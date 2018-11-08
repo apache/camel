@@ -25,6 +25,7 @@ import io.swagger.parser.SwaggerParser;
 import org.apache.camel.generator.swagger.DestinationGenerator;
 import org.apache.camel.generator.swagger.RestDslGenerator;
 import org.apache.camel.generator.swagger.RestDslSourceCodeGenerator;
+import org.apache.camel.generator.swagger.SpringBootProjectSourceCodeGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -89,7 +90,65 @@ public class GenerateMojo extends AbstractGenerateMojo {
 
         final Path outputPath = new File(outputDirectory).toPath();
 
+        if (restConfiguration) {
+            String comp = detectRestComponentFromClasspath();
+            if (comp != null) {
+                getLog().info("Detected Camel Rest component from classpath: " + comp);
+                generator.withRestComponent(comp);
+            } else {
+                comp = "servlet";
+
+                // is it spring boot?
+                String aid = "camel-servlet";
+                if (detectSpringBootFromClasspath()) {
+                    aid = "camel-servlet-starter";
+                }
+
+                String dep = "\n\t\t<dependency>"
+                    + "\n\t\t\t<groupId>org.apache.camel</groupId>"
+                    + "\n\t\t\t<artifactId>" + aid + "</artifactId>";
+                String ver = detectCamelVersionFromClasspath();
+                if (ver != null) {
+                    dep += "\n\t\t\t<version>" + ver + "</version>";
+                }
+                dep += "\n\t\t</dependency>\n";
+
+                getLog().info("Cannot detect Rest component from classpath. Will use servlet as Rest component.");
+                getLog().info("Add the following dependency in the Maven pom.xml file:\n" + dep + "\n");
+
+                generator.withRestComponent("servlet");
+            }
+
+            // if its a spring boot project and we use servlet then we should generate additional source code
+            if (detectSpringBootFromClasspath() && "servlet".equals(comp)) {
+                try {
+                    if (ObjectHelper.isEmpty(packageName)) {
+                        // if not explicit package name then try to use package where the spring boot application is located
+                        String pName = detectSpringBootMainPackage();
+                        if (pName != null) {
+                            packageName = pName;
+                            generator.withPackageName(packageName);
+                            getLog().info("Detected @SpringBootApplication, and will be using its package name: " + packageName);
+                        }
+                    }
+                    getLog().info("Generating Camel Rest Controller source with package name " + packageName + " in source directory: " + outputPath);
+                    SpringBootProjectSourceCodeGenerator.generator().withPackageName(packageName).generate(outputPath);
+                    // the Camel Rest Controller allows to use root as context-path
+                    generator.withRestContextPath("/");
+                } catch (final IOException e) {
+                    throw new MojoExecutionException(
+                        "Unable to generate Camel Rest Controller source due " + e.getMessage(), e);
+                }
+            }
+        }
+
+        if (detectSpringBootFromClasspath()) {
+            generator.asSpringComponent();
+            generator.asSpringBootProject();
+        }
+
         try {
+            getLog().info("Generating Camel DSL source in directory: " + outputPath);
             generator.generate(outputPath);
         } catch (final IOException e) {
             throw new MojoExecutionException(

@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.log;
 
-import org.junit.Test;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.CamelLogProcessor;
+import org.junit.Test;
 
 /**
  * @version 

@@ -16,15 +16,15 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class ManagedRouteDirectWhileIssueLeakTest extends ManagementTestSupport {
 

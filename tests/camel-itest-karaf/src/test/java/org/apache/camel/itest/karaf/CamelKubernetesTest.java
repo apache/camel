@@ -27,7 +27,22 @@ public class CamelKubernetesTest extends BaseKarafTest {
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        testComponent(COMPONENT, "kubernetes-config-maps");
+        testComponent(COMPONENT, "kubernetes-deployments");
+        testComponent(COMPONENT, "kubernetes-hpa");
+        testComponent(COMPONENT, "kubernetes-job");
+        testComponent(COMPONENT, "kubernetes-namespaces");
+        testComponent(COMPONENT, "kubernetes-nodes");
+        testComponent(COMPONENT, "kubernetes-persistent-volumes-claims");
+        testComponent(COMPONENT, "kubernetes-persistent-volumes");
+        testComponent(COMPONENT, "kubernetes-pods");
+        testComponent(COMPONENT, "kubernetes-replication-controllers");
+        testComponent(COMPONENT, "kubernetes-resources-quota");
+        testComponent(COMPONENT, "kubernetes-secrets");
+        testComponent(COMPONENT, "kubernetes-service-accounts");
+        testComponent(COMPONENT, "kubernetes-services");
+        testComponent(COMPONENT, "openshift-builds");
+        testComponent(COMPONENT, "openshift-build-configs");
     }
 
 

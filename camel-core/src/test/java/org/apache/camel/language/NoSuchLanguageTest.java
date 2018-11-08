@@ -16,10 +16,9 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.NoSuchLanguageException;
+import org.junit.Test;
 
 public class NoSuchLanguageTest extends LanguageTestSupport {
 

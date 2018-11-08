@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -27,6 +23,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ValidatorBeanCallTest extends ContextTestSupport {
 

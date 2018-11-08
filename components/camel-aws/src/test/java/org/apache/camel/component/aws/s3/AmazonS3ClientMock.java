@@ -31,8 +31,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.HttpMethod;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AbstractAmazonS3;
 import com.amazonaws.services.s3.S3ResponseMetadata;
 import com.amazonaws.services.s3.model.AbortMultipartUploadRequest;
 import com.amazonaws.services.s3.model.AccessControlList;
@@ -80,7 +79,7 @@ import com.amazonaws.services.s3.model.VersionListing;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Assert;
 
-public class AmazonS3ClientMock extends AmazonS3Client {
+public class AmazonS3ClientMock extends AbstractAmazonS3 {
     
     List<S3Object> objects = new CopyOnWriteArrayList<>();
     List<PutObjectRequest> putObjectRequests = new CopyOnWriteArrayList<>();
@@ -90,7 +89,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
     private int maxCapacity = 100;
     
     public AmazonS3ClientMock() {
-        super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
+        super();
     }
 
     @Override

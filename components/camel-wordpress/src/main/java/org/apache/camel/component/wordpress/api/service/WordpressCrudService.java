@@ -17,6 +17,7 @@
 package org.apache.camel.component.wordpress.api.service;
 
 import java.util.List;
+
 import org.apache.camel.component.wordpress.api.model.Context;
 import org.apache.camel.component.wordpress.api.model.DeletedModel;
 import org.apache.camel.component.wordpress.api.model.SearchCriteria;

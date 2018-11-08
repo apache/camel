@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import org.junit.Before;
-import org.junit.After;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;

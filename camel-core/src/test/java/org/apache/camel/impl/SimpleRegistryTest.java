@@ -15,14 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.Map;
 
-import org.junit.Assert;
 import org.apache.camel.NoSuchBeanException;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class SimpleRegistryTest extends Assert {
 

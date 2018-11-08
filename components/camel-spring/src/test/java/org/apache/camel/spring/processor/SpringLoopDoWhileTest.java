@@ -16,10 +16,9 @@
  */
 package org.apache.camel.spring.processor;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.LoopDoWhileTest;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 

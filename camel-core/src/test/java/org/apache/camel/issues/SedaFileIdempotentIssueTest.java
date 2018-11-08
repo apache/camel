@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.CountDownLatch;
@@ -30,6 +26,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.idempotent.FileIdempotentRepository;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *

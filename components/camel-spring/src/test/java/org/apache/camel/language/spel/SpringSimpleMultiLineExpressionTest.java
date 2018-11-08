@@ -16,9 +16,8 @@
  */
 package org.apache.camel.language.spel;
 
-import org.junit.Test;
-
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

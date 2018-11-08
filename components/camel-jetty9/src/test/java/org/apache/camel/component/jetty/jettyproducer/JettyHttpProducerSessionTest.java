@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jetty.jettyproducer;
-import org.junit.Before;
-
 import javax.servlet.http.HttpSession;
 
 import org.apache.camel.Exchange;

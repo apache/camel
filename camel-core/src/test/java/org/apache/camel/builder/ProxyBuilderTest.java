@@ -16,12 +16,11 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  *

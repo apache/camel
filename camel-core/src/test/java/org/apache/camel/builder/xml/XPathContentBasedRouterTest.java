@@ -16,10 +16,9 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *

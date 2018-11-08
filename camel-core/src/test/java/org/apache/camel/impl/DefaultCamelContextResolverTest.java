@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-import org.junit.Before;
-import org.junit.After;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;

@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.dataformat;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class DataFormatEndpointStringTest extends ContextTestSupport {
 

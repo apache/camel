@@ -16,14 +16,13 @@
  */
 
 package org.apache.camel.component.ribbon.cloud;
-import org.junit.Before;
-
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.ribbon.RibbonConfiguration;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Before;
 import org.junit.Test;
 
 public class RibbonServiceCallUpdateRouteTest extends CamelTestSupport {

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Test;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +29,7 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.jndi.ExampleBean;
+import org.junit.Test;
 
 /**
  * Unit test for IntrospectionSupport
@@ -273,6 +272,22 @@ public class IntrospectionSupportTest extends ContextTestSupport {
     }
 
     @Test
+    public void testSetPropertyDash() throws Exception {
+        AnotherExampleBean bean = new AnotherExampleBean();
+        bean.setName("Claus");
+        bean.setPrice(10.0);
+        Date date = new Date(0);
+        bean.setDate(date);
+        bean.setGoldCustomer(true);
+        bean.setLittle(true);
+
+        IntrospectionSupport.setProperty(bean, "name", "James");
+        IntrospectionSupport.setProperty(bean, "gold-customer", "false");
+        assertEquals("James", bean.getName());
+        assertEquals(false, bean.isGoldCustomer());
+    }
+
+    @Test
     public void testAnotherGetProperty() throws Exception {
         AnotherExampleBean bean = new AnotherExampleBean();
         bean.setName("Claus");
@@ -289,6 +304,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertSame(date, IntrospectionSupport.getProperty(bean, "date"));
         assertSame(children, IntrospectionSupport.getProperty(bean, "children"));
         assertEquals(Boolean.TRUE, IntrospectionSupport.getProperty(bean, "goldCustomer"));
+        assertEquals(Boolean.TRUE, IntrospectionSupport.getProperty(bean, "gold-customer"));
         assertEquals(Boolean.TRUE, IntrospectionSupport.getProperty(bean, "little"));
     }
 

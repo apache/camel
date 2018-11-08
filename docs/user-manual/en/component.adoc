@@ -1,0 +1,42 @@
+[[Component-Components]]
+=== Components
+
+A Component is essentially a factory of link:endpoint.adoc[Endpoint] instances.
+
+You can explicitly configure Component instances
+and add them to a link:camelcontext.adoc[CamelContext] in an IoC
+container like Spring or Guice, or they can be auto-discovered using
+link:uris.adoc[URIs].
+
+[[Component-ComponentsIncluded]]
+==== Components Included
+
+Camel includes the following Component implementations via link:uris.adoc[URIs].
+
+[IMPORTANT]
+====
+Make sure to read link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+to learn more about configuring endpoints. For
+example how to refer to beans in the link:registry.adoc[Registry] or how
+to use raw values for password options, and using
+link:using-propertyplaceholder.adoc[property placeholders] etc.
+====
+
+===== Core Components
+
+include::../../../camel-core/readme.adoc[]
+
+===== Components
+
+include::../../../components/readme.adoc[]
+
+
+[[Component-SeeAlso]]
+==== See Also
+
+* link:endpoint.adoc[Endpoint]
+* link:uris.adoc[URIs]
+* link:writing-components.adoc[Writing Components]
+* link:configuring-camel.adoc[How do I add a component?]
+* link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
+* link:using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]

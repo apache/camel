@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +24,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

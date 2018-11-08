@@ -79,7 +79,7 @@ public final class OsgiNamingHelper {
             }
         } while (clash);
 
-        LOG.debug("Generated free name for bundle id: {}, clash: {} -> {}", new Object[]{context.getBundle().getBundleId(), clash, candidate});
+        LOG.debug("Generated free name for bundle id: {}, clash: {} -> {}", context.getBundle().getBundleId(), clash, candidate);
         return candidate;
     }
 

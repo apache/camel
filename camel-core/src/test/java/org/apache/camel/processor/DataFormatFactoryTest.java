@@ -16,14 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.SerializationDataFormat;
 import org.apache.camel.impl.StringDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
+import org.junit.Test;
 
 public class DataFormatFactoryTest extends ContextTestSupport {
     private static final DataFormat STRING_DF = new StringDataFormat("US-ASCII");

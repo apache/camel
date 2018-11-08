@@ -58,7 +58,7 @@ with the following path and query parameters:
 | *objectDomain* (consumer) | *Required* The domain for the mbean you're connecting to |  | String
 | *objectName* (consumer) | The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed. |  | String
 | *observedAttribute* (consumer) | The attribute to observe for the monitor bean or consumer. |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *executorService* (advanced) | To use a custom shared thread pool for the consumers. By default each consume has their own thread-pool to process and route notifications. |  | ExecutorService
 | *handback* (advanced) | Value to handback to the listener when a notification is received. This value will be put in the message header with the key jmx.handback |  | Object

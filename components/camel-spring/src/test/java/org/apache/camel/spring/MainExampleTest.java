@@ -16,11 +16,10 @@
  */
 package org.apache.camel.spring;
 
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.example.MyProcessor;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

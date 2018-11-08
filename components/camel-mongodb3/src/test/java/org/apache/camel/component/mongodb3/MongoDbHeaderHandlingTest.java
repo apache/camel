@@ -17,7 +17,6 @@
 package org.apache.camel.component.mongodb3;
 
 import com.mongodb.client.result.UpdateResult;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

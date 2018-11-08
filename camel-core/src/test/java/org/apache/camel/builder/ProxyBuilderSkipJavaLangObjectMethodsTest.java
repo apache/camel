@@ -16,9 +16,8 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  *

@@ -61,6 +61,7 @@ import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -154,7 +155,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
         // ensure this zipkin tracer gets initialized when Camel starts
         init(camelContext);
-        return new ZipkinRoutePolicy(routeId);
+        return new ZipkinRoutePolicy();
     }
 
     /**
@@ -356,7 +357,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
 
         if (spanReporter == null) {
             if (endpoint != null) {
-                LOG.info("Configuring Zipkin URLConnectionSender using endpoint: {} ", endpoint);
+                LOG.info("Configuring Zipkin URLConnectionSender using endpoint: {}", endpoint);
                 spanReporter = AsyncReporter.create(URLConnectionSender.create(endpoint));
             } else if (hostName != null && port > 0) {
                 LOG.info("Configuring Zipkin ScribeSpanCollector using host: {} and port: {}", hostName, port);
@@ -516,10 +517,11 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
                     return null;
                 }
             }
-            if (LOG.isTraceEnabled() && key != null) {
-                LOG.trace("Using serviceName: {} as fallback", key);
+            String sanitizedKey = URISupport.sanitizeUri(key);
+            if (LOG.isTraceEnabled() && sanitizedKey != null) {
+                LOG.trace("Using serviceName: {} as fallback", sanitizedKey);
             }
-            return key;
+            return sanitizedKey;
         } else {
             if (LOG.isTraceEnabled() && answer != null) {
                 LOG.trace("Using serviceName: {}", answer);
@@ -713,11 +715,6 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
         }
     }
 
-    private boolean hasZipkinTraceId(Exchange exchange) {
-        // must have zipkin headers to start a server event
-        return exchange.getIn().getHeader(ZipkinConstants.TRACE_ID) != null;
-    }
-
     private final class ZipkinEventNotifier extends EventNotifierSupport {
 
         @Override
@@ -759,12 +756,6 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     }
 
     private final class ZipkinRoutePolicy extends RoutePolicySupport {
-
-        private final String routeId;
-
-        ZipkinRoutePolicy(String routeId) {
-            this.routeId = routeId;
-        }
 
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {

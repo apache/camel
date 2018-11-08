@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,6 +25,7 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
 

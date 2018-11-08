@@ -17,6 +17,7 @@
 package org.apache.camel.component.websocket;
 
 import java.util.Collection;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

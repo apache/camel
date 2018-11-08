@@ -19,6 +19,7 @@ package org.apache.camel.component.quickfixj;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import javax.management.JMException;
 
 import org.apache.camel.Exchange;

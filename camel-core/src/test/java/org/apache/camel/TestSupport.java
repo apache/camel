@@ -29,11 +29,9 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.util.PredicateAssertHelper;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.slf4j.Logger;
@@ -47,10 +45,10 @@ public abstract class TestSupport extends Assert {
     protected static final String LS = System.lineSeparator();
     private static final Logger LOG = LoggerFactory.getLogger(TestSupport.class);
 
-    protected Logger log = LoggerFactory.getLogger(getClass());
-
     @Rule
     public TestName name = new TestName();
+
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     public String toString() {

@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.example.reportincident;
-import org.junit.Before;
-
 import java.io.File;
 import java.io.FileOutputStream;
 

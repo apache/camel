@@ -49,7 +49,7 @@ public class RestletProducerSynchronouslyTest extends RestletTestSupport {
 
                 from("direct:start").to("restlet:http://localhost:" + portNum + "/users/123/basic").to("log:reply");
                 
-                from("direct:delete").to("restlet:http://localhost:" + portNum + "/users/123/basicrestletMethod=DELETE");
+                from("direct:delete").to("restlet:http://localhost:" + portNum + "/users/123/basic");
 
                 from("restlet:http://localhost:" + portNum + "/users/{id}/basic?restletMethods=GET,DELETE")
                     .process(new Processor() {

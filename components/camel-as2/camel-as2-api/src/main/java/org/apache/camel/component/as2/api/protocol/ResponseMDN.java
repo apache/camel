@@ -25,6 +25,7 @@ import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2ServerManager;
+import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.InvalidAS2NameException;
@@ -55,12 +56,14 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     private final String as2Version;
     private final String serverFQDN;
+    private AS2SignatureAlgorithm signingAlgorithm;
     private Certificate[] signingCertificateChain;
     private PrivateKey signingPrivateKey;
 
-    public ResponseMDN(String as2Version, String serverFQDN, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey) {
+    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
+        this.signingAlgorithm = signingAlgorithm;
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;
     }
@@ -73,7 +76,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             // RFC4130 - 7.6 - Status codes in the 200 range SHOULD also be used when an entity is returned
             // (a signed receipt in a multipart/signed content type or an unsigned
             // receipt in a multipart/report)
-            LOG.debug("MDN not return due to response status code: " + statusCode);
+            LOG.debug("MDN not return due to response status code: {}", statusCode);
             return;
         }
 
@@ -85,7 +88,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             LOG.debug("MDN not returned due to null request");
             throw new HttpException("request missing from HTTP context");
         }
-        LOG.debug("Processing MDN for request: " + request);
+        LOG.debug("Processing MDN for request: {}", request);
 
         if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_TO) == null) {
             // no receipt requested by sender
@@ -161,7 +164,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             AS2SignedDataGenerator gen = null;
             if (dispositionNotificationOptions.getSignedReceiptProtocol() != null && signingCertificateChain != null
                     && signingPrivateKey != null) {
-                gen = SigningUtils.createSigningGenerator(signingCertificateChain, signingPrivateKey);
+                gen = SigningUtils.createSigningGenerator(signingAlgorithm, signingCertificateChain, signingPrivateKey);
             }
 
             if (gen != null) {

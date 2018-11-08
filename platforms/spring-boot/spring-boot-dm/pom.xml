@@ -41,13 +41,13 @@
 
   <properties>
     <!-- Spring-Boot target version -->
-    <spring-boot-version>2.0.4.RELEASE</spring-boot-version>
+    <spring-boot-version>2.1.0.RELEASE</spring-boot-version>
 
     <!-- The following dependencies should be aligned with the ones in standard camel parent -->
     <!-- Needed by BOM generator-->
     <avro-version>1.8.2</avro-version>
     <jackson-version>1.9.12</jackson-version>
-    <testcontainers-version>1.8.3</testcontainers-version>
+    <testcontainers-version>1.9.1</testcontainers-version>
 
     <!-- needed for testing -->
     <curator-version>2.12.0</curator-version>
@@ -57,9 +57,9 @@
     <google-guava-version>19.0</google-guava-version>
     <lucene3-version>3.6.0</lucene3-version>
     <hadoop2-version>2.7.4</hadoop2-version>
-    <infinispan-spring-boot-version>2.0.0.Beta1</infinispan-spring-boot-version>
+    <infinispan-spring-boot-version>2.0.0.Final</infinispan-spring-boot-version>
     <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
-    <groovy-version>2.4.15</groovy-version>
+    <groovy-version>2.5.3</groovy-version>
     <grpc-guava-version>20.0</grpc-guava-version>
 
     <!-- Plugin versions -->

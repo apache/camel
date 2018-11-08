@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xquery;
-import org.junit.Before;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 /**

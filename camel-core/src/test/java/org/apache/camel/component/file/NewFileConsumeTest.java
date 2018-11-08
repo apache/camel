@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
@@ -30,6 +26,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Simple unit test to consume a new file

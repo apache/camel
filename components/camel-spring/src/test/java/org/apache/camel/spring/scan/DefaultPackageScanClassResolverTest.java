@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.scan;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -29,6 +25,8 @@ import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.spring.scan.a.ScanTargetOne;
 import org.apache.camel.spring.scan.b.ScanTargetTwo;
 import org.apache.camel.spring.scan.c.ScanTargetThree;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring.scan.ScanTestSupport {
 

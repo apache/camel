@@ -72,7 +72,7 @@ public class NettyConsumer extends DefaultConsumer {
 
         ServiceHelper.startServices(nettyServerBootstrapFactory);
 
-        LOG.info("Netty consumer bound to: " + configuration.getAddress());
+        LOG.info("Netty consumer bound to: {}", configuration.getAddress());
     }
 
     @Override
@@ -81,7 +81,7 @@ public class NettyConsumer extends DefaultConsumer {
 
         ServiceHelper.stopService(nettyServerBootstrapFactory);
 
-        LOG.info("Netty consumer unbound from: " + configuration.getAddress());
+        LOG.info("Netty consumer unbound from: {}", configuration.getAddress());
 
         super.doStop();
     }

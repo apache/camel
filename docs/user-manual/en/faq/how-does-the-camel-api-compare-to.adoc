@@ -1,0 +1,43 @@
+[[HowdoestheCamelAPIcompareto-HowdoestheCamelAPIcomparetofromCXFHTTPJBIJMSJavaMailetc]]
+=== How does the Camel API compare to from CXF, HTTP, JBI, JMS, JavaMail, etc.
+
+We have tried to make the Camel
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchange.html[Exchange]
+and
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Message.html[Message]
+map very closely to JBI in particular but also
+<<cxf-component,CXF>>, <<http-component,HTTP>>, <<jms-component,JMS>>,
+<<mail-component,Mail>>, <<xmpp-component,XMPP>> and most other integration
+abstractions. We want to prevent leaky abstractions, so the Camel API
+exposes the underlying APIs so that a link:../processor.adoc[Processor] can
+make use of the underlying abstractions if they make sense.
+
+For example:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Component |Inbound exchange exposes
+|<<cxf-component,CXF>> |Each Inbound
+http://camel.apache.org/maven/current/camel-cxf/apidocs/org/apache/camel/component/cxf/CxfExchange.html[CxfExchange]
+has access to the underlying Exchange and Message from CXF
+
+|<<http-component,HTTP>> |Each inbound
+http://camel.apache.org/maven/current/camel-http/apidocs/org/apache/camel/component/http/HttpExchange.html[HttpExchange]
+has access to the underlying HttpServletRequest and HttpServletResponse
+
+|JBI |Each inbound
+http://camel.apache.org/maven/current/camel-jbi/apidocs/org/apache/camel/component/jbi/JbiExchange.html[JbiExchange]
+has access to the underlying JBI MessageExchange and NormalizedMessage
+objects
+
+|<<jms-component,JMS>> |Each inbound
+http://camel.apache.org/maven/current/camel-jms/apidocs/org/apache/camel/component/jms/JmsExchange.html[JmsExchange]
+has access to the underlying JMS Message objects
+|=======================================================================
+
+You can probably see a pattern forming now :smile:
+
+For many routing and mediation components and
+link:../processor.adoc[Processor] objects, you maybe don't care about the
+underlying transport and can instead stick to the abstract Camel API.
+But if you need to, the real transport APIs are there for you.

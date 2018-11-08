@@ -16,13 +16,13 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
+import java.util.concurrent.Callable;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -32,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * @version
@@ -293,7 +294,7 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         final ScheduledExecutorService badService = new ScheduledThreadPoolExecutor(1) {
             @Override
-            public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
+            public <V> ScheduledFuture<V> schedule(Callable<V> command, long delay, TimeUnit unit) {
                 throw new RejectedExecutionException();
             }
         };

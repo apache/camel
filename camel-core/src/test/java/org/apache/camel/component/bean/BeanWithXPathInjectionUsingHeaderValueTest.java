@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.bean;
 
-import org.junit.Test;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Handler;
 import org.apache.camel.language.XPath;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Test;
 
 /**
  * Tests the XPath annotation 'header' value which when set will cause the XPath

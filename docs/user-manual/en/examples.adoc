@@ -1,0 +1,55 @@
+[[Examples-Examples]]
+=== Examples
+
+Once you have read about link:getting-started.adoc[Getting Started] and
+looked at the link:enterprise-integration-patterns.adoc[Enterprise
+Integration Patterns], you might want to try out some examples.
+
+Before starting to work on example you may want to
+link:faq/what-are-the-dependencies.adoc[check the requirements for working
+with Camel]. Then link:running-examples.adoc[Running Examples] describes
+how to get the examples to run
+
+
+[[Examples-Walk-throughs]]
+==== Walk-throughs
+
+* Walk through the code of a
+link:walk-through-an-example.adoc[beginner's example] so you can
+understand how things fit together using the Java link:dsl.adoc[DSL] to
+set up some routes in a simple `main(...)` method.
+* Walk through the link:walk-through-another-example.adoc[Spring DSL
+example] to look at XML-based routing.
+* Walk through the link:console-example.adoc[Console Example] to
+practice reading input from the console.
+
+[NOTE]
+====
+The examples listed below are hosted at Apache. We also offer the
+link:articles.adoc[Articles] page as a collection of 3rd-party Camel
+material - such as tutorials, blog posts, published articles, videos,
+podcasts, presentations, and so forth.
+
+If you have written a Camel-related article, then we are happy to
+provide a link to it. You can contact the Camel link:team.adoc[Team] via
+our link:mailing-lists.adoc[Mailing Lists], or simply post a tweet with
+the words "Apache Camel".
+====
+
+
+[[Examples-Examples.1]]
+==== Examples
+
+Browse the examples from github where each example is documented and up
+to date:
+
+https://github.com/apache/camel/tree/master/examples#welcome-to-the-apache-camel-examples
+
+
+[[Examples-SeeAlso]]
+==== See Also
+
+* link:tutorials.adoc[Tutorials]
+* link:cookbook.adoc[Cookbook]
+* link:enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns]

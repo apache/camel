@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -467,8 +468,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     /**
      * @param classType the canonical class name for the array passed as input
      *
-     * @deprecated as of 2.19.0. Replaced wtih {@link #type(Class)} with {@code []} appended to canonical class name
-     * , e.g. {@code type(MyClass[].class}
+     * @deprecated as of 2.19.0. Replaced with {@link #type(Class)} with {@code []} appended to canonical class name,
+     * e.g. {@code type(MyClass[].class}
      */
     @Deprecated
     public RestDefinition typeList(Class<?> classType) {
@@ -497,8 +498,8 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
     /**
      * @param classType the canonical class name for the array passed as output
      *
-     * @deprecated as of 2.19.0. Replaced wtih {@link #outType(Class)} with {@code []} appended to canonical class name
-     * , e.g. {@code outType(MyClass[].class}
+     * @deprecated as of 2.19.0. Replaced with {@link #outType(Class)} with {@code []} appended to canonical class name,
+     * e.g. {@code outType(MyClass[].class}
      */
     @Deprecated
     public RestDefinition outTypeList(Class<?> classType) {

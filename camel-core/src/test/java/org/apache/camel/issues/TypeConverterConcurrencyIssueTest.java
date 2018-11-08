@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import java.lang.reflect.Method;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -27,6 +25,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * Testing for CAMEL-5002

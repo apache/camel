@@ -35,7 +35,8 @@ import org.slf4j.LoggerFactory;
 import scala.Option;
 import scala.collection.mutable.Buffer;
 
-import static org.apache.camel.component.kafka.embedded.TestUtils.*;
+import static org.apache.camel.component.kafka.embedded.TestUtils.constructTempDir;
+import static org.apache.camel.component.kafka.embedded.TestUtils.perTest;
 
 public class EmbeddedKafkaBroker extends ExternalResource {
 

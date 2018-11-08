@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -430,7 +431,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
             try {
                 unregister(name);
             } catch (Exception e) {
-                LOG.info("Exception unregistering MBean with name " + name, e);
+                LOG.info("Exception unregistering MBean with name {}", name, e);
                 caught++;
             }
         }
@@ -494,7 +495,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
                     hostName = InetAddressUtil.getLocalHostName();
                 }
             } catch (UnknownHostException uhe) {
-                LOG.info("Cannot determine localhost name or address. Using default: " + DEFAULT_REGISTRY_PORT, uhe);
+                LOG.info("Cannot determine localhost name or address. Using default: {}", DEFAULT_REGISTRY_PORT, uhe);
                 hostName = DEFAULT_HOST;
             }
         } else {

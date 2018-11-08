@@ -25,6 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,7 +37,7 @@ import org.json.simple.JSONObject;
  * The slack component allows you to send messages to Slack.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel", label = "social")
-public class SlackEndpoint extends DefaultEndpoint {
+public class SlackEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
     @Metadata(required = "true")
@@ -79,6 +80,7 @@ public class SlackEndpoint extends DefaultEndpoint {
             throw new RuntimeCamelException("Missing required endpoint configuration: token must be defined for Slack consumer");
         }
         SlackConsumer consumer = new SlackConsumer(this, processor);
+        configureConsumer(consumer);
         return consumer;
     }
 

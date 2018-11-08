@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import org.junit.Test;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
@@ -30,6 +28,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.junit.Test;
 
 /**
  * @version 

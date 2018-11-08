@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.timer;
 
-import org.junit.Test;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -25,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class TimerReferenceConfigurationTest extends ContextTestSupport {
 

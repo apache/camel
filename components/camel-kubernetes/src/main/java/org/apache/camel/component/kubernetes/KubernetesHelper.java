@@ -47,7 +47,7 @@ public final class KubernetesHelper {
     }
 
     private static KubernetesClient createKubernetesClient(KubernetesConfiguration configuration) {
-        LOG.debug("Create Kubernetes client with the following Configuration: " + configuration.toString());
+        LOG.debug("Create Kubernetes client with the following Configuration: {}", configuration);
 
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());

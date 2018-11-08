@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -26,6 +22,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * @version 

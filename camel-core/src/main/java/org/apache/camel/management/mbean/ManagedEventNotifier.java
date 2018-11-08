@@ -18,6 +18,7 @@ package org.apache.camel.management.mbean;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.management.MBeanNotificationInfo;
 import javax.management.NotificationBroadcasterSupport;
 

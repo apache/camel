@@ -18,6 +18,7 @@ package org.apache.camel.maven.generator.swagger;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import io.swagger.models.Swagger;
 import io.swagger.parser.SwaggerParser;
@@ -25,10 +26,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.generator.swagger.DestinationGenerator;
 import org.apache.camel.generator.swagger.RestDslGenerator;
 import org.apache.camel.generator.swagger.RestDslXmlGenerator;
+import org.apache.camel.generator.swagger.SpringBootProjectSourceCodeGenerator;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -48,7 +49,7 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
     private boolean blueprint;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoExecutionException {
         if (skip) {
             return;
         }
@@ -76,6 +77,36 @@ public class GenerateXmlMojo extends AbstractGenerateMojo {
             final DestinationGenerator destinationGeneratorObject = createDestinationGenerator();
 
             generator.withDestinationGenerator(destinationGeneratorObject);
+        }
+
+        if (restConfiguration) {
+            String comp = detectRestComponentFromClasspath();
+            if (comp != null) {
+                getLog().info("Detected Camel Rest component from classpath: " + comp);
+                generator.withRestComponent(comp);
+            } else {
+                comp = "servlet";
+
+                // is it spring boot?
+                String aid = "camel-servlet";
+                if (detectSpringBootFromClasspath()) {
+                    aid = "camel-servlet-starter";
+                }
+
+                String dep = "\n\t\t<dependency>"
+                    + "\n\t\t\t<groupId>org.apache.camel</groupId>"
+                    + "\n\t\t\t<artifactId>" + aid + "</artifactId>";
+                String ver = detectCamelVersionFromClasspath();
+                if (ver != null) {
+                    dep += "\n\t\t\t<version>" + ver + "</version>";
+                }
+                dep += "\n\t\t</dependency>\n";
+
+                getLog().info("Cannot detect Rest component from classpath. Will use servlet as Rest component.");
+                getLog().info("Add the following dependency in the Maven pom.xml file:\n" + dep + "\n");
+
+                generator.withRestComponent(comp);
+            }
         }
 
         try {

@@ -16,13 +16,12 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.junit.Test;
-
 import javax.xml.transform.Source;
 
-import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class XsltUriResolverTest extends Assert {
 

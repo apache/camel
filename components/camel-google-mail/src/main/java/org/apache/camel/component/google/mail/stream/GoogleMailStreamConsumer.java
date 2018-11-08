@@ -169,7 +169,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processRollback(Exchange exchange, String unreadLabelId) {
         try {
-            LOG.warn("Exchange failed, so rolling back mail {} to un " + exchange);
+            LOG.warn("Exchange failed, so rolling back mail {} to un {}", exchange);
 
             List<String> add = new ArrayList<>();
             add.add(unreadLabelId);

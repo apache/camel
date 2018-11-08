@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -165,7 +164,7 @@ public final class GroupTokenIterator implements Iterator<Object>, Closeable {
                 bos.write(bytes);
             } else if (data != null) {
                 // convert to input stream
-                InputStream is = camelContext.getTypeConverter().mandatoryConvertTo(InputStream.class, data);
+                InputStream is = camelContext.getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, data);
                 IOHelper.copy(is, bos);
             }
 

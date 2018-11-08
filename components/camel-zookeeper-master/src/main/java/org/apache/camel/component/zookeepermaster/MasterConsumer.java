@@ -163,7 +163,7 @@ public class MasterConsumer extends DefaultConsumer {
 
                     ServiceHelper.startService(delegate);
                 } catch (Exception e) {
-                    LOG.error("Failed to start master consumer for: " + endpoint, e);
+                    LOG.error("Failed to start master consumer for: {}", endpoint, e);
                 }
 
                 LOG.info("Elected as master. Consumer started: {}", endpoint.getConsumerEndpoint());
@@ -176,7 +176,7 @@ public class MasterConsumer extends DefaultConsumer {
             try {
                 stopConsumer();
             } catch (Exception e) {
-                LOG.warn("Failed to stop master consumer for: " + endpoint, e);
+                LOG.warn("Failed to stop master consumer for: {}", endpoint, e);
             }
         };
     }

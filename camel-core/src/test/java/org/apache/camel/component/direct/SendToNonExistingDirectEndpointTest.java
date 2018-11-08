@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.direct;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  * @version 

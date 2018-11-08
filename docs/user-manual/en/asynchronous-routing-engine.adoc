@@ -5,7 +5,7 @@ Asynchronous Routing Engine
 *Available as of Camel 2.4*
 
 As of Camel 2.4 the asynchronous routing engine is back and kicking. +
-All the link:enterprise-integration-patterns.html[Enterprise
+All the link:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] are supported as well a selected number of
 Components:
 

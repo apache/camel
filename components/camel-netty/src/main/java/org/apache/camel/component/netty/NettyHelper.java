@@ -88,12 +88,12 @@ public final class NettyHelper {
         ChannelFuture future;
         if (remoteAddress != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Channel: {} remote address: {} writing body: {}", new Object[]{channel, remoteAddress, body});
+                log.debug("Channel: {} remote address: {} writing body: {}", channel, remoteAddress, body);
             }
             future = channel.write(body, remoteAddress);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Channel: {} writing body: {}", new Object[]{channel, body});
+                log.debug("Channel: {} writing body: {}", channel, body);
             }
             future = channel.write(body);
         }

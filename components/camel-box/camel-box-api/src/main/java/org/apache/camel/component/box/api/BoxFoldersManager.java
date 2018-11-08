@@ -87,7 +87,7 @@ public class BoxFoldersManager {
      */
     public BoxFolder getFolder(String... path) {
         try {
-            LOG.debug("Getting folder at path=" + Arrays.toString(path));
+            LOG.debug("Getting folder at path={}", Arrays.toString(path));
 
             BoxFolder folder = BoxFolder.getRootFolder(boxConnection);
             if (path == null || path.length == 0) {
@@ -332,7 +332,7 @@ public class BoxFoldersManager {
      */
     public void deleteFolder(String folderId) {
         try {
-            LOG.debug("Deleting folder(id=" + folderId + ")");
+            LOG.debug("Deleting folder(id={})", folderId);
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -356,7 +356,7 @@ public class BoxFoldersManager {
      */
     public BoxFolder.Info getFolderInfo(String folderId, String... fields) {
         try {
-            LOG.debug("Getting info for folder(id=" + folderId + ")");
+            LOG.debug("Getting info for folder(id={})", folderId);
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -385,7 +385,7 @@ public class BoxFoldersManager {
      */
     public BoxFolder updateFolderInfo(String folderId, BoxFolder.Info info) {
         try {
-            LOG.debug("Updating info for folder(id=" + folderId + ")");
+            LOG.debug("Updating info for folder(id={})", folderId);
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }

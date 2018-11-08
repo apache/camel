@@ -18,8 +18,7 @@ package org.apache.camel.component.aws.sdb;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.simpledb.AmazonSimpleDBClient;
+import com.amazonaws.services.simpledb.AbstractAmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.BatchDeleteAttributesRequest;
 import com.amazonaws.services.simpledb.model.BatchDeleteAttributesResult;
@@ -44,7 +43,7 @@ import com.amazonaws.services.simpledb.model.PutAttributesResult;
 import com.amazonaws.services.simpledb.model.SelectRequest;
 import com.amazonaws.services.simpledb.model.SelectResult;
 
-public class AmazonSDBClientMock extends AmazonSimpleDBClient {
+public class AmazonSDBClientMock extends AbstractAmazonSimpleDB {
     
     protected BatchDeleteAttributesRequest batchDeleteAttributesRequest;
     protected BatchPutAttributesRequest batchPutAttributesRequest;
@@ -58,7 +57,7 @@ public class AmazonSDBClientMock extends AmazonSimpleDBClient {
     protected SelectRequest selectRequest;
 
     public AmazonSDBClientMock() {
-        super(new BasicAWSCredentials("user", "secret"));
+        super();
     }
     
     @Override

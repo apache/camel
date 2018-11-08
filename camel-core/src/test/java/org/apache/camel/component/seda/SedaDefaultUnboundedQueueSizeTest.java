@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  * @version 

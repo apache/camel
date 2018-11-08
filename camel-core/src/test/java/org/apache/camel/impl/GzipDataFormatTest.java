@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.util.zip.GZIPInputStream;
 
@@ -25,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.junit.Test;
 
 /**
  * Unit test of the gzip data format.

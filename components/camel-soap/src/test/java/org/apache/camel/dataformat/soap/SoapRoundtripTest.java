@@ -19,7 +19,6 @@ package org.apache.camel.dataformat.soap;
 import java.io.IOException;
 
 import com.example.customerservice.GetCustomersByName;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;

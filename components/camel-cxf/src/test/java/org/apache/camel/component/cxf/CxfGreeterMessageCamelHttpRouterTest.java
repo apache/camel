@@ -16,9 +16,6 @@
  */
 
 package org.apache.camel.component.cxf;
-import org.junit.Before;
-import org.junit.After;
-
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.builder.RouteBuilder;

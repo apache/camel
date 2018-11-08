@@ -114,7 +114,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 if (dataField != null) {
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Position defined in the class: {}, position: {}, Field: {}", new Object[]{cl.getName(), dataField.pos(), dataField});
+                        LOG.debug("Position defined in the class: {}, position: {}, Field: {}", cl.getName(), dataField.pos(), dataField);
                     }
 
                     if (dataField.required()) {
@@ -201,7 +201,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
             // skip ahead if the expected position is greater than the offset
             if (dataField.pos() > offset) {
-                LOG.debug("skipping ahead [" + (dataField.pos() - offset) + "] chars.");
+                LOG.debug("skipping ahead [{}] chars.", dataField.pos() - offset);
                 offset = dataField.pos();
             }
 
@@ -250,7 +250,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             field.setAccessible(true);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Pos/Offset: {}, Data: {}, Field type: {}", new Object[]{offset, token, field.getType()});
+                LOG.debug("Pos/Offset: {}, Data: {}, Field type: {}", offset, token, field.getType());
             }
 
             // Create format object to format the field
@@ -507,7 +507,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     }
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", new Object[]{value, datafield.pos(), result});
+                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", value, datafield.pos(), result);
                     }
 
                 } else {

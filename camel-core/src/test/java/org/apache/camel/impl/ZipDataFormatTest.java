@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.zip.Deflater;
@@ -31,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.spi.DataFormat;
+import org.junit.Test;
 
 /**
  * Unit test of the zip data format.

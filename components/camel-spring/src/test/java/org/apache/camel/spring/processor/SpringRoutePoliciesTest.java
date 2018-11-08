@@ -16,13 +16,12 @@
  */
 package org.apache.camel.spring.processor;
 
-import org.junit.Test;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.support.RoutePolicySupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

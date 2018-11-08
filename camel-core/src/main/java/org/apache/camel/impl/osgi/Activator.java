@@ -415,7 +415,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 Set<String> packages = getConverterPackages(bundle.getEntry(META_INF_TYPE_CONVERTER));
 
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Found {} {} packages: {}", new Object[]{packages.size(), META_INF_TYPE_CONVERTER, packages});
+                    LOG.trace("Found {} {} packages: {}", packages.size(), META_INF_TYPE_CONVERTER, packages);
                 }
                 // if we only have camel-core on the classpath then we have already pre-loaded all its type converters
                 // but we exposed the "org.apache.camel.core" package in camel-core. This ensures there is at least one

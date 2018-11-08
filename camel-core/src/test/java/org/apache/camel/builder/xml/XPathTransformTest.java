@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.junit.Test;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
@@ -25,6 +23,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 import org.slf4j.Logger;
 
 import static org.hamcrest.Matchers.containsString;

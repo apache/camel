@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.example.customerservice.GetCustomersByName;
-
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;

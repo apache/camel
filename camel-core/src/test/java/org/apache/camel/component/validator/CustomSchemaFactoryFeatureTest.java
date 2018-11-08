@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.validator;
 
-import org.junit.Test;
-
 import javax.xml.XMLConstants;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // Need to bind the CustomerSchemaFactory

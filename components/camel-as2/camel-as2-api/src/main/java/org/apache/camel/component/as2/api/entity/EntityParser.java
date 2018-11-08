@@ -40,11 +40,13 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpMessage;
+import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.io.AbstractMessageParser;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
 import org.apache.http.message.BasicLineParser;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.message.LineParser;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.util.Args;
@@ -169,7 +171,7 @@ public final class EntityParser {
             throw new HttpException("Failed to read start boundary for body part", e);
         }
 
-        if (!foundEndBoundary) {
+        if (!foundEndBoundary && boundary != null) {
             throw new HttpException("Failed to find start boundary for body part");
         }
 
@@ -276,12 +278,18 @@ public final class EntityParser {
             inbuffer.bind(entity.getContent());
 
             // Get Boundary Value
-            String boundary = HttpMessageUtils.getBoundaryParameterValue(message, AS2Header.CONTENT_TYPE);
+            String boundary = HttpMessageUtils.getParameterValue(message, AS2Header.CONTENT_TYPE, "boundary");
             if (boundary == null) {
-                throw new HttpException("Failed to retrive boundary value");
+                throw new HttpException("Failed to retrieve 'boundary' parameter from content type header");
+            }
+            
+            // Get Micalg Value
+            String micalg = HttpMessageUtils.getParameterValue(message, AS2Header.CONTENT_TYPE, "micalg");
+            if (micalg == null) {
+                throw new HttpException("Failed to retrieve 'micalg' parameter from content type header");
             }
 
-            multipartSignedEntity = parseMultipartSignedEntityBody(inbuffer, boundary, charsetName, contentTransferEncoding);
+            multipartSignedEntity = parseMultipartSignedEntityBody(inbuffer, boundary, micalg, charsetName, contentTransferEncoding);
             multipartSignedEntity.setMainBody(true);
 
             EntityUtils.setMessageEntity(message, multipartSignedEntity);
@@ -370,7 +378,7 @@ public final class EntityParser {
             inbuffer.bind(entity.getContent());
 
             // Get Boundary Value
-            String boundary = HttpMessageUtils.getBoundaryParameterValue(message, AS2Header.CONTENT_TYPE);
+            String boundary = HttpMessageUtils.getParameterValue(message, AS2Header.CONTENT_TYPE, "boundary");
             if (boundary == null) {
                 throw new HttpException("Failed to retrive boundary value");
             }
@@ -420,6 +428,7 @@ public final class EntityParser {
 
     public static MultipartSignedEntity parseMultipartSignedEntityBody(AS2SessionInputBuffer inbuffer,
                                                                        String boundary,
+                                                                       String micalg,
                                                                        String charsetName,
                                                                        String contentTransferEncoding)
             throws ParseException {
@@ -514,7 +523,11 @@ public final class EntityParser {
             //
             // End Signature Body Part
 
-            ContentType contentType = ContentType.create(AS2MimeType.MULTIPART_SIGNED, charset);
+            NameValuePair[] parameters = new NameValuePair[] {
+                new BasicNameValuePair("protocol", AS2MimeType.APPLICATION_PKCS7_SIGNATURE),
+                new BasicNameValuePair("boundary", boundary), new BasicNameValuePair("micalg", micalg),
+                new BasicNameValuePair("charset", charsetName)};
+            ContentType contentType = ContentType.create(AS2MimeType.MULTIPART_SIGNED, parameters);
             multipartSignedEntity.setContentType(contentType);
             multipartSignedEntity.setContentTransferEncoding(contentTransferEncoding);
             return multipartSignedEntity;
@@ -731,9 +744,10 @@ public final class EntityParser {
                 entity = parseEDIEntityBody(inbuffer, boundary, entityContentType, contentTransferEncoding);
                 break;
             case AS2MimeType.MULTIPART_SIGNED:
-                String multipartSignedBoundary = AS2HeaderUtils.getBoundaryParameterValue(headers,
-                        AS2Header.CONTENT_TYPE);
-                entity = parseMultipartSignedEntityBody(inbuffer, multipartSignedBoundary, charset.name(),
+                String multipartSignedBoundary = AS2HeaderUtils.getParameterValue(headers,
+                        AS2Header.CONTENT_TYPE, "boundary");
+                String micalg = AS2HeaderUtils.getParameterValue(headers, AS2Header.CONTENT_TYPE, "micalg");
+                entity = parseMultipartSignedEntityBody(inbuffer, multipartSignedBoundary, micalg, charset.name(),
                         contentTransferEncoding);
                 skipToBoundary(inbuffer, boundary);
                 break;
@@ -742,8 +756,8 @@ public final class EntityParser {
                         contentTransferEncoding);
                 break;
             case AS2MimeType.MULTIPART_REPORT:
-                String multipartReportBoundary = AS2HeaderUtils.getBoundaryParameterValue(headers,
-                        AS2Header.CONTENT_TYPE);
+                String multipartReportBoundary = AS2HeaderUtils.getParameterValue(headers,
+                        AS2Header.CONTENT_TYPE, "boundary");
                 entity = parseMultipartReportEntityBody(inbuffer, multipartReportBoundary, charset.name(),
                         contentTransferEncoding);
                 skipToBoundary(inbuffer, boundary);

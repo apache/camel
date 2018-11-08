@@ -16,12 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class StreamCachingRecipientListTest extends ContextTestSupport {
 

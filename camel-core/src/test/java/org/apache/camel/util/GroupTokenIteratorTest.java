@@ -15,11 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.util;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *

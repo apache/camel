@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.jaxp;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.util.List;
 
@@ -26,6 +24,7 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.junit.Test;
 
 /**
  * @version 

@@ -19,6 +19,7 @@ package org.apache.camel.model.cloud;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;

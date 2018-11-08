@@ -117,7 +117,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                         LOG.trace("Session isn't connected, trying to recreate and connect.");
                         session = createSession(configuration);
                         if (endpoint.getConfiguration().getConnectTimeout() > 0) {
-                            LOG.trace("Connecting use connectTimeout: " + endpoint.getConfiguration().getConnectTimeout() + " ...");
+                            LOG.trace("Connecting use connectTimeout: {} ...", endpoint.getConfiguration().getConnectTimeout());
                             session.connect(endpoint.getConfiguration().getConnectTimeout());
                         } else {
                             LOG.trace("Connecting ...");
@@ -129,13 +129,13 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     channel = (ChannelSftp) session.openChannel("sftp");
 
                     if (endpoint.getConfiguration().getConnectTimeout() > 0) {
-                        LOG.trace("Connecting use connectTimeout: " + endpoint.getConfiguration().getConnectTimeout() + " ...");
+                        LOG.trace("Connecting use connectTimeout: {} ...", endpoint.getConfiguration().getConnectTimeout());
                         channel.connect(endpoint.getConfiguration().getConnectTimeout());
                     } else {
                         LOG.trace("Connecting ...");
                         channel.connect();
                     }
-                    LOG.debug("Connected to " + configuration.remoteServerInformation());
+                    LOG.debug("Connected to {}", configuration.remoteServerInformation());
                 }
 
                 // yes we could connect
@@ -332,13 +332,13 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
 
             public boolean promptYesNo(String s) {
-                LOG.warn("Server asks for confirmation (yes|no): " + s + ". Camel will answer no.");
+                LOG.warn("Server asks for confirmation (yes|no): {}. Camel will answer no.", s);
                 // Return 'false' indicating modification of the hosts file is disabled.
                 return false;
             }
 
             public void showMessage(String s) {
-                LOG.trace("Message received from Server: " + s);
+                LOG.trace("Message received from Server: {}", s);
             }
 
             public String[] promptKeyboardInteractive(String destination, String name,
@@ -473,7 +473,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             channel.rm(name);
             return true;
         } catch (SftpException e) {
-            LOG.debug("Cannot delete file: " + name, e);
+            LOG.debug("Cannot delete file: {}", name, e);
             throw new GenericFileOperationFailedException("Cannot delete file: " + name, e);
         }
     }
@@ -501,11 +501,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         // ignore absolute as all dirs are relative with FTP
         boolean success = false;
 
-        String originalDirectory = getCurrentDirectory();
         try {
             // maybe the full directory already exists
             try {
-                channel.cd(directory);
+                channel.ls(directory);
                 success = true;
             } catch (SftpException e) {
                 // ignore, we could not change directory so try to create it instead
@@ -523,17 +522,9 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     success = buildDirectoryChunks(directory);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | SftpException e) {
             throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
-        } catch (SftpException e) {
-            throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
-        } finally {
-            // change back to original directory
-            if (originalDirectory != null) {
-                changeCurrentDirectory(originalDirectory);
-            }
         }
-
         return success;
     }
 
@@ -593,7 +584,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         char separatorChar = '/';
         path = FileUtil.compactPath(path, separatorChar);
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Compacted path: {} -> {} using separator: {}", new Object[]{before, path, separatorChar});
+            LOG.trace("Compacted path: {} -> {} using separator: {}", before, path, separatorChar);
         }
 
         // not stepwise should change directory in one operation
@@ -614,8 +605,13 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         // if it starts with the root path then a little special handling for that
         if (FileUtil.hasLeadingSeparator(path)) {
             // change to root path
-            doChangeDirectory(path.substring(0, 1));
-            path = path.substring(1);
+            if (!FileUtil.isWindows()) {
+                doChangeDirectory(path.substring(0, 1));
+                path = path.substring(1);
+            } else {
+                doChangeDirectory(path.substring(0, 4));
+                path = path.substring(4);
+            }
         }
 
         // split into multiple dirs
@@ -909,7 +905,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 throw new GenericFileOperationFailedException("File already exist: " + name + ". Cannot write new file.");
             } else if (existFile && endpoint.getFileExist() == GenericFileExist.Move) {
                 // move any existing file first
-                doMoveExistingFile(name, targetName);
+                this.endpoint.getMoveExistingFileStrategy().moveExistingFile(endpoint, this, targetName);
             }
         }
 
@@ -974,54 +970,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             IOHelper.close(is, "store: " + name, LOG);
         }
     }
-
-    /**
-     * Moves any existing file due fileExists=Move is in use.
-     */
-    private void doMoveExistingFile(String name, String targetName) throws GenericFileOperationFailedException {
-        // need to evaluate using a dummy and simulate the file first, to have access to all the file attributes
-        // create a dummy exchange as Exchange is needed for expression evaluation
-        // we support only the following 3 tokens.
-        Exchange dummy = endpoint.createExchange();
-        // we only support relative paths for the ftp component, so dont provide any parent
-        String parent = null;
-        String onlyName = FileUtil.stripPath(targetName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME, targetName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
-        dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
-
-        String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
-        // we only support relative paths for the ftp component, so strip any leading paths
-        to = FileUtil.stripLeadingSeparator(to);
-        // normalize accordingly to configuration
-        to = endpoint.getConfiguration().normalizePath(to);
-        if (ObjectHelper.isEmpty(to)) {
-            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + name);
-        }
-
-        // do we have a sub directory
-        String dir = FileUtil.onlyPath(to);
-        if (dir != null) {
-            // ensure directory exists
-            buildDirectory(dir, false);
-        }
-
-        // deal if there already exists a file
-        if (existsFile(to)) {
-            if (endpoint.isEagerDeleteTargetFile()) {
-                LOG.trace("Deleting existing file: {}", to);
-                deleteFile(to);
-            } else {
-                throw new GenericFileOperationFailedException("Cannot moved existing file from: " + name + " to: " + to + " as there already exists a file: " + to);
-            }
-        }
-
-        LOG.trace("Moving existing file: {} to: {}", name, to);
-        if (!renameFile(targetName, to)) {
-            throw new GenericFileOperationFailedException("Cannot rename file from: " + name + " to: " + to);
-        }
-    }
-
+    
     public synchronized boolean existsFile(String name) throws GenericFileOperationFailedException {
         LOG.trace("existsFile({})", name);
         if (endpoint.isFastExistsCheck()) {

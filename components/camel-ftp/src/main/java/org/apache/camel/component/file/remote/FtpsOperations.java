@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.IOException;
+
 import javax.net.ssl.SSLException;
 
 import org.apache.camel.component.file.GenericFileOperationFailedException;

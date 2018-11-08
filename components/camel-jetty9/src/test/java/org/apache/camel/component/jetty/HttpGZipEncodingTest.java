@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;

@@ -16,10 +16,9 @@
  */
 package org.apache.camel.spring;
 
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.CamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class MainDummyTest extends Assert {
 

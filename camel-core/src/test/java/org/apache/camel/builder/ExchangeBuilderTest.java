@@ -16,14 +16,12 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
-import org.junit.Assert;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Assert;
+import org.junit.Test;
 
 
 public class ExchangeBuilderTest extends Assert {

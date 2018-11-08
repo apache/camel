@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.ref;
 
-import org.junit.Test;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +26,7 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
+import org.junit.Test;
 
 public class RefComponentTest extends ContextTestSupport {
 

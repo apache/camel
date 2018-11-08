@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.simple;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -42,6 +40,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
+import org.junit.Test;
 
 /**
  * @version

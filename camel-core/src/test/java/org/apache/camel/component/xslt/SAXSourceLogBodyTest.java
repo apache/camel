@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.xslt;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.io.InputStream;
+
 import javax.xml.transform.sax.SAXSource;
 
 import org.xml.sax.InputSource;
@@ -31,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *

@@ -16,16 +16,16 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 

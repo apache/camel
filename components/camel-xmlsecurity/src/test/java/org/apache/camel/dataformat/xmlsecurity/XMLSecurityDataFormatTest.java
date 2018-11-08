@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.xmlsecurity;
-import org.junit.Before;
-
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,8 +34,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.commons.codec.Charsets;
 import org.apache.xml.security.encryption.XMLCipher;
-
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 

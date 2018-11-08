@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -113,7 +114,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("SjmsMessageConsumer invoked for Exchange id:{} ", exchange.getExchangeId());
+            log.debug("SjmsMessageConsumer invoked for Exchange id:{}", exchange.getExchangeId());
         }
     }
 

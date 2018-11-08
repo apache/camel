@@ -16,11 +16,10 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.junit.Test;
 
 public class ConsumerTemplateSedaQueueIssueTest extends ContextTestSupport {
 

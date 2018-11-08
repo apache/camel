@@ -1,0 +1,75 @@
+[[ConfiguringCamel-ConfiguringCamel]]
+=== Configuring Camel
+
+[[ConfiguringCamel-HowdoIaddacomponent]]
+==== How do I add a component?
+
+You might first want to read link:writing-components.adoc[Writing
+Components] for a background in how to implement a new component.
+Typically it means you write an implementation of the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Component.html[Component]
+interface, usually deriving from
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent].
+
+You can then register your component explicitly via:
+
+[source,java]
+----
+CamelContext context = new DefaultCamelContext();
+context.addComponent("foo", new FooComponent(context));
+----
+
+However you can use the auto-discovery feature of Camel where by Camel
+will automatically add a link:component.adoc[Component] when an endpoint
+URI is used. To do this you would create a file called:
+
+....
+/META-INF/services/org/apache/camel/component/foo
+....
+
+with contents:
+
+[source,java]
+----
+class=org.acme.FooComponent
+----
+
+(You can add other property configurations in there too if you like.)
+
+Then if you refer to an endpoint as `foo://somethingOrOther` Camel
+will auto-discover your component and register it.
+
+The `FooComponent` can then be auto-injected with resources using the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/Injector.html[Injector],
+such as to support link:spring.adoc[Spring] based auto-wiring, or to
+support `@Resource` (EJB3 style) injection or Guice style `@Inject`
+injection.
+
+
+[[ConfiguringCamel-WorkingwithSpringXML]]
+==== Working with Spring XML
+
+You can configure a component via Spring using the following mechanism:
+
+include::../../../components/camel-jms/src/test/resources/org/apache/camel/component/jms/jmsRouteUsingSpring.xml[]
+
+Which allows you to configure a component using some name (activemq in the
+above example), then you can refer to the component using
+`activemq:[queue:|topic:]destinationName`.
+
+If you want to add explicit Spring 2.x XML objects to your XML then you
+could use the `xbean-spring` which tries to automate most of the XML
+binding work for you; or you could look in camel-spring
+at `CamelNamespaceHandler` you'll see how we handle the Spring XML
+stuff (warning it's kinda hairy code to look at :smile:).
+If you wanted `<fooComponent>` to be a standard part of the core Camel
+schema then you'd hack that file to add your component &
+link:contributing.adoc[contribute a patch] to the camel XSD. Otherwise
+you could write your own namespace & schema if you prefer.
+
+
+[[ConfiguringCamel-SeeAlso]]
+==== See Also
+
+* link:writing-components.adoc[Writing Components]
+* link:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]

@@ -15,20 +15,18 @@
  * limitations under the License.
  */
 package org.apache.camel.builder.xml;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.sax.SAXSource;
 
 import org.w3c.dom.Document;
+
 import org.xml.sax.InputSource;
 
 import org.apache.camel.ContextTestSupport;
@@ -38,6 +36,8 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.UnitOfWorkHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

@@ -163,7 +163,7 @@ public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, Linke
             try {
                 WebClient.client(resourceProxy).close();
             } catch (Exception e) {
-                log.warn("Error closing LinkedIn REST proxy: " + e.getMessage(), e);
+                log.warn("Error closing LinkedIn REST proxy: {}", e.getMessage(), e);
             }
             resourceProxy = null;
         }

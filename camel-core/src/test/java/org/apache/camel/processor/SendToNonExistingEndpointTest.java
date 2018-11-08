@@ -16,10 +16,9 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchEndpointException;
+import org.junit.Test;
 
 /**
  * @version 

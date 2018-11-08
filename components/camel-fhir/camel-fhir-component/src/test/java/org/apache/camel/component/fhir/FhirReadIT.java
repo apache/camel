@@ -247,11 +247,11 @@ public class FhirReadIT extends AbstractFhirTestSupport {
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_STRING_ID_AND_VERSION")
-                    .to("fhir://" + PATH_PREFIX + "/resourceByIdAndVersion");
+                    .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceById
                 from("direct://RESOURCE_BY_STRING_ID_AND_VERSION_AND_STRING_RESOURCE")
-                    .to("fhir://" + PATH_PREFIX + "/resourceByIdAndVersion");
+                    .to("fhir://" + PATH_PREFIX + "/resourceById");
 
                 // test route for resourceByUrl
                 from("direct://RESOURCE_BY_IURL")

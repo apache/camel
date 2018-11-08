@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty;
-import org.junit.Before;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.jboss.netty.channel.socket.nio.BossPool;
 import org.jboss.netty.channel.socket.nio.WorkerPool;
+import org.junit.Before;
 import org.junit.Test;
 
 /**

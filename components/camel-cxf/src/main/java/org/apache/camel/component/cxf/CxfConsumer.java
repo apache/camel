@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.ws.WebFault;
 
 import org.w3c.dom.Element;
@@ -27,6 +28,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.interceptors.UnitOfWorkCloserInterceptor;
 import org.apache.camel.component.cxf.util.CxfUtils;
@@ -43,7 +45,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
-import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.ContextUtils;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
@@ -58,7 +59,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class CxfConsumer extends DefaultConsumer {
+public class CxfConsumer extends DefaultConsumer implements Suspendable {
     private static final Logger LOG = LoggerFactory.getLogger(CxfConsumer.class);
     private Server server;
     private CxfEndpoint cxfEndpoint;

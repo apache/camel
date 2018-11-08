@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.xmlsecurity;
-import org.junit.Before;
-
 import java.lang.reflect.Constructor;
 import java.security.Provider;
 import java.security.Security;
@@ -30,6 +28,7 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.xml.security.encryption.XMLCipher;
+import org.junit.Before;
 import org.junit.Test;
 
 /**

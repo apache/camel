@@ -16,11 +16,10 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * This test stops a route, mutates it then restarts it

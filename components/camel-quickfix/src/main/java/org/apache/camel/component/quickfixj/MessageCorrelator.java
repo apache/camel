@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-
 import quickfix.Message;
 import quickfix.SessionID;
 

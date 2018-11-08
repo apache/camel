@@ -26,8 +26,13 @@ import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyRequest;
 import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserRequest;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
+import com.amazonaws.services.identitymanagement.model.GetUserRequest;
+import com.amazonaws.services.identitymanagement.model.GetUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 import com.amazonaws.services.identitymanagement.model.ListUsersResult;
+import com.amazonaws.services.identitymanagement.model.StatusType;
+import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyRequest;
+import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyResult;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -65,11 +70,17 @@ public class IAMProducer extends DefaultProducer {
         case deleteAccessKey:
             deleteAccessKey(getEndpoint().getIamClient(), exchange);
             break;
+        case updateAccessKey:
+            updateAccessKey(getEndpoint().getIamClient(), exchange);
+            break;
         case createUser:
             createUser(getEndpoint().getIamClient(), exchange);
             break;
         case deleteUser:
             deleteUser(getEndpoint().getIamClient(), exchange);
+            break;
+        case getUser:
+            getUser(getEndpoint().getIamClient(), exchange);
             break;
         case listUsers:
             listUsers(getEndpoint().getIamClient(), exchange);
@@ -149,6 +160,23 @@ public class IAMProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
+    
+    private void getUser(AmazonIdentityManagement iamClient, Exchange exchange) {
+        GetUserRequest request = new GetUserRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
+            String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
+            request.withUserName(userName);
+        }
+        GetUserResult result;
+        try {
+            result = iamClient.getUser(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("get user command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
 
     private void listUsers(AmazonIdentityManagement iamClient, Exchange exchange) {
         ListUsersResult result;
@@ -181,6 +209,12 @@ public class IAMProducer extends DefaultProducer {
     
     private void deleteAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
         DeleteAccessKeyRequest request = new DeleteAccessKeyRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_ID))) {
+            String accessKeyId = exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_ID, String.class);
+            request.withAccessKeyId(accessKeyId);
+        } else {
+            throw new IllegalArgumentException("Key Id must be specified");
+        }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
             request.withUserName(userName);
@@ -190,6 +224,35 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.deleteAccessKey(request);
         } catch (AmazonServiceException ase) {
             LOG.trace("Delete Access Key command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void updateAccessKey(AmazonIdentityManagement iamClient, Exchange exchange) {
+        UpdateAccessKeyRequest request = new UpdateAccessKeyRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_ID))) {
+            String accessKeyId = exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_ID, String.class);
+            request.withAccessKeyId(accessKeyId);
+        } else {
+            throw new IllegalArgumentException("Key Id must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_STATUS))) {
+            String status = exchange.getIn().getHeader(IAMConstants.ACCESS_KEY_STATUS, String.class);
+            request.withStatus(StatusType.fromValue(status));
+        } else {
+            throw new IllegalArgumentException("Access Key status must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
+            String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
+            request.withUserName(userName);
+        }
+        UpdateAccessKeyResult result;
+        try {
+            result = iamClient.updateAccessKey(request);
+        } catch (AmazonServiceException ase) {
+            LOG.trace("Update Access Key command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

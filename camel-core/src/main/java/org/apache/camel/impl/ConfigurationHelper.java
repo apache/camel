@@ -121,7 +121,7 @@ public final class ConfigurationHelper {
                     || (anno.component().equals(EndpointConfiguration.URI_QUERY) && anno.parameter().equals(name))) { 
     
                     found = field;
-                    LOG.trace("Found field {}.{} as candidate for parameter {}", new Object[]{clazz.getName(), found.getName(), name});
+                    LOG.trace("Found field {}.{} as candidate for parameter {}", clazz.getName(), found.getName(), name);
                     return found;
                 }
             }

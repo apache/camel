@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,6 +30,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.util.FileUtil;
+import org.junit.Test;
 
 /**
  * Unit test for File Language.

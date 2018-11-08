@@ -16,13 +16,12 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.language.xpath.XPathLanguage;
 import org.apache.camel.spi.Language;
+import org.junit.Test;
 
 /**
  * @version 

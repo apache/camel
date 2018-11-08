@@ -17,7 +17,7 @@ public final class MyRestRoute extends RouteBuilder {
 	 * Defines Apache Camel routes using REST DSL fluent API.
 	 */
 	public void configure() {
-		rest()
+		rest("/v2")
 			.put("/pet")
 				.id("updatePet")
 				.consumes("application/json,application/xml")
@@ -38,6 +38,14 @@ public final class MyRestRoute extends RouteBuilder {
 					.type(RestParamType.body)
 					.required(true)
 					.description("Pet object that needs to be added to the store")
+				.endParam()
+				.param()
+					.name("verbose")
+					.type(RestParamType.query)
+					.dataType("boolean")
+					.defaultValue("false")
+					.required(false)
+					.description("Verbose data")
 				.endParam()
 				.to("direct:rest-addPet")
 			.get("/pet/findByStatus")

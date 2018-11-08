@@ -16,13 +16,12 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.async.MyAsyncComponent;
+import org.junit.Test;
 
 /**
  * @version 
@@ -37,10 +36,10 @@ public class AsyncLoopCopyTest extends ContextTestSupport {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:loopIterationStart").expectedBodiesReceived("Hello Camel", "Hello Camel");
         getMockEndpoint("mock:loopIterationEnd").expectedBodiesReceived("Bye Camel", "Bye Camel");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
         String reply = template.requestBodyAndHeader("direct:start", "Hello Camel", "NumberIterations", 2, String.class);
-        assertEquals("Hello Camel", reply);
+        assertEquals("Bye Camel", reply);
 
         assertMockEndpointsSatisfied();
 

@@ -16,11 +16,10 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.TypeConverterSupport;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

@@ -103,14 +103,14 @@ with the following path and query parameters:
 | *maxPartitionFetchBytes* (consumer) | The maximum amount of data per-partition the server will return. The maximum total memory used for a request will be #partitions max.partition.fetch.bytes. This size must be at least as large as the maximum message size the server allows or else it is possible for the producer to send messages larger than the consumer can fetch. If that happens, the consumer can get stuck trying to fetch a large message on a certain partition. | 1048576 | Integer
 | *maxPollIntervalMs* (consumer) | The maximum delay between invocations of poll() when using consumer group management. This places an upper bound on the amount of time that the consumer can be idle before fetching more records. If poll() is not called before expiration of this timeout, then the consumer is considered failed and the group will rebalance in order to reassign the partitions to another member. |  | Long
 | *maxPollRecords* (consumer) | The maximum number of records returned in a single call to poll() | 500 | Integer
-| *offsetRepository* (consumer) | The offset repository to use in order to locally store the offset of each partition of the topic. Defining one will disable the autocommit. |  | String>
+| *offsetRepository* (consumer) | The offset repository to use in order to locally store the offset of each partition of the topic. Defining one will disable the autocommit. |  | StateRepository
 | *partitionAssignor* (consumer) | The class name of the partition assignment strategy that the client will use to distribute partition ownership amongst consumer instances when group management is used | org.apache.kafka.clients.consumer.RangeAssignor | String
 | *pollTimeoutMs* (consumer) | The timeout used when polling the KafkaConsumer. | 5000 | Long
 | *seekTo* (consumer) | Set if KafkaConsumer will read from beginning or end on startup: beginning : read from beginning end : read from end This is replacing the earlier property seekToBeginning |  | String
 | *sessionTimeoutMs* (consumer) | The timeout used to detect failures when using Kafka's group management facilities. | 10000 | Integer
 | *topicIsPattern* (consumer) | Whether the topic is a pattern (regular expression). This can be used to subscribe to dynamic number of topics matching the pattern. | false | boolean
 | *valueDeserializer* (consumer) | Deserializer class for value that implements the Deserializer interface. | org.apache.kafka.common.serialization.StringDeserializer | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *bridgeEndpoint* (producer) | If the option is true, then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message. | false | boolean
 | *bufferMemorySize* (producer) | The total bytes of memory the producer can use to buffer records waiting to be sent to the server. If records are sent faster than they can be delivered to the server the producer will either block or throw an exception based on the preference specified by block.on.buffer.full.This setting should correspond roughly to the total memory the producer will use, but is not a hard bound since not all memory the producer uses is used for buffering. Some additional memory will be used for compression (if compression is enabled) as well as for maintaining in-flight requests. | 33554432 | Integer
@@ -411,7 +411,8 @@ from("kafka:" + TOPIC + "?brokers=localhost:{{kafkaPort}}" +
              "&groupId=A" +
              "&sslKeystoreLocation=/path/to/keystore.jks" +
              "&sslKeystorePassword=changeit" +
-             "&sslKeyPassword=changeit")
+             "&sslKeyPassword=changeit" +
+             "&securityProtocol=SSL")
         .to("mock:result");
 ----
 
@@ -442,7 +443,9 @@ camelContext.addRoutes(new RouteBuilder() {
                      // Setup the topic and broker address
                      "&groupId=A" +
                      // The consumer processor group ID
-                     "&sslContextParameters=#ssl")
+                     "&sslContextParameters=#ssl" +
+                     // The security protocol
+                     "&securityProtocol=SSL)
                      // Reference the SSL configuration
                 .to("mock:result");
     }

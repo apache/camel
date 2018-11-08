@@ -18,7 +18,6 @@
 package org.apache.camel.component.cxf.spring;
 
 import org.apache.camel.util.IOHelper;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;

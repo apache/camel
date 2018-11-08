@@ -47,6 +47,8 @@ public class RestDslGeneratorTest {
         final RestsDefinition definition = RestDslGenerator.toDefinition(swagger).generate(context);
 
         assertThat(definition).isNotNull();
+        assertThat(definition.getRests()).hasSize(1);
+        assertThat(definition.getRests().get(0).getPath()).isEqualTo("/v2");
     }
 
     @Test
@@ -56,6 +58,18 @@ public class RestDslGeneratorTest {
         RestDslGenerator.toAppendable(swagger).withGeneratedTime(generated).generate(code);
 
         final URI file = RestDslGeneratorTest.class.getResource("/SwaggerPetstore.txt").toURI();
+        final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
+
+        assertThat(code.toString()).isEqualTo(expectedContent);
+    }
+
+    @Test
+    public void shouldGenerateSourceCodeWithRestComponent() throws IOException, URISyntaxException {
+        final StringBuilder code = new StringBuilder();
+
+        RestDslGenerator.toAppendable(swagger).withGeneratedTime(generated).withRestComponent("servlet").withRestContextPath("/").generate(code);
+
+        final URI file = RestDslGeneratorTest.class.getResource("/SwaggerPetstoreWithRestComponent.txt").toURI();
         final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
 
         assertThat(code.toString()).isEqualTo(expectedContent);

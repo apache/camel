@@ -16,10 +16,9 @@
  */
 package org.apache.camel.spring.issues.packagescan;
 
-import org.junit.Test;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

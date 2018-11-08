@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.util.jndi;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -29,6 +25,8 @@ import javax.naming.NamingException;
 
 import org.apache.camel.TestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

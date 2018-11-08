@@ -17,11 +17,13 @@
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
+
 import org.apache.camel.component.wordpress.api.model.Context;
 import org.apache.camel.component.wordpress.api.model.Tag;
 import org.apache.camel.component.wordpress.api.model.TagSearchCriteria;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceTags;
 import org.apache.camel.component.wordpress.api.service.spi.TagsSPI;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class WordpressServiceTagsAdapter extends AbstractWordpressCrudServiceAdapter<TagsSPI, Tag, TagSearchCriteria> implements WordpressServiceTags {

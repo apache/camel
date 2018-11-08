@@ -53,7 +53,7 @@ public class Web3jConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.info("Subscribing to: " + endpoint.getNodeAddress());
+        LOG.info("Subscribing to: {}", endpoint.getNodeAddress());
         switch (configuration.getOperation()) {
         case Web3jConstants.ETH_LOG_OBSERVABLE:
             EthFilter ethFilter = Web3jEndpoint.buildEthFilter(configuration.getFromBlock(), configuration.getToBlock(), configuration.getAddresses(), configuration.getTopics());
@@ -156,7 +156,7 @@ public class Web3jConsumer extends DefaultConsumer {
             throw new IllegalArgumentException("Unsupported operation " + configuration.getOperation());
         }
 
-        LOG.info("Subscribed: " + this.configuration);
+        LOG.info("Subscribed: {}", this.configuration);
     }
 
     private EthFilter buildEthFilter() {
@@ -174,14 +174,14 @@ public class Web3jConsumer extends DefaultConsumer {
     }
 
     private void ethBlockHashObservable(String x) {
-        LOG.debug("processEthBlock " + x);
+        LOG.debug("processEthBlock {}", x);
         Exchange exchange = this.getEndpoint().createExchange();
         exchange.getIn().setBody(x);
         processEvent(exchange);
     }
 
     private void ethPendingTransactionHashObservable(String x) {
-        LOG.debug("processEthBlock " + x);
+        LOG.debug("processEthBlock {}", x);
         Exchange exchange = this.getEndpoint().createExchange();
         exchange.getIn().setBody(x);
         processEvent(exchange);
@@ -189,28 +189,28 @@ public class Web3jConsumer extends DefaultConsumer {
 
     private void blockObservable(EthBlock x) {
         EthBlock.Block block = x.getBlock();
-        LOG.debug("processEthBlock " + block);
+        LOG.debug("processEthBlock {}", block);
         Exchange exchange = this.getEndpoint().createExchange();
         exchange.getIn().setBody(block);
         processEvent(exchange);
     }
 
     private void processTransaction(Transaction x) {
-        LOG.debug("processTransaction " + x);
+        LOG.debug("processTransaction {}", x);
         Exchange exchange = this.getEndpoint().createExchange();
         exchange.getIn().setBody(x);
         processEvent(exchange);
     }
 
     private void ethLogObservable(Log x) {
-        LOG.debug("processLogObservable " + x);
+        LOG.debug("processLogObservable {}", x);
         Exchange exchange = this.getEndpoint().createExchange();
         exchange.getIn().setBody(x);
         processEvent(exchange);
     }
 
     public void processEvent(Exchange exchange) {
-        LOG.debug("processEvent " + exchange);
+        LOG.debug("processEvent {}", exchange);
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
@@ -219,7 +219,7 @@ public class Web3jConsumer extends DefaultConsumer {
     }
 
     private void processDone(String operation) {
-        LOG.debug("processDone for operation: " + operation);
+        LOG.debug("processDone for operation: {}", operation);
         Exchange exchange = this.getEndpoint().createExchange();
         exchange.getIn().setHeader("status", "done");
         exchange.getIn().setHeader("operation", operation);

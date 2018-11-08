@@ -18,7 +18,6 @@ package org.apache.camel.component.mongodb;
 
 import com.mongodb.DBObject;
 import org.apache.camel.builder.RouteBuilder;
-
 import org.junit.Test;
 
 public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {    

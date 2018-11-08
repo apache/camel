@@ -23,7 +23,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.DefaultAddressedEnvelope;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.slf4j.Logger;
@@ -91,7 +90,7 @@ public final class NettyHelper {
         ChannelFuture future;
         if (remoteAddress != null) {
             if (log.isDebugEnabled()) {
-                log.debug("Channel: {} remote address: {} writing body: {}", new Object[]{channel, remoteAddress, body});
+                log.debug("Channel: {} remote address: {} writing body: {}", channel, remoteAddress, body);
             }
             // Need to create AddressedEnvelope to setup the address information here
             DefaultAddressedEnvelope<Object, InetSocketAddress> ae =
@@ -99,7 +98,7 @@ public final class NettyHelper {
             future = channel.writeAndFlush(ae);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Channel: {} writing body: {}", new Object[]{channel, body});
+                log.debug("Channel: {} writing body: {}", channel, body);
             }
             // In netty4 we need to call channel flush to send out the message 
             future = channel.writeAndFlush(body);

@@ -16,10 +16,9 @@
  */
 package org.apache.camel.language.simple;
 
-import org.junit.Test;
-
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Predicate;
+import org.junit.Test;
 
 /**
  * Unit test regexp function as the reg exp value should be template text only

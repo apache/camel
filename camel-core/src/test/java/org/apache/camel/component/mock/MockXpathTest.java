@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.mock;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.language.XPathExpression;
+import org.junit.Test;
 
 public class MockXpathTest extends ContextTestSupport {
 

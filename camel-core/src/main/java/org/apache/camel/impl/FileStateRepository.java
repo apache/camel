@@ -144,7 +144,7 @@ public class FileStateRepository extends ServiceSupport implements StateReposito
      */
     private void appendToStore(String key, String value) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Appending {}={} to state filestore: {}", new Object[]{key, value, fileStore});
+            LOG.debug("Appending {}={} to state filestore: {}", key, value, fileStore);
         }
         FileOutputStream fos = null;
         try {

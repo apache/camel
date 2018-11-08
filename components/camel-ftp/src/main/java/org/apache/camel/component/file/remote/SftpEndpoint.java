@@ -20,6 +20,7 @@ import com.jcraft.jsch.Proxy;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
+import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -65,7 +66,18 @@ public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
     }
 
     protected GenericFileProducer<SftpRemoteFile> buildProducer() {
+        if (this.getMoveExistingFileStrategy() == null) {
+            this.setMoveExistingFileStrategy(createDefaultSftpMoveExistingFileStrategy());
+        }
         return new RemoteFileProducer<>(this, createRemoteFileOperations());
+    }
+
+    /**
+     * Default Existing File Move Strategy
+     * @return the default implementation for sftp component
+     */
+    private FileMoveExistingStrategy createDefaultSftpMoveExistingFileStrategy() {
+        return new SftpDefaultMoveExistingFileStrategy();
     }
 
     public RemoteFileOperations<SftpRemoteFile> createRemoteFileOperations() {

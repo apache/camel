@@ -66,7 +66,7 @@ public class DropboxPutProducer extends DropboxProducer {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Uploaded: {}", result.toString());
+            LOG.debug("Uploaded: {}", result);
         }
     }
 

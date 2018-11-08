@@ -19,7 +19,6 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 
 import io.undertow.server.HttpHandler;
-
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 
 /**

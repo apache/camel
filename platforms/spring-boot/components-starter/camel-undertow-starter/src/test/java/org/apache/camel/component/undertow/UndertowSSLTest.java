@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow;
-import org.junit.Before;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;

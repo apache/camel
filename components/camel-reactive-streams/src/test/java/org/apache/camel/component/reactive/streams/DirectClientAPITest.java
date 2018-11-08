@@ -16,20 +16,21 @@
  */
 package org.apache.camel.component.reactive.streams;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Flowable;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.reactive.streams.support.ReactiveStreamsTestSupport;
 import org.apache.camel.impl.JndiRegistry;
+import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
-
 
 public class DirectClientAPITest extends ReactiveStreamsTestSupport {
 
@@ -86,11 +87,7 @@ public class DirectClientAPITest extends ReactiveStreamsTestSupport {
                 .doOnNext(queue::add)
                 .subscribe();
 
-        for (int i = 1; i <= 3; i++) {
-            String res = queue.poll(1, TimeUnit.SECONDS);
-            assertEquals("Hello " + i, res);
-        }
-
+        check3HelloInQueue(queue);
     }
 
     @Test
@@ -132,11 +129,7 @@ public class DirectClientAPITest extends ReactiveStreamsTestSupport {
                 .doOnNext(queue::add)
                 .subscribe();
 
-        for (int i = 1; i <= 3; i++) {
-            String res = queue.poll(1, TimeUnit.SECONDS);
-            assertEquals("Hello " + i, res);
-        }
-
+        check3HelloInQueue(queue);
     }
 
     @Test
@@ -150,12 +143,17 @@ public class DirectClientAPITest extends ReactiveStreamsTestSupport {
                 .map(ex -> ex.getOut().getBody(String.class))
                 .doOnNext(queue::add)
                 .subscribe();
+        
+        check3HelloInQueue(queue);
+    }
 
-        for (int i = 1; i <= 3; i++) {
-            String res = queue.poll(1, TimeUnit.SECONDS);
-            assertEquals("Hello " + i, res);
-        }
+    private void check3HelloInQueue(BlockingQueue<String> queue) throws InterruptedException {
+        Set<String> res = new HashSet<>();
+        res.add(queue.poll(1, TimeUnit.SECONDS));
+        res.add(queue.poll(1, TimeUnit.SECONDS));
+        res.add(queue.poll(1, TimeUnit.SECONDS));
 
+        Assertions.assertThat(res).containsExactlyInAnyOrder("Hello 1", "Hello 2", "Hello 3");
     }
 
     @Test
@@ -170,14 +168,8 @@ public class DirectClientAPITest extends ReactiveStreamsTestSupport {
                 .doOnNext(queue::add)
                 .subscribe();
 
-        for (int i = 1; i <= 3; i++) {
-            String res = queue.poll(1, TimeUnit.SECONDS);
-            assertEquals("Hello " + i, res);
-        }
-
+        check3HelloInQueue(queue);
     }
-
-
 
     @Test
     public void testProxiedDirectCall() throws Exception {

@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProducer;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -81,14 +80,14 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         loggedIn = false;
         if (isStopping() || isStopped()) {
             // if we are stopping then ignore any exception during a poll
-            log.debug("Exception occurred during stopping: " + exception.getMessage());
+            log.debug("Exception occurred during stopping: {}", exception.getMessage());
         } else {
-            log.warn("Writing file failed with: " + exception.getMessage());
+            log.warn("Writing file failed with: {}", exception.getMessage());
             try {
                 disconnect();
             } catch (Exception e) {
                 // ignore exception
-                log.debug("Ignored exception during disconnect: " + e.getMessage());
+                log.debug("Ignored exception during disconnect: {}", e.getMessage());
             }
             // rethrow the original exception*/
             throw exception;
@@ -128,12 +127,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         // if not alive then reconnect
         if (!noop) {
             try {
-                if (getEndpoint().getMaximumReconnectAttempts() > 0) {
-                    // only use recoverable if we are allowed any re-connect attempts
-                    recoverableConnectIfNecessary();
-                } else {
-                    connectIfNecessary();
-                }
+                connectIfNecessary();
             } catch (Exception e) {
                 loggedIn = false;
 
@@ -179,47 +173,6 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
         super.doStop();
     }
 
-    protected void recoverableConnectIfNecessary() throws Exception {
-        try {
-            connectIfNecessary();
-        } catch (Exception e) {
-            loggedIn = false;
-
-            // are we interrupted
-            InterruptedException ie = ObjectHelper.getException(InterruptedException.class, e);
-            if (ie != null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Interrupted during connect to: " + getEndpoint(), ie);
-                }
-                throw ie;
-            }
-
-            if (log.isDebugEnabled()) {
-                log.debug("Could not connect to: " + getEndpoint() + ". Will try to recover.", e);
-            }
-        }
-
-        // recover by re-creating operations which should most likely be able to recover
-        if (!loggedIn) {
-            log.debug("Trying to recover connection to: {} with a new FTP client.", getEndpoint());
-            // we want to preserve last FTP activity listener when we set a new operations
-            if (operations instanceof FtpOperations) {
-                FtpOperations ftpOperations = (FtpOperations) operations;
-                FtpClientActivityListener listener = ftpOperations.getClientActivityListener();
-                setOperations(getEndpoint().createRemoteFileOperations());
-                getOperations().setEndpoint(getEndpoint());
-                if (listener != null) {
-                    ftpOperations = (FtpOperations) getOperations();
-                    ftpOperations.setClientActivityListener(listener);
-                }
-            } else {
-                setOperations(getEndpoint().createRemoteFileOperations());
-                getOperations().setEndpoint(getEndpoint());
-            }
-            connectIfNecessary();
-        }
-    }
-
     protected void connectIfNecessary() throws GenericFileOperationFailedException {
         if (!loggedIn || !getOperations().isConnected()) {
             log.debug("Not already connected/logged in. Connecting to: {}", getEndpoint());
@@ -228,7 +181,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> implements Ser
             if (!loggedIn) {
                 return;
             }
-            log.debug("Connected and logged in to: " + getEndpoint());
+            log.debug("Connected and logged in to: {}", getEndpoint());
         }
     }
 

@@ -34,6 +34,10 @@ public abstract class RestDslGenerator<G> {
 
     DestinationGenerator destinationGenerator = new DirectToOperationId();
     OperationFilter filter = new OperationFilter();
+    String restComponent;
+    String restContextPath;
+    boolean springComponent;
+    boolean springBootProject;
 
     RestDslGenerator(final Swagger swagger) {
         this.swagger = notNull(swagger, "swagger");
@@ -64,6 +68,42 @@ public abstract class RestDslGenerator<G> {
 
     public G withOperationFilter(String include) {
         this.filter.setIncludes(include);
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+
+    public G withRestComponent(String restComponent) {
+        this.restComponent = restComponent;
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+
+    public G withRestContextPath(String contextPath) {
+        this.restContextPath = contextPath;
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+
+    public G asSpringComponent() {
+        this.springComponent = true;
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+
+    public G asSpringBootProject() {
+        this.springBootProject = true;
 
         @SuppressWarnings("unchecked")
         final G that = (G) this;

@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.jaxrs.simplebinding;
-import org.junit.Before;
-import org.junit.After;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -52,6 +49,8 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**

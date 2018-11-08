@@ -24,6 +24,8 @@ package org.apache.camel.component.jpa;
 public final class JpaConstants {
 
     public static final String ENTITY_MANAGER = "CamelEntityManager";
+    
+    public static final String JPA_PARAMETERS_HEADER = "CamelJpaParameters";
 
     /**
      * @deprecated use {@link #ENTITY_MANAGER}

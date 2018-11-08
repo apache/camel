@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl.cloud;
-import org.junit.Before;
-
 import java.util.concurrent.RejectedExecutionException;
 import java.util.stream.Collectors;
 

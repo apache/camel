@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -118,7 +116,7 @@ public class FileProducerMoveExistingTest extends ContextTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Cannot moved existing file"));
+            assertTrue(cause.getMessage().startsWith("Cannot move existing file"));
         }
 
         // we could not write the new file so the previous context should be there

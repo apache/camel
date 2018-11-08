@@ -52,15 +52,10 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
     protected boolean prePollCheck() throws Exception {
         if (log.isTraceEnabled()) {
-            log.trace("prePollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
+            log.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
         try {
-            if (getEndpoint().getMaximumReconnectAttempts() > 0) {
-                // only use recoverable if we are allowed any re-connect attempts
-                recoverableConnectIfNecessary();
-            } else {
-                connectIfNecessary();
-            }
+            connectIfNecessary();
         } catch (Exception e) {
             loggedIn = false;
 
@@ -88,7 +83,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     @Override
     protected void postPollCheck(int polledMessages) {
         if (log.isTraceEnabled()) {
-            log.trace("postPollCheck on " + getEndpoint().getConfiguration().remoteServerInformation());
+            log.trace("postPollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());
         }
 
         // if we did not poll any messages, but are configured to disconnect then we need to do this now
@@ -183,37 +178,6 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         }
     }
 
-    protected void recoverableConnectIfNecessary() throws Exception {
-        try {
-            connectIfNecessary();
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Could not connect to: " + getEndpoint() + ". Will try to recover.", e);
-            }
-            loggedIn = false;
-        }
-
-        // recover by re-creating operations which should most likely be able to recover
-        if (!loggedIn) {
-            log.debug("Trying to recover connection to: {} with a fresh client.", getEndpoint());
-            // we want to preserve last FTP activity listener when we set a new operations
-            if (operations instanceof FtpOperations) {
-                FtpOperations ftpOperations = (FtpOperations) operations;
-                FtpClientActivityListener listener = ftpOperations.getClientActivityListener();
-                setOperations(getEndpoint().createRemoteFileOperations());
-                getOperations().setEndpoint(getEndpoint());
-                if (listener != null) {
-                    ftpOperations = (FtpOperations) getOperations();
-                    ftpOperations.setClientActivityListener(listener);
-                }
-            } else {
-                setOperations(getEndpoint().createRemoteFileOperations());
-                getOperations().setEndpoint(getEndpoint());
-            }
-            connectIfNecessary();
-        }
-    }
-
     protected void connectIfNecessary() throws IOException {
         // We need to send a noop first to check if the connection is still open 
         boolean isConnected = false;
@@ -222,7 +186,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         } catch (Exception ex) {
             // here we just ignore the exception and try to reconnect
             if (log.isDebugEnabled()) {
-                log.debug("Exception checking connection status: " + ex.getMessage());
+                log.debug("Exception checking connection status: {}", ex.getMessage());
             }
         }
 
@@ -232,7 +196,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
             }
             loggedIn = getOperations().connect((RemoteFileConfiguration) endpoint.getConfiguration());
             if (loggedIn) {
-                log.debug("Connected and logged in to: " + remoteServer());
+                log.debug("Connected and logged in to: {}", remoteServer());
             }
         }
     }

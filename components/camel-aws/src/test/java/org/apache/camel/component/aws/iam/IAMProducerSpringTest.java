@@ -20,8 +20,11 @@ import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
+import com.amazonaws.services.identitymanagement.model.GetUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 import com.amazonaws.services.identitymanagement.model.ListUsersResult;
+import com.amazonaws.services.identitymanagement.model.StatusType;
+import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyResult;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -136,12 +139,50 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.deleteAccessKey);
                 exchange.getIn().setHeader(IAMConstants.USERNAME, "test");
+                exchange.getIn().setHeader(IAMConstants.ACCESS_KEY_ID, "1");
             }
         });
 
         assertMockEndpointsSatisfied();
 
         DeleteAccessKeyResult resultGet = (DeleteAccessKeyResult)exchange.getIn().getBody();
+        assertNotNull(resultGet);
+    }
+    
+    @Test
+    public void iamGetUserTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:getUser", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.getUser);
+                exchange.getIn().setHeader(IAMConstants.USERNAME, "test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        GetUserResult resultGet = (GetUserResult)exchange.getIn().getBody();
+        assertEquals("test", resultGet.getUser().getUserName());
+    }
+    
+    @Test
+    public void iamUpdateAccessKeyTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:updateAccessKey", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.updateAccessKey);
+                exchange.getIn().setHeader(IAMConstants.ACCESS_KEY_ID, "1");
+                exchange.getIn().setHeader(IAMConstants.ACCESS_KEY_STATUS, StatusType.Inactive.toString());
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        UpdateAccessKeyResult resultGet = (UpdateAccessKeyResult)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
 

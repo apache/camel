@@ -31,9 +31,7 @@ import io.undertow.util.Methods;
 import io.undertow.util.MimeMappings;
 import io.undertow.util.StatusCodes;
 import io.undertow.websockets.core.WebSocketChannel;
-
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -43,7 +41,6 @@ import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,7 +152,7 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
         TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
 
         if (body == null) {
-            LOG.trace("No payload to send as reply for exchange: " + camelExchange);
+            LOG.trace("No payload to send as reply for exchange: {}", camelExchange);
             httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
             httpExchange.getResponseSender().send("No response available");
         } else {

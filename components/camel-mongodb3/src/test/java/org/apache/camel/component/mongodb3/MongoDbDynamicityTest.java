@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import com.mongodb.client.MongoCollection;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
 import org.junit.Test;

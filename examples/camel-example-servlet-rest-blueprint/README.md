@@ -1,5 +1,4 @@
 # Camel Servlet REST and OSGi Blueprint example
-=============================================
 
 ### Introduction
 This example shows how to use Servlet REST to define REST endpoints in Camel routes using the Rest DSL
@@ -11,7 +10,7 @@ You will need to compile this example first:
 	mvn install
 
 
-### run
+### Run
 To install Apache Camel in Karaf you type in the shell (we use version ${project.version}):
 
 	feature:repo-add camel ${project.version}
@@ -35,9 +34,9 @@ And you can use <kbd>ctrl</kbd>+<kbd>c</kbd> to stop tailing the log.
 
 There is a user REST service that supports the following operations
 
- - GET /user/{id} - to view a user with the given id </li>
- - GET /user/final - to view all users</li>
- - PUT /user - to update/create an user</li>
+ - GET /user/{id} - to view a user with the given id
+ - GET /user/final - to view all users
+ - PUT /user - to update/create an user
 
 The view operations are HTTP GET, and update is using HTTP PUT.
 
@@ -54,12 +53,12 @@ From the command shell you can use curl to access the service as shown below:
 
 
 ### Configuration
-This example is implemented in XML DSL in the `src/main/resources/OSGI-INF/bluepring/camel.xml` file.
+This example is implemented in XML DSL in the `src/main/resources/OSGI-INF/blueprint/camel.xml` file.
 
 
 ### Forum, Help, etc
 
-If you hit an problems please let us know on the Camel Forums
+If you hit problems please let us know on the Camel Forums
 	<http://camel.apache.org/discussion-forums.html>
 
 Please help us make Apache Camel better - we appreciate any feedback you may

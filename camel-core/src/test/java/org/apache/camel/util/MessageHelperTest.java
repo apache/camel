@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.util;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -26,7 +22,6 @@ import java.io.StringReader;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import org.junit.Assert;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -35,6 +30,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultMessage;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test cases for {@link MessageHelper}

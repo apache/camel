@@ -34,7 +34,6 @@ import com.braintreegateway.Result;
 import com.braintreegateway.TextEvidenceRequest;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.DisputeGatewayApiMethod;

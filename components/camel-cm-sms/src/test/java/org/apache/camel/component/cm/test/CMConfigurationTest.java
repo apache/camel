@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cm.test;
-import org.junit.After;
-
 import java.util.Set;
 import java.util.UUID;
 

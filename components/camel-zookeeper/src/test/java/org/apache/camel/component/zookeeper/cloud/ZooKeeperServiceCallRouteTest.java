@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.zookeeper.cloud;
-import org.junit.After;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +31,7 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
+import org.junit.After;
 import org.junit.Test;
 
 public class ZooKeeperServiceCallRouteTest extends CamelTestSupport {

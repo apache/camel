@@ -543,11 +543,11 @@ public class PropertiesComponent extends UriEndpointComponent {
         List<PropertiesLocation> answer = new ArrayList<>();
 
         for (PropertiesLocation location : locations) {
-            LOG.trace("Parsing location: {} ", location);
+            LOG.trace("Parsing location: {}", location);
 
             try {
                 String path = FilePathResolver.resolvePath(location.getPath());
-                LOG.debug("Parsed location: {} ", path);
+                LOG.debug("Parsed location: {}", path);
                 if (ObjectHelper.isNotEmpty(path)) {
                     answer.add(new PropertiesLocation(
                         location.getResolver(),

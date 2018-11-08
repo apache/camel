@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 
 import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;

@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.http;
-import org.junit.Before;
-import org.junit.After;
-
 import java.net.InetSocketAddress;
 
 import org.apache.camel.builder.RouteBuilder;

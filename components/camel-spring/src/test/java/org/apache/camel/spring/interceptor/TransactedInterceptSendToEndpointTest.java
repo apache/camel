@@ -16,11 +16,10 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import org.junit.Test;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.junit.Test;
 
 /**
  * Easier transaction configuration as we do not have to setup a transaction error handler

@@ -201,7 +201,7 @@ public class RestSwaggerServlet extends HttpServlet {
                             match = EndpointHelper.matchPattern(name, apiContextIdPattern);
                         }
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{name, apiContextIdPattern, match});
+                            LOG.debug("Match contextId: {} with pattern: {} -> {}", name, apiContextIdPattern, match);
                         }
                     }
                 }
@@ -209,7 +209,7 @@ public class RestSwaggerServlet extends HttpServlet {
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, classResolver, new RestConfiguration());
+                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, getHeaders(request), classResolver, new RestConfiguration());
                 }
             }
         } catch (Exception e) {
@@ -258,6 +258,18 @@ public class RestSwaggerServlet extends HttpServlet {
             }
         }
         return path;
+    }
+
+    private Map<String, Object> getHeaders(HttpServletRequest request) {
+        Map<String, Object> headers = new HashMap<>();
+        @SuppressWarnings("unchecked")
+        Enumeration<String> headerNames = request.getHeaderNames();
+        if (headerNames != null) {
+            while (headerNames.hasMoreElements()) {
+                headers.put(headerNames.nextElement(), request.getHeader(headerNames.nextElement()));
+            }
+        }
+        return headers;
     }
 
 }

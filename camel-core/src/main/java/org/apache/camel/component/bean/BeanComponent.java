@@ -76,7 +76,7 @@ public class BeanComponent extends UriEndpointComponent {
     protected void doShutdown() throws Exception {
         if (LOG.isDebugEnabled() && beanInfoCache instanceof LRUCache) {
             LRUCache cache = (LRUCache) this.beanInfoCache;
-            LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted()});
+            LOG.debug("Clearing BeanInfo cache[size={}, hits={}, misses={}, evicted={}]", cache.size(), cache.getHits(), cache.getMisses(), cache.getEvicted());
         }
         beanInfoCache.clear();
     }

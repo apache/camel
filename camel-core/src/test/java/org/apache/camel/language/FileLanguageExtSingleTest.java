@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.util.Calendar;
 
@@ -26,6 +24,7 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
+import org.junit.Test;
 
 /**
  * Unit test for File Language.

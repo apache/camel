@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.mail;
 
-import org.junit.Test;
-
 import java.util.Date;
+
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 
 import org.junit.Assert;
+import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 import static org.apache.camel.component.mail.SearchTermBuilder.Comparison;

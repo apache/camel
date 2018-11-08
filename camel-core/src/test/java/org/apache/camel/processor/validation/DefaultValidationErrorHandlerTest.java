@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.validation;
 
-import org.junit.Test;
-
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
@@ -29,6 +27,7 @@ import org.xml.sax.SAXParseException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * @version 

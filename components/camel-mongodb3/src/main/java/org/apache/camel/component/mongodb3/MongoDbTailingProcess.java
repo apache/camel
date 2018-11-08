@@ -22,7 +22,6 @@ import com.mongodb.CursorType;
 import com.mongodb.MongoCursorNotFoundException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-
 import org.apache.camel.Exchange;
 import org.bson.Document;
 import org.slf4j.Logger;

@@ -63,7 +63,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Exception caught at Channel: " + ctx.getChannel(), exceptionEvent.getCause());
+            LOG.trace("Exception caught at Channel: {}", ctx.getChannel(), exceptionEvent.getCause());
         }
          
         if (exceptionHandled) {
@@ -217,7 +217,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     protected Message getResponseMessage(Exchange exchange, MessageEvent messageEvent) throws Exception {
         Object body = messageEvent.getMessage();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Channel: {} received body: {}", new Object[]{messageEvent.getChannel(), body});
+            LOG.debug("Channel: {} received body: {}", messageEvent.getChannel(), body);
         }
 
         // if textline enabled then covert to a String which must be used for textline

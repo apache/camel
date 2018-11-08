@@ -16,10 +16,9 @@
  */
 package org.apache.camel.language.simple;
 
-import org.junit.Test;
-
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.junit.Test;
 
 /**
  *

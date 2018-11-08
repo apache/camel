@@ -44,7 +44,7 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_DATA_SERVICE);
         if (service != null) {
-            LOG.debug("Using DataService found in registry " + service.getClass().getCanonicalName());
+            LOG.debug("Using DataService found in registry {}", service.getClass().getCanonicalName());
             dataService = (DataService) service;
         } else {
             dataService = new DataService();

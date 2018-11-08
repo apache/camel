@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 public class SplitterParallelAggregateTest extends ContextTestSupport {
 

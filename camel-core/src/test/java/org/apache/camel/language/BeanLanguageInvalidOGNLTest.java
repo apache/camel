@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language;
 
-import org.junit.Test;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,6 +25,7 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.MethodNotFoundException;
+import org.junit.Test;
 
 /**
  * @version 

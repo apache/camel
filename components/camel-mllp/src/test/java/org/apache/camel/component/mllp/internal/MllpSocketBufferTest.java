@@ -18,7 +18,6 @@
 package org.apache.camel.component.mllp.internal;
 
 import org.apache.camel.component.mllp.MllpProtocolConstants;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;

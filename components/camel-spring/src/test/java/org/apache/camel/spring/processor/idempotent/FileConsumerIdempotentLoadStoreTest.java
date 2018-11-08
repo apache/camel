@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor.idempotent;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -28,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FileUtil;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 

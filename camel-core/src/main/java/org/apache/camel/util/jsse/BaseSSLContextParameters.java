@@ -47,7 +47,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
 import org.apache.camel.util.jsse.FilterParameters.Patterns;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

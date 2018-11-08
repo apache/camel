@@ -16,18 +16,17 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.io.InputStream;
 
-import org.junit.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.support.TypeConverterSupport;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

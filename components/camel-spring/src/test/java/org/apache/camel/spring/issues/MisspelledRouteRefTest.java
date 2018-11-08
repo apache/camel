@@ -16,13 +16,11 @@
  */
 package org.apache.camel.spring.issues;
 
-import org.junit.Test;
-
-import org.junit.Assert;
-
 import org.apache.camel.CamelException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.Main;
+import org.junit.Assert;
+import org.junit.Test;
 
 import static org.apache.camel.TestSupport.assertIsInstanceOf;
 

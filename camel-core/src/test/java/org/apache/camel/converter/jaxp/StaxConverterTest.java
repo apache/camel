@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.jaxp;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -36,6 +34,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 public class StaxConverterTest extends ContextTestSupport {
 

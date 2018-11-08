@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletConfig;
@@ -67,11 +66,11 @@ public class CamelServlet extends HttpServlet {
 
         final String asyncParam = config.getInitParameter(ASYNC_PARAM);
         this.async = asyncParam == null ? false : ObjectHelper.toBoolean(asyncParam);
-        log.trace("servlet '{}' initialized with: async={}", new Object[]{servletName, async});
+        log.trace("servlet '{}' initialized with: async={}", servletName, async);
     }
 
     @Override
-    protected final void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isAsync()) {
             final AsyncContext context = req.startAsync();
             //run async

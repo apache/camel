@@ -45,7 +45,7 @@ public class PredicateValidatingProcessor extends ServiceSupport implements Proc
         boolean matches = predicate.matches(exchange);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Validation {} for {} with Predicate[{}]", new Object[]{matches ? "succeed" : "failed", exchange, predicate});
+            LOG.debug("Validation {} for {} with Predicate[{}]", matches ? "succeed" : "failed", exchange, predicate);
         }
 
         if (!matches) {

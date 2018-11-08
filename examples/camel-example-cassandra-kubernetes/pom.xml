@@ -120,7 +120,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <version>${exec-maven-plugin.version}</version>
+        <version>${exec-maven-plugin-version}</version>
         <configuration>
           <mainClass>org.apache.camel.spring.Main</mainClass>
         </configuration>

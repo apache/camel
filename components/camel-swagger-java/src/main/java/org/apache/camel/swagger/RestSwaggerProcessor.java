@@ -109,14 +109,14 @@ public class RestSwaggerProcessor implements Processor {
                         match = EndpointHelper.matchPattern(name, contextIdPattern);
                     }
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Match contextId: {} with pattern: {} -> {}", new Object[]{name, contextIdPattern, match});
+                        LOG.debug("Match contextId: {} with pattern: {} -> {}", name, contextIdPattern, match);
                     }
                 }
 
                 if (!match) {
                     adapter.noContent();
                 } else {
-                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, exchange.getContext().getClassResolver(), configuration);
+                    support.renderResourceListing(adapter, swaggerConfig, name, route, json, yaml, exchange.getIn().getHeaders(), exchange.getContext().getClassResolver(), configuration);
                 }
             }
         } catch (Exception e) {

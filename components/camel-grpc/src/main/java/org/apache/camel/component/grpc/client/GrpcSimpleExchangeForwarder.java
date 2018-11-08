@@ -17,7 +17,6 @@
 package org.apache.camel.component.grpc.client;
 
 import io.grpc.stub.StreamObserver;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

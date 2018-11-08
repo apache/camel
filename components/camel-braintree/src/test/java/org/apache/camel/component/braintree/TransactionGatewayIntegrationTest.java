@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.braintree;
-import org.junit.After;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,10 +27,10 @@ import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionCloneRequest;
 import com.braintreegateway.TransactionRefundRequest;
 import com.braintreegateway.TransactionRequest;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.TransactionGatewayApiMethod;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -192,7 +190,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
             Result.class);
 
         assertNotNull("Submit For Settlement result", result);
-        LOG.debug("Transaction submitted for settlement - id={}" + result.getTarget().getId());
+        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
     }
 
     @Test
@@ -225,7 +223,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
             Result.class);
 
         assertNotNull("Submit For Settlement result", result);
-        LOG.debug("Transaction submitted for settlement - id={}" + result.getTarget().getId());
+        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
     }
 
     @Test
@@ -259,7 +257,7 @@ public class TransactionGatewayIntegrationTest extends AbstractBraintreeTestSupp
             Result.class);
 
         assertNotNull("Submit For Settlement result", result);
-        LOG.debug("Transaction submitted for settlement - id={}" + result.getTarget().getId());
+        LOG.debug("Transaction submitted for settlement - id={}", result.getTarget().getId());
     }
 
     @Test

@@ -45,7 +45,7 @@ public class GoogleMailStreamComponent extends DefaultComponent {
 
     public GoogleMailStreamComponent(CamelContext context) {
         super(context);
-
+        registerExtension(new GoogleMailStreamComponentVerifierExtension());
         this.configuration = new GoogleMailStreamConfiguration();
     }
 

@@ -185,14 +185,21 @@ public class JpaProducer extends DefaultProducer {
         });
     }
 
+    @SuppressWarnings("unchecked")
     private void configureParameters(Query query, Exchange exchange) {
         int maxResults = getEndpoint().getMaximumResults();
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
         }
-        // setup the parameter
+        // setup the parameters
+        Map<String, ?> params;
         if (parameters != null) {
-            parameters.forEach((key, value) -> {
+            params = parameters;
+        } else {
+            params = exchange.getIn().getHeader(JpaConstants.JPA_PARAMETERS_HEADER, Map.class);
+        }
+        if (params != null) {
+            params.forEach((key, value) -> {
                 Object resolvedValue = value;
                 if (value instanceof String) {
                     resolvedValue = SimpleLanguage.expression((String)value).evaluate(exchange, Object.class);

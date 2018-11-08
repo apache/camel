@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.seda;
 
-import org.junit.Test;
-
 import java.util.concurrent.Future;
 
 import org.apache.camel.ContextTestSupport;
@@ -28,6 +26,7 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Test;
 
 /**
  * The new Async API version of doing async routing based on the old AsyncProcessor API

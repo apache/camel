@@ -19,7 +19,9 @@ package org.apache.camel.component.as2.springboot;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import javax.annotation.Generated;
+import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
+import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.http.entity.ContentType;
@@ -153,9 +155,9 @@ public class AS2ComponentConfiguration
          */
         private String as2To;
         /**
-         * The name of algorithm used to sign EDI message.
+         * The algorithm used to sign EDI message.
          */
-        private String signingAlgorithmName;
+        private AS2SignatureAlgorithm signingAlgorithm;
         /**
          * The chain of certificates used to sign EDI message.
          */
@@ -177,9 +179,9 @@ public class AS2ComponentConfiguration
          */
         private String[] signedReceiptMicAlgorithms;
         /**
-         * The name of algorithm used to encrypt EDI message.
+         * The algorithm used to encrypt EDI message.
          */
-        private String encryptingAlgorithmName;
+        private AS2EncryptionAlgorithm encryptingAlgorithm;
         /**
          * The chain of certificates used to encrypt EDI message.
          */
@@ -335,12 +337,12 @@ public class AS2ComponentConfiguration
             this.as2To = as2To;
         }
 
-        public String getSigningAlgorithmName() {
-            return signingAlgorithmName;
+        public AS2SignatureAlgorithm getSigningAlgorithm() {
+            return signingAlgorithm;
         }
 
-        public void setSigningAlgorithmName(String signingAlgorithmName) {
-            this.signingAlgorithmName = signingAlgorithmName;
+        public void setSigningAlgorithm(AS2SignatureAlgorithm signingAlgorithm) {
+            this.signingAlgorithm = signingAlgorithm;
         }
 
         public Certificate[] getSigningCertificateChain() {
@@ -378,12 +380,13 @@ public class AS2ComponentConfiguration
             this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
         }
 
-        public String getEncryptingAlgorithmName() {
-            return encryptingAlgorithmName;
+        public AS2EncryptionAlgorithm getEncryptingAlgorithm() {
+            return encryptingAlgorithm;
         }
 
-        public void setEncryptingAlgorithmName(String encryptingAlgorithmName) {
-            this.encryptingAlgorithmName = encryptingAlgorithmName;
+        public void setEncryptingAlgorithm(
+                AS2EncryptionAlgorithm encryptingAlgorithm) {
+            this.encryptingAlgorithm = encryptingAlgorithm;
         }
 
         public Certificate[] getEncryptingCertificateChain() {

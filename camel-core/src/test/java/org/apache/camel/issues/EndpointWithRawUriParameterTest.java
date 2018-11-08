@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import org.junit.Test;
-
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.junit.Test;
 
 public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 

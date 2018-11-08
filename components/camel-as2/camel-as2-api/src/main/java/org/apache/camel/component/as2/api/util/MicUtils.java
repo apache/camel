@@ -77,7 +77,7 @@ public final class MicUtils {
             MessageDigest messageDigest = MessageDigest.getInstance(algorithmId, "BC");
             return messageDigest.digest(content);
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            LOG.debug("failed to get message digets '" + algorithmId + "'");
+            LOG.debug("failed to get message digets '{}'", algorithmId);
             return null;
         }
     }
@@ -120,8 +120,7 @@ public final class MicUtils {
             break;
         }
         default:
-            LOG.debug("can not create MIC: invalid content type '" + contentType.getMimeType()
-                    + "' for message integrity check");
+            LOG.debug("can not create MIC: invalid content type '{}' for message integrity check", contentType.getMimeType());
             return null;
         }
 

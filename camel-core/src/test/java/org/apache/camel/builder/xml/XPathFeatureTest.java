@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.junit.Test;
-
 import java.io.FileNotFoundException;
 
 import org.xml.sax.SAXParseException;
@@ -28,6 +26,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.junit.Test;
 
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 

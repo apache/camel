@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.seda;
 
-import org.junit.Test;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class SedaSuspendConsumerStopRouteTest extends ContextTestSupport {
 

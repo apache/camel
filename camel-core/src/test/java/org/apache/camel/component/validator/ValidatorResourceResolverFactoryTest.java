@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.validator;
 
-import org.junit.Test;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +31,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.junit.Assert;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 

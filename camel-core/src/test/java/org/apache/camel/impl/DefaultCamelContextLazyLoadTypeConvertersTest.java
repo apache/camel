@@ -16,11 +16,10 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.TypeConverter;
+import org.junit.Test;
 
 /**
  * Tests the lazy loading property of the camel context. The default behavior is to

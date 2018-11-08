@@ -16,12 +16,12 @@
  */
 package org.apache.camel.builder.xml;
 
-import org.junit.Test;
-
 import java.net.URL;
+
 import javax.xml.transform.ErrorListener;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring.config;
 
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.Channel;
@@ -27,6 +25,7 @@ import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

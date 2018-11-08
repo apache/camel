@@ -15,14 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.async;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+
 import javax.naming.Context;
 
 import org.apache.camel.CamelExecutionException;
@@ -30,6 +27,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.util.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.spy;

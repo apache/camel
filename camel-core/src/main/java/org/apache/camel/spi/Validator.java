@@ -31,7 +31,7 @@ import org.apache.camel.support.ServiceSupport;
  * {@link ContractAdvice} applies Validator if input/output type is declared on
  * a route with validation enabled.
  *  
- * @see {@link ContractAdvice}
+ * @see ContractAdvice
  * {@link InputTypeDefinition} {@link OutputTypeDefinition}
  */
 public abstract class Validator extends ServiceSupport implements CamelContextAware {

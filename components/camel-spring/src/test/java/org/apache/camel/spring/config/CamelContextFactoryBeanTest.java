@@ -15,11 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.util.List;
 
 import org.apache.camel.CamelContext;
@@ -30,6 +25,9 @@ import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.AbstractApplicationContext;

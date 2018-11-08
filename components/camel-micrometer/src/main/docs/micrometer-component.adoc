@@ -78,7 +78,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *metricsType* | *Required* Type of metrics |  | Type
 | *metricsName* | *Required* Name of metrics |  | String
-| *tags* | Tags of metrics |  | Tag>
+| *tags* | Tags of metrics |  | Iterable
 |===
 
 

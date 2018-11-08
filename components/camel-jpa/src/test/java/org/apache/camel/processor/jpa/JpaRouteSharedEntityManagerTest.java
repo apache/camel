@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.jpa;
-import org.junit.Before;
-
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -29,6 +27,7 @@ import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.Expression;

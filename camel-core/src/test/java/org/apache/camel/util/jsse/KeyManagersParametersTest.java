@@ -16,8 +16,6 @@
  */
 package org.apache.camel.util.jsse;
 
-import org.junit.Test;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
@@ -27,6 +25,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.X509KeyManager;
 
 import org.apache.camel.CamelContext;
+import org.junit.Test;
 
 public class KeyManagersParametersTest extends AbstractJsseParametersTest {
     

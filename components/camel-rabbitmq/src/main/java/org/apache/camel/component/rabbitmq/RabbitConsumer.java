@@ -31,7 +31,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -269,7 +268,7 @@ class RabbitConsumer extends ServiceSupport implements com.rabbitmq.client.Consu
                     reconnect();
                     connected = true;
                 } catch (Exception e) {
-                    log.warn("Unable to obtain a RabbitMQ channel. Will try again. Caused by: " + e.getMessage() + ". Stacktrace logged at DEBUG logging level.");
+                    log.warn("Unable to obtain a RabbitMQ channel. Will try again. Caused by: {}. Stacktrace logged at DEBUG logging level.", e.getMessage());
                     // include stacktrace in DEBUG logging
                     log.debug(e.getMessage(), e);
 

@@ -15,10 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregator;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,6 +31,8 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.ExceptionHandler;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 

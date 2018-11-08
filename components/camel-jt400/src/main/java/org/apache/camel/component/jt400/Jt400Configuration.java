@@ -19,6 +19,7 @@ package org.apache.camel.component.jt400;
 import java.beans.PropertyVetoException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
 import com.ibm.as400.access.ConnectionPoolException;

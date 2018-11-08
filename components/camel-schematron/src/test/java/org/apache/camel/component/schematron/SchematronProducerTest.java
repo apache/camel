@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.schematron;
-import org.junit.Before;
-
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerFactory;
 

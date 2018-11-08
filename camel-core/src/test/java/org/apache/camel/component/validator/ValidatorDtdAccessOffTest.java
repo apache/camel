@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.validator;
 
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class ValidatorDtdAccessOffTest extends ValidatorDtdAccessAbstractTest {
     

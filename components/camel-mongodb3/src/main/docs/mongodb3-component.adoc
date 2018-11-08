@@ -94,7 +94,7 @@ with the following path and query parameters:
 | *operation* (common) | Sets the operation this endpoint will execute against MongoDB. For possible values, see MongoDbOperation. |  | MongoDbOperation
 | *outputType* (common) | Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or MongoIterable applies to findAll and aggregate. Document applies to all other operations. |  | MongoDbOutputType
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *cursorRegenerationDelay* (advanced) | MongoDB tailable cursors will block until new data arrives. If no new data is inserted, after some time the cursor will be automatically freed and closed by the MongoDB server. The client is expected to regenerate the cursor if needed. This value specifies the time to wait before attempting to fetch a new cursor, and if the attempt fails, how long before the next attempt is made. Default value is 1000ms. | 1000 | long
 | *dynamicity* (advanced) | Sets whether this endpoint will attempt to dynamically resolve the target database and collection from the incoming Exchange properties. Can be used to override at runtime the database and collection specified on the otherwise static endpoint URI. It is disabled by default to boost performance. Enabling it will take a minimal performance hit. | false | boolean
@@ -658,27 +658,27 @@ Supports the following IN message headers:
 |`CamelMongoDbAllowDiskUse` |`MongoDbConstants.ALLOW_DISK_USE` | Enable aggregation pipeline stages to write data to temporary files. |boolean/Boolean
 |=======================================================================
 
-Efficient retrieval is supported via outputType=MongoIterable.
+By default a List of all results is returned. This can be heavy on memory depending on the size of the results. A safer alternative is to set your
+outputType=MongoIterable. The next Processor will see an iterable in the message body allowing it to step through the results one by one. Thus setting
+a batch size and returning an iterable allows for efficient retrieval and processing of the result.
 
-You can also "stream" the documents returned from the server into your route by including outputType=DBCursor (Camel 2.21+) as an endpoint option
-which may prove simpler than setting the above headers. This hands your Exchange the DBCursor from the Mongo driver, just as if you were executing
-the aggregate() within the Mongo shell, allowing your route to iterate over the results. By default and without this option, this component will load
-the documents from the driver's cursor into a List and return this to your route - which may result in a large number of in-memory objects. Remember,
-with a DBCursor do not ask for the number of documents matched - see the MongoDB documentation site for details.
-
-Example with option outputType=MongoIterable and batch size:
+An example would look like:
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-// route: from("direct:aggregate").to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate&outputType=MongoIterable");
-List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist", 
+List<Bson> aggregate = Arrays.asList(match(or(eq("scientist", "Darwin"), eq("scientist",
         group("$scientist", sum("count", 1)));
 from("direct:aggregate")
     .setHeader(MongoDbConstants.BATCH_SIZE).constant(10)
     .setBody().constant(aggregate)
     .to("mongodb3:myDb?database=science&collection=notableScientists&operation=aggregate&outputType=MongoIterable")
+    .split(body())
+    .streaming()
     .to("mock:resultAggregate");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Note that calling `.split(body())` is enough to send the entries down the route one-by-one, however it would still load all the entries into memory first.
+Calling `.streaming()` is thus required to load data into memory by batches.
 
 
 ===== getDbStats

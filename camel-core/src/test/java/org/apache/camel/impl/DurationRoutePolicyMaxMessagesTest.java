@@ -16,12 +16,11 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 

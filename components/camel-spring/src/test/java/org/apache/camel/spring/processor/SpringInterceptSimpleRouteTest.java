@@ -18,6 +18,7 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.intercept.InterceptSimpleRouteTest;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringInterceptSimpleRouteTest extends InterceptSimpleRouteTest {

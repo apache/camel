@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.bean.issues;
 
-import org.junit.Test;
-
 import java.lang.reflect.Method;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.BeanInfo;
+import org.junit.Test;
 
 public class BeanInfoSingleMethodServiceTest extends ContextTestSupport {
 

@@ -146,7 +146,7 @@ with the following path and query parameters:
 | *concurrentConsumers* (consumer) | Number of concurrent threads processing exchanges. | 1 | int
 | *multipleConsumers* (consumer) | Specifies whether multiple consumers are allowed. If enabled, you can use Disruptor for Publish-Subscribe messaging. That is, you can send a message to the queue and have each consumer receive a copy of the message. When enabled, this option should be specified on every consumer endpoint. | false | boolean
 | *waitStrategy* (consumer) | Defines the strategy used by consumer threads to wait on new exchanges to be published. The options allowed are:Blocking, Sleeping, BusySpin and Yielding. | Blocking | DisruptorWaitStrategy
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *blockWhenFull* (producer) | Whether a thread that sends messages to a full Disruptor will block until the ringbuffer's capacity is no longer exhausted. By default, the calling thread will block and wait until the message can be accepted. By disabling this option, an exception will be thrown stating that the queue is full. | false | boolean
 | *producerType* (producer) | Defines the producers allowed on the Disruptor. The options allowed are: Multi to allow multiple producers and Single to enable certain optimizations only allowed when one concurrent producer (on one thread or otherwise synchronized) is active. | Multi | DisruptorProducerType
@@ -173,7 +173,6 @@ The component supports 18 options, which are listed below.
 | *camel.component.disruptor-vm.default-producer-type* | To configure the default value for DisruptorProducerType The default value is Multi. |  | DisruptorProducerType
 | *camel.component.disruptor-vm.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor-vm.enabled* | Enable disruptor-vm component | true | Boolean
-| *camel.component.disruptor-vm.queue-size* | To configure the ring buffer size |  | Integer
 | *camel.component.disruptor-vm.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.disruptor.buffer-size* | To configure the ring buffer size | 1024 | Integer
 | *camel.component.disruptor.default-block-when-full* | To configure the default value for block when full The default value is true. | true | Boolean
@@ -182,8 +181,9 @@ The component supports 18 options, which are listed below.
 | *camel.component.disruptor.default-producer-type* | To configure the default value for DisruptorProducerType The default value is Multi. |  | DisruptorProducerType
 | *camel.component.disruptor.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor.enabled* | Enable disruptor component | true | Boolean
-| *camel.component.disruptor.queue-size* | To configure the ring buffer size |  | Integer
 | *camel.component.disruptor.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.disruptor-vm.queue-size* | To configure the ring buffer size |  | Integer
+| *camel.component.disruptor.queue-size* | To configure the ring buffer size |  | Integer
 |===
 // spring-boot-auto-configure options: END
 

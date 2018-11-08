@@ -16,9 +16,6 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Assume;
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +25,8 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Assume;
+import org.junit.Test;
 
 /**
  * Tests mbeans is registered when adding a 2nd route after CamelContext has been started.

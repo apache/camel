@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.spring.ws;
 
+import java.io.IOException;
+import java.io.StringReader;
+
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -27,12 +34,6 @@ import org.springframework.ws.client.WebServiceIOException;
 import org.springframework.ws.client.core.SourceExtractor;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
-
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamSource;
-import java.io.IOException;
-import java.io.StringReader;
 
 public class ConsumerEndpointMappingRouteTest extends CamelSpringTestSupport {
 

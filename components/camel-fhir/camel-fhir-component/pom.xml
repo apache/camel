@@ -238,6 +238,7 @@
                     <nullableOption>returnResource</nullableOption>
                     <nullableOption>throwError</nullableOption>
                     <nullableOption>extraParameters</nullableOption>
+                    <nullableOption>version</nullableOption>
                   </nullableOptions>
                 </api>
                 <api>
@@ -261,6 +262,8 @@
                   <proxyClass>org.apache.camel.component.fhir.api.FhirUpdate</proxyClass>
                   <fromJavadoc/>
                   <nullableOptions>
+                    <nullableOption>id</nullableOption>
+                    <nullableOption>stringId</nullableOption>
                     <nullableOption>preferReturn</nullableOption>
                     <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>

@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.sjms.producer;
-import org.junit.Before;
-import org.junit.After;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,7 +27,8 @@ import javax.jms.TextMessage;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class InOutQueueProducerAsyncLoadTest extends JmsTestSupport {

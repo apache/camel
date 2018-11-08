@@ -16,11 +16,10 @@
  */
 package org.apache.camel.util;
 
-import org.junit.Test;
-
 import java.text.DecimalFormatSymbols;
 
 import org.junit.Assert;
+import org.junit.Test;
 
 import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
 

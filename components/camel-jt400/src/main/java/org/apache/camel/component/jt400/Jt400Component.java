@@ -100,7 +100,7 @@ public class Jt400Component extends UriEndpointComponent {
     protected void doShutdown() throws Exception {
         super.doShutdown();
         if (connectionPool != null) {
-            LOG.info("Shutting down the default connection pool " + connectionPool + " ...");
+            LOG.info("Shutting down the default connection pool {} ...", connectionPool);
             connectionPool.close();
             connectionPool = null;
         }

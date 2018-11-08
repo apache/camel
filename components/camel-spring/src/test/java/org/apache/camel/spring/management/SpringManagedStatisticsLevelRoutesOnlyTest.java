@@ -18,6 +18,7 @@ package org.apache.camel.spring.management;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.management.ManagedStatisticsLevelRoutesOnlyTest;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**

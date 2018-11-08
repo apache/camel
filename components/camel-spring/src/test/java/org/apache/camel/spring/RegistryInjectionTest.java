@@ -16,11 +16,10 @@
  */
 package org.apache.camel.spring;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

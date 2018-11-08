@@ -78,7 +78,7 @@ public class BoxFilesManager {
      */
     public BoxFile.Info getFileInfo(String fileId, String... fields) {
         try {
-            LOG.debug("Getting info for file(id=" + fileId + ")");
+            LOG.debug("Getting info for file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -107,7 +107,7 @@ public class BoxFilesManager {
      */
     public BoxFile updateFileInfo(String fileId, BoxFile.Info info) {
         try {
-            LOG.debug("Updating info for file(id=" + fileId + ")");
+            LOG.debug("Updating info for file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -203,7 +203,7 @@ public class BoxFilesManager {
     public BoxFile uploadNewFileVersion(String fileId, InputStream fileContent, Date modified, Long fileSize,
             ProgressListener listener) {
         try {
-            LOG.debug("Uploading new version of file(id=" + fileId + ")");
+            LOG.debug("Uploading new version of file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -239,7 +239,7 @@ public class BoxFilesManager {
      */
     public Collection<BoxFileVersion> getFileVersions(String fileId) {
         try {
-            LOG.debug("Getting versions of file(id=" + fileId + ")");
+            LOG.debug("Getting versions of file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -278,7 +278,7 @@ public class BoxFilesManager {
     public OutputStream downloadFile(String fileId, OutputStream output, Long rangeStart, Long rangeEnd,
             ProgressListener listener) {
         try {
-            LOG.debug("Downloading file(id=" + fileId + ")");
+            LOG.debug("Downloading file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -495,7 +495,7 @@ public class BoxFilesManager {
      */
     public void deleteFile(String fileId) {
         try {
-            LOG.debug("Deleting file(id=" + fileId + ")");
+            LOG.debug("Deleting file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -589,7 +589,7 @@ public class BoxFilesManager {
      */
     public URL getDownloadURL(String fileId) {
         try {
-            LOG.debug("Getting download URL for file(id=" + fileId + ")");
+            LOG.debug("Getting download URL for file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -615,7 +615,7 @@ public class BoxFilesManager {
      */
     public URL getFilePreviewLink(String fileId) {
         try {
-            LOG.debug("Getting preview link for file(id=" + fileId + ")");
+            LOG.debug("Getting preview link for file(id={})", fileId);
 
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
@@ -696,7 +696,7 @@ public class BoxFilesManager {
      */
     public Metadata createFileMetadata(String fileId, Metadata metadata, String typeName) {
         try {
-            LOG.debug("Creating metadata for file(id=" + fileId + ")");
+            LOG.debug("Creating metadata for file(id={})", fileId);
 
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
@@ -730,7 +730,7 @@ public class BoxFilesManager {
      */
     public Metadata getFileMetadata(String fileId, String typeName) {
         try {
-            LOG.debug("Get metadata for file(id=" + fileId + ")");
+            LOG.debug("Get metadata for file(id={})", fileId);
 
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
@@ -761,7 +761,7 @@ public class BoxFilesManager {
      */
     public Metadata updateFileMetadata(String fileId, Metadata metadata) {
         try {
-            LOG.debug("Updating metadata for file(id=" + fileId + ")");
+            LOG.debug("Updating metadata for file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -784,7 +784,7 @@ public class BoxFilesManager {
      */
     public void deleteFileMetadata(String fileId) {
         try {
-            LOG.debug("Deleting metadata for file(id=" + fileId + ")");
+            LOG.debug("Deleting metadata for file(id={})", fileId);
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }

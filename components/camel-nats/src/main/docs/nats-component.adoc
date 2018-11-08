@@ -91,7 +91,7 @@ with the following path and query parameters:
 | *maxMessages* (consumer) | Stop receiving messages from a topic we are subscribing to after maxMessages |  | String
 | *poolSize* (consumer) | Consumer pool size | 10 | int
 | *queueName* (consumer) | The Queue name if we are using nats for a queue configuration |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *replySubject* (producer) | the subject to which subscribers should send response |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

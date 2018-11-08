@@ -140,6 +140,9 @@ results) using result link returned from the 'query' API
 * composite - submit up to 25 possibly related REST requests and receive individual responses
 * composite-tree - create up to 200 records with parent-child relationships (up to 5 levels) in one go
 * composite-batch - submit a composition of requests in batch
+* queryAll - Runs a SOQL query. It returns the results that are deleted because of a merge or delete. Also returns the  information about archived Task and Event records.
+* getBlobField - Retrieves the specified blob field from an individual record.
+* apexCall - Executes a user defined APEX REST API call.
 
 For example, the following producer endpoint uses the upsertSObject API,
 with the sObjectIdName parameter specifying 'Name' as the external id
@@ -179,6 +182,12 @@ You can use the following for `operationName`:
 * createBatchQuery - Creates a Batch from an SOQL query
 * getQueryResultIds - Gets a list of Result Ids for a Batch Query
 * getQueryResult - Gets results for a Result Id
+* getRecentReports - Gets up to 200 of the reports you most recently viewed by sending a GET request to the Report List resource.
+* getReportDescription - Retrieves the report, report type, and related metadata for a report, either in a tabular or summary or matrix format.
+* executeSyncReport - Runs a report synchronously with or without changing filters and returns the latest summary data.
+* executeAsyncReport - Runs an instance of a report asynchronously with or without filters and returns the summary data with or without details.
+* getReportInstances - Returns a list of instances for a report that you requested to be run asynchronously. Each item in the list is treated as a separate instance of the report.
+* getReportResults: Contains the results of running a report.
 
 For example, the following producer endpoint uses the createBatch API to
 create a Job Batch. The in message must contain a body that can be converted into an
@@ -396,51 +405,6 @@ from("direct:fetchRecentItems")
     to("salesforce:recent")
         .split().body()
             .log("${body.name} at ${body.attributes.url}");
-----
-
-=== Working with approvals
-
-All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
-approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
-that any property not present in either body or header will be taken from the Endpoint configuration. Or you can set
-the approval template on the Endpoint by assigning `approval` property to a reference onto a bean in the Registry.
-
-You can also provide header values using the same `approval.PropertyName` in the incoming message headers.
-
-And finally body can contain one `AprovalRequest` or an `Iterable` of `ApprovalRequest` objects to process as
-a batch.
-
-The important thing to remember is the priority of the values specified in these three mechanisms:
-
-. value in body takes precedence before any other
-. value in message header takes precedence before template value
-. value in template is set if no other value in header or body was given
-
-For example to send one record for approval using values in headers use:
-
-Given a route:
-
-[source,java]
-----
-from("direct:example1")//
-        .setHeader("approval.ContextId", simple("${body['contextId']}"))
-        .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
-        .to("salesforce:approval?"//
-            + "approvalActionType=Submit"//
-            + "&approvalComments=this is a test"//
-            + "&approvalProcessDefinitionNameOrId=Test_Account_Process"//
-            + "&approvalSkipEntryCriteria=true");
-----
-
-You could send a record for approval using:
-
-[source,java]
-----
-final Map<String, String> body = new HashMap<>();
-body.put("contextId", accountIds.iterator().next());
-body.put("nextApproverIds", userId);
-
-final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
 ----
 
 === Using Salesforce Composite API to submit SObject tree
@@ -747,7 +711,7 @@ with the following path and query parameters:
 | *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *replayId* (consumer) | The replayId value to use when subscribing |  | Long
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===

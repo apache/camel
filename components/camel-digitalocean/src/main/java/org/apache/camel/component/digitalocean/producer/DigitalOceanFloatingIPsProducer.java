@@ -99,7 +99,7 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
 
 
         FloatingIP ip = getEndpoint().getDigitalOceanClient().getFloatingIPInfo(ipAddress);
-        LOG.trace("Floating IP {} ", ip);
+        LOG.trace("Floating IP {}", ip);
         exchange.getOut().setBody(ip);
     }
 
@@ -113,7 +113,7 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
 
 
         Delete delete = getEndpoint().getDigitalOceanClient().deleteFloatingIP(ipAddress);
-        LOG.trace("Delete Floating IP {} ", delete);
+        LOG.trace("Delete Floating IP {}", delete);
         exchange.getOut().setBody(delete);
     }
 
@@ -131,7 +131,7 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
         }
 
         Action action = getEndpoint().getDigitalOceanClient().assignFloatingIP(dropletId, ipAddress);
-        LOG.trace("Assign Floating IP to Droplet {} ", action);
+        LOG.trace("Assign Floating IP to Droplet {}", action);
         exchange.getOut().setBody(action);
     }
 
@@ -143,7 +143,7 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
         }
 
         Action action = getEndpoint().getDigitalOceanClient().unassignFloatingIP(ipAddress);
-        LOG.trace("Unassign Floating IP {} ", action);
+        LOG.trace("Unassign Floating IP {}", action);
         exchange.getOut().setBody(action);
     }
 

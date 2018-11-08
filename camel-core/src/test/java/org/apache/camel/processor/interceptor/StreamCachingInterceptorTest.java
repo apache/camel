@@ -15,13 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -33,6 +30,8 @@ import org.apache.camel.StringSource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.junit.Before;
+import org.junit.Test;
 
 public class StreamCachingInterceptorTest extends ContextTestSupport {
 

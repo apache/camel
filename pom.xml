@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>20</version>
+    <version>21</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -53,7 +53,7 @@
 
     <maven-compiler-plugin-version>3.8.0</maven-compiler-plugin-version>
     <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
-    <maven-surefire-plugin-version>2.22.0</maven-surefire-plugin-version>
+    <maven-surefire-plugin-version>2.22.1</maven-surefire-plugin-version>
     <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
     <surefire.version>${maven-surefire-plugin-version}</surefire.version>
 
@@ -62,8 +62,8 @@
     <jaxb-version>2.3.0</jaxb-version>
     <errorprone-version>2.5</errorprone-version>
     <mycila-license-version>3.0</mycila-license-version>
-    <gmavenplus-plugin-version>1.5</gmavenplus-plugin-version>
-    <groovy-version>2.5.1</groovy-version>
+    <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
+    <groovy-version>2.5.3</groovy-version>
   </properties>
 
   <mailingLists>
@@ -153,6 +153,7 @@
     <module>connectors</module>
     <module>tests</module>
     <module>examples</module>
+    <module>docs</module>
   </modules>
 
   <scm>

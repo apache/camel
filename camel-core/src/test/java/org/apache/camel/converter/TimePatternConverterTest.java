@@ -16,11 +16,9 @@
  */
 package org.apache.camel.converter;
 
+import org.apache.camel.ContextTestSupport;
 import org.junit.Test;
 
-import org.apache.camel.ContextTestSupport;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
 public class TimePatternConverterTest extends ContextTestSupport {

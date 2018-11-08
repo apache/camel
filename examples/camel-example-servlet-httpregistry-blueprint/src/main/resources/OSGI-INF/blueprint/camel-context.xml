@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:ext="http://aries.apache.org/blueprint/xmlns/blueprint-ext/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+           http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+    <!-- availability="optional" is required only when the servlet service is packaged in the same bundle -->
+    <reference id="servletRef" ext:proxy-method="classes" interface="org.apache.camel.http.common.CamelServlet"
+        availability="optional">
+        <reference-listener ref="httpRegistry" bind-method="register" unbind-method="unregister" />
+    </reference>
+
+    <bean id="httpRegistry" class="org.apache.camel.component.servlet.DefaultHttpRegistry" />
+
+    <bean id="servlet" class="org.apache.camel.component.servlet.ServletComponent">
+        <property name="httpRegistry" ref="httpRegistry" />
+    </bean>
+
+    <bean id="servletProcessor" class="org.apache.camel.example.servlet.ServletProcessor" />
+
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+        <route>
+            <!-- Notice how we can use the servlet scheme which is that reference above -->
+            <from uri="servlet://hello" />
+            <process ref="servletProcessor" />
+        </route>
+    </camelContext>
+
+</blueprint>

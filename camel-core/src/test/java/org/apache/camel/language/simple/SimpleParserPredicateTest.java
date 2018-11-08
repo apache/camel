@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.simple;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +24,7 @@ import java.util.Map;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Predicate;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *

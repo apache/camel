@@ -32,7 +32,6 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 import com.thoughtworks.xstream.io.xml.QNameMap;
 import com.thoughtworks.xstream.io.xml.StaxReader;
 import com.thoughtworks.xstream.io.xml.StaxWriter;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.codehaus.jettison.mapped.MappedXMLInputFactory;

@@ -408,7 +408,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                                     }
                                 } catch (Exception e) {
                                     // error resolving endpoint so we should break out
-                                    exchange.setException(e);
+                                    current.setException(e);
                                     break;
                                 }
 

@@ -25,10 +25,8 @@ import com.github.dozermapper.core.el.ELExpressionFactory;
 import com.github.dozermapper.core.el.NoopELEngine;
 import com.github.dozermapper.core.el.TcclELEngine;
 import com.github.dozermapper.core.util.RuntimeUtils;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.dozer.DozerEndpoint;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

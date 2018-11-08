@@ -16,10 +16,9 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.WaitForTaskToComplete;
+import org.junit.Test;
 
 /**
  * @version 

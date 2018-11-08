@@ -17,16 +17,15 @@
 
 package org.apache.camel.component.mina;
 
-import org.junit.Test;
-
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.junit.Assert;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.mina.common.ByteBuffer;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

@@ -3,9 +3,9 @@ Expressions
 ~~~~~~~~~~~
 
 Expressions and Predicates can then be used to
-create the various link:enterprise-integration-patterns.html[Enterprise
+create the various link:enterprise-integration-patterns.adoc[Enterprise
 Integration Patterns] in the DSL or
-Xml Configuration like the
+XML Configuration like the
 Recipient List. +
  To support dynamic rules Camel supports pluggable
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Expression.html[Expression]
@@ -98,7 +98,7 @@ The following languages are supported out of the box
 * Tokenizer
 * <<xpath-language,XPath>>
 * <<xquery-component,XQuery>>
-* VTD-XML
+* https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
 
 Most of these languages is also supported used as
 link:annotation-based-expression-language.html[Annotation Based

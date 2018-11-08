@@ -382,7 +382,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
             @Override
             public void execute(String contextName, SpringCamelContext camelContext)
                 throws Exception {
-                LOG.info("Setting shutdown timeout to [{} {}] on CamelContext with name [{}].", new Object[]{shutdownTimeout, shutdownTimeUnit, contextName});
+                LOG.info("Setting shutdown timeout to [{} {}] on CamelContext with name [{}].", shutdownTimeout, shutdownTimeUnit, contextName);
                 camelContext.getShutdownStrategy().setTimeout(shutdownTimeout);
                 camelContext.getShutdownStrategy().setTimeUnit(shutdownTimeUnit);
             }

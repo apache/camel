@@ -16,8 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +28,7 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.ValidationException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.DelegateProcessor;
+import org.junit.Test;
 
 /**
  * @version 

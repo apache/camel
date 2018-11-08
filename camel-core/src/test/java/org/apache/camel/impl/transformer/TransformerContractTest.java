@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;

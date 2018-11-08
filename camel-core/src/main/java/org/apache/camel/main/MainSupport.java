@@ -177,7 +177,7 @@ public abstract class MainSupport extends ServiceSupport {
                 afterStop();
             } catch (Exception e) {
                 // however while running then just log errors
-                LOG.error("Failed: " + e, e);
+                LOG.error("Failed: {}", e, e);
             }
         }
     }

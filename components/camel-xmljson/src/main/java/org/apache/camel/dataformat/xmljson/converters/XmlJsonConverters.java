@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import net.sf.json.JSON;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;

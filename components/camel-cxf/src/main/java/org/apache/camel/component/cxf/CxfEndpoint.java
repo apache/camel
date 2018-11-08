@@ -127,8 +127,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @UriParam(label = "advanced")
     protected Bus bus;
 
-    private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
-    private volatile boolean createBus;
+    protected volatile boolean createBus;
+    private final AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
     private BindingConfiguration bindingConfig;
     private DataBinding dataBinding;
@@ -1097,7 +1097,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     protected void doStop() throws Exception {
         // we should consider to shutdown the bus if the bus is created by cxfEndpoint
         if (createBus && bus != null) {
-            LOG.info("shutdown the bus ... " + bus);
+            LOG.info("shutdown the bus ... {}", bus);
             getBus().shutdown(false);
             // clean up the bus to create a new one if the endpoint is started again
             bus = null;

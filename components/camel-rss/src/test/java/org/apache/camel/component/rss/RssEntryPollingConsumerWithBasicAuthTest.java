@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.rss;
-import org.junit.Before;
-import org.junit.After;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;

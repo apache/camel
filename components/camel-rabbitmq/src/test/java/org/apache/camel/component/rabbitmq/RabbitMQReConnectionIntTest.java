@@ -20,7 +20,6 @@ import java.net.ConnectException;
 import java.util.concurrent.TimeUnit;
 
 import com.rabbitmq.client.AlreadyClosedException;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;

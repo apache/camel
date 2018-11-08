@@ -16,11 +16,9 @@
  */
 package org.apache.camel.spring.config;
 
-import org.junit.Test;
-
-import org.junit.Assert;
-
 import org.apache.camel.util.IOHelper;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

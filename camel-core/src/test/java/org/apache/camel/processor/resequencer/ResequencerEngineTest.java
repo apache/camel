@@ -15,17 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.resequencer;
-import org.junit.Before;
-import org.junit.After;
-
-import org.junit.Test;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.TestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 

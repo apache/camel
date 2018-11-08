@@ -19,11 +19,11 @@ package org.apache.camel.component.mqtt;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.Executor;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-
 import org.fusesource.hawtdispatch.DispatchQueue;
 import org.fusesource.hawtdispatch.transport.TcpTransport;
 import org.fusesource.mqtt.client.MQTT;
@@ -75,7 +75,7 @@ public class MQTTConfiguration extends MQTT {
     String willTopic;
     @UriParam
     String willMessage;
-    @UriParam(enums = "AtMostOnce,AtLeastOne,ExactlyOnce", defaultValue = "AtMostOnce")
+    @UriParam(enums = "AtMostOnce,AtLeastOnce,ExactlyOnce", defaultValue = "AtMostOnce")
     QoS willQos = QoS.AT_MOST_ONCE;
     @UriParam
     QoS willRetain;
@@ -112,7 +112,7 @@ public class MQTTConfiguration extends MQTT {
     private int sendWaitInSeconds = 5;
     @UriParam
     private boolean byDefaultRetain;
-    @UriParam(enums = "AtMostOnce,AtLeastOne,ExactlyOnce", defaultValue = "AtLeastOnce")
+    @UriParam(enums = "AtMostOnce,AtLeastOnce,ExactlyOnce", defaultValue = "AtLeastOnce")
     private String qualityOfService = QoS.AT_LEAST_ONCE.name();
     private QoS qos = QoS.AT_LEAST_ONCE;
 

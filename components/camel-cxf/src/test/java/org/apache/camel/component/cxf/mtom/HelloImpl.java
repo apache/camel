@@ -24,7 +24,6 @@ import javax.imageio.ImageIO;
 import javax.xml.ws.Holder;
 
 import org.apache.camel.cxf.mtom_feature.Hello;
-
 import org.junit.Assert;
 
 /**

@@ -19,7 +19,6 @@ package org.apache.camel.component.cache;
 import java.io.FileInputStream;
 
 import net.sf.ehcache.CacheManager;
-
 import org.apache.camel.RuntimeCamelException;
 
 public class FileCacheManagerFactory extends CacheManagerFactory {

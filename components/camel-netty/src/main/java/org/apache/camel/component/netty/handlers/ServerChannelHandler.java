@@ -86,7 +86,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     public void messageReceived(final ChannelHandlerContext ctx, final MessageEvent messageEvent) throws Exception {
         Object in = messageEvent.getMessage();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Channel: {} received body: {}", new Object[]{messageEvent.getChannel(), in});
+            LOG.debug("Channel: {} received body: {}", messageEvent.getChannel(), in);
         }
 
         // create Exchange and let the consumer process it

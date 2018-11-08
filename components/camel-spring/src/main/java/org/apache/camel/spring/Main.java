@@ -158,12 +158,12 @@ public class Main extends MainSupport {
             if (additionalApplicationContext == null) {
                 additionalApplicationContext = createAdditionalLocationsFromClasspath();
                 if (additionalApplicationContext != null) {
-                    LOG.debug("Starting Additional ApplicationContext: " + additionalApplicationContext.getId());
+                    LOG.debug("Starting Additional ApplicationContext: {}", additionalApplicationContext.getId());
                     additionalApplicationContext.start();
                 }
             }
 
-            LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getId());
+            LOG.debug("Starting Spring ApplicationContext: {}", applicationContext.getId());
             applicationContext.start();
 
             postProcessContext();
@@ -180,11 +180,11 @@ public class Main extends MainSupport {
     protected void doStop() throws Exception {
         super.doStop();
         if (additionalApplicationContext != null) {
-            LOG.debug("Stopping Additional ApplicationContext: " + additionalApplicationContext.getId());
+            LOG.debug("Stopping Additional ApplicationContext: {}", additionalApplicationContext.getId());
             IOHelper.close(additionalApplicationContext);
         }
         if (applicationContext != null) {
-            LOG.debug("Stopping Spring ApplicationContext: " + applicationContext.getId());
+            LOG.debug("Stopping Spring ApplicationContext: {}", applicationContext.getId());
             IOHelper.close(applicationContext);
         }
     }

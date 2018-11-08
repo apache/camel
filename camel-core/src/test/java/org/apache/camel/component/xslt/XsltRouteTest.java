@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.xslt;
 
-import org.junit.Test;
-
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -28,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class XsltRouteTest extends ContextTestSupport {
     

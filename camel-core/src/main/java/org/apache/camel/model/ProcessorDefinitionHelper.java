@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
@@ -742,7 +743,7 @@ public final class ProcessorDefinitionHelper {
                         }
                         changedProperties.put(name, value);
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
+                            LOG.debug("Changed property [{}] from: {} to: {}", name, value, text);
                         }
                     }
                 }
@@ -787,7 +788,7 @@ public final class ProcessorDefinitionHelper {
                             IntrospectionSupport.setProperty(definition, name, constant);
                             changedProperties.put(name, value);
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, constant});
+                                LOG.debug("Changed property [{}] from: {} to: {}", name, value, constant);
                             }
                         } else {
                             throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");

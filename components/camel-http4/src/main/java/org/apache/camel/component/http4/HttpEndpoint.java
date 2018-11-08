@@ -26,6 +26,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.cookie.CookieHandler;
@@ -34,6 +36,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
@@ -42,6 +45,8 @@ import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.pool.ConnPoolControl;
+import org.apache.http.pool.PoolStats;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "http4,https4", title = "HTTP4,HTTPS4", syntax = "http4:httpUri",
     producerOnly = true, label = "http", lenientProperties = true)
+@ManagedResource(description = "Managed HttpEndpoint")
 public class HttpEndpoint extends HttpCommonEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
@@ -108,6 +114,10 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private int connectionsPerRoute;
     @UriParam(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
+    @UriParam(label = "security", description = "To configure security using SSLContextParameters."
+        + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
+        + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
+    protected SSLContextParameters sslContextParameters;
 
     public HttpEndpoint() {
     }
@@ -189,7 +199,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                 if (scheme == null) {
                     scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
                 }
-                LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
+                LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", host, port, scheme);
                 HttpHost proxy = new HttpHost(host, port, scheme);
                 clientBuilder.setProxy(proxy);
             }
@@ -396,6 +406,19 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.x509HostnameVerifier = x509HostnameVerifier;
     }
 
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters.
+     * Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent.
+     * If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
     public int getConnectionRequestTimeout() {
         return connectionRequestTimeout;
     }
@@ -453,6 +476,67 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setSocketTimeout(int socketTimeout) {
         this.socketTimeout = socketTimeout;
+    }
+
+    @ManagedAttribute(description = "Maximum number of allowed persistent connections")
+    public int getClientConnectionsPoolStatsMax() {
+        ConnPoolControl pool = null;
+        if (clientConnectionManager instanceof ConnPoolControl) {
+            pool = (ConnPoolControl) clientConnectionManager;
+        }
+        if (pool != null) {
+            PoolStats stats = pool.getTotalStats();
+            if (stats != null) {
+                return stats.getMax();
+            }
+        }
+        return -1;
+    }
+
+    @ManagedAttribute(description = "Number of available idle persistent connections")
+    public int getClientConnectionsPoolStatsAvailable() {
+        ConnPoolControl pool = null;
+        if (clientConnectionManager instanceof ConnPoolControl) {
+            pool = (ConnPoolControl) clientConnectionManager;
+        }
+        if (pool != null) {
+            PoolStats stats = pool.getTotalStats();
+            if (stats != null) {
+                return stats.getAvailable();
+            }
+        }
+        return -1;
+    }
+
+    @ManagedAttribute(description = "Number of persistent connections tracked by the connection manager currently being used to execute requests")
+    public int getClientConnectionsPoolStatsLeased() {
+        ConnPoolControl pool = null;
+        if (clientConnectionManager instanceof ConnPoolControl) {
+            pool = (ConnPoolControl) clientConnectionManager;
+        }
+        if (pool != null) {
+            PoolStats stats = pool.getTotalStats();
+            if (stats != null) {
+                return stats.getLeased();
+            }
+        }
+        return -1;
+    }
+
+    @ManagedAttribute(description = "Number of connection requests being blocked awaiting a free connection."
+        + " This can happen only if there are more worker threads contending for fewer connections.")
+    public int getClientConnectionsPoolStatsPending() {
+        ConnPoolControl pool = null;
+        if (clientConnectionManager instanceof ConnPoolControl) {
+            pool = (ConnPoolControl) clientConnectionManager;
+        }
+        if (pool != null) {
+            PoolStats stats = pool.getTotalStats();
+            if (stats != null) {
+                return stats.getPending();
+            }
+        }
+        return -1;
     }
 
 }

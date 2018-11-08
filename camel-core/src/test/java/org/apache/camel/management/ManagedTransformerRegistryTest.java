@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

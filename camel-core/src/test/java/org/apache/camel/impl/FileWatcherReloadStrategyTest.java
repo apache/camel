@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import org.junit.Test;
-
 import java.io.File;
 import java.util.EventObject;
 import java.util.concurrent.CountDownLatch;
@@ -29,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.event.RouteAddedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.FileUtil;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 

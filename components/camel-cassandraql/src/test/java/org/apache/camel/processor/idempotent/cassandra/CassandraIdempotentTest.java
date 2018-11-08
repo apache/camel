@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.idempotent.cassandra;
-import org.junit.After;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cassandra.BaseCassandraTest;
 import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
 import org.junit.Test;
 
 /**

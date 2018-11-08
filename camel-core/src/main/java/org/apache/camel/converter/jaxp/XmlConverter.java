@@ -1103,7 +1103,7 @@ public class XmlConverter {
                     factory.setFeature(uri, value);
                     features.add("feature " + uri + " value " + value);
                 } catch (ParserConfigurationException e) {
-                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", new Object[]{uri, value, e});
+                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", uri, value, e);
                 }
             }
         }
@@ -1116,7 +1116,7 @@ public class XmlConverter {
                 }
                 featureString.append(feature);
             }
-            LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString.toString());
+            LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString);
         }
 
     }
@@ -1212,7 +1212,7 @@ public class XmlConverter {
         try {
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (TransformerConfigurationException e) {
-            LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
+            LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.", javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e);
         }
         factory.setErrorListener(new XmlErrorListener());
         configureSaxonTransformerFactory(factory);
@@ -1265,7 +1265,7 @@ public class XmlConverter {
         try {
             sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
         } catch (Exception e) {
-            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
+            LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e);
         }
         try {
             sfactory.setFeature("http://xml.org/sax/features/external-general-entities", false);

@@ -48,4 +48,4 @@ And in XML:
 For more details see
 
 * link:message.html[Message]
-* link:message-endpoint.html[Message Endpoint]
+* <<messageEndpoint-eip,Message Endpoint>>

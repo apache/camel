@@ -17,6 +17,7 @@
 package org.apache.camel.api.management.mbean;
 
 import java.util.Map;
+
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.ComponentVerifier;

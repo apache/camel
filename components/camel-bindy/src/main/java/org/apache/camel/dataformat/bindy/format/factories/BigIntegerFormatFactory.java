@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy.format.factories;
 
 import java.math.BigInteger;
+
 import org.apache.camel.dataformat.bindy.Format;
 import org.apache.camel.dataformat.bindy.FormattingOptions;
 import org.apache.camel.dataformat.bindy.format.AbstractNumberFormat;

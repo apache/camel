@@ -19,7 +19,6 @@ package org.apache.camel.dataformat.xmljson;
 import java.util.List;
 
 import net.sf.json.JSONException;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;

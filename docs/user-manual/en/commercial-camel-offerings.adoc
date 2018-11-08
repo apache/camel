@@ -1,0 +1,126 @@
+[[CommercialCamelOfferings-CommercialCamelOfferings]]
+=== Commercial Camel Offerings
+
+Apache Camel is a widely used project. As such, several companies have
+built products and services around Camel. This page is dedicated to
+providing descriptions of those offerings and links to more information.
+Companies are definitely encouraged to update this page directly or
+link:mailing-lists.adoc[send a mail] to the Camel PMC with a description
+of your offerings and we can update the page. The products and services
+listed on this page are provided for information use only to our users.
+The Camel PMC does not endorse or recommend any of the products or
+services on this page. See below for information about what is
+appropriate to add to the page.
+
+[[CommercialCamelOfferings-Code-House]]
+==== http://code-house.org[Code-House]
+
+http://code-house.org[Code-House] is european service provider with own
+training programs covering Apache middleware projects (Camel,
+ServiceMix, ActiveMQ) on development and system operations level. We
+also offer dedicated management tool.
+
+[[CommercialCamelOfferings-CyberlogicConsulting]]
+==== http://www.cyberlogic.ch[Cyberlogic Consulting]
+
+http://www.cyberlogic.ch[Cyberlogic Consulting] is a Swiss based
+consultancy. We pride ourselves in providing Swiss quality services
+including enterprise consulting, coding, systems integration, training
+and support for Apache Camel and the related Apache Open Source
+Software. We specialize in helping our clients to realize new projects
+and support the delivery of the project from end to end.
+
+[[CommercialCamelOfferings-Evosent]]
+==== http://evosent.com/?utm_source=apache&utm_medium=web&utm_campaign=commercial_support[Evosent]
+
+http://evosent.com/?utm_source=apache&utm_medium=web&utm_campaign=commercial_support[Evosent] is
+a boutique consultancy based in Europe. It specialises in open source
+integration middleware, messaging and big data: Apache Camel,
+ServiceMix, Karaf, ActiveMQ, Elasticsearch (+ Kibana + Logstash), Docker
+and Kubernetes.  Evosent is managed by a committer and PMC member at the
+Apache Camel and Apache Ignite projects. Amongst it services are: ninja
+consulting and support; workshops, mentoring and training; proof of
+concept development; and sophisticated engineering services.
+
+[[CommercialCamelOfferings-GOAPPO]]
+==== https://www.goappo.com[GOAPPO]
+
+https://www.goappo.com[GOAPPO] embeds Apache Camel at design, testing
+and runtime. You start by composing ETLs using the application builder.
+You test ETLs instantly on your machine. You bundle ETLs with your
+application.
+
+[[CommercialCamelOfferings-MediaDriver]]
+==== http://mediadriver.com[Media Driver]
+
+Media Driver provides consulting services and management tools for
+Apache Camel, Red Hat JBoss Fuse and the Apache Integration stack
+(ActiveMQ, CXF, Karaf, ServiceMix, etc) for both the commercial and
+public sector. We bring a full suite of project delivery services
+including business and technical analysis, proof of concepts,
+architectural guidance, best practice integration, and project
+management. Media Driver offers training classes for developers and
+administrators, as well as middleware management software.
+
+[[CommercialCamelOfferings-Middleware360]]
+==== http://www.middleware360.com/[Middleware360]
+
+http://www.middleware360.com/[Middleware360] Enterprise Integration
+consulting services.
+
+[[CommercialCamelOfferings-OpenLogic]]
+==== http://www.openlogic.com/[OpenLogic]
+
+http://www.openlogic.com/[OpenLogic] provide support.
+
+[[CommercialCamelOfferings-RedHat]]
+==== https://www.redhat.com/en/technologies/jboss-middleware/fuse[Red Hat]
+
+https://www.redhat.com/en/technologies/jboss-middleware/fuse[Red Hat] offers
+http://www.redhat.com/en/technologies/jboss-middleware/fuse[Fuse],
+an enterprise integration platform based on Apache Camel and other
+open source integration projects, with developer and production support.
+In addition to enterprise support, Red Hat provides
+https://www.redhat.com/en/services/training/courses-by-curriculum#Red-Hat-JBoss-Fuse-BRMS-and-more[training],
+https://www.redhat.com/en/services/consulting[consulting], and
+https://developers.redhat.com/products/fuse/overview/[a developer community].
+
+[[CommercialCamelOfferings-SavoirTechnologiesInc]]
+==== http://www.savoirtech.com[Savoir Technologies, Inc]
+
+http://www.savoirtech.com[Savoir Technologies, Inc] provides enterprise
+consulting, training and support for Camel and a host of other Apache
+service containers. Savoir can provide best practice mentoring for
+developing with Camel, as well as architectural/design reviews,
+troubleshooting and SOA infrastructure implementations.
+
+[[CommercialCamelOfferings-TalendInc]]
+==== http://www.talend.com[Talend, Inc]
+
+http://www.talend.com[Talend, Inc] provides enterprise level services,
+training and support for Apache Camel and their
+http://www.talend.com/products/esb-standard-edition.php[Talend ESB]
+product which is a repackaging of Apache Camel including a full,
+pre-configured OSGi runtime container.
+
+[[CommercialCamelOfferings-TouK]]
+==== http://touk.pl[TouK]
+
+http://touk.pl[TouK] provides enterprise integration consulting and
+system integration services as well as support for Apache Camel and
+Apache Servicemix. Their developers were involved in camel-activiti
+development.
+
+[[CommercialCamelOfferings-Policyforadditionstothispage]]
+==== Policy for additions to this page
+
+Companies are free to add information about their products and services
+to this page (please keep entries in alphabetical order). The
+information must be factual and informational in nature and not be a
+marketing statement. Statements that promote your products and services
+over other offerings on the page will not be tolerated and will be
+removed. Such marketing statements can be added to your own pages on
+your own site, but not here.
+
+When in doubt, email the Camel dev list (see
+link:mailing-lists.adoc[Mailing Lists]) and ask. We'd be happy to help.

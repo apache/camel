@@ -162,7 +162,6 @@ The component supports 139 options, which are listed below.
 | *camel.springboot.shutdown-routes-in-reverse-order* | Sets whether routes should be shutdown in reverse or the same order as they where started. | true | Boolean
 | *camel.springboot.shutdown-suppress-logging-on-timeout* | Whether Camel should try to suppress logging during shutdown and timeout was triggered, meaning forced shutdown is happening. And during forced shutdown we want to avoid logging errors/warnings et all in the logs as a side-effect of the forced timeout. Notice the suppress is a best effort as there may still be some logs coming from 3rd party libraries and whatnot, which Camel cannot control. This option is default false. | false | Boolean
 | *camel.springboot.shutdown-timeout* | Timeout in seconds to graceful shutdown Camel. | 300 | Integer
-| *camel.springboot.stream-caching* | Sets whether stream caching is enabled or not (deprecated use stream-caching-enabled instead). Default is false. | false | Boolean
 | *camel.springboot.stream-caching-any-spool-rules* | Sets whether if just any of the org.apache.camel.spi.StreamCachingStrategy.SpoolRule rules returns true then shouldSpoolCache(long) returns true, to allow spooling to disk. If this option is false, then all the org.apache.camel.spi.StreamCachingStrategy.SpoolRule must return true. The default value is false which means that all the rules must return true. | false | Boolean
 | *camel.springboot.stream-caching-buffer-size* | Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches. The default size is 4096. | 0 | Integer
 | *camel.springboot.stream-caching-enabled* | Sets whether stream caching is enabled or not. Default is false. | false | Boolean
@@ -192,7 +191,6 @@ The component supports 139 options, which are listed below.
 | *camel.springboot.type-conversion* | Enables enhanced Camel/Spring type conversion. | true | Boolean
 | *camel.springboot.use-breadcrumb* | Set whether breadcrumb is enabled. The default value is true. | true | Boolean
 | *camel.springboot.use-data-type* | Whether to enable using data type on Camel messages. Data type are automatic turned on if one ore more routes has been explicit configured with input and output types. Otherwise data type is default off. | false | Boolean
-| *camel.springboot.use-m-d-c-logging* | To turn on MDC logging (deprecated use use-mdc-logging instead) | false | Boolean
 | *camel.springboot.use-mdc-logging* | To turn on MDC logging | false | Boolean
 | *camel.springboot.xml-rests* | Directory to scan for adding additional XML rests. You can turn this off by setting the value to false. | classpath:camel-rest/*.xml | String
 | *camel.springboot.xml-routes* | Directory to scan for adding additional XML routes. You can turn this off by setting the value to false. | classpath:camel/*.xml | String
@@ -225,6 +223,8 @@ The component supports 139 options, which are listed below.
 | *management.endpoint.camelroutes.enabled* | To turn on or off information about Camel Routes via actuator endpoint. | true | Boolean
 | *management.endpoint.camelroutes.read-only* | Whether Camel Routes actuator is in read-only mode. If not in read-only mode then operations to start/stop routes would be enabled. | true | Boolean
 | *management.info.camel.enabled* | Whether to enable Camel info. | true | Boolean
+| *camel.springboot.stream-caching* | Sets whether stream caching is enabled or not (deprecated use stream-caching-enabled instead). Default is false. | false | Boolean
+| *camel.springboot.use-m-d-c-logging* | To turn on MDC logging (deprecated use use-mdc-logging instead) | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -575,4 +575,56 @@ The Rest-DSL XML files should be Camel XML rests (not CamelContext) such as
      </delete>
   </rest>
 </rests>
+----
+
+[[SpringBoot-Testing]]
+=== Testing
+For testing, Maven users will need to add the following dependencies to their `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <version>${spring-boot.version}</version> <!-- Use the same version as your Spring Boot version -->
+    <scope>test</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-spring</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+    <scope>test</scope>
+</dependency>
+----
+
+To test a Camel Spring Boot application, annotate your test class(es) with
+`@RunWith(CamelSpringBootRunner.class)`. This brings Camel's Spring Test
+support to your application, so that you can write tests using
+https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-testing.html[Spring Boot test conventions].
+
+To get the `CamelContext` or `ProducerTemplate`, you can inject them into the class in the normal Spring manner, using `@Autowired`.
+
+You can also use link:../../../../../docs/user-manual/en/spring-testing.adoc#camel-enhanced-spring-test[Camel Spring test annotations] to configure tests declaratively. This example uses the `@MockEndpoints` annotation to auto-mock an endpoint:
+
+[source,java]
+----
+@RunWith(CamelSpringBootRunner.class)
+@SpringBootTest
+@MockEndpoints("direct:end")
+public class MyApplicationTest {
+
+    @Autowired
+    private ProducerTemplate template;
+
+    @EndpointInject(uri = "mock:direct:end")
+    MockEndpoint mock;
+
+    @Test
+    public void testReceive() throws Exception {
+        mock.expectedBodiesReceived("Hello");
+        template.sendBody("direct:start", "Hello");
+        mock.assertIsSatisfied();
+    }
+
+}
 ----

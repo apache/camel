@@ -42,6 +42,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**

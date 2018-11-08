@@ -16,12 +16,11 @@
  */
 package org.apache.camel.processor.async;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test to verify that error handling using threads() also works as expected.

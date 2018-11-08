@@ -21,6 +21,7 @@ import com.amazonaws.services.mq.model.ConfigurationId;
 import com.amazonaws.services.mq.model.CreateBrokerResult;
 import com.amazonaws.services.mq.model.DeleteBrokerResult;
 import com.amazonaws.services.mq.model.DeploymentMode;
+import com.amazonaws.services.mq.model.DescribeBrokerResult;
 import com.amazonaws.services.mq.model.ListBrokersResult;
 import com.amazonaws.services.mq.model.UpdateBrokerResult;
 
@@ -128,6 +129,27 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         
         assertMockEndpointsSatisfied();
         UpdateBrokerResult resultGet = (UpdateBrokerResult) exchange.getIn().getBody();
+        assertEquals(resultGet.getBrokerId(), "1");
+    }
+    
+    @Test
+    public void mqDescribeBrokerTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:describeBroker", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(MQConstants.OPERATION, MQOperations.describeBroker);
+                exchange.getIn().setHeader(MQConstants.BROKER_ID, "1");
+                ConfigurationId cId = new ConfigurationId();
+                cId.setId("1");
+                cId.setRevision(12);
+                exchange.getIn().setHeader(MQConstants.CONFIGURATION_ID, cId);
+            }
+        });
+        
+        assertMockEndpointsSatisfied();
+        DescribeBrokerResult resultGet = (DescribeBrokerResult) exchange.getIn().getBody();
         assertEquals(resultGet.getBrokerId(), "1");
     }
     

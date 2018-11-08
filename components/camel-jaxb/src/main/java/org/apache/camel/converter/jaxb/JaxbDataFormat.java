@@ -533,7 +533,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
                 LOG.debug("Creating JAXBContext with contextPath: " + contextPath + " and ApplicationContextClassLoader: " + cl);
                 return JAXBContext.newInstance(contextPath, cl);
             } else {
-                LOG.debug("Creating JAXBContext with contextPath: " + contextPath);
+                LOG.debug("Creating JAXBContext with contextPath: {}", contextPath);
                 return JAXBContext.newInstance(contextPath);
             }
         } else {

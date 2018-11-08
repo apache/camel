@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.disruptor.vm;
 
-import org.junit.Test;
-
 import java.util.Iterator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.disruptor.DisruptorComponent;
 import org.apache.camel.component.disruptor.DisruptorReference;
+import org.junit.Test;
 
 /**
  *

@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.test;
 
-import org.junit.Test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class TestSedaTest extends ContextTestSupport {
 

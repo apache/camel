@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.bindy;
 
 import java.util.Locale;
+
 import org.apache.camel.dataformat.bindy.annotation.BindyConverter;
 import org.apache.camel.util.ObjectHelper;
 

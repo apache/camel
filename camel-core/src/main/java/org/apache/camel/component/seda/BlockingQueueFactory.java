@@ -17,6 +17,7 @@
 package org.apache.camel.component.seda;
 
 import java.util.concurrent.BlockingQueue;
+
 import org.apache.camel.Exchange;
 
 /**

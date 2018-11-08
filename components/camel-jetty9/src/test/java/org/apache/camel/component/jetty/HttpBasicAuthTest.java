@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;

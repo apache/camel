@@ -44,9 +44,9 @@ import org.apache.camel.Component;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.properties.PropertiesComponent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.apache.camel.util.ObjectHelper.isAssignableFrom;
 
 /**
@@ -134,7 +134,7 @@ public final class IntrospectionSupport {
     public static void stop() {
         if (LOG.isDebugEnabled() && CACHE instanceof LRUCache) {
             LRUCache localCache = (LRUCache) IntrospectionSupport.CACHE;
-            LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", new Object[]{localCache.size(), localCache.getHits(), localCache.getMisses(), localCache.getEvicted()});
+            LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", localCache.size(), localCache.getHits(), localCache.getMisses(), localCache.getEvicted());
         }
         CACHE.clear();
 
@@ -387,14 +387,14 @@ public final class IntrospectionSupport {
 
     public static Method getPropertyGetter(Class<?> type, String propertyName) throws NoSuchMethodException {
         if (isPropertyIsGetter(type, propertyName)) {
-            return type.getMethod("is" + StringHelper.capitalize(propertyName));
+            return type.getMethod("is" + StringHelper.capitalize(propertyName, true));
         } else {
-            return type.getMethod("get" + StringHelper.capitalize(propertyName));
+            return type.getMethod("get" + StringHelper.capitalize(propertyName, true));
         }
     }
 
     public static Method getPropertySetter(Class<?> type, String propertyName) throws NoSuchMethodException {
-        String name = "set" + StringHelper.capitalize(propertyName);
+        String name = "set" + StringHelper.capitalize(propertyName, true);
         for (Method method : type.getMethods()) {
             if (isSetter(method) && method.getName().equals(name)) {
                 return method;
@@ -405,7 +405,7 @@ public final class IntrospectionSupport {
 
     public static boolean isPropertyIsGetter(Class<?> type, String propertyName) {
         try {
-            Method method = type.getMethod("is" + StringHelper.capitalize(propertyName));
+            Method method = type.getMethod("is" + StringHelper.capitalize(propertyName, true));
             if (method != null) {
                 return method.getReturnType().isAssignableFrom(boolean.class) || method.getReturnType().isAssignableFrom(Boolean.class);
             }
@@ -566,7 +566,7 @@ public final class IntrospectionSupport {
                             if (SECRETS.matcher(name).find()) {
                                 val = "xxxxxx";
                             }
-                            LOG.trace("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, val});
+                            LOG.trace("Configured property: {} on bean: {} with value: {}", name, target, val);
                         }
                         return true;
                     } else {
@@ -581,7 +581,7 @@ public final class IntrospectionSupport {
                             if (SECRETS.matcher(name).find()) {
                                 val = "xxxxxx";
                             }
-                            LOG.trace("Configured property: {} on bean: {} with value: {}", new Object[]{name, target, val});
+                            LOG.trace("Configured property: {} on bean: {} with value: {}", name, target, val);
                         }
                         return true;
                     }
@@ -688,7 +688,7 @@ public final class IntrospectionSupport {
         Set<Method> candidates = new LinkedHashSet<>();
 
         // Build the method name.
-        name = "set" + StringHelper.capitalize(name);
+        name = "set" + StringHelper.capitalize(name, true);
         while (clazz != Object.class) {
             // Since Object.class.isInstance all the objects,
             // here we just make sure it will be add to the bottom of the set.

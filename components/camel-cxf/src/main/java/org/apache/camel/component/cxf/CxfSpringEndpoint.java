@@ -248,6 +248,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         applicationContext = ctx;
 
         if (bus == null) {
+            createBus = true;
             bus = BusWiringBeanFactoryPostProcessor.addDefaultBus(ctx);
         }
     }

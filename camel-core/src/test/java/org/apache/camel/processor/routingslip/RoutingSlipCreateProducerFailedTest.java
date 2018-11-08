@@ -16,12 +16,11 @@
  */
 package org.apache.camel.processor.routingslip;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class RoutingSlipCreateProducerFailedTest extends ContextTestSupport {
 

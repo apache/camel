@@ -15,13 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.bind;
-import org.junit.Before;
-
-import org.junit.Test;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.Assert;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.BeanInfo;
@@ -30,6 +25,9 @@ import org.apache.camel.component.bean.DefaultParameterMappingStrategy;
 import org.apache.camel.component.bean.MethodInvocation;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @version 
