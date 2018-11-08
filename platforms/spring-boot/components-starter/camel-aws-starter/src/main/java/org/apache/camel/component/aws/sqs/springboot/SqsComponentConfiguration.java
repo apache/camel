@@ -159,6 +159,11 @@ public class SqsComponentConfiguration
          */
         private Integer delaySeconds;
         /**
+         * Define if you want to apply delaySeconds option to the queue or on
+         * single messages
+         */
+        private Boolean delayQueue = false;
+        /**
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          */
@@ -319,6 +324,14 @@ public class SqsComponentConfiguration
 
         public void setDelaySeconds(Integer delaySeconds) {
             this.delaySeconds = delaySeconds;
+        }
+
+        public Boolean getDelayQueue() {
+            return delayQueue;
+        }
+
+        public void setDelayQueue(Boolean delayQueue) {
+            this.delayQueue = delayQueue;
         }
 
         public Integer getMaximumMessageSize() {
