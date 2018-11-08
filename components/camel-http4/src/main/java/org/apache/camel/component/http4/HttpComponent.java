@@ -311,9 +311,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         } else {
             setEndpointHeaderFilterStrategy(endpoint);
         }
-        endpoint.setBinding(getHttpBinding());
+        endpoint.setHttpBinding(getHttpBinding());
         if (httpBinding != null) {
-            endpoint.setBinding(httpBinding);
+            endpoint.setHttpBinding(httpBinding);
         }
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
