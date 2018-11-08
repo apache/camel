@@ -26,6 +26,8 @@ import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchRequest;
+import org.elasticsearch.action.search.MultiSearchResponse.Item;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.search.SearchHits;
 import org.junit.Test;
@@ -112,6 +114,30 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         SearchHits response = template.requestBody("direct:search", req, SearchHits.class);
         assertNotNull("response should not be null", response);
         assertEquals("response hits should be == 0", 0, response.totalHits);
+    }
+    
+    @Test
+    public void testMultiSearch() throws Exception {
+        //first, Index a value
+        Map<String, String> map = createIndexedData();
+        String indexId = template.requestBody("direct:index", map, String.class);
+        assertNotNull("indexId should be set", indexId);
+
+        //now, verify GET succeeded
+        GetResponse getResponse = template.requestBody("direct:get", indexId, GetResponse.class);
+        assertNotNull("response should not be null", getResponse);
+        assertNotNull("response source should not be null", getResponse.getSource());
+        //now, verify GET succeeded
+        SearchRequest req = new SearchRequest();
+        req.indices("twitter");
+        req.types("tweet");
+        SearchRequest req1 = new SearchRequest();
+        req.indices("twitter");
+        req.types("tweets");
+        MultiSearchRequest request = new MultiSearchRequest().add(req1).add(req);
+        Item[] response = template.requestBody("direct:search", request, Item[].class);
+        assertNotNull("response should not be null", response);
+        assertEquals("response should be == 2", 2, response.length);
     }
     
     @Test
@@ -296,6 +322,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
                 from("direct:multiget").to("elasticsearch-rest://elasticsearch?operation=MultiGet&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:delete").to("elasticsearch-rest://elasticsearch?operation=Delete&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:search").to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:multiSearch").to("elasticsearch-rest://elasticsearch?operation=MultiSearch&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:update").to("elasticsearch-rest://elasticsearch?operation=Update&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:exists").to("elasticsearch-rest://elasticsearch?operation=Exists&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
             }

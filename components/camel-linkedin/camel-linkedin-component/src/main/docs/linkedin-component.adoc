@@ -89,14 +89,16 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+==== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *accessToken* (common) | LinkedIn access token to avoid username and password login. |  | String
 | *clientId* (common) | LinkedIn application client ID |  | String
 | *clientSecret* (common) | LinkedIn application client secret |  | String
+| *expiryTime* (common) | LinkedIn access token expiry time in milliseconds since Unix Epoch, default is 60 days in the future. |  | Long
 | *httpParams* (common) | Custom HTTP params, for example proxy host and port, use constants from AllClientPNames |  | Map
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *lazyAuth* (common) | Flag to enable/disable lazy OAuth, default is true. when enabled, OAuth token retrieval or generation is not done until the first REST call | true | boolean
@@ -115,16 +117,18 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 13 options, which are listed below.
+The component supports 15 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.linkedin.configuration.access-token* | LinkedIn access token to avoid username and password login. |  | String
 | *camel.component.linkedin.configuration.api-name* | What kind of operation to perform |  | LinkedInApiName
 | *camel.component.linkedin.configuration.client-id* | LinkedIn application client ID |  | String
 | *camel.component.linkedin.configuration.client-secret* | LinkedIn application client secret |  | String
+| *camel.component.linkedin.configuration.expiry-time* | LinkedIn access token expiry time in milliseconds since Unix Epoch, default is 60 days in the future. |  | Long
 | *camel.component.linkedin.configuration.http-params* | Custom HTTP params, for example proxy host and port, use constants from AllClientPNames |  | Map
 | *camel.component.linkedin.configuration.lazy-auth* | Flag to enable/disable lazy OAuth, default is true. when enabled, OAuth token retrieval or generation is not done until the first REST call | true | Boolean
 | *camel.component.linkedin.configuration.method-name* | What sub operation to use for the selected operation |  | String

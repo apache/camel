@@ -173,7 +173,6 @@ The component supports 18 options, which are listed below.
 | *camel.component.disruptor-vm.default-producer-type* | To configure the default value for DisruptorProducerType The default value is Multi. |  | DisruptorProducerType
 | *camel.component.disruptor-vm.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor-vm.enabled* | Enable disruptor-vm component | true | Boolean
-| *camel.component.disruptor-vm.queue-size* | To configure the ring buffer size |  | Integer
 | *camel.component.disruptor-vm.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.disruptor.buffer-size* | To configure the ring buffer size | 1024 | Integer
 | *camel.component.disruptor.default-block-when-full* | To configure the default value for block when full The default value is true. | true | Boolean
@@ -182,8 +181,9 @@ The component supports 18 options, which are listed below.
 | *camel.component.disruptor.default-producer-type* | To configure the default value for DisruptorProducerType The default value is Multi. |  | DisruptorProducerType
 | *camel.component.disruptor.default-wait-strategy* | To configure the default value for DisruptorWaitStrategy The default value is Blocking. |  | DisruptorWaitStrategy
 | *camel.component.disruptor.enabled* | Enable disruptor component | true | Boolean
-| *camel.component.disruptor.queue-size* | To configure the ring buffer size |  | Integer
 | *camel.component.disruptor.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.disruptor-vm.queue-size* | To configure the ring buffer size |  | Integer
+| *camel.component.disruptor.queue-size* | To configure the ring buffer size |  | Integer
 |===
 // spring-boot-auto-configure options: END
 

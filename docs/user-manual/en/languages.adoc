@@ -29,8 +29,7 @@ The following is the list of currently supported languages:
 * <<mvel-language,Mvel>>
 * <<ognl-language,OGNL>>
 * <<ref-language,Ref Language>>
-* <<exchangeproperty-language,ExchangeProperty>> /
-  <<property-language,Property>>
+* <<exchangeproperty-language,ExchangeProperty>> / <<property-language,Property>>
 * <<scripting-languages-language,Scripting Languages>> such as:
 ** <<beanshell-language,BeanShell>>
 ** <<javascript-language,JavaScript>>

@@ -57,6 +57,10 @@ public class LinkedInConfiguration {
     @UriParam
     private OAuthSecureStorage secureStorage;
     @UriParam
+    private String accessToken;
+    @UriParam
+    private Long expiryTime;
+    @UriParam
     private String clientId;
     @UriParam
     private String clientSecret;
@@ -115,6 +119,28 @@ public class LinkedInConfiguration {
 
     public OAuthSecureStorage getSecureStorage() {
         return secureStorage;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    /**
+     * LinkedIn access token to avoid username and password login.
+     */
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public Long getExpiryTime() {
+        return expiryTime;
+    }
+
+    /**
+     * LinkedIn access token expiry time in milliseconds since Unix Epoch, default is 60 days in the future.
+     */
+    public void setExpiryTime(Long expiryTime) {
+        this.expiryTime = expiryTime;
     }
 
     /**

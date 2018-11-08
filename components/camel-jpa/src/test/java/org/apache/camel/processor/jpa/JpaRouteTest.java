@@ -39,7 +39,7 @@ public class JpaRouteTest extends AbstractJpaTest {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        ValueBuilder header = mock.message(0).header(JpaConstants.ENTITYMANAGER);
+        ValueBuilder header = mock.message(0).header(JpaConstants.ENTITY_MANAGER);
         header.isNotNull();
         header.isInstanceOf(EntityManager.class);
 

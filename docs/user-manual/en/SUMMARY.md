@@ -59,10 +59,9 @@
 * [Camel Maven Archetypes]
 * [Creating a new Spring based Camel Route]
 * [Camel JMX]
-* [How to run Camel in an OSGi container]
-* [Using OSGi blueprint with Camel]
+* [Using OSGi blueprint with Camel](using-osgi-blueprint-with-camel.adoc)
 * [Working with Camel and SCR]
-* Working with REST and [Rest DSL]
+* Working with REST and [Rest DSL]
 
 ### [Examples](examples.adoc)
 
@@ -85,7 +84,7 @@
 * [CEP](cep.adoc)
 * Clustering and loadbalancing
 * [Component](component.adoc)
-* ComponentConfiguration
+* [ComponentConfiguration](componentconfiguration.adoc)
 * [Data Format](data-format.adoc)
 * [Debugger](debugger.adoc)
 * [Delay Interceptor](delay-interceptor.adoc)
@@ -94,12 +93,12 @@
 * [DSL](dsl.adoc)
 * [Endpoint](endpoint.adoc)
 * Endpoint Annotations
-* EndpointCompleter
+* [EndpointCompleter](endpoint-completer.adoc)
 * [Error Handler](error-handler.adoc)
 * [Exchange](exchange.adoc)
 * [Exchange Pattern](exchange-pattern.adoc)
 * [Expression](expression.adoc)
-* HTTP-Session Handling
+* [HTTP-Session Handling](http-session-handling.adoc)
 * [Injector](injector.adoc)
 * [Intercept](intercept.adoc)
 * [Inversion of Control with Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
@@ -113,14 +112,14 @@
 * [RouteBuilder](route-builder.adoc)
 * [RoutePolicy](route-policy.adoc)
 * [Routes](routes.adoc)
-* ServicePool
+* [ServicePool](servicepool.adoc)
 * Stream caching
-* Threading Model
+* [Threading Model](threading-model.adoc)
 * ToAsync
 * Tracer
 * [Transport](transport.adoc)
 * [Type Converter](type-converter.adoc)
-* URIs
+* [URIs](uris.adoc)
 * [UuidGenerator](uuidgenerator.adoc)
 * XML Configuration
 
@@ -341,6 +340,7 @@
 	* [Nats](nats-component.adoc)
 	* [Netty4](netty4-component.adoc)
 	* [Netty4 HTTP](netty4-http-component.adoc)
+	* [nsq](nsq-component.adoc)
 	* [Olingo2](olingo2-component.adoc)
 	* [Olingo4](olingo4-component.adoc)
 	* [OPC UA Client](milo-client-component.adoc)
@@ -475,6 +475,8 @@
 	* [Boon](boon-dataformat.adoc)
 	* [Crypto (Java Cryptographic Extension)](crypto-dataformat.adoc)
 	* [CSV](csv-dataformat.adoc)
+	* [FHIR JSon](fhirJson-dataformat.adoc)
+	* [FHIR XML](fhirXml-dataformat.adoc)
 	* [Flatpack](flatpack-dataformat.adoc)
 	* [GZip](gzip-dataformat.adoc)
 	* [HL7](hl7-dataformat.adoc)
@@ -539,7 +541,7 @@
 * [Contributing](../../../CONTRIBUTING.md)
 * [Mailing Lists](mailing-lists.adoc)
 * Gitter / IRC Chat
-* User Stories
+* [User Stories](user-stories.adoc)
 * News
 * Articles
 * Site

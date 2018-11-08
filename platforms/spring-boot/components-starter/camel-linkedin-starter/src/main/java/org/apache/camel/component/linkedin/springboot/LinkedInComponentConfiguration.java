@@ -97,6 +97,15 @@ public class LinkedInComponentConfiguration
          */
         private OAuthSecureStorage secureStorage;
         /**
+         * LinkedIn access token to avoid username and password login.
+         */
+        private String accessToken;
+        /**
+         * LinkedIn access token expiry time in milliseconds since Unix Epoch,
+         * default is 60 days in the future.
+         */
+        private Long expiryTime;
+        /**
          * LinkedIn application client ID
          */
         private String clientId;
@@ -165,6 +174,22 @@ public class LinkedInComponentConfiguration
 
         public void setSecureStorage(OAuthSecureStorage secureStorage) {
             this.secureStorage = secureStorage;
+        }
+
+        public String getAccessToken() {
+            return accessToken;
+        }
+
+        public void setAccessToken(String accessToken) {
+            this.accessToken = accessToken;
+        }
+
+        public Long getExpiryTime() {
+            return expiryTime;
+        }
+
+        public void setExpiryTime(Long expiryTime) {
+            this.expiryTime = expiryTime;
         }
 
         public String getClientId() {

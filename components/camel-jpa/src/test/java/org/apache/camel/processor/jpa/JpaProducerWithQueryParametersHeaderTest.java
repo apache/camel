@@ -54,13 +54,12 @@ public class JpaProducerWithQueryParametersHeaderTest extends Assert {
         Map<String, Object> params = new HashMap<>();
         params.put("custName", "${body}");
 
-        Object answer = template.requestBodyAndHeader("direct:namedQuery", "Willem", JpaConstants.JPA_PARAMETERS_HEADER, params);
-        List list = (List)answer;
+        List list = template.requestBodyAndHeader("direct:namedQuery", "Willem", JpaConstants.JPA_PARAMETERS_HEADER, params, List.class);
         assertEquals(1, list.size());
         assertEquals("Willem", ((Customer)list.get(0)).getName());
 
-        answer = template.requestBody("direct:deleteCustomers", "");
-        assertEquals(2, ((Integer)answer).intValue());
+        int integer = template.requestBody("direct:deleteCustomers", null, int.class);
+        assertEquals(2, integer);
     }
 
     @Before

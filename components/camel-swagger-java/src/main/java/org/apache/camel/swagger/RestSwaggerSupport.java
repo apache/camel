@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -375,7 +374,7 @@ public class RestSwaggerSupport {
         String proto = (String) headers.get(HEADER_X_FORWARDED_PROTO);
         if (ObjectHelper.isNotEmpty(proto)) {
             String[] schemes = proto.split(",");
-            for(String scheme : schemes) {
+            for (String scheme : schemes) {
                 String trimmedScheme = scheme.trim();
                 if (ObjectHelper.isNotEmpty(trimmedScheme)) {
                     swagger.addScheme(Scheme.forValue(trimmedScheme));

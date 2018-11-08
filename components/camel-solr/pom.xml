@@ -36,7 +36,7 @@
     </camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=solr</camel.osgi.export.service>
     <java.awt.headless>true</java.awt.headless>
-    <solr-test-framework-jetty-version>9.3.20.v20170531</solr-test-framework-jetty-version>
+    <solr-test-framework-jetty-version>9.4.11.v20180605</solr-test-framework-jetty-version>
   </properties>
 
   <dependencies>
