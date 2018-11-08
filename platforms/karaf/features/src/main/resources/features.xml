@@ -614,6 +614,7 @@
     <bundle>mvn:org.apache.camel/camel-elasticsearch5/${project.version}</bundle>
   </feature>
   <feature name='camel-elasticsearch-rest' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-elasticsearch-rest currently does not work in OSGi</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature>http</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -1637,6 +1638,20 @@
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty4-http/${project.version}</bundle>
   </feature>
+  <feature name='camel-nsq' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:com.github.brainlag/nsq-client/${nsq-client-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-nsq/${project.version}</bundle>
+  </feature>
   <feature name='camel-ognl' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ognl/${ognl-bundle-version}</bundle>
@@ -1985,6 +2000,7 @@
     <bundle dependency='true'>mvn:commons-beanutils/commons-beanutils/${commons-beanutils-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-configuration2/${commons-configuration2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-text/${commons-text-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.shiro/shiro-core/${shiro-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-shiro/${project.version}</bundle>
   </feature>
@@ -2096,7 +2112,7 @@
     <bundle>mvn:org.apache.camel/camel-spring-ldap/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-redis' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>Does not work with Karaf 4.1.x due KARAF-4921, but work with Karaf 4.2.x</details>
+    <details>Does not work with in OSGi actually</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${spring-version-range}'>spring</feature>
     <feature version='${spring-version-range}'>spring-tx</feature>

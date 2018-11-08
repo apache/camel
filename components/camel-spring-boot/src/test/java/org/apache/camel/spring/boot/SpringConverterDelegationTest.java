@@ -32,7 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DirtiesContext
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = SpringConverterDelegationTest.class, properties = "camel.springboot.typeConversion=true")
+@SpringBootTest(properties = "camel.springboot.typeConversion=true")
 public class SpringConverterDelegationTest extends Assert {
 
     @Autowired

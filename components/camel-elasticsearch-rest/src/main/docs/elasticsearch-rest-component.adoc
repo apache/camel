@@ -154,6 +154,8 @@ object in the body
 
 |Search |*Map*, *String* or *SearchRequest* |Search the content with the map of query string
 
+|MultiSearch |*MultiSearchRequest* |Multiple search in one
+
 |Exists |Index name(indexName) as header  |Checks the index exists or not and returns a Boolean flag in the body
 
 |Update |*Map*, *UpdateRequest*, *String*, *byte[]* or *XContentBuilder* content to update |Updates content to an index and returns the content's
@@ -231,7 +233,7 @@ from("direct:search")
 ----
 <route>
     <from uri="direct:search" />
-    <to uri="eelasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet"/>
+    <to uri="elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet"/>
 </route>
 ----
 
@@ -256,4 +258,37 @@ Map<String, Object> query = new HashMap<>();
 query.put("query", match);
 SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
 
+----
+
+=== MultiSearch Example
+
+MultiSearching on specific field(s) and value use the Operation ´MultiSearch´.
+Pass in the MultiSearchRequest instance
+
+[source,java]
+----
+from("direct:multiSearch")
+  .to("elasticsearch-rest://elasticsearch?operation=MultiSearch");
+----
+
+[source,xml]
+----
+<route>
+    <from uri="direct:multiSearch" />
+    <to uri="elasticsearch-rest://elasticsearch?operation=MultiSearch"/>
+</route>
+----
+
+MultiSearch on specific field(s) 
+
+[source,java]
+----
+SearchRequest req = new SearchRequest();
+req.indices("twitter");
+req.types("tweet");
+SearchRequest req1 = new SearchRequest();
+req.indices("twitter");
+req.types("tweets");
+MultiSearchRequest request = new MultiSearchRequest().add(req1).add(req);
+Item[] response = template.requestBody("direct:search", request, Item[].class);
 ----

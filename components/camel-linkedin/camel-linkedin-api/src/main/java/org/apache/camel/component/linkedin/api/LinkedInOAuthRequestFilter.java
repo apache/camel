@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.client.ClientRequestContext;
@@ -157,23 +156,31 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                 url = String.format(AUTHORIZATION_URL_WITH_SCOPE, oAuthParams.getClientId(), csrfId,
                     builder.toString(), encodedRedirectUri);
             }
-            HtmlPage authPage;
+            HtmlPage authPage = null;
             try {
                 authPage = webClient.getPage(url);
             } catch (FailingHttpStatusCodeException e) {
                 // only handle errors returned with redirects
-                if (e.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
-                    final URL location = new URL(e.getResponse().getResponseHeaderValue(HttpHeaders.LOCATION));
-                    final String locationQuery = location.getQuery();
-                    if (locationQuery != null && locationQuery.contains("error=")) {
-                        throw new IOException(URLDecoder.decode(locationQuery).replaceAll("&", ", "));
+                boolean done = false;
+                do {
+                    if (e.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY || e.getStatusCode() == HttpStatus.SC_SEE_OTHER) {
+                        final URL location = new URL(e.getResponse().getResponseHeaderValue(HttpHeaders.LOCATION));
+                        final String locationQuery = location.getQuery();
+                        if (locationQuery != null && locationQuery.contains("error=")) {
+                            throw new IOException(URLDecoder.decode(locationQuery).replaceAll("&", ", "));
+                        } else {
+                            // follow the redirect to login form
+                            try {
+                                authPage = webClient.getPage(location);
+                                done = true;
+                            } catch (FailingHttpStatusCodeException e1) {
+                                e = e1;
+                            }
+                        }
                     } else {
-                        // follow the redirect to login form
-                        authPage = webClient.getPage(location);
+                        throw e;
                     }
-                } else {
-                    throw e;
-                }
+                } while (!done);
             }
 
             // look for <div role="alert">
@@ -183,12 +190,12 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
             }
 
             // submit login credentials
-            final HtmlForm loginForm = authPage.getFormByName("oauth2SAuthorizeForm");
+            final HtmlForm loginForm = authPage.getForms().get(0);
             final HtmlTextInput login = loginForm.getInputByName("session_key");
             login.setText(oAuthParams.getUserName());
             final HtmlPasswordInput password = loginForm.getInputByName("session_password");
             password.setText(oAuthParams.getUserPassword());
-            final HtmlSubmitInput submitInput = loginForm.getInputByName("authorize");
+            final HtmlSubmitInput submitInput = (HtmlSubmitInput) loginForm.getElementsByAttribute("input", "type", "submit").get(0);
 
             // validate CSRF and get authorization code
             String redirectQuery;
@@ -211,6 +218,10 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
             while (matcher.find()) {
                 params.put(matcher.group(1), matcher.group(2));
             }
+            // check if we got caught in a Captcha!
+            if (params.get("challengeId") != null) {
+                throw new SecurityException("Unable to login due to CAPTCHA, use with a valid accessToken instead!");
+            }
             final String state = params.get("state");
             if (!csrfId.equals(state)) {
                 throw new SecurityException("Invalid CSRF code!");
@@ -220,7 +231,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                 return params.get("code");
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException("Error authorizing application: " + e.getMessage(), e);
         }
     }

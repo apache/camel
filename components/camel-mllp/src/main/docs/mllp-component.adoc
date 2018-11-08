@@ -135,7 +135,6 @@ The component supports 31 options, which are listed below.
 | *camel.component.mllp.configuration.bind-retry-interval* | TCP Server Only - The number of milliseconds to wait between bind attempts | 5000 | Integer
 | *camel.component.mllp.configuration.bind-timeout* | TCP Server Only - The number of milliseconds to retry binding to a server port | 30000 | Integer
 | *camel.component.mllp.configuration.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to receive incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. If disabled, the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions by logging them at WARN or ERROR level and ignored. | true | Boolean
-| *camel.component.mllp.configuration.buffer-writes* | Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | Boolean
 | *camel.component.mllp.configuration.charset-name* | Set the CamelCharsetName property on the exchange |  | String
 | *camel.component.mllp.configuration.connect-timeout* | Timeout (in milliseconds) for establishing for a TCP connection TCP Client only | 30000 | Integer
 | *camel.component.mllp.configuration.exchange-pattern* | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -144,7 +143,6 @@ The component supports 31 options, which are listed below.
 | *camel.component.mllp.configuration.keep-alive* | Enable/disable the SO_KEEPALIVE socket option. | true | Boolean
 | *camel.component.mllp.configuration.lenient-bind* | TCP Server Only - Allow the endpoint to start before the TCP ServerSocket is bound. In some environments, it may be desirable to allow the endpoint to start before the TCP ServerSocket is bound. | false | Boolean
 | *camel.component.mllp.configuration.max-concurrent-consumers* | The maximum number of concurrent MLLP Consumer connections that will be allowed. If a new connection is received and the maximum is number are already established, the new connection will be reset immediately. | 5 | Integer
-| *camel.component.mllp.configuration.max-receive-timeouts* | The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
 | *camel.component.mllp.configuration.read-timeout* | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received | 5000 | Integer
 | *camel.component.mllp.configuration.receive-buffer-size* | Sets the SO_RCVBUF option to the specified value (in bytes) | 8192 | Integer
 | *camel.component.mllp.configuration.receive-timeout* | The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame | 15000 | Integer
@@ -160,6 +158,8 @@ The component supports 31 options, which are listed below.
 | *camel.component.mllp.log-phi* | Set the component to log PHI data. | true | Boolean
 | *camel.component.mllp.log-phi-max-bytes* | Set the maximum number of bytes of PHI that will be logged in a log entry. | 5120 | Integer
 | *camel.component.mllp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.mllp.configuration.buffer-writes* | Enable/Disable the buffering of HL7 payloads before writing to the socket. | false | Boolean
+| *camel.component.mllp.configuration.max-receive-timeouts* | The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset. |  | Integer
 |===
 // spring-boot-auto-configure options: END
 
