@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.nsq;
 
-import com.github.brainlag.nsq.NSQConsumer;
-import com.github.brainlag.nsq.lookup.DefaultNSQLookup;
-import com.github.brainlag.nsq.lookup.NSQLookup;
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.github.brainlag.nsq.NSQConsumer;
+import com.github.brainlag.nsq.lookup.DefaultNSQLookup;
+import com.github.brainlag.nsq.lookup.NSQLookup;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class NsqProducerTest extends NsqTestSupport {
 
@@ -62,7 +63,7 @@ public class NsqProducerTest extends NsqTestSupport {
         CountDownLatch lock = new CountDownLatch(NUMBER_OF_MESSAGES);
 
         for (int i = 0; i < NUMBER_OF_MESSAGES; i++) {
-            template.sendBody("direct:send", ("test" + i));
+            template.sendBody("direct:send", "test" + i);
         }
 
         AtomicInteger counter = new AtomicInteger(0);

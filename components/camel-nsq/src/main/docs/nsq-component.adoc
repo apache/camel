@@ -1,6 +1,8 @@
 [[nsq-component]]
 == nsq Component
 
+*Available as of Camel version 2.22*
+
 
 http://nsq.io/[NSQ] is a realtime distributed messaging platform.
 
@@ -30,7 +32,7 @@ Where *servers* represents the list of NSQ servers - nsqlookupd servers in the
 
 
 // component options: START
-The Nsq component supports 2 options, which are listed below.
+The nsq component supports 2 options, which are listed below.
 
 
 
@@ -47,10 +49,10 @@ The Nsq component supports 2 options, which are listed below.
 
 
 // endpoint options: START
-The NSQ endpoint is configured using URI syntax:
+The nsq endpoint is configured using URI syntax:
 
 ----
-nsq:servers
+nsq:lookupServer
 ----
 
 with the following path and query parameters:
@@ -61,26 +63,30 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *servers* | *Required* URLs to one or more nsqlookupq (consumer) or nsqd (producer) servers. Use comma to separate URLs when specifying multiple servers. The port can also be specified using <hostname>:<port>. |  | String
+| *servers* | *Required* The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer). |  | String
 |===
 
 
-==== Query Parameters (25 parameters):
+==== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *topic* (common) | *Required* The name of topic we want to use |  | String
-| *channel* (consumer) | *Required* The name of channel we want to use |  | String
+| *userAgent* (common) | A String to identify the userAgent |  | String
+| *autoFinish* (consumer) | Automatically finish the NSQ message when it is retrieved from the quese and before the Exchange is processed. | true | Boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *channel* (consumer) | The name of channel we want to use |  | String
+| *lookupInterval* (consumer) | The lookup retry interval | 5000 | long
+| *lookupServerPort* (consumer) | The port of the nsqdlookupd server | 4161 | int
+| *messageTimeout* (consumer) | The NSQ message timeout for a consumer. | -1 | long
 | *poolSize* (consumer) | Consumer pool size | 10 | int
-| *lookupServerPort* (consumer) | The default port number to use to connect to nsqlookupd server | 4161 | int
-| *port* (producer) | The default port number to use to connect to nsqd server | 4150 | int
-| *lookupInterval* (consumer) | The retry interval in millicseconds to lookup the topic at the nsqlookupq server. | 5000 | int
-| *autoFinish* (consumer) | Automatically finish the NSQ Message when it is retrievd from the queue and before the Exchange is processed | true | boolean
-| *messageTimeout* (consumer) | The NSQ consumer timeout period for messages retrieved from the queue | 0 | int
-| *requeueInterval* (consumer) | The requeue interval. Default of 0 will use the default configured on the server | 0 | int
+| *requeueInterval* (consumer) | The requeue interval | -1 | long
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *port* (producer) | The port of the nsqd server | 4150 | int
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *secure* (security) | Set secure option indicating TLS is required | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
