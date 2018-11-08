@@ -121,7 +121,7 @@ public class DefaultComponentTest extends ContextTestSupport {
         } catch (TypeConversionException ex) {
             assertEquals("Error during type conversion from type: java.lang.String "
                     + "to the required type: java.lang.Integer "
-                    + "with value abc due For input string: \"abc\"", ex.getMessage());
+                    + "with value abc due to java.lang.NumberFormatException: For input string: \"abc\"", ex.getMessage());
         }
     }
 
