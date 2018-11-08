@@ -290,14 +290,10 @@ address` http://localhost:8080/orders`.
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.apache.camel.component.jgroups.JGroupsExpressions.delayIfContextNotStarted;
-import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinatorViews;
+JGroupsLockClusterService service = new JGroupsLockClusterService();
+service.setId("uniqueNodeId");
 ...
-from("jgroups:clusterName?enableViewMessages=true").
-  filter(dropNonCoordinatorViews()).
-  threads().delay(delayIfContextNotStarted(SECONDS.toMillis(5))). // run in separated and delayed thread. Delay only if the context hasn't been started already. 
-  to("controlbus:route?routeId=masterRoute&action=start&async=true");
+context.addService(service);
 
-from("jetty:http://localhost:8080/orders").routeId("masterRoute").autoStartup(false).to("jms:orders"); 
+from("master:mycluster:jetty:http://localhost:8080/orders").to("jms:orders"); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
