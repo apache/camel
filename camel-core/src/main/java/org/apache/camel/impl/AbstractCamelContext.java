@@ -349,6 +349,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public void doInit() {
+        // setup management strategy first since end users may use it to add event notifiers
+        // using the management strategy before the CamelContext has been started
+        this.managementStrategy = createManagementStrategy();
+
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
         CamelContextTracker.notifyContextCreated(this);
@@ -902,7 +906,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     @Override
     public void setRouteController(RouteController routeController) {
-        this.routeController = doAddService(routeController);
+        this.routeController = routeController;
+        doAddService(routeController);
     }
 
     @Override
@@ -2467,7 +2472,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     public TypeConverterRegistry getTypeConverterRegistry() {
         if (typeConverterRegistry == null) {
             synchronized (this) {
-                if (typeConverter == null) {
+                if (typeConverterRegistry == null) {
                     setTypeConverterRegistry(createTypeConverterRegistry());
                 }
             }
@@ -4006,6 +4011,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             getPackageScanClassResolver();
             getProducerServicePool();
             getPollingConsumerServicePool();
+            getRestRegistry();
 
             if (isTypeConverterStatisticsEnabled() != null) {
                 getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
@@ -4022,7 +4028,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
                 getComponentResolver();
                 getDataFormatResolver();
                 getManagementStrategy();
-                getRestRegistry();
                 getHeadersMapFactory();
                 getClassResolver();
                 getNodeIdFactory();
@@ -4393,7 +4398,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         if (shutdownStrategy == null) {
             synchronized (this) {
                 if (shutdownStrategy == null) {
-                    shutdownStrategy = createShutdownStrategy();
+                    setShutdownStrategy(createShutdownStrategy());
                 }
             }
         }
