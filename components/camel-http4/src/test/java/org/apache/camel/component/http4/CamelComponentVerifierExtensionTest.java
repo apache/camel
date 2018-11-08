@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Component;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.http4.handler.AuthenticationValidationHandler;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
@@ -142,9 +141,9 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
 
         Map<String, Object> parameters = new HashMap<>();
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
 
         ComponentVerifierExtension.VerificationError error = result.getErrors().get(0);
