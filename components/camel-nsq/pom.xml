@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.github.brainlag</groupId>
             <artifactId>nsq-client</artifactId>
-            <version>${nats-client-version}</version>
+            <version>${nsq-client-version}</version>
         </dependency>
         <!-- testing -->
         <dependency>
