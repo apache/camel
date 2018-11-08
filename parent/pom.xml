@@ -515,7 +515,7 @@
     <mvel-version>2.4.2.Final</mvel-version>
     <mybatis-version>3.4.6</mybatis-version>
     <narayana-version>5.9.0.Final</narayana-version>
-    <nats-client-version>1.0.0.RC4</nats-client-version>
+    <nsq-client-version>1.0.0.RC4</nsq-client-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <nekohtml-version>1.9.22</nekohtml-version>
     <neoscada-version>0.4.0</neoscada-version>
