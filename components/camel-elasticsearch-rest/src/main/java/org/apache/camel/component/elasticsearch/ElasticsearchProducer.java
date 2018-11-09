@@ -227,6 +227,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
         if (configuration.getDisconnect()) {
             IOHelper.close(client);
+        	IOHelper.close(restHighLevelClient);
             client = null;
             if (configuration.getEnableSniffer()) {
                 IOHelper.close(sniffer);
