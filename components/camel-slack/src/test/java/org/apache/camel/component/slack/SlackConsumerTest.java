@@ -16,29 +16,72 @@
  */
 package org.apache.camel.component.slack;
 
+import java.io.IOException;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClients;
+import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 
-@Ignore
+
+
 public class SlackConsumerTest extends CamelTestSupport {
+
+    private String token;
+    private String hook;
+
+    @Before
+    public void setUp() throws Exception {
+        token = System.getProperty("SLACK_TOKEN");
+        hook = System.getProperty("SLACK_HOOK", "https://hooks.slack.com/services/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");
+
+        assumeCredentials();
+        super.setUp();
+    }
 
     @Test
     public void testConsumePrefixedMessages() throws Exception {
+        final String message = "Hi camel";
+        sendMessage(message);
+
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(9);
-        
+        mock.expectedMessageCount(1);
+        mock.message(0).body(SlackMessage.class).method("getText").isEqualTo(message);
+
         assertMockEndpointsSatisfied();
     }
-    
+
+    private void assumeCredentials() {
+        Assume.assumeThat("You should specified access token", token, CoreMatchers.notNullValue());
+        Assume.assumeThat("You should specified slack application hook", hook, CoreMatchers.notNullValue());
+    }
+
+    private void sendMessage(String message) throws IOException {
+        HttpClient client = HttpClients.createDefault();
+        HttpPost post = new HttpPost(hook);
+        post.setHeader("Content-type", "application/json");
+        post.setEntity(new StringEntity(String.format("{ 'text': '%s'}", message)));
+        HttpResponse response = client.execute(post);
+        Assert.assertEquals(response.getStatusLine().getStatusCode(), HttpStatus.SC_OK);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("slack://general?token=RAW(token)&maxResults=1")
+                from(String.format("slack://general?token=RAW(%s)&maxResults=1", token))
                     .to("mock:result");
             }
         };
