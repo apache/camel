@@ -208,6 +208,8 @@ from("direct:index")
 </route>
 ----
 
+*For this operation you'll need to specify a indexId header.*
+
 A client would simply need to pass a body message containing a Map to
 the route. The result body contains the indexId created.
 
