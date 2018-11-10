@@ -20,8 +20,8 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link NsqEndpoint}.
