@@ -31,6 +31,7 @@ import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
 import org.apache.camel.support.component.AbstractApiComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the component that manages {@link LinkedInEndpoint}.
@@ -67,7 +68,7 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
     public LinkedInConfiguration getConfiguration() {
         return super.getConfiguration();
     }
- 
+
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, LinkedInApiName apiName,
                                       LinkedInConfiguration endpointConfiguration) {
