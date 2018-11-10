@@ -48,8 +48,8 @@ wget -e robots=off --wait 3 --no-check-certificate \
  -P "${DOWNLOAD}/${VERSION}" -nH "--cut-dirs=3" "--level=1" "--ignore-length" \
  "https://repository.apache.org/content/repositories/releases/org/apache/camel/apache-camel/${VERSION}/"
 # Remove the signature check sum files
-rm ${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}/*.asc.md5
-rm ${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}/*.asc.sha1
+rm ${DOWNLOAD}/dist/${VERSION}/*.asc.md5
+rm ${DOWNLOAD}/dist/${VERSION}/*.asc.sha1
 
 echo "################################################################################"
 echo "                         RESET GROUP PERMISSIONS                                "
