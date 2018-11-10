@@ -24,7 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 import static org.apache.camel.component.nsq.NsqConstants.NSQ_DEFAULT_LOOKUP_PORT;
 import static org.apache.camel.component.nsq.NsqConstants.NSQ_DEFAULT_PORT;

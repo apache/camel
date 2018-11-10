@@ -24,11 +24,10 @@ import com.github.brainlag.nsq.ServerAddress;
 import com.github.brainlag.nsq.callbacks.NSQMessageCallback;
 import com.github.brainlag.nsq.lookup.DefaultNSQLookup;
 import com.github.brainlag.nsq.lookup.NSQLookup;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public class NsqConsumer extends DefaultConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(NsqConsumer.class);
-    
+
     NSQConsumer consumer;
 
     private final Processor processor;

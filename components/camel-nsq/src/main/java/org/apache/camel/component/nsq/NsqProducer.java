@@ -18,9 +18,8 @@ package org.apache.camel.component.nsq;
 
 import com.github.brainlag.nsq.NSQProducer;
 import com.github.brainlag.nsq.ServerAddress;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
