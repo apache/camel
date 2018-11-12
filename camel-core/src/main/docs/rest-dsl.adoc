@@ -585,7 +585,7 @@ whether the Content-Type and Accept headers from
                         A key without a prefix is a common key for all situations.
 
                         From Camel 2.17: the options value can use the # notation to refer to a bean to lookup in the Registry
-|apiProperties | -|Sets additional options on api level.
+|apiProperty | -|Sets additional options on api level.
 |corsHeaders | -|Allows to configure custom CORS headers.
 |===
 
