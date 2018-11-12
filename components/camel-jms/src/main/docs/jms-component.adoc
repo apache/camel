@@ -604,7 +604,6 @@ The component supports 171 options, which are listed below.
 | *camel.component.jms.username* | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory. |  | String
 | *camel.component.jms.wait-for-provision-correlation-to-be-updated-counter* | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled. | 50 | Integer
 | *camel.component.jms.wait-for-provision-correlation-to-be-updated-thread-sleeping-time* | Interval in millis to sleep each time while waiting for provisional correlation id to be updated. | 100 | Long
-| *camel.component.jms.configuration.transacted-in-out* |  |  | Boolean
 |===
 // spring-boot-auto-configure options: END
 
