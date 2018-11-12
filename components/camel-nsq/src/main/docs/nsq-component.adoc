@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *topic* (common) | *Required* The name of topic we want to use |  | String
-| *userAgent* (common) | A String to identify the userAgent |  | String
+| *userAgent* (common) | A String to identify the kind of client |  | String
 | *autoFinish* (consumer) | Automatically finish the NSQ message when it is retrieved from the quese and before the Exchange is processed. | true | Boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *channel* (consumer) | The name of channel we want to use |  | String

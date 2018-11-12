@@ -39,7 +39,7 @@ public class CamelSalesforceTest extends AbstractSpringBootTestSupport {
                 .basePath("../../components/camel-salesforce/camel-salesforce-component")
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest.*|MSPTest$)")
                 .autostart(false) // needs configuration
-                .dependency("org.codehaus.groovy:groovy-all:" + DependencyResolver.resolveParentProperty("${groovy-version}"))
+                .dependency("org.codehaus.groovy:groovy:" + DependencyResolver.resolveParentProperty("${groovy-version}"))
                 .build();
     }
 
