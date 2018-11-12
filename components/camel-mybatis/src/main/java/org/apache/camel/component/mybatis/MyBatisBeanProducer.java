@@ -90,7 +90,7 @@ public class MyBatisBeanProducer extends DefaultProducer {
     private BeanProcessor createBeanProcessor(SqlSession session) throws Exception {
         // discover the bean and get the mapper
         // is the bean a alias type
-        Class clazz = session.getConfiguration().getTypeAliasRegistry().resolveAlias(endpoint.getBeanName());
+        Class<?> clazz = session.getConfiguration().getTypeAliasRegistry().resolveAlias(endpoint.getBeanName());
         if (clazz == null) {
             // its maybe a FQN so try to use Camel to lookup the class
             clazz = getEndpoint().getCamelContext().getClassResolver().resolveMandatoryClass(endpoint.getBeanName());

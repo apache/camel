@@ -38,6 +38,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -151,22 +152,22 @@ public class ElasticsearchProducer extends DefaultProducer {
 
         if (operation == ElasticsearchOperation.Index) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
-            message.setBody(restHighLevelClient.index(indexRequest).getId());
+            message.setBody(restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT).getId());
         } else if (operation == ElasticsearchOperation.Update) {
             UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
-            message.setBody(restHighLevelClient.update(updateRequest).getId());
+            message.setBody(restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT).getId());
         } else if (operation == ElasticsearchOperation.GetById) {
             GetRequest getRequest = message.getBody(GetRequest.class);
-            message.setBody(restHighLevelClient.get(getRequest));
+            message.setBody(restHighLevelClient.get(getRequest, RequestOptions.DEFAULT));
         } else if (operation == ElasticsearchOperation.Bulk) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-            message.setBody(restHighLevelClient.bulk(bulkRequest).getItems());
+            message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
         } else if (operation == ElasticsearchOperation.BulkIndex) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-            message.setBody(restHighLevelClient.bulk(bulkRequest).getItems());
+            message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
         } else if (operation == ElasticsearchOperation.Delete) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
-            message.setBody(restHighLevelClient.delete(deleteRequest).getResult());
+            message.setBody(restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT).getResult());
         } else if (operation == ElasticsearchOperation.DeleteIndex) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
             message.setBody(client.performRequest("Delete", deleteRequest.index()).getStatusLine().getStatusCode());
@@ -178,7 +179,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             SearchRequest searchRequest = new SearchRequest(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
             searchRequest.source(sourceBuilder);
             try {
-                restHighLevelClient.search(searchRequest);
+                restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
                 message.setBody(true);
             } catch (ElasticsearchStatusException e) {
                 if (e.status().equals(RestStatus.NOT_FOUND)) {
@@ -190,14 +191,14 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
         } else if (operation == ElasticsearchOperation.Search) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
-            message.setBody(restHighLevelClient.search(searchRequest).getHits());
+            message.setBody(restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT).getHits());
         } else if (operation == ElasticsearchOperation.MultiSearch) {
             MultiSearchRequest searchRequest = message.getBody(MultiSearchRequest.class);
-            message.setBody(restHighLevelClient.multiSearch(searchRequest).getResponses());
+            message.setBody(restHighLevelClient.msearch(searchRequest, RequestOptions.DEFAULT).getResponses());
         } else if (operation == ElasticsearchOperation.Ping) {
-            message.setBody(restHighLevelClient.ping());
+            message.setBody(restHighLevelClient.ping(RequestOptions.DEFAULT));
         } else if (operation == ElasticsearchOperation.Info) {
-            message.setBody(restHighLevelClient.info());
+            message.setBody(restHighLevelClient.info(RequestOptions.DEFAULT));
         } else {
             throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }
@@ -222,6 +223,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
         if (configuration.getDisconnect()) {
             IOHelper.close(client);
+            IOHelper.close(restHighLevelClient);
             client = null;
             if (configuration.getEnableSniffer()) {
                 IOHelper.close(sniffer);

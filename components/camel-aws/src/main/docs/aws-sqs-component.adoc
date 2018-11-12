@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (47 parameters):
+==== Query Parameters (48 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -97,6 +97,7 @@ with the following path and query parameters:
 | *delaySeconds* (producer) | Delay sending messages for a number of seconds. |  | Integer
 | *messageDeduplicationId Strategy* (producer) | Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message. Can be one of the following options: useExchangeId, useContentBasedDeduplication. For the useContentBasedDeduplication option, no messageDeduplicationId will be set on the message. | useExchangeId | MessageDeduplicationId Strategy
 | *messageGroupIdStrategy* (producer) | Only for FIFO queues. Strategy for setting the messageGroupId on the message. Can be one of the following options: useConstant, useExchangeId, usePropertyValue. For the usePropertyValue option, the value of property CamelAwsMessageGroupId will be used. |  | MessageGroupIdStrategy
+| *delayQueue* (advanced) | Define if you want to apply delaySeconds option to the queue or on single messages | false | boolean
 | *queueUrl* (advanced) | To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored. This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
@@ -245,6 +246,33 @@ and refer to it in your Camel aws-sqs component configuration:
 from("aws-sqs://MyQueue?amazonSQSClient=#client&delay=5000&maxMessagesPerPoll=5")
 .to("mock:result");
 ---------------------------------------------------------------------------------
+
+#### Creating or updating an SQS Queue
+
+In the SQS Component, when an endpoint is started, a check is executed to obtain information 
+about the existence of the queue or not. You're able to customize the creation through the QueueAttributeName 
+mapping with the SQSConfiguration option.
+
+[source,java]
+---------------------------------------------------------------------------------
+from("aws-sqs://MyQueue?amazonSQSClient=#client&delay=5000&maxMessagesPerPoll=5")
+.to("mock:result");
+---------------------------------------------------------------------------------
+
+In this example if the MyQueue queue is not already created on AWS, it will be created with default parameters from the 
+SQS configuration. If it's already up on AWS, the SQS configuration options will be used to override the existent AWS configuration.
+
+#### DelayQueue VS Delay for Single message
+
+From 2.23.0 the component has a new option: delayQueue. When the option is set to true, the SQS Queue will be a DelayQueue with the 
+DelaySeconds option as delay. For more information about DelayQueue you can read the https://docs.aws.amazon.com/en_us/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-delay-queues.html[AWS SQS documentation].
+One important information to take into account is the following:
+
+- For standard queues, the per-queue delay setting is not retroactive—changing the setting doesn't affect the delay of messages already in the queue.
+- For FIFO queues, the per-queue delay setting is retroactive—changing the setting affects the delay of messages already in the queue.
+
+as stated in the official documentation. If you want to specify a delay on single messages, you can ignore the delayQueue option, while you can set this option 
+to true, if you need to add a fixed delay to all messages enqueued.
 
 ### Dependencies
 

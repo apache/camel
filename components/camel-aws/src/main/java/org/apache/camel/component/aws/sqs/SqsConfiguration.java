@@ -69,6 +69,9 @@ public class SqsConfiguration implements Cloneable {
     // producer properties
     @UriParam(label = "producer")
     private Integer delaySeconds;
+    // producer properties
+    @UriParam(label = "advanced")
+    private boolean delayQueue;
     @UriParam(label = "producer", enums = "useConstant,useExchangeId,usePropertyValue")
     private MessageGroupIdStrategy messageGroupIdStrategy;
     @UriParam(label = "producer", defaultValue = "useExchangeId", enums = "useExchangeId,useContentBasedDeduplication")
@@ -222,6 +225,17 @@ public class SqsConfiguration implements Cloneable {
      */
     public void setDelaySeconds(Integer delaySeconds) {
         this.delaySeconds = delaySeconds;
+    }
+
+    public boolean isDelayQueue() {
+        return delayQueue;
+    }
+
+    /**
+     * Define if you want to apply delaySeconds option to the queue or on single messages
+     */
+    public void setDelayQueue(boolean delayQueue) {
+        this.delayQueue = delayQueue;
     }
 
     public Integer getMaximumMessageSize() {
