@@ -53,6 +53,8 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     private String token;
     @UriParam(label = "consumer", defaultValue = "10")
     private String maxResults = "10";
+    @UriParam(label = "consumer", defaultValue = "https://slack.com")
+    private String serverUrl = "https://slack.com";
 
     /**
      * Constructor for SlackEndpoint
@@ -166,6 +168,17 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
      */
     public void setMaxResults(String maxResult) {
         this.maxResults = maxResult;
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
+    
+    /**
+     * The Server URL of the Slack instance
+     */
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 
     public Exchange createExchange(JSONObject object) {
