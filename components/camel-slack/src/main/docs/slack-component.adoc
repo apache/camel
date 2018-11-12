@@ -77,7 +77,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (25 parameters):
+==== Query Parameters (26 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,6 +86,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *maxResults* (consumer) | The Max Result for the poll | 10 | String
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *serverUrl* (consumer) | The Server URL of the Slack instance | https://slack.com | String
 | *token* (consumer) | The token to use |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
