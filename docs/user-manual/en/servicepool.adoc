@@ -48,7 +48,7 @@ Then set your custom pooling on the `CamelContext` with the
 
 The producer service pool identify a producer as being pool capable if
 the producer implements the marker interface
-`org.apache.camel.SerivcePoolAware`. +
+`org.apache.camel.ServicePoolAware`. +
  As the producer will be pooled and thus long lived, your producer
 should be able to automatic safely recover lost connection. Usually you
 implement logic that re connects if needed.

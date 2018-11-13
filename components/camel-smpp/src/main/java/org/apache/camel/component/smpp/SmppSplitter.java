@@ -49,9 +49,9 @@ public class SmppSplitter {
     /**
      * The value that identifier length of the SAR fragment.
      * <p/>
-     * {@code 0x00} value must be used if the legnth of the reference number is
+     * {@code 0x00} value must be used if the length of the reference number is
      * 1 byte.<br/>
-     * {@code 0x08} value must be used if the legnth of the reference number is
+     * {@code 0x08} value must be used if the length of the reference number is
      * 2 bytes.
      */
     protected static final byte UDHIE_IDENTIFIER_SAR = 0x00;
@@ -59,9 +59,9 @@ public class SmppSplitter {
     /**
      * The length of the SAR fragment.
      * <p/>
-     * {@code 0x03} value must be used if the legnth of the reference number is
+     * {@code 0x03} value must be used if the length of the reference number is
      * 1 byte.<br/>
-     * {@code 0x04} value must be used if the legnth of the reference number is
+     * {@code 0x04} value must be used if the length of the reference number is
      * 2 bytes.
      */
     protected static final byte UDHIE_SAR_LENGTH = 0x03;

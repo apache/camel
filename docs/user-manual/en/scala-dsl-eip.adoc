@@ -174,7 +174,7 @@ Delayer
 +++++++
 
 Unlike a throttler, which only slows down messages if the rate exceeds a
-treshold, a delayer delays every messages with a fixed amount of time.
+threshold, a delayer delays every messages with a fixed amount of time.
 An example: to delay every message going from `seda:a` to `mock:a` with
 1 second, you write...
 

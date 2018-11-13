@@ -505,7 +505,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         sendBody("direct:enveloping", payload, Collections.<String, Object> emptyMap());
         assertMockEndpointsSatisfied();
         checkThrownException(mock, XmlSignatureException.class,
-                "The XAdES-EPES confguration is invalid. The signature policy identifier is missing.", null);
+                "The XAdES-EPES configuration is invalid. The signature policy identifier is missing.", null);
     }
 
     @Test
@@ -527,7 +527,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         sendBody("direct:enveloping", payload, Collections.<String, Object> emptyMap());
         assertMockEndpointsSatisfied();
         checkThrownException(mock, XmlSignatureException.class,
-                "The XAdES-EPES confguration is invalid. The digest value for the signature policy is missing.", null);
+                "The XAdES-EPES configuration is invalid. The digest value for the signature policy is missing.", null);
     }
 
     @Test
@@ -549,7 +549,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         sendBody("direct:enveloping", payload, Collections.<String, Object> emptyMap());
         assertMockEndpointsSatisfied();
         checkThrownException(mock, XmlSignatureException.class,
-                "The XAdES-EPES confguration is invalid. The digest algorithm for the signature policy is missing.", null);
+                "The XAdES-EPES configuration is invalid. The digest algorithm for the signature policy is missing.", null);
     }
 
     @Test
@@ -564,7 +564,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
-                "The XAdES confguration is invalid. The list of the claimed roles contains the invalid entry '<ClaimedRole>wrong XML fragment<ClaimedRole>'. An entry must either be a text or"
+                "The XAdES configuration is invalid. The list of the claimed roles contains the invalid entry '<ClaimedRole>wrong XML fragment<ClaimedRole>'. An entry must either be a text or"
                         + " an XML fragment with the root element 'ClaimedRole' with the namespace 'http://uri.etsi.org/01903/v1.3.2#'.",
                 null);
     }
@@ -581,7 +581,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
-                "The XAdES confguration is invalid. The list of the commitment type qualifiers contains the invalid entry '<CommitmentTypeQualifier>wrong XML fragment<CommitmentTypeQualifier>'."
+                "The XAdES configuration is invalid. The list of the commitment type qualifiers contains the invalid entry '<CommitmentTypeQualifier>wrong XML fragment<CommitmentTypeQualifier>'."
                         + " An entry must either be a text or an XML fragment with the root element 'CommitmentTypeQualifier' with the namespace 'http://uri.etsi.org/01903/v1.3.2#'.",
                 null);
     }
@@ -598,7 +598,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
-                "The XAdES confguration is invalid. The list of the signatue policy qualifiers contains the invalid entry '<SigPolicyQualifier>wrong XML fragment<SigPolicyQualifier>'."
+                "The XAdES configuration is invalid. The list of the signatue policy qualifiers contains the invalid entry '<SigPolicyQualifier>wrong XML fragment<SigPolicyQualifier>'."
                         + " An entry must either be a text or an XML fragment with the root element 'SigPolicyQualifier' with the namespace 'http://uri.etsi.org/01903/v1.3.2#'.",
                 null);
     }
@@ -616,7 +616,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
         checkThrownException(
                 mock,
                 XmlSignatureException.class,
-                "The XAdES confguration is invalid. The root element 'SigPolicyQualifier' of the provided XML fragment "
+                "The XAdES configuration is invalid. The root element 'SigPolicyQualifier' of the provided XML fragment "
                         + "'<SigPolicyQualifier xmlns=\"http://invalid.com\">XML fragment with wrong namespace for root element</SigPolicyQualifier>' has the invalid namespace 'http://invalid.com'."
                         + " The correct namespace is 'http://uri.etsi.org/01903/v1.3.2#'.", null);
     }
