@@ -16,36 +16,78 @@
  */
 package org.apache.camel.component.dropbox.integration;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Properties;
-
+import com.dropbox.core.DbxDownloader;
+import com.dropbox.core.DbxException;
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.FileMetadata;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 
 
 public class DropboxTestSupport extends CamelTestSupport {
 
+
     protected final Properties properties;
+    protected String workdir;
+    protected String token;
+    private DbxClientV2 client;
 
     protected DropboxTestSupport() {
-        URL url = getClass().getResource("/test-options.properties");
-
-        InputStream inStream;
-        try {
-            inStream = url.openStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalAccessError("test-options.properties could not be found");
-        }
-
         properties = new Properties();
-        try {
+        try (InputStream inStream = getClass().getResourceAsStream("/test-options.properties")) {
             properties.load(inStream);
         } catch (IOException e) {
             e.printStackTrace();
             throw new IllegalAccessError("test-options.properties could not be found");
         }
+
+        workdir = properties.getProperty("workDir");
+        token = properties.getProperty("accessToken");
+
+        DbxRequestConfig config = DbxRequestConfig.newBuilder(properties.getProperty("clientIdentifier")).build();
+        client = new DbxClientV2(config, token);
+
+    }
+
+    @Before
+    public void setUpWorkingFolder() throws DbxException {
+        createDir(workdir);
+    }
+
+    protected void createDir(String name) throws DbxException {
+        try {
+            removeDir(name);
+        } finally {
+            client.files().createFolder(name);
+        }
+    }
+
+    protected void removeDir(String name) throws DbxException {
+        client.files().delete(name);
+    }
+
+    protected void createFile(String fileName, String content) throws IOException {
+        try {
+            client.files().uploadBuilder(workdir + "/" + fileName).uploadAndFinish(new ByteArrayInputStream(content.getBytes()));
+        } catch (DbxException e) {
+            log.info("folder is already created");
+        }
+
+    }
+
+    protected String getFileContent(String path) throws DbxException, IOException {
+        ByteArrayOutputStream target = new ByteArrayOutputStream();
+        DbxDownloader<FileMetadata> downloadedFile = client.files().download(path);
+        if (downloadedFile != null) {
+            downloadedFile.download(target);
+        }
+        return new String(target.toByteArray());
     }
 
     @Override
