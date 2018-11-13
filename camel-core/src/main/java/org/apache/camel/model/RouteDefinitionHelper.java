@@ -19,14 +19,18 @@ package org.apache.camel.model;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -145,10 +149,11 @@ public final class RouteDefinitionHelper {
         for (final RouteDefinition route : routes) {
             if (route.getId() == null) {
                 // keep assigning id's until we find a free name
+                
                 boolean done = false;
                 String id = null;
                 while (!done) {
-                    id = context.getNodeIdFactory().createId(route);
+                    id = route.idOrCreate(context.getNodeIdFactory());
                     done = !customIds.contains(id);
                 }
                 route.setId(id);
@@ -161,6 +166,32 @@ public final class RouteDefinitionHelper {
                 });
                 route.setCustomId(false);
                 customIds.add(route.getId());
+            }
+            RestDefinition rest = route.getRestDefinition();
+            if (rest != null && route.isRest()) {
+                for (VerbDefinition verb : rest.getVerbs()) {
+                    String id = verb.idOrCreate(context.getNodeIdFactory());
+                    if (!verb.getUsedForGeneratingNodeId()) {
+                        id = route.getId();
+                    }
+                    verb.setRouteId(id);
+                }
+                List<FromDefinition> fromDefinitions = route.getInputs();
+                
+                if (ObjectHelper.isNotEmpty(fromDefinitions)) {
+                    FromDefinition fromDefinition = fromDefinitions.get(0);
+                    String endpointUri = fromDefinition.getEndpointUri();
+                    if (ObjectHelper.isNotEmpty(endpointUri)) {
+                        Map<String, Object> options = new HashMap<String, Object>();
+                        options.put("routeId", route.getId());
+                        endpointUri = URISupport.appendParametersToURI(endpointUri, options);
+                     
+                        // replace uri with new routeId
+                        fromDefinition.setUri(endpointUri);
+                        fromDefinitions.set(0, fromDefinition);
+                        route.setInputs(fromDefinitions);
+                    }
+                }
             }
         }
     }
