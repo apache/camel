@@ -396,7 +396,7 @@
     <jira-rest-client-api-version>2.0.0-m30</jira-rest-client-api-version>
     <jmh-version>1.21</jmh-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
-    <jodatime2-bundle-version>2.10</jodatime2-bundle-version>
+    <jodatime2-bundle-version>2.10.1</jodatime2-bundle-version>
     <jolokia-version>1.6.0</jolokia-version>
     <jolt-version>0.1.1</jolt-version>
     <jolt-bundle-version>0.1.1_1</jolt-bundle-version>
