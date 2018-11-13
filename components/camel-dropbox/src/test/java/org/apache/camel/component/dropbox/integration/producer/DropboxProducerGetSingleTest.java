@@ -16,63 +16,42 @@
  */
 package org.apache.camel.component.dropbox.integration.producer;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import java.io.IOException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 
 public class DropboxProducerGetSingleTest extends DropboxTestSupport {
 
-    public DropboxProducerGetSingleTest() throws Exception { }
+    public static final String FILE_NAME = "myFile.txt";
+    public static final String CONTENT = "Hi camels";
+
+    @Before
+    public void createFile() throws IOException {
+        createFile(FILE_NAME, CONTENT);
+    }
 
     @Test
     public void testCamelDropbox() throws Exception {
-        template.send("direct:start", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader("test", "test");
-            }
-        });
-
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);       
-        assertMockEndpointsSatisfied();
-
-        List<Exchange> exchanges = mock.getReceivedExchanges();
-        Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.DOWNLOADED_FILE.name());
-        Object body = exchange.getIn().getBody();
-        assertNotNull(header);
-        assertNotNull(body);
+        test("direct:start");
     }
 
     @Test
     public void testCamelDropboxWithOptionInHeader() throws Exception {
-        template.send("direct:start2", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader("test", "test");
-            }
-        });
+        test("direct:start2");
+    }
 
-
+    private void test(String endpoint) throws InterruptedException {
+        template.sendBody(endpoint, null);
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        assertMockEndpointsSatisfied();
-
-        List<Exchange> exchanges = mock.getReceivedExchanges();
-        Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.DOWNLOADED_FILE.name());
-        Object body = exchange.getIn().getBody();
-        assertNotNull(header);
-        assertNotNull(body);
+        mock.message(0).header(DropboxResultHeader.DOWNLOADED_FILE.name()).contains(String.format("%s/%s", workdir, FILE_NAME));
+        mock.message(0).body(String.class).isEqualTo(CONTENT);
+        mock.assertIsSatisfied();
     }
 
     @Override
@@ -80,14 +59,12 @@ public class DropboxProducerGetSingleTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://get?accessToken={{accessToken}}&remotePath=/XXX")
-                        .to("file:///XXX?fileName=XXX")
+                        .to("dropbox://get?accessToken={{accessToken}}&remotePath=" + workdir + "/" + FILE_NAME)
                         .to("mock:result");
 
                 from("direct:start2")
-                    .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
+                        .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE_NAME))
                     .to("dropbox://get?accessToken={{accessToken}}")
-                    .to("file:///XXX?fileName=XXX")
                     .to("mock:result");
             }
         };
