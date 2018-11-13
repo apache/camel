@@ -854,6 +854,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 options.put("outType", outType);
             }
             // if no route id has been set, then use the verb id as route id
+            /*
             if (!route.hasCustomIdAssigned()) {
                 // use id of verb as route id
                 String id = verb.getId();
@@ -861,7 +862,9 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     route.setId(id);
                 }
             }
+            */
 
+            /*
             String routeId = verb.idOrCreate(camelContext.getNodeIdFactory());
 
             if (!verb.getUsedForGeneratingNodeId()) {
@@ -870,6 +873,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             verb.setRouteId(routeId);
             options.put("routeId", routeId);
+            */
             if (component != null && !component.isEmpty()) {
                 options.put("componentName", component);
             }
@@ -963,7 +967,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             // the route should be from this rest endpoint
             route.fromRest(from);
-            route.routeId(routeId);
+            //route.routeId(routeId);
             route.setRestDefinition(this);
             answer.add(route);
         }
