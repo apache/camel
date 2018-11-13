@@ -8,9 +8,8 @@ link:expression.adoc[Expression] or link:predicate.adoc[Predicate]
 within either the link:dsl.adoc[Routing Domain Specific Language] or the
 link:xml-configuration.adoc[XML Configuration].
 
-[NOTE]
-====
-**Combining Predicates**
+==== Note
+*Combining Predicates**
 
 When creating predicates (expressions that evaluate to `true` or
 `false`), you can combine several predicates -- regardless of the

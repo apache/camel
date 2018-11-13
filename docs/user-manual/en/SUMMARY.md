@@ -102,7 +102,7 @@
 * [Injector](injector.adoc)
 * [Intercept](intercept.adoc)
 * [Inversion of Control with Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
-* Languages
+* [Languages](languages.adoc)
 * [Lifecycle](lifecycle.adoc)
 * [OnCompletion](oncompletion.adoc)
 * Pluggable Class Resolvers
