@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -32,11 +31,10 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -47,7 +45,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on some dynamic expression.
  */
-public class RecipientList extends ServiceSupport implements AsyncProcessor, IdAware {
+public class RecipientList extends AsyncProcessorSupport implements IdAware {
 
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
@@ -107,10 +105,6 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {

@@ -25,21 +25,19 @@ import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandKey;
 import com.netflix.hystrix.HystrixCommandMetrics;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.support.AsyncProcessorHelper;
 
 /**
  * Implementation of the Hystrix EIP.
  */
 @ManagedResource(description = "Managed Hystrix Processor")
-public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, org.apache.camel.Traceable, IdAware {
+public class HystrixProcessor extends AsyncProcessorSupport implements Navigate<Processor>, org.apache.camel.Traceable, IdAware {
 
     private String id;
     private final HystrixCommandGroupKey groupKey;
@@ -182,11 +180,6 @@ public class HystrixProcessor extends ServiceSupport implements AsyncProcessor, 
     @Override
     public boolean hasNext() {
         return true;
-    }
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

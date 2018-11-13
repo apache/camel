@@ -135,7 +135,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
     }
 
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         if (output == null) {
             // no output then just return
             return;

@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
@@ -32,13 +31,12 @@ import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
@@ -54,7 +52,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  *
  * @see Enricher
  */
-public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
+public class PollEnricher extends AsyncProcessorSupport implements IdAware, CamelContextAware {
 
     private CamelContext camelContext;
     private ConsumerCache consumerCache;
@@ -159,10 +157,6 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
 
     public void setIgnoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     /**

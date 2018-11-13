@@ -20,15 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A default base class for a {@link LoadBalancer} implementation.
@@ -38,9 +34,8 @@ import org.slf4j.LoggerFactory;
  * Consider using the {@link SimpleLoadBalancerSupport} if your load balancer does not by nature
  * support asynchronous routing.
  */
-public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer, Navigate<Processor>, IdAware {
+public abstract class LoadBalancerSupport extends AsyncProcessorSupport implements LoadBalancer, Navigate<Processor>, IdAware {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final List<Processor> processors = new CopyOnWriteArrayList<>();
     private String id;
 
@@ -91,7 +86,4 @@ public abstract class LoadBalancerSupport extends ServiceSupport implements Load
         }
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
 }

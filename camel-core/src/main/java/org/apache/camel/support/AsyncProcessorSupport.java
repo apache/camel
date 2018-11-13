@@ -14,48 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.support;
 
-import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 
-/**
- * Stops continue processing the route and marks it as complete.
- */
-public class StopProcessor extends AsyncProcessorSupport implements IdAware {
-
-    private String id;
-
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        // mark the exchange to stop continue routing
-        exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
-
-        callback.done(true);
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "Stop";
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+public abstract class AsyncProcessorSupport extends ServiceSupport implements AsyncProcessor {
 
     @Override
     protected void doStart() throws Exception {
-        // noop
     }
 
     @Override
     protected void doStop() throws Exception {
-        // noop
     }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
+        awaitManager.process(this, exchange);
+    }
+
 }

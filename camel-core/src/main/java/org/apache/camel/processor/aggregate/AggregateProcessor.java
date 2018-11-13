@@ -35,7 +35,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
@@ -50,6 +49,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.Traceable;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
@@ -58,13 +58,11 @@ import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -84,7 +82,7 @@ import org.apache.camel.util.TimeUtils;
  * and older prices are discarded). Another idea is to combine line item messages
  * together into a single invoice message.
  */
-public class AggregateProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware {
+public class AggregateProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
 
@@ -259,13 +257,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         this.id = id;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            doProcess(exchange);
+            doProcess(exchange, callback);
         } catch (Throwable e) {
             exchange.setException(e);
         }
@@ -273,7 +267,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         return true;
     }
 
-    protected void doProcess(Exchange exchange) throws Exception {
+    protected void doProcess(Exchange exchange, AsyncCallback callback) throws Exception {
 
         if (getStatistics().isStatisticsEnabled()) {
             totalIn.incrementAndGet();

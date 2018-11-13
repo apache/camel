@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -32,11 +31,10 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.SendDynamicAware;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -44,7 +42,7 @@ import org.apache.camel.util.URISupport;
  *
  * @see org.apache.camel.processor.SendProcessor
  */
-public class SendDynamicProcessor extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
+public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAware, CamelContextAware {
 
     protected SendDynamicAware dynamicAware;
     protected CamelContext camelContext;
@@ -78,10 +76,6 @@ public class SendDynamicProcessor extends ServiceSupport implements AsyncProcess
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public void process(final Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {

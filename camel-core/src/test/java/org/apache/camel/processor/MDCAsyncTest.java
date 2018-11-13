@@ -84,13 +84,7 @@ public class MDCAsyncTest extends ContextTestSupport {
 
         @Override
         public boolean process(Exchange exchange, final AsyncCallback callback) {
-            EXECUTOR.submit(new Runnable() {
-                @Override
-                public void run() {
-                    callback.done(false);
-                }
-            });
-            
+            EXECUTOR.submit(() -> callback.done(false));
             return false;
         }
     }

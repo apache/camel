@@ -23,9 +23,9 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ServiceHelper;
 
@@ -66,14 +66,10 @@ public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
         if (endpoint.getDetour() != null) {
             // detour the exchange using synchronous processing
             AsyncProcessor detour = AsyncProcessorConverterHelper.convert(endpoint.getDetour());
-            AsyncProcessor ascb = new AsyncProcessor() {
+            AsyncProcessor ascb = new AsyncProcessorSupport() {
                 @Override
                 public boolean process(Exchange exchange, AsyncCallback callback) {
                     return callback(exchange, callback, true);
-                }
-                @Override
-                public void process(Exchange exchange) throws Exception {
-                    AsyncProcessorHelper.process(this, exchange);
                 }
             };
             return new Pipeline(exchange.getContext(), Arrays.asList(detour, ascb)).process(exchange, callback);

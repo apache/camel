@@ -17,18 +17,16 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A processor which removes one ore more headers from the IN or OUT message
  */
-public class RemoveHeadersProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class RemoveHeadersProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
     private String id;
     private final String pattern;
     private final String[] excludePattern;
@@ -36,10 +34,6 @@ public class RemoveHeadersProcessor extends ServiceSupport implements AsyncProce
     public RemoveHeadersProcessor(String pattern, String[] excludePattern) {
         this.pattern = pattern;
         this.excludePattern = excludePattern;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

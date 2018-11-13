@@ -28,16 +28,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 
 /**
  * Implements try/catch/finally type processing
  */
-public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
+public class TryProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware {
 
     protected String id;
     protected final Processor tryProcessor;
@@ -58,10 +57,6 @@ public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navi
 
     public String getTraceLabel() {
         return "doTry";
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {

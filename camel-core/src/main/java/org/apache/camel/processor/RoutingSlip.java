@@ -20,7 +20,6 @@ import java.util.Iterator;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -35,12 +34,12 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -54,7 +53,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * as the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the
  * pipeline to ensure it works the same and the async routing engine is flawless.
  */
-public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdAware {
 
     protected String id;
     protected ProducerCache producerCache;
@@ -156,10 +155,6 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
 
     public String getTraceLabel() {
         return "routingSlip[" + expression + "]";
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -487,12 +482,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
      * Embedded processor that routes to the routing slip that has been set via the
      * exchange property {@link Exchange#SLIP_PRODUCER}.
      */
-    private final class RoutingSlipProcessor implements AsyncProcessor {
-
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            AsyncProcessorHelper.process(this, exchange);
-        }
+    private final class RoutingSlipProcessor extends AsyncProcessorSupport {
 
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {

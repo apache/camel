@@ -43,16 +43,13 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.IOHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.processor.validation.SchemaReader.ACCESS_EXTERNAL_DTD;
 
@@ -60,8 +57,8 @@ import static org.apache.camel.processor.validation.SchemaReader.ACCESS_EXTERNAL
  * A processor which validates the XML version of the inbound message body
  * against some schema either in XSD or RelaxNG
  */
-public class ValidatingProcessor implements AsyncProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(ValidatingProcessor.class);
+public class ValidatingProcessor extends AsyncProcessorSupport {
+
     private final SchemaReader schemaReader;
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
     private final XmlConverter converter = new XmlConverter();
@@ -77,10 +74,6 @@ public class ValidatingProcessor implements AsyncProcessor {
     public ValidatingProcessor(SchemaReader schemaReader) {
         // schema reader can be a singelton per schema, therefore make reuse, see ValidatorEndpoint and ValidatorProducer
         this.schemaReader = schemaReader;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -105,11 +98,11 @@ public class ValidatingProcessor implements AsyncProcessor {
         // turn off access to external schema by default
         if (!Boolean.parseBoolean(exchange.getContext().getGlobalOptions().get(ACCESS_EXTERNAL_DTD))) {
             try {
-                LOG.debug("Configuring Validator to not allow access to external DTD/Schema");
+                log.debug("Configuring Validator to not allow access to external DTD/Schema");
                 validator.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
                 validator.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
             } catch (SAXException e) {
-                LOG.warn(e.getMessage(), e);
+                log.warn(e.getMessage(), e);
             }
         }
 
@@ -158,7 +151,7 @@ public class ValidatingProcessor implements AsyncProcessor {
                 validator.setErrorHandler(handler);
 
                 try {
-                    LOG.trace("Validating {}", source);
+                    log.trace("Validating {}", source);
                     validator.validate(source, result);
                     handler.handleErrors(exchange, schema, result);
                 } catch (SAXParseException e) {

@@ -28,13 +28,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A logger for logging message throughput.
  */
-public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, IdAware {
+public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProcessor, IdAware {
 
     private String id;
     private final AtomicInteger receivedCounter = new AtomicInteger();
