@@ -1731,7 +1731,14 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:org.optaplanner/optaplanner-core/${optaplanner-version}</bundle>
-    <bundle dependency='true'>mvn:org.uberfire/uberfire-maven-support/${uberfire-maven-support-version}</bundle>
+    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-common/${optaplanner-version}</bundle>  
+    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-jaxb/${optaplanner-version}</bundle>
+    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-jackson/${optaplanner-version}</bundle>
+    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-xstream/${optaplanner-version}</bundle> 
+    <bundle dependency='true'>mvn:org.kie.soup/kie-soup-maven-support/${kie-version}</bundle>
+    <bundle dependency='true'>mvn:org.kie.soup/kie-soup-project-datamodel-api/${kie-version}</bundle>
+    <bundle dependency='true'>mvn:org.kie.soup/kie-soup-project-datamodel-commons/${kie-version}</bundle>
+    <bundle dependency='true'>mvn:org.kie.soup/kie-soup-commons/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-api/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${drools-version}</bundle>
@@ -1743,7 +1750,7 @@
     <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java/${protobuf-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/${javax-inject-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-optaplanner/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-optaplanner/${project.version}</bundle>    
   </feature>
   <feature name='camel-openstack' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

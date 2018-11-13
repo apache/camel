@@ -184,7 +184,7 @@
     <docker-java-bundle-version>3.0.14_1</docker-java-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>6.4.1</dozer-version>
-    <drools-version>7.3.0.Final</drools-version>
+    <drools-version>7.14.0.Final</drools-version>
     <dropbox-version>3.0.10</dropbox-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
@@ -441,7 +441,7 @@
     <kafka-bundle-version>2.0.0_1</kafka-bundle-version>
     <karaf2-version>2.4.4</karaf2-version>
     <karaf4-version>4.2.1</karaf4-version>
-    <kie-version>7.3.0.Final</kie-version>
+    <kie-version>7.14.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kubernetes-client-version>4.1.0</kubernetes-client-version>
     <kubernetes-model-version>4.1.0</kubernetes-model-version>
@@ -549,7 +549,7 @@
     <opentracing-version>0.31.0</opentracing-version>
     <opentracing-tracerresolver-version>0.1.4</opentracing-tracerresolver-version>
     <ops4j-base-version>1.5.0</ops4j-base-version>
-    <optaplanner-version>7.3.0.Final</optaplanner-version>
+    <optaplanner-version>7.14.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
