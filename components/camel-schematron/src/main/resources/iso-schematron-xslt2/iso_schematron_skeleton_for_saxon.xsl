@@ -2207,7 +2207,7 @@ which require a preprocess.
 		message text is taken from the strings below. We use XHTML, to provide
 		the namespace. 
 		
-		If the $langCode is somethign else, then the XSLT engine will try to
+		If the $langCode is something else, then the XSLT engine will try to
 		find a file called  sch-messages-$langCode.xhtml in the same directory
 		as this stylesheet. Expect a fatal error if the file does not exist.
 		

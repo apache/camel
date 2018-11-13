@@ -149,7 +149,7 @@ public class ProducerParamsPrecedenceTest extends CamelSpringTestSupport {
         Assertions.assertThat(wsaProperties).isNotNull();
         Assertions.assertThat(wsaProperties.getFaultTo().getAddress()).isEqualTo(new URI("http://faultPrecedence.to"));
         // /we set in sample data all precendence fields for simplier tests
-        // otherwise it woudl be here annonymous
+        // otherwise it would be here anonymous
         Assertions.assertThat(wsaProperties.getReplyTo().getAddress()).isEqualTo(new URI("http://replyPrecedence.to"));
 
     }
