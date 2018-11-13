@@ -16,63 +16,44 @@
  */
 package org.apache.camel.component.dropbox.integration.producer;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import java.io.IOException;
+import com.dropbox.core.DbxException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 
 public class DropboxProducerMoveTest extends DropboxTestSupport {
 
-    public DropboxProducerMoveTest() throws Exception { }
+    public static final String COPY_WORKDIR = "/test-workdir";
+    public static final String FILE = "file.txt";
+
+    @Before
+    public void removeDir() throws DbxException, IOException {
+        createDir(COPY_WORKDIR);
+        createFile(FILE, "content");
+    }
 
     @Test
     public void testCamelDropbox() throws Exception {
-        template.send("direct:start", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader("test", "test");
-            }
-        });
-
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);       
-        assertMockEndpointsSatisfied();
-
-        List<Exchange> exchanges = mock.getReceivedExchanges();
-        Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.MOVED_PATH.name());
-        Object body = exchange.getIn().getBody();
-        assertNotNull(header);
-        assertNotNull(body);
+        test("direct:start");
     }
 
     @Test
     public void testCamelDropboxWithOptionInHeader() throws Exception {
-        template.send("direct:start2", new Processor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader("test", "test");
-            }
-        });
+        test("direct:start2");
+    }
 
+    private void test(String endpoint) throws InterruptedException {
+        template.sendBody(endpoint, null);
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
+        mock.expectedHeaderReceived(DropboxResultHeader.MOVED_PATH.name(), workdir + "/" + FILE);
         assertMockEndpointsSatisfied();
-
-        List<Exchange> exchanges = mock.getReceivedExchanges();
-        Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.MOVED_PATH.name());
-        Object body = exchange.getIn().getBody();
-        assertNotNull(header);
-        assertNotNull(body);
     }
 
     @Override
@@ -80,12 +61,12 @@ public class DropboxProducerMoveTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://move?accessToken={{accessToken}}&remotePath=/XXX&newRemotePath=/XXX")
+                        .to(String.format("dropbox://move?accessToken={{accessToken}}&remotePath=%s&newRemotePath=%s", workdir + "/" + FILE, COPY_WORKDIR + "/" + FILE))
                         .to("mock:result");
 
                 from("direct:start2")
-                    .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant("/XXX"))
-                    .setHeader(DropboxConstants.HEADER_NEW_REMOTE_PATH, constant("/XXX"))
+                        .setHeader(DropboxConstants.HEADER_REMOTE_PATH, constant(workdir + "/" + FILE))
+                        .setHeader(DropboxConstants.HEADER_NEW_REMOTE_PATH, constant(COPY_WORKDIR + "/" + FILE))
                     .to("dropbox://move?accessToken={{accessToken}}")
                     .to("mock:result");
             }
