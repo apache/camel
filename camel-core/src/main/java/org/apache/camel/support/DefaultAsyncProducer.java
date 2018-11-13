@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 
 /**
  * A default implementation of {@link org.apache.camel.Producer} for implementation inheritance,
@@ -31,6 +32,7 @@ public abstract class DefaultAsyncProducer extends DefaultProducer implements As
     }
 
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
+        AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
+        awaitManager.process(this, exchange);
     }
 }

@@ -19,21 +19,19 @@ package org.apache.camel.processor;
 import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
-import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A processor which evaluates an {@link Expression} and logs it.
  */
-public class LogProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class LogProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
 
     private String id;
     private final Expression expression;
@@ -46,10 +44,6 @@ public class LogProcessor extends ServiceSupport implements AsyncProcessor, Trac
         this.logger = logger;
         this.formatter = formatter;
         this.listeners = listeners;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

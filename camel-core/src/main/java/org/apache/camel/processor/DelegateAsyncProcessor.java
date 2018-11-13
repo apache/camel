@@ -25,10 +25,9 @@ import org.apache.camel.DelegateProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 
 /**
  * A Delegate pattern which delegates processing to a nested {@link AsyncProcessor} which can
@@ -39,7 +38,7 @@ import org.apache.camel.support.ServiceSupport;
  * @see DelegateSyncProcessor
  * @see org.apache.camel.processor.DelegateProcessor
  */
-public class DelegateAsyncProcessor extends ServiceSupport implements DelegateProcessor, AsyncProcessor, Navigate<Processor> {
+public class DelegateAsyncProcessor extends AsyncProcessorSupport implements DelegateProcessor, Navigate<Processor> {
     protected AsyncProcessor processor;
 
     public DelegateAsyncProcessor() {
@@ -83,12 +82,6 @@ public class DelegateAsyncProcessor extends ServiceSupport implements DelegatePr
 
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(processor);
-    }
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        final AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
-        awaitManager.process(this, exchange);
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {

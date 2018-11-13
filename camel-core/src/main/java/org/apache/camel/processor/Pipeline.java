@@ -31,11 +31,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
@@ -43,7 +42,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * Creates a Pipeline pattern where the output of the previous step is sent as
  * input to the next step, reusing the same message exchanges
  */
-public class Pipeline extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
+public class Pipeline extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware {
 
     private final CamelContext camelContext;
     private List<AsyncProcessor> processors;
@@ -78,11 +77,6 @@ public class Pipeline extends ServiceSupport implements AsyncProcessor, Navigate
         }
 
         return new Pipeline(camelContext, toBeProcessed);
-    }
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

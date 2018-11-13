@@ -17,23 +17,19 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Processor} which converts the inbound exchange to a method
  * invocation on a POJO
  */
-public abstract class AbstractBeanProcessor implements AsyncProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractBeanProcessor.class);
+public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
     private final BeanHolder beanHolder;
     private transient Processor processor;
@@ -62,10 +58,6 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
     @Override
     public String toString() {
         return "BeanProcessor[" + beanHolder + "]";
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -111,7 +103,9 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
                 }
             }
             if (target != null) {
-                LOG.trace("Using a custom adapter as bean invocation: {}", target);
+                if (log.isTraceEnabled()) {
+                    log.trace("Using a custom adapter as bean invocation: {}", target);
+                }
                 try {
                     target.process(exchange);
                 } catch (Throwable e) {
@@ -138,11 +132,13 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
             // and therefore the message body contains a BeanInvocation object.
             // However this can causes problem if we in a Camel route invokes another bean,
             // so we must test whether BeanHolder and BeanInvocation is the same bean or not
-            LOG.trace("Exchange IN body is a BeanInvocation instance: {}", beanInvoke);
+            if (log.isTraceEnabled()) {
+                log.trace("Exchange IN body is a BeanInvocation instance: {}", beanInvoke);
+            }
             Class<?> clazz = beanInvoke.getMethod().getDeclaringClass();
             boolean sameBean = clazz.isInstance(bean);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", bean.getClass(), clazz, sameBean);
+            if (log.isDebugEnabled()) {
+                log.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", bean.getClass(), clazz, sameBean);
             }
             if (sameBean) {
                 try {

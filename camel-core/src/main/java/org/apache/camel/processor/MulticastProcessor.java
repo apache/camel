@@ -54,14 +54,12 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.FilterIterator;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.StopWatch;
@@ -75,7 +73,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * endpoints, each endpoint receiving a copy of the message exchange.
  * @see Pipeline
  */
-public class MulticastProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
+public class MulticastProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware {
 
     /**
      * Class that represent each step in the multicast route to do
@@ -207,10 +205,6 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     public CamelContext getCamelContext() {
         return camelContext;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {

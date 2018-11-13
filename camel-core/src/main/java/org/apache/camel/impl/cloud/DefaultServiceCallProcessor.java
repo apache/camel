@@ -19,7 +19,6 @@ package org.apache.camel.impl.cloud;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -29,16 +28,12 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.SendDynamicProcessor;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class DefaultServiceCallProcessor extends ServiceSupport implements AsyncProcessor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceCallProcessor.class);
+public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
 
     private final ExchangePattern exchangePattern;
     private final String name;
@@ -148,12 +143,6 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
     // Processor
     // *************************************
 
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final Message message = exchange.getIn();
@@ -183,7 +172,7 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
         final int port = service.getPort();
         final Map<String, String> meta = service.getMetadata();
 
-        LOGGER.debug("Service {} active at server: {}:{}", name, host, port);
+        log.debug("Service {} active at server: {}:{}", name, host, port);
 
         // set selected server as header
         message.setHeader(ServiceCallConstants.SERVICE_HOST, host);

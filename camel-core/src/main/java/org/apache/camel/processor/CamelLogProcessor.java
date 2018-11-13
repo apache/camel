@@ -19,18 +19,15 @@ package org.apache.camel.processor;
 import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
-import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.spi.CamelLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A {@link Processor} which just logs to a {@link CamelLogger} object which can be used
@@ -39,11 +36,10 @@ import org.slf4j.LoggerFactory;
  * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
  * which has a <tt>Logger</tt> class.
  */
-public class CamelLogProcessor implements AsyncProcessor, IdAware {
+public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelLogProcessor.class);
     private String id;
-    private CamelLogger log;
+    private CamelLogger logger;
     private ExchangeFormatter formatter;
     private MaskingFormatter maskingFormatter;
     private Set<LogListener> listeners;
@@ -52,13 +48,13 @@ public class CamelLogProcessor implements AsyncProcessor, IdAware {
         this(new CamelLogger(CamelLogProcessor.class.getName()));
     }
     
-    public CamelLogProcessor(CamelLogger log) {
+    public CamelLogProcessor(CamelLogger logger) {
         this.formatter = new ToStringExchangeFormatter();
-        this.log = log;
+        this.logger = logger;
     }
 
-    public CamelLogProcessor(CamelLogger log, ExchangeFormatter formatter, MaskingFormatter maskingFormatter, Set<LogListener> listeners) {
-        this(log);
+    public CamelLogProcessor(CamelLogger logger, ExchangeFormatter formatter, MaskingFormatter maskingFormatter, Set<LogListener> listeners) {
+        this(logger);
         this.formatter = formatter;
         this.maskingFormatter = maskingFormatter;
         this.listeners = listeners;
@@ -66,7 +62,7 @@ public class CamelLogProcessor implements AsyncProcessor, IdAware {
 
     @Override
     public String toString() {
-        return "Logger[" + log + "]";
+        return "Logger[" + logger + "]";
     }
 
     public String getId() {
@@ -77,42 +73,38 @@ public class CamelLogProcessor implements AsyncProcessor, IdAware {
         this.id = id;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        if (log.shouldLog()) {
+        if (logger.shouldLog()) {
             String output = formatter.format(exchange);
             if (maskingFormatter != null) {
                 output = maskingFormatter.format(output);
             }
             output = fireListeners(exchange, output);
-            log.log(output);
+            logger.log(output);
         }
         callback.done(true);
         return true;
     }
 
     public void process(Exchange exchange, Throwable exception) {
-        if (log.shouldLog()) {
+        if (logger.shouldLog()) {
             String output = formatter.format(exchange);
             if (maskingFormatter != null) {
                 output = maskingFormatter.format(output);
             }
             output = fireListeners(exchange, output);
-            log.log(output, exception);
+            logger.log(output, exception);
         }
     }
 
     public void process(Exchange exchange, String message) {
-        if (log.shouldLog()) {
+        if (logger.shouldLog()) {
             String output = formatter.format(exchange) + message;
             if (maskingFormatter != null) {
                 output = maskingFormatter.format(output);
             }
             output = fireListeners(exchange, output);
-            log.log(output);
+            logger.log(output);
         }
     }
 
@@ -125,12 +117,12 @@ public class CamelLogProcessor implements AsyncProcessor, IdAware {
                 continue;
             }
             try {
-                String output = listener.onLog(exchange, log, message);
+                String output = listener.onLog(exchange, logger, message);
                 message = output != null ? output : message;
             } catch (Throwable t) {
-                LOG.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("", t);
+                log.warn("Ignoring an exception thrown by {}: {}", listener.getClass().getName(), t.getMessage());
+                if (log.isDebugEnabled()) {
+                    log.debug("", t);
                 }
             }
         }
@@ -138,19 +130,19 @@ public class CamelLogProcessor implements AsyncProcessor, IdAware {
     }
 
     public CamelLogger getLogger() {
-        return log;
+        return logger;
     }
     
     public void setLogName(String logName) {
-        log.setLogName(logName);
+        logger.setLogName(logName);
     }
     
     public void setLevel(LoggingLevel level) {
-        log.setLevel(level);
+        logger.setLevel(level);
     }
 
     public void setMarker(String marker) {
-        log.setMarker(marker);
+        logger.setMarker(marker);
     }
 
     public void setMaskingFormatter(MaskingFormatter maskingFormatter) {

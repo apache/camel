@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -26,26 +25,21 @@ import org.apache.camel.Traceable;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Marshals the body of the incoming message using the given
  * <a href="http://camel.apache.org/data-format.html">data format</a>
  */
-public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, Traceable, CamelContextAware, IdAware {
+public class MarshalProcessor extends AsyncProcessorSupport implements Traceable, CamelContextAware, IdAware {
     private String id;
     private CamelContext camelContext;
     private final DataFormat dataFormat;
 
     public MarshalProcessor(DataFormat dataFormat) {
         this.dataFormat = dataFormat;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
