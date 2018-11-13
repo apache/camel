@@ -141,7 +141,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     /**
      * Sets swagger operation response messages.
      */
-    public void setResponseMsgs(List<RestOperationResponseMsgDefinition> params) {
+    public void setResponseMsgs(List<RestOperationResponseMsgDefinition> responseMsgs) {
         this.responseMsgs = responseMsgs;
     }
 
