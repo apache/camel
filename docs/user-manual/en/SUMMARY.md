@@ -128,7 +128,7 @@
 * [Java DSL](java-dsl.adoc)
 * [Spring DSL](spring.adoc)
 * [Blueprint DSL](using-osgi-blueprint-with-camel.adoc)
-* Rest DSL
+* [Rest DSL](../../../camel-core/src/main/docs/rest-dsl.adoc)
 * [Groovy DSL](groovy-dsl.adoc)
 * [Scala DSL](scala-dsl.adoc)
 * [Annotation DSL](bean-integration.adoc)
