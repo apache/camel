@@ -52,7 +52,6 @@ public class SchematronProcessor {
      * @param templates
      */
     public SchematronProcessor(XMLReader reader, Templates templates) {
-
         this.reader = reader;
         this.templates = templates;
     }
@@ -64,9 +63,18 @@ public class SchematronProcessor {
      * @return
      */
     public String validate(final String xml) {
+        final Source source = new SAXSource(reader, new InputSource(IOUtils.toInputStream(xml)));
+        return validate(source);
+    }
 
+    /**
+     * Validates the given XML for given Rules.
+     *
+     * @param source
+     * @return
+     */
+    public String validate(Source source) {
         try {
-            final Source source = new SAXSource(reader, new InputSource(IOUtils.toInputStream(xml)));
             final StringWriter writer = new StringWriter();
             templates.newTransformer().transform(source, new StreamResult(writer));
             return writer.toString();
