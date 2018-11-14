@@ -239,24 +239,16 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
     }
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
-        Processor processor = makeProcessor(routeContext);
+        Channel processor = makeProcessor(routeContext);
         if (processor == null) {
             // no processor to add
             return;
         }
 
         if (!routeContext.isRouteAdded()) {
-            boolean endpointInterceptor = false;
-
             // are we routing to an endpoint interceptor, if so we should not add it as an event driven
             // processor as we use the producer to trigger the interceptor
-            if (processor instanceof Channel) {
-                Channel channel = (Channel) processor;
-                Processor next = channel.getNextProcessor();
-                if (next instanceof InterceptEndpointProcessor) {
-                    endpointInterceptor = true;
-                }
-            }
+            boolean endpointInterceptor = processor.getNextProcessor() instanceof InterceptEndpointProcessor;
 
             // only add regular processors as event driven
             if (endpointInterceptor) {
@@ -265,26 +257,25 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
                 log.trace("Adding event driven processor: {}", processor);
                 routeContext.addEventDrivenProcessor(processor);
             }
-
         }
     }
 
     /**
      * Wraps the child processor in whatever necessary interceptors and error handlers
      */
-    public Processor wrapProcessor(RouteContext routeContext, Processor processor) throws Exception {
+    public Channel wrapProcessor(RouteContext routeContext, Processor processor) throws Exception {
         // dont double wrap
         if (processor instanceof Channel) {
-            return processor;
+            return (Channel) processor;
         }
         return wrapChannel(routeContext, processor, null);
     }
 
-    protected Processor wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child) throws Exception {
+    protected Channel wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child) throws Exception {
         return wrapChannel(routeContext, processor, child, definition.isInheritErrorHandler());
     }
 
-    protected Processor wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler) throws Exception {
+    protected Channel wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler) throws Exception {
         // put a channel in between this and each output to control the route flow logic
         ModelChannel channel = createChannel(routeContext);
         channel.setNextProcessor(processor);
@@ -500,7 +491,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
     /**
      * Creates the processor and wraps it in any necessary interceptors and error handlers
      */
-    protected Processor makeProcessor(RouteContext routeContext) throws Exception {
+    protected Channel makeProcessor(RouteContext routeContext) throws Exception {
         // We will save list of actions to restore the definition back to the original state.
         Runnable propertyPlaceholdersChangeReverter = ProcessorDefinitionHelper.createPropertyPlaceholdersChangeReverter();
         try {
@@ -511,7 +502,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         }
     }
 
-    private Processor makeProcessorImpl(RouteContext routeContext) throws Exception {
+    private Channel makeProcessorImpl(RouteContext routeContext) throws Exception {
         Processor processor = null;
 
         // allow any custom logic before we create the processor

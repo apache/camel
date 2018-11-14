@@ -117,12 +117,12 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
     // -------------------------------------------------------------------------
     public synchronized void consumerStarted(EventConsumer consumer) {
         getComponent().consumerStarted(this);
-        getLoadBalancer().addProcessor(consumer.getProcessor());
+        getLoadBalancer().addProcessor(consumer.getAsyncProcessor());
     }
 
     public synchronized void consumerStopped(EventConsumer consumer) {
         getComponent().consumerStopped(this);
-        getLoadBalancer().removeProcessor(consumer.getProcessor());
+        getLoadBalancer().removeProcessor(consumer.getAsyncProcessor());
     }
 
     protected LoadBalancer createLoadBalancer() {
