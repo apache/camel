@@ -18,6 +18,7 @@ package org.apache.camel.swagger;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -210,7 +211,7 @@ public class RestSwaggerSupport {
 
         List<RestDefinition> rests = getRestDefinitions(contextId);
         if (rests != null) {
-            final Map<String, Object> apiProperties = configuration.getApiProperties();
+            final Map<String, Object> apiProperties = configuration.getApiProperties() != null ? configuration.getApiProperties() : new HashMap<>();
             if (json) {
                 response.setHeader(Exchange.CONTENT_TYPE, (String) apiProperties.getOrDefault("api.specification.contentType.json", "application/json"));
 
