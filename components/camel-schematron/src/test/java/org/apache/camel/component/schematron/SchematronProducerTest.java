@@ -15,8 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.schematron;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXSource;
 
 import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.Exchange;
@@ -26,8 +30,12 @@ import org.apache.camel.component.schematron.processor.ClassPathURIResolver;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 /**
  * Schematron Producer Unit Test.
@@ -71,6 +79,39 @@ public class SchematronProducerTest extends CamelTestSupport {
         // assert
         assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
 
+    }
+
+    @Test
+    public void testProcessValidXMLAsSource() throws Exception {
+        Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
+        exc.getIn().setBody(new SAXSource(getXMLReader(), new InputSource(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"))));
+
+        // process xml payload
+        producer.process(exc);
+
+        // assert
+        assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.SUCCESS));
+    }
+
+    @Test
+    public void testProcessInValidXMLAsSource() throws Exception {
+        Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
+        exc.getIn().setBody(new SAXSource(getXMLReader(), new InputSource(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"))));
+
+        // process xml payload
+        producer.process(exc);
+
+        // assert
+        assertTrue(exc.getOut().getHeader(Constants.VALIDATION_STATUS).equals(Constants.FAILED));
+
+    }
+
+    private static XMLReader getXMLReader() throws ParserConfigurationException, SAXException {
+        final SAXParserFactory fac = SAXParserFactory.newInstance();
+        fac.setValidating(false);
+        final SAXParser parser = fac.newSAXParser();
+        XMLReader reader = parser.getXMLReader();
+        return reader;
     }
 
 }
