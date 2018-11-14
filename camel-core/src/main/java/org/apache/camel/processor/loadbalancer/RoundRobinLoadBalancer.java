@@ -16,31 +16,25 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 
 /**
  * Implements the round robin load balancing policy
  */
 public class RoundRobinLoadBalancer extends QueueLoadBalancer {
-    private int counter = -1;
+    private AtomicInteger counter = new AtomicInteger(-1);
 
-    protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
-        int size = processors.size();
-        if (++counter >= size) {
-            counter = 0;
-        }
-        return processors.get(counter);
+    protected AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
+        int size = processors.length;
+        int c = counter.updateAndGet(x -> (++x < size ? x : 0));
+        return processors[c];
     }
 
     public int getLastChosenProcessorIndex() {
-        return counter;
-    }
-
-    public String toString() {
-        return "RoundRobinLoadBalancer";
+        return counter.get();
     }
 
 }

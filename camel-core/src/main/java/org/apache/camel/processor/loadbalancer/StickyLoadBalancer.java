@@ -16,14 +16,12 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 
 /**
  * Implements a sticky load balancer using an {@link Expression} to calculate
@@ -34,39 +32,25 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     private Expression correlationExpression;
     private RoundRobinLoadBalancer loadBalancer;
     private int numberOfHashGroups = 64 * 1024;
-    private final Map<Object, Processor> stickyMap = new HashMap<>();
+    private final Map<Object, AsyncProcessor> stickyMap = new ConcurrentHashMap<>();
 
     public StickyLoadBalancer(Expression correlationExpression) {
         this.correlationExpression = correlationExpression;
         this.loadBalancer = new RoundRobinLoadBalancer();
     }
 
-    protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
+    protected AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
         Object value = correlationExpression.evaluate(exchange, Object.class);
         Object key = getStickyKey(value);
 
-        Processor processor;
-        synchronized (stickyMap) {
-            processor = stickyMap.get(key);
-            if (processor == null) {
-                processor = loadBalancer.chooseProcessor(processors, exchange);
-                stickyMap.put(key, processor);
-            }
-        }
+        AsyncProcessor processor;
+        processor = stickyMap.computeIfAbsent(key, k -> loadBalancer.chooseProcessor(processors, exchange));
         return processor;
     }
 
     @Override
-    public void removeProcessor(Processor processor) {
-        synchronized (stickyMap) {
-            Iterator<Map.Entry<Object, Processor>> iter = stickyMap.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<Object, Processor> entry = iter.next();
-                if (processor.equals(entry.getValue())) {
-                    iter.remove();
-                }
-            }
-        }
+    public void removeProcessor(AsyncProcessor processor) {
+        stickyMap.values().remove(processor);
         super.removeProcessor(processor);
     }
 
@@ -109,10 +93,6 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
             hashCode = hashCode % numberOfHashGroups;
         }
         return hashCode;
-    }
-
-    public String toString() {
-        return "StickyLoadBalancer";
     }
 
 }

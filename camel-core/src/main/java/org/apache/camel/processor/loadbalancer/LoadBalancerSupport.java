@@ -16,50 +16,72 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
-import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ServiceHelper;
 
 /**
  * A default base class for a {@link LoadBalancer} implementation.
- * <p/>
- * This implementation is dedicated for asynchronous load balancers.
- * <p/>
- * Consider using the {@link SimpleLoadBalancerSupport} if your load balancer does not by nature
- * support asynchronous routing.
  */
 public abstract class LoadBalancerSupport extends AsyncProcessorSupport implements LoadBalancer, Navigate<Processor>, IdAware {
 
-    private final List<Processor> processors = new CopyOnWriteArrayList<>();
+    private final AtomicReference<AsyncProcessor[]> processors = new AtomicReference<>(new AsyncProcessor[0]);
     private String id;
 
-    public void addProcessor(Processor processor) {
-        processors.add(processor);
+    public void addProcessor(AsyncProcessor processor) {
+        processors.updateAndGet(op -> doAdd(processor, op));
     }
 
-    public void removeProcessor(Processor processor) {
-        processors.remove(processor);
+    public void removeProcessor(AsyncProcessor processor) {
+        processors.updateAndGet(op -> doRemove(processor, op));
     }
 
-    public List<Processor> getProcessors() {
-        return processors;
+    private AsyncProcessor[] doAdd(AsyncProcessor processor, AsyncProcessor[] op) {
+        int len = op.length;
+        AsyncProcessor[] np = Arrays.copyOf(op, len + 1, op.getClass());
+        np[len] = processor;
+        return np;
     }
 
+    private AsyncProcessor[] doRemove(AsyncProcessor processor, AsyncProcessor[] op) {
+        int len = op.length;
+        for (int index = 0; index < len; index++) {
+            if (op[index].equals(processor)) {
+                AsyncProcessor[] np = (AsyncProcessor[]) Array.newInstance(AsyncProcessor.class, len - 1);
+                System.arraycopy(op, 0, np, 0, index);
+                System.arraycopy(op, index + 1, np, index, len - index - 1);
+                return np;
+            }
+        }
+        return op;
+    }
+
+    public List<AsyncProcessor> getProcessors() {
+        return Arrays.asList(processors.get());
+    }
+
+    protected AsyncProcessor[] doGetProcessors() {
+        return processors.get();
+    }
+
+    @SuppressWarnings("unchecked")
     public List<Processor> next() {
         if (!hasNext()) {
             return null;
         }
-        return new ArrayList<>(processors);
+        return (List) getProcessors();
     }
 
     public boolean hasNext() {
-        return processors.size() > 0;
+        return doGetProcessors().length > 0;
     }
 
     public String getId() {
@@ -71,19 +93,24 @@ public abstract class LoadBalancerSupport extends AsyncProcessorSupport implemen
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startService(processors);
+        ServiceHelper.startService((Object[]) processors.get());
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(processors);
+        ServiceHelper.stopService((Object[]) processors.get());
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownServices(processors);
-        for (Processor processor : processors) {
+        AsyncProcessor[] p = processors.get();
+        ServiceHelper.stopAndShutdownServices((Object[]) p);
+        for (AsyncProcessor processor : p) {
             removeProcessor(processor);
         }
+    }
+
+    public String toString() {
+        return getClass().getSimpleName() + Arrays.toString(doGetProcessors());
     }
 
 }

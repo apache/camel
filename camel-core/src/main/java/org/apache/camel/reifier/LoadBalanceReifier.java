@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.Channel;
 import org.apache.camel.Processor;
 import org.apache.camel.model.LoadBalanceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -23,6 +24,7 @@ import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.reifier.loadbalancer.LoadBalancerReifier;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
 
 class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
 
@@ -55,8 +57,8 @@ class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
                     throw new IllegalArgumentException("Loadbalancer already configured to: " + definition.getLoadBalancerType() + ". Cannot set it to: " + processorType);
                 }
                 Processor processor = createProcessor(routeContext, processorType);
-                processor = wrapChannel(routeContext, processor, processorType);
-                loadBalancer.addProcessor(processor);
+                Channel channel = wrapChannel(routeContext, processor, processorType);
+                loadBalancer.addProcessor(channel);
             }
         }
 
