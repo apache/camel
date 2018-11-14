@@ -42,6 +42,11 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
             message.setHeader("CamelFileHost", getHostname());
         }
     }
+    
+    @Override
+    public void populateHeaders(GenericFileMessage<T> message, boolean isProbeContentTypeFromEndpoint) {
+        populateHeaders(message);
+    }
 
     public String getHostname() {
         return hostname;
