@@ -76,6 +76,9 @@ The component supports 2 options, which are listed below.
 |===
 // spring-boot-auto-configure options: END
 
+### Karaf support
+
+Actually this component is not supported in Karaf
 
 ### Message Headers
 
