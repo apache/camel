@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
     
-    private int services = 10;
+    private static final int SERVICES = 11;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -57,10 +57,10 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        // number of services
+        // number of SERVICES
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // number of producers
         ObjectName onP = ObjectName.getInstance("org.apache.camel:context=camel-1,type=producers,*");
@@ -83,9 +83,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         template.sendBody("direct:bar", "Hello World");
         bar.assertIsSatisfied();
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // but we should have one more producer
         namesP = mbeanServer.queryNames(onP, null);
@@ -98,9 +98,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // and the 2nd producer should be removed
         namesP = mbeanServer.queryNames(onP, null);
@@ -119,9 +119,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
 
-        // number of services
+        // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // number of producers
         ObjectName onP = ObjectName.getInstance("org.apache.camel:context=camel-1,type=producers,*");
@@ -144,9 +144,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         template.sendBodyAndHeader("direct:bar", "Hello World", "bar", "mock:bar");
         bar.assertIsSatisfied();
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // but as its recipient list which is dynamic-to we do not add a new producer
         namesP = mbeanServer.queryNames(onP, null);
@@ -159,9 +159,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // and we still have the original producer
         namesP = mbeanServer.queryNames(onP, null);
@@ -180,9 +180,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
 
-        // number of services
+        // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // number of producers
         ObjectName onP = ObjectName.getInstance("org.apache.camel:context=camel-1,type=producers,*");
@@ -205,9 +205,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         template.sendBodyAndHeader("direct:bar", "Hello World", "bar", "mock:bar");
         bar.assertIsSatisfied();
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // but as its recipient list which is dynamic-to we do not add a new producer
         namesP = mbeanServer.queryNames(onP, null);
@@ -220,9 +220,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // and we still have the original producer
         namesP = mbeanServer.queryNames(onP, null);
@@ -241,9 +241,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
 
-        // number of services
+        // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         log.info("Adding 2nd route");
 
@@ -271,9 +271,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -283,9 +283,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         log.info("Shutting down...");
     }
@@ -300,9 +300,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
 
-        // number of services
+        // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         log.info("Adding 2nd route");
 
@@ -331,9 +331,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -343,9 +343,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         log.info("Shutting down...");
     }
@@ -360,9 +360,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
 
-        // number of services
+        // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         log.info("Adding 2nd route");
 
@@ -389,9 +389,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -401,9 +401,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         log.info("Shutting down...");
     }
@@ -418,9 +418,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
 
-        // number of services
+        // number of SERVICES
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         log.info("Adding 2nd route");
 
@@ -448,9 +448,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         // now stop and remove the 2nd route
         log.info("Stopping 2nd route");
@@ -460,9 +460,9 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
         boolean removed = context.removeRoute("bar");
         assertTrue(removed);
 
-        // there should still be the same number of services
+        // there should still be the same number of SERVICES
         names = mbeanServer.queryNames(on, null);
-        assertEquals(services, names.size());
+        assertEquals(SERVICES, names.size());
 
         log.info("Shutting down...");
     }
