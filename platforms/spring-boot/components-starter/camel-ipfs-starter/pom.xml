@@ -53,9 +53,9 @@
   <!--START OF GENERATED CODE-->
   <repositories>
     <repository>
-      <id>jboss.ea</id>
+      <id>jboss.thirdparty</id>
       <name>JBoss Repository</name>
-      <url>https://repository.jboss.org/nexus/content/groups/ea</url>
+      <url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content/</url>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
