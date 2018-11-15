@@ -97,6 +97,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession mavenSession;
+    
+    @Parameter
+    String apiContextPath;
 
     @Component
     private BuildPluginManager pluginManager;

@@ -66,7 +66,8 @@ in the `<configuration>` tag.
 | `indent` | `"&nbsp;&nbsp;&nbsp;&nbsp;"` | What identing character(s) to use, by default four spaces, you can use `\t` to signify tab character
 | `outputDirectory` | `generated-sources/restdsl-swagger` | Where to place the generated source file, by default `generated-sources/restdsl-swagger` within the project directory
 | `destinationGenerator` | | Fully qualified class name of the class that implements `org.apache.camel.generator.swagger.DestinationGenerator` interface for customizing destination endpoint
-| `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used. |
+| `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used. 
+| `apiContextPath` | | Define swagger endpoint path if `restConfiguration` is set to `true`. |
 |========================================
 
 === Spring Boot Project with Servlet component
@@ -138,7 +139,8 @@ in the `<configuration>` tag.
 | `fileName` | `camel-rest.xml` | The name of the XML file as output.
 | `blueprint` | `false` | If enabled generates OSGi Blueprint XML instead of Spring XML.
 | `destinationGenerator` | | Fully qualified class name of the class that implements `org.apache.camel.generator.swagger.DestinationGenerator` interface for customizing destination endpoint
-| `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used. |
+| `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used.
+| `apiContextPath` | | Define swagger endpoint path if `restConfiguration` is set to `true`. |
 |========================================
 
 == camel-restdsl-swagger:generate-xml-with-dto
