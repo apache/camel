@@ -19,16 +19,16 @@ package org.apache.camel.component.ipfs;
 import java.net.URI;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-
 import io.nessus.ipfs.IPFSClient;
 import io.nessus.ipfs.impl.DefaultIPFSClient;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 
 public class IPFSComponent extends DefaultComponent {
 
     private IPFSClient client;
-    
+
     @Override
     protected Endpoint createEndpoint(String urispec, String remaining, Map<String, Object> params) throws Exception {
 
@@ -42,15 +42,19 @@ public class IPFSComponent extends DefaultComponent {
         int port = uri.getPort();
         String cmd = remaining;
         if (!cmd.equals(host)) {
-            if (host != null) config.setIpfsHost(host);
-            if (port > 0) config.setIpfsPort(port);
+            if (host != null) {
+                config.setIpfsHost(host);
+            }
+            if (port > 0) {
+                config.setIpfsPort(port);
+            }
             int idx = cmd.indexOf('/');
             cmd = cmd.substring(idx + 1);
         }
         config.setIpfsCmd(cmd);
-        
+
         client = createClient(config);
-        
+
         return new IPFSEndpoint(urispec, this, config);
     }
 
