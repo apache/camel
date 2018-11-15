@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import io.nessus.ipfs.IPFSClient;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,17 +33,16 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-import io.nessus.ipfs.IPFSClient;
-
 /**
- * The camel-ipfs component provides access to the Interplanetary File System (IPFS).
+ * The camel-ipfs component provides access to the Interplanetary File System
+ * (IPFS).
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "ipfs", title = "IPFS", syntax = "ipfs:host:port/cmd", producerOnly = true, label = "file,ipfs")
 public class IPFSEndpoint extends DefaultEndpoint {
 
     @UriParam
     private final IPFSConfiguration configuration;
-    
+
     public IPFSEndpoint(String uri, IPFSComponent component, IPFSConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
@@ -49,7 +50,7 @@ public class IPFSEndpoint extends DefaultEndpoint {
 
     @Override
     public IPFSComponent getComponent() {
-        return (IPFSComponent) super.getComponent();
+        return (IPFSComponent)super.getComponent();
     }
 
     @Override
@@ -79,7 +80,7 @@ public class IPFSEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("Unsupported command: " + cmd);
         }
     }
-    
+
     String ipfsVersion() throws IOException {
         return ipfs().version();
     }
