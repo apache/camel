@@ -23,19 +23,18 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
 import org.apache.camel.impl.DefaultProducer;
 
-import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
-
 public class IPFSProducer extends DefaultProducer {
-    
+
     public IPFSProducer(IPFSEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
     public IPFSEndpoint getEndpoint() {
-        return (IPFSEndpoint) super.getEndpoint();
+        return (IPFSEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -43,14 +42,14 @@ public class IPFSProducer extends DefaultProducer {
 
         IPFSEndpoint endpoint = getEndpoint();
         IPFSCommand cmd = endpoint.getCommand();
-        
+
         if (IPFSCommand.version == cmd) {
-            
+
             String resp = endpoint.ipfsVersion();
             exchange.getMessage().setBody(resp);
-            
-        }  else if (IPFSCommand.add == cmd) {
-            
+
+        } else if (IPFSCommand.add == cmd) {
+
             Path path = pathFromBody(exchange);
             List<String> cids = endpoint.ipfsAdd(path);
             Object resp = cids;
@@ -58,20 +57,20 @@ public class IPFSProducer extends DefaultProducer {
                 resp = cids.size() > 0 ? cids.get(0) : null;
             }
             exchange.getMessage().setBody(resp);
-            
-        }  else if (IPFSCommand.cat == cmd) {
+
+        } else if (IPFSCommand.cat == cmd) {
 
             String cid = exchange.getMessage().getBody(String.class);
             InputStream resp = endpoint.ipfsCat(cid);
             exchange.getMessage().setBody(resp);
-            
-        }  else if (IPFSCommand.get == cmd) {
+
+        } else if (IPFSCommand.get == cmd) {
 
             Path outdir = endpoint.getConfiguration().getOutdir();
             String cid = exchange.getMessage().getBody(String.class);
             Path resp = endpoint.ipfsGet(cid, outdir);
             exchange.getMessage().setBody(resp);
-            
+
         } else {
             throw new UnsupportedOperationException(cmd.toString());
         }
@@ -79,9 +78,15 @@ public class IPFSProducer extends DefaultProducer {
 
     private Path pathFromBody(Exchange exchange) {
         Object body = exchange.getMessage().getBody();
-        if (body instanceof Path) return (Path) body;
-        if (body instanceof String) return Paths.get((String) body);
-        if (body instanceof File) return ((File) body).toPath();
+        if (body instanceof Path) {
+            return (Path)body;
+        }
+        if (body instanceof String) {
+            return Paths.get((String)body);
+        }
+        if (body instanceof File) {
+            return ((File)body).toPath();
+        }
         throw new IllegalArgumentException("Invalid path: " + body);
     }
 }
