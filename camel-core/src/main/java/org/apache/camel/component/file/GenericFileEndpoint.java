@@ -1405,8 +1405,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
         pattern = pattern.replaceFirst("\\$\\{file:name\\}", onlyName);
         pattern = pattern.replaceFirst("\\$simple\\{file:name\\}", onlyName);
-        pattern = pattern.replaceFirst("\\$\\{file:name.noext\\}", FileUtil.stripExt(onlyName));
-        pattern = pattern.replaceFirst("\\$simple\\{file:name.noext\\}", FileUtil.stripExt(onlyName));
+        pattern = pattern.replaceFirst("\\$\\{file:name.noext\\}", FileUtil.stripExt(onlyName, true));
+        pattern = pattern.replaceFirst("\\$simple\\{file:name.noext\\}", FileUtil.stripExt(onlyName, true));
 
         // must be able to resolve all placeholders supported
         if (StringHelper.hasStartToken(pattern, "simple")) {
