@@ -36,6 +36,7 @@ public abstract class RestDslGenerator<G> {
     OperationFilter filter = new OperationFilter();
     String restComponent;
     String restContextPath;
+    String apiContextPath;
     boolean springComponent;
     boolean springBootProject;
 
@@ -86,6 +87,15 @@ public abstract class RestDslGenerator<G> {
 
     public G withRestContextPath(String contextPath) {
         this.restContextPath = contextPath;
+
+        @SuppressWarnings("unchecked")
+        final G that = (G) this;
+
+        return that;
+    }
+    
+    public G withApiContextPath(String contextPath) {
+        this.apiContextPath = contextPath;
 
         @SuppressWarnings("unchecked")
         final G that = (G) this;
