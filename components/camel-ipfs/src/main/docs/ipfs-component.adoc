@@ -66,6 +66,8 @@ with the following path and query parameters:
 
 The component supports 2 options, which are listed below.
 
+
+
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type

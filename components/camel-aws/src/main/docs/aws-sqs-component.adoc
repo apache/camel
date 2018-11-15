@@ -128,7 +128,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 30 options, which are listed below.
+The component supports 31 options, which are listed below.
 
 
 
@@ -142,6 +142,7 @@ The component supports 30 options, which are listed below.
 | *camel.component.aws-sqs.configuration.attribute-names* | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
 | *camel.component.aws-sqs.configuration.concurrent-consumers* | Allows you to use multiple threads to poll the sqs queue to increase throughput | 1 | Integer
 | *camel.component.aws-sqs.configuration.default-visibility-timeout* | The default visibility timeout (in seconds) |  | Integer
+| *camel.component.aws-sqs.configuration.delay-queue* | Define if you want to apply delaySeconds option to the queue or on single messages | false | Boolean
 | *camel.component.aws-sqs.configuration.delay-seconds* | Delay sending messages for a number of seconds. |  | Integer
 | *camel.component.aws-sqs.configuration.delete-after-read* | Delete message from SQS after it has been read | true | Boolean
 | *camel.component.aws-sqs.configuration.delete-if-filtered* | Whether or not to send the DeleteMessage to the SQS queue if an exchange fails to get through a filter. If 'false' and exchange does not make it through a Camel filter upstream in the route, then don't send DeleteMessage. | true | Boolean

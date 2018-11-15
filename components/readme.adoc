@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 303 in 205 JAR artifacts (22 deprecated)
+Number of Components: 304 in 206 JAR artifacts (22 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -412,6 +412,9 @@ Number of Components: 303 in 205 JAR artifacts (22 deprecated)
 
 | link:camel-influxdb/src/main/docs/influxdb-component.adoc[InfluxDB] (camel-influxdb) +
 `influxdb:connectionBean` | 2.18 | The influxdb component allows you to interact with InfluxDB, a time series database.
+
+| link:camel-ipfs/src/main/docs/ipfs-component.adoc[IPFS] (camel-ipfs) +
+`ipfs:host:port/cmd` | 2.23 | The camel-ipfs component provides access to the Interplanetary File System (IPFS).
 
 | link:camel-irc/src/main/docs/irc-component.adoc[IRC] (camel-irc) +
 `irc:hostname:port` | 1.1 | The irc component implements an IRC (Internet Relay Chat) transport.
