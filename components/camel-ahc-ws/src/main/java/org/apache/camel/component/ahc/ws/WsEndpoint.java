@@ -67,9 +67,9 @@ public class WsEndpoint extends AhcEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-    	WsConsumer consumer = new WsConsumer(this, processor);
-    	configureConsumer(consumer);
-    	return consumer;
+        WsConsumer consumer = new WsConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     WebSocket getWebSocket() throws Exception {
