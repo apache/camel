@@ -20,6 +20,7 @@ import io.swagger.models.Swagger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.util.ObjectHelper;
 
 public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
@@ -51,10 +52,14 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
         xml = xml.replaceAll(" customId=\"false\"", "");
 
         if (restComponent != null) {
-            String extra = "<restConfiguration component=\"" + restComponent + "\"/>";
+            String extra = "<restConfiguration component=\"" + restComponent + "\"";
             if (restContextPath != null) {
-                extra = "<restConfiguration component=\"" + restComponent + "\" contextPath=\"" + restContextPath + "\"/>";
+                extra = extra.concat(" contextPath=\"" + restContextPath + "\"");
             }
+            if (ObjectHelper.isNotEmpty(apiContextPath)) {
+                extra = extra.concat(" apiContextPath=\"" + apiContextPath + "\"");
+            }
+            extra = extra.concat("/>");
             xml = xml.replaceFirst("<rest>", extra + "\n    <rest>");
             xml = xml.replaceFirst("<rest ", extra + "\n    <rest ");
         }
