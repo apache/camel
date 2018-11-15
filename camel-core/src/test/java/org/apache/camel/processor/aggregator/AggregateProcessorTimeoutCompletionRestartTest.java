@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -57,7 +58,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         mock.expectedBodiesReceived("A+B");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
@@ -101,7 +102,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         mock.expectedBodiesReceived("A+B");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
@@ -147,7 +148,7 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         mock.expectedBodiesReceived("C+D", "A+B");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
