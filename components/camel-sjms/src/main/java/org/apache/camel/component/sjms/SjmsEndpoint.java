@@ -563,6 +563,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
 
     /**
      * Sets the reply to destination name used for InOut producer endpoints.
+     * The type of the reply to destination can be determined by the starting 
+     * prefix (topic: or queue:) in its name. 
      */
     public void setNamedReplyTo(String namedReplyTo) {
         this.namedReplyTo = namedReplyTo;
