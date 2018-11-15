@@ -29,6 +29,8 @@ import org.junit.Test;
 
 public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 
+    private static final int SERVICES = 11;
+
     @Test
     public void testService() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
@@ -48,7 +50,7 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
-        assertEquals(11, set.size());
+        assertEquals(SERVICES + 1, set.size());
     }
 
     @Test
@@ -70,7 +72,7 @@ public class ManagedNonManagedServiceTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
-        assertEquals(10, set.size());
+        assertEquals(SERVICES, set.size());
     }
 
     @Override
