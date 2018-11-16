@@ -37,7 +37,7 @@ The URI scheme for a netty component is as follows
 
 [source,text]
 ----
-netty4:tcp://localhost:99999[?options]
+netty4:tcp://0.0.0.0:99999[?options]
 netty4:udp://remotehost:99999/[?options]
 ----
 
@@ -360,7 +360,7 @@ operations.
 ----
 RouteBuilder builder = new RouteBuilder() {
   public void configure() {
-    from("netty4:udp://localhost:5155?sync=true")
+    from("netty4:udp://0.0.0.0:5155?sync=true")
       .process(new Processor() {
          public void process(Exchange exchange) throws Exception {
            Poetry poetry = (Poetry) exchange.getIn().getBody();
@@ -378,7 +378,7 @@ RouteBuilder builder = new RouteBuilder() {
 ----
 RouteBuilder builder = new RouteBuilder() {
   public void configure() {
-       from("netty4:tcp://localhost:5150")
+       from("netty4:tcp://0.0.0.0:5150")
            .to("mock:result");
   }
 };
@@ -432,7 +432,7 @@ Spring DSL based configuration of endpoint
     </camel:keyManagers>
   </camel:sslContextParameters>...
 ...
-  <to uri="netty4:tcp://localhost:5150?sync=true&ssl=true&sslContextParameters=#sslContextParameters"/>
+  <to uri="netty4:tcp://0.0.0.0:5150?sync=true&ssl=true&sslContextParameters=#sslContextParameters"/>
 ...
 ----
 
@@ -450,7 +450,7 @@ context.createRegistry(registry);
 context.addRoutes(new RouteBuilder() {
   public void configure() {
       String netty_ssl_endpoint =
-         "netty4:tcp://localhost:5150?sync=true&ssl=true&passphrase=#password"
+         "netty4:tcp://0.0.0.0:5150?sync=true&ssl=true&passphrase=#password"
          + "&keyStoreFile=#ksf&trustStoreFile=#tsf";
       String return_string =
          "When You Go Home, Tell Them Of Us And Say,"
@@ -578,9 +578,9 @@ a comma separated list or contained in a List e.g.
 
 [source,java]
 ----
- from("direct:multiple-codec").to("netty4:tcp://localhost:{{port}}?encoders=#encoders&sync=false");
+ from("direct:multiple-codec").to("netty4:tcp://0.0.0.0:{{port}}?encoders=#encoders&sync=false");
                 
- from("netty4:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
+ from("netty4:tcp://0.0.0.0:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
 ----
 
 or via XML.
@@ -590,10 +590,10 @@ or via XML.
 <camelContext id="multiple-netty-codecs-context" xmlns="http://camel.apache.org/schema/spring">
     <route>
         <from uri="direct:multiple-codec"/>
-        <to uri="netty4:tcp://localhost:5150?encoders=#encoders&amp;sync=false"/>
+        <to uri="netty4:tcp://0.0.0.0:5150?encoders=#encoders&amp;sync=false"/>
     </route>
     <route>
-        <from uri="netty4:tcp://localhost:5150?decoders=#length-decoder,#string-decoder&amp;sync=false"/>
+        <from uri="netty4:tcp://0.0.0.0:5150?decoders=#length-decoder,#string-decoder&amp;sync=false"/>
         <to uri="mock:multiple-codec"/>
     </route>
 </camelContext>
@@ -615,7 +615,7 @@ written the bye message back to the client:
 
 [source,java]
 ----
-from("netty4:tcp://localhost:8080").process(new Processor() {
+from("netty4:tcp://0.0.0.0:8080").process(new Processor() {
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
         exchange.getOut().setBody("Bye " + body);
@@ -685,7 +685,7 @@ registry.bind("spf", factory);
 context.addRoutes(new RouteBuilder() {
   public void configure() {
       String netty_ssl_endpoint =
-         "netty4:tcp://localhost:5150?serverInitializerFactory=#spf"
+         "netty4:tcp://0.0.0.0:5150?serverInitializerFactory=#spf"
       String return_string =
          "When You Go Home, Tell Them Of Us And Say,"
          + "For Your Tomorrow, We Gave Our Today.";
@@ -738,7 +738,7 @@ as shown below:
 [source,xml]
 ----
 <route>
-  <from uri="netty4:tcp://localhost:5021?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
+  <from uri="netty4:tcp://0.0.0.0:5021?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
   <to uri="log:result"/>
   ...
 </route>
@@ -749,7 +749,7 @@ And if we have another route we can refer to the shared worker pool:
 [source,xml]
 ----
 <route>
-  <from uri="netty4:tcp://localhost:5022?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
+  <from uri="netty4:tcp://0.0.0.0:5022?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;usingExecutorService=false"/>
   <to uri="log:result"/>
   ...
 </route>
