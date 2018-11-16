@@ -39,7 +39,7 @@ The URI scheme for a netty component is as follows
 
 [source,java]
 -------------------------------------------
-netty4-http:http://localhost:8080[?options]
+netty4-http:http://0.0.0.0:8080[?options]
 -------------------------------------------
 
 You can append query options to the URI in the following format,
@@ -362,7 +362,7 @@ ProducerTemplate as shown below:
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------
-    String out = template.requestBody("netty4-http:http://localhost:8080/foo", "Hello World", String.class);
+    String out = template.requestBody("netty4-http:http://0.0.0.0:8080/foo", "Hello World", String.class);
     System.out.println(out);
 ------------------------------------------------------------------------------------------------------------
 
