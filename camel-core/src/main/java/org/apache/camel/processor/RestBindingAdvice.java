@@ -34,6 +34,8 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.processor.CamelInternalProcessorAdvice} that binds the REST DSL incoming
@@ -47,6 +49,8 @@ import org.apache.camel.util.ObjectHelper;
  * @see CamelInternalProcessor
  */
 public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<String, Object>> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RestBindingAdvice.class);
     private static final String STATE_KEY_DO_MARSHAL = "doMarshal";
     private static final String STATE_KEY_ACCEPT = "accept";
     private static final String STATE_JSON = "json";
@@ -198,6 +202,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         if (clientRequestValidation) {
             // check if the content-type is accepted according to consumes
             if (!isValidOrAcceptedContentType(consumes, contentType)) {
+                LOG.trace("Consuming content type does not match contentType header {}. Stopping routing.", contentType);
                 // the content-type is not something we can process so its a HTTP_ERROR 415
                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 415);
                 // stop routing and return
@@ -207,6 +212,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
 
             // check if what is produces is accepted by the client
             if (!isValidOrAcceptedContentType(produces, accept)) {
+                LOG.trace("Produced content type does not match accept header {}. Stopping routing.", contentType);
                 // the response type is not accepted by the client so its a HTTP_ERROR 406
                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 406);
                 // stop routing and return
@@ -505,6 +511,12 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
     private static boolean isValidOrAcceptedContentType(String valid, String target) {
         if (valid == null || target == null) {
             return true;
+        }
+
+        // Any MIME type
+        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept#Directives
+        if ("*/*".equals(target)) {
+          return true;
         }
 
         boolean isXml = valid.toLowerCase(Locale.ENGLISH).contains("xml");
