@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.schematron;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.transform.Source;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.exception.SchematronValidationException;
@@ -25,17 +30,12 @@ import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.transform.Source;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * The Schematron producer.
  */
 public class SchematronProducer extends DefaultProducer {
     private Logger logger = LoggerFactory.getLogger(SchematronProducer.class);
     private SchematronEndpoint endpoint;
-
 
     /**
      * @param endpoint the schematron endpoint.
@@ -58,10 +58,10 @@ public class SchematronProducer extends DefaultProducer {
 
         if (payload instanceof Source) {
             logger.debug("Applying schematron validation on payload: {}", payload);
-            report = schematronProcessor.validate((Source) payload);
+            report = schematronProcessor.validate((Source)payload);
         } else if (payload instanceof String) {
             logger.debug("Applying schematron validation on payload: {}", payload);
-            report = schematronProcessor.validate((String) payload);
+            report = schematronProcessor.validate((String)payload);
         } else {
             String stringPayload = exchange.getIn().getBody(String.class);
             logger.debug("Applying schematron validation on payload: {}", stringPayload);

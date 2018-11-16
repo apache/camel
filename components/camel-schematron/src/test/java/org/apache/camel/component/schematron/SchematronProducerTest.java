@@ -15,14 +15,19 @@
  * limitations under the License.
  */
 package org.apache.camel.component.schematron;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXSource;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import net.sf.saxon.TransformerFactoryImpl;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.schematron.constant.Constants;
@@ -30,16 +35,11 @@ import org.apache.camel.component.schematron.processor.ClassPathURIResolver;
 import org.apache.camel.component.schematron.processor.TemplatesFactory;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.io.IOUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 /**
  * Schematron Producer Unit Test.
- *
  */
 public class SchematronProducerTest extends CamelTestSupport {
 
@@ -50,8 +50,7 @@ public class SchematronProducerTest extends CamelTestSupport {
         SchematronEndpoint endpoint = new SchematronEndpoint();
         TransformerFactory fac = new TransformerFactoryImpl();
         fac.setURIResolver(new ClassPathURIResolver(Constants.SCHEMATRON_TEMPLATES_ROOT_DIR, endpoint.getUriResolver()));
-        Templates templates = TemplatesFactory.newInstance().getTemplates(ClassLoader.
-                getSystemResourceAsStream("sch/schematron-1.sch"), fac);
+        Templates templates = TemplatesFactory.newInstance().getTemplates(ClassLoader.getSystemResourceAsStream("sch/schematron-1.sch"), fac);
         endpoint.setRules(templates);
         producer = new SchematronProducer(endpoint);
     }
