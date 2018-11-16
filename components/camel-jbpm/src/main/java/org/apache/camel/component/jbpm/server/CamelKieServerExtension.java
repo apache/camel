@@ -36,29 +36,28 @@ import org.kie.server.services.impl.KieServerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class CamelKieServerExtension implements KieServerExtension {
     public static final String EXTENSION_NAME = "Camel";
 
-    private static final Logger logger = LoggerFactory.getLogger(CamelKieServerExtension.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CamelKieServerExtension.class);
 
-    private static final Boolean disabled = Boolean.parseBoolean(System.getProperty("org.camel.server.ext.disabled", "false"));
+    private static final Boolean DISABLED = Boolean.parseBoolean(System.getProperty("org.camel.server.ext.disabled", "false"));
 
     protected DefaultCamelContext camel;
-    
+
     protected boolean managedCamel;
 
     protected Map<String, DefaultCamelContext> camelContexts = new HashMap<>();
-    
+
     public CamelKieServerExtension() {
         this.managedCamel = true;
     }
-    
+
     public CamelKieServerExtension(DefaultCamelContext camel) {
         this.camel = camel;
         this.managedCamel = false;
     }
-    
+
     @Override
     public boolean isInitialized() {
         return camel != null;
@@ -66,7 +65,7 @@ public class CamelKieServerExtension implements KieServerExtension {
 
     @Override
     public boolean isActive() {
-        return disabled == false;
+        return !DISABLED;
     }
 
     @Override
@@ -74,55 +73,55 @@ public class CamelKieServerExtension implements KieServerExtension {
         if (this.managedCamel && this.camel == null) {
             this.camel = new DefaultCamelContext();
             this.camel.setName("KIE Server Camel context");
-            
+
             try (InputStream is = this.getClass().getResourceAsStream("/global-camel-routes.xml")) {
                 if (is != null) {
-                                        
-                    RoutesDefinition routes = camel.loadRoutesDefinition(is);                                  
-                    camel.addRouteDefinitions(routes.getRoutes());            
+
+                    RoutesDefinition routes = camel.loadRoutesDefinition(is);
+                    camel.addRouteDefinitions(routes.getRoutes());
                 }
             } catch (Exception e) {
-                logger.error("Error while adding Camel context for KIE Server", e);
+                LOGGER.error("Error while adding Camel context for KIE Server", e);
             }
         }
-        
+
         ServiceRegistry.get().register("GlobalCamelService", this.camel);
     }
 
     @Override
     public void destroy(KieServerImpl kieServer, KieServerRegistry registry) {
         ServiceRegistry.get().remove("GlobalCamelService");
-        
+
         if (this.managedCamel && this.camel != null) {
             try {
                 this.camel.stop();
             } catch (Exception e) {
-                logger.error("Failed at stopping KIE Server extension {}", EXTENSION_NAME);
+                LOGGER.error("Failed at stopping KIE Server extension {}", EXTENSION_NAME);
             }
         }
     }
 
     @Override
     public void createContainer(String id, KieContainerInstance kieContainerInstance, Map<String, Object> parameters) {
-        
+
         ClassLoader classloader = kieContainerInstance.getKieContainer().getClassLoader();
         try (InputStream is = classloader.getResourceAsStream("camel-routes.xml")) {
             if (is != null) {
-                
+
                 DefaultCamelContext context = new DefaultCamelContext();
-                context.setName("KIE Server Camel context for container " + kieContainerInstance.getContainerId());                            
-                
-                RoutesDefinition routes = context.loadRoutesDefinition(is);              
+                context.setName("KIE Server Camel context for container " + kieContainerInstance.getContainerId());
+
+                RoutesDefinition routes = context.loadRoutesDefinition(is);
                 annotateKJarRoutes(routes, id);
                 context.addRouteDefinitions(routes.getRoutes());
                 context.start();
                 camelContexts.put(id, context);
-                
+
                 ServiceRegistry.get().register(id + "_CamelService", this.camel);
-               
+
             }
         } catch (Exception e) {
-            logger.error("Error while adding Camel context for {}", kieContainerInstance.getContainerId(), e);
+            LOGGER.error("Error while adding Camel context for {}", kieContainerInstance.getContainerId(), e);
         }
     }
 
@@ -140,14 +139,14 @@ public class CamelKieServerExtension implements KieServerExtension {
     @Override
     public void disposeContainer(String id, KieContainerInstance kieContainerInstance, Map<String, Object> parameters) {
         DefaultCamelContext context = camelContexts.get(id);
-        
+
         if (context != null) {
-            
+
             ServiceRegistry.get().remove(id + "_CamelService");
             try {
                 context.stop();
             } catch (Exception e) {
-                logger.error("Error while removing Camel context for container {}", id, e);
+                LOGGER.error("Error while removing Camel context for container {}", id, e);
             }
         }
     }
@@ -181,18 +180,18 @@ public class CamelKieServerExtension implements KieServerExtension {
     public Integer getStartOrder() {
         return 50;
     }
-    
+
     @Override
     public void serverStarted() {
         if (this.managedCamel && this.camel != null && !this.camel.isStarted()) {
             try {
                 this.camel.start();
             } catch (Exception e) {
-                logger.error("Failed at start Camel context", e);
+                LOGGER.error("Failed at start Camel context", e);
             }
         }
     }
-    
+
     @Override
     public String toString() {
         return EXTENSION_NAME + " KIE Server extension";
@@ -200,12 +199,12 @@ public class CamelKieServerExtension implements KieServerExtension {
 
     protected void annotateKJarRoutes(RoutesDefinition routes, String deploymentId) {
         for (RouteDefinition route : routes.getRoutes()) {
-            
+
             for (FromDefinition from : route.getInputs()) {
-                
+
                 if (from.getUri().startsWith("jbpm:events") && !from.getUri().contains("deploymentId")) {
                     StringBuilder uri = new StringBuilder(from.getUri());
-                    
+
                     String[] split = from.getUri().split("\\?");
                     if (split.length == 1) {
                         // no query given
@@ -217,7 +216,7 @@ public class CamelKieServerExtension implements KieServerExtension {
                     uri.append("deploymentId=").append(deploymentId);
                     from.setUri(uri.toString());
                 }
-                
+
                 System.out.println(from.getUri());
             }
         }
