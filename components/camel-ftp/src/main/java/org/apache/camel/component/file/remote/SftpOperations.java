@@ -349,8 +349,12 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         });
 
         // set the SO_TIMEOUT for the time after the connect phase
-        if (configuration.getSoTimeout() > 0) {
-            session.setTimeout(configuration.getSoTimeout());
+        if (sftpConfig.getServerAliveInterval() == 0) {
+            if (configuration.getSoTimeout() > 0) {
+               session.setTimeout(configuration.getSoTimeout());
+            }
+        } else {
+        	LOG.debug("The Server Alive Internal is already set, the socket timeout won't be considered to avoid overidding the provided Server alive interval value");
         }
 
         // set proxy if configured
