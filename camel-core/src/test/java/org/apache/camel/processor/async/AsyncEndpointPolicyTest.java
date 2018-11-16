@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
@@ -23,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.Policy;
@@ -131,6 +134,12 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
                 public void process(Exchange exchange) throws Exception {
                     final AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
                     awaitManager.process(this, exchange);
+                }
+
+                public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+                    AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+                    process(exchange, callback);
+                    return callback.getFuture();
                 }
             };
         }

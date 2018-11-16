@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -28,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
+import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.Transformer;
@@ -86,6 +88,13 @@ public class SharedCamelInternalProcessor {
             @Override
             public boolean process(Exchange exchange, AsyncCallback callback) {
                 return SharedCamelInternalProcessor.this.process(exchange, callback, processor, resultProcessor);
+            }
+
+            @Override
+            public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+                AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+                process(exchange, callback);
+                return callback.getFuture();
             }
 
             @Override
