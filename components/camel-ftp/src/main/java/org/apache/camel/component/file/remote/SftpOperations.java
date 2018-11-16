@@ -43,6 +43,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LoggingLevel;
@@ -65,7 +66,8 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * SFTP remote file operations
  * <p/>
- * The JSCH session and channel are not thread-safe so we need to synchronize access to using this operation.
+ * The JSCH session and channel are not thread-safe so we need to synchronize
+ * access to using this operation.
  */
 public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     private static final Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
@@ -83,13 +85,14 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     }
 
     /**
-     * Extended user info which supports interactive keyboard mode, by entering the password.
+     * Extended user info which supports interactive keyboard mode, by entering
+     * the password.
      */
     public interface ExtendedUserInfo extends UserInfo, UIKeyboardInteractive {
     }
 
     public void setEndpoint(GenericFileEndpoint<SftpRemoteFile> endpoint) {
-        this.endpoint = (SftpEndpoint) endpoint;
+        this.endpoint = (SftpEndpoint)endpoint;
     }
 
     public synchronized boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
@@ -121,7 +124,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     }
 
                     LOG.trace("Channel isn't connected, trying to recreate and connect.");
-                    channel = (ChannelSftp) session.openChannel("sftp");
+                    channel = (ChannelSftp)session.openChannel("sftp");
 
                     if (endpoint.getConfiguration().getConnectTimeout() > 0) {
                         LOG.trace("Connecting use connectTimeout: " + endpoint.getConfiguration().getConnectTimeout() + " ...");
@@ -186,7 +189,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         final JSch jsch = new JSch();
         JSch.setLogger(new JSchLogger(endpoint.getConfiguration().getJschLoggingLevel()));
 
-        SftpConfiguration sftpConfig = (SftpConfiguration) configuration;
+        SftpConfiguration sftpConfig = (SftpConfiguration)configuration;
 
         if (isNotEmpty(sftpConfig.getCiphers())) {
             LOG.debug("Using ciphers: {}", sftpConfig.getCiphers());
@@ -328,7 +331,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
             public boolean promptYesNo(String s) {
                 LOG.warn("Server asks for confirmation (yes|no): " + s + ". Camel will answer no.");
-                // Return 'false' indicating modification of the hosts file is disabled.
+                // Return 'false' indicating modification of the hosts file is
+                // disabled.
                 return false;
             }
 
@@ -336,13 +340,12 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 LOG.trace("Message received from Server: " + s);
             }
 
-            public String[] promptKeyboardInteractive(String destination, String name,
-                                                      String instruction, String[] prompt, boolean[] echo) {
+            public String[] promptKeyboardInteractive(String destination, String name, String instruction, String[] prompt, boolean[] echo) {
                 // must return an empty array if password is null
                 if (configuration.getPassword() == null) {
                     return new String[0];
                 } else {
-                    return new String[]{configuration.getPassword()};
+                    return new String[] {configuration.getPassword()};
                 }
             }
 
@@ -351,10 +354,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         // set the SO_TIMEOUT for the time after the connect phase
         if (sftpConfig.getServerAliveInterval() == 0) {
             if (configuration.getSoTimeout() > 0) {
-               session.setTimeout(configuration.getSoTimeout());
+                session.setTimeout(configuration.getSoTimeout());
             }
         } else {
-        	LOG.debug("The Server Alive Internal is already set, the socket timeout won't be considered to avoid overidding the provided Server alive interval value");
+            LOG.debug("The Server Alive Internal is already set, the socket timeout won't be considered to avoid overidding the provided Server alive interval value");
         }
 
         // set proxy if configured
@@ -461,7 +464,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         LOG.debug("Renaming file: {} to: {}", from, to);
         try {
             reconnectIfNecessary();
-            //make use of the '/' separator because JSch expects this 
+            // make use of the '/' separator because JSch expects this
             // as the file separator even on Windows
             to = FileUtil.compactPath(to, '/');
             channel.rename(from, to);
@@ -487,7 +490,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 channel.cd(directory);
                 success = true;
             } catch (SftpException e) {
-                // ignore, we could not change directory so try to create it instead
+                // ignore, we could not change directory so try to create it
+                // instead
             }
 
             if (!success) {
@@ -497,7 +501,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                     channel.mkdir(directory);
                     success = true;
                 } catch (SftpException e) {
-                    // we are here if the server side doesn't create intermediate folders
+                    // we are here if the server side doesn't create
+                    // intermediate folders
                     // so create the folder one by one
                     success = buildDirectoryChunks(directory);
                 }
@@ -566,13 +571,15 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             return;
         }
 
-        // must compact path so SFTP server can traverse correctly, make use of the '/'
-        // separator because JSch expects this as the file separator even on Windows
+        // must compact path so SFTP server can traverse correctly, make use of
+        // the '/'
+        // separator because JSch expects this as the file separator even on
+        // Windows
         String before = path;
         char separatorChar = '/';
         path = FileUtil.compactPath(path, separatorChar);
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Compacted path: {} -> {} using separator: {}", new Object[]{before, path, separatorChar});
+            LOG.trace("Compacted path: {} -> {} using separator: {}", new Object[] {before, path, separatorChar});
         }
 
         // not stepwise should change directory in one operation
@@ -581,8 +588,9 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             return;
         }
         if (getCurrentDirectory().startsWith(path)) {
-            // extract the path segment relative to the target path and make sure it keeps the preceding '/' for the regex op
-            String p = getCurrentDirectory().substring(path.length() - (path.endsWith("/") ?  1 : 0));
+            // extract the path segment relative to the target path and make
+            // sure it keeps the preceding '/' for the regex op
+            String p = getCurrentDirectory().substring(path.length() - (path.endsWith("/") ? 1 : 0));
             if (p.length() == 0) {
                 return;
             }
@@ -590,7 +598,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             path = UP_DIR_PATTERN.matcher(p).replaceAll("/..").substring(1);
         }
 
-        // if it starts with the root path then a little special handling for that
+        // if it starts with the root path then a little special handling for
+        // that
         if (FileUtil.hasLeadingSeparator(path)) {
             // change to root path
             doChangeDirectory(path.substring(0, 1));
@@ -656,7 +665,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             // can return either null or an empty list depending on FTP servers
             if (files != null) {
                 for (Object file : files) {
-                    list.add(new SftpRemoteFileJCraft((ChannelSftp.LsEntry) file));
+                    list.add(new SftpRemoteFileJCraft((ChannelSftp.LsEntry)file));
                 }
             }
             return list;
@@ -668,7 +677,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     public synchronized boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         LOG.trace("retrieveFile({})", name);
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
-            // local work directory is configured so we should store file content as files in this local directory
+            // local work directory is configured so we should store file
+            // content as files in this local directory
             return retrieveFileToFileInLocalWorkDirectory(name, exchange);
         } else {
             // store file content directory as stream on the body
@@ -692,8 +702,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     private boolean retrieveFileToStreamInBody(String name, Exchange exchange) throws GenericFileOperationFailedException {
         String currentDir = null;
         try {
-            GenericFile<ChannelSftp.LsEntry> target =
-                    (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+            GenericFile<ChannelSftp.LsEntry> target = (GenericFile<ChannelSftp.LsEntry>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
             ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
 
             String remoteName = name;
@@ -702,12 +711,14 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 currentDir = getCurrentDirectory();
 
                 // change directory to path where the file is to be retrieved
-                // (must do this as some FTP servers cannot retrieve using absolute path)
+                // (must do this as some FTP servers cannot retrieve using
+                // absolute path)
                 String path = FileUtil.onlyPath(name);
                 if (path != null) {
                     changeCurrentDirectory(path);
                 }
-                // remote name is now only the file name as we just changed directory
+                // remote name is now only the file name as we just changed
+                // directory
                 remoteName = FileUtil.stripPath(name);
             }
 
@@ -743,8 +754,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         File temp;
         File local = new File(endpoint.getLocalWorkDirectory());
         OutputStream os;
-        GenericFile<ChannelSftp.LsEntry> file =
-                (GenericFile<ChannelSftp.LsEntry>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+        GenericFile<ChannelSftp.LsEntry> file = (GenericFile<ChannelSftp.LsEntry>)exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
         ObjectHelper.notNull(file, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
         try {
             // use relative filename in local work directory
@@ -773,7 +783,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 throw new GenericFileOperationFailedException("Cannot create new local work file: " + temp);
             }
 
-            // store content as a file in the local work directory in the temp handle
+            // store content as a file in the local work directory in the temp
+            // handle
             os = new FileOutputStream(temp);
 
             // set header with the path to the local work file
@@ -792,12 +803,14 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 currentDir = getCurrentDirectory();
 
                 // change directory to path where the file is to be retrieved
-                // (must do this as some FTP servers cannot retrieve using absolute path)
+                // (must do this as some FTP servers cannot retrieve using
+                // absolute path)
                 String path = FileUtil.onlyPath(name);
                 if (path != null) {
                     changeCurrentDirectory(path);
                 }
-                // remote name is now only the file name as we just changed directory
+                // remote name is now only the file name as we just changed
+                // directory
                 remoteName = FileUtil.stripPath(name);
             }
 
@@ -805,7 +818,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
         } catch (SftpException e) {
             LOG.trace("Error occurred during retrieving file: {} to local directory. Deleting local work file: {}", name, temp);
-            // failed to retrieve the file so we need to close streams and delete in progress file
+            // failed to retrieve the file so we need to close streams and
+            // delete in progress file
             // must close stream before deleting file
             IOHelper.close(os, "retrieve: " + name, LOG);
             boolean deleted = FileUtil.deleteFile(temp);
@@ -824,7 +838,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
         LOG.debug("Retrieve file to local work file result: true");
 
-        // operation went okay so rename temp to local after we have retrieved the data
+        // operation went okay so rename temp to local after we have retrieved
+        // the data
         LOG.trace("Renaming local in progress file from: {} to: {}", temp, local);
         try {
             if (!FileUtil.renameFile(temp, local, false)) {
@@ -850,13 +865,15 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
         try {
             if (path != null && endpoint.getConfiguration().isStepwise()) {
-                // must remember current dir so we stay in that directory after the write
+                // must remember current dir so we stay in that directory after
+                // the write
                 currentDir = getCurrentDirectory();
 
                 // change to path of name
                 changeCurrentDirectory(path);
 
-                // the target name should be without path, as we have changed directory
+                // the target name should be without path, as we have changed
+                // directory
                 targetName = FileUtil.stripPath(name);
             }
 
@@ -876,9 +893,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         LOG.trace("doStoreFile({})", targetName);
 
         // if an existing file already exists what should we do?
-        if (endpoint.getFileExist() == GenericFileExist.Ignore
-                || endpoint.getFileExist() == GenericFileExist.Fail
-                || endpoint.getFileExist() == GenericFileExist.Move) {
+        if (endpoint.getFileExist() == GenericFileExist.Ignore || endpoint.getFileExist() == GenericFileExist.Fail || endpoint.getFileExist() == GenericFileExist.Move) {
             boolean existFile = existsFile(targetName);
             if (existFile && endpoint.getFileExist() == GenericFileExist.Ignore) {
                 // ignore but indicate that the file was written
@@ -897,7 +912,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             // Do an explicit test for a null body and decide what to do
             if (endpoint.isAllowNullBody()) {
                 LOG.trace("Writing empty file.");
-                is = new ByteArrayInputStream(new byte[]{});
+                is = new ByteArrayInputStream(new byte[] {});
             } else {
                 throw new GenericFileOperationFailedException("Cannot write null body to file: " + name);
             }
@@ -928,8 +943,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
             if (LOG.isDebugEnabled()) {
                 long time = watch.taken();
-                LOG.debug("Took {} ({} millis) to store file: {} and FTP client returned: true",
-                        new Object[]{TimeUtils.printDuration(time), time, targetName});
+                LOG.debug("Took {} ({} millis) to store file: {} and FTP client returned: true", new Object[] {TimeUtils.printDuration(time), time, targetName});
             }
 
             // after storing file, we may set chmod on the file
@@ -958,11 +972,14 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
      * Moves any existing file due fileExists=Move is in use.
      */
     private void doMoveExistingFile(String name, String targetName) throws GenericFileOperationFailedException {
-        // need to evaluate using a dummy and simulate the file first, to have access to all the file attributes
-        // create a dummy exchange as Exchange is needed for expression evaluation
+        // need to evaluate using a dummy and simulate the file first, to have
+        // access to all the file attributes
+        // create a dummy exchange as Exchange is needed for expression
+        // evaluation
         // we support only the following 3 tokens.
         Exchange dummy = endpoint.createExchange();
-        // we only support relative paths for the ftp component, so dont provide any parent
+        // we only support relative paths for the ftp component, so dont provide
+        // any parent
         String parent = null;
         String onlyName = FileUtil.stripPath(targetName);
         dummy.getIn().setHeader(Exchange.FILE_NAME, targetName);
@@ -970,7 +987,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
 
         String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
-        // we only support relative paths for the ftp component, so strip any leading paths
+        // we only support relative paths for the ftp component, so strip any
+        // leading paths
         to = FileUtil.stripLeadingSeparator(to);
         // normalize accordingly to configuration
         to = endpoint.getConfiguration().normalizePath(to);
@@ -1022,7 +1040,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 return false;
             }
             for (Object file : files) {
-                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) file;
+                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry)file;
                 String existing = entry.getFilename();
                 LOG.trace("Existing file: {}, target file: {}", existing, name);
                 existing = FileUtil.stripPath(existing);
@@ -1032,7 +1050,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
             return false;
         } catch (SftpException e) {
-            // or an exception can be thrown with id 2 which means file does not exists
+            // or an exception can be thrown with id 2 which means file does not
+            // exists
             if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
                 return false;
             }
@@ -1051,7 +1070,8 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
             return files.size() >= 1;
         } catch (SftpException e) {
-            // or an exception can be thrown with id 2 which means file does not exists
+            // or an exception can be thrown with id 2 which means file does not
+            // exists
             if (ChannelSftp.SSH_FX_NO_SUCH_FILE == e.id) {
                 return false;
             }
