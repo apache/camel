@@ -98,7 +98,7 @@ public final class JacksonTypeConverters {
             } else if (byte[].class.isAssignableFrom(type)) {
                 byte[] out = mapper.writeValueAsBytes(value);
                 return type.cast(out);
-            } else if (mapper.canSerialize(type)) {
+            } else if (mapper.canSerialize(type) && !Enum.class.isAssignableFrom(type)) {
                 // if the source value type is readable by the mapper then use its read operation
                 if (String.class.isAssignableFrom(value.getClass())) {
                     return mapper.readValue((String) value, type);
