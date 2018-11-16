@@ -35,7 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The jbpm component provides integration with jBPM (Business Process Management).
+ * The jbpm component provides integration with jBPM (Business Process
+ * Management).
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "jbpm", title = "JBPM", syntax = "jbpm:connectionURL", label = "process")
 public class JBPMEndpoint extends DefaultEndpoint {
@@ -50,8 +51,9 @@ public class JBPMEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        KieServicesConfiguration kieConfiguration = KieServicesFactory.newRestConfiguration(configuration.getConnectionURL().toExternalForm(), configuration.getUserName(), configuration.getPassword());
-  
+        KieServicesConfiguration kieConfiguration = KieServicesFactory.newRestConfiguration(configuration.getConnectionURL().toExternalForm(), configuration.getUserName(),
+                                                                                            configuration.getPassword());
+
         if (configuration.getTimeout() != null) {
             kieConfiguration.setTimeout(configuration.getTimeout());
         }
@@ -59,8 +61,8 @@ public class JBPMEndpoint extends DefaultEndpoint {
             List<Class<?>> classes = Arrays.asList(configuration.getExtraJaxbClasses());
             kieConfiguration.addExtraClasses(new LinkedHashSet<>(classes));
         }
-        
-        KieServicesClient kieServerClient = KieServicesFactory.newKieServicesClient(kieConfiguration);        
+
+        KieServicesClient kieServerClient = KieServicesFactory.newKieServicesClient(kieConfiguration);
         LOGGER.debug("JBPM Producer created with KieServerClient configured for {}", configuration.getConnectionURL());
         return new JBPMProducer(this, kieServerClient);
     }
