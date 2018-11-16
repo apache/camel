@@ -47,6 +47,7 @@ import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.http.common.cookie.CookieHandler;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LRUSoftCache;
@@ -64,7 +65,7 @@ import org.slf4j.LoggerFactory;
  * JAXRS client, it will turn the normal Object invocation to a RESTful request
  * according to resource annotation.  Any response will be bound to Camel exchange.
  */
-public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
+public class CxfRsProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsProducer.class);
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
 import org.junit.Test;
 import org.slf4j.MDC;
 
@@ -80,6 +82,13 @@ public class MDCAsyncTest extends ContextTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             throw new RuntimeCamelException("This processor does not support the sync pattern.");
+        }
+
+        @Override
+        public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+            AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+            process(exchange, callback);
+            return callback.getFuture();
         }
 
         @Override

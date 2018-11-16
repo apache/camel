@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * An <b>asynchronous</b> processor which can process an {@link Exchange} in an asynchronous fashion
  * and signal completion by invoking the {@link AsyncCallback}.
@@ -39,4 +41,7 @@ public interface AsyncProcessor extends Processor {
      * @return (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
      */
     boolean process(Exchange exchange, AsyncCallback callback);
+
+    CompletableFuture<Exchange> processAsync(Exchange exchange);
+
 }

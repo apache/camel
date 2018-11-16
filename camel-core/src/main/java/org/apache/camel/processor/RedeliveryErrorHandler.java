@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,6 +35,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.reifier.ErrorHandlerReifier;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -152,6 +154,12 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // Run it
         ReactiveHelper.scheduleMain(state);
         return false;
+    }
+
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        process(exchange, callback);
+        return callback.getFuture();
     }
 
     /**
