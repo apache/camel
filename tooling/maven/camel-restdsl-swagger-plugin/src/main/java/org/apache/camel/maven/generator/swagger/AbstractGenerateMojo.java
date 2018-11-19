@@ -92,14 +92,14 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter(defaultValue = "true")
     String modelWithXml;
 
+    @Parameter
+    String apiContextPath;
+
     @Parameter(defaultValue = "${project}", readonly = true)
     private MavenProject mavenProject;
 
     @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession mavenSession;
-    
-    @Parameter
-    String apiContextPath;
 
     @Component
     private BuildPluginManager pluginManager;
