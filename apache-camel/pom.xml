@@ -568,6 +568,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jgroups-raft</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jibx</artifactId>
     </dependency>
     <dependency>
@@ -1846,6 +1850,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jgroups-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jgroups-raft-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
