@@ -142,6 +142,19 @@ public final class RouteDefinitionHelper {
                     });
                 }
                 customIds.add(id);
+            } else {
+                RestDefinition rest = route.getRestDefinition();
+                if (rest != null && route.isRest()) {
+                    VerbDefinition verb = findVerbDefinition(rest, route.getInputs().get(0).getUri());
+                    if (verb != null) {
+                        String id = verb.getId();
+                        if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !customIds.contains(id)) {
+                            route.setId(id);
+                            customIds.add(id);
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -169,7 +182,8 @@ public final class RouteDefinitionHelper {
             }
             RestDefinition rest = route.getRestDefinition();
             if (rest != null && route.isRest()) {
-                for (VerbDefinition verb : rest.getVerbs()) {
+                VerbDefinition verb = findVerbDefinition(rest, route.getInputs().get(0).getUri());
+                if (verb != null) {
                     String id = verb.idOrCreate(context.getNodeIdFactory());
                     if (!verb.getUsedForGeneratingNodeId()) {
                         id = route.getId();
@@ -194,6 +208,19 @@ public final class RouteDefinitionHelper {
                 }
             }
         }
+    }
+    
+    /**
+     * Find verb associated with the route by mapping uri
+     */
+    private static VerbDefinition findVerbDefinition(RestDefinition rest, String endpointUri) {
+        for (VerbDefinition verb : rest.getVerbs()) {
+            String verbUri = rest.buildFromUri(verb);
+            if (endpointUri.startsWith(verbUri)) {
+                return verb;
+            }
+        }
+        return null;
     }
 
     /**
