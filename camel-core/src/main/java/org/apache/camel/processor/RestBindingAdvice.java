@@ -516,7 +516,7 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         // Any MIME type
         // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept#Directives
         if ("*/*".equals(target)) {
-          return true;
+            return true;
         }
 
         boolean isXml = valid.toLowerCase(Locale.ENGLISH).contains("xml");
