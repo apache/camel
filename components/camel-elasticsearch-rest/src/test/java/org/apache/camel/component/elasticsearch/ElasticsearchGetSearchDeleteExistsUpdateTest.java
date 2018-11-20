@@ -47,6 +47,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         GetResponse response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
+        System.err.println(response.getSource());
     }
 
     @Test
@@ -277,12 +278,15 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         String indexId = template.requestBody("direct:index", map, String.class);
         assertNotNull("indexId should be set", indexId);
 
-        String body = "{\"id\" : 1}";
+        String body = "{\"teststringupdate-key\" : \"teststringupdate-updated\"}";
 
         Map<String, Object> headers = new HashMap<>();
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, indexId);
         indexId = template.requestBodyAndHeaders("direct:update", body, headers, String.class);
         assertNotNull("indexId should be set", indexId);
+        
+        GetResponse response = template.requestBody("direct:get", indexId, GetResponse.class);
+        assertEquals("teststringupdate-updated", response.getSource().get("teststringupdate-key"));
     }
 
     @Override
