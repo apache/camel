@@ -14,28 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.irc;
+package org.apache.camel.component.irc.it;
 
 import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.irc.IrcConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
-public class IrcOnReplyTest extends CamelTestSupport {
-    protected MockEndpoint resultEndpoint;
+public class IrcOnReplyTest extends IrcIntegrationTestSupport {
     protected String command = "WHO #camel-test";
-    protected String resultEnd = "End of WHO list";
-    private boolean sentMessages;    
+    protected String resultEnd = "End of /WHO list.";
+    private boolean sentMessages;
 
-    @Ignore("test manual, irc.codehaus.org has been closed")
     @Test
     public void testIrcMessages() throws Exception {
-        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(resultEnd);
 
         resultEndpoint.assertIsSatisfied();
@@ -64,7 +59,8 @@ public class IrcOnReplyTest extends CamelTestSupport {
     }
 
     protected String fromUri() {
-        return "irc://camel-con@irc.codehaus.org:6667?nickname=camel-con&channels=#camel-test&onReply=true";
+        StringBuilder sb = new StringBuilder(super.fromUri());
+        return sb.append("&onReply=true").toString();
     }    
     
     /**

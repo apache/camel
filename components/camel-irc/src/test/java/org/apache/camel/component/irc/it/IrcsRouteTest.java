@@ -14,25 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.irc;
+package org.apache.camel.component.irc.it;
 
-import org.junit.Ignore;
-
-@Ignore
 public class IrcsRouteTest extends IrcRouteTest {
-
-    // TODO This test is disabled until we can find a public SSL enabled IRC 
-    // server to test against. To use this you'll need to change the server 
-    // information below and the username/password. 
 
     @Override
     protected String sendUri() {
-        return "ircs://camel-prd@irc.codehaus.org:6667/#camel-test?nickname=camel-prd&password=blah";
+        return "ircs://{{camelTo}}@{{server}}?channels={{channel1}}";
     }
 
-    @Override    
+    @Override
     protected String fromUri() {
-        return "ircs://camel-con@irc.codehaus.org:6667/#camel-test?nickname=camel-con&password=blah";
-    }    
+        return "ircs://{{camelFrom}}@{{server}}?channels={{channel1}}";
+    }
 
 }
