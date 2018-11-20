@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.irc;
+package org.apache.camel.component.irc.it;
 
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.jsse.KeyStoreParameters;
