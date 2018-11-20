@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 281 in 186 JAR artifacts (0 deprecated)
+Number of Components: 282 in 187 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -577,6 +577,9 @@ Number of Components: 281 in 186 JAR artifacts (0 deprecated)
 
 | link:camel-milo/src/main/docs/milo-server-component.adoc[OPC UA Server] (camel-milo) +
 `milo-server:itemId` | 2.19 | Make telemetry data available as an OPC UA server
+
+| link:camel-openshift/src/main/docs/openshift-component.adoc[OpenShift] (camel-openshift) +
+`openshift:clientId` | 2.14 | *deprecated* To manage your Openshift 2.x applications.
 
 | link:camel-kubernetes/src/main/docs/openshift-build-configs-component.adoc[Openshift Build Config] (camel-kubernetes) +
 `openshift-build-configs:masterUrl` | 2.17 | The Kubernetes Build Config component provides a producer to execute kubernetes build config operations.

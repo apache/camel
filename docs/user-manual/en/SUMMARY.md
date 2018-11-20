@@ -345,6 +345,7 @@
 	* [Olingo4](olingo4-component.adoc)
 	* [OPC UA Client](milo-client-component.adoc)
 	* [OPC UA Server](milo-server-component.adoc)
+	* [OpenShift](openshift-component.adoc)
 	* [Openshift Build Config](openshift-build-configs-component.adoc)
 	* [Openshift Builds](openshift-builds-component.adoc)
 	* [OpenStack Cinder](openstack-cinder-component.adoc)
