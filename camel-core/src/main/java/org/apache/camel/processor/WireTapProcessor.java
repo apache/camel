@@ -38,6 +38,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
@@ -143,20 +144,16 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
         final Exchange wireTapExchange = target;
 
         // send the exchange to the destination using an executor service
-        executorService.submit(new Callable<Exchange>() {
-            public Exchange call() throws Exception {
+        executorService.submit(() -> {
                 taskCount.increment();
-                try {
-                    log.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
-                    processor.process(wireTapExchange);
-                } catch (Throwable e) {
-                    log.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", e);
-                } finally {
+                log.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
+                AsyncProcessorConverterHelper.convert(processor).process(wireTapExchange, doneSync -> {
+                    if (wireTapExchange.getException() != null) {
+                        log.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", wireTapExchange.getException());
+                    }
                     taskCount.decrement();
-                }
-                return wireTapExchange;
-            }
-        });
+                });
+            });
 
         // continue routing this synchronously
         callback.done(true);

@@ -28,7 +28,6 @@ import io.grpc.stub.StreamObserver;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslProvider;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.auth.jwt.JwtCallCredentials;
 import org.apache.camel.component.grpc.auth.jwt.JwtHelper;
@@ -36,15 +35,15 @@ import org.apache.camel.component.grpc.client.GrpcExchangeForwarder;
 import org.apache.camel.component.grpc.client.GrpcExchangeForwarderFactory;
 import org.apache.camel.component.grpc.client.GrpcResponseAggregationStreamObserver;
 import org.apache.camel.component.grpc.client.GrpcResponseRouterStreamObserver;
-import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents asynchronous and synchronous gRPC producer implementations.
  */
-public class GrpcProducer extends DefaultProducer implements AsyncProcessor {
+public class GrpcProducer extends DefaultAsyncProducer {
 
     protected final GrpcConfiguration configuration;
     protected final GrpcEndpoint endpoint;

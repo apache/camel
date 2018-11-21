@@ -152,7 +152,11 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         // Create the redelivery state object for this exchange
         RedeliveryState state = new RedeliveryState(exchange, callback);
         // Run it
-        ReactiveHelper.scheduleMain(state);
+        if (exchange.isTransacted()) {
+            ReactiveHelper.scheduleSync(state);
+        } else {
+            ReactiveHelper.scheduleMain(state);
+        }
         return false;
     }
 

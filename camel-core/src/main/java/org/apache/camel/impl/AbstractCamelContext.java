@@ -234,8 +234,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerBuilder;
-    private final Object errorHandlerExecutorServiceLock = new Object();
-    private ScheduledExecutorService errorHandlerExecutorService;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<>();
     private Map<String, String> globalOptions = new HashMap<>();
     private PropertiesComponent propertiesComponent;
@@ -243,10 +241,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
 
+    private final Object lock = new Object();
     private volatile CamelContextNameStrategy nameStrategy;
     private volatile ManagementNameStrategy managementNameStrategy;
-    private Registry registry;
-
+    private volatile Registry registry;
     private volatile TypeConverter typeConverter;
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile Injector injector;
@@ -276,6 +274,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private volatile UnitOfWorkFactory unitOfWorkFactory;
     private volatile ReloadStrategy reloadStrategy;
     private volatile RouteController routeController;
+    private volatile ScheduledExecutorService errorHandlerExecutorService;
 
     private TransformerRegistry<TransformerKey> transformerRegistry;
     private ValidatorRegistry<ValidatorKey> validatorRegistry;
@@ -413,7 +412,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public CamelContextNameStrategy getNameStrategy() {
         if (nameStrategy == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (nameStrategy == null) {
                     setNameStrategy(createCamelContextNameStrategy());
                 }
@@ -428,7 +427,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public ManagementNameStrategy getManagementNameStrategy() {
         if (managementNameStrategy == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (managementNameStrategy == null) {
                     setManagementNameStrategy(createManagementNameStrategy());
                 }
@@ -913,7 +912,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     @Override
     public RouteController getRouteController() {
         if (routeController == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (routeController == null) {
                     setRouteController(createRouteController());
                 }
@@ -2456,7 +2455,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public TypeConverter getTypeConverter() {
         if (typeConverter == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (typeConverter == null) {
                     setTypeConverter(createTypeConverter());
                 }
@@ -2471,7 +2470,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public TypeConverterRegistry getTypeConverterRegistry() {
         if (typeConverterRegistry == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (typeConverterRegistry == null) {
                     setTypeConverterRegistry(createTypeConverterRegistry());
                 }
@@ -2486,7 +2485,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public Injector getInjector() {
         if (injector == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (injector == null) {
                     setInjector(createInjector());
                 }
@@ -2509,7 +2508,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public ComponentResolver getComponentResolver() {
         if (componentResolver == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (componentResolver == null) {
                     setComponentResolver(createComponentResolver());
                 }
@@ -2524,7 +2523,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public LanguageResolver getLanguageResolver() {
         if (languageResolver == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (languageResolver == null) {
                     setLanguageResolver(createLanguageResolver());
                 }
@@ -2547,7 +2546,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public Registry getRegistry() {
         if (registry == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (registry == null) {
                     setRegistry(createRegistry());
                 }
@@ -2875,13 +2874,23 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public ScheduledExecutorService getErrorHandlerExecutorService() {
-        synchronized (errorHandlerExecutorServiceLock) {
-            if (errorHandlerExecutorService == null) {
-                // setup default thread pool for error handler
-                errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
+        if (errorHandlerExecutorService == null) {
+            synchronized (lock) {
+                if (errorHandlerExecutorService == null) {
+                    // setup default thread pool for error handler
+                    errorHandlerExecutorService = createErrorHandlerExecutorService();
+                }
             }
         }
         return errorHandlerExecutorService;
+    }
+
+    protected ScheduledExecutorService createErrorHandlerExecutorService() {
+        return getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
+    }
+
+    public void setErrorHandlerExecutorService(ScheduledExecutorService errorHandlerExecutorService) {
+        this.errorHandlerExecutorService = errorHandlerExecutorService;
     }
 
     public void setProducerServicePool(ServicePool<Producer> producerServicePool) {
@@ -2890,7 +2899,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public ServicePool<Producer> getProducerServicePool() {
         if (producerServicePool == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (producerServicePool == null) {
                     setProducerServicePool(createProducerServicePool());
                 }
@@ -2901,7 +2910,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public ServicePool<PollingConsumer> getPollingConsumerServicePool() {
         if (pollingConsumerServicePool == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (pollingConsumerServicePool == null) {
                     setPollingConsumerServicePool(createPollingConsumerServicePool());
                 }
@@ -2916,7 +2925,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public UnitOfWorkFactory getUnitOfWorkFactory() {
         if (unitOfWorkFactory == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (unitOfWorkFactory == null) {
                     setUnitOfWorkFactory(createUnitOfWorkFactory());
                 }
@@ -2954,7 +2963,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public String getVersion() {
         if (version == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (version == null) {
                     version = doGetVersion();
                 }
@@ -4121,7 +4130,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public FactoryFinder getDefaultFactoryFinder() {
         if (defaultFactoryFinder == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (defaultFactoryFinder == null) {
                     defaultFactoryFinder = getFactoryFinderResolver().resolveDefaultFactoryFinder(getClassResolver());
                 }
@@ -4132,7 +4141,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public FactoryFinderResolver getFactoryFinderResolver() {
         if (factoryFinderResolver == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (factoryFinderResolver == null) {
                     factoryFinderResolver = createFactoryFinderResolver();
                 }
@@ -4155,7 +4164,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public ClassResolver getClassResolver() {
         if (classResolver == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (classResolver == null) {
                     setClassResolver(createClassResolver());
                 }
@@ -4170,7 +4179,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public PackageScanClassResolver getPackageScanClassResolver() {
         if (packageScanClassResolver == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (packageScanClassResolver == null) {
                     setPackageScanClassResolver(createPackageScanClassResolver());
                 }
@@ -4193,7 +4202,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public ModelJAXBContextFactory getModelJAXBContextFactory() {
         if (modelJAXBContextFactory == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (modelJAXBContextFactory == null) {
                     setModelJAXBContextFactory(createModelJAXBContextFactory());
                 }
@@ -4208,7 +4217,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public NodeIdFactory getNodeIdFactory() {
         if (nodeIdFactory == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (nodeIdFactory == null) {
                     setNodeIdFactory(createNodeIdFactory());
                 }
@@ -4223,7 +4232,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public ManagementStrategy getManagementStrategy() {
         if (managementStrategy == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (managementStrategy == null) {
                     setManagementStrategy(createManagementStrategy());
                 }
@@ -4254,7 +4263,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public InflightRepository getInflightRepository() {
         if (inflightRepository == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (inflightRepository == null) {
                     setInflightRepository(createInflightRepository());
                 }
@@ -4269,7 +4278,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public AsyncProcessorAwaitManager getAsyncProcessorAwaitManager() {
         if (asyncProcessorAwaitManager == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (asyncProcessorAwaitManager == null) {
                     setAsyncProcessorAwaitManager(createAsyncProcessorAwaitManager());
                 }
@@ -4341,7 +4350,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public DataFormatResolver getDataFormatResolver() {
         if (dataFormatResolver == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (dataFormatResolver == null) {
                     setDataFormatResolver(createDataFormatResolver());
                 }
@@ -4396,7 +4405,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public ShutdownStrategy getShutdownStrategy() {
         if (shutdownStrategy == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (shutdownStrategy == null) {
                     setShutdownStrategy(createShutdownStrategy());
                 }
@@ -4435,7 +4444,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public ExecutorServiceManager getExecutorServiceManager() {
         if (executorServiceManager == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (executorServiceManager == null) {
                     setExecutorServiceManager(createExecutorServiceManager());
                 }
@@ -4451,7 +4460,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public ProcessorFactory getProcessorFactory() {
         if (processorFactory == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (processorFactory == null) {
                     setProcessorFactory(createProcessorFactory());
                 }
@@ -4466,7 +4475,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public MessageHistoryFactory getMessageHistoryFactory() {
         if (messageHistoryFactory == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (messageHistoryFactory == null) {
                     setMessageHistoryFactory(createMessageHistoryFactory());
                 }
@@ -4492,7 +4501,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public UuidGenerator getUuidGenerator() {
         if (uuidGenerator == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (uuidGenerator == null) {
                     setUuidGenerator(createUuidGenerator());
                 }
@@ -4507,7 +4516,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public StreamCachingStrategy getStreamCachingStrategy() {
         if (streamCachingStrategy == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (streamCachingStrategy == null) {
                     setStreamCachingStrategy(createStreamCachingStrategy());
                 }
@@ -4522,7 +4531,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public RestRegistry getRestRegistry() {
         if (restRegistry ==  null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (restRegistry == null) {
                     setRestRegistry(createRestRegistry());
                 }
@@ -4616,7 +4625,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     @Override
     public HeadersMapFactory getHeadersMapFactory() {
         if (headersMapFactory == null) {
-            synchronized (this) {
+            synchronized (lock) {
                 if (headersMapFactory == null) {
                     setHeadersMapFactory(createHeadersMapFactory());
                 }

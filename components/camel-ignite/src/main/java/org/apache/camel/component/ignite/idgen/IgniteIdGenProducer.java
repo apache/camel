@@ -70,10 +70,11 @@ public class IgniteIdGenProducer extends DefaultAsyncProducer {
             
         default:
             exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite ID Generator producer."));
-            return true;
+            break;
         }
 
-        return true;
+        callback.done(false);
+        return false;
     }
 
     private IgniteIdGenOperation idGenOperationFor(Exchange exchange) {

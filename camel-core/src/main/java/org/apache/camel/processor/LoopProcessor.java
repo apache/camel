@@ -52,7 +52,11 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
             LoopState state = new LoopState(exchange, callback);
 
-            ReactiveHelper.scheduleMain(state);
+            if (exchange.isTransacted()) {
+                ReactiveHelper.scheduleSync(state);
+            } else {
+                ReactiveHelper.scheduleMain(state);
+            }
             return false;
 
         } catch (Exception e) {

@@ -33,23 +33,31 @@ public class ReactiveHelper {
     }
 
     public static void scheduleMain(Runnable runnable) {
-        WORKERS.get().schedule(runnable, true, true);
+        WORKERS.get().schedule(runnable, true, true, false);
+    }
+
+    public static void scheduleSync(Runnable runnable) {
+        WORKERS.get().schedule(runnable, true, true, true);
     }
 
     public static void scheduleMain(Runnable runnable, String description) {
-        WORKERS.get().schedule(describe(runnable, description), true, true);
+        WORKERS.get().schedule(describe(runnable, description), true, true, false);
     }
 
     public static void schedule(Runnable runnable) {
-        WORKERS.get().schedule(runnable, true, false);
+        WORKERS.get().schedule(runnable, true, false, false);
     }
 
     public static void schedule(Runnable runnable, String description) {
-        WORKERS.get().schedule(describe(runnable, description), true, false);
+        WORKERS.get().schedule(describe(runnable, description), true, false, false);
     }
 
     public static void scheduleLast(Runnable runnable, String description) {
-        WORKERS.get().schedule(describe(runnable, description), false, false);
+        WORKERS.get().schedule(describe(runnable, description), false, false, false);
+    }
+
+    public static void scheduleSync(Runnable runnable, String description) {
+        WORKERS.get().schedule(describe(runnable, description), false, true, true);
     }
 
     public static boolean executeFromQueue() {
@@ -88,7 +96,7 @@ public class ReactiveHelper {
         LinkedList<LinkedList<Runnable>> back;
         boolean running;
 
-        public void schedule(Runnable runnable, boolean first, boolean main) {
+        public void schedule(Runnable runnable, boolean first, boolean main, boolean sync) {
             if (main) {
                 if (!queue.isEmpty()) {
                     if (back == null) {
@@ -103,7 +111,7 @@ public class ReactiveHelper {
             } else {
                 queue.addLast(runnable);
             }
-            if (!running) {
+            if (!running || sync) {
                 running = true;
 //                Thread thread = Thread.currentThread();
 //                String name = thread.getName();
