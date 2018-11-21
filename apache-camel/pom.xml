@@ -492,6 +492,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ipfs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-irc</artifactId>
     </dependency>
     <dependency>
@@ -1739,6 +1743,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-influxdb-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ipfs-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
