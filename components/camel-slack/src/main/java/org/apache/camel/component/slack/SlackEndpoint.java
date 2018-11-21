@@ -24,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.slack.helper.SlackMessage;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -54,6 +53,8 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
     private String token;
     @UriParam(label = "consumer", defaultValue = "10")
     private String maxResults = "10";
+    @UriParam(label = "consumer", defaultValue = "https://slack.com")
+    private String serverUrl = "https://slack.com";
 
     /**
      * Constructor for SlackEndpoint
@@ -167,6 +168,17 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
      */
     public void setMaxResults(String maxResult) {
         this.maxResults = maxResult;
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
+    
+    /**
+     * The Server URL of the Slack instance
+     */
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 
     public Exchange createExchange(JSONObject object) {

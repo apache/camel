@@ -690,8 +690,8 @@
   <value>${dfs.namenode.checkpoint.dir}</value>
   <description>Determines where on the local filesystem the DFS secondary
       name node should store the temporary edits to merge.
-      If this is a comma-delimited list of directoires then teh edits is
-      replicated in all of the directoires for redundancy.
+      If this is a comma-delimited list of directories then the edits is
+      replicated in all of the directories for redundancy.
       Default value is same as dfs.namenode.checkpoint.dir
   </description>
 </property>

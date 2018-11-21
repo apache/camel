@@ -172,6 +172,11 @@
         <version>1.7</version>
       </dependency>
       <dependency>
+        <groupId>io.nessus</groupId>
+        <artifactId>nessus-ipfs</artifactId>
+        <version>1.0.0.Beta1</version>
+      </dependency>
+      <dependency>
         <groupId>javax.annotation</groupId>
         <artifactId>jsr250-api</artifactId>
         <version>1.0</version>
@@ -1387,6 +1392,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-influxdb-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ipfs</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ipfs-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3351,11 +3366,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
-        <artifactId>jempbox</artifactId>
-        <version>1.8.16</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.pdfbox</groupId>
         <artifactId>pdfbox</artifactId>
         <version>2.0.12</version>
       </dependency>
@@ -3392,7 +3402,7 @@
       <dependency>
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
-        <version>3.1.2</version>
+        <version>3.1.3</version>
       </dependency>
       <dependency>
         <groupId>org.cassandraunit</groupId>
@@ -3469,7 +3479,7 @@
       <dependency>
         <groupId>org.knowm.xchange</groupId>
         <artifactId>xchange-core</artifactId>
-        <version>4.3.11</version>
+        <version>4.3.12</version>
       </dependency>
       <dependency>
         <groupId>org.mozilla</groupId>
@@ -3479,342 +3489,359 @@
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core-gwt</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>gwt-lib</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-distribution</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>zip</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-docs</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>zip</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-examples</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-examples</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-examples</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jackson</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jackson</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jackson</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jackson</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jaxb</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jaxb</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jaxb</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jaxb</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-test</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-api</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-api</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-backend</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-backend</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-client</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-client</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-api</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-api</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-backend</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-backend</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-client</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-guided-rule-editor-client</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-api</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-api</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-backend</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-backend</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-client</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-client</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
-        <artifactId>optaplanner-wb-upstream-model</artifactId>
-        <version>7.3.0.Final</version>
-      </dependency>
-      <dependency>
-        <groupId>org.optaplanner</groupId>
-        <artifactId>optaplanner-wb-upstream-model</artifactId>
-        <version>7.3.0.Final</version>
-        <classifier>sources</classifier>
-      </dependency>
-      <dependency>
-        <groupId>org.optaplanner</groupId>
-        <artifactId>optaplanner-webexamples</artifactId>
-        <version>7.3.0.Final</version>
+        <artifactId>optaplanner-wb-ui</artifactId>
+        <version>7.14.0.Final</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-webexamples</artifactId>
-        <version>7.3.0.Final</version>
+        <version>7.14.0.Final</version>
+        <type>war</type>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner</groupId>
+        <artifactId>optaplanner-webexamples</artifactId>
+        <version>7.14.0.Final</version>
+        <classifier>sources</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner</groupId>
+        <artifactId>optaplanner-workbench-models-core</artifactId>
+        <version>7.14.0.Final</version>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner</groupId>
+        <artifactId>optaplanner-workbench-models-core</artifactId>
+        <version>7.14.0.Final</version>
+        <classifier>sources</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner</groupId>
+        <artifactId>optaplanner-workbench-models-datamodel-api</artifactId>
+        <version>7.14.0.Final</version>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner</groupId>
+        <artifactId>optaplanner-workbench-models-datamodel-api</artifactId>
+        <version>7.14.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>

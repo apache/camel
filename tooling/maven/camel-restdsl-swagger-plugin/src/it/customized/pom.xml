@@ -53,6 +53,7 @@
               <className>MyRestRoute</className>
               <indent>\t</indent>
               <destinationGenerator>com.example.MyDestinationGenerator</destinationGenerator>
+              <apiContextPath>/api-docs</apiContextPath>
             </configuration>
           </execution>
         </executions>

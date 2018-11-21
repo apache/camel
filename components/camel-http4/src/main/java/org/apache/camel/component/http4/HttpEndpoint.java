@@ -61,6 +61,11 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
 
+    @UriParam(label = "security", description = "To configure security using SSLContextParameters."
+        + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
+        + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
+    protected SSLContextParameters sslContextParameters;
+
     @UriParam(label = "advanced", description = "To use a custom HttpContext instance")
     private HttpContext httpContext;
     @UriParam(label = "advanced", description = "Register a custom configuration strategy for new HttpClient instances"
@@ -114,10 +119,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private int connectionsPerRoute;
     @UriParam(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
-    @UriParam(label = "security", description = "To configure security using SSLContextParameters."
-        + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
-        + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
-    protected SSLContextParameters sslContextParameters;
 
     public HttpEndpoint() {
     }
@@ -191,10 +192,10 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
         if (!useSystemProperties) {
             // configure http proxy from camelContext
-            if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
-                String host = getCamelContext().getProperty("http.proxyHost");
-                int port = Integer.parseInt(getCamelContext().getProperty("http.proxyPort"));
-                String scheme = getCamelContext().getProperty("http.proxyScheme");
+            if (ObjectHelper.isNotEmpty(getCamelContext().getGlobalOption("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getGlobalOption("http.proxyPort"))) {
+                String host = getCamelContext().getGlobalOption("http.proxyHost");
+                int port = Integer.parseInt(getCamelContext().getGlobalOption("http.proxyPort"));
+                String scheme = getCamelContext().getGlobalOption("http.proxyScheme");
                 // fallback and use either http or https depending on secure
                 if (scheme == null) {
                     scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
@@ -480,9 +481,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     @ManagedAttribute(description = "Maximum number of allowed persistent connections")
     public int getClientConnectionsPoolStatsMax() {
-        ConnPoolControl pool = null;
+        ConnPoolControl<?> pool = null;
         if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl) clientConnectionManager;
+            pool = (ConnPoolControl<?>) clientConnectionManager;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();
@@ -495,9 +496,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     @ManagedAttribute(description = "Number of available idle persistent connections")
     public int getClientConnectionsPoolStatsAvailable() {
-        ConnPoolControl pool = null;
+        ConnPoolControl<?> pool = null;
         if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl) clientConnectionManager;
+            pool = (ConnPoolControl<?>) clientConnectionManager;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();
@@ -510,9 +511,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
 
     @ManagedAttribute(description = "Number of persistent connections tracked by the connection manager currently being used to execute requests")
     public int getClientConnectionsPoolStatsLeased() {
-        ConnPoolControl pool = null;
+        ConnPoolControl<?> pool = null;
         if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl) clientConnectionManager;
+            pool = (ConnPoolControl<?>) clientConnectionManager;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();
@@ -526,9 +527,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @ManagedAttribute(description = "Number of connection requests being blocked awaiting a free connection."
         + " This can happen only if there are more worker threads contending for fewer connections.")
     public int getClientConnectionsPoolStatsPending() {
-        ConnPoolControl pool = null;
+        ConnPoolControl<?> pool = null;
         if (clientConnectionManager instanceof ConnPoolControl) {
-            pool = (ConnPoolControl) clientConnectionManager;
+            pool = (ConnPoolControl<?>) clientConnectionManager;
         }
         if (pool != null) {
             PoolStats stats = pool.getTotalStats();

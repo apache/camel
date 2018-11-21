@@ -18,3 +18,7 @@
 def File restdsl = new File(basedir, "target/classes/generated/com/example/MyRestRoute.java")
 
 assert restdsl.exists()
+
+def String data = restdsl.text
+
+assert data.contains('restConfiguration().component("servlet").apiContextPath("/api-docs");')

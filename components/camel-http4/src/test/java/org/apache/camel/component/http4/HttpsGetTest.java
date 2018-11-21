@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
@@ -63,7 +63,7 @@ public class HttpsGetTest extends BaseHttpsTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        registry.bind("x509HostnameVerifier", new AllowAllHostnameVerifier());
+        registry.bind("x509HostnameVerifier", new NoopHostnameVerifier());
 
         return registry;
     }

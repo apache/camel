@@ -812,7 +812,7 @@ response context with the following code:
          // Get the response context form outMessage
          Map<String, Object> responseContext = CastUtils.cast((Map)out.getHeader(Client.RESPONSE_CONTEXT));
          assertNotNull(responseContext);
-         assertEquals("Get the wrong wsdl opertion name", "{http://apache.org/hello_world_soap_http}greetMe",
+         assertEquals("Get the wrong wsdl operation name", "{http://apache.org/hello_world_soap_http}greetMe",
                       responseContext.get("javax.xml.ws.wsdl.operation").toString());
 -------------------------------------------------------------------------------------------------------------
 
@@ -824,7 +824,7 @@ Attachment is not tested.  Since attachments are marshalled and
 unmarshalled into POJOs, users typically do not need to deal with the
 attachment themself.  Attachments are propagated to Camel message's
 attachments if the MTOM is not enabled, since Camel 2.12.3.  So, it is
-possible to retreive attachments by Camel Message API
+possible to retrieve attachments by Camel Message API
 
 [source,java]
 --------------------------------------------

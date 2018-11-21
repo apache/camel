@@ -69,7 +69,7 @@
     <asterisk-java-version>1.0.0-final</asterisk-java-version>
     <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
     <atmos-client-version>2.2.2</atmos-client-version>
-    <atmosphere-version>2.5.1</atmosphere-version>
+    <atmosphere-version>2.5.2</atmosphere-version>
     <atmosphere-version-range>[2.5,3.0)</atmosphere-version-range>
     <atomix-version>1.0.8</atomix-version>
     <atomix-catalyst-version>1.2.1</atomix-catalyst-version>
@@ -80,15 +80,14 @@
     <avro-version>1.8.2</avro-version>
     <avro-bundle-version>1.8.2_1</avro-bundle-version>
     <avro-ipc-bundle-version>1.8.2_1</avro-ipc-bundle-version>
-    <awaitility-version>3.1.2</awaitility-version>
+    <awaitility-version>3.1.3</awaitility-version>
     <aws-java-sdk-bundle-version>1.11.438_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.11.438</aws-java-sdk-version>
-    <aws-xray-version>2.0.1</aws-xray-version>
+    <aws-xray-version>2.1.0</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-storage-java-sdk-version>8.0.0</azure-storage-java-sdk-version>
     <azure-storage-java-sdk-bundle-version>8.0.0_1</azure-storage-java-sdk-bundle-version>
     <azure-guava-version>20.0</azure-guava-version>
-    <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <beanio-version>2.1.0</beanio-version>
     <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
@@ -98,7 +97,7 @@
     <bouncycastle-version>1.60</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.10.0</box-java-sdk-version>
-    <braintree-gateway-version>2.86.0</braintree-gateway-version>
+    <braintree-gateway-version>2.87.0</braintree-gateway-version>
     <brave-zipkin-version>5.5.0</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
@@ -146,7 +145,6 @@
     <commons-daemon-version>1.0.15</commons-daemon-version>
     <commons-dbcp-version>1.4</commons-dbcp-version>
     <commons-dbcp2-version>2.5.0</commons-dbcp2-version>
-    <commons-digester-1x-version>1.8.1</commons-digester-1x-version>
     <commons-digester-version>2.1</commons-digester-version>
     <commons-exec-version>1.3</commons-exec-version>
     <commons-httpclient-bundle-version>3.1_7</commons-httpclient-bundle-version>
@@ -186,13 +184,13 @@
     <docker-java-bundle-version>3.0.14_1</docker-java-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>6.4.1</dozer-version>
-    <drools-version>7.3.0.Final</drools-version>
+    <drools-version>7.14.0.Final</drools-version>
     <dropbox-version>3.0.10</dropbox-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
     <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
     <ehcache-version>2.10.6</ehcache-version>
-    <ehcache3-version>3.6.1</ehcache3-version>
+    <ehcache3-version>3.6.2</ehcache3-version>
     <ekstazi-maven-plugin-version>5.3.0</ekstazi-maven-plugin-version>
     <elasticsearch-bundle-version>2.4.4_1</elasticsearch-bundle-version>
     <elasticsearch-guava-version>18.0</elasticsearch-guava-version>
@@ -315,8 +313,8 @@
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>
     <ignite-version>2.6.0</ignite-version>
-    <infinispan-version>9.4.1.Final</infinispan-version>
-    <infinispan-spring-boot-version>2.0.0.Final</infinispan-spring-boot-version>
+    <infinispan-version>9.4.2.Final</infinispan-version>
+    <infinispan-spring-boot-version>2.1.0.Final</infinispan-spring-boot-version>
     <influx-java-driver-version>2.14</influx-java-driver-version>
     <influx-java-driver-bundle-version>2.14_1</influx-java-driver-bundle-version>
     <influx-guava-version>20.0</influx-guava-version>
@@ -362,7 +360,7 @@
     <javax.ws.rs-api-version>2.0.1</javax.ws.rs-api-version>
     <jaxb-bundle-version>2.2.11_1</jaxb-bundle-version>
     <jaxen-version>1.1.6</jaxen-version>
-    <jbpm-version>6.5.0.Final</jbpm-version>
+    <jbpm-version>7.14.0.Final</jbpm-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jboss-logging-version>3.3.2.Final</jboss-logging-version>
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
@@ -398,7 +396,7 @@
     <jira-rest-client-api-version>2.0.0-m30</jira-rest-client-api-version>
     <jmh-version>1.21</jmh-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
-    <jodatime2-bundle-version>2.10</jodatime2-bundle-version>
+    <jodatime2-bundle-version>2.10.1</jodatime2-bundle-version>
     <jolokia-version>1.6.0</jolokia-version>
     <jolt-version>0.1.1</jolt-version>
     <jolt-bundle-version>0.1.1_1</jolt-bundle-version>
@@ -443,7 +441,7 @@
     <kafka-bundle-version>2.0.0_1</kafka-bundle-version>
     <karaf2-version>2.4.4</karaf2-version>
     <karaf4-version>4.2.1</karaf4-version>
-    <kie-version>7.3.0.Final</kie-version>
+    <kie-version>7.14.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kubernetes-client-version>4.1.0</kubernetes-client-version>
     <kubernetes-model-version>4.1.0</kubernetes-model-version>
@@ -465,7 +463,7 @@
     <lucene-version-range>[7,8)</lucene-version-range>
     <lightcouch-version>0.2.0</lightcouch-version>
     <lightcouch-bundle-version>0.2.0_1</lightcouch-bundle-version>
-    <lz4-version>1.4.1</lz4-version>
+    <lz4-version>1.5.0</lz4-version>
     <!-- needed from tooling/archetypes -->
     <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
@@ -515,6 +513,7 @@
     <mvel-version>2.4.2.Final</mvel-version>
     <mybatis-version>3.4.6</mybatis-version>
     <narayana-version>5.9.0.Final</narayana-version>
+    <nessus-version>1.0.0.Beta1</nessus-version>
     <nsq-client-version>1.0.0.RC4</nsq-client-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <nekohtml-version>1.9.22</nekohtml-version>
@@ -551,7 +550,7 @@
     <opentracing-version>0.31.0</opentracing-version>
     <opentracing-tracerresolver-version>0.1.4</opentracing-tracerresolver-version>
     <ops4j-base-version>1.5.0</ops4j-base-version>
-    <optaplanner-version>7.3.0.Final</optaplanner-version>
+    <optaplanner-version>7.14.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
@@ -562,7 +561,6 @@
     <pax-exam-version>4.12.0</pax-exam-version>
     <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
     <pax-logging-version>1.8.6</pax-logging-version>
-    <pdfbox18-version>1.8.16</pdfbox18-version>
     <pdfbox-version>2.0.12</pdfbox-version>
     <pgjdbc-ng-driver-version>0.7.1</pgjdbc-ng-driver-version>
     <protobuf-version>3.5.1</protobuf-version>
@@ -571,8 +569,8 @@
     <protonpack-version>1.8</protonpack-version>
     <pubnub-version>4.20.0</pubnub-version>
     <qpid-broker-version>7.0.6</qpid-broker-version>
-    <qpid-proton-j-version>0.29.0</qpid-proton-j-version>
-    <qpid-jms-client-version>0.37.0</qpid-jms-client-version>
+    <qpid-proton-j-version>0.30.0</qpid-proton-j-version>
+    <qpid-jms-client-version>0.38.0</qpid-jms-client-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
     <quartz-version-range>[1.8,2)</quartz-version-range>
@@ -580,7 +578,7 @@
     <quickfixj-version>2.1.0</quickfixj-version>
     <rabbitmq-amqp-client-version>5.5.0</rabbitmq-amqp-client-version>
     <reactive-streams-version>1.0.2</reactive-streams-version>
-    <reactor-version>3.2.1.RELEASE</reactor-version>
+    <reactor-version>3.2.2.RELEASE</reactor-version>
     <reflections-version>0.9.11</reflections-version>
     <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
@@ -681,7 +679,7 @@
     <stringtemplate-version>4.0.8</stringtemplate-version>
     <tagsoup-bundle-version>1.2.1_1</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
-    <testcontainers-version>1.10.0</testcontainers-version>
+    <testcontainers-version>1.10.1</testcontainers-version>
     <testng-version>6.14.2</testng-version>
     <tinybundles-version>2.1.1</tinybundles-version>
     <tika-version>1.19.1</tika-version>
@@ -719,7 +717,7 @@
     <!-- xbean-asm4-bundle is used by openjpa -->
     <xbean-asm4-bundle-version>3.14</xbean-asm4-bundle-version>
     <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
-    <xchange-version>4.3.11</xchange-version>
+    <xchange-version>4.3.12</xchange-version>
     <xerces-bundle-version>2.11.0_1</xerces-bundle-version>
     <xerces-version>2.11.0</xerces-version>
     <!-- needed to manage the xml-apis version in camel-xmljson -->
@@ -1389,6 +1387,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ignite</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ipfs</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2908,6 +2911,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-influxdb-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-ipfs-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -4914,11 +4922,6 @@
       <!-- pdfbox -->
       <dependency>
         <groupId>org.apache.pdfbox</groupId>
-        <artifactId>jempbox</artifactId>
-        <version>${pdfbox18-version}</version><!-- because of Tika -->
-      </dependency>
-      <dependency>
-        <groupId>org.apache.pdfbox</groupId>
         <artifactId>fontbox</artifactId>
         <version>${pdfbox-version}</version>
       </dependency>
@@ -4938,6 +4941,11 @@
         <version>${pdfbox-version}</version>
       </dependency>
 
+      <dependency>
+        <groupId>io.nessus</groupId>
+        <artifactId>nessus-ipfs</artifactId>
+        <version>${nessus-version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

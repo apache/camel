@@ -102,7 +102,7 @@
 * [Injector](injector.adoc)
 * [Intercept](intercept.adoc)
 * [Inversion of Control with Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
-* Languages
+* [Languages](languages.adoc)
 * [Lifecycle](lifecycle.adoc)
 * [OnCompletion](oncompletion.adoc)
 * Pluggable Class Resolvers
@@ -128,7 +128,7 @@
 * [Java DSL](java-dsl.adoc)
 * [Spring DSL](spring.adoc)
 * [Blueprint DSL](using-osgi-blueprint-with-camel.adoc)
-* Rest DSL
+* [Rest DSL](../../../camel-core/src/main/docs/rest-dsl.adoc)
 * [Groovy DSL](groovy-dsl.adoc)
 * [Scala DSL](scala-dsl.adoc)
 * [Annotation DSL](bean-integration.adoc)
@@ -294,6 +294,7 @@
 	* [IMAP](imap-component.adoc)
 	* [Infinispan](infinispan-component.adoc)
 	* [InfluxDB](influxdb-component.adoc)
+	* [IPFS](ipfs-component.adoc)
 	* [IRC](irc-component.adoc)
 	* [IronMQ](ironmq-component.adoc)
 	* [JavaSpace](javaspace-component.adoc)
