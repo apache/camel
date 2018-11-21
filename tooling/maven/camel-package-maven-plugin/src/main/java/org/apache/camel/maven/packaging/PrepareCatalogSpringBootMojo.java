@@ -42,6 +42,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  * Prepares the Spring Boot provider camel catalog to include component it supports
  *
  * @goal prepare-catalog-springboot
+ * @threadSafe
  */
 public class PrepareCatalogSpringBootMojo extends AbstractMojo {
 

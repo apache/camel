@@ -54,6 +54,7 @@ import static org.apache.camel.maven.packaging.StringHelper.isEmpty;
  * Generate or updates the component/dataformat/language/eip readme.md and .adoc files in the project root directory.
  *
  * @goal update-readme
+ * @threadSafe
  */
 public class UpdateReadmeMojo extends AbstractMojo {
 

@@ -45,6 +45,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
  * Prepares the user guide to keep the table of content up to date with the components, data formats, and languages.
  *
  * @goal prepare-user-guide
+ * @threadSafe
  */
 public class PrepareUserGuideMojo extends AbstractMojo {
 

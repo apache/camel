@@ -67,6 +67,7 @@ import org.apache.maven.project.MavenProject;
  *
  * @goal generate
  * @phase validate
+ * @threadSafe
  */
 public class BomGeneratorMojo extends AbstractMojo {
 

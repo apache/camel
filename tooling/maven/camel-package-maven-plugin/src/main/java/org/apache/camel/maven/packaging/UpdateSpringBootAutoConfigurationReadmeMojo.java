@@ -47,6 +47,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
  * .adoc files in their component directory is updated to include spring boot auto configuration options.
  *
  * @goal update-spring-boot-auto-configuration-readme
+ * @threadSafe
  */
 public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
 
