@@ -19,11 +19,18 @@ package org.apache.camel.component.google.calendar.internal;
 /**
  * Constants for GoogleCalendar component.
  */
-public interface GoogleCalendarConstants {
+public final class GoogleCalendarConstants {
 
     // suffix for parameters when passed as exchange header properties
-    String PROPERTY_PREFIX = "CamelGoogleCalendar.";
+    public static final String PROPERTY_PREFIX = "CamelGoogleCalendar.";
 
     // thread profile name for this component
-    String THREAD_PROFILE_NAME = "CamelGoogleCalendar";
+    public static final String THREAD_PROFILE_NAME = "CamelGoogleCalendar";
+
+    /**
+     * Prevent instantiation.
+     */
+    private GoogleCalendarConstants() {
+        super();
+    }
 }
