@@ -561,35 +561,6 @@
     </profile>
 
     <profile>
-      <id>integration</id>
-      <!--The profile for running the unit and integration test -->
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${maven-surefire-plugin-version}</version>
-            <configuration>
-              <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-              <childDelegation>false</childDelegation>
-              <useFile>true</useFile>
-              <failIfNoTests>false</failIfNoTests>
-              <runOrder>alphabetical</runOrder>
-              <systemPropertyVariables>
-                <derby.stream.error.file>target/derby.log</derby.stream.error.file>
-                <java.awt.headless>${java.awt.headless}</java.awt.headless>
-              </systemPropertyVariables>
-              <includes>
-                <include>**/*Test.*</include>
-                <include>**/*IntegrationTest.*</include>
-              </includes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
       <id>deploy</id>
       <build>
         <defaultGoal>deploy</defaultGoal>
