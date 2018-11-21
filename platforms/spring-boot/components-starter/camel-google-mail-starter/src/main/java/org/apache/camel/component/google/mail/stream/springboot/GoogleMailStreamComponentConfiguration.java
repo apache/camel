@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.mail.stream.springboot;
 
-import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -105,12 +104,6 @@ public class GoogleMailStreamComponentConfiguration
          */
         private String applicationName;
         /**
-         * Specifies the level of permissions you want a mail application to
-         * have to a user account. See
-         * https://developers.google.com/gmail/api/auth/scopes for more info.
-         */
-        private List scopes;
-        /**
          * Specifies an index for the endpoint
          */
         private String index;
@@ -169,14 +162,6 @@ public class GoogleMailStreamComponentConfiguration
 
         public void setApplicationName(String applicationName) {
             this.applicationName = applicationName;
-        }
-
-        public List getScopes() {
-            return scopes;
-        }
-
-        public void setScopes(List scopes) {
-            this.scopes = scopes;
         }
 
         public String getIndex() {
