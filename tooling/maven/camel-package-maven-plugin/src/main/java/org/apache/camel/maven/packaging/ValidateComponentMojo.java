@@ -45,6 +45,7 @@ import static org.apache.camel.maven.packaging.ValidateHelper.validate;
  * all contains the needed meta-data such as assigned labels, documentation for each option
  *
  * @goal validate-components
+ * @threadSafe
  */
 public class ValidateComponentMojo extends AbstractMojo {
 

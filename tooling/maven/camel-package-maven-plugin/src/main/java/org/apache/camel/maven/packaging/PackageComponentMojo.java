@@ -37,6 +37,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
  *
  * @goal generate-components-list
+ * @threadSafe
  */
 public class PackageComponentMojo extends AbstractMojo {
 

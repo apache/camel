@@ -40,6 +40,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * Analyses the Camel EIPs in a project and generates extra descriptor information for easier auto-discovery in Camel.
  *
  * @goal generate-eips-list
+ * @threadSafe
  */
 public class PackageModelMojo extends AbstractMojo {
 

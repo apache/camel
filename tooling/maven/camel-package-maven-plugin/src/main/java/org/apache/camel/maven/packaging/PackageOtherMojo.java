@@ -39,6 +39,7 @@ import static org.apache.camel.maven.packaging.StringHelper.camelDashToTitle;
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
  *
  * @goal generate-others-list
+ * @threadSafe
  */
 public class PackageOtherMojo extends AbstractMojo {
 

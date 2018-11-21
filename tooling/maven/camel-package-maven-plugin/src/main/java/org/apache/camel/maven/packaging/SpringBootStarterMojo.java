@@ -77,6 +77,7 @@ import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNod
  * Generate Spring Boot starter for the component
  *
  * @goal prepare-spring-boot-starter
+ * @threadSafe
  */
 public class SpringBootStarterMojo extends AbstractMojo {
 
