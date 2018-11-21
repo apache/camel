@@ -215,15 +215,12 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
             // If request included a response, set as body
             if (result != null) {
                 exchange.getIn().setBody(result);
-
-                return true;
             }
         } catch (DockerException | InterruptedException | IOException e) {
             log.error(e.getMessage(), e);
-
-            return false;
         }
 
+        callback.done(false);
         return false;
     }
 

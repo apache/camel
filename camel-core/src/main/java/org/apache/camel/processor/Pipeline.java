@@ -81,8 +81,13 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        ReactiveHelper.scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true),
-                "Step[" + exchange.getExchangeId() + "," + Pipeline.this + "]");
+        if (exchange.isTransacted()) {
+            ReactiveHelper.scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true),
+                    "Step[" + exchange.getExchangeId() + "," + Pipeline.this + "]");
+        } else {
+            ReactiveHelper.scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true),
+                    "Step[" + exchange.getExchangeId() + "," + Pipeline.this + "]");
+        }
         return false;
     }
 

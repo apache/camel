@@ -223,7 +223,11 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         if (isParallelProcessing()) {
             executorService.submit(() -> ReactiveHelper.schedule(state));
         } else {
-            ReactiveHelper.scheduleMain(state);
+            if (exchange.isTransacted()) {
+                ReactiveHelper.scheduleSync(state);
+            } else {
+                ReactiveHelper.scheduleMain(state);
+            }
         }
 
         // the remainder of the multicast will be completed async
