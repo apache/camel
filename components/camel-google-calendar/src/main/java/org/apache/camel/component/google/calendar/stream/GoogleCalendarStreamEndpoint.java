@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.google.calendar.stream;
 
-import java.io.UnsupportedEncodingException;
-
 import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -32,22 +28,21 @@ import org.apache.camel.component.google.calendar.GoogleCalendarClientFactory;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * The google-calendar component provides access to Google Calendar in a streaming mod.
  */
-@UriEndpoint(firstVersion = "2.23.0", 
-             scheme = "google-calendar-stream", 
-             title = "Google Calendar Stream", 
-             syntax = "google-calendar-stream:index", 
+@UriEndpoint(firstVersion = "2.23.0",
+             scheme = "google-calendar-stream",
+             title = "Google Calendar Stream",
+             syntax = "google-calendar-stream:index",
              consumerClass = GoogleCalendarStreamConsumer.class,
              consumerOnly = true,
              label = "api,cloud")
 public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(GoogleCalendarStreamEndpoint.class);
 
     @UriParam
@@ -91,11 +86,11 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
         return true;
     }
 
-    public Exchange createExchange(ExchangePattern pattern, Event event) throws UnsupportedEncodingException {
-
-        Exchange exchange = super.createExchange();
+    public Exchange createExchange(ExchangePattern pattern, Event event) {
+        Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         message.setBody(event);
+        message.setHeader(GoogleCalendarStreamConstants.EVENT_ID, event.getId());
         return exchange;
     }
 }

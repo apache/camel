@@ -12,7 +12,7 @@ Google Calendar uses
 the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
 protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
-to https://developers.google.com/gmail/api/auth/web-server[create an
+to https://developers.google.com/calendar/auth[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
 generating a long-lived refreshToken is
@@ -27,7 +27,7 @@ for this component:
             <artifactId>camel-google-calendar</artifactId>
             <version>2.23.0</version>
     </dependency>
-        
+
 ------------------------------------------------------
 
 ### URI Format
@@ -36,10 +36,10 @@ The Google Calendar Component uses the following URI format:
 
 --------------------------------------------------------
         google-calendar-stream://index?[options]
-    
+
 --------------------------------------------------------
 
-### GoogleMailStreamComponent
+### GoogleCalendarStreamComponent
 
 
 // component options: START
@@ -88,14 +88,14 @@ with the following path and query parameters:
 | *applicationName* (consumer) | Google Calendar application name. Example would be camel-google-calendar/1.0 |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *calendarId* (consumer) | The calendarId to be used | primary | String
-| *clientId* (consumer) | Client ID of the mail application |  | String
-| *clientSecret* (consumer) | Client secret of the mail application |  | String
+| *clientId* (consumer) | Client ID of the calendar application |  | String
+| *clientSecret* (consumer) | Client secret of the calendar application |  | String
 | *considerLastUpdate* (consumer) | Take into account the lastUpdate of the last event polled as start date for the next poll | false | boolean
 | *consumeFromNow* (consumer) | Consume events in the selected calendar from now on | true | boolean
 | *maxResults* (consumer) | Max results to be returned | 10 | int
 | *query* (consumer) | The query to execute on calendar |  | String
 | *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *scopes* (consumer) | Specifies the level of permissions you want a mail application to have to a user account. See https://developers.google.com/calendar/api/auth/scopes for more info. |  | List
+| *scopes* (consumer) | Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/calendar/auth for more info. |  | List
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -148,7 +148,7 @@ The component supports 15 options, which are listed below.
 
 ### Consumer
 
-The consumer will poll by default with maxResults equals to 10.
+The consumer will poll by default with maxResults equals to 5.
 
 For example
 
@@ -157,6 +157,6 @@ For example
 from("google-calendar-stream://test?markAsRead=true&delay=5000&maxResults=5").to("mock:result");
 ---------------------------------------------------------
 
-This route will consume the next ten events starting from the date of polling.
+This route will consume the next five events starting from the date of polling.
 
    
