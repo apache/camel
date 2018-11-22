@@ -16,16 +16,16 @@
  */
 package org.apache.camel.component.google.sheets;
 
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
 import com.google.api.services.sheets.v4.Sheets;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 public class GoogleSheetsVerifierExtension extends DefaultComponentVerifierExtension {
 
@@ -61,12 +61,9 @@ public class GoogleSheetsVerifierExtension extends DefaultComponentVerifierExten
         try {
             GoogleSheetsConfiguration configuration = setProperties(new GoogleSheetsConfiguration(), parameters);
             GoogleSheetsClientFactory clientFactory = new BatchGoogleSheetsClientFactory();
-            Sheets client = clientFactory.makeClient(configuration.getClientId(), configuration.getClientSecret(),
-                    configuration.getApplicationName(),
-                    configuration.getRefreshToken(), configuration.getAccessToken());
-            client.spreadsheets().get(Optional.ofNullable(parameters.get("spreadsheetId"))
-                                              .map(Object::toString)
-                                              .orElse(UUID.randomUUID().toString())).execute();
+            Sheets client = clientFactory.makeClient(configuration.getClientId(), configuration.getClientSecret(), configuration.getApplicationName(),
+                                                     configuration.getRefreshToken(), configuration.getAccessToken());
+            client.spreadsheets().get(Optional.ofNullable(parameters.get("spreadsheetId")).map(Object::toString).orElse(UUID.randomUUID().toString())).execute();
         } catch (Exception e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
                 .detail("google_sheets_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())

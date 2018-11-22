@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.google.sheets;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class GoogleSheetsVerifierExtensionTest extends CamelTestSupport {
 
