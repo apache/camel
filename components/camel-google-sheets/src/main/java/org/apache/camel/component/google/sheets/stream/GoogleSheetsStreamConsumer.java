@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.google.sheets.stream;
 
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Queue;
+import java.util.stream.Collectors;
+
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.BatchGetValuesResponse;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
@@ -27,12 +33,6 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Queue;
-import java.util.stream.Collectors;
 
 /**
  * The GoogleSheets consumer.

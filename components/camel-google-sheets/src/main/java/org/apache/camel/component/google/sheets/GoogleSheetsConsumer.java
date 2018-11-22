@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.google.sheets;
 
+
+import java.util.Map;
+import java.util.Map.Entry;
+
+
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -23,9 +28,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.component.AbstractApiConsumer;
-
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * The GoogleSheets consumer.

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.google.sheets;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
@@ -24,9 +27,6 @@ import org.apache.camel.component.google.sheets.internal.GoogleSheetsPropertiesH
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.component.AbstractApiProducer;
 import org.apache.camel.util.component.ApiMethod;
-
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * The GoogleSheets producer.
@@ -39,7 +39,7 @@ public class GoogleSheetsProducer extends AbstractApiProducer<GoogleSheetsApiNam
 
     @Override
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
-        AbstractGoogleClientRequest<?> request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
+        AbstractGoogleClientRequest<?> request = (AbstractGoogleClientRequest)super.doInvokeMethod(method, properties);
         try {
             TypeConverter typeConverter = getEndpoint().getCamelContext().getTypeConverter();
             for (Entry<String, Object> p : properties.entrySet()) {
