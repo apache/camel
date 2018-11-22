@@ -260,6 +260,7 @@
     <google-api-client-version>1.22.0</google-api-client-version>
     <google-api-services-drive-version>v2-rev297-1.22.0</google-api-services-drive-version>
     <google-api-services-calendar-version>v3-rev291-1.22.0</google-api-services-calendar-version>
+    <google-api-services-sheets-version>v4-rev551-1.22.0</google-api-services-sheets-version>
     <google-api-services-mail-version>v1-rev81-1.22.0</google-api-services-mail-version>
     <google-api-services-bigquery-version>v2-rev352-1.22.0</google-api-services-bigquery-version>
     <google-api-services-pubsub-version>v1-rev12-1.22.0</google-api-services-pubsub-version>
@@ -1229,12 +1230,17 @@
         <artifactId>camel-github</artifactId>
         <version>${project.version}</version>
       </dependency>
-       <dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-calendar</artifactId>
         <version>${project.version}</version>
       </dependency>
-       <dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-google-sheets</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-drive</artifactId>
         <version>${project.version}</version>
@@ -2771,6 +2777,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-google-calendar-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-google-sheets-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
