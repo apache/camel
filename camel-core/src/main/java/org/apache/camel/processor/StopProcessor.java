@@ -17,22 +17,16 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * Stops continue processing the route and marks it as complete.
  */
-public class StopProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
+public class StopProcessor extends AsyncProcessorSupport implements IdAware {
 
     private String id;
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // mark the exchange to stop continue routing

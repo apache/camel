@@ -126,9 +126,9 @@ public class DisruptorConcurrentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("disruptor:foo?concurrentConsumers=10").to("mock:before").delay(2000).to("mock:result");
+                from("disruptor:foo?concurrentConsumers=10").to("mock:before").delay(2000).syncDelayed().to("mock:result");
 
-                from("disruptor:bar?concurrentConsumers=10").to("mock:before").delay(2000)
+                from("disruptor:bar?concurrentConsumers=10").to("mock:before").delay(2000).syncDelayed()
                         .transform(body().prepend("Bye ")).to("mock:result");
             }
         };

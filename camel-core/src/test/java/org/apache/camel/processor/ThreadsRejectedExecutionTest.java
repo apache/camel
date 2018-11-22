@@ -77,7 +77,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                     .to("log:before")
                     // will use our custom pool
                     .threads().executorService(pool).callerRunsWhenRejected(false)
-                    .delay(200)
+                    .delay(200).syncDelayed()
                     .to("log:after")
                     .to("mock:result");
             }

@@ -111,9 +111,13 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
      * processor on the consumer. If the processor does not implement the interface,
      * it will be adapted so that it does.
      */
-    public synchronized AsyncProcessor getAsyncProcessor() {
-        if (asyncProcessor == null) {            
-            asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
+    public AsyncProcessor getAsyncProcessor() {
+        if (asyncProcessor == null) {
+            synchronized (this) {
+                if (asyncProcessor == null) {
+                    asyncProcessor = AsyncProcessorConverterHelper.convert(processor);
+                }
+            }
         }
         return asyncProcessor;
     }

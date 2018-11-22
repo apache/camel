@@ -36,8 +36,7 @@ public class AsyncEndpointRecipientListParallelTest extends ContextTestSupport {
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye Camel", reply);
 
-        // to hard to do parallel async routing so the caller thread is synchronized
-        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertNotEquals("Should use different threads", beforeThreadName, afterThreadName);
     }
 
     @Override

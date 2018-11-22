@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.net.URISyntaxException;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -32,11 +31,10 @@ import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
@@ -46,7 +44,7 @@ import org.apache.camel.util.URISupport;
  *
  * @see SendDynamicProcessor
  */
-public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware, IdAware {
+public class SendProcessor extends AsyncProcessorSupport implements Traceable, EndpointAware, IdAware {
 
     protected transient String traceLabelToString;
     protected final CamelContext camelContext;
@@ -101,10 +99,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         return destination;
     }
 
-    public void process(final Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
             exchange.setException(new IllegalStateException("SendProcessor has not been started: " + this));
@@ -124,13 +118,13 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             final Exchange target = configureExchange(exchange, pattern);
 
             final boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
-            StopWatch sw = null;
-            if (sending) {
-                sw = new StopWatch();
-            }
-
             // record timing for sending the exchange using the producer
-            final StopWatch watch = sw;
+            StopWatch watch;
+            if (sending) {
+                watch = new StopWatch();
+            } else {
+                watch = null;
+            }
 
             try {
                 log.debug(">>>> {} {}", destination, exchange);

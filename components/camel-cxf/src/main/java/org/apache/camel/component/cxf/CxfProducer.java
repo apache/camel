@@ -34,6 +34,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.support.ServiceHelper;
@@ -52,7 +53,7 @@ import org.apache.cxf.service.model.BindingOperationInfo;
  * client, and sends the request to a CXF to a server.  Any response will 
  * be bound to Camel exchange. 
  */
-public class CxfProducer extends DefaultProducer implements AsyncProcessor {
+public class CxfProducer extends DefaultAsyncProducer {
 
     private Client client;
     private CxfEndpoint endpoint;

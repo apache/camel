@@ -20,6 +20,8 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.DelegateProcessor;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.event.CamelContextStartedEvent;
@@ -100,7 +102,11 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertEquals("should be DLC", true, e.isDeadLetterChannel());
         assertTrue("should be marked as failure handled", e.isHandled());
         assertFalse("should not be continued", e.isContinued());
-        SendProcessor send = assertIsInstanceOf(SendProcessor.class, e.getFailureHandler());
+        Processor fh = e.getFailureHandler();
+        if (fh.getClass().getName().endsWith("ProcessorToReactiveProcessorBridge")) {
+            fh = ((DelegateProcessor) fh).getProcessor();
+        }
+        SendProcessor send = assertIsInstanceOf(SendProcessor.class, fh);
         assertEquals("mock://dead", send.getDestination().getEndpointUri());
         assertEquals("mock://dead", e.getDeadLetterUri());
 

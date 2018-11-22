@@ -89,7 +89,8 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
             break;
         }
 
-        return true;
+        callback.done(false);
+        return false;
     }
 
     @SuppressWarnings("unchecked")

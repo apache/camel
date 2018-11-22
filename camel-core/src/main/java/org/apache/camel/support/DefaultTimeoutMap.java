@@ -54,8 +54,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     private final ScheduledExecutorService executor;
     private volatile ScheduledFuture<?> future;
     private final long purgePollTime;
-    private final Lock lock = new ReentrantLock();
-    private boolean useLock = true;
+    private final Lock lock;
 
     public DefaultTimeoutMap(ScheduledExecutorService executor) {
         this(executor, 1000);
@@ -66,17 +65,19 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     }
 
     public DefaultTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, boolean useLock) {
+        this(executor, requestMapPollTimeMillis, useLock ? new ReentrantLock() : new NoLock());
+    }
+
+    public DefaultTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, Lock lock) {
         ObjectHelper.notNull(executor, "ScheduledExecutorService");
         this.executor = executor;
         this.purgePollTime = requestMapPollTimeMillis;
-        this.useLock = useLock;
+        this.lock = lock;
     }
 
     public V get(K key) {
         TimeoutMapEntry<K, V> entry;
-        if (useLock) {
-            lock.lock();
-        }
+        lock.lock();
         try {
             entry = map.get(key);
             if (entry == null) {
@@ -84,58 +85,44 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
             }
             updateExpireTime(entry);
         } finally {
-            if (useLock) {
-                lock.unlock();
-            }
+            lock.unlock();
         }
         return entry.getValue();
     }
     
     public V put(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
-        if (useLock) {
-            lock.lock();
-        }
+        lock.lock();
         try {
             updateExpireTime(entry);
             TimeoutMapEntry<K, V> result = map.put(key, entry);
             return result != null ? result.getValue() : null;
         } finally {
-            if (useLock) {
-                lock.unlock();
-            }
+            lock.unlock();
         }
     }
     
     public V putIfAbsent(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
-        if (useLock) {
-            lock.lock();
-        }
+        lock.lock();
         try {
             updateExpireTime(entry);
             //Just make sure we don't override the old entry
             TimeoutMapEntry<K, V> result = map.putIfAbsent(key, entry);
             return result != null ? result.getValue() : null;
         } finally {
-            if (useLock) {
-                lock.unlock();
-            }
+            lock.unlock();
         }
     }
 
     public V remove(K key) {
         TimeoutMapEntry<K, V> entry;
 
-        if (useLock) {
-            lock.lock();
-        }
+        lock.lock();
         try {
             entry = map.remove(key);
         } finally {
-            if (useLock) {
-                lock.unlock();
-            }
+            lock.unlock();
         }
 
         return entry != null ? entry.getValue() : null;
@@ -143,17 +130,13 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
     public Object[] getKeys() {
         Object[] keys;
-        if (useLock) {
-            lock.lock();
-        }
+        lock.lock();
         try {
             Set<K> keySet = map.keySet();
             keys = new Object[keySet.size()];
             keySet.toArray(keys);
         } finally {
-            if (useLock) {
-                lock.unlock();
-            }
+            lock.unlock();
         }
         return keys;
     }
@@ -191,9 +174,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
         List<TimeoutMapEntry<K, V>> expired = new ArrayList<>();
 
-        if (useLock) {
-            lock.lock();
-        }
+        lock.lock();
         try {
             // need to find the expired entries and add to the expired list
             for (Map.Entry<K, TimeoutMapEntry<K, V>> entry : map.entrySet()) {
@@ -242,9 +223,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
                 }
             }
         } finally {
-            if (useLock) {
-                lock.unlock();
-            }
+            lock.unlock();
         }
     }
 

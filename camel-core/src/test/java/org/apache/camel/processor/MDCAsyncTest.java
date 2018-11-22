@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
 import org.junit.Test;
 import org.slf4j.MDC;
 
@@ -83,14 +85,15 @@ public class MDCAsyncTest extends ContextTestSupport {
         }
 
         @Override
+        public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+            AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+            process(exchange, callback);
+            return callback.getFuture();
+        }
+
+        @Override
         public boolean process(Exchange exchange, final AsyncCallback callback) {
-            EXECUTOR.submit(new Runnable() {
-                @Override
-                public void run() {
-                    callback.done(false);
-                }
-            });
-            
+            EXECUTOR.submit(() -> callback.done(false));
             return false;
         }
     }

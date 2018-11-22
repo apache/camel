@@ -119,12 +119,9 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             throw exchange.getException();
         }
 
-        Iterable<ProcessorExchangePair> answer;
-        if (isStreaming()) {
-            answer = createProcessorExchangePairsIterable(exchange, value);
-        } else {
-            answer = createProcessorExchangePairsList(exchange, value);
-        }
+        Iterable<ProcessorExchangePair> answer = isStreaming()
+                ? createProcessorExchangePairsIterable(exchange, value)
+                : createProcessorExchangePairsList(exchange, value);
         if (exchange.getException() != null) {
             // force any exceptions occurred during creation of exchange paris to be thrown
             // before returning the answer;
@@ -245,8 +242,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     @Override
-    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs,
-                                     Iterator<ProcessorExchangePair> it) {
+    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
         // do not share unit of work
         exchange.setUnitOfWork(null);
 
@@ -255,7 +251,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             // non streaming mode, so we know the total size already
             exchange.setProperty(Exchange.SPLIT_SIZE, ((Collection<?>) allPairs).size());
         }
-        if (it.hasNext()) {
+        if (hasNext) {
             exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE);
         } else {
             exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.TRUE);

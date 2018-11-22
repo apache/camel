@@ -20,12 +20,10 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A <code>SamplingThrottler</code> is a special kind of throttler. It also
@@ -38,7 +36,7 @@ import org.apache.camel.support.ServiceSupport;
  * an exchange stream, rough consolidation of noisy and bursty exchange traffic
  * or where queuing of throttled exchanges is undesirable.
  */
-public class SamplingThrottler extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class SamplingThrottler extends AsyncProcessorSupport implements Traceable, IdAware {
 
     private String id;
     private long messageFrequency;
@@ -68,14 +66,6 @@ public class SamplingThrottler extends ServiceSupport implements AsyncProcessor,
         this.samplePeriod = samplePeriod;
         this.units = units;
         this.periodInMillis = units.toMillis(samplePeriod);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-    }
-
-    @Override
-    protected void doStop() throws Exception {
     }
 
     @Override
@@ -113,11 +103,6 @@ public class SamplingThrottler extends ServiceSupport implements AsyncProcessor,
 
     public TimeUnit getUnits() {
         return units;
-    }
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

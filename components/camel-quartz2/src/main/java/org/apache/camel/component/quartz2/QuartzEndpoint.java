@@ -616,7 +616,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public void onConsumerStart(QuartzConsumer quartzConsumer) throws Exception {
-        getConsumerLoadBalancer().addProcessor(quartzConsumer.getProcessor());
+        getConsumerLoadBalancer().addProcessor(quartzConsumer.getAsyncProcessor());
         if (!jobAdded.get()) {
             addJobInScheduler();
         } else {
@@ -625,7 +625,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public void onConsumerStop(QuartzConsumer quartzConsumer) throws Exception {
-        getConsumerLoadBalancer().removeProcessor(quartzConsumer.getProcessor());
+        getConsumerLoadBalancer().removeProcessor(quartzConsumer.getAsyncProcessor());
         if (jobAdded.get()) {
             pauseTrigger();
         }

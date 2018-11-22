@@ -17,29 +17,23 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which executes the script as an expression and does not change the message body.
  */
-public class ScriptProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class ScriptProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
     private String id;
     private final Expression expression;
 
     public ScriptProcessor(Expression expression) {
         ObjectHelper.notNull(expression, "expression", this);
         this.expression = expression;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {

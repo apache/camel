@@ -99,7 +99,6 @@ public class SedaProducer extends DefaultAsyncProducer {
                 }
             });
 
-            log.trace("Adding Exchange to queue: {}", copy);
             try {
                 // do not copy as we already did the copy
                 addToQueue(copy, false);

@@ -107,10 +107,11 @@ public class IgniteSetProducer extends DefaultAsyncProducer {
             
         default:
             exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite Set producer."));
-            return true;
+            break;
         }
 
-        return true;
+        callback.done(false);
+        return false;
     }
 
     private IgniteSetOperation setOperationFor(Exchange exchange) {

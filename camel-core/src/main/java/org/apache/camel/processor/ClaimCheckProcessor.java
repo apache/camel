@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -25,10 +24,9 @@ import org.apache.camel.impl.DefaultClaimCheckRepository;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.spi.ClaimCheckRepository;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -39,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * This guards against concurrent and thread-safe issues. For off-memory persistent storage of data, then use
  * any of the many Camel components that support persistent storage, and do not use this Claim Check EIP implementation.
  */
-public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
+public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAware, CamelContextAware {
 
     private CamelContext camelContext;
     private String id;
@@ -98,10 +96,6 @@ public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcesso
 
     public void setFilter(String filter) {
         this.filter = filter;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

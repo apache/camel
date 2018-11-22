@@ -20,18 +20,16 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A processor that sorts the expression using a comparator
  */
-public class SortProcessor<T> extends ServiceSupport implements AsyncProcessor, IdAware, org.apache.camel.Traceable {
+public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, org.apache.camel.Traceable {
 
     private String id;
     private final Expression expression;
@@ -40,10 +38,6 @@ public class SortProcessor<T> extends ServiceSupport implements AsyncProcessor, 
     public SortProcessor(Expression expression, Comparator<? super T> comparator) {
         this.expression = expression;
         this.comparator = comparator;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

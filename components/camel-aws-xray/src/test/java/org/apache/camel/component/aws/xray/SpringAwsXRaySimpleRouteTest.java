@@ -54,25 +54,20 @@ public class SpringAwsXRaySimpleRouteTest extends CamelSpringTestSupport {
 
         List<TestTrace> testData = Arrays.asList(
         TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("dude")
-                .withSubsegment(TestDataBuilder.createSubsegment("car"))
-            ),
+            .withSegment(TestDataBuilder.createSegment("dude"))
+            .withSegment(TestDataBuilder.createSegment("car")),
         TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("dude")
-                .withSubsegment(TestDataBuilder.createSubsegment("car"))
-            ),
+            .withSegment(TestDataBuilder.createSegment("dude"))
+            .withSegment(TestDataBuilder.createSegment("car")),
         TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("dude")
-                .withSubsegment(TestDataBuilder.createSubsegment("car"))
-            ),
+            .withSegment(TestDataBuilder.createSegment("dude"))
+            .withSegment(TestDataBuilder.createSegment("car")),
         TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("dude")
-                .withSubsegment(TestDataBuilder.createSubsegment("car"))
-            ),
+            .withSegment(TestDataBuilder.createSegment("dude"))
+            .withSegment(TestDataBuilder.createSegment("car")),
         TestDataBuilder.createTrace()
-            .withSegment(TestDataBuilder.createSegment("dude")
-                .withSubsegment(TestDataBuilder.createSubsegment("car"))
-            )
+            .withSegment(TestDataBuilder.createSegment("dude"))
+            .withSegment(TestDataBuilder.createSegment("car"))
         );
 
         Thread.sleep(2000);

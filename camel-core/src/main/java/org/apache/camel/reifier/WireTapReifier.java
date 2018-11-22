@@ -57,7 +57,7 @@ class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         CamelInternalProcessor internal = new CamelInternalProcessor(target);
         internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
 
-        // is true bt default
+        // is true by default
         boolean isCopy = definition.getCopy() == null || definition.getCopy();
 
         WireTapProcessor answer = new WireTapProcessor(dynamicTo, internal, definition.getPattern(), threadPool, shutdownThreadPool, definition.isDynamic());

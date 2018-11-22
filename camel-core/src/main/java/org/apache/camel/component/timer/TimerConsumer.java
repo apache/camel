@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.StartupListener;
 import org.apache.camel.Suspendable;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.ReactiveHelper;
 
 /**
  * The timer consumer.
@@ -174,6 +175,10 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
     }
 
     protected void sendTimerExchange(long counter) {
+        ReactiveHelper.schedule(() -> doSendTimerExchange(counter), "Send timer exchange");
+    }
+
+    protected void doSendTimerExchange(long counter) {
         final Exchange exchange = endpoint.createExchange();
         exchange.setProperty(Exchange.TIMER_COUNTER, counter);
         exchange.setProperty(Exchange.TIMER_NAME, endpoint.getTimerName());

@@ -99,6 +99,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  * Generate Spring Boot auto configuration files for Camel components and data formats.
  *
  * @goal prepare-spring-boot-auto-configuration
+ * @threadSafe
  * @requiresDependencyResolution compile+runtime
  */
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {

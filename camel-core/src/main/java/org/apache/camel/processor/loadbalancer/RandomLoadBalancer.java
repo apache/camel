@@ -16,39 +16,34 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
-import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 
 /**
  * Implements the random load balancing policy
  */
 public class RandomLoadBalancer extends QueueLoadBalancer {
 
-    private static final Random RANDOM = new Random();
     private transient int index;
 
-    protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
-        int size = processors.size();
+    protected AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
+        int size = processors.length;
         if (size == 0) {
             return null;
         } else if (size == 1) {
             // there is only 1
-            return processors.get(0);
+            return processors[0];
         }
 
         // pick a random
-        index = RANDOM.nextInt(size);
-        return processors.get(index);
+        index = ThreadLocalRandom.current().nextInt(size);
+        return processors[index];
     }
 
     public int getLastChosenProcessorIndex() {
         return index;
     }
 
-    public String toString() {
-        return "RandomLoadBalancer";
-    }
 }

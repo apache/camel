@@ -28,13 +28,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A logger for logging message throughput.
  */
-public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, IdAware {
+public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProcessor, IdAware {
 
     private String id;
     private final AtomicInteger receivedCounter = new AtomicInteger();
@@ -82,10 +83,6 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
     }
 
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    public boolean process(Exchange exchange, AsyncCallback callback) {
         if (startTime == 0) {
             startTime = System.currentTimeMillis();
         }
@@ -98,7 +95,14 @@ public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, 
                 logger.log(lastLogMessage);
             }
         }
+    }
 
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
         callback.done(true);
         return true;
     }

@@ -32,10 +32,9 @@ public class TwoServiceTest extends CamelAwsXRayTestSupport {
         super(
             TestDataBuilder.createTrace().inRandomOrder()
                 .withSegment(TestDataBuilder.createSegment("ServiceA")
-                    .withSubsegment(TestDataBuilder.createSubsegment("direct:ServiceB")
-                        .withSubsegment(TestDataBuilder.createSubsegment("ServiceB"))
-                    )
+                    .withSubsegment(TestDataBuilder.createSubsegment("direct:ServiceB"))
                 )
+                .withSegment(TestDataBuilder.createSegment("ServiceB"))
         );
     }
 

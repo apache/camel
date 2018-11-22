@@ -30,6 +30,7 @@ import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.transaction.TransactionDefinition;
@@ -91,7 +92,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange) {
         // we have to run this synchronously as Spring Transaction does *not* support
         // using multiple threads to span a transaction
         if (transactionTemplate.getPropagationBehavior() != TransactionDefinition.PROPAGATION_REQUIRES_NEW && exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
@@ -120,7 +121,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         return true;
     }
 
-    protected void processInTransaction(final Exchange exchange) throws Exception {
+    protected void processInTransaction(final Exchange exchange) {
         // is the exchange redelivered, for example JMS brokers support such details
         Boolean externalRedelivered = exchange.isExternalRedelivered();
         final String redelivered = externalRedelivered != null ? externalRedelivered.toString() : "unknown";
@@ -215,31 +216,12 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
      * @param exchange the exchange
      */
     protected void processByErrorHandler(final Exchange exchange) {
-        final CountDownLatch latch = new CountDownLatch(1);
-        boolean sync = super.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                if (!doneSync) {
-                    log.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
-                    latch.countDown();
-                }
-            }
-
+        awaitManager.process(new AsyncProcessorSupport() {
             @Override
-            public String toString() {
-                return "Done " + TransactionErrorHandler.this.toString();
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                return TransactionErrorHandler.super.process(exchange, callback);
             }
-        });
-        if (!sync) {
-            log.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
-                    exchange.getExchangeId(), exchange);
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                exchange.setException(e);
-            }
-            log.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
-                    exchange.getExchangeId(), exchange);
-        }
+        }, exchange);
     }
 
     /**

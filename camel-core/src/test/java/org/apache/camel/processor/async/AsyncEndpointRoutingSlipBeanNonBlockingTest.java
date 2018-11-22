@@ -32,6 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ServiceHelper;
 import org.junit.Assert;
 import org.junit.Test;
@@ -113,7 +114,7 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
         }
     }
 
-    private class MyAsyncProcessor implements AsyncProcessor {
+    private class MyAsyncProcessor extends AsyncProcessorSupport {
 
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -121,11 +122,6 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
             innerExchange = exchange;
 
             return false;
-        }
-
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            AsyncProcessorHelper.process(this, exchange);
         }
     }
 }

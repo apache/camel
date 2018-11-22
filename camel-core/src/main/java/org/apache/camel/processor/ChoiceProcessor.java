@@ -28,9 +28,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
@@ -39,7 +38,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * they are true their processors are used, with a default otherwise clause used
  * if none match.
  */
-public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
+public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware {
 
     private String id;
     private final List<FilterProcessor> filters;
@@ -49,10 +48,6 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
     public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
         this.filters = filters;
         this.otherwise = otherwise;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {

@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -39,17 +38,17 @@ import org.apache.camel.Traceable;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ShutdownAware;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
  */
-public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable, ShutdownAware, IdAware, CamelContextAware {
+public class WireTapProcessor extends AsyncProcessorSupport implements Traceable, ShutdownAware, IdAware, CamelContextAware {
 
     private String id;
     private CamelContext camelContext;
@@ -127,10 +126,6 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         return dynamicProcessor.getEndpointUtilizationStatistics();
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
             throw new IllegalStateException("WireTapProcessor has not been started: " + this);
@@ -149,20 +144,16 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         final Exchange wireTapExchange = target;
 
         // send the exchange to the destination using an executor service
-        executorService.submit(new Callable<Exchange>() {
-            public Exchange call() throws Exception {
+        executorService.submit(() -> {
                 taskCount.increment();
-                try {
-                    log.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
-                    processor.process(wireTapExchange);
-                } catch (Throwable e) {
-                    log.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", e);
-                } finally {
+                log.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
+                AsyncProcessorConverterHelper.convert(processor).process(wireTapExchange, doneSync -> {
+                    if (wireTapExchange.getException() != null) {
+                        log.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", wireTapExchange.getException());
+                    }
                     taskCount.decrement();
-                }
-                return wireTapExchange;
-            }
-        });
+                });
+            });
 
         // continue routing this synchronously
         callback.done(true);

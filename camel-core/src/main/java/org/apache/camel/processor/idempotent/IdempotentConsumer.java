@@ -28,13 +28,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 
 /**
  * An implementation of the <a
@@ -44,7 +43,7 @@ import org.apache.camel.support.ServiceSupport;
  *
  * @see org.apache.camel.spi.IdempotentRepository
  */
-public class IdempotentConsumer extends ServiceSupport implements CamelContextAware, AsyncProcessor, Navigate<Processor>, IdAware {
+public class IdempotentConsumer extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, IdAware {
 
     private CamelContext camelContext;
     private String id;
@@ -89,10 +88,6 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {

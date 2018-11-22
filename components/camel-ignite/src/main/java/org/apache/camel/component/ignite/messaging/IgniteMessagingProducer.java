@@ -61,8 +61,8 @@ public class IgniteMessagingProducer extends DefaultAsyncProducer {
         }
 
         IgniteHelper.maybePropagateIncomingBody(endpoint, in, out);
-
-        return true;
+        callback.done(false);
+        return false;
     }
 
     private String topicFor(Exchange exchange) {

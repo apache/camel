@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.async;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
@@ -23,11 +25,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorHelper;
 import org.junit.Test;
 
 public class AsyncEndpointPolicyTest extends ContextTestSupport {
@@ -121,31 +124,22 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
                     // let the original processor continue routing
                     exchange.getIn().setHeader(name, "was wrapped");
                     AsyncProcessor ap = AsyncProcessorConverterHelper.convert(processor);
-                    boolean sync = ap.process(exchange, new AsyncCallback() {
-                        public void done(boolean doneSync) {
-                            // we only have to handle async completion of this policy
-                            if (doneSync) {
-                                return;
-                            }
-
-                            exchange.getIn().setHeader(name, "policy finished execution");
-                            callback.done(false);
-                        }
+                    ap.process(exchange, doneSync -> {
+                        exchange.getIn().setHeader(name, "policy finished execution");
+                        callback.done(false);
                     });
-
-                    if (!sync) {
-                        // continue routing async
-                        return false;
-                    }
-
-                    // we are done synchronously, so do our after work and invoke the callback
-                    exchange.getIn().setHeader(name, "policy finished execution");
-                    callback.done(true);
-                    return true;
+                    return false;
                 }
 
                 public void process(Exchange exchange) throws Exception {
-                    AsyncProcessorHelper.process(this, exchange);
+                    final AsyncProcessorAwaitManager awaitManager = exchange.getContext().getAsyncProcessorAwaitManager();
+                    awaitManager.process(this, exchange);
+                }
+
+                public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+                    AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+                    process(exchange, callback);
+                    return callback.getFuture();
                 }
             };
         }
