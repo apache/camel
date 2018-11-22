@@ -17,19 +17,17 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the property on the exchange with an {@link org.apache.camel.Expression}
  */
-public class SetPropertyProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class SetPropertyProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
     private String id;
     private final Expression propertyName;
     private final Expression expression;
@@ -39,10 +37,6 @@ public class SetPropertyProcessor extends ServiceSupport implements AsyncProcess
         this.expression = expression;
         ObjectHelper.notNull(propertyName, "propertyName");
         ObjectHelper.notNull(expression, "expression");
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

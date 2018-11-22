@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import java.lang.reflect.Constructor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
@@ -27,14 +26,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * The processor which sets an {@link Exception} on the {@link Exchange}
  */
-public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware, CamelContextAware {
+public class ThrowExceptionProcessor extends AsyncProcessorSupport implements Traceable, IdAware, CamelContextAware {
     private String id;
     private CamelContext camelContext;
     private Expression simple;
@@ -50,10 +48,6 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
         this.exception = exception;
         this.type = type;
         this.message = message;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {

@@ -38,8 +38,7 @@ public class AsyncEndpointRecipientListParallel5Test extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        // to hard to do parallel async routing so the caller thread is synchronized
-        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertNotEquals("Should use different threads", beforeThreadName, afterThreadName);
     }
 
     @Override

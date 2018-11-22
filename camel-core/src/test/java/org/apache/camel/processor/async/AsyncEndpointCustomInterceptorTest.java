@@ -18,12 +18,14 @@ package org.apache.camel.processor.async;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Test;
 
@@ -91,13 +93,12 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
         public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
 
-            return new Processor() {
-                public void process(Exchange exchange) throws Exception {
+            return new DelegateAsyncProcessor(target) {
+                public boolean process(final Exchange exchange, final AsyncCallback callback) {
                     // we just want to count number of interceptions
                     counter.incrementAndGet();
-
                     // and continue processing the exchange
-                    target.process(exchange);
+                    return super.process(exchange, callback);
                 }
             };
         }

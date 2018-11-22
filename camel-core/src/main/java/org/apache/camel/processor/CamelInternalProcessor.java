@@ -46,6 +46,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -117,7 +118,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
+    public boolean process(Exchange exchange, AsyncCallback ocallback) {
         // ----------------------------------------------------------
         // CAMEL END USER - READ ME FOR DEBUGGING TIPS
         // ----------------------------------------------------------
@@ -134,7 +135,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         if (processor == null || !continueProcessing(exchange)) {
             // no processor or we should not continue then we are done
-            callback.done(true);
+            ocallback.done(true);
             return true;
         }
 
@@ -148,17 +149,37 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 states[i] = state;
             } catch (Throwable e) {
                 exchange.setException(e);
-                callback.done(true);
+                ocallback.done(true);
                 return true;
             }
         }
 
         // create internal callback which will execute the advices in reverse order when done
-        callback = new InternalCallback(states, exchange, callback);
+        AsyncCallback callback = doneSync -> {
+            try {
+                for (int i = advices.size() - 1; i >= 0; i--) {
+                    CamelInternalProcessorAdvice task = advices.get(i);
+                    Object state = states[i];
+                    try {
+                        task.after(exchange, state);
+                    } catch (Throwable e) {
+                        exchange.setException(e);
+                        // allow all advices to complete even if there was an exception
+                    }
+                }
+            } finally {
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ START +++
+                // ----------------------------------------------------------
+                // callback must be called
+                ReactiveHelper.callback(ocallback);
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ END +++
+                // ----------------------------------------------------------
+            }
+        };
 
-        // UNIT_OF_WORK_PROCESS_SYNC is @deprecated and we should remove it from Camel 3.0
-        Object synchronous = exchange.removeProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC);
-        if (exchange.isTransacted() || synchronous != null) {
+        if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
             if (log.isTraceEnabled()) {
                 if (exchange.isTransacted()) {
@@ -196,73 +217,29 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (log.isTraceEnabled()) {
                 log.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
-            boolean sync = processor.process(exchange, async);
+            processor.process(exchange, async);
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
-            // execute any after processor work (in current thread, not in the callback)
-            if (uow != null) {
-                uow.afterProcess(processor, exchange, callback, sync);
-            }
+            ReactiveHelper.scheduleLast(() -> {
+                // execute any after processor work (in current thread, not in the callback)
+                if (uow != null) {
+                    uow.afterProcess(processor, exchange, callback, false);
+                }
 
-            if (log.isTraceEnabled()) {
-                log.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
-                        new Object[]{sync ? "synchronously" : "asynchronously", exchange.getExchangeId(), exchange});
-            }
-            return sync;
+                if (log.isTraceEnabled()) {
+                    log.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                             exchange.getExchangeId(), exchange);
+                }
+            }, "CamelInternalProcessor - UnitOfWork - afterProcess - " + processor + " - " + exchange.getExchangeId());
+            return false;
         }
     }
 
     @Override
     public String toString() {
         return processor != null ? processor.toString() : super.toString();
-    }
-
-    /**
-     * Internal callback that executes the after advices.
-     */
-    private final class InternalCallback implements AsyncCallback {
-
-        private final Object[] states;
-        private final Exchange exchange;
-        private final AsyncCallback callback;
-
-        private InternalCallback(Object[] states, Exchange exchange, AsyncCallback callback) {
-            this.states = states;
-            this.exchange = exchange;
-            this.callback = callback;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public void done(boolean doneSync) {
-            // NOTE: if you are debugging Camel routes, then all the code in the for loop below is internal only
-            // so you can step straight to the finally block and invoke the callback
-
-            // we should call after in reverse order
-            try {
-                for (int i = advices.size() - 1; i >= 0; i--) {
-                    CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = states[i];
-                    try {
-                        task.after(exchange, state);
-                    } catch (Throwable e) {
-                        exchange.setException(e);
-                        // allow all advices to complete even if there was an exception
-                    }
-                }
-            } finally {
-                // ----------------------------------------------------------
-                // CAMEL END USER - DEBUG ME HERE +++ START +++
-                // ----------------------------------------------------------
-                // callback must be called
-                callback.done(doneSync);
-                // ----------------------------------------------------------
-                // CAMEL END USER - DEBUG ME HERE +++ END +++
-                // ----------------------------------------------------------
-            }
-        }
     }
 
     /**

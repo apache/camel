@@ -157,10 +157,11 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
             
         default:
             exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite Queue producer."));
-            return true;
+            break;
         }
 
-        return true;
+        callback.done(false);
+        return false;
     }
 
     private IgniteQueueOperation queueOperationFor(Exchange exchange) {

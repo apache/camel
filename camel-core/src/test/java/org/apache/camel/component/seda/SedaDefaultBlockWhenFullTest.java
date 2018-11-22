@@ -27,8 +27,8 @@ import org.junit.Test;
 public class SedaDefaultBlockWhenFullTest extends ContextTestSupport {
 
     private static final int QUEUE_SIZE = 1;
-    private static final int DELAY = 10;
-    private static final int DELAY_LONG = 100;
+    private static final int DELAY = 100;
+    private static final int DELAY_LONG = 1000;
     private static final String MOCK_URI = "mock:blockWhenFullOutput";
     private static final String SIZE_PARAM = "?size=%d";
     private static final String BLOCK_WHEN_FULL_URI = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&timeout=0";

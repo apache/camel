@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -25,10 +28,12 @@ import org.junit.Test;
 
 /**
  * Unit test for navigating a route (runtime processors, not the model).
+ *
+ * @version
  */
 public class NavigateRouteTest extends ContextTestSupport {
 
-    private static int count;
+    private static List<Processor> processors = new ArrayList<>();
 
     @Test
     public void testNavigateRoute() throws Exception {
@@ -42,7 +47,7 @@ public class NavigateRouteTest extends ContextTestSupport {
         Navigate<Processor> nav = context.getRoutes().get(0).navigate();
         navigateRoute(nav);
 
-        assertEquals("There should be 6 processors to navigate", 6, count);
+        assertEquals("There should be 6 processors to navigate", 6, processors.size());
     }
 
     @SuppressWarnings("unchecked")
@@ -50,9 +55,12 @@ public class NavigateRouteTest extends ContextTestSupport {
         if (!nav.hasNext()) {
             return;
         }
+        if (nav.getClass().getName().endsWith("ProcessorToReactiveProcessorBridge")) {
+            nav = (Navigate) ((Navigate) nav).next().get(0);
+        }
 
         for (Processor child : nav.next()) {
-            count++;
+            processors.add(child);
 
             if (child instanceof SendProcessor) {
                 SendProcessor send = (SendProcessor) child;
@@ -67,7 +75,7 @@ public class NavigateRouteTest extends ContextTestSupport {
             // navigate children
             if (child instanceof Navigate) {
                 navigateRoute((Navigate<Processor>) child);
-            } 
+            }
         }
     }
 
@@ -77,9 +85,9 @@ public class NavigateRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .convertBodyTo(String.class)
-                    .split(body().tokenize(" "))
-                    .to("mock:result");
+                        .convertBodyTo(String.class)
+                        .split(body().tokenize(" "))
+                        .to("mock:result");
             }
         };
     }

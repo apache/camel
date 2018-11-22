@@ -22,13 +22,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.Rejectable;
 
@@ -55,7 +53,7 @@ import org.apache.camel.util.concurrent.Rejectable;
  * will not be free to process a new exchange, as its processing the current exchange.</li>
  * </ul>
  */
-public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
+public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware {
 
     private String id;
     private final CamelContext camelContext;
@@ -109,10 +107,6 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
         this.rejectedPolicy = rejectedPolicy;
-    }
-
-    public void process(final Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {

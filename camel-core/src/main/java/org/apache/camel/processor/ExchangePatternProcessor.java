@@ -17,17 +17,15 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * Processor to set {@link org.apache.camel.ExchangePattern} on the {@link org.apache.camel.Exchange}.
  */
-public class ExchangePatternProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
+public class ExchangePatternProcessor extends AsyncProcessorSupport implements IdAware {
     private String id;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     
@@ -52,10 +50,6 @@ public class ExchangePatternProcessor extends ServiceSupport implements AsyncPro
 
     public ExchangePattern getExchangePattern() {
         return exchangePattern;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {

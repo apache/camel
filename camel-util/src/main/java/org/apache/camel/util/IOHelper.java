@@ -386,16 +386,14 @@ public final class IOHelper {
     }
 
     public static void closeIterator(Object it) throws IOException {
+        if (it instanceof Closeable) {
+            IOHelper.closeWithException((Closeable) it);
+        }
         if (it instanceof java.util.Scanner) {
-            // special for Scanner which implement the Closeable since JDK7
-            java.util.Scanner scanner = (java.util.Scanner) it;
-            scanner.close();
-            IOException ioException = scanner.ioException();
+            IOException ioException = ((java.util.Scanner) it).ioException();
             if (ioException != null) {
                 throw ioException;
             }
-        } else if (it instanceof Closeable) {
-            IOHelper.closeWithException((Closeable) it);
         }
     }
 

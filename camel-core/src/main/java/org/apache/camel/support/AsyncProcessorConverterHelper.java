@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -29,6 +30,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
+import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
 
 /**
  * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.
@@ -68,6 +70,13 @@ public final class AsyncProcessorConverterHelper {
                 callback.done(true);
             }
             return true;
+        }
+
+        @Override
+        public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+            AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+            process(exchange, callback);
+            return callback.getFuture();
         }
 
         @Override

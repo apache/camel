@@ -32,12 +32,11 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.StopWatch;
 
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
@@ -54,7 +53,7 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  *
  * @see PollEnricher
  */
-public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
+public class Enricher extends AsyncProcessorSupport implements IdAware, CamelContextAware {
 
     private CamelContext camelContext;
     private String id;
@@ -132,10 +131,6 @@ public class Enricher extends ServiceSupport implements AsyncProcessor, IdAware,
 
     public void setIgnoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     /**

@@ -17,30 +17,24 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.ServiceSupport;
 
 /**
  * A processor which sets the body on the IN or OUT message with an {@link Expression}
  */
-public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class SetBodyProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
     private String id;
     private final Expression expression;
 
     public SetBodyProcessor(Expression expression) {
         this.expression = expression;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

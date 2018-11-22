@@ -20,6 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -31,6 +33,7 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,7 +60,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         mock.expectedBodiesReceived("A+B+END");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "predicate");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
         Predicate complete = body().contains("END");
@@ -99,7 +102,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         mock.expectedBodiesReceived("A+B+END");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "predicate");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
         Predicate complete = body().isEqualTo("END");
@@ -150,7 +153,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         mock.expectedBodiesReceived("A+B+C");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "size");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
@@ -200,7 +203,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         mock.expectedBodiesReceived("A+B+C");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
@@ -249,7 +252,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         mock.expectedBodiesReceived("A+B+C", "D");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "interval");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
@@ -291,7 +294,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+C+END");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
         Predicate complete = body().contains("END");
@@ -332,7 +335,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+C+END");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
         Predicate complete = body().contains("END");
@@ -378,7 +381,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B+END");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
         Predicate complete = body().contains("END");
@@ -425,7 +428,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         mock.expectedBodiesReceived("A+B", "C+D+E");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "consumer");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
@@ -513,15 +516,21 @@ public class AggregateProcessorTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+END");
 
-        Processor done = new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                if (exchange.getIn().getBody(String.class).contains("Kaboom")) {
-                    throw new IllegalArgumentException("Damn");
+        AsyncProcessor done = new AsyncProcessorSupport() {
+            public boolean process(Exchange exchange, AsyncCallback callback) {
+                try {
+                    if (exchange.getIn().getBody(String.class).contains("Kaboom")) {
+                        throw new IllegalArgumentException("Damn");
+                    } else {
+                        SendProcessor send = new SendProcessor(context.getEndpoint("mock:result"));
+                        send.start();
+                        send.process(exchange, callback);
+                    }
+                } catch (Exception e) {
+                    exchange.setException(e);
+                    callback.done(false);
                 }
-                // else send it further along
-                SendProcessor send = new SendProcessor(context.getEndpoint("mock:result"));
-                send.start();
-                send.process(exchange);
+                return false;
             }
         };
                 
@@ -576,7 +585,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("B+END", "A+END");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "force");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 

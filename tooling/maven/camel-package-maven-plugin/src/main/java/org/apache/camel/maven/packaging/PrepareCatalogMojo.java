@@ -50,6 +50,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  * and generates a report.
  *
  * @goal prepare-catalog
+ * @threadSafe
  */
 public class PrepareCatalogMojo extends AbstractMojo {
 

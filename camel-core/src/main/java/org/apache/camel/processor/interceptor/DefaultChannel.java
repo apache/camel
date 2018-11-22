@@ -251,19 +251,6 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
                         + " See more details at the InterceptStrategy javadoc."
                         + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
                         + " but its not the most optimal solution. Please consider changing your interceptor to comply.");
-
-                // use a bridge and wrap again which allows us to adapt and leverage the asynchronous routing engine anyway
-                // however its not the most optimal solution, but we can still run.
-                InterceptorToAsyncProcessorBridge bridge = new InterceptorToAsyncProcessorBridge(target);
-                wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, bridge, next);
-                // Avoid the stack overflow
-                if (!wrapped.equals(bridge)) {
-                    bridge.setTarget(wrapped);
-                } else {
-                    // Just skip the wrapped processor
-                    bridge.setTarget(null);
-                }
-                wrapped = bridge;
             }
             if (!(wrapped instanceof WrapProcessor)) {
                 // wrap the target so it becomes a service and we can manage its lifecycle

@@ -48,6 +48,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  * Prepares the Karaf provider camel catalog to include component it supports
  *
  * @goal prepare-catalog-karaf
+ * @threadSafe
  */
 public class PrepareCatalogKarafMojo extends AbstractMojo {
 

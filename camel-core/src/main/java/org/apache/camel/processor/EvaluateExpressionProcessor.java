@@ -17,11 +17,10 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A {@link org.apache.camel.Processor} which evaluates an {@link Expression}
@@ -31,17 +30,12 @@ import org.apache.camel.support.AsyncProcessorHelper;
  * This processor will in case of evaluation exceptions, set the caused exception
  * on the {@link Exchange}.
  */
-public class EvaluateExpressionProcessor implements AsyncProcessor, Traceable {
+public class EvaluateExpressionProcessor extends AsyncProcessorSupport implements Traceable {
 
     private final Expression expression;
 
     public EvaluateExpressionProcessor(Expression expression) {
         this.expression = expression;
-    }
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     @Override

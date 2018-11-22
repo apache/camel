@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
-    private static String url = "file:target/pending?initialDelay=0&delay=10";
+    private static String url = "file:target/pending?initialDelay=0&delay=10&synchronous=true";
     private static AtomicInteger counter = new AtomicInteger();
     private static CountDownLatch latch = new CountDownLatch(2);
 

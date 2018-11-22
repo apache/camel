@@ -62,7 +62,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:downstream")
     private MockEndpoint downstream;
 
-    private Deque<Callable<?>> tasks = new LinkedBlockingDeque<>();
+    private Deque<Object> tasks = new LinkedBlockingDeque<>();
     private int port;
     private boolean alive = true;
 
@@ -83,6 +83,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
                         .retriesExhaustedLogLevel(LoggingLevel.ERROR)
                         // lets have a little delay so we do async redelivery
                         .redeliveryDelay(10)
+                        .asyncDelayedRedelivery()
                         .to("mock:exception")
                         .handled(true);
 
@@ -149,7 +150,7 @@ public class NettyRedeliveryTest extends CamelTestSupport {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if ("submit".equals(method.getName()) || "schedule".equals(method.getName())) {
-                    tasks.add((Callable<?>) args[0]);
+                    tasks.add(args[0]);
                 }
                 return method.invoke(delegate, args);
             }

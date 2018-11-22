@@ -20,7 +20,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.ServiceHelper;
 
 /**
@@ -49,7 +48,7 @@ public final class UnitOfWorkProducer implements Producer {
     }
 
     public void process(final Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(processor, exchange);
+        processor.process(exchange);
     }
 
     public void start() throws Exception {

@@ -20,7 +20,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -31,10 +30,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.SynchronizationAdapter;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -42,7 +40,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * Processor implementing <a href="http://camel.apache.org/oncompletion.html">onCompletion</a>.
  */
-public class OnCompletionProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
+public class OnCompletionProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
 
     private final CamelContext camelContext;
     private String id;
@@ -98,10 +96,6 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {

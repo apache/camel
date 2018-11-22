@@ -46,6 +46,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
  * Prepares the readme.md files content up to date with all the examples that Apache Camel ships.
  *
  * @goal prepare-example
+ * @threadSafe
  */
 public class PrepareExampleMojo extends AbstractMojo {
 

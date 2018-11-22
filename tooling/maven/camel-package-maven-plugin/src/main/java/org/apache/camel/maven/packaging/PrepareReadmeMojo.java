@@ -51,6 +51,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
  * Prepares the readme.md files content up to date with all the artifacts that Apache Camel ships.
  *
  * @goal prepare-readme
+ * @threadSafe
  */
 public class PrepareReadmeMojo extends AbstractMojo {
 

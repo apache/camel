@@ -85,17 +85,18 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
                 
             default:
                 exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite Compute producer."));
-                return true;
+                callback.done(false);
+                return false;
             }
 
             compute.future().listen(IgniteInCamelClosure.create(exchange, callback));
+            return false;
 
         } catch (Exception e) {
             exchange.setException(e);
-            return true;
+            callback.done(false);
+            return false;
         }
-
-        return false;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

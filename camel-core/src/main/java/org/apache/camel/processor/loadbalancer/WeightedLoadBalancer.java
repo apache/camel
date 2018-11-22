@@ -16,27 +16,28 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
-    transient int lastIndex;
+    transient int lastIndex = -1;
 
-    private List<Integer> distributionRatioList = new ArrayList<>();
-    private List<DistributionRatio> runtimeRatios = new ArrayList<>();
+    protected final List<DistributionRatio> ratios;
+    protected final int distributionRatioSum;
+    protected int runtimeRatioSum;
 
     
     public WeightedLoadBalancer(List<Integer> distributionRatios) {
-        deepCloneDistributionRatios(distributionRatios);
-        loadRuntimeRatios(distributionRatios);
+        List<DistributionRatio> ratios = distributionRatios.stream()
+                .map(DistributionRatio::new)
+                .collect(Collectors.toList());
+        this.ratios = Collections.unmodifiableList(ratios);
+        this.distributionRatioSum = ratios.stream()
+                .mapToInt(DistributionRatio::getDistributionWeight).sum();
+        this.runtimeRatioSum = distributionRatioSum;
     }
     
-    protected void deepCloneDistributionRatios(List<Integer> distributionRatios) {
-        for (Integer value : distributionRatios) {
-            this.distributionRatioList.add(value);
-        }
-    }
-
     public int getLastChosenProcessorIndex() {
         return lastIndex;
     }
@@ -44,51 +45,28 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (getProcessors().size() != getDistributionRatioList().size()) {
+        if (getProcessors().size() != ratios.size()) {
             throw new IllegalArgumentException("Loadbalacing with " + getProcessors().size()
-                + " should match number of distributions " + getDistributionRatioList().size());
+                + " should match number of distributions " + ratios.size());
         }
     }
 
-    protected void loadRuntimeRatios(List<Integer> distributionRatios) {
-        int position = 0;
-        
-        for (Integer value : distributionRatios) {
-            runtimeRatios.add(new DistributionRatio(position++, value.intValue()));
-        }
-    }
-    
-    protected boolean isRuntimeRatiosZeroed() {
-        boolean cleared = true;
-        
-        for (DistributionRatio runtimeRatio : runtimeRatios) {
-            if (runtimeRatio.getRuntimeWeight() > 0) {
-                cleared = false;
-            }
-        }        
-        return cleared; 
-    }
-    
-    protected void resetRuntimeRatios() {
-        for (DistributionRatio runtimeRatio : runtimeRatios) {
-            runtimeRatio.setRuntimeWeight(runtimeRatio.getDistributionWeight());
+    protected void decrementSum() {
+        if (--runtimeRatioSum == 0) {
+            // every processor is exhausted, reload for a new distribution round
+            reset();
         }
     }
 
-    public List<Integer> getDistributionRatioList() {
-        return distributionRatioList;
+    protected void reset() {
+        for (DistributionRatio ratio : ratios) {
+            ratio.reset();
+        }
+        runtimeRatioSum = distributionRatioSum;
     }
 
-    public void setDistributionRatioList(List<Integer> distributionRatioList) {
-        this.distributionRatioList = distributionRatioList;
+    public List<DistributionRatio> getRatios() {
+        return ratios;
     }
 
-    public List<DistributionRatio> getRuntimeRatios() {
-        return runtimeRatios;
-    }
-
-    public void setRuntimeRatios(ArrayList<DistributionRatio> runtimeRatios) {
-        this.runtimeRatios = runtimeRatios;
-    }    
-    
 }

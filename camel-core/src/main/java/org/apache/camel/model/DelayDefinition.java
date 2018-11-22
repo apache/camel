@@ -41,7 +41,7 @@ public class DelayDefinition extends NoOutputExpressionNode implements ExecutorS
     private ExecutorService executorService;
     @XmlAttribute
     private String executorServiceRef;
-    @XmlAttribute @Metadata(defaultValue = "false")
+    @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean asyncDelayed;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean callerRunsWhenRejected;
@@ -68,7 +68,7 @@ public class DelayDefinition extends NoOutputExpressionNode implements ExecutorS
         return "Delay[" + getExpression() + " -> " + getOutputs() + "]";
     }
 
-    // Fluent API
+   // Fluent API
     // -------------------------------------------------------------------------
 
     /**
@@ -100,6 +100,14 @@ public class DelayDefinition extends NoOutputExpressionNode implements ExecutorS
      */
     public DelayDefinition asyncDelayed() {
         setAsyncDelayed(true);
+        return this;
+    }
+
+    /**
+     * Enables asynchronous delay which means the thread will <b>not</b> block while delaying.
+     */
+    public DelayDefinition syncDelayed() {
+        setAsyncDelayed(false);
         return this;
     }
 

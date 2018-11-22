@@ -16,12 +16,9 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
-import java.util.List;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 
 /**
  * A base class for {@link LoadBalancer} implementations which choose a single
@@ -30,32 +27,21 @@ import org.apache.camel.Processor;
 public abstract class QueueLoadBalancer extends LoadBalancerSupport {
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        List<Processor> list = getProcessors();
-        if (!list.isEmpty()) {
-            Processor processor = chooseProcessor(list, exchange);
+        AsyncProcessor[] list = doGetProcessors();
+        if (list.length > 0) {
+            AsyncProcessor processor = chooseProcessor(list, exchange);
             if (processor == null) {
                 Exception e = new IllegalStateException("No processors could be chosen to process " + exchange);
                 exchange.setException(e);
             } else {
-                if (processor instanceof AsyncProcessor) {
-                    AsyncProcessor async = (AsyncProcessor) processor;
-                    return async.process(exchange, callback);
-                } else {
-                    try {
-                        processor.process(exchange);
-                    } catch (Exception e) {
-                        exchange.setException(e);
-                    }
-                    callback.done(true);
-                    return true;
-                }
+                processor.process(exchange, callback);
+                return false;
             }
         }
-
         // no processors but indicate we are done
-        callback.done(true);
-        return true;
+        callback.done(false);
+        return false;
     }
 
-    protected abstract Processor chooseProcessor(List<Processor> processors, Exchange exchange);
+    protected abstract AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange);
 }

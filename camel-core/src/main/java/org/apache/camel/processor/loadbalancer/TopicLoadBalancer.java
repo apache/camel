@@ -16,11 +16,11 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
-import java.util.List;
-
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.support.ReactiveHelper;
 
 /**
  * A {@link LoadBalancer} implementations which sends to all destinations
@@ -32,20 +32,41 @@ import org.apache.camel.Processor;
 public class TopicLoadBalancer extends LoadBalancerSupport {
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        List<Processor> list = getProcessors();
-        // too hard to do multiple async, so we do it sync
-        for (Processor processor : list) {
-            try {
+        AsyncProcessor[] processors = doGetProcessors();
+        ReactiveHelper.schedule(new State(exchange, callback, processors)::run);
+        return false;
+    }
+
+    protected class State {
+        final Exchange exchange;
+        final AsyncCallback callback;
+        final AsyncProcessor[] processors;
+        int index;
+
+        public State(Exchange exchange, AsyncCallback callback, AsyncProcessor[] processors) {
+            this.exchange = exchange;
+            this.callback = callback;
+            this.processors = processors;
+        }
+
+        public void run() {
+            if (index < processors.length) {
+                AsyncProcessor processor = processors[index++];
                 Exchange copy = copyExchangeStrategy(processor, exchange);
-                processor.process(copy);
-            } catch (Throwable e) {
-                exchange.setException(e);
-                // stop on failure
-                break;
+                processor.process(copy, doneSync -> done(copy));
+            } else {
+                callback.done(false);
             }
         }
-        callback.done(true);
-        return true;
+
+        public void done(Exchange current) {
+            if (current.getException() != null) {
+                exchange.setException(current.getException());
+                callback.done(false);
+            } else {
+                ReactiveHelper.schedule(this::run);
+            }
+        }
     }
 
     /**
@@ -62,7 +83,4 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
         return exchange.copy();
     }
 
-    public String toString() {
-        return "TopicLoadBalancer";
-    }
 }

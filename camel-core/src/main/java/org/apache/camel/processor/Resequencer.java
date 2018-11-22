@@ -44,18 +44,18 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExpressionComparator;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * An implementation of the <a href="http://camel.apache.org/resequencer.html">Resequencer</a>
  * which can reorder messages within a batch.
  */
-public class Resequencer extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, IdAware, Traceable {
+public class Resequencer extends AsyncProcessorSupport implements Navigate<Processor>, IdAware, Traceable {
 
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
@@ -73,7 +73,7 @@ public class Resequencer extends ServiceSupport implements AsyncProcessor, Navig
     private Expression expression;
 
     private final CamelContext camelContext;
-    private final Processor processor;
+    private final AsyncProcessor processor;
     private final Collection<Exchange> collection;
     private ExceptionHandler exceptionHandler;
 
@@ -96,7 +96,7 @@ public class Resequencer extends ServiceSupport implements AsyncProcessor, Navig
 
         // wrap processor in UnitOfWork so what we send out of the batch runs in a UoW
         this.camelContext = camelContext;
-        this.processor = processor;
+        this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.collection = collection;
         this.expression = expression;
         this.sender = new BatchSender();
@@ -293,8 +293,11 @@ public class Resequencer extends ServiceSupport implements AsyncProcessor, Navig
      * Strategy Method to process an exchange in the batch. This method allows derived classes to perform
      * custom processing before or after an individual exchange is processed
      */
-    protected void processExchange(Exchange exchange) throws Exception {
-        processor.process(exchange);
+    protected void processExchange(Exchange exchange) {
+        processor.process(exchange, sync -> postProcess(exchange));
+    }
+
+    protected void postProcess(Exchange exchange) {
         if (exchange.getException() != null) {
             getExceptionHandler().handleException("Error processing aggregated exchange: " + exchange, exchange.getException());
         }
@@ -309,10 +312,6 @@ public class Resequencer extends ServiceSupport implements AsyncProcessor, Navig
         sender.cancel();
         ServiceHelper.stopService(processor);
         collection.clear();
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     /**
@@ -519,13 +518,8 @@ public class Resequencer extends ServiceSupport implements AsyncProcessor, Navig
             while (iter.hasNext()) {
                 Exchange exchange = iter.next();
                 iter.remove();
-                try {
-                    log.debug("Sending aggregated exchange: {}", exchange);
-                    processExchange(exchange);
-                } catch (Throwable t) {
-                    // must catch throwable to avoid growing memory
-                    getExceptionHandler().handleException("Error processing aggregated exchange: " + exchange, t);
-                }
+                log.debug("Sending aggregated exchange: {}", exchange);
+                processExchange(exchange);
             }
         }
     }

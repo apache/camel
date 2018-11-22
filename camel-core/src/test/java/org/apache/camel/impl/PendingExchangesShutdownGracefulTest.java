@@ -55,7 +55,7 @@ public class PendingExchangesShutdownGracefulTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").to("mock:foo").delay(500).process(new Processor() {
+                from("seda:foo").to("mock:foo").delay(500).syncDelayed().process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         foo = foo + exchange.getIn().getBody(String.class);
                         latch.countDown();

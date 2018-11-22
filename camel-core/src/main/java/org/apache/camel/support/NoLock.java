@@ -14,30 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.loadbalancer;
+package org.apache.camel.support;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 
 /**
- * A default base class for a {@link LoadBalancer} implementation.
- * <p/>
- * This implementation is dedicated for simple synchronous load balancers.
- * <p/>
- * Consider using the {@link LoadBalancerSupport} if you want to support
- * the asynchronous routing engine in Camel.
+ * Empty lock implementation
  */
-public abstract class SimpleLoadBalancerSupport extends LoadBalancerSupport {
+public class NoLock implements Lock {
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        try {
-            process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-        callback.done(true);
+    @Override
+    public void lock() {
+    }
+
+    @Override
+    public void lockInterruptibly() {
+    }
+
+    @Override
+    public boolean tryLock() {
         return true;
     }
 
-    public abstract void process(Exchange exchange) throws Exception;
+    @Override
+    public boolean tryLock(long time, TimeUnit unit) {
+        return true;
+    }
+
+    @Override
+    public void unlock() {
+    }
+
+    @Override
+    public Condition newCondition() {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -25,7 +25,7 @@ import org.junit.Test;
 
 public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
 
-    private static String url = "file:target/pending?initialDelay=0&delay=10";
+    private static String url = "file:target/pending?initialDelay=0&delay=10&synchronous=true";
 
     @Override
     @Before
@@ -65,7 +65,7 @@ public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
                 from(url)
                     // let it complete only current task so we shutdown faster
                     .shutdownRunningTask(ShutdownRunningTask.CompleteCurrentTaskOnly)
-                    .delay(1000).to("seda:foo");
+                    .delay(1000).syncDelayed().to("seda:foo");
 
                 from("seda:foo").routeId("route2").to("mock:bar");
             }
