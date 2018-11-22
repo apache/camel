@@ -27,7 +27,7 @@ for this component:
             <artifactId>camel-google-mail</artifactId>
             <version>2.22-SNAPSHOT</version>
     </dependency>
-        
+
 ------------------------------------------------------
 
 ### URI Format
@@ -36,7 +36,7 @@ The GoogleMail Component uses the following URI format:
 
 --------------------------------------------------------
         google-mail-stream://index?[options]
-    
+
 --------------------------------------------------------
 
 ### GoogleMailStreamComponent
@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (29 parameters):
+==== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,7 +94,6 @@ with the following path and query parameters:
 | *maxResults* (consumer) | Max results to be returned | 10 | long
 | *query* (consumer) | The query to execute on gmail box | is:unread | String
 | *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
-| *scopes* (consumer) | Specifies the level of permissions you want a mail application to have to a user account. See https://developers.google.com/gmail/api/auth/scopes for more info. |  | List
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
