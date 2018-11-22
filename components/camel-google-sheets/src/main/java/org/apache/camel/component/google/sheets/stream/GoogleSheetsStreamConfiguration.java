@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.google.sheets.stream;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.api.services.sheets.v4.SheetsScopes;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Component configuration for GoogleSheets stream component.

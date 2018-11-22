@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.sheets.stream;
 
+import java.util.Map;
+
 import com.google.api.services.sheets.v4.Sheets;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -24,8 +26,6 @@ import org.apache.camel.component.google.sheets.GoogleSheetsClientFactory;
 import org.apache.camel.component.google.sheets.GoogleSheetsVerifierExtension;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
-
-import java.util.Map;
 
 /**
  * Represents the component that manages {@link GoogleSheetsStreamEndpoint}.
