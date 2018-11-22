@@ -133,6 +133,7 @@
     <module>camel-git</module>
     <module>camel-github</module>
     <module>camel-google-calendar</module>
+    <module>camel-google-sheets</module>
     <module>camel-google-drive</module>
     <module>camel-google-mail</module>
     <module>camel-google-bigquery</module>
@@ -357,7 +358,7 @@
     <profile>
       <id>validate</id>
       <build>
-        <plugins>           
+        <plugins>
           <!-- to validate Camel endpoints: mvn camel:validate -Pvalidate -->
           <plugin>
             <groupId>org.apache.camel</groupId>
