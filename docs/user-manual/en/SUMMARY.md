@@ -260,6 +260,8 @@
 	* [Google Mail](google-mail-component.adoc)
 	* [Google Mail Stream](google-mail-stream-component.adoc)
 	* [Google Pubsub](google-pubsub-component.adoc)
+	* [Google Sheets](google-sheets-component.adoc)
+	* [Google Sheets Stream](google-sheets-stream-component.adoc)
 	* [Gora](gora-component.adoc)
 	* [Grape](grape-component.adoc)
 	* [gRPC](grpc-component.adoc)

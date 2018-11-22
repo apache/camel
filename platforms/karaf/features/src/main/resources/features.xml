@@ -771,6 +771,20 @@
     <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-calendar/${project.version}</bundle>
   </feature>
+  <feature name='camel-google-sheets' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.api-client/google-api-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.apis/google-api-services-sheets/${google-api-services-sheets-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-google-sheets/${project.version}</bundle>
+  </feature>
   <feature name='camel-google-drive' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
@@ -1158,17 +1172,17 @@
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-project-datamodel-commons/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-commons/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-api/${jbpm-version}</bundle>
-    <bundle dependency='true'>mvn:org.kie/kie-internal/${jbpm-version}</bundle>    
+    <bundle dependency='true'>mvn:org.kie/kie-internal/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-compiler/${jbpm-version}</bundle>
-    <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>    
+    <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-dmn-model/${jbpm-version}</bundle>
-    <bundle dependency='true'>mvn:org.kie/kie-dmn-api/${jbpm-version}</bundle>   
+    <bundle dependency='true'>mvn:org.kie/kie-dmn-api/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.optaplanner/optaplanner-core/${jbpm-version}</bundle>
-    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-common/${jbpm-version}</bundle>  
+    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-common/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-jaxb/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-jackson/${jbpm-version}</bundle>
-    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-xstream/${jbpm-version}</bundle>  
+    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-xstream/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java/${protobuf-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-math3/${commons-math3-version}</bundle>
@@ -1177,13 +1191,13 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>    
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream-java8/${xstream-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>    
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-xjc/${jaxb-bundle-version}</bundle>    
-    <bundle>mvn:org.apache.camel/camel-jbpm/${project.version}</bundle> 
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-xjc/${jaxb-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-jbpm/${project.version}</bundle>
   </feature>
   <feature name='camel-jcache' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1731,10 +1745,10 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:org.optaplanner/optaplanner-core/${optaplanner-version}</bundle>
-    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-common/${optaplanner-version}</bundle>  
+    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-common/${optaplanner-version}</bundle>
     <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-jaxb/${optaplanner-version}</bundle>
     <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-jackson/${optaplanner-version}</bundle>
-    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-xstream/${optaplanner-version}</bundle> 
+    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-persistence-xstream/${optaplanner-version}</bundle>
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-maven-support/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-project-datamodel-api/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-project-datamodel-commons/${kie-version}</bundle>
@@ -1750,7 +1764,7 @@
     <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java/${protobuf-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/${javax-inject-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-optaplanner/${project.version}</bundle>    
+    <bundle>mvn:org.apache.camel/camel-optaplanner/${project.version}</bundle>
   </feature>
   <feature name='camel-openstack' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

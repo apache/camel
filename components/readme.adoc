@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 304 in 206 JAR artifacts (22 deprecated)
+Number of Components: 305 in 206 JAR artifacts (22 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -313,6 +313,12 @@ Number of Components: 304 in 206 JAR artifacts (22 deprecated)
 
 | link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
 `google-pubsub:projectId:destinationName` | 2.19 | Messaging client for Google Cloud Platform PubSub Service
+
+| link:camel-google-sheets/src/main/docs/google-sheets-component.adoc[Google Sheets] (camel-google-sheets) +
+`google-sheets:apiName/methodName` | 2.23 | The google-sheets component provides access to Google Sheets.
+
+| link:camel-google-sheets/src/main/docs/google-sheets-stream-component.adoc[Google Sheets Stream] (camel-google-sheets) +
+`google-sheets-stream:apiName` | 2.23 | The google-sheets component provides access to Google Sheets.
 
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
