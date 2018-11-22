@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.google.mail.stream;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.google.api.services.gmail.GmailScopes;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -31,13 +26,8 @@ import org.apache.camel.spi.UriPath;
  */
 @UriParams
 public class GoogleMailStreamConfiguration implements Cloneable {
-    private static final List<String> DEFAULT_SCOPES = Arrays.asList(GmailScopes.GMAIL_COMPOSE, GmailScopes.GMAIL_MODIFY, GmailScopes.MAIL_GOOGLE_COM);
-
     @UriPath
     private String index;
-
-    @UriParam
-    private List<String> scopes = DEFAULT_SCOPES;
 
     @UriParam
     private String clientId;
@@ -122,19 +112,6 @@ public class GoogleMailStreamConfiguration implements Cloneable {
      */
     public void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
-    }
-
-    public List<String> getScopes() {
-        return scopes;
-    }
-
-    /**
-     * Specifies the level of permissions you want a mail application to have to
-     * a user account. See https://developers.google.com/gmail/api/auth/scopes
-     * for more info.
-     */
-    public void setScopes(List<String> scopes) {
-        this.scopes = scopes;
     }
 
     public String getIndex() {
