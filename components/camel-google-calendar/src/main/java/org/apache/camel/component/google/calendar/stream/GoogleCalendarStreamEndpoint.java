@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.google.calendar.stream;
 
-import java.io.UnsupportedEncodingException;
-
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.Event;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -35,15 +32,15 @@ import org.apache.camel.spi.UriParam;
 /**
  * The google-calendar component provides access to Google Calendar in a streaming mod.
  */
-@UriEndpoint(firstVersion = "2.23.0", 
-             scheme = "google-calendar-stream", 
-             title = "Google Calendar Stream", 
-             syntax = "google-calendar-stream:index", 
+@UriEndpoint(firstVersion = "2.23.0",
+             scheme = "google-calendar-stream",
+             title = "Google Calendar Stream",
+             syntax = "google-calendar-stream:index",
              consumerClass = GoogleCalendarStreamConsumer.class,
              consumerOnly = true,
              label = "api,cloud")
 public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
-    
+
     @UriParam
     private GoogleCalendarStreamConfiguration configuration;
 
@@ -85,11 +82,11 @@ public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {
         return true;
     }
 
-    public Exchange createExchange(ExchangePattern pattern, Event event) throws UnsupportedEncodingException {
-
-        Exchange exchange = super.createExchange();
+    public Exchange createExchange(ExchangePattern pattern, Event event) {
+        Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         message.setBody(event);
+        message.setHeader(GoogleCalendarStreamConstants.EVENT_ID, event.getId());
         return exchange;
     }
 }
