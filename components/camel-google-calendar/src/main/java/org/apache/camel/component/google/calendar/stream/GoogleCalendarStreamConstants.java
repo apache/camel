@@ -21,12 +21,7 @@ package org.apache.camel.component.google.calendar.stream;
  */
 public final class GoogleCalendarStreamConstants {
 
-    public static final String MAIL_TO = "CamelGoogleMailStreamTo";
-    public static final String MAIL_FROM = "CamelGoogleMailStreamFrom";
-    public static final String MAIL_CC = "CamelGoogleMailStreamCc";
-    public static final String MAIL_BCC = "CamelGoogleMailStreamBcc";
-    public static final String MAIL_SUBJECT = "CamelGoogleMailStreamSubject";
-    public static final String MAIL_ID = "CamelGoogleMailId";
+    public static final String EVENT_ID = "CamelGoogleCalendarEventId";
 
     /**
      * Prevent instantiation.
