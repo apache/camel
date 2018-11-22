@@ -19,7 +19,6 @@ package org.apache.camel.component.google.calendar.stream;
 import java.util.Map;
 
 import com.google.api.services.calendar.Calendar;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.calendar.BatchGoogleCalendarClientFactory;
@@ -49,11 +48,11 @@ public class GoogleCalendarStreamComponent extends DefaultComponent {
         this.configuration = new GoogleCalendarStreamConfiguration();
     }
 
-    public Calendar getClient(GoogleCalendarStreamConfiguration googleMailConfiguration) {
+    public Calendar getClient(GoogleCalendarStreamConfiguration endpointConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(googleMailConfiguration.getClientId(), googleMailConfiguration.getClientSecret(), configuration.getScopes(),
-                                                   googleMailConfiguration.getApplicationName(), googleMailConfiguration.getRefreshToken(),
-                                                   googleMailConfiguration.getAccessToken(), null, null, "me");
+            client = getClientFactory().makeClient(endpointConfiguration.getClientId(), endpointConfiguration.getClientSecret(), endpointConfiguration.getScopes(),
+                                                    endpointConfiguration.getApplicationName(), endpointConfiguration.getRefreshToken(),
+                                                    endpointConfiguration.getAccessToken(), null, null, "me");
         }
         return client;
     }
