@@ -437,6 +437,9 @@ Number of Components: 308 in 208 JAR artifacts (22 deprecated)
 | link:camel-javaspace/src/main/docs/javaspace-component.adoc[JavaSpace] (camel-javaspace) +
 `javaspace:url` | 2.1 | *deprecated* Sending and receiving messages through JavaSpace.
 
+| link:camel-websocket-jsr356/src/main/docs/websocket-jsr356-component.adoc[Javax Websocket] (camel-websocket-jsr356) +
+`websocket-jsr356:/resourceUri` | 2.23 | Camel WebSocket using JSR356 (javax)
+
 | link:camel-jbpm/src/main/docs/jbpm-component.adoc[JBPM] (camel-jbpm) +
 `jbpm:connectionURL` | 2.6 | The jbpm component provides integration with jBPM (Business Process Management).
 

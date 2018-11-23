@@ -2426,6 +2426,11 @@
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-websocket/${project.version}</bundle>
   </feature>
+  <feature name='camel-websocket-jsr356' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature>jetty</feature>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-websocket-jsr356/${project.version}</bundle>
+  </feature>
   <feature name='camel-web3j' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>wrap:mvn:org.web3j/core/${web3j-version}</bundle>

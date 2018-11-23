@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsr356;
+package org.apache.camel.websocket.jsr356;
 
 import static java.util.Collections.singletonList;
 
@@ -42,7 +42,7 @@ public class JSR356ProducerTest extends CamelTestSupport {
     @Rule
     public final MeecrowaveRule servlet = new MeecrowaveRule(new Meecrowave.Builder() {{
         randomHttpPort();
-        setScanningPackageIncludes("org.apache.camel.jsr356.JSR356ProducerTest$"); // deploy test classes
+        setScanningPackageIncludes("org.apache.camel.websocket.jsr356.JSR356ProducerTest$"); // deploy test classes
     }}, "");
 
     @Rule
@@ -66,7 +66,7 @@ public class JSR356ProducerTest extends CamelTestSupport {
                 from("direct:ensureServerModeSendsProperly")
                         .id("camel_consumer_acts_as_client")
                         .convertBodyTo(String.class)
-                        .to("jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver");
+                        .to("websocket-jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver");
             }
         };
     }

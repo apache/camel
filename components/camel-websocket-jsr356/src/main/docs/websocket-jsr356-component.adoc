@@ -1,5 +1,8 @@
-[[websocket-component]]
+[[websocket-jsr356-component]]
+== Javax Websocket Component
 == Websocket JSR356 Component
+*Available as of Camel version 2.23*
+
 
 *Available as of Camel version 2.23*
 
@@ -14,14 +17,14 @@ To consume from the local instance on a particular `path` the messages:
 
 [source,java]
 ----
-jsr356://${path}
+websocket-jsr356://${path}
 ----
 
 To consume from a remote instance - i.e. Camel will be a client - on a particular `uri` the messages:
 
 [source,java]
 ----
-jsr356://${uri}
+websocket-jsr356://${uri}
 ----
 
 You can append query options to the URI in the following format,
@@ -31,10 +34,5 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *sessionCount* (consumer/producer) | Number of session to pool. | 1 | Integer > 0
-| *context* (consumer/producer) | The servlet context (path) to use if ambiguous to deploy locally endpoints. | - | String
-|===
+The Javax Websocket component has no options.
 // component options: END
