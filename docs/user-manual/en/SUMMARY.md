@@ -302,6 +302,7 @@
 	* [IRC](irc-component.adoc)
 	* [IronMQ](ironmq-component.adoc)
 	* [JavaSpace](javaspace-component.adoc)
+	* [Javax Websocket](websocket-jsr356-component.adoc)
 	* [JBPM](jbpm-component.adoc)
 	* [JCache](jcache-component.adoc)
 	* [JClouds](jclouds-component.adoc)

@@ -14,24 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsr356;
+package org.apache.camel.websocket.jsr356;
 
 import static java.util.Optional.ofNullable;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import javax.websocket.server.ServerContainer;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.IOHelper;
 
 public class JSR356WebSocketComponent extends DefaultComponent {
     // didn't find a better way to handle that unless we can assume the CamelContext is in the ServletContext
@@ -45,21 +46,15 @@ public class JSR356WebSocketComponent extends DefaultComponent {
         return new JSR356Endpoint(this, uri);
     }
 
-    public void sendMessage(final Session session, final Object message) throws IOException {
+    public static void sendMessage(final Session session, final Object message) throws IOException {
+        final RemoteEndpoint.Basic basicRemote = session.getBasicRemote(); // todo: handle async?
         synchronized (session) {
-            // todo: handle async?
             if (String.class.isInstance(message)) {
-                session.getBasicRemote().sendText(String.valueOf(message));
+                basicRemote.sendText(String.valueOf(message));
             } else if (ByteBuffer.class.isInstance(message)) {
-                session.getBasicRemote().sendBinary(ByteBuffer.class.cast(message));
+                basicRemote.sendBinary(ByteBuffer.class.cast(message));
             } else if (InputStream.class.isInstance(message)) {
-                int read;
-                final InputStream in = InputStream.class.cast(message);
-                final byte[] buffer = new byte[8192]; // todo: config
-                final OutputStream out = session.getBasicRemote().getSendStream();
-                while ((read = in.read(buffer)) >= 0) {
-                    out.write(buffer, 0, read);
-                }
+                IOHelper.copy(InputStream.class.cast(message), basicRemote.getSendStream());
             } else {
                 throw new IllegalArgumentException("Unsupported input: " + message);
             }

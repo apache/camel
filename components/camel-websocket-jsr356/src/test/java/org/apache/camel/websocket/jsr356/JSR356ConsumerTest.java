@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsr356;
+package org.apache.camel.websocket.jsr356;
 
 import java.io.IOException;
 import java.net.URI;
@@ -43,7 +43,7 @@ public class JSR356ConsumerTest extends CamelTestSupport {
     @Rule
     public final MeecrowaveRule servlet = new MeecrowaveRule(new Meecrowave.Builder() {{
         randomHttpPort();
-        setScanningPackageIncludes("org.apache.camel.jsr356.JSR356ConsumerTest$"); // deploy test classes
+        setScanningPackageIncludes("org.apache.camel.websocket.jsr356.JSR356ConsumerTest$"); // deploy test classes
     }}, "");
 
     @Rule
@@ -82,12 +82,12 @@ public class JSR356ConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jsr356:///test")
+                from("websocket-jsr356:///test")
                         .id("camel_consumer_acts_as_server")
                         .convertBodyTo(String.class)
                         .to("mock:ensureServerModeReceiveProperlyExchanges");
 
-                from("jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver")
+                from("websocket-jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver")
                         .id("camel_consumer_acts_as_client")
                         .convertBodyTo(String.class)
                         .to("mock:ensureClientModeReceiveProperlyExchanges");
