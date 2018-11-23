@@ -333,6 +333,7 @@
     <module>camel-zipkin</module>
     <module>camel-zookeeper</module>
     <module>camel-zookeeper-master</module>
+    <module>camel-websocket-jsr356</module>
   </modules>
 
 
