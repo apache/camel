@@ -277,8 +277,8 @@
                 <exclude>**/fabric8/*.yaml</exclude>
                 <exclude>**/src/main/resources/consul/services.json</exclude>
                 <exclude>**/src/main/resources/data/*.json</exclude>
-                <exclude>examples/camel-example-fhir*/src/main/data/*.patient</exclude>
-                <exclude>examples/camel-example-fhir*/src/main/data/*.csv</exclude>
+                <exclude>**/src/main/data/*.patient</exclude>
+                <exclude>**/src/main/data/*.csv</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
@@ -301,7 +301,7 @@
                 <exclude>**/additional-spring-configuration-metadata.json</exclude>
 		<exclude>**/*.proto</exclude>
 		<exclude>**/src/revapi/ignore.json</exclude>
-                <exclude>components/camel-jbpm/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension</exclude>
+                <exclude>**/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension</exclude>
                 <!-- Maven Wrapper -->
                 <exclude>.mvn/**/*</exclude>
               </excludes>
