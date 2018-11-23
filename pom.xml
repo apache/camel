@@ -253,6 +253,7 @@
                 <exclude>**/readme-examples.mvel</exclude>
                 <exclude>**/readme-languages.mvel</exclude>
                 <exclude>**/readme-others.mvel</exclude>
+                <exclude>**/spring-boot-auto-configure-options.mvel</exclude>
                 <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
                 <!-- cxf does not handle comments here -->
                 <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
