@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsr356;
+package org.apache.camel.websocket.jsr356;
 
 import static java.util.Optional.ofNullable;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.function.BiConsumer;
 
 import javax.websocket.ClientEndpointConfig;
@@ -62,7 +60,7 @@ public class JSR356Producer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        final String endpointKey = getEndpoint().getEndpointUri().substring("jsr356://".length());
+        final String endpointKey = getEndpoint().getEndpointUri().substring("websocket-jsr356://".length());
         if (!endpointKey.contains("://")) { // we act as a client in all cases here
             throw new IllegalArgumentException("You should pass a client uri");
         }
@@ -72,14 +70,12 @@ public class JSR356Producer extends DefaultAsyncProducer {
         onExchange = (ex, cb) -> manager.execute(session -> doSend(ex, session));
     }
 
-    private CompletionStage<Object> doSend(final Exchange ex, final Session session) {
-        final CompletableFuture<Object> future = new CompletableFuture<>();
+    private void doSend(final Exchange ex, final Session session) {
         try {
-            getEndpoint().getComponent().sendMessage(session, ex.getIn().getBody());
+            JSR356WebSocketComponent.sendMessage(session, ex.getIn().getBody());
         } catch (final IOException e) {
             ex.setException(e);
         }
-        return future;
     }
 
     @Override
