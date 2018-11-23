@@ -30,6 +30,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <artifactId>camel-websocket-jsr356</artifactId>
+  <name>Camel :: WebSocket JSR356</name>
   <description>Camel WebSocket using JSR356 (javax)</description>
 
   <properties>
