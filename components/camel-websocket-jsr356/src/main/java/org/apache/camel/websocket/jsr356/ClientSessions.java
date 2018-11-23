@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsr356;
+package org.apache.camel.websocket.jsr356;
 
-import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.stream.Collectors.toList;
 
 import java.io.Closeable;
@@ -25,10 +24,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import javax.websocket.ClientEndpointConfig;
@@ -69,26 +67,28 @@ class ClientSessions implements Closeable {
         sessions.addAll(IntStream.range(0, expectedCount).mapToObj(idx -> doConnect()).collect(toList()));
     }
 
-    public <T> CompletionStage<T> execute(final Function<Session, CompletionStage<T>> apply) {
+    public void execute(final Consumer<Session> apply) {
+        Session session = null;
         try {
-            final Session session = sessions.take();
-            return apply.apply(session)
-                    .handle((result, exception) -> {
-                        sessions.offer(session);
-                        if (exception != null) {
-                            if (RuntimeException.class.isInstance(exception)) {
-                                throw RuntimeException.class.cast(exception);
-                            }
-                            if (Error.class.isInstance(exception)) {
-                                throw Error.class.cast(exception);
-                            }
-                            throw new IllegalStateException(exception);
-                        }
-                        return result;
-                    });
-        } catch (final InterruptedException e) {
+            session = sessions.take();
+            apply.accept(session);
+        } catch (final RuntimeException re) {
+            log.error(re.getMessage(), re);
+            if (session.isOpen()) {
+                try {
+                    session.close(new CloseReason(CloseReason.CloseCodes.CLOSED_ABNORMALLY, re.getMessage()));
+                } catch (final IOException errorOnClose) {
+                    log.debug(errorOnClose.getMessage(), errorOnClose);
+                }
+            }
+            session = null;
+            throw re;
+        } catch (final InterruptedException ex) {
             Thread.currentThread().interrupt();
-            return completedFuture(null);
+        } finally {
+            if (session != null) {
+                sessions.offer(session);
+            }
         }
     }
 

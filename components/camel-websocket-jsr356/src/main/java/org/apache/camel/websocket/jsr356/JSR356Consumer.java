@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsr356;
+package org.apache.camel.websocket.jsr356;
 
 import static java.util.Optional.ofNullable;
 
@@ -61,7 +61,7 @@ public class JSR356Consumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        final String endpointKey = getEndpoint().getEndpointUri().substring("jsr356://".length());
+        final String endpointKey = getEndpoint().getEndpointUri().substring("websocket-jsr356://".length());
         if (endpointKey.contains("://")) { // we act as a client
             final ClientEndpointConfig.Builder clientConfig = ClientEndpointConfig.Builder.create(); // todo: config
             manager = new ClientSessions(sessionCount, URI.create(endpointKey), clientConfig.build(), onMessage);
