@@ -301,6 +301,7 @@
                 <exclude>**/additional-spring-configuration-metadata.json</exclude>
 		<exclude>**/*.proto</exclude>
 		<exclude>**/src/revapi/ignore.json</exclude>
+                <exclude>components/camel-jbpm/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension</exclude>
                 <!-- Maven Wrapper -->
                 <exclude>.mvn/**/*</exclude>
               </excludes>
