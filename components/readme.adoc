@@ -623,8 +623,8 @@ Number of Components: 306 in 207 JAR artifacts (22 deprecated)
 | link:camel-netty4-http/src/main/docs/netty4-http-component.adoc[Netty4 HTTP] (camel-netty4-http) +
 `netty4-http:protocol:host:port/path` | 2.14 | Netty HTTP server and client using the Netty 4.x library.
 
-| link:camel-nsq/src/main/docs/nsq-component.adoc[nsq] (camel-nsq) +
-`nsq:lookupServer` | 2.22 | Represents a nsq endpoint.
+| link:camel-nsq/src/main/docs/nsq-component.adoc[NSQ] (camel-nsq) +
+`nsq:lookupServer` | 2.23 | Represents a nsq endpoint.
 
 | link:camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
 `olingo2:apiName/methodName` | 2.14 | Communicates with OData 2.0 services using Apache Olingo.
