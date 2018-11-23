@@ -276,6 +276,8 @@
                 <exclude>**/fabric8/*.yaml</exclude>
                 <exclude>**/src/main/resources/consul/services.json</exclude>
                 <exclude>**/src/main/resources/data/*.json</exclude>
+                <exclude>examples/camel-example-fhir*/src/main/data/*.patient</exclude>
+                <exclude>examples/camel-example-fhir*/src/main/data/*.csv</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
