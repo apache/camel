@@ -1,6 +1,8 @@
+[[nsq-component]]
 == NSQ Component
 
-*Available as of Camel version 2.22*
+*Available as of Camel version 2.23*
+
 *Available as of Camel version 2.23*
 
 
