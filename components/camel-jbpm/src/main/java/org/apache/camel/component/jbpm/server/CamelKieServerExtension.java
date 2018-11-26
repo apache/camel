@@ -117,7 +117,7 @@ public class CamelKieServerExtension implements KieServerExtension {
                 context.start();
                 camelContexts.put(id, context);
 
-                ServiceRegistry.get().register(id + "_CamelService", this.camel);
+                ServiceRegistry.get().register(id + "_CamelService", context);
 
             }
         } catch (Exception e) {
