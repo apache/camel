@@ -12,7 +12,7 @@ const define = new webpack.DefinePlugin({
 });
 
 const extractCSS = new ExtractTextPlugin({
-  filename: '../css/[name].[contenthash].css',
+  filename: '../css/[name].[hash].css',
 });
 
 const assetsManifest = new AssetsPlugin({
@@ -41,7 +41,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['es2015'],
+            presets: ['env'],
           },
         },
       }, {
