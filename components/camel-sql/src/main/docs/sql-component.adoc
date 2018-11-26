@@ -607,7 +607,7 @@ Here is the SQL query used to create the tables, just replace
 `"aggregation"` with your aggregator repository name.
 
 [source,sql]
------
+----
 CREATE TABLE aggregation (
  id varchar(255) NOT NULL,
  exchange blob NOT NULL,
@@ -618,7 +618,7 @@ CREATE TABLE aggregation_completed (
  exchange blob NOT NULL,
  constraint aggregation_completed_pk PRIMARY KEY (id)
 );
------
+----
 
 
 === Storing body and headers as text
@@ -761,7 +761,7 @@ Here is an example, where we define 2 extra FQN class names from the
 JDBC vendor.
 
 [source,xml]
------
+----
 <bean id="repo"
 class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
   <property name="transactionManager" ref="transactionManager"/>
@@ -778,7 +778,7 @@ class="org.apache.camel.processor.aggregate.jdbc.JdbcAggregationRepository">
     </util:set>
   </property>
 </bean>
------
+----
 
 === Camel Sql Starter
 
@@ -786,7 +786,7 @@ A starter module is available to spring-boot users. When using the starter,
 the `DataSource` can be directly configured using spring-boot properties.
 
 [source,text]
------
+----
 # Example for a mysql datasource
 spring.datasource.url=jdbc:mysql://localhost/test
 spring.datasource.username=dbuser
