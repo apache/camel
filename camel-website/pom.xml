@@ -75,8 +75,8 @@
             </goals>
             <phase>generate-sources</phase>
             <configuration>
-              <nodeVersion>v8.10.0</nodeVersion>
-              <yarnVersion>v1.5.1</yarnVersion>
+              <nodeVersion>v10.13.0</nodeVersion>
+              <yarnVersion>v1.12.3</yarnVersion>
             </configuration>
           </execution>
           <execution>
