@@ -51,11 +51,14 @@ import org.apache.http.message.LineParser;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
+import org.bouncycastle.cms.CMSCompressedData;
 import org.bouncycastle.cms.CMSEnvelopedData;
+import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.Recipient;
 import org.bouncycastle.cms.RecipientInformation;
 import org.bouncycastle.cms.RecipientInformationStore;
 import org.bouncycastle.cms.jcajce.JceKeyTransEnvelopedRecipient;
+import org.bouncycastle.operator.InputExpanderProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,12 +180,26 @@ public final class EntityParser {
 
     }
     
-    public static MimeEntity parseEnvelopedEntity(byte[] envelopedContent, PrivateKey privateKey) {
+    public static MimeEntity parseCompressedEntity(byte[] compressedData, InputExpanderProvider expanderProvider)
+            throws HttpException {
+
+        byte[] uncompressedContent = uncompressData(compressedData, expanderProvider);
+
+        return parseEntity(uncompressedContent);
+    }
+
+    public static MimeEntity parseEnvelopedEntity(byte[] envelopedContent, PrivateKey privateKey) throws HttpException {
+
+        byte[] decryptedContent = decryptData(envelopedContent, privateKey);
+
+        return parseEntity(decryptedContent);
+    }
+
+    public static MimeEntity parseEntity(byte[] content) throws HttpException {
         
         try {
-            byte[] decryptedContent = decryptData(envelopedContent, privateKey);
             
-            InputStream is = new ByteArrayInputStream(decryptedContent);
+            InputStream is = new ByteArrayInputStream(content);
             AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE);
             inbuffer.bind(is);
 
@@ -191,54 +208,68 @@ public final class EntityParser {
                     new ArrayList<CharArrayBuffer>());
 
             // Get Content-Type and Content-Transfer-Encoding
-            ContentType envelopedEntityContentType = null;
-            String envelopedEntityContentTransferEncoding = null;
+            ContentType entityContentType = null;
+            String entityContentTransferEncoding = null;
             for (Header header : headers) {
                 switch (header.getName()) {
                 case AS2Header.CONTENT_TYPE:
-                    envelopedEntityContentType = ContentType.parse(header.getValue());
+                    entityContentType = ContentType.parse(header.getValue());
                     break;
                 case AS2Header.CONTENT_TRANSFER_ENCODING:
-                    envelopedEntityContentTransferEncoding = header.getValue();
+                    entityContentTransferEncoding = header.getValue();
                     break;
                 default:
                     continue;
                 }
             }
-            if (envelopedEntityContentType == null) {
+            if (entityContentType == null) {
                 throw new HttpException("Failed to find Content-Type header in enveloped entity");
             }
 
-            MimeEntity entity = parseEntityBody(inbuffer, null, envelopedEntityContentType, envelopedEntityContentTransferEncoding, headers);
+            MimeEntity entity = parseEntityBody(inbuffer, null, entityContentType, entityContentTransferEncoding, headers);
             entity.removeAllHeaders();
             entity.setHeaders(headers);
             
             return entity;
         } catch (Exception e) {
-            return null;
+            throw new HttpException("Failed to parse entity", e);
         }
     }
 
-    public static byte[] decryptData(byte[] encryptedData, PrivateKey privateKey) throws Exception {
-        // Create enveloped data from encrypted data
-        CMSEnvelopedData cmsEnvelopedData = new CMSEnvelopedData(encryptedData);
-        
-        // Extract recipient information form enveloped data.
-        RecipientInformationStore recipientsInformationStore = cmsEnvelopedData.getRecipientInfos();
-        Collection<RecipientInformation> recipients = recipientsInformationStore.getRecipients();
-        Iterator<RecipientInformation> it = recipients.iterator();
-        
-        // Decrypt if enveloped data contains recipient information
-        if (it.hasNext()) {
-            // Create recipient from private key.
-            Recipient recipient = new JceKeyTransEnvelopedRecipient(privateKey);
+    public static byte[] uncompressData(byte[] compressedData, InputExpanderProvider expanderProvider)
+            throws HttpException {
+        try {
+            CMSCompressedData cmsCompressedData = new CMSCompressedData(compressedData);
+            return cmsCompressedData.getContent(expanderProvider);
+        } catch (CMSException e) {
+            throw new HttpException("Failed to decompress data", e);
+        }
+    }
 
-            // Extract decrypted data from recipient information
-            RecipientInformation recipientInfo = it.next();
-            return recipientInfo.getContent(recipient);
+    public static byte[] decryptData(byte[] encryptedData, PrivateKey privateKey) throws HttpException {
+        try {
+            // Create enveloped data from encrypted data
+            CMSEnvelopedData cmsEnvelopedData = new CMSEnvelopedData(encryptedData);
+            
+            // Extract recipient information form enveloped data.
+            RecipientInformationStore recipientsInformationStore = cmsEnvelopedData.getRecipientInfos();
+            Collection<RecipientInformation> recipients = recipientsInformationStore.getRecipients();
+            Iterator<RecipientInformation> it = recipients.iterator();
+            
+            // Decrypt if enveloped data contains recipient information
+            if (it.hasNext()) {
+                // Create recipient from private key.
+                Recipient recipient = new JceKeyTransEnvelopedRecipient(privateKey);
+
+                // Extract decrypted data from recipient information
+                RecipientInformation recipientInfo = it.next();
+                return recipientInfo.getContent(recipient);
+            }
+        } catch (CMSException e) {
+            throw new HttpException("Failed to decrypt data", e);
         }
         
-        return null;
+        throw new HttpException("Failed to decrypt data: bno recipeint information");
     }
     
     public static void parseMultipartSignedEntity(HttpMessage message)
