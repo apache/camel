@@ -1,0 +1,75 @@
+[[ChatScript-component]]
+== ChatScript Component
+
+*Available as of Camel version 2.23*
+
+The *ChatScript:* component allows you to interact with ChatScript Server and have converstations. This component is stateless and relies on ChatScript to maintain chat history. 
+
+Original ChatScript is available here : https://github.com/bwilcox-1234/ChatScript
+
+This component expects a JSON having the following fields:
+{
+username:
+botname:
+body:
+}
+
+Refer ChatScriptMessage.java and samples  
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+      <artifactId>camel-chatscript</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+[source,java]
+-------------------------------------------------------------------------------------------------------------------------
+ChatScript:host:[port]/BotName[?options]
+-------------------------------------------------------------------------------------------------------------------------
+
+### Options
+
+// component options: START
+This component has one option resetchat which when set to true will issue :reset command to CS when the EndPoing is created.
+// component options: END
+
+// endpoint options: START
+The ChatScript endpoint is configured using URI syntax:
+
+----
+ChatScript:hostname:port/BotName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *BotName* | *Required* Name of the Bot in CS to converse with | Harry | String |
+|===
+
+
+==== Query Parameters (8 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *resetchat* (common) | *Optional* Issues :reset command to start a new conversation everytime |  | String |
+
+// endpoint options: END
+// spring-boot-auto-configure options: START
+
+
+
