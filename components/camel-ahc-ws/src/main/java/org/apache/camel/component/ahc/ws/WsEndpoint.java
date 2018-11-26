@@ -200,6 +200,10 @@ public class WsEndpoint extends AhcEndpoint {
             }
         }
 
+        public void onPingFrame(byte[] payload) {
+            LOG.debug("Received ping --> {}", payload);
+            websocket.sendPongFrame(payload);
+        }
     }
 
 }
