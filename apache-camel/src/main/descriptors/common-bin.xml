@@ -64,6 +64,7 @@
         <include>org.apache.camel:camel-cometd</include>
         <include>org.apache.camel:camel-connector</include>
         <include>org.apache.camel:camel-consul</include>
+        <include>org.apache.camel:camel-corda</include>
         <include>org.apache.camel:camel-couchdb</include>
         <include>org.apache.camel:camel-couchbase</include>
         <include>org.apache.camel:camel-crypto</include>
@@ -350,6 +351,7 @@
         <include>org.apache.camel:camel-coap-starter</include>
         <include>org.apache.camel:camel-cometd-starter</include>
         <include>org.apache.camel:camel-consul-starter</include>
+        <include>org.apache.camel:camel-corda-starter</include>
         <include>org.apache.camel:camel-core-starter</include>
         <include>org.apache.camel:camel-couchdb-starter</include>
         <include>org.apache.camel:camel-couchbase-starter</include>
