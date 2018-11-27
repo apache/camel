@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 306 in 207 JAR artifacts (22 deprecated)
+Number of Components: 307 in 208 JAR artifacts (22 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -178,6 +178,9 @@ Number of Components: 306 in 207 JAR artifacts (22 deprecated)
 
 | link:../camel-core/src/main/docs/controlbus-component.adoc[Control Bus] (camel-core) +
 `controlbus:command:language` | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
+
+| link:camel-corda/src/main/docs/corda-component.adoc[corda] (camel-corda) +
+`corda:url` | 2.23 | The corda component uses the corda-rpc to interact with corda nodes.
 
 | link:camel-couchbase/src/main/docs/couchbase-component.adoc[Couchbase] (camel-couchbase) +
 `couchbase:protocol:hostname:port` | 2.19 | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.

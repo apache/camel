@@ -492,6 +492,16 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-corda</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-corda-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core</artifactId>
         <version>${project.version}</version>

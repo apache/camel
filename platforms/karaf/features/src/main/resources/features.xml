@@ -426,6 +426,11 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-context/${project.version}</bundle>
   </feature>
+  <feature name='camel-corda' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:net.corda/corda-rpc/${corda-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-corda/${project.version}</bundle>
+  </feature>
   <feature name='camel-couchdb' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.lightcouch/${lightcouch-bundle-version}</bundle>

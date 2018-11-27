@@ -187,6 +187,25 @@
         <version>1.2.17</version>
       </dependency>
       <dependency>
+        <groupId>net.corda</groupId>
+        <artifactId>corda-rpc</artifactId>
+        <version>3.3-corda</version>
+        <exclusions>
+          <exclusion>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>quasar-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.1-api</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
         <groupId>net.sf.saxon</groupId>
         <artifactId>Saxon-HE</artifactId>
         <version>9.8.0-14</version>
@@ -695,6 +714,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-context-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-corda-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

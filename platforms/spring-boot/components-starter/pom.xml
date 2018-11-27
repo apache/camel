@@ -139,6 +139,7 @@
     <module>camel-cometd-starter</module>
     <module>camel-consul-starter</module>
     <module>camel-context-starter</module>
+    <module>camel-corda-starter</module>
     <module>camel-core-starter</module>
     <module>camel-couchbase-starter</module>
     <module>camel-couchdb-starter</module>
