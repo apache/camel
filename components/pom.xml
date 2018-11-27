@@ -100,6 +100,7 @@
     <module>camel-coap</module>
     <module>camel-cometd</module>
     <module>camel-consul</module>
+    <module>camel-corda</module>
     <module>camel-couchbase</module>
     <module>camel-couchdb</module>
     <module>camel-crypto</module>

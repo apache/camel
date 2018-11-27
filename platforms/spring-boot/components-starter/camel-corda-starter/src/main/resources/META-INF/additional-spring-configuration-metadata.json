@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.corda.enabled",
+      "description": "Enable corda component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}
