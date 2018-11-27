@@ -174,7 +174,7 @@ public class WsEndpoint extends AhcEndpoint {
             } catch (Exception e) {
                 LOG.warn("Error re-connecting to websocket", e);
                 ExceptionHandler exceptionHandler = getExceptionHandler();
-                if(exceptionHandler != null) {
+                if (exceptionHandler != null) {
                     exceptionHandler.handleException("Error re-connecting to websocket", e);
                 }
             }
