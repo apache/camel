@@ -28,6 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -205,7 +207,9 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private Document loadBasePom() throws Exception {
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        DocumentBuilder builder = dbf.newDocumentBuilder();
         Document pom = builder.parse(sourcePom);
 
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -236,7 +240,9 @@ public class BomGeneratorMojo extends AbstractMojo {
             emptyNode.getParentNode().removeChild(emptyNode);
         }
 
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
@@ -285,7 +291,6 @@ public class BomGeneratorMojo extends AbstractMojo {
 
 
     private void overwriteDependencyManagement(Document pom, List<Dependency> dependencies) throws Exception {
-
         XPath xpath = XPathFactory.newInstance().newXPath();
         XPathExpression expr = xpath.compile("/project/dependencyManagement/dependencies");
 

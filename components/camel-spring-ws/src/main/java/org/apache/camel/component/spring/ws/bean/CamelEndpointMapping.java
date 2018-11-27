@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -248,6 +249,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
             xmlConverter.setTransformerFactory(transformerFactory);
         } else {
             transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         }
     }
 

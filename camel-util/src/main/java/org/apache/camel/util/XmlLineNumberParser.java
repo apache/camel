@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Stack;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
@@ -107,11 +108,13 @@ public final class XmlLineNumberParser {
         final Document doc;
         SAXParser parser;
         final SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         parser = factory.newSAXParser();
         final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         // turn off validator and loading external dtd
         dbf.setValidating(false);
         dbf.setNamespaceAware(true);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         dbf.setFeature("http://xml.org/sax/features/namespaces", false);
         dbf.setFeature("http://xml.org/sax/features/validation", false);
         dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
