@@ -220,7 +220,7 @@
 	* [CoAP](coap-component.adoc)
 	* [CometD](cometd-component.adoc)
 	* [Consul](consul-component.adoc)
-	* [Corda](corda-component.adoc)
+	* [corda](corda-component.adoc)
 	* [Couchbase](couchbase-component.adoc)
 	* [CouchDB](couchdb-component.adoc)
 	* [Crypto (JCE)](crypto-component.adoc)
