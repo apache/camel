@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.schematron.processor;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -68,6 +69,7 @@ public final class SchematronProcessorFactory {
      */
     private static XMLReader getXMLReader() throws ParserConfigurationException, SAXException {
         final SAXParserFactory fac = SAXParserFactory.newInstance();
+        fac.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         fac.setValidating(false);
         final SAXParser parser = fac.newSAXParser();
         XMLReader reader = parser.getXMLReader();

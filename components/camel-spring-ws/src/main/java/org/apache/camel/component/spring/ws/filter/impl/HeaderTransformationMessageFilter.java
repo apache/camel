@@ -18,9 +18,11 @@ package org.apache.camel.component.spring.ws.filter.impl;
 
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
@@ -128,6 +130,12 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
 
         if (transformerFactory == null) {
             throw new IllegalStateException("Cannot resolve a transformer factory");
+        }
+
+        try {
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        } catch (TransformerConfigurationException ex) {
+            // ignore
         }
 
         transformerFactory.setErrorListener(new ErrorListener() {

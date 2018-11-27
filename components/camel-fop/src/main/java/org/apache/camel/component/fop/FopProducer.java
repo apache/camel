@@ -19,6 +19,8 @@ package org.apache.camel.component.fop;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Map;
+
+import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -85,8 +87,9 @@ public class FopProducer extends DefaultProducer {
         throws FOPException, TransformerException {
         OutputStream out = new ByteArrayOutputStream();
         Fop fop = fopFactory.newFop(outputFormat, userAgent, out);
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = factory.newTransformer();
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        Transformer transformer = transformerFactory.newTransformer();
 
         Result res = new SAXResult(fop.getDefaultHandler());
         transformer.transform(src, res);

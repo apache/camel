@@ -23,6 +23,7 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -177,7 +178,9 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
         parser.setContentHandler(createContentHandler(w));
 
         try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            Transformer transformer = transformerFactory.newTransformer();
             DOMResult result = new DOMResult();
             transformer.transform(new SAXSource(parser, new InputSource(inputStream)), result);
             return result.getNode();

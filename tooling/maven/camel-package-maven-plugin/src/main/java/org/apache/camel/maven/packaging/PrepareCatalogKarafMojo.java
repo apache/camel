@@ -29,6 +29,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
@@ -640,6 +642,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             dbf.setNamespaceAware(false);
             dbf.setValidating(false);
             dbf.setXIncludeAware(false);
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
             Document dom = dbf.newDocumentBuilder().parse(is);
 
             NodeList children = dom.getElementsByTagName("features");
