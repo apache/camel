@@ -29,7 +29,7 @@
 
   <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>camel-archetype-connector</artifactId>
-  <name>Camel :: Archetypes :: Connector</name>
+  <name>Camel :: Archetypes :: Connector (deprecated)</name>
   <description>Creates a new Camel connector.</description>
   <packaging>maven-archetype</packaging>
 
