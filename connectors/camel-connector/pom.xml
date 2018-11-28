@@ -29,7 +29,7 @@
 
   <artifactId>camel-connector</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Connectors :: Camel Connector Component</name>
+  <name>Camel :: Connectors :: Camel Connector Component (deprecated)</name>
   <description>Camel Connector Component</description>
 
   <properties>

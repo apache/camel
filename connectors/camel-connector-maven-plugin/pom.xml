@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>camel-connector-maven-plugin</artifactId>
-  <name>Camel :: Connectors :: Camel Connector Maven Plugin</name>
+  <name>Camel :: Connectors :: Camel Connector Maven Plugin (deprecated)</name>
   <packaging>maven-plugin</packaging>
 
   <dependencies>
