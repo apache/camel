@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.google.bigquery.sql;
 
-import org.apache.camel.*;
-import org.apache.camel.util.ResourceHelper;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.util.ResourceHelper;
 
 public final class SqlHelper {
 
@@ -35,13 +39,13 @@ public final class SqlHelper {
     }
 
     /**
-     * Resolve the query by loading the query from the classpath or file resource if needed.
+     * Resolve the query by loading the query from the classpath or file
+     * resource if needed.
      */
     public static String resolveQuery(CamelContext camelContext, String query, String placeholder) throws NoTypeConversionAvailableException, IOException {
         String answer = query;
         if (ResourceHelper.hasScheme(query)) {
-            InputStream is = ResourceHelper
-                    .resolveMandatoryResourceAsInputStream(camelContext, query);
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, query);
             answer = camelContext.getTypeConverter().mandatoryConvertTo(String.class, is);
             if (placeholder != null) {
                 answer = answer.replaceAll(placeholder, "@");
@@ -51,8 +55,9 @@ public final class SqlHelper {
     }
 
     /**
-     * Replaces pattern in query in form of "${param}" with values from message header
-     * Raises an error if param value not found in headers
+     * Replaces pattern in query in form of "${param}" with values from message
+     * header Raises an error if param value not found in headers
+     * 
      * @param exchange
      * @return Translated query text
      */
@@ -66,8 +71,9 @@ public final class SqlHelper {
             String value = message.getHeader(paramKey, String.class);
             if (value == null) {
                 value = exchange.getProperty(paramKey, String.class);
-                if (value == null)
+                if (value == null) {
                     throw new RuntimeExchangeException("SQL pattern with name '" + paramKey + "' not found in the message headers", exchange);
+                }
             }
 
             String replacement = Matcher.quoteReplacement(value);
@@ -79,6 +85,7 @@ public final class SqlHelper {
 
     /**
      * Extracts list of parameters in form "@name" from query text
+     * 
      * @param query
      * @return list of parameter names
      */

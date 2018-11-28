@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.bigquery.unit.sql;
 
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -25,13 +27,23 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.Set;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 public class SqlHelperTest {
+
+    String query = "INSERT INTO ${report}.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n" + "  region\n" + "FROM\n" + "  ${import}.test\n" + "WHERE\n"
+                   + "  rec_date = @date AND id = @id\n";
+
+    String expected = "INSERT INTO report_data.test( -- TODO \n" + "  id,\n" + "  region\n" + ")\n" + "SELECT\n" + "  id,\n" + "  region\n" + "FROM\n" + "  import_data.test\n"
+                      + "WHERE\n" + "  rec_date = @date AND id = @id\n";
+
+    Exchange exchange = Mockito.mock(Exchange.class);
+    Message message = Mockito.mock(Message.class);
+    
     private CamelContext context = Mockito.mock(CamelContext.class);
 
     @Test
@@ -46,33 +58,6 @@ public class SqlHelperTest {
         String answer = SqlHelper.resolveQuery(context, "classpath:sql/delete.sql", ":");
         assertEquals("delete from test.test_sql_table where id = @id", answer);
     }
-
-    String query = "INSERT INTO ${report}.test( -- TODO \n" +
-            "  id,\n" +
-            "  region\n" +
-            ")\n" +
-            "SELECT\n" +
-            "  id,\n" +
-            "  region\n" +
-            "FROM\n" +
-            "  ${import}.test\n" +
-            "WHERE\n" +
-            "  rec_date = @date AND id = @id\n";
-
-    String expected = "INSERT INTO report_data.test( -- TODO \n" +
-            "  id,\n" +
-            "  region\n" +
-            ")\n" +
-            "SELECT\n" +
-            "  id,\n" +
-            "  region\n" +
-            "FROM\n" +
-            "  import_data.test\n" +
-            "WHERE\n" +
-            "  rec_date = @date AND id = @id\n";
-
-    Exchange exchange = Mockito.mock(Exchange.class);
-    Message message = Mockito.mock(Message.class);
 
     @Test
     public void testTranslateQuery() {

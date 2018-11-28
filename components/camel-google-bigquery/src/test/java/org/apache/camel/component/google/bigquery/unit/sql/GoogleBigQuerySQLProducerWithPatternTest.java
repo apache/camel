@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.google.bigquery.unit.sql;
 
+import java.util.List;
+
 import com.google.api.services.bigquery.model.QueryRequest;
 import org.apache.camel.Exchange;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-
-import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;

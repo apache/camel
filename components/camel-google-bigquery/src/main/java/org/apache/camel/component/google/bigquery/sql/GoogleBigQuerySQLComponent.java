@@ -73,7 +73,8 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
     }
 
     /**
-     * ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used
+     * ConnectionFactory to obtain connection to Bigquery Service. If non
+     * provided the default one will be used
      */
     public void setConnectionFactory(GoogleBigQueryConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
