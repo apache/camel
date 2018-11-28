@@ -255,6 +255,7 @@
 	* [Git](git-component.adoc)
 	* [GitHub](github-component.adoc)
 	* [Google BigQuery](google-bigquery-component.adoc)
+	* [Google BigQuery Standard SQL](google-bigquery-sql-component.adoc)
 	* [Google Calendar](google-calendar-component.adoc)
 	* [Google Calendar Stream](google-calendar-stream-component.adoc)
 	* [Google Drive](google-drive-component.adoc)
