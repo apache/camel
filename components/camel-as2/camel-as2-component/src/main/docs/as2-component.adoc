@@ -70,7 +70,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (30 parameters):
+==== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -81,6 +81,7 @@ with the following path and query parameters:
 | *as2To* (common) | The value of the AS2To header of AS2 message. |  | String
 | *as2Version* (common) | The version of the AS2 protocol. | 1.1 | String
 | *clientFqdn* (common) | The Client Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint. | camel.apache.org | String
+| *compressionAlgorithm* (common) | The algorithm used to compress EDI message. |  | AS2Compression Algorithm
 | *dispositionNotificationTo* (common) | The value of the Disposition-Notification-To header. Assigning a value to this parameter requests a message disposition notification (MDN) for the AS2 message. |  | String
 | *ediMessageTransferEncoding* (common) | The transfer encoding of EDI message. |  | String
 | *ediMessageType* (common) | The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent |  | ContentType
