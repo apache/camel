@@ -352,7 +352,7 @@ box:files/endpoint?[options]
 
 |getFileVersions |versions |fileId |java.util.Collection
 
-|downloadPreviousFileVersions |downloadVersion |fileId, version, output, [listener] |java.io.OutputStream
+|downloadPreviousFileVersion |downloadVersion |fileId, version, output, [listener] |java.io.OutputStream
 
 |deleteFileVersion |deleteVersion |fileId, version |
 
