@@ -30,7 +30,7 @@
   </parent>
 
   <artifactId>connectors</artifactId>
-  <name>Camel :: Connectors</name>
+  <name>Camel :: Connectors (deprecated)</name>
   <description>Camel Connectors</description>
   <packaging>pom</packaging>
 
