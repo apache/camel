@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.google.bigquery.unit.sql;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.api.services.bigquery.model.QueryRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
