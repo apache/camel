@@ -21,67 +21,48 @@
 
   <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>components</artifactId>
+    <version>2.23.0-SNAPSHOT</version>
+</parent>
+    
   <groupId>org.apache.camel.component</groupId>
   <artifactId>camel-chatscript</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
 
-  <name>A Camel Component</name>
-  <url>http://www.myorganization.org</url>
+  <name>Camel :: ChatScript</name>
+  <description>Camel support for ChatScript</description>
 
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.component.chatscript.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=ChatScript</camel.osgi.export.service>
+</properties>
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-      <version>2.22.1</version>
     </dependency>  
-<dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-netty4</artifactId>
-      <version>2.22.1</version>
-    <!-- use the same version as your Camel core version -->
-</dependency>
     <!-- for testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <version>2.22.1</version>      
       <scope>test</scope>
     </dependency>
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.6.1</version>
     </dependency>      
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.6.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId> 
       <artifactId>log4j</artifactId> 
-      <version>1.2.16</version>
       <scope>test</scope> 
     </dependency>
   </dependencies>
-
-  <build>
-    <defaultGoal>install</defaultGoal>
-
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
-
