@@ -38,7 +38,7 @@ ChatScript:host:[port]/BotName[?options]
 ### Options
 
 // component options: START
-This component has one option resetchat which when set to true will issue :reset command to CS when the EndPoint is created.
+This component has one option resetchat which when set to true will issue :reset command to CS when the endpoint is created.
 // component options: END
 
 // endpoint options: START
@@ -56,7 +56,9 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *BotName* | *Required* Name of the Bot in CS to converse with | Harry | String |
+| *hostname* | *Required* Host where ChatScript is running in server mode | none | String |
+| *port* | *Required* Port on which ChatScript is listening to| 1024 | String |
+| *botName* | *Required* Name of the Bot in CS to converse with | Harry | String |
 |===
 
 
@@ -70,6 +72,3 @@ with the following path and query parameters:
 
 // endpoint options: END
 // spring-boot-auto-configure options: START
-
-
-
