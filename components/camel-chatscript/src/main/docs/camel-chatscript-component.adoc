@@ -3,7 +3,7 @@
 
 *Available as of Camel version 2.23*
 
-The *ChatScript:* component allows you to interact with ChatScript Server and have converstations. This component is stateless and relies on ChatScript to maintain chat history. 
+The *ChatScript:* component allows you to interact with ChatScript Server and have conversations. This component is stateless and relies on ChatScript to maintain chat history. 
 
 Original ChatScript is available here : https://github.com/bwilcox-1234/ChatScript
 
