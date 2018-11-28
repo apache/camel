@@ -21,6 +21,7 @@ public final class GoogleBigQueryConstants {
     public static final String TABLE_ID = "CamelGoogleBigQueryTableId";
     public static final String INSERT_ID = "CamelGoogleBigQueryInsertId";
     public static final String PARTITION_DECORATOR = "CamelGoogleBigQueryPartitionDecorator";
+    public static final String TRANSLATED_QUERY = "CamelGoogleBigQueryTranslatedQuery";
 
     /**
      * Prevent instantiation.
