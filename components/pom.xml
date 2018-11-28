@@ -100,6 +100,7 @@
     <module>camel-cassandraql</module>
     <module>camel-castor</module>
     <module>camel-cdi</module>
+    <module>camel-chatscript</module>
     <module>camel-chronicle</module>
     <module>camel-chunk</module>
     <module>camel-cm-sms</module>
