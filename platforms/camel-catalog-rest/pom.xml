@@ -29,7 +29,7 @@
 
   <artifactId>camel-catalog-rest</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Camel Catalog :: REST</name>
+  <name>Camel :: Platforms :: Camel Catalog :: REST (deprecated)</name>
   <description>Camel Catalog REST</description>
 
   <properties>

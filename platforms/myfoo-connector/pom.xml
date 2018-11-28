@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>myfoo-connector</artifactId>
-  <name>Camel :: Platforms :: My Foo Connector</name>
+  <name>Camel :: Platforms :: My Foo Connector (deprecated)</name>
   <description>Camel My Foo Connector</description>
   <packaging>jar</packaging>
 

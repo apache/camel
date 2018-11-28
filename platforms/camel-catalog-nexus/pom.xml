@@ -30,7 +30,7 @@
 
   <artifactId>camel-catalog-nexus</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Camel Catalog :: Nexus</name>
+  <name>Camel :: Platforms :: Camel Catalog :: Nexus (deprecated)</name>
   <description>Camel Catalog Nexus</description>
 
   <properties>
