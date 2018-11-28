@@ -18,9 +18,13 @@ package org.apache.camel.component.as2.api;
 
 public enum AS2MessageStructure {
     PLAIN(false, false, false),
-    SIGNED(false, false, false),
-    ENCRYPTED(false, false, false),
-    ENCRYPTED_SIGNED(false, false, false);
+    SIGNED(true, false, false),
+    ENCRYPTED(false, true, false),
+    SIGNED_ENCRYPTED(true, true, false),
+    PLAIN_COMPRESSED(false, false, true),
+    SIGNED_COMPRESSED(true, false, true),
+    ENCRYPTED_COMPRESSED(false, true, true),
+    SIGNED_ENCRYPTED_COMPRESSED(true, true, true);
 
     private final boolean isSigned;
     private final boolean isEncrypted;

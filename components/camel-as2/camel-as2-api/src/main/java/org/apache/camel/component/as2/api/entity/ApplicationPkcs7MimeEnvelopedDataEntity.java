@@ -37,13 +37,13 @@ import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSTypedData;
 import org.bouncycastle.operator.OutputEncryptor;
 
-public class ApplicationPkcs7MimeEntity extends MimeEntity {
+public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
     
     private static final String CONTENT_DISPOSITION = "attachment; filename=\"smime.p7m\"";
     
     private byte[] encryptedData;
     
-    public ApplicationPkcs7MimeEntity(MimeEntity entity2Encrypt,
+    public ApplicationPkcs7MimeEnvelopedDataEntity(MimeEntity entity2Encrypt,
                                 CMSEnvelopedDataGenerator dataGenerator,
                                 OutputEncryptor encryptor,
                                 String encryptedContentTransferEncoding,
@@ -61,7 +61,7 @@ public class ApplicationPkcs7MimeEntity extends MimeEntity {
         }
     }
     
-    public ApplicationPkcs7MimeEntity(byte[] encryptedData, String encryptedContentTransferEncoding, boolean isMainBody) {
+    public ApplicationPkcs7MimeEnvelopedDataEntity(byte[] encryptedData, String encryptedContentTransferEncoding, boolean isMainBody) {
         this.encryptedData = Args.notNull(encryptedData, "encryptedData");
         
         setContentType(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "enveloped-datat"),
@@ -101,10 +101,7 @@ public class ApplicationPkcs7MimeEntity extends MimeEntity {
     }
     
     public MimeEntity getEncryptedEntity(PrivateKey privateKey) throws HttpException {
-        
         return EntityParser.parseEnvelopedEntity(encryptedData, privateKey);
-        
-        
     }
     
     private byte[] createEncryptedData(MimeEntity entity2Encrypt, CMSEnvelopedDataGenerator envelopedDataGenerator, OutputEncryptor encryptor) throws Exception {

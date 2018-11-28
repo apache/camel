@@ -882,7 +882,7 @@ public final class EntityParser {
         }
     }
 
-    public static ApplicationPkcs7MimeEntity parseApplicationPkcs7MimeEntityBody(AS2SessionInputBuffer inbuffer,
+    public static ApplicationPkcs7MimeEnvelopedDataEntity parseApplicationPkcs7MimeEntityBody(AS2SessionInputBuffer inbuffer,
                                                                                       String boundary,
                                                                                       ContentType contentType,
                                                                                       String contentTransferEncoding)
@@ -903,7 +903,7 @@ public final class EntityParser {
 
             byte[] encryptedContent = EntityUtils.decode(pkcs7EncryptedBodyContent.getBytes(charset), contentTransferEncoding);
 
-            ApplicationPkcs7MimeEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEntity(
+            ApplicationPkcs7MimeEnvelopedDataEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEnvelopedDataEntity(
                     encryptedContent, contentTransferEncoding, false);
             return applicationPkcs7MimeEntity;
         } catch (Exception e) {

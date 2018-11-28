@@ -20,6 +20,7 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.as2.api.AS2CompressionAlgorithm;
 import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
@@ -100,6 +101,9 @@ public class AS2Configuration {
 
     @UriParam
     private PrivateKey signingPrivateKey;
+
+    @UriParam
+    private AS2CompressionAlgorithm compressionAlgorithm;
 
     @UriParam
     private String dispositionNotificationTo;
@@ -388,6 +392,17 @@ public class AS2Configuration {
         this.signingPrivateKey = signingPrivateKey;
     }
 
+    public AS2CompressionAlgorithm getCompressionAlgorithm() {
+        return compressionAlgorithm;
+    }
+
+    /**
+     * The algorithm used to compress EDI message.
+     */
+    public void setCompressionAlgorithm(AS2CompressionAlgorithm compressionAlgorithm) {
+        this.compressionAlgorithm = compressionAlgorithm;
+    }
+
     public String getDispositionNotificationTo() {
         return dispositionNotificationTo;
     }
@@ -415,7 +430,7 @@ public class AS2Configuration {
         this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
     }
 
-    public AS2EncryptionAlgorithm getEncryptingingAlgorithm() {
+    public AS2EncryptionAlgorithm getEncryptingAlgorithm() {
         return encryptingAlgorithm;
     }
 
