@@ -569,7 +569,7 @@
     <protobuf-javanano-version>3.1.0</protobuf-javanano-version>
     <protobuf-maven-plugin-version>0.5.1</protobuf-maven-plugin-version>
     <protonpack-version>1.8</protonpack-version>
-    <pubnub-version>4.20.0</pubnub-version>
+    <pubnub-version>4.21.0</pubnub-version>
     <qpid-broker-version>7.0.6</qpid-broker-version>
     <qpid-proton-j-version>0.30.0</qpid-proton-j-version>
     <qpid-jms-client-version>0.38.0</qpid-jms-client-version>
