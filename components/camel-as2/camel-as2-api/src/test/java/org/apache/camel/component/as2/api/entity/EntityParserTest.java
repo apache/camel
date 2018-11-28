@@ -317,7 +317,7 @@ public class EntityParserTest {
         // Build Enveloped Entity
         //
         TextPlainEntity textEntity = new TextPlainEntity("This is a super secret messatge!", "US-ASCII", "7bit", false);
-        ApplicationPkcs7MimeEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEntity(textEntity, cmsEnvelopeDataGenerator, contentEncryptor, "binary", true);
+        ApplicationPkcs7MimeEnvelopedDataEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEnvelopedDataEntity(textEntity, cmsEnvelopeDataGenerator, contentEncryptor, "binary", true);
         
         MimeEntity decryptedMimeEntity = applicationPkcs7MimeEntity.getEncryptedEntity(encryptKP.getPrivate());
         assertEquals("Decrypted entity has unexpected content type", "text/plain; charset=US-ASCII", decryptedMimeEntity.getContentTypeValue());
