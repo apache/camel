@@ -19,6 +19,7 @@ package org.apache.camel.component.as2.springboot;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import javax.annotation.Generated;
+import org.apache.camel.component.as2.api.AS2CompressionAlgorithm;
 import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
@@ -166,6 +167,10 @@ public class AS2ComponentConfiguration
          * The key used to sign the EDI message.
          */
         private PrivateKey signingPrivateKey;
+        /**
+         * The algorithm used to compress EDI message.
+         */
+        private AS2CompressionAlgorithm compressionAlgorithm;
         /**
          * The value of the Disposition-Notification-To header. Assigning a
          * value to this parameter requests a message disposition notification
@@ -360,6 +365,15 @@ public class AS2ComponentConfiguration
 
         public void setSigningPrivateKey(PrivateKey signingPrivateKey) {
             this.signingPrivateKey = signingPrivateKey;
+        }
+
+        public AS2CompressionAlgorithm getCompressionAlgorithm() {
+            return compressionAlgorithm;
+        }
+
+        public void setCompressionAlgorithm(
+                AS2CompressionAlgorithm compressionAlgorithm) {
+            this.compressionAlgorithm = compressionAlgorithm;
         }
 
         public String getDispositionNotificationTo() {
