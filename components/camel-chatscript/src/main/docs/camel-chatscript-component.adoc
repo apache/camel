@@ -38,7 +38,7 @@ ChatScript:host:[port]/BotName[?options]
 ### Options
 
 // component options: START
-This component has one option resetchat which when set to true will issue :reset command to CS when the EndPoing is created.
+This component has one option resetchat which when set to true will issue :reset command to CS when the EndPoint is created.
 // component options: END
 
 // endpoint options: START
