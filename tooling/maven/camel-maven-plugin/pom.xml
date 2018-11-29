@@ -31,8 +31,24 @@
   <name>Camel :: Maven Plugins :: Camel Maven Run</name>
   <description>Maven plugin to run Camel standalone</description>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>tooling-parent</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+    </dependency>
     <!-- we extend the exec-maven-plugin for this camel maven plugin -->
     <dependency>
       <groupId>org.codehaus.mojo</groupId>
@@ -44,11 +60,17 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!-- As Camel requires Maven 3.x we can depend on an updated version of the plugin API -->
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
-      <version>3.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-compat</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
     </dependency>
 
     <dependency>
