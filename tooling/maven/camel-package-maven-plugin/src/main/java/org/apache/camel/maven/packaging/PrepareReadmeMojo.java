@@ -21,16 +21,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import static java.util.stream.Collectors.toSet;
-
-import edu.emory.mathcs.backport.java.util.Collections;
 
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
@@ -40,91 +37,82 @@ import org.apache.camel.maven.packaging.model.OtherModel;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.mvel2.templates.TemplateRuntime;
 
+import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
 /**
  * Prepares the readme.md files content up to date with all the artifacts that Apache Camel ships.
- *
- * @goal prepare-readme
  */
+@Mojo(name = "prepare-readme", threadSafe = true)
 public class PrepareReadmeMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The directory for EIPs (model) catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/models"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/models")
     protected File eipsDir;
 
     /**
      * The directory for components catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/components")
     protected File componentsDir;
 
     /**
      * The directory for data formats catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/dataformats"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/dataformats")
     protected File dataFormatsDir;
 
     /**
      * The directory for languages catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/languages"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/languages")
     protected File languagesDir;
 
     /**
      * The directory for others catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/others"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/others")
     protected File othersDir;
 
     /**
      * The directory for camel-core
-     *
-     * @parameter default-value="${project.directory}/../../../camel-core"
      */
+    @Parameter(defaultValue = "${project.directory}/../../../camel-core")
     protected File readmeCoreDir;
 
     /**
      * The directory for components
-     *
-     * @parameter default-value="${project.directory}/../../../components"
      */
+    @Parameter(defaultValue = "${project.directory}/../../../components")
     protected File readmeComponentsDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * Execute goal.
      *
      * @throws MojoExecutionException execution of the main class or one of the
-     *                                                        threads it generated failed.
+     *                                threads it generated failed.
      * @throws MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -169,8 +157,8 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // how many deprecated
             long deprecated = models.stream()
-                .filter(EipModel::isDeprecated)
-                .count();
+                    .filter(EipModel::isDeprecated)
+                    .count();
 
             // update the big readme file in the core dir
             File file = new File(readmeCoreDir, "readme-eip.adoc");
@@ -247,13 +235,13 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // how many different artifacts
             int count = components.stream()
-                .map(ComponentModel::getArtifactId)
-                .collect(toSet()).size();
+                    .map(ComponentModel::getArtifactId)
+                    .collect(toSet()).size();
 
             // how many deprecated
             long deprecated = components.stream()
-                .filter(c -> "true".equals(c.getDeprecated()))
-                .count();
+                    .filter(c -> "true".equals(c.getDeprecated()))
+                    .count();
 
             // update the big readme file in the core/components dir
             File file;
@@ -304,13 +292,13 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // how many different artifacts
             int count = others.stream()
-                .map(OtherModel::getArtifactId)
-                .collect(toSet()).size();
+                    .map(OtherModel::getArtifactId)
+                    .collect(toSet()).size();
 
             // how many deprecated
             long deprecated = others.stream()
-                .filter(o -> "true".equals(o.getDeprecated()))
-                .count();
+                    .filter(o -> "true".equals(o.getDeprecated()))
+                    .count();
 
             // update the big readme file in the components dir
             File file = new File(readmeComponentsDir, "readme.adoc");
@@ -362,13 +350,13 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // how many different artifacts
             int count = models.stream()
-                .map(DataFormatModel::getArtifactId)
-                .collect(toSet()).size();
+                    .map(DataFormatModel::getArtifactId)
+                    .collect(toSet()).size();
 
             // how many deprecated
             long deprecated = models.stream()
-                .filter(m -> "true".equals(m.getDeprecated()))
-                .count();
+                    .filter(m -> "true".equals(m.getDeprecated()))
+                    .count();
 
             // filter out camel-core
             List<DataFormatModel> dataFormats = new ArrayList<>();
@@ -447,13 +435,13 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // how many different artifacts
             int count = languages.stream()
-                .map(LanguageModel::getArtifactId)
-                .collect(toSet()).size();
+                    .map(LanguageModel::getArtifactId)
+                    .collect(toSet()).size();
 
             // how many deprecated
             long deprecated = languages.stream()
-                .filter(l -> "true".equals(l.getDeprecated()))
-                .count();
+                    .filter(l -> "true".equals(l.getDeprecated()))
+                    .count();
 
             // update the big readme file in the core/components dir
             File file;

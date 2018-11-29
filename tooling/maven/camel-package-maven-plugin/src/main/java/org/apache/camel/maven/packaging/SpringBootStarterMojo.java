@@ -69,6 +69,9 @@ import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.dependency.tree.DependencyNode;
 import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
@@ -77,9 +80,8 @@ import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNod
 
 /**
  * Generate Spring Boot starter for the component
- *
- * @goal prepare-spring-boot-starter
  */
+@Mojo(name = "prepare-spring-boot-starter", threadSafe = true)
 public class SpringBootStarterMojo extends AbstractMojo {
 
     private static final String[] IGNORE_MODULES = {
@@ -98,60 +100,35 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * Allows using the existing pom.xml file if present.
-     *
-     * @parameter property="reuseExistingPom" default-value="true"
      */
+    @Parameter(property = "reuseExistingPom", defaultValue = "true")
     protected boolean reuseExistingPom;
 
     /**
      * The project directory
-     *
-     * @parameter default-value="${basedir}"
      */
+    @Parameter(defaultValue = "${basedir}")
     protected File baseDir;
 
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
+    @Component
     protected ArtifactFactory artifactFactory;
 
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
+    @Component
     protected ArtifactMetadataSource artifactMetadataSource;
 
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
+    @Component
     protected ArtifactCollector artifactCollector;
 
-    /**
-     * @component
-     * @required
-     * @readonly
-     */
+    @Component
     protected DependencyTreeBuilder treeBuilder;
 
-    /**
-     * @parameter default-value="${localRepository}"
-     * @readonly
-     * @required
-     */
+    @Parameter(defaultValue = "${localRepository}", readonly = true, required = true)
     protected ArtifactRepository localRepository;
 
     @Override

@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -30,12 +31,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.packaging.model.ExampleModel;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.mvel2.templates.TemplateRuntime;
@@ -45,26 +48,20 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
 /**
  * Prepares the readme.md files content up to date with all the examples that Apache Camel ships.
- *
- * @goal prepare-example
  */
+@Mojo(name = "prepare-example", threadSafe = true)
 public class PrepareExampleMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**

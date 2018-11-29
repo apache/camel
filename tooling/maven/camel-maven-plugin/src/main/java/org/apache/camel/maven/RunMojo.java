@@ -37,6 +37,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
@@ -50,22 +51,25 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.descriptor.PluginDescriptor;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.codehaus.mojo.exec.ExecutableDependency;
 import org.codehaus.mojo.exec.Property;
+import org.eclipse.aether.RepositorySystem;
 
 /**
  * Runs a CamelContext using any Spring or Blueprint XML configuration files found in
  * <code>META-INF/spring/*.xml</code>, and <code>OSGI-INF/blueprint/*.xml</code>,
  * and <code>camel-*.xml</code> and starting up the context.
- *
- * @goal run
- * @requiresDependencyResolution compile+runtime
- * @execute phase="prepare-package"
  */
+@Mojo(name = "run", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class RunMojo extends AbstractExecMojo {
 
     // this code is based on a copy-and-paste of maven-exec-plugin
@@ -81,87 +85,63 @@ public class RunMojo extends AbstractExecMojo {
      * @required
      * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * Sets the time duration (seconds) that the application will run for before terminating.
      * A value <= 0 will run forever.
-     *
-     * @parameter property="camel.duration"
-     *            default-value="-1"
-     *
      */
+    @Parameter(property = "camel.duration", defaultValue = "-1")
     protected String duration;
 
     /**
      * Sets the idle time duration (seconds) duration that the application can be idle before terminating.
      * A value <= 0 will run forever.
-     *
-     * @parameter property="camel.durationIdle"
-     *            default-value="-1"
-     *
      */
+    @Parameter(property = "camel.durationIdle", defaultValue = "-1")
     protected String durationIdle;
 
     /**
      * Sets the duration of maximum number of messages that the application will process before terminating.
-     *
-     * @parameter property="camel.duration.maxMessages"
-     *            default-value="-1"
-     *
      */
+    @Parameter(property = "camel.duration.maxMessages", defaultValue = "-1")
     protected String durationMaxMessages;
 
     /**
      * Whether to log the classpath when starting
-     *
-     * @parameter property="camel.logClasspath"
-     *            default-value="false"
      */
+    @Parameter(property = "camel.logClasspath", defaultValue = "false")
     protected boolean logClasspath;
 
     /**
      * Whether to use Blueprint when running, instead of Spring
-     *
-     * @parameter property="camel.useBlueprint"
      */
+    @Parameter(property = "camel.useBlueprint")
     protected Boolean useBlueprint;
 
     /**
      * Whether to use CDI when running, instead of Spring
-     *
-     * @parameter property="camel.useCDI"
      */
+    @Parameter(property = "camel.useCDI")
     protected Boolean useCDI;
     
     protected String extendedPluginDependencyArtifactId;
 
-    /**
-     * @component
-     */
+    @Component
     private ArtifactResolver artifactResolver;
 
-    /**
-     * @component
-     */
+    @Component
     private ArtifactFactory artifactFactory;
 
-    /**
-     * @component
-     */
+    @Component
     private ArtifactMetadataSource metadataSource;
 
-    /**
-     * @parameter property="localRepository"
-     * @required
-     * @readonly
-     */
+    @Parameter(property = "localRepository")
     private ArtifactRepository localRepository;
 
-    /**
-     * @parameter property="project.remoteArtifactRepositories"
-     */
-    private List<?> remoteRepositories;
+    @Parameter(property = "project.remoteArtifactRepositories")
+    private List remoteRepositories;
 
     /**
      * @component
@@ -1059,12 +1039,12 @@ public class RunMojo extends AbstractExecMojo {
                                                                                      this.localRepository);
 
             // get all of the dependencies for the executable project
-            List<Artifact> dependencies = CastUtils.cast(executableProject.getDependencies());
+            List<Dependency> dependencies = executableProject.getDependencies();
 
             // make Artifacts of all the dependencies
             Set<Artifact> dependencyArtifacts 
-                = CastUtils.cast(MavenMetadataSource.createArtifacts(this.artifactFactory, dependencies,
-                                                                          null, null, null));
+                = MavenMetadataSource.createArtifacts(this.artifactFactory, dependencies,
+                                                                          null, null, null);
 
             // not forgetting the Artifact of the project itself
             dependencyArtifacts.add(executableProject.getArtifact());

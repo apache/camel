@@ -43,7 +43,6 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -62,90 +61,71 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Generate BOM by flattening the current project's dependency management section and applying exclusions.
- *
- * @goal generate
- * @phase validate
  */
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class BomGeneratorMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
     /**
      * The source pom template file.
-     *
-     * @parameter default-value="${basedir}/pom.xml"
      */
+    @Parameter(defaultValue = "${basedir}/pom.xml")
     protected File sourcePom;
 
     /**
      * The pom file.
-     *
-     * @parameter default-value="${project.build.directory}/${project.name}-pom.xml"
      */
+    @Parameter(defaultValue = "${project.build.directory}/${project.name}-pom.xml")
     protected File targetPom;
 
 
     /**
      * The user configuration
-     *
-     * @parameter
-     * @readonly
      */
+    @Parameter(readonly = true)
     protected DependencySet dependencies;
 
     /**
      * The conflict checks configured by the user
-     *
-     * @parameter
-     * @readonly
      */
+    @Parameter(readonly = true)
     protected ExternalBomConflictCheckSet checkConflicts;
 
     /**
      * Used to look up Artifacts in the remote repository.
-     *
-     * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
-     * @required
-     * @readonly
      */
+    @Component
     protected ArtifactFactory artifactFactory;
 
     /**
      * Used to look up Artifacts in the remote repository.
-     *
-     * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
-     * @required
-     * @readonly
      */
+    @Component
     protected ArtifactResolver artifactResolver;
 
     /**
      * List of Remote Repositories used by the resolver
-     *
-     * @parameter property="project.remoteArtifactRepositories"
-     * @readonly
-     * @required
      */
+    @Parameter(property = "project.remoteArtifactRepositories", readonly = true, required = true)
     protected List remoteRepositories;
 
     /**
      * Location of the local repository.
-     *
-     * @parameter property="localRepository"
-     * @readonly
-     * @required
      */
+    @Parameter(property = "localRepository", readonly = true, required = true)
     protected ArtifactRepository localRepository;
 
     @Override

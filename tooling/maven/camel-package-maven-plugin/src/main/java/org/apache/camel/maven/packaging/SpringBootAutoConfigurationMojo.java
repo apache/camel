@@ -59,6 +59,9 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
@@ -97,10 +100,8 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
 /**
  * Generate Spring Boot auto configuration files for Camel components and data formats.
- *
- * @goal prepare-spring-boot-auto-configuration
- * @requiresDependencyResolution compile+runtime
  */
+@Mojo(name = "prepare-spring-boot-auto-configuration", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     /**
@@ -149,32 +150,29 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     /**
      * The output directory for generated component schema file
      *
-     * @parameter default-value="${project.build.directory}/classes"
      */
-    protected File classesDir;
+     @Parameter(defaultValue="${project.build.directory}/classes")
+     protected File classesDir;
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The project build directory
      *
-     * @parameter default-value="${project.build.directory}"
      */
-    protected File buildDir;
+     @Parameter(defaultValue="${project.build.directory}")
+     protected File buildDir;
 
     /**
      * The base directory
      *
-     * @parameter default-value="${basedir}"
      */
-    protected File baseDir;
+     @Parameter(defaultValue="${basedir}")
+     protected File baseDir;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

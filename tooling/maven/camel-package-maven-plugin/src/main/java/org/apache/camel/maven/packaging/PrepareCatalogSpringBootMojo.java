@@ -33,6 +33,9 @@ import java.util.regex.Pattern;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -40,9 +43,8 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
 /**
  * Prepares the Spring Boot provider camel catalog to include component it supports
- *
- * @goal prepare-catalog-springboot
  */
+@Mojo(name = "prepare-catalog-springboot", threadSafe = true)
 public class PrepareCatalogSpringBootMojo extends AbstractMojo {
 
     public static final int BUFFER_SIZE = 128 * 1024;
@@ -51,68 +53,60 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The output directory for components catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/springboot/components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/springboot/components")
     protected File componentsOutDir;
 
     /**
      * The output directory for dataformats catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/springboot/dataformats"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/springboot/dataformats")
     protected File dataFormatsOutDir;
 
     /**
      * The output directory for languages catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/springboot/languages"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/springboot/languages")
     protected File languagesOutDir;
 
     /**
      * The output directory for others catalog
      *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/springboot/others"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/springboot/others")
     protected File othersOutDir;
 
     /**
      * The directory where all spring-boot starters are
      *
-     * @parameter default-value="${project.build.directory}/../../../platforms/spring-boot/components-starter"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../platforms/spring-boot/components-starter")
     protected File componentsStarterDir;
 
     /**
      * The components directory where all the Apache Camel components are
      *
-     * @parameter default-value="${project.build.directory}/../../../components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components")
     protected File componentsDir;
 
     /**
      * The camel-core directory where camel-core components are
      *
-     * @parameter default-value="${project.build.directory}/../../../camel-core"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../camel-core")
     protected File coreDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**

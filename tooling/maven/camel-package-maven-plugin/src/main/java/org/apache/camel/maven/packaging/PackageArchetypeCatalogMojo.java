@@ -28,6 +28,9 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -35,40 +38,32 @@ import static org.apache.camel.maven.packaging.StringHelper.between;
 
 /**
  * Creates the Maven catalog for the Camel archetypes
- *
- * @goal generate-and-attach-archetype-catalog
  */
+@Mojo(name = "generate-and-attach-archetype-catalog", threadSafe = true)
 public class PackageArchetypeCatalogMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The output directory for generated components file
-     *
-     * @parameter default-value="${project.build.directory}/classes/"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/")
     protected File outDir;
 
     /**
      * The build directory
-     *
-     * @parameter default-value="${project.build.directory}"
      */
+    @Parameter(defaultValue = "${project.build.directory}")
     protected File projectBuildDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**

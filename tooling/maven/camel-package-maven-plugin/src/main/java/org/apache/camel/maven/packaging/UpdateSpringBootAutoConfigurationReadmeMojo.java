@@ -31,6 +31,9 @@ import org.apache.camel.maven.packaging.model.SpringBootAutoConfigureOptionModel
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.json.simple.DeserializationException;
 import org.json.simple.JsonArray;
@@ -45,55 +48,47 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 /**
  * For all the Camel components that has Spring Boot starter JAR, their documentation
  * .adoc files in their component directory is updated to include spring boot auto configuration options.
- *
- * @goal update-spring-boot-auto-configuration-readme
  */
+@Mojo(name = "update-spring-boot-auto-configuration-readme", threadSafe = true)
 public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The project build directory
      *
-     * @parameter default-value="${project.build.directory}"
      */
+    @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
 
     /**
      * The documentation directory
      *
-     * @parameter default-value="${basedir}/../../../../components/"
      */
+    @Parameter(defaultValue = "${basedir}/../../../../components/")
     protected File componentsDir;
 
     /**
      * Whether to fail the build fast if any Warnings was detected.
-     *
-     * @parameter
      */
+    @Parameter
     protected Boolean failFast;
 
     /**
      * Whether to fail if an option has no documentation.
-     *
-     * @parameter
      */
+    @Parameter
     protected Boolean failOnMissingDescription;
 
     /**
      * build context to check changed files and mark them for refresh (used for
      * m2e compatibility)
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private BuildContext buildContext;
 
     @Override

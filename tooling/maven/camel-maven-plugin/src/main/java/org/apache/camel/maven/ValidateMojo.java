@@ -42,6 +42,8 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.jboss.forge.roaster.Roaster;
@@ -50,99 +52,84 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions.
- *
- * @goal validate
- * @threadSafe
  */
+@Mojo(name = "validate", threadSafe = true)
 public class ValidateMojo extends AbstractExecMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * Whether to fail if invalid Camel endpoints was found. By default the plugin logs the errors at WARN level
      *
-     * @parameter property="camel.failOnError"
-     *            default-value="false"
      */
+    @Parameter(property = "camel.failOnError", defaultValue = "false")
     private boolean failOnError;
 
     /**
      * Whether to log endpoint URIs which was un-parsable and therefore not possible to validate
      *
-     * @parameter property="camel.logUnparseable"
-     *            default-value="false"
      */
+    @Parameter(property = "camel.logUnparseable", defaultValue = "false")
     private boolean logUnparseable;
 
     /**
      * Whether to include Java files to be validated for invalid Camel endpoints
      *
-     * @parameter property="camel.includeJava"
-     *            default-value="true"
      */
+    @Parameter(property = "camel.includeJava", defaultValue = "true")
     private boolean includeJava;
 
     /**
      * Whether to include XML files to be validated for invalid Camel endpoints
      *
-     * @parameter property="camel.includeXml"
-     *            default-value="true"
      */
+    @Parameter(property = "camel.includeXml", defaultValue = "true")
     private boolean includeXml;
 
     /**
      * Whether to include test source code
      *
-     * @parameter property="camel.includeTest"
-     *            default-value="false"
      */
+    @Parameter(property = "camel.includeTest", defaultValue = "false")
     private boolean includeTest;
 
     /**
      * To filter the names of java and xml files to only include files matching any of the given list of patterns (wildcard and regular expression).
      * Multiple values can be separated by comma.
-     *
-     * @parameter property="camel.includes"
      */
+    @Parameter(property = "camel.includes")
     private String includes;
 
     /**
      * To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard and regular expression).
      * Multiple values can be separated by comma.
-     *
-     * @parameter property="camel.excludes"
      */
+    @Parameter(property = "camel.excludes")
     private String excludes;
 
     /**
      * Whether to ignore unknown components
      *
-     * @parameter property="camel.ignoreUnknownComponent"
-     *            default-value="true"
      */
+    @Parameter(property = "camel.ignoreUnknownComponent", defaultValue = "true")
     private boolean ignoreUnknownComponent;
 
     /**
      * Whether to ignore incapable of parsing the endpoint uri
      *
-     * @parameter property="camel.ignoreIncapable"
-     *            default-value="true"
      */
+    @Parameter(property = "camel.ignoreIncapable", defaultValue = "true")
     private boolean ignoreIncapable;
 
     /**
      * Whether to ignore deprecated options being used in the endpoint uri
      *
-     * @parameter property="camel.ignoreDeprecated"
-     *            default-value="true"
      */
+    @Parameter(property = "camel.ignoreDeprecated", defaultValue = "true")
     private boolean ignoreDeprecated;
 
     /**
@@ -150,43 +137,38 @@ public class ValidateMojo extends AbstractExecMojo {
      * but would fail on properties that are not part of the component but in the uri because of using lenient properties.
      * For example using the HTTP components to provide query parameters in the endpoint uri.
      *
-     * @parameter property="camel.ignoreLenientProperties"
-     *            default-value="true"
      */
+    @Parameter(property = "camel.ignoreLenientProperties", defaultValue = "true")
     private boolean ignoreLenientProperties;
 
     /**
      * Whether to show all endpoints and simple expressions (both invalid and valid).
      *
-     * @parameter property="camel.showAll"
-     *            default-value="false"
      */
+    @Parameter(property = "camel.showAll", defaultValue = "false")
     private boolean showAll;
 
     /**
      * Whether to allow downloading Camel catalog version from the internet. This is needed if the project
      * uses a different Camel version than this plugin is using by default.
      *
-     * @parameter property="camel.downloadVersion"
-     *            default-value="true"
      */
+    @Parameter(property = "camel.downloadVersion", defaultValue = "true")
     private boolean downloadVersion;
 
     /**
      * Whether to validate for duplicate route ids. Route ids should be unique and if there are duplicates
      * then Camel will fail to startup.
      *
-     * @parameter property="camel.duplicateRouteId"
-     *            default-value="true"
      */
+    @Parameter(property = "camel.duplicateRouteId", defaultValue = "true")
     private boolean duplicateRouteId;
 
     /**
      * Whether to validate direct/seda endpoints sending to non existing consumers.
      *
-     * @parameter property="camel.directOrSedaPairCheck"
-     *            default-value="true"
      */
+    @Parameter(property = "camel.directOrSedaPairCheck", defaultValue = "true")
     private boolean directOrSedaPairCheck;
 
     // CHECKSTYLE:OFF

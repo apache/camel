@@ -29,48 +29,42 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
- *
- * @goal generate-components-list
  */
+@Mojo(name = "generate-components-list", threadSafe = true)
 public class PackageComponentMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The output directory for generated components file
-     *
-     * @parameter default-value="${project.build.directory}/generated/camel/components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/components")
     protected File componentOutDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * build context to check changed files and mark them for refresh (used for
      * m2e compatibility)
-     * 
-     * @component
-     * @readonly
      */
+    @Component
     private BuildContext buildContext;
 
     /**
