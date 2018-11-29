@@ -42,47 +42,23 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * The body of the result {@link Message} of the invocation is returned via the <code>response</code> parameter. Access to the raw response 
  * {@link Message} is provided via the <code>message</code> parameter. This gives the user access to more advanced fields like message headers 
- * and attachments.  
- * <p/>
- * This {@link Command} can be constructed in 2 ways. When using the default constructor, the {link Command} will try to find 
- * the global KIE {@link CamelContext} from the <code>jBPM</code> {@link ServiceRegistry}. 
- * When the {@link RuntimeManager} is passed to the constructor, the {@link Command} will retrieve and use the {@link CamelContext} bound 
- * to the {@link RuntimeManage} from the {@link ServiceRegistry}
- * 
+ * and attachments.
  */
-public class CamelCommand implements Command,
+public abstract class AbstractCamelCommand implements Command,
                                           Cacheable {
 
-	private static final String GLOBAL_CAMEL_CONTEXT_SERVICE_KEY = "GlobalCamelService";
-	private static final String RUNTIME_CAMEL_CONTEXT_SERVICE_POSTFIX = "_CamelService";
-	
 	private static final String CAMEL_ENDPOINT_ID_PARAM = "camel-endpoint-id";
 	private static final String RESPONSE_PARAM = "response";
 	private static final String MESSAGE_PARAM = "out-headers";
-
 	
-    private static final Logger logger = LoggerFactory.getLogger(CamelCommand.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractCamelCommand.class);
 
-	private final ProducerTemplate producerTemplate;
-
-
-	public CamelCommand() {
-		CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
-		// TODO: Should we allow to set the maximumCacheSize on the producer?
-		this.producerTemplate = globalCamelContext.createProducerTemplate();
+	public AbstractCamelCommand() {
 	}
-	
-	public CamelCommand(RuntimeManager runtimeManager) {
-		String runtimeCamelContextKey = runtimeManager.getIdentifier() + RUNTIME_CAMEL_CONTEXT_SERVICE_POSTFIX;
-		CamelContext runtimeCamelContext = (CamelContext) ServiceRegistry.get().service(runtimeCamelContextKey);
-		// TODO: Should we allow to set the maximumCacheSize on the producer?
-		this.producerTemplate = runtimeCamelContext.createProducerTemplate();
-	}
-	
-	
 	
     @Override
     public ExecutionResults execute(CommandContext ctx) throws Exception {
+        
         
     	WorkItem workItem = (WorkItem) ctx.getData("workItem");
     	
@@ -91,6 +67,7 @@ public class CamelCommand implements Command,
 		// We only support direct. We don't need to support more, as direct simply gives us the entrypoint into the actual Camel Routes.
 		String camelUri = "direct://" + camelEndpointId;
 		
+		ProducerTemplate producerTemplate = getProducerTemplate(ctx);
 		Exchange inExchange = ExchangeBuilder.anExchange(producerTemplate.getCamelContext()).withBody(workItem).build();
 		Exchange outExchange = producerTemplate.send(camelUri, inExchange);
 		// producerTemplate.send does not throw exceptions, instead they are set on the returned Exchange.
@@ -106,16 +83,7 @@ public class CamelCommand implements Command,
     	
         return results;
     }
-
     
-	@Override
-	public void close() {
-		try {
-			this.producerTemplate.stop();
-		} catch (Exception e) {
-			logger.warn("Error encountered while closing the Camel Producer Template.", e);
-			// Not much we can do here, so swallowing exception.
-		}
-	}
+    protected abstract ProducerTemplate getProducerTemplate(CommandContext ctx);
 
 }
