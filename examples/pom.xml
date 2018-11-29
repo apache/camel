@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>2.23.1-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -152,7 +152,7 @@
     <!-- as having org.apache.camel as prefix is not needed and makes the name very long -->
     <camel.osgi.symbolic.name>${project.artifactId}</camel.osgi.symbolic.name>
     <skip.starting.camel.context>false</skip.starting.camel.context>
-    <camel.osgi.export.pkg/>
+    <camel.osgi.export.pkg />
   </properties>
 
   <build>
@@ -243,7 +243,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
