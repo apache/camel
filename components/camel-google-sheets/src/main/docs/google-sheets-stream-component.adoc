@@ -122,7 +122,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 16 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
@@ -141,6 +141,7 @@ The component supports 16 options, which are listed below.
 | *camel.component.google-sheets-stream.configuration.range* | Specifies the range of rows and columns in a sheet to get data from. |  | String
 | *camel.component.google-sheets-stream.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *camel.component.google-sheets-stream.configuration.scopes* | Specifies the level of permissions you want a sheets application to have to a user account. See https://developers.google.com/identity/protocols/googlescopes for more info. |  | List
+| *camel.component.google-sheets-stream.configuration.split-results* | True if value range result should be split into rows or columns to process each of them individually. When true each row or column is represented with a separate exchange in batch processing. Otherwise value range object is used as exchange junk size. | false | Boolean
 | *camel.component.google-sheets-stream.configuration.spreadsheet-id* | Specifies the spreadsheet identifier that is used to identify the target to obtain. |  | String
 | *camel.component.google-sheets-stream.configuration.value-render-option* | Determines how values should be rendered in the output. | FORMATTED_VALUE | String
 | *camel.component.google-sheets-stream.enabled* | Whether to enable auto configuration of the google-sheets-stream component. This is enabled by default. |  | Boolean
