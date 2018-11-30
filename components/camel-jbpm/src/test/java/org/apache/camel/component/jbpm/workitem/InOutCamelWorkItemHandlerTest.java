@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.apache.camel.impl.DefaultHeadersMapFactory;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.drools.core.process.instance.impl.WorkItemImpl;
@@ -80,8 +81,8 @@ public class InOutCamelWorkItemHandlerTest {
 
         TestWorkItemManager manager = new TestWorkItemManager();
         WorkItemImpl workItem = new WorkItemImpl();
-        workItem.setParameter("camel-endpoint-id", camelEndpointId);
-        workItem.setParameter("request", "someRequest");
+        workItem.setParameter("CamelEndpointId", camelEndpointId);
+        workItem.setParameter("Request", "someRequest");
         workItem.setDeploymentId("testDeploymentId");
         workItem.setProcessInstanceId(1L);
         workItem.setId(1L);
@@ -95,7 +96,7 @@ public class InOutCamelWorkItemHandlerTest {
         assertThat(manager.getResults().containsKey(workItem.getId()), is(true));
         Map<String, Object> results = manager.getResults(workItem.getId());
         assertThat(results.size(), equalTo(2));
-        assertThat(results.get("response"), equalTo(testReponse));
+        assertThat(results.get("Response"), equalTo(testReponse));
     }
 
     @Test
@@ -124,8 +125,8 @@ public class InOutCamelWorkItemHandlerTest {
         ServiceRegistry.get().register(runtimeManagerId + "_CamelService", camelContext);
 
         WorkItemImpl workItem = new WorkItemImpl();
-        workItem.setParameter("camel-endpoint-id", camelEndpointId);
-        workItem.setParameter("request", "someRequest");
+        workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
+        workItem.setParameter("Request", "someRequest");
         workItem.setDeploymentId("testDeploymentId");
         workItem.setProcessInstanceId(1L);
         workItem.setId(1L);
@@ -141,7 +142,7 @@ public class InOutCamelWorkItemHandlerTest {
         
         Map<String, Object> results = manager.getResults(workItem.getId());
         assertThat(results.size(), equalTo(2));
-        assertThat(results.get("response"), equalTo(testReponse));
+        assertThat(results.get(JBPMConstants.RESPONSE_WI_PARAM), equalTo(testReponse));
     }
    
 }

@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -85,7 +86,7 @@ public class CamelKieServerExtension implements KieServerExtension {
             }
         }
 
-        ServiceRegistry.get().register("GlobalCamelService", this.camel);
+        ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, this.camel);
     }
 
     @Override
@@ -117,7 +118,7 @@ public class CamelKieServerExtension implements KieServerExtension {
                 context.start();
                 camelContexts.put(id, context);
 
-                ServiceRegistry.get().register(id + "_CamelService", context);
+                ServiceRegistry.get().register(id + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX, context);
 
             }
         } catch (Exception e) {

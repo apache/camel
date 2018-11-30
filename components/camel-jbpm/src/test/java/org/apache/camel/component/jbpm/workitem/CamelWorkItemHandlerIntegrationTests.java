@@ -23,6 +23,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.drools.core.process.instance.impl.WorkItemImpl;
@@ -50,22 +51,22 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId(routeId)
-                        .setBody(simple("${body.getParameter(\"request\")}"))
+                        .setBody(simple("${body.getParameter(\"Request\")}"))
                         .to("mock:result");
             }
         };
         context.addRoutes(builder);
         try {
             // Register the Camel Context with the jBPM ServiceRegistry.
-            ServiceRegistry.get().register("GlobalCamelService", context);
+            ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, context);
 
             // Test
             String expectedBody = "helloRequest";
             resultEndpoint.expectedBodiesReceived(expectedBody);
 
             WorkItemImpl workItem = new WorkItemImpl();
-            workItem.setParameter("camel-endpoint-id", "start");
-            workItem.setParameter("request", expectedBody);
+            workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, "start");
+            workItem.setParameter("Request", expectedBody);
 
             TestWorkItemManager manager = new TestWorkItemManager();
 
@@ -90,7 +91,7 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId(routeId)
-                        .setBody(simple("${body.getParameter(\"request\")}"))
+                        .setBody(simple("${body.getParameter(\"Request\")}"))
                         .throwException(new IllegalArgumentException("Illegal contennt!"))
                         .to("mock:result");
             }
@@ -98,15 +99,15 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
         context.addRoutes(builder);
         try {
             // Register the Camel Context with the jBPM ServiceRegistry.
-            ServiceRegistry.get().register("GlobalCamelService", context);
+            ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, context);
 
             // Test
             String expectedBody = "helloRequest";
             resultEndpoint.expectedBodiesReceived(expectedBody);
 
             WorkItemImpl workItem = new WorkItemImpl();
-            workItem.setParameter("camel-endpoint-id", "start");
-            workItem.setParameter("request", expectedBody);
+            workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, "start");
+            workItem.setParameter("Request", expectedBody);
 
             TestWorkItemManager manager = new TestWorkItemManager();
 
@@ -131,22 +132,22 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId(routeId)
-                        .setBody(simple("${body.getParameter(\"request\")}"))
+                        .setBody(simple("${body.getParameter(\"Request\")}"))
                         .to("mock:result");
             }
         };
         context.addRoutes(builder);
         try {
             // Register the Camel Context with the jBPM ServiceRegistry.
-            ServiceRegistry.get().register("GlobalCamelService", context);
+            ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, context);
 
             // Test
             String expectedBody = "helloRequest";
             resultEndpoint.expectedBodiesReceived(expectedBody);
 
             WorkItemImpl workItem = new WorkItemImpl();
-            workItem.setParameter("camel-endpoint-id", "start");
-            workItem.setParameter("request", expectedBody);
+            workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, "start");
+            workItem.setParameter("Request", expectedBody);
 
             TestWorkItemManager manager = new TestWorkItemManager();
 
@@ -172,7 +173,7 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId(routeId)
-                        .setBody(simple("${body.getParameter(\"request\")}"))
+                        .setBody(simple("${body.getParameter(\"Request\")}"))
                         .throwException(new IllegalArgumentException("Illegal contennt!"))
                         .to("mock:result");
             }
@@ -180,15 +181,15 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
         context.addRoutes(builder);
         try {
             // Register the Camel Context with the jBPM ServiceRegistry.
-            ServiceRegistry.get().register("GlobalCamelService", context);
+            ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, context);
 
             // Test
             String expectedBody = "helloRequest";
             resultEndpoint.expectedBodiesReceived(expectedBody);
 
             WorkItemImpl workItem = new WorkItemImpl();
-            workItem.setParameter("camel-endpoint-id", "start");
-            workItem.setParameter("request", expectedBody);
+            workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, "start");
+            workItem.setParameter("Request", expectedBody);
 
             TestWorkItemManager manager = new TestWorkItemManager();
 

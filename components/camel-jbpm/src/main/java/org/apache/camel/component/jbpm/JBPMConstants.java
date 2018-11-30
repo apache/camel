@@ -43,4 +43,12 @@ public interface JBPMConstants {
     String JBPM_TASK_EVENT_LISTENER = "task";
     String JBPM_CASE_EVENT_LISTENER = "case";
     String JBPM_EVENT_EMITTER = "emitter";
+    
+    String GLOBAL_CAMEL_CONTEXT_SERVICE_KEY = "GlobalCamelService";
+    String DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX = "_CamelService";
+    String CAMEL_ENDPOINT_ID_WI_PARAM = "CamelEndpointId";
+    String RESPONSE_WI_PARAM = "Response";
+    String MESSAGE_WI_PARAM = "Message";
+
+    
 }

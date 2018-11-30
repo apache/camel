@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.services.api.service.ServiceRegistry;
 import org.junit.Test;
@@ -78,11 +79,11 @@ public class GlobalContextCamelCommandTest {
     	when(outMessage.getBody()).thenReturn(testReponse);
     	
     	//Register the RuntimeManager bound camelcontext.
-    	ServiceRegistry.get().register("GlobalCamelService", camelContext);
+    	ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, camelContext);
     	
         WorkItemImpl workItem = new WorkItemImpl();
-        workItem.setParameter("camel-endpoint-id", camelEndpointId);
-        workItem.setParameter("request", "someRequest");
+        workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
+        workItem.setParameter("Request", "someRequest");
         
         when(commandContext.getData(anyString())).thenReturn(workItem);
         
@@ -92,6 +93,6 @@ public class GlobalContextCamelCommandTest {
         
         assertNotNull(results);
         assertEquals(2, results.getData().size());
-        assertEquals(testReponse, results.getData().get("response"));
+        assertEquals(testReponse, results.getData().get(JBPMConstants.RESPONSE_WI_PARAM));
     }
 }

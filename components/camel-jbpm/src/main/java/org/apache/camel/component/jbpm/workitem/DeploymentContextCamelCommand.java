@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.jbpm.services.api.service.ServiceRegistry;
 import org.kie.api.executor.CommandContext;
 import org.slf4j.Logger;
@@ -31,8 +32,6 @@ import org.slf4j.LoggerFactory;
  * CamelCommand that uses the {@link CamelContext} registered on the {@link ServiceRegistry} for this specific deployment.
  */
 public class DeploymentContextCamelCommand extends AbstractCamelCommand {
-
-    private static final String RUNTIME_CAMEL_CONTEXT_SERVICE_POSTFIX = "_CamelService";
 
     private final Map<String, ProducerTemplate> templates = new ConcurrentHashMap<>();
 
@@ -48,7 +47,7 @@ public class DeploymentContextCamelCommand extends AbstractCamelCommand {
                 template = templates.get(deploymentId);
                 if (template == null) {
                     CamelContext deploymentCamelContext = (CamelContext) ServiceRegistry.get()
-                            .service(deploymentId + RUNTIME_CAMEL_CONTEXT_SERVICE_POSTFIX);
+                            .service(deploymentId + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX);
                     template = deploymentCamelContext.createProducerTemplate();
                     templates.put(deploymentId, template);
                 }
