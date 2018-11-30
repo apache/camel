@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jbpm.workitem;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.component.jbpm.JBPMConstants;
-import org.jbpm.services.api.service.ServiceRegistry;
 import org.kie.api.executor.Command;
 import org.kie.api.executor.CommandContext;
 import org.kie.api.executor.ExecutionResults;
-import org.kie.api.runtime.manager.RuntimeManager;
 import org.kie.api.runtime.process.WorkItem;
 import org.kie.internal.runtime.Cacheable;
 import org.slf4j.Logger;
@@ -45,41 +41,41 @@ import org.slf4j.LoggerFactory;
  * {@link Message} is provided via the <code>Message</code> parameter. This gives the user access to more advanced fields like message headers 
  * and attachments.
  */
-public abstract class AbstractCamelCommand implements Command,
-                                          Cacheable {
+public abstract class AbstractCamelCommand implements Command, Cacheable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCamelCommand.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractCamelCommand.class);
-
-	public AbstractCamelCommand() {
-	}
-	
+    public AbstractCamelCommand() {
+    }
+    
     @Override
     public ExecutionResults execute(CommandContext ctx) throws Exception {
         
         WorkItem workItem = (WorkItem) ctx.getData("workItem");
-    	
-    	String camelEndpointId = (String) workItem.getParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM);
-		
-		// We only support direct. We don't need to support more, as direct simply gives us the entrypoint into the actual Camel Routes.
-		String camelUri = "direct://" + camelEndpointId;
-		
-		ProducerTemplate producerTemplate = getProducerTemplate(ctx);
-		Exchange inExchange = ExchangeBuilder.anExchange(producerTemplate.getCamelContext()).withBody(workItem).build();
-		Exchange outExchange = producerTemplate.send(camelUri, inExchange);
-		// producerTemplate.send does not throw exceptions, instead they are set on the returned Exchange.
-		if (outExchange.getException() != null) {
-			throw outExchange.getException();
-		}
-		Message outMessage = outExchange.getOut();
-		
-		ExecutionResults results = new ExecutionResults();
-		Object response = outMessage.getBody();
-		results.setData(JBPMConstants.RESPONSE_WI_PARAM, response);
-		results.setData(JBPMConstants.MESSAGE_WI_PARAM, outMessage);
-    	
+      
+        String camelEndpointId = (String) workItem.getParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM);
+
+        // We only support direct. We don't need to support more, as direct simply gives us the entrypoint into the actual Camel Routes.
+        String camelUri = "direct://" + camelEndpointId;
+        
+        ProducerTemplate producerTemplate = getProducerTemplate(ctx);
+        Exchange inExchange = ExchangeBuilder.anExchange(producerTemplate.getCamelContext()).withBody(workItem).build();
+        Exchange outExchange = producerTemplate.send(camelUri, inExchange);
+
+        // producerTemplate.send does not throw exceptions, instead they are set on the returned Exchange.
+        if (outExchange.getException() != null) {
+            throw outExchange.getException();
+        }
+
+        Message outMessage = outExchange.getOut();
+
+        ExecutionResults results = new ExecutionResults();
+        Object response = outMessage.getBody();
+        results.setData(JBPMConstants.RESPONSE_WI_PARAM, response);
+        results.setData(JBPMConstants.MESSAGE_WI_PARAM, outMessage);
+
         return results;
     }
-    
+
     protected abstract ProducerTemplate getProducerTemplate(CommandContext ctx);
 
 }
