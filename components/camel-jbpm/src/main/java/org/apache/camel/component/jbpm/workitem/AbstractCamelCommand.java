@@ -56,8 +56,7 @@ public abstract class AbstractCamelCommand implements Command,
     @Override
     public ExecutionResults execute(CommandContext ctx) throws Exception {
         
-        
-    	WorkItem workItem = (WorkItem) ctx.getData("workItem");
+        WorkItem workItem = (WorkItem) ctx.getData("workItem");
     	
     	String camelEndpointId = (String) workItem.getParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM);
 		
