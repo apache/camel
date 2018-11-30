@@ -115,7 +115,8 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
             public void configure() {
                 from("google-sheets-stream://data?spreadsheetId=" + spreadsheetId + "&range=" + range + "&delay=2000&maxResults=5").routeId("google-stream-test").to("mock:result");
 
-                from("google-sheets-stream://data?spreadsheetId=" + spreadsheetId + "&range=" + range + "&delay=2000&maxResults=5&splitResults=true").routeId("google-stream-values-test").to("mock:rows");
+                from("google-sheets-stream://data?spreadsheetId=" + spreadsheetId 
+                    + "&range=" + range + "&delay=2000&maxResults=5&splitResults=true").routeId("google-stream-values-test").to("mock:rows");
             }
         };
     }
