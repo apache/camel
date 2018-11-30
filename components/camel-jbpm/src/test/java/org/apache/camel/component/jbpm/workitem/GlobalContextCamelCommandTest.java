@@ -14,12 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jbpm.workitem;
-
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -37,10 +32,14 @@ import org.kie.api.runtime.manager.RuntimeManager;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 @RunWith(MockitoJUnitRunner.class)
 public class GlobalContextCamelCommandTest {
 
-	@Mock
+    @Mock
     ProducerTemplate producerTemplate;
 
     @Mock
@@ -61,36 +60,34 @@ public class GlobalContextCamelCommandTest {
     @Test
     public void testExecuteGlobalCommand() throws Exception {
     
-    	String camelEndpointId = "testCamelRoute";
-    	String camelRouteUri = "direct://" + camelEndpointId;
-    	
-    	String testReponse = "testResponse";
-    	
-    	String runtimeManagerId = "testRuntimeManager";
-    	
-    	when(producerTemplate.send(eq(camelRouteUri), any(Exchange.class))).thenReturn(outExchange);
-    	
-    	
-    	when(producerTemplate.getCamelContext()).thenReturn(camelContext);
-    	
-    	when(camelContext.createProducerTemplate()).thenReturn(producerTemplate);
-    	
-    	when(outExchange.getOut()).thenReturn(outMessage);
-    	when(outMessage.getBody()).thenReturn(testReponse);
-    	
-    	//Register the RuntimeManager bound camelcontext.
-    	ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, camelContext);
-    	
+        String camelEndpointId = "testCamelRoute";
+        String camelRouteUri = "direct://" + camelEndpointId;
+
+        String testReponse = "testResponse";
+
+        String runtimeManagerId = "testRuntimeManager";
+
+        when(producerTemplate.send(eq(camelRouteUri), any(Exchange.class))).thenReturn(outExchange);
+
+        when(producerTemplate.getCamelContext()).thenReturn(camelContext);
+
+        when(camelContext.createProducerTemplate()).thenReturn(producerTemplate);
+
+        when(outExchange.getOut()).thenReturn(outMessage);
+        when(outMessage.getBody()).thenReturn(testReponse);
+
+        //Register the RuntimeManager bound camelContext.
+        ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, camelContext);
+
         WorkItemImpl workItem = new WorkItemImpl();
         workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
         workItem.setParameter("Request", "someRequest");
-        
+
         when(commandContext.getData(anyString())).thenReturn(workItem);
-        
+
         Command command = new GlobalContextCamelCommand();
         ExecutionResults results = command.execute(commandContext);
-        
-        
+
         assertNotNull(results);
         assertEquals(2, results.getData().size());
         assertEquals(testReponse, results.getData().get(JBPMConstants.RESPONSE_WI_PARAM));

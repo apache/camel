@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jbpm.workitem;
-
-import static org.hamcrest.CoreMatchers.*;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -32,6 +29,8 @@ import org.jbpm.process.workitem.core.TestWorkItemManager;
 import org.jbpm.services.api.service.ServiceRegistry;
 import org.junit.Test;
 import org.kie.api.runtime.process.WorkItemHandler;
+
+import static org.hamcrest.CoreMatchers.*;
 
 //http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html
 //http://camel.apache.org/async.html
