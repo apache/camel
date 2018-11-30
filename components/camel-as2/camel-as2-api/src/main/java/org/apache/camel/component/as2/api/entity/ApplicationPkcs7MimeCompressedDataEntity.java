@@ -64,7 +64,7 @@ public class ApplicationPkcs7MimeCompressedDataEntity extends MimeEntity {
     public ApplicationPkcs7MimeCompressedDataEntity(byte[] compressedData, String compressedContentTransferEncoding, boolean isMainBody) {
         this.compressedData = Args.notNull(compressedData, "encryptedData");
         
-        setContentType(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "compressed-datat"),
+        setContentType(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "compressed-data"),
                 new BasicNameValuePair("name", "smime.p7z")));
         setContentTransferEncoding(compressedContentTransferEncoding);
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
