@@ -78,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (31 parameters):
+==== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,6 +96,7 @@ with the following path and query parameters:
 | *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *scopes* (consumer) | Specifies the level of permissions you want a sheets application to have to a user account. See https://developers.google.com/identity/protocols/googlescopes for more info. |  | List
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *splitResults* (consumer) | True if value range result should be split into rows or columns to process each of them individually. When true each row or column is represented with a separate exchange in batch processing. Otherwise value range object is used as exchange junk size. | false | boolean
 | *spreadsheetId* (consumer) | Specifies the spreadsheet identifier that is used to identify the target to obtain. |  | String
 | *valueRenderOption* (consumer) | Determines how values should be rendered in the output. | FORMATTED_VALUE | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
