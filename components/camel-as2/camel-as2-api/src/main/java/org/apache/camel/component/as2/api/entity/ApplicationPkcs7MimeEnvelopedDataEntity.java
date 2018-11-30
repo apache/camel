@@ -64,7 +64,7 @@ public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
     public ApplicationPkcs7MimeEnvelopedDataEntity(byte[] encryptedData, String encryptedContentTransferEncoding, boolean isMainBody) {
         this.encryptedData = Args.notNull(encryptedData, "encryptedData");
         
-        setContentType(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "enveloped-datat"),
+        setContentType(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "enveloped-data"),
                 new BasicNameValuePair("name", "smime.p7m")));
         setContentTransferEncoding(encryptedContentTransferEncoding);
         addHeader(AS2Header.CONTENT_DISPOSITION, CONTENT_DISPOSITION);
