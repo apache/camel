@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jbpm.server;
 
 import java.io.InputStream;
@@ -44,7 +43,7 @@ public class CamelKieServerExtension implements KieServerExtension {
 
     private static final Boolean DISABLED = Boolean.parseBoolean(System.getProperty("org.camel.server.ext.disabled", "false"));
 
-    protected DefaultCamelContext camel;
+    protected DefaultCamelContext camelContext;
 
     protected boolean managedCamel;
 
@@ -54,14 +53,14 @@ public class CamelKieServerExtension implements KieServerExtension {
         this.managedCamel = true;
     }
 
-    public CamelKieServerExtension(DefaultCamelContext camel) {
-        this.camel = camel;
+    public CamelKieServerExtension(DefaultCamelContext camelContext) {
+        this.camelContext = camelContext;
         this.managedCamel = false;
     }
 
     @Override
     public boolean isInitialized() {
-        return camel != null;
+        return camelContext != null;
     }
 
     @Override
@@ -71,31 +70,31 @@ public class CamelKieServerExtension implements KieServerExtension {
 
     @Override
     public void init(KieServerImpl kieServer, KieServerRegistry registry) {
-        if (this.managedCamel && this.camel == null) {
-            this.camel = new DefaultCamelContext();
-            this.camel.setName("KIE Server Camel context");
+        if (this.managedCamel && this.camelContext == null) {
+            this.camelContext = new DefaultCamelContext();
+            this.camelContext.setName("KIE Server Camel context");
 
             try (InputStream is = this.getClass().getResourceAsStream("/global-camel-routes.xml")) {
                 if (is != null) {
 
-                    RoutesDefinition routes = camel.loadRoutesDefinition(is);
-                    camel.addRouteDefinitions(routes.getRoutes());
+                    RoutesDefinition routes = camelContext.loadRoutesDefinition(is);
+                    camelContext.addRouteDefinitions(routes.getRoutes());
                 }
             } catch (Exception e) {
                 LOGGER.error("Error while adding Camel context for KIE Server", e);
             }
         }
 
-        ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, this.camel);
+        ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, this.camelContext);
     }
 
     @Override
     public void destroy(KieServerImpl kieServer, KieServerRegistry registry) {
         ServiceRegistry.get().remove("GlobalCamelService");
 
-        if (this.managedCamel && this.camel != null) {
+        if (this.managedCamel && this.camelContext != null) {
             try {
-                this.camel.stop();
+                this.camelContext.stop();
             } catch (Exception e) {
                 LOGGER.error("Failed at stopping KIE Server extension {}", EXTENSION_NAME);
             }
@@ -184,9 +183,9 @@ public class CamelKieServerExtension implements KieServerExtension {
 
     @Override
     public void serverStarted() {
-        if (this.managedCamel && this.camel != null && !this.camel.isStarted()) {
+        if (this.managedCamel && this.camelContext != null && !this.camelContext.isStarted()) {
             try {
-                this.camel.start();
+                this.camelContext.start();
             } catch (Exception e) {
                 LOGGER.error("Failed at start Camel context", e);
             }

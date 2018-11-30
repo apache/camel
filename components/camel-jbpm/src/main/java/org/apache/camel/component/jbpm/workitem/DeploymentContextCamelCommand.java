@@ -32,10 +32,9 @@ import org.slf4j.LoggerFactory;
  * CamelCommand that uses the {@link CamelContext} registered on the {@link ServiceRegistry} for this specific deployment.
  */
 public class DeploymentContextCamelCommand extends AbstractCamelCommand {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DeploymentContextCamelCommand.class);
 
     private final Map<String, ProducerTemplate> templates = new ConcurrentHashMap<>();
-
-    private static final Logger logger = LoggerFactory.getLogger(DeploymentContextCamelCommand.class);
 
     @Override
     protected ProducerTemplate getProducerTemplate(CommandContext ctx) {
@@ -62,7 +61,7 @@ public class DeploymentContextCamelCommand extends AbstractCamelCommand {
             try {
                 nextTemplate.stop();
             } catch (Exception e) {
-                logger.warn("Error encountered while closing the Camel Producer Template.", e);
+                LOGGER.warn("Error encountered while closing the Camel Producer Template.", e);
                 // Not much we can do here, so swallowing exception.
             }
         }
