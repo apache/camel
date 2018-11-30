@@ -69,7 +69,6 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
 
     public AbstractCamelWorkItemHandler(String camelEndointId) {
         CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
-        // TODO: Should we allow to set the maximumCacheSize on the producer?
         this.producerTemplate = globalCamelContext.createProducerTemplate();
         this.camelEndpointId = camelEndointId;
     }
@@ -85,7 +84,6 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
     public AbstractCamelWorkItemHandler(RuntimeManager runtimeManager, String camelEndpointId) {
         String runtimeCamelContextKey = runtimeManager.getIdentifier() + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX;
         CamelContext runtimeCamelContext = (CamelContext) ServiceRegistry.get().service(runtimeCamelContextKey);
-        // TODO: Should we allow to set the maximumCacheSize on the producer?
         this.producerTemplate = runtimeCamelContext.createProducerTemplate();
         this.camelEndpointId = camelEndpointId;
     }
