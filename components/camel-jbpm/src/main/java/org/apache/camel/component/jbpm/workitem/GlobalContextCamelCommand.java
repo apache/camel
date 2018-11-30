@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.jbpm.workitem;
 
 import org.apache.camel.CamelContext;
@@ -29,10 +28,9 @@ import org.slf4j.LoggerFactory;
  * CamelCommand that uses the global {@link CamelContext} registered on the {@link ServiceRegistry}.
  */
 public class GlobalContextCamelCommand extends AbstractCamelCommand {
-
-    private final ProducerTemplate globalContextProducerTemplate;
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalContextCamelCommand.class);
     
-    private static final Logger logger = LoggerFactory.getLogger(GlobalContextCamelCommand.class);
+    private final ProducerTemplate globalContextProducerTemplate;
     
     public GlobalContextCamelCommand() {
         CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
@@ -49,7 +47,7 @@ public class GlobalContextCamelCommand extends AbstractCamelCommand {
         try {
             this.globalContextProducerTemplate.stop();
         } catch (Exception e) {
-            logger.warn("Error encountered while closing the Camel Producer Template.", e);
+            LOGGER.warn("Error encountered while closing the Camel Producer Template.", e);
             // Not much we can do here, so swallowing exception.
         }
     }
