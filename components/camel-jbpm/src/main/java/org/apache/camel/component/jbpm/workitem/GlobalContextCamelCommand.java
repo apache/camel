@@ -19,6 +19,7 @@ package org.apache.camel.component.jbpm.workitem;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.jbpm.services.api.service.ServiceRegistry;
 import org.kie.api.executor.CommandContext;
 import org.slf4j.Logger;
@@ -29,14 +30,12 @@ import org.slf4j.LoggerFactory;
  */
 public class GlobalContextCamelCommand extends AbstractCamelCommand {
 
-    private static final String GLOBAL_CAMEL_CONTEXT_SERVICE_KEY = "GlobalCamelService";
-    
     private final ProducerTemplate globalContextProducerTemplate;
     
     private static final Logger logger = LoggerFactory.getLogger(GlobalContextCamelCommand.class);
     
     public GlobalContextCamelCommand() {
-        CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
+        CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         // TODO: Should we allow to set the maximumCacheSize on the producer?
         this.globalContextProducerTemplate = globalCamelContext.createProducerTemplate();
     }
