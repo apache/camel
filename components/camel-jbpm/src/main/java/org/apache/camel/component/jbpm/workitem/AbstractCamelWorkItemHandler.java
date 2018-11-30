@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.jbpm.process.workitem.core.AbstractLogOrThrowWorkItemHandler;
 import org.jbpm.services.api.service.ServiceRegistry;
 import org.kie.api.runtime.manager.RuntimeManager;
@@ -35,28 +36,23 @@ import org.slf4j.LoggerFactory;
  * Camel jBPM {@link WorkItemHandler} which allows to call Camel routes with a <code>direct</code> endpoint.
  * <p/>
  * The handler passes the {@WorkItem} to the route that has a consumer on the endpoint-id that can be passed with the
- * <code>camel-endpoint-id</code>{@link WorkItem} parameter. E.g. when a the value "myCamelEndpoint" is passed to the {link WorkItem} via
- * the <code>camel-endpoint-id</code> parameter, this command will send the {@link WorkItem} to the Camel URI
+ * <code>CamelEndpointId</code>{@link WorkItem} parameter. E.g. when a the value "myCamelEndpoint" is passed to the {link WorkItem} via
+ * the <code>CamelEndpointId</code> parameter, this command will send the {@link WorkItem} to the Camel URI
  * <code>direct://myCamelEndpoint</code>.
  * <p/>
- * The body of the result {@link Message} of the invocation is returned via the <code>response</code> parameter. Access to the raw response
- * {@link Message} is provided via the <code>message</code> parameter. This gives the user access to more advanced fields like message
+ * The body of the result {@link Message} of the invocation is returned via the <code>Response</code> parameter. Access to the raw response
+ * {@link Message} is provided via the <code>Message</code> parameter. This gives the user access to more advanced fields like message
  * headers and attachments.
  * <p/>
  * This handler can be constructed in multiple ways. When you don't pass a {@link RuntimeManager} to the constructor, the handler will try
  * to find the global KIE {@link CamelContext} from the <code>jBPM</code> {@link ServiceRegistry}. When the {@link RuntimeManager} is passed
  * to the constructor, the handler will retrieve and use the {@link CamelContext} bound to the {@link RuntimeManage} from the
- * {@link ServiceRegistry}. When a <code>camel-endpoint-id</code> is passed to the constructor, the handler will send all requests to the
- * Camel route that is consuming from that endpoint, unless the endpoint is overridden by passing a the <code>camel-endpoint-id</code> in
+ * {@link ServiceRegistry}. When a <code>CamelEndpointId</code> is passed to the constructor, the handler will send all requests to the
+ * Camel route that is consuming from that endpoint, unless the endpoint is overridden by passing a the <code>CamelEndpointId</code> in
  * the {@link WorkItem} parameters.
  * 
  */
 public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWorkItemHandler implements Cacheable {
-
-    private static final String GLOBAL_CAMEL_CONTEXT_SERVICE_KEY = "GlobalCamelService";
-    private static final String RUNTIME_CAMEL_CONTEXT_SERVICE_POSTFIX = "_CamelService";
-
-    private static final String CAMEL_ENDPOINT_ID_PARAM = "camel-endpoint-id";
 
     private static Logger logger = LoggerFactory.getLogger(AbstractCamelWorkItemHandler.class);
 
@@ -72,7 +68,7 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
     }
 
     public AbstractCamelWorkItemHandler(String camelEndointId) {
-        CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
+        CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         // TODO: Should we allow to set the maximumCacheSize on the producer?
         this.producerTemplate = globalCamelContext.createProducerTemplate();
         this.camelEndpointId = camelEndointId;
@@ -87,7 +83,7 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
     }
 
     public AbstractCamelWorkItemHandler(RuntimeManager runtimeManager, String camelEndpointId) {
-        String runtimeCamelContextKey = runtimeManager.getIdentifier() + RUNTIME_CAMEL_CONTEXT_SERVICE_POSTFIX;
+        String runtimeCamelContextKey = runtimeManager.getIdentifier() + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX;
         CamelContext runtimeCamelContext = (CamelContext) ServiceRegistry.get().service(runtimeCamelContextKey);
         // TODO: Should we allow to set the maximumCacheSize on the producer?
         this.producerTemplate = runtimeCamelContext.createProducerTemplate();
@@ -115,13 +111,15 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
         }
     }
 
-    private String getCamelEndpointId(WorkItem workItem) {
-        String workItemCamelEndpointId = (String) workItem.getParameter(CAMEL_ENDPOINT_ID_PARAM);
+    protected String getCamelEndpointId(WorkItem workItem) {
+        String workItemCamelEndpointId = (String) workItem.getParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM);
 
         if (camelEndpointId != null && !camelEndpointId.isEmpty()) {
             if (workItemCamelEndpointId != null && !workItemCamelEndpointId.isEmpty()) {
                 logger.debug(
-                        "The Camel Endpoint ID has been set on both the WorkItemHanlder and WorkItem. The camel-endpoint-id configured on the WorkItem overrides the global configuation.");
+                        "The Camel Endpoint ID has been set on both the WorkItemHanlder and WorkItem. The '"
+                                + JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM
+                                + "' configured on the WorkItem overrides the global configuation.");
             } else {
                 workItemCamelEndpointId = camelEndpointId;
             }
@@ -129,8 +127,9 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
 
         if (workItemCamelEndpointId == null || workItemCamelEndpointId.isEmpty()) {
             throw new IllegalArgumentException(
-                    "No Camel Endpoint ID specified. Please configure the 'camel-endpoint-id' in either the constructor of this WorkItemHandler, or pass it via the "
-                            + CAMEL_ENDPOINT_ID_PARAM + "' WorkItem parameter.");
+                    "No Camel Endpoint ID specified. Please configure the '" + JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM
+                            + "' in either the constructor of this WorkItemHandler, or pass it via the "
+                            + JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM + "' WorkItem parameter.");
         }
         return workItemCamelEndpointId;
     }

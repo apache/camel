@@ -22,6 +22,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.process.workitem.core.util.Wid;
 import org.jbpm.process.workitem.core.util.WidMavenDepends;
@@ -56,11 +57,11 @@ import org.kie.api.runtime.process.WorkItemManager;
         defaultHandler = "mvel: new org.apache.camel.component.jbpm.workitem.InOnlyCamelWorkitemHandler()",
         documentation = "${artifactId}/index.html",
         parameters = {
-                @WidParameter(name = "camel-endpoint-id")
+                @WidParameter(name = JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM)
         },
         results = {
-                @WidResult(name = "response"),
-                @WidResult(name = "message") },
+                @WidResult(name = JBPMConstants.RESPONSE_WI_PARAM),
+                @WidResult(name = JBPMConstants.MESSAGE_WI_PARAM) },
         mavenDepends = {
                 @WidMavenDepends(group = "${groupId}",
                         artifact = "${artifactId}",

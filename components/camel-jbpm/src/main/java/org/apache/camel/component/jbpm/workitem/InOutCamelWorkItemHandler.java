@@ -25,6 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.drools.core.process.instance.impl.WorkItemImpl;
 import org.jbpm.process.workitem.core.util.Wid;
 import org.jbpm.process.workitem.core.util.WidMavenDepends;
@@ -58,11 +59,11 @@ import org.kie.api.runtime.process.WorkItemManager;
         defaultHandler = "mvel: new org.apache.camel.component.jbpm.workitem.InOutCamelWorkitemHandler()",
         documentation = "${artifactId}/index.html",
         parameters = {
-                @WidParameter(name = "camel-endpoint-id")
+                @WidParameter(name = JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM)
         },
         results = {
-                @WidResult(name = "response"),
-                @WidResult(name = "message") },
+                @WidResult(name = JBPMConstants.RESPONSE_WI_PARAM),
+                @WidResult(name = JBPMConstants.MESSAGE_WI_PARAM) },
         mavenDepends = {
                 @WidMavenDepends(group = "${groupId}",
                         artifact = "${artifactId}",
@@ -73,9 +74,6 @@ import org.kie.api.runtime.process.WorkItemManager;
                 keywords = "apache,camel,payload,route,connector",
                 action = @WidAction(title = "Send payload to a Camel endpoint")))
 public class InOutCamelWorkItemHandler extends AbstractCamelWorkItemHandler {
-
-    private static final String RESPONSE_PARAM = "response";
-    private static final String MESSAGE_PARAM = "message";
 
     public InOutCamelWorkItemHandler() {
         super();
@@ -99,8 +97,8 @@ public class InOutCamelWorkItemHandler extends AbstractCamelWorkItemHandler {
 
         Map<String, Object> result = new HashMap<>();
         Object response = outMessage.getBody();
-        result.put(RESPONSE_PARAM, response);
-        result.put(MESSAGE_PARAM, outMessage);
+        result.put(JBPMConstants.RESPONSE_WI_PARAM, response);
+        result.put(JBPMConstants.MESSAGE_WI_PARAM, outMessage);
 
         manager.completeWorkItem(workItem.getId(), result);
     }
