@@ -800,6 +800,20 @@ public final class EntityParser {
                 entity = parseApplicationPkcs7SignatureEntityBody(inbuffer, boundary, entityContentType,
                         contentTransferEncoding);
                 break;
+            case AS2MimeType.APPLICATION_PKCS7_MIME:
+                switch(entityContentType.getParameter("smime-type")) {
+                case "compressed-data":
+                    entity = parseApplicationPkcs7MimeCompressedDataEntityBody(inbuffer, boundary, entityContentType,
+                            contentTransferEncoding);
+                    break;
+                case "enveloped-data":
+                    entity = parseApplicationPkcs7MimeEnvelopedDataEntityBody(inbuffer, boundary, entityContentType,
+                            contentTransferEncoding);
+                    break;
+                default:
+                    break;
+                }
+                break;
             default:
                 break;
             }
@@ -882,7 +896,7 @@ public final class EntityParser {
         }
     }
 
-    public static ApplicationPkcs7MimeEnvelopedDataEntity parseApplicationPkcs7MimeEntityBody(AS2SessionInputBuffer inbuffer,
+    public static ApplicationPkcs7MimeEnvelopedDataEntity parseApplicationPkcs7MimeEnvelopedDataEntityBody(AS2SessionInputBuffer inbuffer,
                                                                                       String boundary,
                                                                                       ContentType contentType,
                                                                                       String contentTransferEncoding)
@@ -905,6 +919,40 @@ public final class EntityParser {
 
             ApplicationPkcs7MimeEnvelopedDataEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEnvelopedDataEntity(
                     encryptedContent, contentTransferEncoding, false);
+            return applicationPkcs7MimeEntity;
+        } catch (Exception e) {
+            ParseException parseException = new ParseException("failed to parse PKCS7 Mime entity");
+            parseException.initCause(e);
+            throw parseException;
+        } finally {
+            inbuffer.setCharsetDecoder(previousDecoder);
+        }
+    }
+
+    public static ApplicationPkcs7MimeCompressedDataEntity parseApplicationPkcs7MimeCompressedDataEntityBody(AS2SessionInputBuffer inbuffer,
+                                                                                                           String boundary,
+                                                                                                           ContentType contentType,
+                                                                                                           String contentTransferEncoding)
+            throws ParseException {
+
+        CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
+
+        try {
+            Charset charset = contentType.getCharset();
+            if (charset == null) {
+                charset = Charset.forName(AS2Charset.US_ASCII);
+            }
+            CharsetDecoder charsetDecoder = charset.newDecoder();
+
+            inbuffer.setCharsetDecoder(charsetDecoder);
+
+            String pkcs7CompressedBodyContent = parseBodyPartText(inbuffer, boundary);
+
+            byte[] compressedContent = EntityUtils.decode(pkcs7CompressedBodyContent.getBytes(charset),
+                    contentTransferEncoding);
+
+            ApplicationPkcs7MimeCompressedDataEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeCompressedDataEntity(
+                    compressedContent, contentTransferEncoding, false);
             return applicationPkcs7MimeEntity;
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse PKCS7 Mime entity");
