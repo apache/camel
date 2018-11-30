@@ -20,11 +20,13 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.google.api.services.sheets.v4.Sheets;
 import com.google.api.services.sheets.v4.model.BatchGetValuesResponse;
 import com.google.api.services.sheets.v4.model.Spreadsheet;
+import com.google.api.services.sheets.v4.model.ValueRange;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -70,8 +72,8 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
 
             if (getConfiguration().getRange().contains(",")) {
                 request.setRanges(Arrays.stream(getConfiguration().getRange().split(","))
-                                        .map(String::trim)
-                                        .collect(Collectors.toList()));
+                        .map(String::trim)
+                        .collect(Collectors.toList()));
             } else {
                 request.setRanges(Collections.singletonList(getConfiguration().getRange()));
             }
@@ -79,11 +81,24 @@ public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
             BatchGetValuesResponse response = request.execute();
 
             if (response.getValueRanges() != null) {
-                response.getValueRanges()
-                        .stream()
-                        .limit(getConfiguration().getMaxResults())
-                        .map(valueRange -> getEndpoint().createExchange(valueRange))
-                        .forEach(answer::add);
+                if (getConfiguration().isSplitResults()) {
+                    for (ValueRange valueRange : response.getValueRanges()) {
+                        AtomicInteger rangeIndex = new AtomicInteger(1);
+                        AtomicInteger valueIndex = new AtomicInteger();
+                        valueRange.getValues().stream()
+                            .limit(getConfiguration().getMaxResults())
+                            .map(values -> getEndpoint().createExchange(rangeIndex.get(), valueIndex.incrementAndGet(), valueRange.getRange(), valueRange.getMajorDimension(), values))
+                            .forEach(answer::add);
+                        rangeIndex.incrementAndGet();
+                    }
+                } else {
+                    AtomicInteger rangeIndex = new AtomicInteger();
+                    response.getValueRanges()
+                            .stream()
+                            .limit(getConfiguration().getMaxResults())
+                            .map(valueRange -> getEndpoint().createExchange(rangeIndex.incrementAndGet(), valueRange))
+                            .forEach(answer::add);
+                }
             }
         } else {
             Sheets.Spreadsheets.Get request = getClient().spreadsheets().get(getConfiguration().getSpreadsheetId());

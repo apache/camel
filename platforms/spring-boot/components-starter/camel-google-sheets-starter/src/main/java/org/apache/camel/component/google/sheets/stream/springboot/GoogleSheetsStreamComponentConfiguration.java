@@ -144,6 +144,13 @@ public class GoogleSheetsStreamComponentConfiguration
          * True if grid data should be returned.
          */
         private Boolean includeGridData = false;
+        /**
+         * True if value range result should be split into rows or columns to
+         * process each of them individually. When true each row or column is
+         * represented with a separate exchange in batch processing. Otherwise
+         * value range object is used as exchange junk size.
+         */
+        private Boolean splitResults = false;
 
         public String getClientId() {
             return clientId;
@@ -247,6 +254,14 @@ public class GoogleSheetsStreamComponentConfiguration
 
         public void setIncludeGridData(Boolean includeGridData) {
             this.includeGridData = includeGridData;
+        }
+
+        public Boolean getSplitResults() {
+            return splitResults;
+        }
+
+        public void setSplitResults(Boolean splitResults) {
+            this.splitResults = splitResults;
         }
     }
 }

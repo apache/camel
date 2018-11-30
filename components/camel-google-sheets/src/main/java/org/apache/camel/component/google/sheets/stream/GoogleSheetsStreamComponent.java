@@ -52,9 +52,11 @@ public class GoogleSheetsStreamComponent extends DefaultComponent {
 
     public Sheets getClient(GoogleSheetsStreamConfiguration endpointConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(endpointConfiguration.getClientId(), endpointConfiguration.getClientSecret(),
-                                                    endpointConfiguration.getApplicationName(), endpointConfiguration.getRefreshToken(),
-                                                    endpointConfiguration.getAccessToken());
+            client = getClientFactory().makeClient(endpointConfiguration.getClientId(),
+                                                endpointConfiguration.getClientSecret(),
+                                                endpointConfiguration.getApplicationName(),
+                                                endpointConfiguration.getRefreshToken(),
+                                                endpointConfiguration.getAccessToken());
         }
         return client;
     }
