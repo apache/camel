@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.ExchangeBuilder;
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.jbpm.services.api.service.ServiceRegistry;
 import org.kie.api.executor.Command;
 import org.kie.api.executor.CommandContext;
@@ -40,17 +41,13 @@ import org.slf4j.LoggerFactory;
  * {link WorkItem} via the <code>camel-endpoint-id</code> parameter, this {@link Command} will send the {@link WorkItem} to 
  * the Camel URI <code>direct://myCamelEndpoint</code>.  
  * <p/>
- * The body of the result {@link Message} of the invocation is returned via the <code>response</code> parameter. Access to the raw response 
- * {@link Message} is provided via the <code>message</code> parameter. This gives the user access to more advanced fields like message headers 
+ * The body of the result {@link Message} of the invocation is returned via the <code>Response</code> parameter. Access to the raw response 
+ * {@link Message} is provided via the <code>Message</code> parameter. This gives the user access to more advanced fields like message headers 
  * and attachments.
  */
 public abstract class AbstractCamelCommand implements Command,
                                           Cacheable {
 
-	private static final String CAMEL_ENDPOINT_ID_PARAM = "camel-endpoint-id";
-	private static final String RESPONSE_PARAM = "response";
-	private static final String MESSAGE_PARAM = "out-headers";
-	
     private static final Logger logger = LoggerFactory.getLogger(AbstractCamelCommand.class);
 
 	public AbstractCamelCommand() {
@@ -62,7 +59,7 @@ public abstract class AbstractCamelCommand implements Command,
         
     	WorkItem workItem = (WorkItem) ctx.getData("workItem");
     	
-    	String camelEndpointId = (String) workItem.getParameter(CAMEL_ENDPOINT_ID_PARAM);
+    	String camelEndpointId = (String) workItem.getParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM);
 		
 		// We only support direct. We don't need to support more, as direct simply gives us the entrypoint into the actual Camel Routes.
 		String camelUri = "direct://" + camelEndpointId;
@@ -78,8 +75,8 @@ public abstract class AbstractCamelCommand implements Command,
 		
 		ExecutionResults results = new ExecutionResults();
 		Object response = outMessage.getBody();
-		results.setData(RESPONSE_PARAM, response);
-		results.setData(MESSAGE_PARAM, outMessage);
+		results.setData(JBPMConstants.RESPONSE_WI_PARAM, response);
+		results.setData(JBPMConstants.MESSAGE_WI_PARAM, outMessage);
     	
         return results;
     }

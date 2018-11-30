@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.jbpm.JBPMConstants;
 import org.apache.camel.impl.DefaultHeadersMapFactory;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.drools.core.process.instance.impl.WorkItemImpl;
@@ -79,8 +80,8 @@ public class InOnlyCamelWorkItemHandlerTest {
         ServiceRegistry.get().register(runtimeManagerId + "_CamelService", camelContext);
 
         WorkItemImpl workItem = new WorkItemImpl();
-        workItem.setParameter("camel-endpoint-id", camelEndpointId);
-        workItem.setParameter("request", "someRequest");
+        workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
+        workItem.setParameter("Request", "someRequest");
         workItem.setDeploymentId("testDeploymentId");
         workItem.setProcessInstanceId(1L);
         workItem.setId(1L);
