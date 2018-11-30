@@ -21,15 +21,24 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +46,25 @@ import org.slf4j.LoggerFactory;
 /**
  * The OsgiServiceRegistry support to get the service object from the bundle context
  */
-public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry {
-    private static final Logger LOG = LoggerFactory.getLogger(OsgiCamelContextHelper.class);
+public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry, ServiceListener {
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiServiceRegistry.class);
     private final BundleContext bundleContext;
     private final Queue<ServiceReference<?>> serviceReferenceQueue = new ConcurrentLinkedQueue<>();
+    private final BlockingQueue<ServiceReference<?>> unregisteredServiceReferenceQueue = new LinkedBlockingQueue<>();
+    private final Map<ServiceReference<?>, Object> serviceCacheMap = new ConcurrentHashMap<>();
+    private ExecutorService executorService;
     
     public OsgiServiceRegistry(BundleContext bc) {
         bundleContext = bc;
+        bundleContext.addServiceListener(this);
+    }
+    
+    @Override
+    public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+        //Start the ServiceReference Cleanup Task.
+        executorService = Executors.newSingleThreadExecutor(new CamelThreadFactory("Camel (" + context.getName() + ") thread ##counter# - #name#", "OSGiServiceReferenceCleanupThread", true));
+
+        executorService.execute(new OsgiServiceReferenceCleanupTask());
     }
 
     /**
@@ -57,8 +78,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
             if (refs != null && refs.length > 0) {
                 // just return the first one
                 sr = refs[0];
-                serviceReferenceQueue.add(sr);
-                service = bundleContext.getService(sr);
+                service = getService(sr);
             }
         } catch (Exception ex) {
             throw ObjectHelper.wrapRuntimeCamelException(ex);
@@ -90,8 +110,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
         if (sr != null) {
             // Need to keep the track of Service
             // and call ungetService when the camel context is closed 
-            serviceReferenceQueue.add(sr);
-            service = bundleContext.getService(sr);
+            service = getService(sr);
         }
         return service;
     }
@@ -104,8 +123,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
             if (refs != null) {
                 for (ServiceReference<?> sr : refs) {
                     if (sr != null) {
-                        Object service = bundleContext.getService(sr);
-                        serviceReferenceQueue.add(sr);
+                        Object service = getService(sr);
                         if (service != null) {
                             String name = (String)sr.getProperty("name");
                             if (name != null) {
@@ -152,6 +170,48 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
         }
         // Clean up the OSGi Service Cache
         serviceReferenceQueue.clear();
+        serviceCacheMap.clear();
+        unregisteredServiceReferenceQueue.clear();
+        executorService.shutdownNow();
+        executorService = null;
     }
-
+    
+    @Override
+    public void serviceChanged(ServiceEvent event) {
+        if( event.getType() == ServiceEvent.UNREGISTERING) {
+                this.unregisteredServiceReferenceQueue.add(event.getServiceReference());
+        }
+    }
+    
+    private Object getService(ServiceReference<?> sr) {
+        Object service = this.serviceCacheMap.get(sr);
+        if(service == null) {
+            service = this.bundleContext.getService(sr);
+            serviceReferenceQueue.add(sr);
+            if(service != null) {
+                this.serviceCacheMap.put(sr, service);
+            }
+        }
+        return service;
+    }
+    
+    class OsgiServiceReferenceCleanupTask implements Runnable {
+        @Override
+        public void run() {
+            ServiceReference<?> serviceReference = null;
+            try {
+                while((serviceReference = unregisteredServiceReferenceQueue.take()) != null) {
+                    if(!bundleContext.ungetService(serviceReference)) {
+                        serviceCacheMap.remove(serviceReference);
+                        serviceReferenceQueue.remove(serviceReference);
+                    }
+                    else {
+                        unregisteredServiceReferenceQueue.add(serviceReference);
+                    }
+                }
+            } catch (InterruptedException e) {
+                LOG.info("Camel Osgi Service Reference Clean up Interrupted", e);
+            }
+        }
+    }
 }
