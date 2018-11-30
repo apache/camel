@@ -36,7 +36,6 @@ public class GlobalContextCamelCommand extends AbstractCamelCommand {
     
     public GlobalContextCamelCommand() {
         CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
-        // TODO: Should we allow to set the maximumCacheSize on the producer?
         this.globalContextProducerTemplate = globalCamelContext.createProducerTemplate();
     }
     
