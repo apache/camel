@@ -315,7 +315,7 @@ public class AS2ClientManager {
             CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator(httpContext);
             OutputCompressor compressor = createCompressor(httpContext);
             ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity = new ApplicationPkcs7MimeCompressedDataEntity(
-                    applicationEDIEntity, compressedDataGenerator, compressor, AS2TransferEncoding.BASE64, false);
+                    applicationEDIEntity, compressedDataGenerator, compressor, AS2TransferEncoding.BASE64, true);
 
             // Add Compressed Entity to main body of request.
             EntityUtils.setMessageEntity(request, pkcs7MimeCompressedDataEntity);
@@ -331,7 +331,7 @@ public class AS2ClientManager {
             CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator(httpContext);
             OutputCompressor compressor = createCompressor(httpContext);
             ApplicationPkcs7MimeCompressedDataEntity pkcs7MimeCompressedDataEntity = new ApplicationPkcs7MimeCompressedDataEntity(
-                    multipartSignedEntity, compressedDataGenerator, compressor, AS2TransferEncoding.BASE64, false);
+                    multipartSignedEntity, compressedDataGenerator, compressor, AS2TransferEncoding.BASE64, true);
 
             // Add Compressed Entity to main body of request.
             EntityUtils.setMessageEntity(request, pkcs7MimeCompressedDataEntity);
