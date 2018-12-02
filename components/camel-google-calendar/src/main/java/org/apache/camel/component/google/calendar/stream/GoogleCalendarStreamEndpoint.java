@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The google-calendar component provides access to Google Calendar in a streaming mod.
+ * The google-calendar component provides access to Google Calendar in a streaming mode.
  */
 @UriEndpoint(firstVersion = "2.23.0",
              scheme = "google-calendar-stream",

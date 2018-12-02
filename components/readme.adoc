@@ -306,7 +306,7 @@ Number of Components: 308 in 208 JAR artifacts (22 deprecated)
 `google-calendar:apiName/methodName` | 2.15 | The google-calendar component provides access to Google Calendar.
 
 | link:camel-google-calendar/src/main/docs/google-calendar-stream-component.adoc[Google Calendar Stream] (camel-google-calendar) +
-`google-calendar-stream:index` | 2.23 | The google-calendar component provides access to Google Calendar in a streaming mod.
+`google-calendar-stream:index` | 2.23 | The google-calendar component provides access to Google Calendar in a streaming mode.
 
 | link:camel-google-drive/src/main/docs/google-drive-component.adoc[Google Drive] (camel-google-drive) +
 `google-drive:apiName/methodName` | 2.14 | The google-drive component provides access to Google Drive file storage service.
