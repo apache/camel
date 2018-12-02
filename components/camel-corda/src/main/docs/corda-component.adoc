@@ -3,8 +3,6 @@
 
 *Available as of Camel version 2.23*
 
-*Available as of Camel version 2.23*
-
 
 The *Corda* blockchain component uses the https://www.corda.net/[corda] rpc client
 
