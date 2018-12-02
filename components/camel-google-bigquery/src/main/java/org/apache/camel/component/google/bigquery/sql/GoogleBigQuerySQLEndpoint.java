@@ -25,16 +25,20 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * Google BigQuery data warehouse for analytics. BigQuery Endpoint Definition
- * Represents a table within a BigQuery dataset Contains configuration details
- * for a single table and the utility methods (such as check, create) to ease
- * operations URI Parameters: * Logger ID - To ensure that logging is unified
- * under Route Logger, the logger ID can be passed on via an endpoint URI
- * parameter * Partitioned - to indicate that the table needs to be partitioned
- * - every UTC day to be written into a timestamped separate table side effect:
- * Australian operational day is always split between two UTC days, and,
- * therefore, tables Another consideration is that exceptions are not handled
- * within the class. They are expected to bubble up and be handled by Camel.
+ * Google BigQuery data warehouse for analytics (using SQL queries).
+ *
+ * BigQuery Endpoint Definition
+ * Represents a table within a BigQuery dataset
+ * Contains configuration details for a single table and the utility methods (such as check, create) to ease operations
+ * URI Parameters:
+ * * Logger ID - To ensure that logging is unified under Route Logger, the logger ID can be passed on
+ *               via an endpoint URI parameter
+ * * Partitioned - to indicate that the table needs to be partitioned - every UTC day to be written into a
+ *                 timestamped separate table
+ *                 side effect: Australian operational day is always split between two UTC days, and, therefore, tables
+ *
+ * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be handled
+ * by Camel.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "google-bigquery-sql", title = "Google BigQuery Standard SQL", syntax = "google-bigquery-sql:query", label = "cloud,messaging", producerOnly = true)
 public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {

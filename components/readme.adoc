@@ -300,7 +300,7 @@ Number of Components: 308 in 208 JAR artifacts (22 deprecated)
 `google-bigquery:projectId:datasetId:tableName` | 2.20 | Google BigQuery data warehouse for analytics.
 
 | link:camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc[Google BigQuery Standard SQL] (camel-google-bigquery) +
-`google-bigquery-sql:query` | 2.23 | Google BigQuery data warehouse for analytics. BigQuery Endpoint Definition Represents a table within a BigQuery dataset Contains configuration details for a single table and the utility methods (such as check, create) to ease operations URI Parameters: Logger ID - To ensure that logging is unified under Route Logger, the logger ID can be passed on via an endpoint URI parameter Partitioned - to indicate that the table needs to be partitioned - every UTC day to be written into a timestamped separate table side effect: Australian operational day is always split between two UTC days, and, therefore, tables Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be handled by Camel.
+`google-bigquery-sql:query` | 2.23 | Google BigQuery data warehouse for analytics (using SQL queries).
 
 | link:camel-google-calendar/src/main/docs/google-calendar-component.adoc[Google Calendar] (camel-google-calendar) +
 `google-calendar:apiName/methodName` | 2.15 | The google-calendar component provides access to Google Calendar.
