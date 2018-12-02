@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The google-calendar component provides access to Google Calendar in a streaming mod.
+ * The google-calendar component provides access to Google Calendar in a streaming mode.
  */
 @UriEndpoint(firstVersion = "2.23.0",
              scheme = "google-calendar-stream",
