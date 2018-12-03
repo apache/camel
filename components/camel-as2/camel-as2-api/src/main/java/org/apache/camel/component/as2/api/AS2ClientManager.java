@@ -354,11 +354,11 @@ public class AS2ClientManager {
             EntityUtils.setMessageEntity(request, pkcs7MimeEnvelopedDataEntity);
             break;
         }
-        case SIGNED_ENCRYPTED_COMPRESSED: {
+        case ENCRYPTED_COMPRESSED_SIGNED: {
             // Create Multipart Signed Entity containing EDI Entity
             AS2SignedDataGenerator signingGenrator = createSigningGenerator(httpContext);
             MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(applicationEDIEntity, signingGenrator,
-                    AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, true, null);
+                    AS2Charset.US_ASCII, AS2TransferEncoding.BASE64, false, null);
             
             // Create Compressed Entity containing Multipart Signed Entity
             CMSCompressedDataGenerator compressedDataGenerator = createCompressorGenerator(httpContext);
