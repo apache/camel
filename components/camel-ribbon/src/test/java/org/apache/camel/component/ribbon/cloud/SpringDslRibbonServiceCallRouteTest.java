@@ -42,13 +42,5 @@ public class SpringDslRibbonServiceCallRouteTest extends SpringRibbonServiceCall
         RibbonServiceLoadBalancer loadBalancer = (RibbonServiceLoadBalancer)processor.getLoadBalancer();
         Assert.assertTrue(loadBalancer.getServiceDiscovery() instanceof StaticServiceDiscovery);
     }
-    
-    protected String getFirstPort() {
-        return "9096";
-    }
-    
-    protected String getSecondPort() {
-        return "9097";
-    }
 }
 
