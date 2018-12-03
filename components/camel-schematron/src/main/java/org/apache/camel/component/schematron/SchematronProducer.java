@@ -52,7 +52,7 @@ public class SchematronProducer extends DefaultProducer {
      * @throws Exception
      */
     public void process(Exchange exchange) throws Exception {
-        final SchematronProcessor schematronProcessor = SchematronProcessorFactory.newScehamtronEngine(endpoint.getRules());
+        final SchematronProcessor schematronProcessor = SchematronProcessorFactory.newSchematronEngine(endpoint.getRules());
         final Object payload = exchange.getIn().getBody();
         final String report;
 
