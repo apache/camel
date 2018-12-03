@@ -60,7 +60,7 @@ public class InOnlyCamelWorkItemHandlerTest {
     public void testExecuteInOnlyLocalCamelContext() throws Exception {
 
         String camelEndpointId = "testCamelRoute";
-        String camelRouteUri = "direct://" + camelEndpointId;
+        String camelRouteUri = "direct:" + camelEndpointId;
 
         String testReponse = "testResponse";
 
@@ -76,22 +76,26 @@ public class InOnlyCamelWorkItemHandlerTest {
         when(camelContext.getHeadersMapFactory()).thenReturn(hmf);
 
         // Register the RuntimeManager bound camelcontext.
-        ServiceRegistry.get().register(runtimeManagerId + "_CamelService", camelContext);
+        try {
+            ServiceRegistry.get().register(runtimeManagerId + "_CamelService", camelContext);
 
-        WorkItemImpl workItem = new WorkItemImpl();
-        workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
-        workItem.setParameter("Request", "someRequest");
-        workItem.setDeploymentId("testDeploymentId");
-        workItem.setProcessInstanceId(1L);
-        workItem.setId(1L);
-        
-        AbstractCamelWorkItemHandler handler = new InOnlyCamelWorkItemHandler(runtimeManager);
+            WorkItemImpl workItem = new WorkItemImpl();
+            workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
+            workItem.setParameter("Request", "someRequest");
+            workItem.setDeploymentId("testDeploymentId");
+            workItem.setProcessInstanceId(1L);
+            workItem.setId(1L);
 
-        TestWorkItemManager manager = new TestWorkItemManager();
-        handler.executeWorkItem(workItem,
-                manager);
-        assertThat(manager.getResults(), is(notNullValue()));
-        //InOnly does not complete WorkItem.
-        assertThat(manager.getResults().size(), equalTo(0));
+            AbstractCamelWorkItemHandler handler = new InOnlyCamelWorkItemHandler(runtimeManager);
+
+            TestWorkItemManager manager = new TestWorkItemManager();
+            handler.executeWorkItem(workItem,
+                    manager);
+            assertThat(manager.getResults(), is(notNullValue()));
+            // InOnly does not complete WorkItem.
+            assertThat(manager.getResults().size(), equalTo(0));
+        } finally {
+            ServiceRegistry.get().remove(runtimeManagerId + "_CamelService");
+        }
     }
 }

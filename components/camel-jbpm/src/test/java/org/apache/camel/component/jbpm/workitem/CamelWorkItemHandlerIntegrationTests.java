@@ -79,6 +79,7 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
         } finally {
             // Cleanup
             context.removeRoute(routeId);
+            ServiceRegistry.get().remove(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         }
     }
 
@@ -120,6 +121,7 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
         } finally {
             // Cleanup
             context.removeRoute(routeId);
+            ServiceRegistry.get().remove(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         }
     }
 
@@ -160,6 +162,7 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
         } finally {
             // Cleanup
             context.removeRoute(routeId);
+            ServiceRegistry.get().remove(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         }
 
     }
@@ -198,6 +201,7 @@ public class CamelWorkItemHandlerIntegrationTests extends CamelTestSupport {
         } finally {
             // Cleanup
             context.removeRoute(routeId);
+            ServiceRegistry.get().remove(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         }
     }
 

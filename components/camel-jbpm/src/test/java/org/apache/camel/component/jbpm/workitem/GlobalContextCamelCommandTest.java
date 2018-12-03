@@ -44,16 +44,16 @@ public class GlobalContextCamelCommandTest {
 
     @Mock
     Exchange outExchange;
-    
+
     @Mock
     Message outMessage;
-    
+
     @Mock
     CamelContext camelContext;
-    
+
     @Mock
     RuntimeManager runtimeManager;
-    
+
     @Mock
     CommandContext commandContext;
 
@@ -61,7 +61,7 @@ public class GlobalContextCamelCommandTest {
     public void testExecuteGlobalCommand() throws Exception {
     
         String camelEndpointId = "testCamelRoute";
-        String camelRouteUri = "direct://" + camelEndpointId;
+        String camelRouteUri = "direct:" + camelEndpointId;
 
         String testReponse = "testResponse";
 
@@ -76,20 +76,24 @@ public class GlobalContextCamelCommandTest {
         when(outExchange.getOut()).thenReturn(outMessage);
         when(outMessage.getBody()).thenReturn(testReponse);
 
-        //Register the RuntimeManager bound camelContext.
-        ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, camelContext);
+        // Register the RuntimeManager bound camelcontext.
+        try {
+            ServiceRegistry.get().register(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY, camelContext);
 
-        WorkItemImpl workItem = new WorkItemImpl();
-        workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
-        workItem.setParameter("Request", "someRequest");
+            WorkItemImpl workItem = new WorkItemImpl();
+            workItem.setParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM, camelEndpointId);
+            workItem.setParameter("Request", "someRequest");
 
-        when(commandContext.getData(anyString())).thenReturn(workItem);
+            when(commandContext.getData(anyString())).thenReturn(workItem);
 
-        Command command = new GlobalContextCamelCommand();
-        ExecutionResults results = command.execute(commandContext);
+            Command command = new GlobalContextCamelCommand();
+            ExecutionResults results = command.execute(commandContext);
 
-        assertNotNull(results);
-        assertEquals(2, results.getData().size());
-        assertEquals(testReponse, results.getData().get(JBPMConstants.RESPONSE_WI_PARAM));
+            assertNotNull(results);
+            assertEquals(2, results.getData().size());
+            assertEquals(testReponse, results.getData().get(JBPMConstants.RESPONSE_WI_PARAM));
+        } finally {
+            ServiceRegistry.get().remove(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
+        }
     }
 }

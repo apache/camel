@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * The command passes the {@WorkItem} retrieved from the {@link CommandContext} to the route that has a consumer on the endpoint-id 
  * that can be passed with the <code>camel-endpoint-id</code> {@link WorkItem} parameter. E.g. when a the value "myCamelEndpoint" is passed to the 
  * {link WorkItem} via the <code>camel-endpoint-id</code> parameter, this {@link Command} will send the {@link WorkItem} to 
- * the Camel URI <code>direct://myCamelEndpoint</code>.  
+ * the Camel URI <code>direct:myCamelEndpoint</code>.  
  * <p/>
  * The body of the result {@link Message} of the invocation is returned via the <code>Response</code> parameter. Access to the raw response 
  * {@link Message} is provided via the <code>Message</code> parameter. This gives the user access to more advanced fields like message headers 
@@ -55,7 +55,7 @@ public abstract class AbstractCamelCommand implements Command, Cacheable {
         String camelEndpointId = (String) workItem.getParameter(JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM);
 
         // We only support direct. We don't need to support more, as direct simply gives us the entrypoint into the actual Camel Routes.
-        String camelUri = "direct://" + camelEndpointId;
+        String camelUri = "direct:" + camelEndpointId;
         
         ProducerTemplate producerTemplate = getProducerTemplate(ctx);
         Exchange inExchange = ExchangeBuilder.anExchange(producerTemplate.getCamelContext()).withBody(workItem).build();
