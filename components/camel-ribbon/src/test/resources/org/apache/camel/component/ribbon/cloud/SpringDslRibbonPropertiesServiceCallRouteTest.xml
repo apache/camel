@@ -25,31 +25,35 @@
          http://camel.apache.org/schema/spring
          http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+  <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:springdslribbonpropertiesservicecallroutetest.properties" />
+  </bean> 
+
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="scall">
       <from uri="direct:start"/>
       <serviceCall name="myService" component="jetty">
         <!-- enable ribbon load balancer -->
         <ribbonLoadBalancer clientName="myClient">
-          <properties key="listOfServers" value="localhost:9094,localhost:9095"/>
+          <properties key="listOfServers" value="localhost:{{firstPort}},localhost:{{secondPort}}"/>
         </ribbonLoadBalancer>
       </serviceCall>
       <to uri="mock:result"/>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9094"/>
-      <to uri="mock:9094"/>
+      <from uri="jetty:http://localhost:{{firstPort}}"/>
+      <to uri="mock:{{firstPort}}"/>
       <transform>
-        <constant>9094</constant>
+        <constant>{{firstPort}}</constant>
       </transform>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9095"/>
-      <to uri="mock:9095"/>
+      <from uri="jetty:http://localhost:{{secondPort}}"/>
+      <to uri="mock:{{secondPort}}"/>
       <transform>
-        <constant>9095</constant>
+        <constant>{{secondPort}}</constant>
       </transform>
     </route>
   </camelContext>
