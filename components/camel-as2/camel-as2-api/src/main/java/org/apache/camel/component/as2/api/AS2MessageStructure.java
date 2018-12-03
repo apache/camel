@@ -24,7 +24,7 @@ public enum AS2MessageStructure {
     PLAIN_COMPRESSED(false, false, true),
     SIGNED_COMPRESSED(true, false, true),
     ENCRYPTED_COMPRESSED(false, true, true),
-    SIGNED_ENCRYPTED_COMPRESSED(true, true, true);
+    ENCRYPTED_COMPRESSED_SIGNED(true, true, true);
 
     private final boolean isSigned;
     private final boolean isEncrypted;

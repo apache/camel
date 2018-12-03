@@ -184,6 +184,8 @@ public final class EntityParser {
             throws HttpException {
 
         byte[] uncompressedContent = uncompressData(compressedData, expanderProvider);
+        
+        String uncompressedContentString = new String(uncompressedContent);
 
         return parseEntity(uncompressedContent);
     }
@@ -198,7 +200,7 @@ public final class EntityParser {
     public static MimeEntity parseEntity(byte[] content) throws HttpException {
         
         try {
-            
+            String contentString = new String(content);
             InputStream is = new ByteArrayInputStream(content);
             AS2SessionInputBuffer inbuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE);
             inbuffer.bind(is);
