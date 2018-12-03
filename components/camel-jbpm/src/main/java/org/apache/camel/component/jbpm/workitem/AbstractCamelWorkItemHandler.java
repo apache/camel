@@ -35,9 +35,9 @@ import org.slf4j.LoggerFactory;
  * Camel jBPM {@link WorkItemHandler} which allows to call Camel routes with a <code>direct</code> endpoint.
  * <p/>
  * The handler passes the {@WorkItem} to the route that has a consumer on the endpoint-id that can be passed with the
- * <code>CamelEndpointId</code>{@link WorkItem} parameter. E.g. when a the value "myCamelEndpoint" is passed to the {link WorkItem} via
- * the <code>CamelEndpointId</code> parameter, this command will send the {@link WorkItem} to the Camel URI
- * <code>direct://myCamelEndpoint</code>.
+ * <code>CamelEndpointId</code>{@link WorkItem} parameter. E.g. when a the value "myCamelEndpoint" is passed to the {link WorkItem} via the
+ * <code>CamelEndpointId</code> parameter, this command will send the {@link WorkItem} to the Camel URI
+ * <code>direct:myCamelEndpoint</code>.
  * <p/>
  * The body of the result {@link Message} of the invocation is returned via the <code>Response</code> parameter. Access to the raw response
  * {@link Message} is provided via the <code>Message</code> parameter. This gives the user access to more advanced fields like message
@@ -47,18 +47,22 @@ import org.slf4j.LoggerFactory;
  * to find the global KIE {@link CamelContext} from the <code>jBPM</code> {@link ServiceRegistry}. When the {@link RuntimeManager} is passed
  * to the constructor, the handler will retrieve and use the {@link CamelContext} bound to the {@link RuntimeManage} from the
  * {@link ServiceRegistry}. When a <code>CamelEndpointId</code> is passed to the constructor, the handler will send all requests to the
- * Camel route that is consuming from that endpoint, unless the endpoint is overridden by passing a the <code>CamelEndpointId</code> in
- * the {@link WorkItem} parameters.
+ * Camel route that is consuming from that endpoint, unless the endpoint is overridden by passing a the <code>CamelEndpointId</code> in the
+ * {@link WorkItem} parameters.
  * 
  */
 public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWorkItemHandler implements Cacheable {
 
     private static Logger logger = LoggerFactory.getLogger(AbstractCamelWorkItemHandler.class);
 
-    private final ProducerTemplate producerTemplate;
+    private ProducerTemplate producerTemplate;
 
     private final String camelEndpointId;
-
+    
+    private final String camelContextKey;
+    
+    private boolean initialized = false;
+    
     /**
      * Default Constructor. This creates a {@link ProducerTemplate} for the global {@link CamelContext}.
      */
@@ -67,9 +71,10 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
     }
 
     public AbstractCamelWorkItemHandler(String camelEndointId) {
-        CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
-        this.producerTemplate = globalCamelContext.createProducerTemplate();
         this.camelEndpointId = camelEndointId;
+        this.camelContextKey = JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY;
+        this.producerTemplate = buildProducerTemplate(camelContextKey);
+        this.initialized = true;
     }
 
     /**
@@ -81,18 +86,38 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
     }
 
     public AbstractCamelWorkItemHandler(RuntimeManager runtimeManager, String camelEndpointId) {
-        String runtimeCamelContextKey = runtimeManager.getIdentifier() + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX;
-        CamelContext runtimeCamelContext = (CamelContext) ServiceRegistry.get().service(runtimeCamelContextKey);
-        this.producerTemplate = runtimeCamelContext.createProducerTemplate();
         this.camelEndpointId = camelEndpointId;
+        this.camelContextKey = runtimeManager.getIdentifier() + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX;
+        /*
+         * Depending on the order of session creation and CamelContext creation and registration, the CamelContext might not yet be
+         * available. Hence, when we deal with a Deployment scoped CamelContext, we can lazy-init when the context is not yet available.
+         */
+        try {
+            this.producerTemplate = buildProducerTemplate(camelContextKey);
+            this.initialized = true;
+        } catch (IllegalArgumentException iae) {
+            String message = "CamelContext with identifier '" + camelContextKey
+                    + "' not found in ServiceRegistry. This can be caused by the order in which the platform extensions are initialized. Deferring Camel ProducerTemplate creation until the first WorkItemHandler call.";
+            logger.info(message, iae);
+        }
     }
 
+    private ProducerTemplate buildProducerTemplate(String key) {
+        CamelContext camelContext = (CamelContext) ServiceRegistry.get().service(key);
+        return this.producerTemplate = camelContext.createProducerTemplate();
+    }
+    
+    
     public void executeWorkItem(WorkItem workItem, final WorkItemManager manager) {
+        if (!initialized) {
+            this.producerTemplate = buildProducerTemplate(camelContextKey);
+            initialized = true;
+        }
 
         String workItemCamelEndpointId = getCamelEndpointId(workItem);
 
         // We only support direct. We don't need to support more, as direct simply gives us the entrypoint into the actual Camel Routes.
-        String camelUri = "direct://" + workItemCamelEndpointId;
+        String camelUri = "direct:" + workItemCamelEndpointId;
 
         try {
             Exchange requestExchange = buildExchange(producerTemplate, workItem);
