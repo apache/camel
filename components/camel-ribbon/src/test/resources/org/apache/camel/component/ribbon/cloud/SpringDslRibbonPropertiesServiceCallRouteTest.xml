@@ -31,25 +31,25 @@
       <serviceCall name="myService" component="jetty">
         <!-- enable ribbon load balancer -->
         <ribbonLoadBalancer clientName="myClient">
-          <properties key="listOfServers" value="localhost:9090,localhost:9091"/>
+          <properties key="listOfServers" value="localhost:9094,localhost:9095"/>
         </ribbonLoadBalancer>
       </serviceCall>
       <to uri="mock:result"/>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9090"/>
-      <to uri="mock:9090"/>
+      <from uri="jetty:http://localhost:9094"/>
+      <to uri="mock:9094"/>
       <transform>
-        <constant>9090</constant>
+        <constant>9094</constant>
       </transform>
     </route>
 
     <route>
-      <from uri="jetty:http://localhost:9091"/>
-      <to uri="mock:9091"/>
+      <from uri="jetty:http://localhost:9095"/>
+      <to uri="mock:9095"/>
       <transform>
-        <constant>9091</constant>
+        <constant>9095</constant>
       </transform>
     </route>
   </camelContext>

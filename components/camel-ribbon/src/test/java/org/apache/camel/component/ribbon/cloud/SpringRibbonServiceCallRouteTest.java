@@ -32,17 +32,21 @@ import org.springframework.test.annotation.DirtiesContext;
 public abstract class SpringRibbonServiceCallRouteTest extends CamelSpringTestSupport {
     @Test
     public void testServiceCall() throws Exception {
-        getMockEndpoint("mock:9090").expectedMessageCount(1);
-        getMockEndpoint("mock:9091").expectedMessageCount(1);
+        getMockEndpoint("mock:"+getFirstPort()).expectedMessageCount(1);
+        getMockEndpoint("mock:"+getSecondPort()).expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         String out = template.requestBody("direct:start", null, String.class);
         String out2 = template.requestBody("direct:start", null, String.class);
-        assertEquals("9091", out);
-        assertEquals("9090", out2);
+        assertEquals(getSecondPort(), out);
+        assertEquals(getFirstPort(), out2);
 
         assertMockEndpointsSatisfied();
     }
+
+    protected abstract String getSecondPort();
+
+    protected abstract String getFirstPort();
 
     // ************************************
     // Helpers
