@@ -55,13 +55,13 @@ public class ChatScriptComponentTest extends CamelTestSupport {
                 }
                 from("timer://foo?repeatCount=1")
                 .setBody(new SimpleExpression(rq))
-                .to("ChatScript://localhost:1024/Harry?resetchat=true")
+                .to("chatscript://localhost:1024/Harry?resetchat=true")
                 .log("Response 2 = ${body}")
                 .setBody(new SimpleExpression(rq2))
-                .to("ChatScript://localhost:1024/Harry")
+                .to("chatscript://localhost:1024/Harry")
                 .log("Response 3 = ${body}")
                 .setBody(new SimpleExpression(rq3))
-                .to("ChatScript://localhost:1024/Harry")
+                .to("chatscript://localhost:1024/Harry")
                 .log("Response 4 = ${body}")
                     .to("mock:result");
             }
