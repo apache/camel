@@ -31,22 +31,22 @@ public class ChatScriptBot {
     String host;
     int port = 1024;
     String message;
-    String botname;
-    String username;
+    String botName;
+    String userName;
     boolean initialized;
 
-    public ChatScriptBot(String ihost, int port, String ibotname, String iusername) {
-        this.host = ihost;
+    public ChatScriptBot(String iHost, int port, String iBotName, String iUserName) {
+        this.host = iHost;
         this.port = port;
-        this.botname = ibotname;
-        this.username = iusername;
+        this.botName = iBotName;
+        this.userName = iUserName;
     }
 
     public String sendChat(String input) {
         if (!initialized) {
             return init(null);
         }
-        ChatScriptMessage g = new ChatScriptMessage(this.username, this.botname, input);
+        ChatScriptMessage g = new ChatScriptMessage(this.userName, this.botName, input);
         return doMessage(g.toCSFormat());
     }
 
@@ -61,7 +61,7 @@ public class ChatScriptBot {
         return doMessage(msg.toCSFormat());
     }
 
-    private String doMessage(String string) {
+    private String doMessage(String msg) {
         Socket echoSocket;
         String resp = "";
 
@@ -69,7 +69,7 @@ public class ChatScriptBot {
             echoSocket = new Socket(this.host, this.port);
             PrintWriter out = new PrintWriter(echoSocket.getOutputStream(), true);
             BufferedReader in = new BufferedReader(new InputStreamReader(echoSocket.getInputStream()));
-            out.println(string);
+            out.println(msg);
             resp = in.readLine();
             echoSocket.close();
         } catch (IOException e) {
@@ -82,9 +82,9 @@ public class ChatScriptBot {
     }
 
     public String init(ChatScriptMessage input) {
-        ChatScriptMessage g = new ChatScriptMessage(input.getUsername(), this.botname, null);
+        ChatScriptMessage g = new ChatScriptMessage(input.getUserName(), this.botName, null);
         String response = doMessage(g);
-        LOG.info("Conversation started between the bot " + this.botname + " and " + input.getUsername());
+        LOG.info("Conversation started between the bot " + this.botName + " and " + input.getUserName());
         initialized = true;
         return response;
     }
@@ -94,8 +94,8 @@ public class ChatScriptBot {
     }
 
     public void reset() {
-        // Message g=new Message("xx",this.botname,":reset");
-    }
+        //TODO
+    	}
 
     public String getHost() {
         return host;
@@ -109,32 +109,32 @@ public class ChatScriptBot {
         return port;
     }
 
-    public void setPort(int port) {
-        this.port = port;
+    public void setPort(int iPort) {
+        this.port = iPort;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setMessage(String iMessage) {
+        this.message = iMessage;
     }
 
-    public String getBotname() {
-        return botname;
+    public String getBotName() {
+        return botName;
     }
 
-    public void setBotname(String botname) {
-        this.botname = botname;
+    public void setBotName(String iBotName) {
+        this.botName = iBotName;
     }
 
     public String getUsername() {
-        return username;
+        return userName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(String iUserName) {
+        this.userName = iUserName;
     }
 
     public boolean isInitialized() {
