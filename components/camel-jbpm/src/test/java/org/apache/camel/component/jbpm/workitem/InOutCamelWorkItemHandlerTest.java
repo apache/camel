@@ -40,7 +40,6 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class InOutCamelWorkItemHandlerTest {
 
@@ -78,31 +77,30 @@ public class InOutCamelWorkItemHandlerTest {
         when(outMessage.getBody()).thenReturn(testReponse);
 
         try {
-        ServiceRegistry.get().register("GlobalCamelService", camelContext);
+            ServiceRegistry.get().register("GlobalCamelService", camelContext);
 
-        TestWorkItemManager manager = new TestWorkItemManager();
-        WorkItemImpl workItem = new WorkItemImpl();
-        workItem.setParameter("CamelEndpointId", camelEndpointId);
-        workItem.setParameter("Request", "someRequest");
-        workItem.setDeploymentId("testDeploymentId");
-        workItem.setProcessInstanceId(1L);
-        workItem.setId(1L);
+            TestWorkItemManager manager = new TestWorkItemManager();
+            WorkItemImpl workItem = new WorkItemImpl();
+            workItem.setParameter("CamelEndpointId", camelEndpointId);
+            workItem.setParameter("Request", "someRequest");
+            workItem.setDeploymentId("testDeploymentId");
+            workItem.setProcessInstanceId(1L);
+            workItem.setId(1L);
 
-        AbstractCamelWorkItemHandler handler = new InOutCamelWorkItemHandler();
+            AbstractCamelWorkItemHandler handler = new InOutCamelWorkItemHandler();
 
-        handler.executeWorkItem(workItem,
-                manager);
-        assertThat(manager.getResults(), is(notNullValue()));
-        assertThat(manager.getResults().size(), equalTo(1));
-        assertThat(manager.getResults().containsKey(workItem.getId()), is(true));
-        Map<String, Object> results = manager.getResults(workItem.getId());
-        assertThat(results.size(), equalTo(2));
-        assertThat(results.get("Response"), equalTo(testReponse));
-        
+            handler.executeWorkItem(workItem, manager);
+            assertThat(manager.getResults(), is(notNullValue()));
+            assertThat(manager.getResults().size(), equalTo(1));
+            assertThat(manager.getResults().containsKey(workItem.getId()), is(true));
+            Map<String, Object> results = manager.getResults(workItem.getId());
+            assertThat(results.size(), equalTo(2));
+            assertThat(results.get("Response"), equalTo(testReponse));
+
         } finally {
             ServiceRegistry.get().remove("GlobalCamelService");
         }
-        
+
     }
 
     @Test
@@ -141,8 +139,7 @@ public class InOutCamelWorkItemHandlerTest {
             AbstractCamelWorkItemHandler handler = new InOutCamelWorkItemHandler(runtimeManager);
 
             TestWorkItemManager manager = new TestWorkItemManager();
-            handler.executeWorkItem(workItem,
-                    manager);
+            handler.executeWorkItem(workItem, manager);
             assertThat(manager.getResults(), is(notNullValue()));
             assertThat(manager.getResults().size(), equalTo(1));
             assertThat(manager.getResults().containsKey(workItem.getId()), is(true));
@@ -191,8 +188,7 @@ public class InOutCamelWorkItemHandlerTest {
             ServiceRegistry.get().register(runtimeManagerId + "_CamelService", camelContext);
 
             TestWorkItemManager manager = new TestWorkItemManager();
-            handler.executeWorkItem(workItem,
-                    manager);
+            handler.executeWorkItem(workItem, manager);
             assertThat(manager.getResults(), is(notNullValue()));
             assertThat(manager.getResults().size(), equalTo(1));
             assertThat(manager.getResults().containsKey(workItem.getId()), is(true));
