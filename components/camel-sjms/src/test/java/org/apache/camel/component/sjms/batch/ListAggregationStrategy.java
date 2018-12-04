@@ -19,8 +19,8 @@ package org.apache.camel.component.sjms.batch;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Exchange;
 
 public class ListAggregationStrategy implements AggregationStrategy {
 
