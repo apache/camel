@@ -32,7 +32,7 @@ for this component:
 ### URI format
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------
-ChatScript:host:[port]/BotName[?options]
+ChatScript:host:[port]/botName[?options]
 -------------------------------------------------------------------------------------------------------------------------
 
 ### Options
@@ -72,3 +72,6 @@ with the following path and query parameters:
 
 // endpoint options: END
 // spring-boot-auto-configure options: START
+
+
+
