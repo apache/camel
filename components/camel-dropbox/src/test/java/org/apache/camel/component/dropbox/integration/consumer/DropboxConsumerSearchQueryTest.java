@@ -31,7 +31,7 @@ public class DropboxConsumerSearchQueryTest extends DropboxTestSupport {
         final String content = "Hi camels";
         createFile(FILE_NAME, content);
 
-        context.startRoute("consumer");
+        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
