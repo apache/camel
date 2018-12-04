@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.chatscript.messages.ChatScriptMessage;
 import org.junit.Test;
 
 public class ChatScriptComponentTest extends CamelTestSupport {
@@ -34,16 +38,32 @@ public class ChatScriptComponentTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
-            	  char nullChar = (char) 0;
-                from("ChatScript://localhost:1024/Harry?chatusername=varun&resetchat=true")
-                .setBody (simple ("Hello" ))
-                .log("Body=${body}")
-                .to("ChatScript://localhost:1024/Harry?chatusername=varun")
-                .log("Chat Reponse=${body}")
-                .setBody (simple ("No" ))
-                .to("ChatScript://localhost:1024/Harry?chatusername=varun")
-                  .to("mock:result");
+            public void configure() throws JsonProcessingException {
+                String g = "CS" + Math.random();
+                ChatScriptMessage rqMsg = new ChatScriptMessage(g, "", "");
+                ChatScriptMessage rq2Msg = new ChatScriptMessage(g, "", "Hello");
+                ChatScriptMessage rq3Msg = new ChatScriptMessage(g, "", "No");
+                String rq = "";
+                String rq2 = "";
+                String rq3 = "";
+                try {
+                        rq = new ObjectMapper().writeValueAsString(rqMsg);
+                        rq2 = new ObjectMapper().writeValueAsString(rq2Msg);
+                        rq3 = new ObjectMapper().writeValueAsString(rq3Msg);
+                } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                }
+                from("timer://foo?repeatCount=1")
+                .setBody(new SimpleExpression(rq))
+                .to("ChatScript://localhost:1024/Harry?resetchat=true")
+                .log("Response 2 = ${body}")
+                .setBody(new SimpleExpression(rq2))
+                .to("ChatScript://localhost:1024/Harry")
+                .log("Response 3 = ${body}")
+                .setBody(new SimpleExpression(rq3))
+                .to("ChatScript://localhost:1024/Harry")
+                .log("Response 4 = ${body}")
+                    .to("mock:result");
             }
         };
     }
