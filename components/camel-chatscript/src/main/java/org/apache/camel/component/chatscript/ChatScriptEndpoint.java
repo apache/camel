@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents a ChatScript endpoint.
  */
-@UriEndpoint(firstVersion = "2.24.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:hostname:port/botname", consumerClass = ChatScriptConsumer.class, label = "ai,chatscript")
+@UriEndpoint(firstVersion = "2.24.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:hostname:port/botname",  producerOnly = true, label = "ai,chatscript")
 public class ChatScriptEndpoint extends DefaultEndpoint {
 
     public static final int DEFAULT_PORT = 1024;
@@ -100,7 +100,7 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new ChatScriptConsumer(this, processor);
+        throw new UnsupportedOperationException("Chatscript consumer not supported");
     }
 
     public boolean isSingleton() {
