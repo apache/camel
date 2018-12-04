@@ -33,7 +33,7 @@ public class ChatScriptConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         Exchange exchange = endpoint.createExchange();
-        ChatScriptMessage inputMessage = new ChatScriptMessage(this.endpoint.getChatusername(), this.endpoint.getBotname(), "");
+        ChatScriptMessage inputMessage = new ChatScriptMessage(this.endpoint.getChatUserName(), this.endpoint.getBotName(), "");
         // create a message body
         exchange.getIn().setBody(inputMessage); //this.endpoint.getCHAT_INIT());
 
