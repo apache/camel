@@ -27,43 +27,43 @@ public class ChatScriptMessage {
     private String body;
     @JsonProperty("response")
     private String reply;
-    public ChatScriptMessage(final String username, final String botname, final String body) {
-        this.username = username;
-        this.botname = botname;
-        this.body = body;
+    public ChatScriptMessage(final String userName, final String botName, final String iBody) {
+        this.username = userName;
+        this.botname = botName;
+        this.body = iBody;
     }
     public ChatScriptMessage() {
 
     }
 
-    public String getUsername() {
+    public String getUserName() {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String userName) {
+        this.username = userName;
     }
 
-    public String getBotname() {
+    public String getBotName() {
         return botname;
     }
 
-    public void setBotname(String botname) {
-        this.botname = botname;
+    public void setBotName(String botName) {
+        this.botname = botName;
     }
 
     public String getBody() {
         return body;
     }
 
-    public void setBody(String body) {
-        this.body = body;
+    public void setBody(String iBody) {
+        this.body = iBody;
     }
     public String getReply() {
         return reply;
     }
-    public void setReply(String reply) {
-        this.reply = reply;
+    public void setReply(String iReply) {
+        this.reply = iReply;
     }
     public String toCSFormat() {
         String s;
