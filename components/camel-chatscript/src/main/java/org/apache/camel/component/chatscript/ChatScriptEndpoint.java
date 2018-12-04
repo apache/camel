@@ -27,6 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a ChatScript endpoint.
@@ -45,7 +46,7 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of the Bot in CS to converse with")
     @Metadata(required = "true")
     private String botname;
-    @UriParam(description = "Username who initializes the CS conversation. To be set when chat is initialized from camel route", label = "username", defaultValue = "camel")
+    @UriParam(description = "Username who initializes the CS conversation. To be set when chat is initialized from camel route", label = "username")
     private String chatusername;
     @UriParam (description = "Issues :reset command to start a new conversation everytime", label = "reset", defaultValue = "false")
     private boolean resetchat;
@@ -63,15 +64,15 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
 
         URI remainingUri = new URI("tcp://" + remaining);
         port = remainingUri.getPort() == -1 ? DEFAULT_PORT : remainingUri.getPort();
-        if (remainingUri.getPath() == null || remainingUri.getPath().trim().length() == 0) {
+        if (ObjectHelper.isEmpty(remainingUri.getPath())) {
             throw new IllegalArgumentException(URI_ERROR);
         }
         hostname = remainingUri.getHost();
-        if (hostname == null) { 
+       if (ObjectHelper.isEmpty(hostname)) { 
             throw new IllegalArgumentException(URI_ERROR);
         }
         botname = remainingUri.getPath();
-        if (botname == null) {
+        if (ObjectHelper.isEmpty(botname)) {
             throw new IllegalArgumentException(URI_ERROR);
         }
         botname = botname.substring(1);
