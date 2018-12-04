@@ -29,8 +29,8 @@ public class ChatScriptProducer extends DefaultProducer {
         super(endpoint);
         this.endpoint = endpoint;
 
-        if (endpoint.isResetchat()) {
-            this.endpoint.getbot().reset();
+        if (endpoint.isResetChat()) {
+            this.endpoint.getBot().reset();
         }
     }
 
@@ -44,7 +44,7 @@ public class ChatScriptProducer extends DefaultProducer {
         } else {
             inputMessage = (ChatScriptMessage) body;
         }
-        String response = this.endpoint.getbot().sendChat(inputMessage);
+        String response = this.endpoint.getBot().sendChat(inputMessage);
         inputMessage.setReply(response);
         exchange.getOut().setBody(inputMessage);
     }
