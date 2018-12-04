@@ -61,7 +61,7 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
     
     private final String camelContextKey;
     
-    private boolean initialized = false;
+    private boolean initialized;
     
     /**
      * Default Constructor. This creates a {@link ProducerTemplate} for the global {@link CamelContext}.
@@ -97,7 +97,8 @@ public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWor
             this.initialized = true;
         } catch (IllegalArgumentException iae) {
             String message = "CamelContext with identifier '" + camelContextKey
-                    + "' not found in ServiceRegistry. This can be caused by the order in which the platform extensions are initialized. Deferring Camel ProducerTemplate creation until the first WorkItemHandler call.";
+                    + "' not found in ServiceRegistry. This can be caused by the order in which the platform extensions are initialized. " 
+                    + "Deferring Camel ProducerTemplate creation until the first WorkItemHandler call.";
             logger.info(message, iae);
         }
     }
