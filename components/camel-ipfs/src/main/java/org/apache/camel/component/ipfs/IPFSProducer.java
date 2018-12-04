@@ -24,7 +24,8 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
+
 
 public class IPFSProducer extends DefaultProducer {
 
