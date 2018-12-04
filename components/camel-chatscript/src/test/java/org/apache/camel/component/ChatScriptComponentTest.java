@@ -19,10 +19,10 @@ package org.apache.camel.component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.chatscript.ChatScriptMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.chatscript.messages.ChatScriptMessage;
 import org.junit.Test;
 
 public class ChatScriptComponentTest extends CamelTestSupport {
