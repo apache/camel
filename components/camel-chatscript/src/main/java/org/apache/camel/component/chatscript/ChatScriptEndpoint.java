@@ -76,22 +76,22 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(URI_ERROR);
         }
         botname = botname.substring(1);
-        setbot(new ChatScriptBot(getHostname(), getPort(), getBotname(), ""));
+        setbot(new ChatScriptBot(getHostName(), getPort(), getBotName(), ""));
 
     }
-    public boolean isResetchat() {
+    public boolean isResetChat() {
         return resetchat;
     }
 
-    public void setResetchat(boolean resetchat) {
-        this.resetchat = resetchat;
+    public void setResetchat(boolean resetChat) {
+        this.resetchat = resetChat;
     }
 
-    public String getChatusername() {
+    public String getChatUserName() {
         return chatusername;
     }
 
-    public void setChatusername(String chatusername) {
+    public void setChatUserName(String chatusername) {
         this.chatusername = chatusername;
     }
 
@@ -107,12 +107,12 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public String getHostname() {
+    public String getHostName() {
         return hostname;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public void setHostName(String hostName) {
+        this.hostname = hostName;
     }
 
     public int getPort() {
@@ -123,11 +123,11 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
         this.port = port;
     }
 
-    public String getBotname() {
+    public String getBotName() {
         return botname;
     }
 
-    public void setBotname(String botname) {
+    public void setBotName(String botname) {
         this.botname = botname;
     }
 
@@ -135,11 +135,11 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
         return DEFAULT_PORT;
     }
 
-    public ChatScriptBot getbot() {
+    public ChatScriptBot getBot() {
         return bot;
     }
 
-    public void setbot(ChatScriptBot thisbot) {
-        this.bot = thisbot;
+    public void setbot(ChatScriptBot thisBot) {
+        this.bot = thisBot;
     }
 }
