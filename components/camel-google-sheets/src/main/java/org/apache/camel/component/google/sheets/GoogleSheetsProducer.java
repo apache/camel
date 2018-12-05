@@ -21,9 +21,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsPropertiesHelper;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.component.AbstractApiProducer;
-import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.component.AbstractApiProducer;
+import org.apache.camel.support.component.ApiMethod;
 
 import java.util.Map;
 import java.util.Map.Entry;

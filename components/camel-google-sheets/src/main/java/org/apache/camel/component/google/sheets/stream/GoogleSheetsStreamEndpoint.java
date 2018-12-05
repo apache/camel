@@ -21,9 +21,9 @@ import com.google.api.services.sheets.v4.model.Spreadsheet;
 import com.google.api.services.sheets.v4.model.ValueRange;
 import org.apache.camel.*;
 import org.apache.camel.component.google.sheets.GoogleSheetsClientFactory;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * The google-sheets component provides access to Google Sheets.

@@ -22,7 +22,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollection;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.support.component.AbstractApiComponent;
+
 
 /**
  * Represents the component that manages {@link GoogleSheetsEndpoint}.
