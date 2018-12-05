@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rests xmlns="http://camel.apache.org/schema/spring">
+	<rest path="/customers/">
+		<get uri="/{id}">
+			<to uri="direct:customerDetail" />
+		</get>
+		<get uri="/{id}/orders">
+			<to uri="direct:customerOrders" />
+		</get>
+		<post uri="/neworder">
+			<to uri="direct:customerNewOrder" />
+		</post>
+	</rest>
+</rests>

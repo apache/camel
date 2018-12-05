@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.jbpm.services.api.service.ServiceRegistry;
 import org.kie.server.services.api.KieContainerInstance;
 import org.kie.server.services.api.KieServerExtension;
@@ -74,12 +75,17 @@ public class CamelKieServerExtension implements KieServerExtension {
             this.camelContext = new DefaultCamelContext();
             this.camelContext.setName("KIE Server Camel context");
 
-            try (InputStream is = this.getClass().getResourceAsStream("/global-camel-routes.xml")) {
-                if (is != null) {
-
-                    RoutesDefinition routes = camelContext.loadRoutesDefinition(is);
-                    camelContext.addRouteDefinitions(routes.getRoutes());
+            try (InputStream isRoutes = this.getClass().getResourceAsStream("/global-camel-routes.xml");
+                    InputStream isRest = this.getClass().getResourceAsStream("/global-camel-rest-dsl.xml")) {
+                if (isRoutes != null) {
+                    RoutesDefinition routes = camelContext.loadRoutesDefinition(isRoutes);
+                    this.camelContext.addRouteDefinitions(routes.getRoutes());
                 }
+                if (isRest != null) {
+                    RestsDefinition rests = camelContext.loadRestsDefinition(isRest);
+                    this.camelContext.addRestDefinitions(rests.getRests());
+                }
+                
             } catch (Exception e) {
                 LOGGER.error("Error while adding Camel context for KIE Server", e);
             }
@@ -105,20 +111,29 @@ public class CamelKieServerExtension implements KieServerExtension {
     public void createContainer(String id, KieContainerInstance kieContainerInstance, Map<String, Object> parameters) {
 
         ClassLoader classloader = kieContainerInstance.getKieContainer().getClassLoader();
-        try (InputStream is = classloader.getResourceAsStream("camel-routes.xml")) {
-            if (is != null) {
+
+        try (InputStream isRoutes = classloader.getResourceAsStream("camel-routes.xml");
+                InputStream isRest = classloader.getResourceAsStream("camel-rest-dsl.xml")) {
+
+            if (isRoutes != null || isRest != null) {
 
                 DefaultCamelContext context = new DefaultCamelContext();
                 context.setName("KIE Server Camel context for container " + kieContainerInstance.getContainerId());
 
-                RoutesDefinition routes = context.loadRoutesDefinition(is);
-                annotateKJarRoutes(routes, id);
-                context.addRouteDefinitions(routes.getRoutes());
+                if (isRoutes != null) {
+                    RoutesDefinition routes = context.loadRoutesDefinition(isRoutes);
+                    annotateKJarRoutes(routes, id);
+                    context.addRouteDefinitions(routes.getRoutes());
+                }
+
+                if (isRest != null) {
+                    RestsDefinition rests = context.loadRestsDefinition(isRest);
+                    context.addRestDefinitions(rests.getRests());
+                }
+
                 context.start();
                 camelContexts.put(id, context);
-
                 ServiceRegistry.get().register(id + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX, context);
-
             }
         } catch (Exception e) {
             LOGGER.error("Error while adding Camel context for {}", kieContainerInstance.getContainerId(), e);
