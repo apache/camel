@@ -84,6 +84,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private String address;
     @UriParam
     private List<Class<?>> resourceClasses;
+    @UriParam(label = "consumer,advanced")
+    private List<Object> serviceBeans;
     @UriParam
     private String modelRef;
     @UriParam(label = "consumer", defaultValue = "Default")
@@ -245,6 +247,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         processResourceModel(sfb);
         if (getResourceClasses() != null) {
             sfb.setResourceClasses(getResourceClasses());
+        }
+        if (serviceBeans != null && !serviceBeans.isEmpty()) {
+            sfb.setServiceBeans(serviceBeans);
         }
 
         // setup the resource providers for interfaces
@@ -431,6 +436,33 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public void setResourceClasses(Class<?>... classes) {
         setResourceClasses(Arrays.asList(classes));
     }
+
+    public List<?> getServiceBeans() {
+        return serviceBeans;
+    }
+
+    public void addServiceBean(Object bean) {
+        if (serviceBeans == null) {
+            serviceBeans = new ArrayList<>();
+        }
+        serviceBeans.add(bean);
+    }
+
+    /**
+     * The service beans which you want to export as REST service. Multiple beans can be separated by comma.
+     */
+    public void setServiceBeans(List<?> beans) {
+        this.serviceBeans = new ArrayList<Object>(beans);
+    }
+
+    public void setServiceBeans(Object... beans) {
+        setServiceBeans(Arrays.asList(beans));
+    }
+
+    public void setServiceBeans(String beans) {
+        setServiceBeans(EndpointHelper.resolveReferenceListParameter(getCamelContext(), beans, Object.class));
+    }
+
 
     /**
      * The service publish address.
