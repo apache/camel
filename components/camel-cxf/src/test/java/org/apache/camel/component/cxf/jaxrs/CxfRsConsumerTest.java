@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import javax.naming.Context;
 import javax.servlet.ServletRequest;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.WebApplicationException;
@@ -33,6 +34,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -41,6 +43,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
+import org.apache.camel.component.cxf.jaxrs.testbean.CustomerService;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -71,6 +74,17 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             "cxfrs://http://localhost:" + CXT + "/rest5?"
             + "propagateContexts=true&"
             + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceDefaultHandlerModel.xml";
+    private static final String CXF_RS_ENDPOINT_URI6 =
+            "cxfrs://http://localhost:" + CXT + "/rest6?"
+            + "performInvocation=true&serviceBeans=#serviceBean";
+
+    @Override
+    protected Context createJndiContext() throws Exception {
+        Context ctx = super.createJndiContext();
+        ctx.bind("serviceBean", new CustomerService());
+        return ctx;
+    }
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         final Processor testProcessor = new TestProcessor();
         final Processor testProcessor2 = new TestProcessor2();
@@ -83,6 +97,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                 from(CXF_RS_ENDPOINT_URI3).process(testProcessor);
                 from(CXF_RS_ENDPOINT_URI4).process(testProcessor2);
                 from(CXF_RS_ENDPOINT_URI5).process(testProcessor3);
+                from(CXF_RS_ENDPOINT_URI6).log(LoggingLevel.OFF, "dummy");
             }
         };
     }
@@ -141,7 +156,12 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             "The remoteAddress is 127.0.0.1");
         
     }
-    
+
+    @Test
+    public void testGetCustomerImplCustomLifecycle() throws Exception {
+        invokeGetCustomer("http://localhost:" + CXT + "/rest6/customerservice/customers/123",
+                "{\"Customer\":{\"id\":123,\"name\":\"John\"}}");
+    }
     
     @Test
     public void testGetWrongCustomer() throws Exception {
