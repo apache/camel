@@ -68,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (48 parameters):
+==== Query Parameters (51 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,9 +86,12 @@ with the following path and query parameters:
 | *deleteAfterRead* (consumer) | Delete message from SQS after it has been read | true | boolean
 | *deleteIfFiltered* (consumer) | Whether or not to send the DeleteMessage to the SQS queue if an exchange fails to get through a filter. If 'false' and exchange does not make it through a Camel filter upstream in the route, then don't send DeleteMessage. | true | boolean
 | *extendMessageVisibility* (consumer) | If enabled then a scheduled background task will keep extending the message visibility on SQS. This is needed if it takes a long time to process the message. If set to true defaultVisibilityTimeout must be set. See details at Amazon docs. | false | boolean
+| *kmsDataKeyReusePeriod Seconds* (consumer) | The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt messages before calling AWS KMS again. An integer representing seconds, between 60 seconds (1 minute) and 86,400 seconds (24 hours). Default: 300 (5 minutes). |  | Integer
+| *kmsMasterKeyId* (consumer) | The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK. |  | String
 | *maxMessagesPerPoll* (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited, but use 0 or negative number to disable it as unlimited. |  | int
 | *messageAttributeNames* (consumer) | A list of message attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *serverSideEncryptionEnabled* (consumer) | Define if Server Side Encryption is enabled or not on the queue | false | boolean
 | *visibilityTimeout* (consumer) | The duration (in seconds) that the received messages are hidden from subsequent retrieve requests after being retrieved by a ReceiveMessage request to set in the com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only make sense if its different from defaultVisibilityTimeout. It changes the queue visibility timeout attribute permanently. |  | Integer
 | *waitTimeSeconds* (consumer) | Duration in seconds (0 to 20) that the ReceiveMessage action call will wait until a message is in the queue to include in the response. |  | Integer
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
