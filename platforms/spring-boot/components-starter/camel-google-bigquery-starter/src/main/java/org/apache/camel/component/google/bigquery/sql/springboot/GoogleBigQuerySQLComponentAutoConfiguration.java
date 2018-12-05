@@ -30,11 +30,7 @@ import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
-<<<<<<< HEAD
 import org.apache.camel.support.IntrospectionSupport;
-=======
-import org.apache.camel.util.IntrospectionSupport;
->>>>>>> a8ce423... CAMEL-12930 - Fixed CS and sb starter
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
