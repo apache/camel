@@ -28,7 +28,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
+
 
 public final class SqlHelper {
 
