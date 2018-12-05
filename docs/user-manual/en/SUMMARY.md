@@ -344,7 +344,7 @@
 	* [Nats](nats-component.adoc)
 	* [Netty4](netty4-component.adoc)
 	* [Netty4 HTTP](netty4-http-component.adoc)
-	* [nsq](nsq-component.adoc)
+	* [NSQ](nsq-component.adoc)
 	* [Olingo2](olingo2-component.adoc)
 	* [Olingo4](olingo4-component.adoc)
 	* [OPC UA Client](milo-client-component.adoc)
