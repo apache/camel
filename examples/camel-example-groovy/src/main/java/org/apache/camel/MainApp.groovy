@@ -23,21 +23,25 @@ import org.apache.camel.main.Main
  */
 class MainApp {
 
-    /**
-     * A main() so we can easily run these routing rules in our IDE
-     */
-    static void main(String... args) throws Exception {
 
-        println "\n\n\n\n"
-        println "==============================================="
-        println "Open your web browser on http://localhost:8080"
-        println "Press ctrl+c to stop this example"
-        println "==============================================="
-        println "\n\n\n\n"
+    static void main(String... args)  {
+        def camelContext = new DefaultCamelContext()
 
-        Main main = new Main()
-        main.addRouteBuilder(new MyRouteBuilder())
-        main.run(args)
+        println("printing something in the console MainApp")
+        camelContext.addRoutes( new RouteBuilder() {
+
+            @Override
+            void configure() {
+                println("Printing some thing before queue")
+                from("Test").to("Test")
+                println("printing something after queue")
+            }
+        })
+         //camelContext.start()
+
+       // Thread.sleep(10000)
+       // camelContext.stop()
+
     }
 
 }
