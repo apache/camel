@@ -91,7 +91,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (29 parameters):
+==== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,6 +110,7 @@ with the following path and query parameters:
 | *publishedEndpointUrl* (consumer) | This option can override the endpointUrl that published from the WADL which can be accessed with resource address url plus _wadl |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *serviceBeans* (consumer) | The service beans which you want to export as REST service. Multiple beans can be separated by comma. |  | List
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *hostnameVerifier* (producer) | The hostname verifier to be used. Use the # notation to reference a HostnameVerifier from the registry. |  | HostnameVerifier
 | *sslContextParameters* (producer) | The Camel SSL setting reference. Use the # notation to reference the SSL Context. |  | SSLContextParameters
