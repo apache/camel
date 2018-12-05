@@ -137,4 +137,63 @@ public class SqsEndpointTest {
         Mockito.verify(amazonSQSClient).createQueue(expectedCreateQueueRequest);
         assertEquals("https://sqs.us-east-1.amazonaws.com/111222333/test-queue", endpoint.getQueueUrl());
     }
+    
+    @Test
+    public void createQueueWithSSEShouldCreateStandardQueueWithSSESet() {
+        config.setDefaultVisibilityTimeout(1000);
+        config.setMaximumMessageSize(128);
+        config.setMessageRetentionPeriod(1000);
+        config.setPolicy("{\"Version\": \"2012-10-17\"}");
+        config.setReceiveMessageWaitTimeSeconds(5);
+        config.setRedrivePolicy("{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
+        config.setKmsMasterKeyId("keyMaster1");
+        config.setKmsDataKeyReusePeriodSeconds(300);
+        config.setServerSideEncryptionEnabled(true);
+
+        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue")
+                .addAttributesEntry(QueueAttributeName.VisibilityTimeout.name(), "1000")
+                .addAttributesEntry(QueueAttributeName.MaximumMessageSize.name(), "128")
+                .addAttributesEntry(QueueAttributeName.MessageRetentionPeriod.name(), "1000")
+                .addAttributesEntry(QueueAttributeName.Policy.name(), "{\"Version\": \"2012-10-17\"}")
+                .addAttributesEntry(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), "5")
+                .addAttributesEntry(QueueAttributeName.KmsMasterKeyId.name(), "keyMaster1")
+                .addAttributesEntry(QueueAttributeName.KmsDataKeyReusePeriodSeconds.name(), "300")
+                .addAttributesEntry(QueueAttributeName.RedrivePolicy.name(), "{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
+        Mockito.when(amazonSQSClient.createQueue(ArgumentMatchers.any(CreateQueueRequest.class)))
+                .thenReturn(new CreateQueueResult()
+                                .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
+
+        endpoint.createQueue(amazonSQSClient);
+
+        Mockito.verify(amazonSQSClient).createQueue(expectedCreateQueueRequest);
+        assertEquals("https://sqs.us-east-1.amazonaws.com/111222333/test-queue", endpoint.getQueueUrl());
+    }
+    
+    @Test
+    public void createQueueWithoutSSEShouldNotCreateStandardQueueWithSSESet() {
+        config.setDefaultVisibilityTimeout(1000);
+        config.setMaximumMessageSize(128);
+        config.setMessageRetentionPeriod(1000);
+        config.setPolicy("{\"Version\": \"2012-10-17\"}");
+        config.setReceiveMessageWaitTimeSeconds(5);
+        config.setRedrivePolicy("{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
+        config.setKmsMasterKeyId("keyMaster1");
+        config.setKmsDataKeyReusePeriodSeconds(300);
+
+        CreateQueueRequest expectedCreateQueueRequest = new CreateQueueRequest("test-queue")
+                .addAttributesEntry(QueueAttributeName.VisibilityTimeout.name(), "1000")
+                .addAttributesEntry(QueueAttributeName.MaximumMessageSize.name(), "128")
+                .addAttributesEntry(QueueAttributeName.MessageRetentionPeriod.name(), "1000")
+                .addAttributesEntry(QueueAttributeName.Policy.name(), "{\"Version\": \"2012-10-17\"}")
+                .addAttributesEntry(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), "5")
+                .addAttributesEntry(QueueAttributeName.RedrivePolicy.name(), "{ \"deadLetterTargetArn\" : String, \"maxReceiveCount\" : Integer }");
+        Mockito.when(amazonSQSClient.createQueue(ArgumentMatchers.any(CreateQueueRequest.class)))
+                .thenReturn(new CreateQueueResult()
+                                .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
+
+        endpoint.createQueue(amazonSQSClient);
+
+        Mockito.verify(amazonSQSClient).createQueue(expectedCreateQueueRequest);
+        assertEquals("https://sqs.us-east-1.amazonaws.com/111222333/test-queue", endpoint.getQueueUrl());
+    }
 }

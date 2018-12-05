@@ -185,6 +185,14 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         if (getConfiguration().getRedrivePolicy() != null) {
             request.getAttributes().put(QueueAttributeName.RedrivePolicy.name(), getConfiguration().getRedrivePolicy());
         }
+        if (getConfiguration().isServerSideEncryptionEnabled()) {
+            if (getConfiguration().getKmsMasterKeyId() != null) {
+                request.getAttributes().put(QueueAttributeName.KmsMasterKeyId.name(), getConfiguration().getKmsMasterKeyId());
+            }
+            if (getConfiguration().getKmsDataKeyReusePeriodSeconds() != null) {
+                request.getAttributes().put(QueueAttributeName.KmsDataKeyReusePeriodSeconds.name(), String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
+            }
+        }
         log.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
 
         CreateQueueResult queueResult = client.createQueue(request);
@@ -216,6 +224,14 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         }
         if (getConfiguration().getRedrivePolicy() != null) {
             request.getAttributes().put(QueueAttributeName.RedrivePolicy.name(), getConfiguration().getRedrivePolicy());
+        }
+        if (getConfiguration().isServerSideEncryptionEnabled()) {
+            if (getConfiguration().getKmsMasterKeyId() != null) {
+                request.getAttributes().put(QueueAttributeName.KmsMasterKeyId.name(), getConfiguration().getKmsMasterKeyId());
+            }
+            if (getConfiguration().getKmsDataKeyReusePeriodSeconds() != null) {
+                request.getAttributes().put(QueueAttributeName.KmsDataKeyReusePeriodSeconds.name(), String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
+            }
         }
         if (!request.getAttributes().isEmpty()) {
             log.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());
