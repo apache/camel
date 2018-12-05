@@ -49,6 +49,8 @@ public interface JBPMConstants {
     String CAMEL_ENDPOINT_ID_WI_PARAM = "CamelEndpointId";
     String RESPONSE_WI_PARAM = "Response";
     String MESSAGE_WI_PARAM = "Message";
+    
+    String CAMEL_CONTEXT_BUILDER_KEY = "CamelContextBuilder";
 
     
 }
