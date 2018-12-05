@@ -17,7 +17,7 @@
 package org.apache.camel.component.google.bigquery.sql;
 
 import org.apache.camel.*;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
