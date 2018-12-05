@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<routes id="routes-c6e723e3-4841-48cd-aefe-dfd8cada3e7e" xmlns="http://camel.apache.org/schema/spring">
+  <route id="unitTestRoute">
+    <from id="direct-unitTestRoute" uri="direct:unitTest" />
+    <to uri="log:org.apache.camel.com?level=WARN" />
+  </route>
+</routes>
