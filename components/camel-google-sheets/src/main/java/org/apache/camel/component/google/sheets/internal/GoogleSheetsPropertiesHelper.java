@@ -17,7 +17,7 @@
 package org.apache.camel.component.google.sheets.internal;
 
 import org.apache.camel.component.google.sheets.GoogleSheetsConfiguration;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * Singleton {@link ApiMethodPropertiesHelper} for GoogleSheets component.

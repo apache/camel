@@ -22,8 +22,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.sheets.BatchGoogleSheetsClientFactory;
 import org.apache.camel.component.google.sheets.GoogleSheetsClientFactory;
 import org.apache.camel.component.google.sheets.GoogleSheetsVerifierExtension;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.DefaultComponent;
 
 import java.util.Map;
 

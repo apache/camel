@@ -37,7 +37,7 @@ public class SheetsStreamConsumerIntegrationTest extends AbstractGoogleSheetsStr
         Spreadsheet testSheet = getSpreadsheetWithTestData();
 
         context().addRoutes(createGoogleStreamRouteBuilder(testSheet.getSpreadsheetId()));
-        context().startRoute("google-stream-test");
+        context().start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
