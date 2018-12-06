@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
@@ -140,6 +141,29 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         assertEquals("++def++", lines.get(1));
     }
 
+    @Test
+    public void testRawUriParameterFail() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
+        getMockEndpoint("mock:result").expectedHeaderReceived("password", "foo)+bar");
+
+        template.sendBody("direct:fail", "Hello World");
+
+        // should fail as the password has + sign which gets escaped
+        getMockEndpoint("mock:result").assertIsNotSatisfied();
+    }
+
+    @Test
+    public void testRawUriParameterOk() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
+        getMockEndpoint("mock:result").expectedHeaderReceived("password", "foo)+bar");
+
+        template.sendBody("direct:ok", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -157,6 +181,14 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
                 from("direct:rawlines")
                     .to("mycomponent:foo?lines=RAW(++abc++)&lines=RAW(++def++)")
+                    .to("mock:result");
+
+                from("direct:fail")
+                    .to("mycomponent:foo?password=foo)+bar&username=scott")
+                    .to("mock:result");
+
+                from("direct:ok")
+                    .to("mycomponent:foo?password=RAW(foo)+bar)&username=scott")
                     .to("mock:result");
             }
         };
