@@ -54,14 +54,14 @@ public class CamelKieServerExtension implements KieServerExtension {
     protected boolean managedCamel;
 
     protected Map<String, DefaultCamelContext> camelContexts = new HashMap<>();
-    
+
     protected CamelContextBuilder camelContextBuilder;
 
     public CamelKieServerExtension() {
         this.managedCamel = true;
         this.camelContextBuilder = discoverCamelContextBuilder();
     }
-    
+
     public CamelKieServerExtension(CamelContextBuilder camelContextBuilder) {
         this.managedCamel = true;
         this.camelContextBuilder = camelContextBuilder;
@@ -92,7 +92,7 @@ public class CamelKieServerExtension implements KieServerExtension {
     @Override
     public void init(KieServerImpl kieServer, KieServerRegistry registry) {
         if (this.managedCamel && this.camelContext == null) {
-            this.camelContext = (DefaultCamelContext) buildGlobalContext();
+            this.camelContext = (DefaultCamelContext)buildGlobalContext();
             this.camelContext.setName("KIE Server Camel context");
 
             try (InputStream is = this.getClass().getResourceAsStream("/global-camel-routes.xml")) {
@@ -129,7 +129,7 @@ public class CamelKieServerExtension implements KieServerExtension {
         try (InputStream is = classloader.getResourceAsStream("camel-routes.xml")) {
             if (is != null) {
 
-                DefaultCamelContext context = (DefaultCamelContext) buildDeploymentContext(id);
+                DefaultCamelContext context = (DefaultCamelContext)buildDeploymentContext(id);
                 context.setName("KIE Server Camel context for container " + kieContainerInstance.getContainerId());
 
                 RoutesDefinition routes = context.loadRoutesDefinition(is);
@@ -217,11 +217,11 @@ public class CamelKieServerExtension implements KieServerExtension {
     public String toString() {
         return EXTENSION_NAME + " KIE Server extension";
     }
-    
+
     public DefaultCamelContext getCamelContext() {
         return camelContext;
     }
-    
+
     public CamelContextBuilder getCamelContextBuilder() {
         return camelContextBuilder;
     }
@@ -244,44 +244,44 @@ public class CamelKieServerExtension implements KieServerExtension {
                     }
                     uri.append("deploymentId=").append(deploymentId);
                     from.setUri(uri.toString());
-                }                
+                }
             }
         }
     }
-    
+
     protected CamelContext buildGlobalContext() {
         if (camelContextBuilder != null) {
             return camelContextBuilder.buildCamelContext();
         }
-        
-        return new CamelContextBuilder(){}.buildCamelContext();
+
+        return new CamelContextBuilder() {
+        }.buildCamelContext();
     }
-    
+
     protected CamelContext buildDeploymentContext(String identifier) {
-        
-        InternalRuntimeManager runtimeManager = (InternalRuntimeManager) RuntimeManagerRegistry.get().getManager(identifier);
-        
+
+        InternalRuntimeManager runtimeManager = (InternalRuntimeManager)RuntimeManagerRegistry.get().getManager(identifier);
+
         if (runtimeManager != null) {
-            
-            CamelContextBuilder deploymentContextBuilder = (CamelContextBuilder) runtimeManager.getEnvironment()
-                                                                                        .getEnvironment()
-                                                                                        .get(JBPMConstants.CAMEL_CONTEXT_BUILDER_KEY);
+
+            CamelContextBuilder deploymentContextBuilder = (CamelContextBuilder)runtimeManager.getEnvironment().getEnvironment().get(JBPMConstants.CAMEL_CONTEXT_BUILDER_KEY);
             if (deploymentContextBuilder != null) {
                 return deploymentContextBuilder.buildCamelContext();
             }
         }
-        
-        return new CamelContextBuilder(){}.buildCamelContext();
+
+        return new CamelContextBuilder() {
+        }.buildCamelContext();
     }
-    
+
     protected CamelContextBuilder discoverCamelContextBuilder() {
-        
+
         ServiceLoader<CamelContextBuilder> builders = ServiceLoader.load(CamelContextBuilder.class);
         Iterator<CamelContextBuilder> it = builders.iterator();
         if (it.hasNext()) {
             return it.next();
         }
-        
+
         return null;
     }
 }
