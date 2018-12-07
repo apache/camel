@@ -1,6 +1,6 @@
 {
   "name": "camel-website",
-  "version": "2.23.0-SNAPSHOT",
+  "version": "2.24.0-SNAPSHOT",
   "description": "Apache Camel Website",
   "license": "Apache-2.0",
   "repository": "https://github.com/apache/camel",
