@@ -35,7 +35,7 @@
 
   <properties>
     <category>Other Languages</category>
-    <kotlin.version>1.2.31</kotlin.version>
+    <kotlin.version>1.3.11</kotlin.version>
   </properties>
 
   <dependencies>
