@@ -1,0 +1,1 @@
+../../../../../components/camel-atomix/src/main/docs/atomix-queue-component.adoc

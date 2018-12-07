@@ -1,0 +1,1 @@
+../../../../../components/camel-mvel/src/main/docs/mvel-component.adoc

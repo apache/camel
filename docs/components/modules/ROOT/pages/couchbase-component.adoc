@@ -1,0 +1,1 @@
+../../../../../components/camel-couchbase/src/main/docs/couchbase-component.adoc

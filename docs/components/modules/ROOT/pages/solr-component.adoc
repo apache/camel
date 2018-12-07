@@ -1,0 +1,1 @@
+../../../../../components/camel-solr/src/main/docs/solr-component.adoc

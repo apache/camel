@@ -1,0 +1,1 @@
+../../../../../components/camel-rest-swagger/src/main/docs/rest-swagger-component.adoc

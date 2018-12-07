@@ -1,0 +1,1 @@
+../../../../../components/camel-hdfs/src/main/docs/hdfs-component.adoc

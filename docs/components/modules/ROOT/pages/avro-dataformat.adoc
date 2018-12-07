@@ -1,0 +1,1 @@
+../../../../../components/camel-avro/src/main/docs/avro-dataformat.adoc

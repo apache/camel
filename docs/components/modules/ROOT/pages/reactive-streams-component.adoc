@@ -1,0 +1,1 @@
+../../../../../components/camel-reactive-streams/src/main/docs/reactive-streams-component.adoc

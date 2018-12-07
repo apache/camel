@@ -1,0 +1,1 @@
+../../../../../components/camel-jasypt/src/main/docs/jasypt.adoc

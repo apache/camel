@@ -1,0 +1,1 @@
+../../../../../components/camel-google-sheets/src/main/docs/google-sheets-component.adoc

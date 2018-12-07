@@ -1,0 +1,1 @@
+../../../../../components/camel-spring-cloud-consul/src/main/docs/spring-cloud-consul.adoc

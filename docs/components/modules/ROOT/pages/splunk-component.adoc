@@ -1,0 +1,1 @@
+../../../../../components/camel-splunk/src/main/docs/splunk-component.adoc

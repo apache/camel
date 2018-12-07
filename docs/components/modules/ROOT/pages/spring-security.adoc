@@ -1,0 +1,1 @@
+../../../../../components/camel-spring-security/src/main/docs/spring-security.adoc

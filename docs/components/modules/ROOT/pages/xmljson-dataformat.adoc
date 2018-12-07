@@ -1,0 +1,1 @@
+../../../../../components/camel-xmljson/src/main/docs/xmljson-dataformat.adoc

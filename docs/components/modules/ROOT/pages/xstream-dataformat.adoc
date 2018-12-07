@@ -1,0 +1,1 @@
+../../../../../components/camel-xstream/src/main/docs/xstream-dataformat.adoc

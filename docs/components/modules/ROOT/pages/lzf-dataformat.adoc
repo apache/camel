@@ -1,0 +1,1 @@
+../../../../../components/camel-lzf/src/main/docs/lzf-dataformat.adoc

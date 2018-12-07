@@ -1,0 +1,1 @@
+../../../../../components/camel-blueprint/src/main/docs/blueprint.adoc

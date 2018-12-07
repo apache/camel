@@ -1,0 +1,1 @@
+../../../../../components/camel-consul/src/main/docs/consul-component.adoc

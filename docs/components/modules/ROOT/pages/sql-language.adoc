@@ -1,0 +1,1 @@
+../../../../../components/camel-josql/src/main/docs/sql-language.adoc

@@ -1,0 +1,1 @@
+../../../../../components/camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc
