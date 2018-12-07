@@ -1,0 +1,1 @@
+../../../../../components/camel-spring-cloud-netflix/src/main/docs/spring-cloud-netflix.adoc

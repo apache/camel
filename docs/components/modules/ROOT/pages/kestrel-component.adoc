@@ -1,0 +1,1 @@
+../../../../../components/camel-kestrel/src/main/docs/kestrel-component.adoc

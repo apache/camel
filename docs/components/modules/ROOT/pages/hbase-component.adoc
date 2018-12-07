@@ -1,0 +1,1 @@
+../../../../../components/camel-hbase/src/main/docs/hbase-component.adoc

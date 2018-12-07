@@ -21,3 +21,4 @@ components/camel-solr/data
 log-camel-lsp.out
 .vscode
 components/camel-cxf/activemq-data
+node_modules

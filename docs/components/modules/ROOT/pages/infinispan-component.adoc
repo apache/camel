@@ -1,0 +1,1 @@
+../../../../../components/camel-infinispan/src/main/docs/infinispan-component.adoc

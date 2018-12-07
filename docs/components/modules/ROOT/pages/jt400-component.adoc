@@ -1,0 +1,1 @@
+../../../../../components/camel-jt400/src/main/docs/jt400-component.adoc

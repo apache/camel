@@ -1,0 +1,1 @@
+../../../../../components/camel-couchdb/src/main/docs/couchdb-component.adoc

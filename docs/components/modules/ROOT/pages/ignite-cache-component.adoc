@@ -1,0 +1,1 @@
+../../../../../components/camel-ignite/src/main/docs/ignite-cache-component.adoc

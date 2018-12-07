@@ -1,0 +1,1 @@
+../../../../../components/camel-crypto/src/main/docs/crypto-dataformat.adoc

@@ -1,0 +1,1 @@
+../../../../../components/camel-geocoder/src/main/docs/geocoder-component.adoc

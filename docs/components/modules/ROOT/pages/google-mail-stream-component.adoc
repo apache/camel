@@ -1,0 +1,1 @@
+../../../../../components/camel-google-mail/src/main/docs/google-mail-stream-component.adoc

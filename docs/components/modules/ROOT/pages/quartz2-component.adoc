@@ -1,0 +1,1 @@
+../../../../../components/camel-quartz2/src/main/docs/quartz2-component.adoc

@@ -1,0 +1,1 @@
+../../../../../components/camel-asterisk/src/main/docs/asterisk-component.adoc
