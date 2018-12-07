@@ -28,19 +28,17 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.*;
 
 /**
  * Represents a ChatScript endpoint.
  */
-@UriEndpoint(firstVersion = "2.24.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:hostname:port/botname",  producerOnly = true, label = "ai,chatscript")
-public class ChatScriptEndpoint extends DefaultEndpoint {
-
-    public static final int DEFAULT_PORT = 1024;
-
-    private static final String URI_ERROR = "Invalid URI. Format must be of the form chatscript://hostname[:port]/botname?[options...]";
+@UriEndpoint(firstVersion = "2.24.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botname",  producerOnly = true, label = "ai,chatscript")
+public class ChatScriptEndpoint extends DefaultEndpoint { 
+    private static final String URI_ERROR = "Invalid URI. Format must be of the form chatscript://host[:port]/botname?[options...]";
     @UriPath (description = "Hostname or IP of the server on which CS server is running") 
     @Metadata(required = "true")
-    private String hostname;
+    private String host;
     @UriPath(description = "Port on which ChatScript is listening to", defaultValue = "" + DEFAULT_PORT)
     private int port;
     @UriPath(description = "Name of the Bot in CS to converse with")
@@ -67,8 +65,8 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isEmpty(remainingUri.getPath())) {
             throw new IllegalArgumentException(URI_ERROR);
         }
-        hostname = remainingUri.getHost();
-       if (ObjectHelper.isEmpty(hostname)) { 
+        host = remainingUri.getHost();
+        if (ObjectHelper.isEmpty(host)) { 
             throw new IllegalArgumentException(URI_ERROR);
         }
         botname = remainingUri.getPath();
@@ -108,11 +106,11 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     }
 
     public String getHostName() {
-        return hostname;
+        return host;
     }
 
     public void setHostName(String hostName) {
-        this.hostname = hostName;
+        this.host = hostName;
     }
 
     public int getPort() {

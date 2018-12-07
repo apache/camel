@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import org.apache.camel.component.chatscript.exception.ChatScriptDeliveryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ public class ChatScriptBot {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(ChatScriptBot.class);
     String host;
-    int port = 1024;
+    int port;
     String message;
     String botName;
     String userName;
@@ -42,7 +43,7 @@ public class ChatScriptBot {
         this.userName = iUserName;
     }
 
-    public String sendChat(String input) {
+    public String sendChat(String input) throws ChatScriptDeliveryException {
         if (!initialized) {
             return init(null);
         }
@@ -50,18 +51,18 @@ public class ChatScriptBot {
         return doMessage(g.toCSFormat());
     }
 
-    public String sendChat(ChatScriptMessage input) {
+    public String sendChat(ChatScriptMessage input) throws ChatScriptDeliveryException {
         if (!initialized) {
             return init(input);
         }
         return doMessage(input.toCSFormat());
     }
 
-    private String doMessage(ChatScriptMessage msg) {
+    private String doMessage(ChatScriptMessage msg) throws ChatScriptDeliveryException {
         return doMessage(msg.toCSFormat());
     }
 
-    private String doMessage(String msg) {
+    private String doMessage(String msg) throws ChatScriptDeliveryException {
         Socket echoSocket;
         String resp = "";
 
@@ -74,14 +75,14 @@ public class ChatScriptBot {
             echoSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
-            LOG.error("Error: " + e.getMessage());
+            throw new ChatScriptDeliveryException("Unable to send message to ChatScript Server. Reason:" + e.getMessage());
         }
 
         return resp;
 
     }
 
-    public String init(ChatScriptMessage input) {
+    public String init(ChatScriptMessage input) throws ChatScriptDeliveryException {
         ChatScriptMessage g = new ChatScriptMessage(input.getUserName(), this.botName, null);
         String response = doMessage(g);
         LOG.info("Conversation started between the bot " + this.botName + " and " + input.getUserName());
@@ -95,7 +96,7 @@ public class ChatScriptBot {
 
     public void reset() {
         //TODO
-    	}
+    }
 
     public String getHost() {
         return host;
@@ -129,11 +130,11 @@ public class ChatScriptBot {
         this.botName = iBotName;
     }
 
-    public String getUsername() {
+    public String getUserName() {
         return userName;
     }
 
-    public void setUsername(String iUserName) {
+    public void setUserName(String iUserName) {
         this.userName = iUserName;
     }
 

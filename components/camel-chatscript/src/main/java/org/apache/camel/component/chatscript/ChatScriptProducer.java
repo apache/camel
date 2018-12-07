@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.chatscript;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.chatscript.exception.InvalidInputMessage;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
@@ -49,23 +51,22 @@ public class ChatScriptProducer extends DefaultProducer {
         exchange.getOut().setBody(inputMessage);
     }
 
-    private ChatScriptMessage buildMessage(Object body) {
+    private ChatScriptMessage buildMessage(Object body) throws InvalidInputMessage {
 
         if (body instanceof String) {
-            return createMessage(body);
+            return createMessage(String.valueOf(body));
         }
         return null;
     }
 
-    private ChatScriptMessage createMessage(Object body) {
+    private ChatScriptMessage createMessage(String message) throws InvalidInputMessage {
         ChatScriptMessage ret = null;
         try {
-            ret = mapper.readValue(String.valueOf(body), ChatScriptMessage.class);
+            ret = mapper.readValue(message, ChatScriptMessage.class);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            throw new InvalidInputMessage("Unable to parse the input message. Error Message" + e.getMessage());
         } 
-
         return ret;
     }
 
