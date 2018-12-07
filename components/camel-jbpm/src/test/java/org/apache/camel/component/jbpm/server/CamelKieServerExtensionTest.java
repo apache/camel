@@ -16,12 +16,6 @@
  */
 package org.apache.camel.component.jbpm.server;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,67 +37,73 @@ import org.kie.server.services.api.KieContainerInstance;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CamelKieServerExtensionTest {
-    
-    private String identifier = "test";
-    
     @Mock
     InternalRuntimeManager runtimeManager;
-    
+
     @Mock
     RuntimeEnvironment runtimeEnvironment;
 
     @Mock
     private KieContainerInstance kieContainerInstance;
-    
+
     @Mock
     private KieContainer kieContainer;
+    
+    private String identifier = "test";
 
     @After
     public void cleanup() {
         RuntimeManagerRegistry.get().remove(identifier);
     }
-    
-    
+
     @Test
     public void testInit() {
         CamelKieServerExtension extension = new CamelKieServerExtension();
         extension.init(null, null);
-        CamelContext globalCamelContext = (CamelContext) ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
+        CamelContext globalCamelContext = (CamelContext)ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         List<RouteDefinition> globalRestDefinitions = globalCamelContext.getRouteDefinitions();
         assertThat(globalRestDefinitions.size(), equalTo(1));
         assertThat(globalCamelContext.getRouteDefinition("unitTestRoute"), is(notNullValue()));
     }
-    
+
     @Test
     public void testCreateContainer() {
         CamelKieServerExtension extension = new CamelKieServerExtension();
         final String containerId = "testContainer";
-        
+
         when(kieContainerInstance.getKieContainer()).thenReturn(kieContainer);
         when(kieContainer.getClassLoader()).thenReturn(this.getClass().getClassLoader());
-        
+
         extension.createContainer(containerId, kieContainerInstance, new HashMap<String, Object>());
-        
-        CamelContext camelContext = (CamelContext) ServiceRegistry.get().service("testContainer" + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX);
+
+        CamelContext camelContext = (CamelContext)ServiceRegistry.get().service("testContainer" + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX);
         List<RouteDefinition> restDefinitions = camelContext.getRouteDefinitions();
         assertThat(restDefinitions.size(), equalTo(1));
-        
+
         assertThat(camelContext.getRoute("unitTestRoute"), is(notNullValue()));
     }
-    
+
     @Test
     public void testDefaultSetup() {
-        
+
         CamelKieServerExtension extension = new CamelKieServerExtension();
-        
+
         assertNull(extension.getCamelContextBuilder());
     }
-    
+
     @Test
     public void testDefaultSetupCustomDiscovery() {
-        
+
         CamelKieServerExtension extension = new CamelKieServerExtension() {
 
             @Override
@@ -115,29 +115,29 @@ public class CamelKieServerExtensionTest {
                         // for test purpose return simply null as camel context
                         return null;
                     }
-                    
+
                 };
             }
-            
+
         };
-        
+
         assertNotNull(extension.getCamelContextBuilder());
         assertNull(extension.getCamelContextBuilder().buildCamelContext());
     }
-    
+
     @Test
     public void testBuildGlobalCamelContext() throws Exception {
-        
+
         CamelKieServerExtension extension = new CamelKieServerExtension();
         CamelContext context = extension.buildGlobalContext();
         assertNotNull(context);
-        
+
         context.stop();
     }
-    
+
     @Test
     public void testBuildGlobalCamelContextCustomBuilder() throws Exception {
-        
+
         CamelKieServerExtension extension = new CamelKieServerExtension(new CamelContextBuilder() {
 
             @Override
@@ -145,36 +145,36 @@ public class CamelKieServerExtensionTest {
                 // for test purpose return simply null as camel context
                 return null;
             }
-            
+
         });
         CamelContext context = extension.buildGlobalContext();
-        assertNull(context);        
+        assertNull(context);
     }
-    
+
     @Test
     public void testBuildDeploymentCamelContext() throws Exception {
-        
+
         when(runtimeManager.getIdentifier()).thenReturn(identifier);
         when(runtimeManager.getEnvironment()).thenReturn(runtimeEnvironment);
-        
+
         Environment environment = KieServices.get().newEnvironment();
         when(runtimeEnvironment.getEnvironment()).thenReturn(environment);
-        
+
         RuntimeManagerRegistry.get().register(runtimeManager);
-        
+
         CamelKieServerExtension extension = new CamelKieServerExtension();
         CamelContext context = extension.buildDeploymentContext(identifier);
         assertNotNull(context);
-        
+
         context.stop();
     }
-    
+
     @Test
     public void testBuildDeploymentCamelContextCustomBuilder() throws Exception {
-        
+
         when(runtimeManager.getIdentifier()).thenReturn(identifier);
         when(runtimeManager.getEnvironment()).thenReturn(runtimeEnvironment);
-        
+
         Environment environment = KieServices.get().newEnvironment();
         environment.set(JBPMConstants.CAMEL_CONTEXT_BUILDER_KEY, new CamelContextBuilder() {
 
@@ -183,15 +183,15 @@ public class CamelKieServerExtensionTest {
                 // for test purpose return simply null as camel context
                 return null;
             }
-            
+
         });
         when(runtimeEnvironment.getEnvironment()).thenReturn(environment);
-        
+
         RuntimeManagerRegistry.get().register(runtimeManager);
-        
+
         CamelKieServerExtension extension = new CamelKieServerExtension();
         CamelContext context = extension.buildDeploymentContext(identifier);
         assertNull(context);
-        
+
     }
 }
