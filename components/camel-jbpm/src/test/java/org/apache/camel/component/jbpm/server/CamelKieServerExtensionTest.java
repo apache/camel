@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.jbpm.JBPMConstants;
 import org.apache.camel.component.jbpm.config.CamelContextBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.jbpm.services.api.service.ServiceRegistry;
 import org.junit.After;
@@ -70,7 +71,7 @@ public class CamelKieServerExtensionTest {
     public void testInit() {
         CamelKieServerExtension extension = new CamelKieServerExtension();
         extension.init(null, null);
-        CamelContext globalCamelContext = (CamelContext)ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
+        DefaultCamelContext globalCamelContext = (DefaultCamelContext)ServiceRegistry.get().service(JBPMConstants.GLOBAL_CAMEL_CONTEXT_SERVICE_KEY);
         List<RouteDefinition> globalRestDefinitions = globalCamelContext.getRouteDefinitions();
         assertThat(globalRestDefinitions.size(), equalTo(1));
         assertThat(globalCamelContext.getRouteDefinition("unitTestRoute"), is(notNullValue()));
@@ -86,7 +87,7 @@ public class CamelKieServerExtensionTest {
 
         extension.createContainer(containerId, kieContainerInstance, new HashMap<String, Object>());
 
-        CamelContext camelContext = (CamelContext)ServiceRegistry.get().service("testContainer" + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX);
+        DefaultCamelContext camelContext = (DefaultCamelContext)ServiceRegistry.get().service("testContainer" + JBPMConstants.DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX);
         List<RouteDefinition> restDefinitions = camelContext.getRouteDefinitions();
         assertThat(restDefinitions.size(), equalTo(1));
 
