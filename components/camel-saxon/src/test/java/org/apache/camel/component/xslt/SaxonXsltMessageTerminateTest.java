@@ -39,7 +39,7 @@ public class SaxonXsltMessageTerminateTest extends CamelTestSupport {
         // we have the xsl termination message as a error property on the exchange as we set terminate=true
         Exception error = out.getProperty(Exchange.XSLT_ERROR, Exception.class);
         assertNotNull(error);
-        assertEquals("Error: DOB is an empty string!", error.getMessage());
+        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>Error: DOB is an empty string!", error.getMessage());
     }
 
     @Override
