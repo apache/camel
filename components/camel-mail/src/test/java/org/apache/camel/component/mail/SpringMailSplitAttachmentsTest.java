@@ -23,22 +23,27 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- *  Tests the {@link SplitAttachmentsExpression}.
+ *  Spring XML version of {@link MailSplitAttachmentsTest}
  */
-public class MailSplitAttachmentsTest extends CamelTestSupport {
+public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
 
     private Endpoint endpoint;
-    private SplitAttachmentsExpression splitAttachmentsExpression;
     private Exchange exchange;
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/mail/SpringMailSplitAttachmentsTest.xml");
+    }
 
     @Before
     public void clearMailBox() {
@@ -89,6 +94,7 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
         mock.expectedMessageCount(2);
 
         // set the expression to extract the attachments as byte[]s
+        SplitAttachmentsExpression splitAttachmentsExpression = context.getRegistry().findByType(SplitAttachmentsExpression.class).iterator().next();
         splitAttachmentsExpression.setExtractAttachments(true);
 
         Producer producer = endpoint.createProducer();
@@ -114,24 +120,4 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
         assertArrayEquals(expected2, second.getBody(byte[].class));
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-
-        splitAttachmentsExpression = new SplitAttachmentsExpression(false);
-
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // START SNIPPET: e1
-                from("pop3://james@mymailserver.com?password=secret&consumer.initialDelay=100&consumer.delay=100")
-                    .to("log:email")
-                    // use the SplitAttachmentsExpression which will split the message per attachment
-                    .split(splitAttachmentsExpression)
-                        // each message going to this mock has a single attachment
-                        .to("mock:split")
-                    .end();
-                // END SNIPPET: e1
-            }
-        };
-    }
 }
