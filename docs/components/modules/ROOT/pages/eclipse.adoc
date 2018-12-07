@@ -1,0 +1,1 @@
+../../../../../components/camel-eclipse/src/main/docs/eclipse.adoc

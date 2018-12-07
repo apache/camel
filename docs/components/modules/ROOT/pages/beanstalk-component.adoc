@@ -1,0 +1,1 @@
+../../../../../components/camel-beanstalk/src/main/docs/beanstalk-component.adoc

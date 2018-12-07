@@ -1,0 +1,1 @@
+../../../../../components/camel-drill/src/main/docs/drill-component.adoc

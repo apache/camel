@@ -1,0 +1,1 @@
+../../../../../components/camel-mina2/src/main/docs/mina2-component.adoc

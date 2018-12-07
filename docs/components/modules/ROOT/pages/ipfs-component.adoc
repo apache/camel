@@ -1,0 +1,1 @@
+../../../../../components/camel-ipfs/src/main/docs/ipfs-component.adoc

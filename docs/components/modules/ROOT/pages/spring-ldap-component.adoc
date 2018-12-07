@@ -1,0 +1,1 @@
+../../../../../components/camel-spring-ldap/src/main/docs/spring-ldap-component.adoc

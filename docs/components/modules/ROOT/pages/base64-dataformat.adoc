@@ -1,0 +1,1 @@
+../../../../../components/camel-base64/src/main/docs/base64-dataformat.adoc

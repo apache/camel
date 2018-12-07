@@ -1,0 +1,1 @@
+../../../../../components/camel-atom/src/main/docs/atom-component.adoc

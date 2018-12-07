@@ -1,0 +1,1 @@
+../../../../../components/camel-test-spring/src/main/docs/test-spring.adoc

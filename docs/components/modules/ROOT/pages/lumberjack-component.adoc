@@ -1,0 +1,1 @@
+../../../../../components/camel-lumberjack/src/main/docs/lumberjack-component.adoc

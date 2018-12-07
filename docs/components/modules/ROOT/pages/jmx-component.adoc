@@ -1,0 +1,1 @@
+../../../../../components/camel-jmx/src/main/docs/jmx-component.adoc

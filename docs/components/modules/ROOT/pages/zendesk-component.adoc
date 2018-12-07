@@ -1,0 +1,1 @@
+../../../../../components/camel-zendesk/src/main/docs/zendesk-component.adoc

@@ -1,0 +1,1 @@
+../../../../../components/camel-kubernetes/src/main/docs/openshift-builds-component.adoc

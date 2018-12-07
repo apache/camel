@@ -1,0 +1,1 @@
+../../../../../components/camel-yql/src/main/docs/yql-component.adoc

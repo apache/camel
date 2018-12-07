@@ -1,0 +1,1 @@
+../../../../../components/camel-vertx/src/main/docs/vertx-component.adoc

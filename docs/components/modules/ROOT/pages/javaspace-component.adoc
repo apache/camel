@@ -1,0 +1,1 @@
+../../../../../components/camel-javaspace/src/main/docs/javaspace-component.adoc

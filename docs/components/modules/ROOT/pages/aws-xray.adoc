@@ -1,0 +1,1 @@
+../../../../../components/camel-aws-xray/src/main/docs/aws-xray.adoc

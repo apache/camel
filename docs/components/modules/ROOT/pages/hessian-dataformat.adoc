@@ -1,0 +1,1 @@
+../../../../../components/camel-hessian/src/main/docs/hessian-dataformat.adoc

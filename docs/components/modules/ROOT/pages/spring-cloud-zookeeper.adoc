@@ -1,0 +1,1 @@
+../../../../../components/camel-spring-cloud-zookeeper/src/main/docs/spring-cloud-zookeeper.adoc

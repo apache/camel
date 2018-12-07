@@ -1,0 +1,1 @@
+../../../../../components/camel-metrics/src/main/docs/metrics-component.adoc
