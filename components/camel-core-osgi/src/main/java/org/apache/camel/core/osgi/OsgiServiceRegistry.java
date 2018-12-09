@@ -164,7 +164,8 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
     @Override
     public void serviceChanged(ServiceEvent event) {
         if( event.getType() == ServiceEvent.UNREGISTERING) {
-            CLEANUP_EXECUTOR_SERVICE.execute(new OsgiServiceReferenceCleanupTask(event.getServiceReference()));
+            CLEANUP_EXECUTOR_SERVICE.execute(new OsgiServiceReferenceCleanupTask(this.bundleContext, 
+                    event.getServiceReference(), this.serviceCacheMap, this.serviceReferenceQueue));
         }
     }
     
@@ -184,8 +185,18 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
         
         private final ServiceReference<?> unRegisteredServiceReference;
         
-        public OsgiServiceReferenceCleanupTask(ServiceReference<?> unRegisteredServiceReference) {
+        private final BundleContext bundleContext; 
+        
+        private final Queue<ServiceReference<?>> serviceReferenceQueue;
+        
+        private final Map<ServiceReference<?>, Object> serviceCacheMap;
+        
+        public OsgiServiceReferenceCleanupTask(BundleContext bundleContext, ServiceReference<?> unRegisteredServiceReference, 
+                Map<ServiceReference<?>, Object> serviceCacheMap, Queue<ServiceReference<?>> serviceReferenceQueue) {
+            this.bundleContext = bundleContext;
             this.unRegisteredServiceReference = unRegisteredServiceReference;
+            this.serviceCacheMap = serviceCacheMap;
+            this.serviceReferenceQueue = serviceReferenceQueue;
         }
         
         @Override
@@ -195,7 +206,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                 serviceReferenceQueue.remove(this.unRegisteredServiceReference);
             }
             else {
-                CLEANUP_EXECUTOR_SERVICE.submit(this);
+                CLEANUP_EXECUTOR_SERVICE.execute(this);
             }
         }
     }
