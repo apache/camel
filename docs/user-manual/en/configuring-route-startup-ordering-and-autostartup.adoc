@@ -111,14 +111,23 @@ Camel started the routes in a non deterministic order. Now you have fine
 grained control in which order the routes should be started. There is a
 new attribute `startupOrder` which is an `Integer` that states the order.
 Camel then sorts the routes before starting time. The routes with the
-lowest `startupOrder` is started first. All `startupOrder` defined must
-be unique among all routes in your
-link:camelcontext.adoc[CamelContext].
+lowest `startupOrder` are started first and the ones with the highest are
+started last.
 
-You should also use numbers that are lower than 1000, as routes without
-an explicit `startupOrder` define will have a number starting from 1000
+IMPORTANT: All `startupOrder` defined must be unique among all routes in your
+link:camelcontext.adoc[CamelContext]. Otherwise if there are clashes in
+`startupOrder` numbers among routes, the routes will fail to start up throwing
+`org.apache.camel.FailedToStartRouteException`.
+
+Normally you should also use numbers that are lower than 1000, as routes without
+an explicit `startupOrder` definition will have a number starting from 1000
 auto assigned. So view numbers from 1000 upwards as reserved internally
 for Camel itself.
+
+However, you can also utilise much higher numbers than 1000
+(to avoid collisions with those auto assigned numbers) to specify the last routes
+to start up. Normally the usage of numbers starting from 10000 should be safe
+for the purpose.
 
 In terms of the `startupOrder` there are no strict rules that it must
 start from 1 and increment by 1. You can for example use: 100, 200, 205,
@@ -148,7 +157,7 @@ were started.
 Let's try a couple of examples.
 
 [[Configuringroutestartuporderingandautostartup-Simpleexample]]
-==== Simple example
+===== Simple example
 
 [source,java]
 ----
@@ -172,7 +181,7 @@ And the same example with XML DSL:
 ----
 
 In this example we have two routes in which we have started that the
-`direct:start` route should be started *after* the `seda:foo` route. +
+`direct:start` route should be started *after* the `seda:foo` route.
 As `direct:start` is consider the input and we want that `seda:foo`
 route to be up and running beforehand.
 
@@ -217,6 +226,31 @@ last.
 
 So you can use this to your advantage to only assign a `startupOrder` on
 the routes which really needs it.
+
+[[Configuringroutestartuporderingandautostartup-Routestostartuplast]]
+===== Routes to start up last
+
+[source,java]
+----
+    // use auto assigned startup ordering
+    from("direct:start").to("seda:foo");
+
+    // should start first
+    from("seda:foo").startupOrder(1).to("mock:result");
+
+    // should start last after the default routes
+    from("direct:bar").startupOrder(12345).to("seda:bar");
+
+    // use auto assigned startup ordering
+    from("seda:bar").to("mock:other");
+----
+
+In the example above the order of startups of routes should be:
+
+1. `seda://foo`
+2. `direct://start`
+3. `seda://bar`
+4. `direct://bar`
 
 [[Configuringroutestartuporderingandautostartup-Shutdown]]
 ==== Shutdown

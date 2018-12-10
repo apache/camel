@@ -61,7 +61,7 @@ public class RouteStartupOrderLastTest extends ContextTestSupport {
                 // should start first
                 from("seda:foo").startupOrder(1).to("mock:result");
 
-                // should start last after the default routes route
+                // should start last after the default routes
                 from("direct:bar").startupOrder(12345).to("seda:bar");
 
                 // use auto assigned startup ordering
