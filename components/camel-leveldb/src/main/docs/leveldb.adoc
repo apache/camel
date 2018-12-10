@@ -1,6 +1,5 @@
 [[LevelDB-LevelDB]]
-LevelDB
-~~~~~~~
+== LevelDB
 
 *Available as of Camel 2.10*
 

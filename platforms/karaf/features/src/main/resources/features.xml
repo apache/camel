@@ -1175,6 +1175,7 @@
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-maven-support/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-project-datamodel-api/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-project-datamodel-commons/${jbpm-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.jbpm/jbpm-workitems-core/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-commons/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-api/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${jbpm-version}</bundle>
@@ -1244,6 +1245,17 @@
     <bundle>mvn:org.apache.camel/camel-jgroups/${project.version}</bundle>
     <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
   </feature>
+  <feature name='camel-jgroups-raft' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.camel/camel-jgroups-raft/${project.version}</bundle>
+    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-raft-jgroups-version}</bundle>
+    <bundle dependency='true'>mvn:org.jgroups/jgroups-raft/${jgroups-raft-version}</bundle>
+    <bundle dependency='true'>mvn:org.fusesource.leveldbjni/leveldbjni-all/${jgroups-raft-leveldbjni-version}</bundle>
+    <bundle dependency='true'>mvn:org.mapdb/mapdb/${jgroups-raft-mapdb-version}</bundle>
+  </feature>
+
+
   <feature name='camel-jibx' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>camel-jibx does not work with Java 8</details>
     <feature version='${project.version}'>camel-core</feature>

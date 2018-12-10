@@ -1,6 +1,5 @@
 [[Kura-EclipseKuracomponent]]
-Eclipse Kura component
-~~~~~~~~~~~~~~~~~~~~~~
+== Eclipse Kura component
 
 *Available as of Camel 2.15*
 

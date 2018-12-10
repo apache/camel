@@ -310,6 +310,7 @@
 	* [Jetty 9](jetty-component.adoc)
 	* [Jetty Websocket](websocket-component.adoc)
 	* [JGroups](jgroups-component.adoc)
+	* [JGroups raft](jgroups-raft-component.adoc)
 	* [Jing](jing-component.adoc)
 	* [JIRA](jira-component.adoc)
 	* [JMS](jms-component.adoc)

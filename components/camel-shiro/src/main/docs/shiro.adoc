@@ -1,6 +1,5 @@
 [[ShiroSecurity-ShiroSecurityComponent]]
-Shiro Security Component
-~~~~~~~~~~~~~~~~~~~~~~~~
+== Shiro Security Component
 
 *Available as of Camel 2.5*
 

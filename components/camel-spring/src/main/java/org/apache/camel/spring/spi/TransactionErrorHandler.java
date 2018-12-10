@@ -95,7 +95,9 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
     public void process(Exchange exchange) throws Exception {
         // we have to run this synchronously as Spring Transaction does *not* support
         // using multiple threads to span a transaction
-        if (transactionTemplate.getPropagationBehavior() != TransactionDefinition.PROPAGATION_REQUIRES_NEW && exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
+        if (transactionTemplate.getPropagationBehavior() != TransactionDefinition.PROPAGATION_REQUIRES_NEW 
+            && exchange.getUnitOfWork() != null 
+            && exchange.getUnitOfWork().isTransactedBy(transactionKey)) {
             // already transacted by this transaction template
             // so lets just let the error handler process it
             processByErrorHandler(exchange);
@@ -129,7 +131,9 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
 
         try {
             // mark the beginning of this transaction boundary
-            exchange.getUnitOfWork().beginTransactedBy(transactionKey);
+            if (exchange.getUnitOfWork() != null) {
+                exchange.getUnitOfWork().beginTransactedBy(transactionKey);
+            }
 
             // do in transaction
             logTransactionBegin(redelivered, ids);
@@ -144,7 +148,9 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
             logTransactionRollback(redelivered, ids, e, false);
         } finally {
             // mark the end of this transaction boundary
-            exchange.getUnitOfWork().endTransactedBy(transactionKey);
+            if (exchange.getUnitOfWork() != null) {
+                exchange.getUnitOfWork().endTransactedBy(transactionKey);
+            }
         }
 
         // if it was a local rollback only then remove its marker so outer transaction wont see the marker

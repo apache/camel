@@ -58,7 +58,8 @@ public final class OsgiCamelContextHelper {
 
         OsgiServiceRegistry osgiServiceRegistry = null;
         Registry resultingRegistry = registry;
-        if(registry instanceof OsgiServiceRegistry) {
+      
+        if (registry instanceof OsgiServiceRegistry) {
             osgiServiceRegistry = (OsgiServiceRegistry)registry;
         } else {
             LOG.debug("Wrapping Registry in OsgiServiceRegistry");

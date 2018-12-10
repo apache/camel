@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 308 in 208 JAR artifacts (22 deprecated)
+Number of Components: 309 in 209 JAR artifacts (22 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -460,6 +460,9 @@ Number of Components: 308 in 208 JAR artifacts (22 deprecated)
 
 | link:camel-jgroups/src/main/docs/jgroups-component.adoc[JGroups] (camel-jgroups) +
 `jgroups:clusterName` | 2.13 | The jgroups component provides exchange of messages between Camel and JGroups clusters.
+
+| link:camel-jgroups-raft/src/main/docs/jgroups-raft-component.adoc[JGroups raft] (camel-jgroups-raft) +
+`jgroups-raft:clusterName` | 2.24 | The jgroups component provides exchange of messages between Camel and JGroups clusters.
 
 | link:camel-jing/src/main/docs/jing-component.adoc[Jing] (camel-jing) +
 `jing:resourceUri` | 1.1 | Validates the payload of a message using RelaxNG Syntax using Jing library.
