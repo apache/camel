@@ -128,7 +128,7 @@ context.getShutdownStrategy().setLogInflightExchangesOnTimeout(false);
 You can configure the order in which routes should be started, and thus
 also the same order they are being shutdown. 
  See more at
-link:configuring-route-startup-ordering-and-autostartup.html[Configuring
+link:configuring-route-startup-ordering-and-autostartup.adoc[Configuring
 route startup ordering and autostartup].
 
 [[GracefulShutdown-Finegrainedconfiguration]]
@@ -463,7 +463,7 @@ option. See `GenericFileConsumer` for an example.
 [[GracefulShutdown-SeeAlso]]
 ==== See Also
 
-* link:configuring-route-startup-ordering-and-autostartup.html[Configuring
+* link:configuring-route-startup-ordering-and-autostartup.adoc[Configuring
 route startup ordering and autostartup]
 * link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
 configuration of CamelContext using Spring]
