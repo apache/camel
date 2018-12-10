@@ -24,7 +24,7 @@ Working with CamelContexts and RouteBuilders
 To get started with Camel:
 
 1.  Create a CamelContext.
-2.  Optionally, link:configuring-camel.html[configure components or
+2.  Optionally, link:configuring-camel.adoc[configure components or
 endpoints].
 3.  Add whatever routing rules you wish using the DSL and
 RouteBuilder or using
