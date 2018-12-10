@@ -1175,6 +1175,7 @@
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-maven-support/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-project-datamodel-api/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-project-datamodel-commons/${jbpm-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.jbpm/jbpm-workitems-core/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie.soup/kie-soup-commons/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-api/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${jbpm-version}</bundle>
