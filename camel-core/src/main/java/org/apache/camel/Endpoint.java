@@ -60,6 +60,14 @@ public interface Endpoint extends IsSingleton, Service {
     String getEndpointKey();
 
     /**
+     * Key that allows multiple endpoints to be associated with the same URI
+     * Allows for different configurations on the same endpoint e.g. multiple SSL certificates
+     * @return
+     */
+    String getProducerCacheKey();
+    void setProducerCacheKey(String key);
+	
+	/**
      * Create a new exchange for communicating with this endpoint
      *
      * @return a new exchange

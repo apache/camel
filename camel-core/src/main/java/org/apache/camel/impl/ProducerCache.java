@@ -560,7 +560,7 @@ public class ProducerCache extends ServiceSupport {
     }
 
     protected synchronized Producer doGetProducer(Endpoint endpoint, boolean pooled) {
-        String key = endpoint.getEndpointUri();
+        String key = endpoint.getProducerCacheKey();
         Producer answer = producers.get(key);
         if (pooled && answer == null) {
             // try acquire from connection pool
