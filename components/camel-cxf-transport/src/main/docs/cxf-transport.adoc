@@ -1,6 +1,5 @@
 [[CamelTransportforCXF-WhatstheCamelTransportforCXF]]
-What's the Camel Transport for CXF
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+== What's the Camel Transport for CXF
 
 In CXF you offer or consume a webservice by defining its address. The
 first part of the address specifies the protocol to use. For example

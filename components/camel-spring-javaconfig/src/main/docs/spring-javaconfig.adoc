@@ -1,6 +1,5 @@
 [[SpringJavaConfig-SpringJavaConfig]]
-Spring Java Config
-~~~~~~~~~~~~~~~~~~
+== Spring Java Config
 
 Spring started life using XML Config to wire beans
 together. However some folks don't like using XML and would rather use

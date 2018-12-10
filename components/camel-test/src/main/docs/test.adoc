@@ -1,6 +1,5 @@
 [[Test-TestComponent]]
-Test Component
-~~~~~~~~~~~~~~
+== Test Component
 
 Testing of distributed and asynchronous processing is
 notoriously difficult. The <<mock-component,Mock>>, <<mock-component,Test>>
