@@ -108,7 +108,7 @@ public class JGroupsRaftClusteredRoutePolicyTest extends JGroupsRaftClusterAbast
             throw new UnsupportedOperationException("CamelContext list and Route ids list must have the same number of elements!");
         }
         for (int i = 0; i < lcc.size(); i++) {
-            ServiceStatus status = lcc.get(i).getRouteStatus(rn.get(i));
+            ServiceStatus status = lcc.get(i).getRouteController().getRouteStatus(rn.get(i));
             if (ServiceStatus.Starting.equals(status) || ServiceStatus.Started.equals(status)) {
                 result++;
             }

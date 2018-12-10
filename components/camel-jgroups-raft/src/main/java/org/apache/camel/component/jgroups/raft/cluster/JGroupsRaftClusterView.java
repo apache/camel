@@ -24,7 +24,7 @@ import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.component.jgroups.raft.JGroupsRaftConstants;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
-import org.apache.camel.impl.cluster.AbstractCamelClusterView;
+import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.jgroups.JChannel;
 import org.jgroups.raft.RaftHandle;
 import org.slf4j.Logger;

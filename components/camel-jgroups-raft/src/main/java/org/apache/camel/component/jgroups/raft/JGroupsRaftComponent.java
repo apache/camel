@@ -20,9 +20,10 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
-import org.apache.camel.impl.DefaultComponent;
+
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultComponent;
 import org.jgroups.protocols.raft.StateMachine;
 import org.jgroups.raft.RaftHandle;
 import org.slf4j.Logger;
