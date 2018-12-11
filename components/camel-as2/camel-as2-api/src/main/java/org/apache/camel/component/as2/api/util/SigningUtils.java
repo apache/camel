@@ -77,20 +77,6 @@ public final class SigningUtils {
         } catch (Exception e) {
             throw new HttpException("Failed to create signer info", e);
         }
-//        for (String signingAlgorithmName : AS2SignedDataGenerator.getSupportedSignatureAlgorithmNamesForKey(privateKey)) {
-//            try {
-//                signerInfoGenerator = new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
-//                .setSignedAttributeGenerator(new AttributeTable(attributes))
-//                .build(signingAlgorithmName, privateKey, signingCert);
-//                break;
-//            } catch (Exception e) {
-//                signerInfoGenerator = null;
-//                continue;
-//            }
-//        }
-//        if (signerInfoGenerator == null) {
-//            throw new HttpException("Failed to create signer info");
-//        }
         gen.addSignerInfoGenerator(signerInfoGenerator);
 
         // Create and populate certificate store.

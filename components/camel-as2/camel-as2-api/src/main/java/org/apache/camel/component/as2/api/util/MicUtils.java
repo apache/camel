@@ -25,6 +25,7 @@ import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MicAlgorithm;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
 import org.apache.camel.component.as2.api.entity.EntityParser;
@@ -96,33 +97,7 @@ public final class MicUtils {
             return null;
         }
 
-        String contentTypeString = HttpMessageUtils.getHeaderValue(request, AS2Header.CONTENT_TYPE);
-        if (contentTypeString == null) {
-            LOG.debug("can not create MIC: content type missing from request");
-            return null;
-        }
-        ContentType contentType = ContentType.parse(contentTypeString);
-
-        HttpEntity entity = null;
-        switch (contentType.getMimeType().toLowerCase()) {
-        case AS2MimeType.APPLICATION_EDIFACT:
-        case AS2MimeType.APPLICATION_EDI_X12:
-        case AS2MimeType.APPLICATION_EDI_CONSENT: {
-            EntityParser.parseAS2MessageEntity(request);
-            entity = HttpMessageUtils.getEntity(request, ApplicationEDIEntity.class);
-            break;
-        }
-        case AS2MimeType.MULTIPART_SIGNED: {
-            EntityParser.parseAS2MessageEntity(request);
-            MultipartSignedEntity multipartSignedEntity = HttpMessageUtils.getEntity(request,
-                    MultipartSignedEntity.class);
-            entity = multipartSignedEntity.getSignedDataEntity();
-            break;
-        }
-        default:
-            LOG.debug("can not create MIC: invalid content type '{}' for message integrity check", contentType.getMimeType());
-            return null;
-        }
+        HttpEntity entity = EntityParser.extractEdiPayload(request, null);
 
         byte[] content = EntityUtils.getContent(entity);
 
@@ -131,7 +106,7 @@ public final class MicUtils {
         try {
             return new ReceivedContentMic(micAS2AlgorithmName, mic);
         } catch (Exception e) {
-            throw new HttpException("failed to encode MIC", e);
+            throw new HttpException("Failed to encode MIC", e);
         }
     }
 
