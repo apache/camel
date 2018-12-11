@@ -38,8 +38,12 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     private String enabled;
     @XmlAttribute
     private String spoolDirectory;
-    @XmlAttribute
+    @XmlAttribute @Metadata(deprecationNode = "Use spoolCipher")
+    @Deprecated
+    // TODO: Remove this in Camel 3
     private String spoolChiper;
+    @XmlAttribute
+    private String spoolCipher;
     @XmlAttribute
     private String spoolThreshold;
     @XmlAttribute
@@ -84,6 +88,7 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         this.spoolDirectory = spoolDirectory;
     }
 
+    @Deprecated
     public String getSpoolChiper() {
         return spoolChiper;
     }
@@ -93,8 +98,22 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
      * <p/>
      * By default the data is not encrypted.
      */
+    @Deprecated
     public void setSpoolChiper(String spoolChiper) {
         this.spoolChiper = spoolChiper;
+    }
+
+    public String getSpoolCipher() {
+        return spoolCipher;
+    }
+
+    /**
+     * Sets a cipher name to use when spooling to disk to write with encryption.
+     * <p/>
+     * By default the data is not encrypted.
+     */
+    public void setSpoolCipher(String spoolCipher) {
+        this.spoolCipher = spoolCipher;
     }
 
     public String getSpoolThreshold() {

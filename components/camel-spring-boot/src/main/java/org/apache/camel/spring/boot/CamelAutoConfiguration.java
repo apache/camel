@@ -173,6 +173,7 @@ public class CamelAutoConfiguration {
         camelContext.getStreamCachingStrategy().setBufferSize(config.getStreamCachingBufferSize());
         camelContext.getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(config.isStreamCachingRemoveSpoolDirectoryWhenStopping());
         camelContext.getStreamCachingStrategy().setSpoolChiper(config.getStreamCachingSpoolChiper());
+        camelContext.getStreamCachingStrategy().setSpoolCipher(config.getStreamCachingSpoolCipher());
         if (config.getStreamCachingSpoolDirectory() != null) {
             camelContext.getStreamCachingStrategy().setSpoolDirectory(config.getStreamCachingSpoolDirectory());
         }

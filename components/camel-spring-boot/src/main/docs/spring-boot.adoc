@@ -79,7 +79,7 @@ or `application.yml` file. 
 === Spring Boot Auto-Configuration
 
 
-The component supports 139 options, which are listed below.
+The component supports 140 options, which are listed below.
 
 
 
@@ -166,7 +166,7 @@ The component supports 139 options, which are listed below.
 | *camel.springboot.stream-caching-buffer-size* | Sets the stream caching buffer size to use when allocating in-memory buffers used for in-memory stream caches. The default size is 4096. | 0 | Integer
 | *camel.springboot.stream-caching-enabled* | Sets whether stream caching is enabled or not. Default is false. | false | Boolean
 | *camel.springboot.stream-caching-remove-spool-directory-when-stopping* | Whether to remove stream caching temporary directory when stopping. This option is default true. | true | Boolean
-| *camel.springboot.stream-caching-spool-chiper* | Sets a stream caching chiper name to use when spooling to disk to write with encryption. By default the data is not encrypted. |  | String
+| *camel.springboot.stream-caching-spool-cipher* | Sets a stream caching cipher name to use when spooling to disk to write with encryption. By default the data is not encrypted. |  | String
 | *camel.springboot.stream-caching-spool-directory* | Sets the stream caching spool (temporary) directory to use for overflow and spooling to disk. If no spool directory has been explicit configured, then a temporary directory is created in the java.io.tmpdir directory. |  | String
 | *camel.springboot.stream-caching-spool-threshold* | Stream caching threshold in bytes when overflow to disk is activated. The default threshold is 128kb. Use -1 to disable overflow to disk. | 0 | Long
 | *camel.springboot.stream-caching-spool-used-heap-memory-limit* | Sets what the upper bounds should be when streamCachingSpoolUsedHeapMemoryThreshold is in use. |  | String
@@ -224,6 +224,7 @@ The component supports 139 options, which are listed below.
 | *management.endpoint.camelroutes.read-only* | Whether Camel Routes actuator is in read-only mode. If not in read-only mode then operations to start/stop routes would be enabled. | true | Boolean
 | *management.info.camel.enabled* | Whether to enable Camel info. | true | Boolean
 | *camel.springboot.stream-caching* | Sets whether stream caching is enabled or not (deprecated use stream-caching-enabled instead). Default is false. | false | Boolean
+| *camel.springboot.stream-caching-spool-chiper* | Sets a stream caching chiper name to use when spooling to disk to write with encryption. By default the data is not encrypted. @deprecated use streamCachingSpoolCipher |  | String
 | *camel.springboot.use-m-d-c-logging* | To turn on MDC logging (deprecated use use-mdc-logging instead) | false | Boolean
 |===
 // spring-boot-auto-configure options: END
