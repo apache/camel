@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 301 in 204 JAR artifacts (14 deprecated)
+Number of Components: 288 in 191 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -143,9 +143,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 | link:camel-caffeine/src/main/docs/caffeine-loadcache-component.adoc[Caffeine LoadCache] (camel-caffeine) +
 `caffeine-loadcache:cacheName` | 2.20 | The caffeine-loadcache component is used for integration with Caffeine Load Cache.
 
-| link:camel-context/src/main/docs/context-component.adoc[Camel Context] (camel-context) +
-`context:contextId:localEndpointUrl` | 2.7 | *deprecated* The context component allows to send/receive messages between Camel routes in a black box way.
-
 | link:camel-cassandraql/src/main/docs/cql-component.adoc[Cassandra CQL] (camel-cassandraql) +
 `cql:beanRef:hosts:port/keyspace` | 2.15 | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
 
@@ -230,9 +227,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 | link:camel-dropbox/src/main/docs/dropbox-component.adoc[Dropbox] (camel-dropbox) +
 `dropbox:operation` | 2.14 | For uploading, downloading and managing files, folders, groups, collaborations, etc on dropbox DOT com.
 
-| link:camel-cache/src/main/docs/cache-component.adoc[EHCache] (camel-cache) +
-`cache:cacheName` | 2.1 | *deprecated* The cache component enables you to perform caching operations using EHCache as the Cache Implementation.
-
 | link:camel-ehcache/src/main/docs/ehcache-component.adoc[Ehcache] (camel-ehcache) +
 `ehcache:cacheName` | 2.18 | The ehcache component enables you to perform caching operations using Ehcache as cache implementation.
 
@@ -241,12 +235,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 
 | link:camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc[Elastichsearch Rest] (camel-elasticsearch-rest) +
 `elasticsearch-rest:clusterName` | 2.21 | The elasticsearch component is used for interfacing with ElasticSearch server using REST API.
-
-| link:camel-elasticsearch/src/main/docs/elasticsearch-component.adoc[Elasticsearch] (camel-elasticsearch) +
-`elasticsearch:clusterName` | 2.11 | *deprecated* The elasticsearch component is used for interfacing with ElasticSearch server.
-
-| link:camel-elasticsearch5/src/main/docs/elasticsearch5-component.adoc[Elasticsearch5] (camel-elasticsearch5) +
-`elasticsearch5:clusterName` | 2.19 | *deprecated* The elasticsearch component is used for interfacing with ElasticSearch server using 5.x API.
 
 | link:camel-elsql/src/main/docs/elsql-component.adoc[ElSQL] (camel-elsql) +
 `elsql:elsqlName:resourceUri` | 2.16 | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
@@ -380,9 +368,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 | link:camel-http4/src/main/docs/http4-component.adoc[HTTP4] (camel-http4) +
 `http4:httpUri` | 2.3 | For calling out to external HTTP servers using Apache HTTP Client 4.x.
 
-| link:camel-ibatis/src/main/docs/ibatis-component.adoc[iBatis] (camel-ibatis) +
-`ibatis:statement` | 1.2 | *deprecated* Performs a query, poll, insert, update or delete in a relational database using Apache iBATIS.
-
 | link:camel-iec60870/src/main/docs/iec60870-client-component.adoc[IEC 60870 Client] (camel-iec60870) +
 `iec60870-client:uriPath` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
 
@@ -425,9 +410,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 | link:camel-ironmq/src/main/docs/ironmq-component.adoc[IronMQ] (camel-ironmq) +
 `ironmq:queueName` | 2.17 | The ironmq provides integration with IronMQ an elastic and durable hosted message queue as a service.
 
-| link:camel-javaspace/src/main/docs/javaspace-component.adoc[JavaSpace] (camel-javaspace) +
-`javaspace:url` | 2.1 | *deprecated* Sending and receiving messages through JavaSpace.
-
 | link:camel-jbpm/src/main/docs/jbpm-component.adoc[JBPM] (camel-jbpm) +
 `jbpm:connectionURL` | 2.6 | The jbpm component provides integration with jBPM (Business Process Management).
 
@@ -458,9 +440,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 | link:camel-jing/src/main/docs/jing-component.adoc[Jing] (camel-jing) +
 `jing:resourceUri` | 1.1 | Validates the payload of a message using RelaxNG Syntax using Jing library.
 
-| link:camel-jira/src/main/docs/jira-component.adoc[JIRA] (camel-jira) +
-`jira:type` | 2.15 | *deprecated* The jira component interacts with the JIRA issue tracker.
-
 | link:camel-jms/src/main/docs/jms-component.adoc[JMS] (camel-jms) +
 `jms:destinationType:destinationName` | 1.0 | The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
 
@@ -481,12 +460,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 
 | link:camel-kafka/src/main/docs/kafka-component.adoc[Kafka] (camel-kafka) +
 `kafka:topic` | 2.13 | The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
-
-| link:camel-kestrel/src/main/docs/kestrel-component.adoc[Kestrel] (camel-kestrel) +
-`kestrel:addresses/queue` | 2.6 | *deprecated* The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
-
-| link:camel-krati/src/main/docs/krati-component.adoc[Krati] (camel-krati) +
-`krati:path` | 2.9 | *deprecated* The krati allows the use krati datastores and datasets inside Camel.
 
 | link:camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (camel-kubernetes) +
 `kubernetes-config-maps:masterUrl` | 2.17 | The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
@@ -571,9 +544,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 
 | link:../camel-core/src/main/docs/mock-component.adoc[Mock] (camel-core) +
 `mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
-
-| link:camel-mongodb/src/main/docs/mongodb-component.adoc[MongoDB] (camel-mongodb) +
-`mongodb:connectionBean` | 2.10 | *deprecated* Component for working with documents stored in MongoDB database.
 
 | link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
 `mongodb3:connectionBean` | 2.19 | Component for working with documents stored in MongoDB database.
@@ -680,9 +650,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 | link:camel-pubnub/src/main/docs/pubnub-component.adoc[PubNub] (camel-pubnub) +
 `pubnub:channel` | 2.19 | To send and receive messages to PubNub data stream network for connected devices.
 
-| link:camel-quartz/src/main/docs/quartz-component.adoc[Quartz] (camel-quartz) +
-`quartz:groupName/timerName` | 1.0 | *deprecated* Provides a scheduled delivery of messages using the Quartz 1.x scheduler.
-
 | link:camel-quartz2/src/main/docs/quartz2-component.adoc[Quartz2] (camel-quartz2) +
 `quartz2:groupName/triggerName` | 2.12 | Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
 
@@ -712,9 +679,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 
 | link:camel-rmi/src/main/docs/rmi-component.adoc[RMI] (camel-rmi) +
 `rmi:hostname:port/name` | 1.0 | The rmi component is for invoking Java RMI beans from Camel.
-
-| link:camel-routebox/src/main/docs/routebox-component.adoc[RouteBox] (camel-routebox) +
-`routebox:routeboxName` | 2.6 | *deprecated* The routebox component allows to send/receive messages between Camel routes in a black box way.
 
 | link:camel-rss/src/main/docs/rss-component.adoc[RSS] (camel-rss) +
 `rss:feedUri` | 2.0 | The rss component is used for consuming RSS feeds.
@@ -881,9 +845,6 @@ Number of Components: 301 in 204 JAR artifacts (14 deprecated)
 | link:camel-xchange/src/main/docs/xchange-component.adoc[XChange] (camel-xchange) +
 `xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
 
-| link:camel-xmlrpc/src/main/docs/xmlrpc-component.adoc[XML RPC] (camel-xmlrpc) +
-`xmlrpc:address` | 2.11 | *deprecated* The xmlrpc component is used for sending messages to a XML RPC service.
-
 | link:camel-xmlsecurity/src/main/docs/xmlsecurity-component.adoc[XML Security] (camel-xmlsecurity) +
 `xmlsecurity:command:name` | 2.12 | Used to sign and verify exchanges using the XML signature specification.
 
@@ -919,7 +880,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 50 in 40 JAR artifacts (4 deprecated)
+Number of Data Formats: 45 in 35 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -943,8 +904,6 @@ Number of Data Formats: 50 in 40 JAR artifacts (4 deprecated)
 
 | link:camel-boon/src/main/docs/boon-dataformat.adoc[Boon] (camel-boon) | 2.16 | Boon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
-| link:camel-castor/src/main/docs/castor-dataformat.adoc[Castor] (camel-castor) | 2.1 | *deprecated* Castor data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
-
 | link:camel-crypto/src/main/docs/crypto-dataformat.adoc[Crypto (Java Cryptographic Extension)] (camel-crypto) | 2.3 | Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.
 
 | link:camel-csv/src/main/docs/csv-dataformat.adoc[CSV] (camel-csv) | 1.3 | The CSV data format is used for handling CSV payloads.
@@ -956,8 +915,6 @@ Number of Data Formats: 50 in 40 JAR artifacts (4 deprecated)
 | link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1 | The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
 
 | link:../camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
-
-| link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17 | *deprecated* Hessian data format is used for marshalling and unmarshalling messages using Cauchos Hessian format.
 
 | link:camel-hl7/src/main/docs/hl7-dataformat.adoc[HL7] (camel-hl7) | 2.0 | The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.
 
@@ -1009,12 +966,6 @@ Number of Data Formats: 50 in 40 JAR artifacts (4 deprecated)
 
 | link:camel-univocity-parsers/src/main/docs/univocity-tsv-dataformat.adoc[uniVocity TSV] (camel-univocity-parsers) | 2.15 | The uniVocity TSV data format is used for working with TSV (Tabular Separated Values) flat payloads.
 
-| link:camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc[XML Beans] (camel-xmlbeans) | 1.2 | *deprecated* XML Beans data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
-
-| link:camel-xmljson/src/main/docs/xmljson-dataformat.adoc[XML JSon] (camel-xmljson) | 2.10 | *deprecated* XML JSon data format can convert from XML to JSON and vice-versa directly, without stepping through intermediate POJOs.
-
-| link:camel-xmlrpc/src/main/docs/xmlrpc-dataformat.adoc[XML RPC] (camel-xmlrpc) | 2.11 | The XML RPC data format is used for working with the XML RPC protocol.
-
 | link:camel-xmlsecurity/src/main/docs/secureXML-dataformat.adoc[XML Security] (camel-xmlsecurity) | 2.0 | The XML Security data format facilitates encryption and decryption of XML payloads.
 
 | link:camel-xstream/src/main/docs/xstream-dataformat.adoc[XStream] (camel-xstream) | 1.3 | XSTream data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
@@ -1032,7 +983,7 @@ Expression Languages
 ^^^^^^^^^^^^^^^^^^^^
 
 // languages: START
-Number of Languages: 21 in 12 JAR artifacts (3 deprecated)
+Number of Languages: 18 in 9 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1041,8 +992,6 @@ Number of Languages: 21 in 12 JAR artifacts (3 deprecated)
 | link:../camel-core/src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
 
 | link:../camel-core/src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | To use a constant value in Camel expressions or predicates.
-
-| link:camel-juel/src/main/docs/el-language.adoc[EL] (camel-juel) | 1.1 | *deprecated* To use EL scripts in Camel expressions or predicates.
 
 | link:../camel-core/src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | To use a Camel Exchange property in expressions or predicates.
 
@@ -1058,8 +1007,6 @@ Number of Languages: 21 in 12 JAR artifacts (3 deprecated)
 
 | link:camel-jsonpath/src/main/docs/jsonpath-language.adoc[JsonPath] (camel-jsonpath) | 2.13 | To use JsonPath in Camel expressions or predicates.
 
-| link:camel-jxpath/src/main/docs/jxpath-language.adoc[JXPath] (camel-jxpath) | 1.3 | *deprecated* To use JXPath in Camel expressions or predicates.
-
 | link:camel-mvel/src/main/docs/mvel-language.adoc[MVEL] (camel-mvel) | 2.0 | To use MVEL scripts in Camel expressions or predicates.
 
 | link:camel-ognl/src/main/docs/ognl-language.adoc[OGNL] (camel-ognl) | 1.1 | To use OGNL scripts in Camel expressions or predicates.
@@ -1069,8 +1016,6 @@ Number of Languages: 21 in 12 JAR artifacts (3 deprecated)
 | link:../camel-core/src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
 
 | link:camel-spring/src/main/docs/spel-language.adoc[SpEL] (camel-spring) | 2.7 | To use Spring Expression Language (SpEL) in Camel expressions or predicates.
-
-| link:camel-josql/src/main/docs/sql-language.adoc[SQL] (camel-josql) | 1.0 | *deprecated* To use SQL (on Java beans) in Camel expressions or predicates.
 
 | link:../camel-core/src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
 
@@ -1087,27 +1032,17 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 44 in 44 JAR artifacts (13 deprecated)
+Number of Miscellaneous Components: 31 in 31 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Component | Available From | Description
-
-| link:camel-bam/src/main/docs/bam.adoc[BAM] (camel-bam) | 1.0 | *deprecated* Business Activity Monitoring
 
 | link:camel-blueprint/src/main/docs/blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
 
 | link:camel-cdi/src/main/docs/cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
 
 | link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
-
-| link:camel-eclipse/src/main/docs/eclipse.adoc[Eclipse] (camel-eclipse) | 2.3 | *deprecated* Camel classpath scanning support for running in Eclipse Desktop Applications
-
-| link:camel-groovy-dsl/src/main/docs/groovy-dsl.adoc[Groovy DSL] (camel-groovy-dsl) | 2.19 | *deprecated* Camel Groovy DSL support
-
-| link:camel-guice/src/main/docs/guice.adoc[Guice] (camel-guice) | 1.5 | *deprecated* Using Camel with Guice
-
-| link:camel-hawtdb/src/main/docs/hawtdb.adoc[HawtDB] (camel-hawtdb) | 2.3 | *deprecated* Using HawtDB as persistent EIP store
 
 | link:camel-headersmap/src/main/docs/headersmap.adoc[Headersmap] (camel-headersmap) | 2.20 | Fast case-insensitive headers map implementation
 
@@ -1127,17 +1062,7 @@ Number of Miscellaneous Components: 44 in 44 JAR artifacts (13 deprecated)
 
 | link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
-| link:camel-ruby/src/main/docs/ruby.adoc[Ruby] (camel-ruby) | 1.0 | *deprecated* Camel Ruby DSL
-
-| link:camel-rx/src/main/docs/rx.adoc[RX] (camel-rx) | 2.11 | *deprecated* Camel Reactive using RxJava library
-
 | link:camel-rxjava2/src/main/docs/rxjava2.adoc[Rxjava2] (camel-rxjava2) | 2.22 | RxJava2 based back-end for Camel's reactive streams component
-
-| link:camel-scala/src/main/docs/scala.adoc[Scala DSL] (camel-scala) | 1.4 | *deprecated* Camel Scala DSL
-
-| link:camel-scr/src/main/docs/scr.adoc[SCR] (camel-scr) | 2.15 | *deprecated* Camel with OSGi SCR (Declarative Services)
-
-| link:camel-servletlistener/src/main/docs/servletlistener.adoc[Servlet Listener] (camel-servletlistener) | 2.11 | *deprecated* Bootstrapping Camel using Servet Listener
 
 | link:camel-shiro/src/main/docs/shiro.adoc[Shiro] (camel-shiro) | 2.5 | Security using Shiro
 
@@ -1155,8 +1080,6 @@ Number of Miscellaneous Components: 44 in 44 JAR artifacts (13 deprecated)
 
 | link:camel-spring-security/src/main/docs/spring-security.adoc[Spring Security] (camel-spring-security) | 2.3 | Security using Spring Security
 
-| link:camel-swagger/src/main/docs/swagger.adoc[Swagger] (camel-swagger) | 2.14 | *deprecated* Rest-dsl support for using swagger api-doc (uses Scala)
-
 | link:camel-swagger-java/src/main/docs/swagger-java.adoc[Swagger Java] (camel-swagger-java) | 2.16 | Rest-dsl support for using swagger api-doc
 
 | link:camel-test/src/main/docs/test.adoc[Test] (camel-test) | 2.9 | Camel unit testing
@@ -1172,10 +1095,6 @@ Number of Miscellaneous Components: 44 in 44 JAR artifacts (13 deprecated)
 | link:camel-testcontainers/src/main/docs/testcontainers.adoc[Testcontainers] (camel-testcontainers) | 2.22 | Camel support for testcontainers
 
 | link:camel-testcontainers-spring/src/main/docs/testcontainers-spring.adoc[Testcontainers Spring] (camel-testcontainers-spring) | 2.22 | Camel unit testing with Spring and testcontainers
-
-| link:camel-testng/src/main/docs/testng.adoc[TestNG] (camel-testng) | 2.8 | *deprecated* Camel unit testing with TestNG
-
-| link:camel-urlrewrite/src/main/docs/urlrewrite.adoc[URLRewrite] (camel-urlrewrite) | 2.11 | *deprecated* URL rewrite support for HTTP components
 
 | link:camel-aws-xray/src/main/docs/aws-xray.adoc[XRay] (camel-aws-xray) | 2.21 | Distributed tracing using AWS XRay
 
