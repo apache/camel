@@ -272,7 +272,7 @@ public class AS2MessageTest {
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
-                null, null, null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
+                null, null, null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -316,7 +316,7 @@ public class AS2MessageTest {
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
                 null, AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
-                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -478,7 +478,7 @@ public class AS2MessageTest {
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null,
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(), null,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, encryptionAlgorithm,
-                certList.toArray(new Certificate[0]), signingKP.getPrivate());
+                certList.toArray(new Certificate[0]));
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -539,7 +539,7 @@ public class AS2MessageTest {
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null,
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(), null,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, encryptionAlgorithm,
-                certList.toArray(new Certificate[0]), signingKP.getPrivate());
+                certList.toArray(new Certificate[0]));
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -606,7 +606,7 @@ public class AS2MessageTest {
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.SIGNED, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
                 null, AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
-                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
 
         HttpRequest request = httpContext.getRequest();
         assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
@@ -634,8 +634,7 @@ public class AS2MessageTest {
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN, ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII),
-                null, null, null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null,
-                null);
+                null, null, null, null, null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
 
         HttpResponse response = httpContext.getResponse();
         assertEquals("Unexpected method value", HttpVersion.HTTP_1_1, response.getStatusLine().getProtocolVersion());
@@ -751,7 +750,7 @@ public class AS2MessageTest {
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null,
                 null, null, null, AS2CompressionAlgorithm.ZLIB,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null,
-                null, null);
+                null);
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -804,10 +803,10 @@ public class AS2MessageTest {
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.SIGNED_COMPRESSED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null,
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), "base64",
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(), AS2CompressionAlgorithm.ZLIB,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null,
-                null, null);
+                null);
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -875,10 +874,10 @@ public class AS2MessageTest {
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED_COMPRESSED,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null,
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), "base64",
                 null, null, null, AS2CompressionAlgorithm.ZLIB,
                 DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, AS2EncryptionAlgorithm.AES128_CBC,
-                certList.toArray(new Certificate[0]), signingKP.getPrivate());
+                certList.toArray(new Certificate[0]));
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
@@ -942,7 +941,7 @@ public class AS2MessageTest {
                 ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null,
                 AS2SignatureAlgorithm.SHA256WITHRSA, certList.toArray(new Certificate[0]), signingKP.getPrivate(),
                 AS2CompressionAlgorithm.ZLIB, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS,
-                AS2EncryptionAlgorithm.AES128_CBC, certList.toArray(new Certificate[0]), signingKP.getPrivate());
+                AS2EncryptionAlgorithm.AES128_CBC, certList.toArray(new Certificate[0]));
 
         HttpRequest request = httpContext.getRequest();
         assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
