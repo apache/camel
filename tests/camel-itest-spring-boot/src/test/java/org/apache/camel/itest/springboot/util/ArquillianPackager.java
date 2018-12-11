@@ -347,6 +347,7 @@ public final class ArquillianPackager {
         ignore.add("xml-apis:xml-apis-ext");
         ignore.add("org.jboss.logging");
         ignore.add("org.jboss.marshalling");
+        ignore.add("org.jgroups:jgroups-raft");
 
         Map<String, Map<String, String>> status = new TreeMap<>();
         Set<String> mismatches = new TreeSet<>();
