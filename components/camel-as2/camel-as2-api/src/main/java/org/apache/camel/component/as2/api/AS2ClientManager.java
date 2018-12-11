@@ -155,12 +155,6 @@ public class AS2ClientManager {
     public static final String ENCRYPTING_CERTIFICATE_CHAIN = CAMEL_AS2_CLIENT_PREFIX + "encrypting-certificate-chain";
 
     /**
-     * The HTTP Context Attribute containing the private key used to encrypt EDI
-     * message
-     */
-    public static final String ENCRYPTING_PRIVATE_KEY = CAMEL_AS2_CLIENT_PREFIX + "encrypting-private-key";
-
-    /**
      * The HTTP Context Attribute containing the algorithm used to compress EDI
      * message
      */
@@ -203,11 +197,11 @@ public class AS2ClientManager {
      * @param signingAlgorithm - the algorithm used to sign the message or <code>null</code> if sending EDI message unsigned
      * @param signingCertificateChain - the chain of certificates used to sign the message or <code>null</code> if sending EDI message unsigned
      * @param signingPrivateKey - the private key used to sign EDI message
+     * @param compressionAlgorithm - the algorithm used to compress the message or <code>null</code> if sending EDI message uncompressed
      * @param dispositionNotificationTo - an RFC2822 address to request a receipt or <code>null</code> if no receipt requested
      * @param signedReceiptMicAlgorithms - the senders list of signing algorithms for signing receipt, in preferred order,  or <code>null</code> if requesting an unsigned receipt.
      * @param encryptingAlgorithm - the algorithm used to encrypt the message or <code>null</code> if sending EDI message unencrypted
      * @param encryptingCertificateChain - the chain of certificates used to encrypt the message or <code>null</code> if sending EDI message unencrypted
-     * @param encryptingPrivateKey - the private key used to encrypt EDI message
      * @return {@link HttpCoreContext} containing request and response used to send EDI message
      * @throws HttpException when things go wrong.
      */
@@ -227,13 +221,16 @@ public class AS2ClientManager {
                                 String dispositionNotificationTo,
                                 String[] signedReceiptMicAlgorithms,
                                 AS2EncryptionAlgorithm encryptingAlgorithm,
-                                Certificate[] encryptingCertificateChain,
-                                PrivateKey encryptingPrivateKey)
+                                Certificate[] encryptingCertificateChain)
             throws HttpException {
 
         Args.notNull(ediMessage, "EDI Message");
-        Args.notNull(as2MessageStructure, "AS2 Message Structure");
         Args.notNull(requestUri, "Request URI");
+        Args.notNull(subject, "Subject");
+        Args.notNull(from, "Subject");
+        Args.notNull(as2From, "Subject");
+        Args.notNull(as2To, "Subject");
+        Args.notNull(as2MessageStructure, "AS2 Message Structure");
         Args.notNull(ediMessageContentType, "EDI Message Content Type");
 
         // Add Context attributes
@@ -254,7 +251,6 @@ public class AS2ClientManager {
         httpContext.setAttribute(AS2ClientManager.SIGNED_RECEIPT_MIC_ALGORITHMS, signedReceiptMicAlgorithms);
         httpContext.setAttribute(AS2ClientManager.ENCRYPTING_ALGORITHM, encryptingAlgorithm);
         httpContext.setAttribute(AS2ClientManager.ENCRYPTING_CERTIFICATE_CHAIN, encryptingCertificateChain);
-        httpContext.setAttribute(AS2ClientManager.ENCRYPTING_PRIVATE_KEY, encryptingPrivateKey);
 
         BasicHttpEntityEnclosingRequest request = new BasicHttpEntityEnclosingRequest("POST", requestUri);
         httpContext.setAttribute(HTTP_REQUEST, request);
