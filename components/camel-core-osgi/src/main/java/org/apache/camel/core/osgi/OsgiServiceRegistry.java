@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Service;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.osgi.framework.BundleContext;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The OsgiServiceRegistry support to get the service object from the bundle context
  */
-public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry {
+public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry, Service {
     private static final Logger LOG = LoggerFactory.getLogger(OsgiCamelContextHelper.class);
     private final BundleContext bundleContext;
     private final Queue<ServiceReference<?>> serviceReferenceQueue = new ConcurrentLinkedQueue<>();
@@ -51,7 +52,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
      */
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         Object service = null;
-        ServiceReference<?> sr  = null;
+        ServiceReference<?> sr;
         try {
             ServiceReference<?>[] refs = bundleContext.getServiceReferences(type.getName(), "(name=" + name + ")");            
             if (refs != null && refs.length > 0) {
@@ -131,8 +132,14 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
     }
 
     @Override
-    public void onContextStop(CamelContext context) {
-        // Unget the OSGi service
+    public void start() throws Exception {
+        // noop
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // Unget the OSGi service as OSGi uses reference counting
+        // and we should do this as one of the last actions when stopping Camel
         ServiceReference<?> sr = serviceReferenceQueue.poll();
         while (sr != null) {
             bundleContext.ungetService(sr);
@@ -141,5 +148,4 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
         // Clean up the OSGi Service Cache
         serviceReferenceQueue.clear();
     }
-
 }
