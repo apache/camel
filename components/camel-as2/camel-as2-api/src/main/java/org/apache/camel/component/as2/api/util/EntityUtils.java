@@ -32,6 +32,7 @@ import org.apache.camel.component.as2.api.entity.ApplicationEDIConsentEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIX12Entity;
+import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.codec.net.QuotedPrintableCodec;
@@ -241,6 +242,12 @@ public final class EntityUtils {
         Header contentTypeHeader = entity.getContentType(); 
         if (contentTypeHeader != null) {
             message.setHeader(contentTypeHeader);
+        }
+        if (entity instanceof MimeEntity) {
+            Header contentTransferEncodingHeader = ((MimeEntity)entity).getContentTransferEncoding();
+            if (contentTransferEncodingHeader != null) {
+                message.setHeader(contentTransferEncodingHeader);
+            }
         }
         long contentLength = entity.getContentLength();
         message.setHeader(AS2Header.CONTENT_LENGTH, Long.toString(contentLength));
