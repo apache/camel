@@ -88,11 +88,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private int pollingConsumerQueueSize = 1000;
     private boolean pollingConsumerBlockWhenFull = true;
     private long pollingConsumerBlockTimeout;
-	
+
     // key that producer cache will use
-	private String producerCacheKey;
+    private String producerCacheKey;
     
-	/**
+    /**
      * Constructs a fully-initialized DefaultEndpoint instance. This is the
      * preferred method of constructing an object from Java code (as opposed to
      * Spring beans, etc.).
@@ -551,19 +551,18 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     protected void doStop() throws Exception {
         // noop
     }
-	
-	@Override
-	public String getProducerCacheKey() {
-		if (producerCacheKey == null) {
-			// return URI as the default if no key is set
-			return getEndpointUri();
-		}
-		return this.producerCacheKey;
-	}
 
-	@Override
-	public void setProducerCacheKey(String key) {
-		this.producerCacheKey = key;
-		
-	}	
+    @Override
+    public String getProducerCacheKey() {
+        if (producerCacheKey == null) {
+        // return URI as the default if no key is set
+            return getEndpointUri();
+        }
+        return this.producerCacheKey;
+    }
+
+    @Override
+    public void setProducerCacheKey(String key) {
+        this.producerCacheKey = key;
+    }
 }

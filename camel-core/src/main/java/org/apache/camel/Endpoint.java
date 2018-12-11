@@ -66,8 +66,8 @@ public interface Endpoint extends IsSingleton, Service {
      */
     String getProducerCacheKey();
     void setProducerCacheKey(String key);
-	
-	/**
+
+    /**
      * Create a new exchange for communicating with this endpoint
      *
      * @return a new exchange

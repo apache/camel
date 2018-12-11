@@ -149,14 +149,13 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
         return delegate.toString();
     }
 
-	@Override
-	public String getProducerCacheKey() {
-		return delegate.getProducerCacheKey();
-	}
-	
-	@Override
-	public void setProducerCacheKey(String key) {
-		delegate.setProducerCacheKey(key);
-	}
-	
+    @Override
+    public String getProducerCacheKey() {
+        return delegate.getProducerCacheKey();
+    }
+
+    @Override
+    public void setProducerCacheKey(String key) {
+        delegate.setProducerCacheKey(key);
+    }
 }
