@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-
-import org.apache.camel.component.chatscript.exception.ChatScriptDeliveryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +41,7 @@ public class ChatScriptBot {
         this.userName = iUserName;
     }
 
-    public String sendChat(String input) throws ChatScriptDeliveryException {
+    public String sendChat(String input) throws Exception {
         if (!initialized) {
             return init(null);
         }
@@ -51,18 +49,18 @@ public class ChatScriptBot {
         return doMessage(g.toCSFormat());
     }
 
-    public String sendChat(ChatScriptMessage input) throws ChatScriptDeliveryException {
+    public String sendChat(ChatScriptMessage input) throws Exception {
         if (!initialized) {
             return init(input);
         }
         return doMessage(input.toCSFormat());
     }
 
-    private String doMessage(ChatScriptMessage msg) throws ChatScriptDeliveryException {
+    private String doMessage(ChatScriptMessage msg) throws Exception {
         return doMessage(msg.toCSFormat());
     }
 
-    private String doMessage(String msg) throws ChatScriptDeliveryException {
+    private String doMessage(String msg) throws Exception {
         Socket echoSocket;
         String resp = "";
 
@@ -75,14 +73,14 @@ public class ChatScriptBot {
             echoSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new ChatScriptDeliveryException("Unable to send message to ChatScript Server. Reason:" + e.getMessage());
+            throw new Exception("Unable to send message to ChatScript Server. Reason:" + e.getMessage());
         }
 
         return resp;
 
     }
 
-    public String init(ChatScriptMessage input) throws ChatScriptDeliveryException {
+    public String init(ChatScriptMessage input) throws Exception {
         ChatScriptMessage g = new ChatScriptMessage(input.getUserName(), this.botName, null);
         String response = doMessage(g);
         LOG.info("Conversation started between the bot " + this.botName + " and " + input.getUserName());

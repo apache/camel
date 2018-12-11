@@ -74,7 +74,7 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(URI_ERROR);
         }
         botname = botname.substring(1);
-        setbot(new ChatScriptBot(getHostName(), getPort(), getBotName(), ""));
+        setBot(new ChatScriptBot(getHostName(), getPort(), getBotName(), ""));
 
     }
     public boolean isResetChat() {
@@ -137,7 +137,7 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
         return bot;
     }
 
-    public void setbot(ChatScriptBot thisBot) {
+    public void setBot(ChatScriptBot thisBot) {
         this.bot = thisBot;
     }
 }

@@ -18,7 +18,6 @@ package org.apache.camel.component.chatscript;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.chatscript.exception.InvalidInputMessage;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
@@ -46,12 +45,13 @@ public class ChatScriptProducer extends DefaultProducer {
         } else {
             inputMessage = (ChatScriptMessage) body;
         }
+        inputMessage.setBotName(endpoint.getBotName());
         String response = this.endpoint.getBot().sendChat(inputMessage);
         inputMessage.setReply(response);
         exchange.getOut().setBody(inputMessage);
     }
 
-    private ChatScriptMessage buildMessage(Object body) throws InvalidInputMessage {
+    private ChatScriptMessage buildMessage(Object body) throws Exception {
 
         if (body instanceof String) {
             return createMessage(String.valueOf(body));
@@ -59,13 +59,13 @@ public class ChatScriptProducer extends DefaultProducer {
         return null;
     }
 
-    private ChatScriptMessage createMessage(String message) throws InvalidInputMessage {
+    private ChatScriptMessage createMessage(String message) throws Exception {
         ChatScriptMessage ret = null;
         try {
             ret = mapper.readValue(message, ChatScriptMessage.class);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new InvalidInputMessage("Unable to parse the input message. Error Message" + e.getMessage());
+            throw new Exception("Unable to parse the input message. Error Message" + e.getMessage());
         } 
         return ret;
     }
