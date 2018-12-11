@@ -474,6 +474,14 @@
             </goals>
             <phase>process-classes</phase>
           </execution>
+          <!-- camel-core needs to generate jaxb.index files -->
+          <execution>
+            <id>jaxb-list</id>
+            <goals>
+              <goal>generate-jaxb-list</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
           <!-- camel-core needs to validate before packaging -->
           <execution>
             <id>validate</id>
@@ -490,6 +498,25 @@
               <goal>update-readme</goal>
             </goals>
             <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-generated-resources</id>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/jaxb</directory>
+                </resource>
+              </resources>
+            </configuration>
           </execution>
         </executions>
       </plugin>

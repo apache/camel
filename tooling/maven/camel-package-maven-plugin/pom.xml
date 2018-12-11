@@ -143,6 +143,13 @@
       <version>${spring-boot-version}</version>
     </dependency>
 
+    <!-- jandex for annotation processing -->
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jandex</artifactId>
+      <version>${jandex-version}</version>
+    </dependency>
+
     <!-- Freemarker for xml templating -->
     <dependency>
       <groupId>org.freemarker</groupId>
