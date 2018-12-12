@@ -96,7 +96,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     @Override
     protected RemoteFileConsumer<FTPFile> buildConsumer(Processor processor) {
         try {
-            return new FtpConsumer(this, processor, createRemoteFileOperations(), createGenericFileStrategy());
+            return new FtpConsumer(this, processor, createRemoteFileOperations(), processStrategy != null ? processStrategy : createGenericFileStrategy());
         } catch (Exception e) {
             throw new FailedToCreateConsumerException(this, e);
         }
