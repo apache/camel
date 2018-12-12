@@ -18,6 +18,8 @@ package org.apache.camel.component.nats;
 
 import java.io.IOException;
 
+import io.nats.client.Message;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -26,8 +28,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-
-import io.nats.client.Message;
 
 public class NatsConsumerWithRedeliveryTest extends NatsTestSupport {
 
@@ -69,8 +69,9 @@ public class NatsConsumerWithRedeliveryTest extends NatsTestSupport {
                     public boolean matches(Exchange exchange) {
                         Message g = exchange.getIn().getBody(Message.class);
                         String s = new String(g.getData());
-                        if (s.contains("test"))
+                        if (s.contains("test")) {
                             return true;
+                        }
                         return false;
                     }
                 }).throwException(RuntimeCamelException.class, "Test for this").end().to(mockResultEndpoint);
