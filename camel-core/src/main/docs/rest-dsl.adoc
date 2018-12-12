@@ -207,7 +207,7 @@ the <<simple-language,Simple>> language, but it has more power than so.
 
 === Embedding Camel routes
 
-Each of the rest service becomes a Camel route, so in the first example
+Each of the rest services becomes a Camel route, so in the first example
 we have 2 x get and 1 x post REST service, which each become a Camel
 route. And we have 2 regular Camel routes, meaning we have 3 + 2 = 5
 routes in total. 
@@ -258,7 +258,7 @@ today.
 
 === Managing Rest services
 
-Each of the rest service becomes a Camel route, so in the first example
+Each of the rest services becomes a Camel route, so in the first example
 we have 2 x get and 1 x post REST service, which each become a Camel
 route. This makes it _the same_ from Camel to manage and run these
 services - as they are just Camel routes. This means any tooling and API
