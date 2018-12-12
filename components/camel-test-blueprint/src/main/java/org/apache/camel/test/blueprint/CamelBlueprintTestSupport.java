@@ -221,6 +221,15 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
         return answer;
     }
+    
+    /**
+     * This option is not supported / in-use for blueprint
+     */
+    @Deprecated
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        return false;
+    }
 
     @Before
     @Override
