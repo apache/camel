@@ -16,11 +16,11 @@
  */
 package org.apache.camel.websocket.jsr356;
 
-import static java.util.Optional.ofNullable;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.function.BiConsumer;
+
+import static java.util.Optional.ofNullable;
 
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.Session;
@@ -61,7 +61,8 @@ public class JSR356Producer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
         final String endpointKey = getEndpoint().getEndpointUri().substring("websocket-jsr356://".length());
-        if (!endpointKey.contains("://")) { // we act as a client in all cases here
+        if (!endpointKey.contains("://")) { // we act as a client in all cases
+                                            // here
             throw new IllegalArgumentException("You should pass a client uri");
         }
         final ClientEndpointConfig.Builder clientConfig = ClientEndpointConfig.Builder.create();

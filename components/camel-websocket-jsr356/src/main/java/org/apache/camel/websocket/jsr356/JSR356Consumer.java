@@ -16,10 +16,11 @@
  */
 package org.apache.camel.websocket.jsr356;
 
-import static java.util.Optional.ofNullable;
-
 import java.net.URI;
 import java.util.function.BiConsumer;
+
+import static java.util.Optional.ofNullable;
+
 
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.Session;
@@ -33,7 +34,7 @@ public class JSR356Consumer extends DefaultConsumer {
     private final int sessionCount;
     private final String context;
     private ClientSessions manager;
-    private Runnable closeTask = null;
+    private Runnable closeTask;
 
     private final BiConsumer<Session, Object> onMessage = (session, message) -> {
         final Exchange exchange = getEndpoint().createExchange();
@@ -46,8 +47,7 @@ public class JSR356Consumer extends DefaultConsumer {
         });
     };;
 
-    JSR356Consumer(final JSR356Endpoint jsr356Endpoint, final Processor processor,
-                          final int sessionCount, final String context) {
+    JSR356Consumer(final JSR356Endpoint jsr356Endpoint, final Processor processor, final int sessionCount, final String context) {
         super(jsr356Endpoint, processor);
         this.sessionCount = sessionCount;
         this.context = context;
@@ -63,7 +63,8 @@ public class JSR356Consumer extends DefaultConsumer {
         super.doStart();
         final String endpointKey = getEndpoint().getEndpointUri().substring("websocket-jsr356://".length());
         if (endpointKey.contains("://")) { // we act as a client
-            final ClientEndpointConfig.Builder clientConfig = ClientEndpointConfig.Builder.create(); // todo: config
+            final ClientEndpointConfig.Builder clientConfig = ClientEndpointConfig.Builder.create(); // todo:
+                                                                                                     // config
             manager = new ClientSessions(sessionCount, URI.create(endpointKey), clientConfig.build(), onMessage);
             manager.prepare();
         } else {
@@ -71,8 +72,7 @@ public class JSR356Consumer extends DefaultConsumer {
             final CamelServerEndpoint endpoint = bag.getEndpoints().get(endpointKey);
             if (endpoint == null) {
                 // todo: make it customizable (the endpoint config)
-                final ServerEndpointConfig.Builder configBuilder = ServerEndpointConfig.Builder.create(CamelServerEndpoint.class,
-                        endpointKey);
+                final ServerEndpointConfig.Builder configBuilder = ServerEndpointConfig.Builder.create(CamelServerEndpoint.class, endpointKey);
                 final CamelServerEndpoint serverEndpoint = new CamelServerEndpoint();
                 bag.getEndpoints().put(endpointKey, serverEndpoint);
                 closeTask = addObserver(serverEndpoint);
