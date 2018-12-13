@@ -35,12 +35,13 @@ public class CamelWebsocketJsr356Test extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelWebsocketJsr356Test.class))
+                .dependency("org.springframework.boot:spring-boot-starter-websocket")
                 .build();
     }
 
     @Test
     public void componentTests() throws Exception {
-        this.runComponentTest(createTestConfig(), "websocket-jsr356");
+        this.runComponentTest(config);
         this.runModuleUnitTestsIfEnabled(config);
     }
 
