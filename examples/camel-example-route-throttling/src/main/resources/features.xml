@@ -37,7 +37,7 @@
     <feature name='camel-example-route-throttling' version='${project.version}'>
         <feature version="${project.version}">camel</feature>
         <feature version="${project.version}">camel-jms</feature>
-        <bundle>mvn:org.apache.camel/camel-example-route-throttling/${project.version}</bundle>
+        <bundle>mvn:org.apache.camel.example/camel-example-route-throttling/${project.version}</bundle>
     </feature>
 
 </features>
