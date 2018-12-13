@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
 public class MockEndpointFailNoHeaderTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
@@ -43,11 +44,33 @@ public class MockEndpointFailNoHeaderTest extends CamelTestSupport {
         template.sendBodyAndHeader(expectedBody, "foo", "bar");
         resultEndpoint.assertIsSatisfied();
     }
-    
-    
+
+    @Test
+    public void withHeaderAndTwoMessagesTestCase() throws InterruptedException {
+        String expectedBody = "<matched/>";
+        resultEndpoint.setExpectedCount(2);
+        resultEndpoint.expectedHeaderReceived("foo", "bar");
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
+        resultEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void withHeaderAndMinTwoMessagesTestCase() throws InterruptedException {
+        String expectedBody = "<matched/>";
+        resultEndpoint.setMinimumExpectedMessageCount(2);
+        resultEndpoint.expectedHeaderReceived("foo", "bar");
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
+        resultEndpoint.assertIsSatisfied();
+    }
+
     @Test
     public void noHeaderTestCase() throws InterruptedException {
         resultEndpoint.expectedHeaderReceived("foo", "bar");
+        resultEndpoint.setResultWaitTime(1); // be quicker instead of default 10 sec
+        // should fail as there is no message sent
         resultEndpoint.assertIsNotSatisfied();
     }
 
