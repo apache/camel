@@ -27,7 +27,8 @@ import javax.websocket.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
+
 
 public class JSR356Producer extends DefaultAsyncProducer {
     private final int sessionCount;

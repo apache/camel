@@ -28,7 +28,8 @@ import javax.websocket.server.ServerEndpointConfig;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
+
 
 public class JSR356Consumer extends DefaultConsumer {
     private final int sessionCount;
