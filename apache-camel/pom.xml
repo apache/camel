@@ -1183,6 +1183,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-websocket-jsr356</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-wordpress</artifactId>
     </dependency>
     <dependency>
@@ -2520,6 +2524,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-websocket-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-websocket-jsr356-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
