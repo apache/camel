@@ -40,7 +40,7 @@ Add features required
 #### Step 3: Deploy
 Deploy the example
 
-	install -s mvn:org.apache.camel/camel-example-cxf-blueprint/${version}
+	install -s mvn:org.apache.camel.example/camel-example-cxf-blueprint/${version}
 
 #### Step 4: Verify that your service is available using the following url in the browser.
 
