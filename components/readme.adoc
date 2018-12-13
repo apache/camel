@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 288 in 191 JAR artifacts (1 deprecated)
+Number of Components: 289 in 192 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -409,6 +409,9 @@ Number of Components: 288 in 191 JAR artifacts (1 deprecated)
 
 | link:camel-ironmq/src/main/docs/ironmq-component.adoc[IronMQ] (camel-ironmq) +
 `ironmq:queueName` | 2.17 | The ironmq provides integration with IronMQ an elastic and durable hosted message queue as a service.
+
+| link:camel-websocket-jsr356/src/main/docs/websocket-jsr356-component.adoc[Javax Websocket] (camel-websocket-jsr356) +
+`websocket-jsr356:/resourceUri` | 2.23 | Camel WebSocket using JSR356 (javax)
 
 | link:camel-jbpm/src/main/docs/jbpm-component.adoc[JBPM] (camel-jbpm) +
 `jbpm:connectionURL` | 2.6 | The jbpm component provides integration with jBPM (Business Process Management).
