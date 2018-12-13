@@ -38,7 +38,7 @@
         <feature version="${project.version}">camel</feature>
         <feature version="${project.version}">camel-jms</feature>
         <feature version="${project.version}">camel-saxon</feature>
-        <bundle>mvn:org.apache.camel/camel-example-spring-xquery/${project.version}</bundle>
+        <bundle>mvn:org.apache.camel.example/camel-example-spring-xquery/${project.version}</bundle>
     </feature>
 
 </features>

@@ -37,7 +37,7 @@
     <feature name='camel-example-loan-broker' version='${project.version}'>
         <feature version="${project.version}">camel</feature>
         <feature version="${project.version}">camel-jms</feature>
-        <bundle>mvn:org.apache.camel/camel-example-loan-broker/${project.version}</bundle>
+        <bundle>mvn:org.apache.camel.example/camel-example-loan-broker-jms/${project.version}</bundle>
     </feature>
 
 </features>
