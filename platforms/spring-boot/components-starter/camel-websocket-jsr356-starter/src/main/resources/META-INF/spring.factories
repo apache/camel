@@ -16,4 +16,4 @@
 ## ---------------------------------------------------------------------------
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.jsr356.springboot.JSR356WebSocketComponentAutoConfiguration
+org.apache.camel.websocket.jsr356.springboot.JSR356WebSocketComponentAutoConfiguration
