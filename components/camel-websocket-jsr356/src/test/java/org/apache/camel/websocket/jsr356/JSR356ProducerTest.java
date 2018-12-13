@@ -16,11 +16,11 @@
  */
 package org.apache.camel.websocket.jsr356;
 
-import static java.util.Collections.singletonList;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
+
+import static java.util.Collections.singletonList;
 
 import javax.enterprise.context.Dependent;
 import javax.websocket.OnMessage;
@@ -40,10 +40,12 @@ import org.junit.rules.TestName;
 
 public class JSR356ProducerTest extends CamelTestSupport {
     @Rule
-    public final MeecrowaveRule servlet = new MeecrowaveRule(new Meecrowave.Builder() {{
-        randomHttpPort();
-        setScanningPackageIncludes("org.apache.camel.websocket.jsr356.JSR356ProducerTest$"); // deploy test classes
-    }}, "");
+    public final MeecrowaveRule servlet = new MeecrowaveRule(new Meecrowave.Builder() {
+        {
+            randomHttpPort();
+            setScanningPackageIncludes("org.apache.camel.websocket.jsr356.JSR356ProducerTest$"); 
+        }
+    }, "");
 
     @Rule
     public final TestName testName = new TestName();
@@ -63,10 +65,8 @@ public class JSR356ProducerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:ensureServerModeSendsProperly")
-                        .id("camel_consumer_acts_as_client")
-                        .convertBodyTo(String.class)
-                        .to("websocket-jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver");
+                from("direct:ensureServerModeSendsProperly").id("camel_consumer_acts_as_client").convertBodyTo(String.class)
+                    .to("websocket-jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver");
             }
         };
     }

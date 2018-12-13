@@ -16,14 +16,14 @@
  */
 package org.apache.camel.websocket.jsr356;
 
-import static java.util.Optional.ofNullable;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.util.Optional.ofNullable;
 
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
@@ -35,7 +35,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IOHelper;
 
 public class JSR356WebSocketComponent extends DefaultComponent {
-    // didn't find a better way to handle that unless we can assume the CamelContext is in the ServletContext
+    // didn't find a better way to handle that unless we can assume the
+    // CamelContext is in the ServletContext
     private static final Map<String, ContextBag> SERVER_CONTAINERS = new ConcurrentHashMap<>();
 
     @Metadata(label = "sessionCount")
@@ -47,7 +48,9 @@ public class JSR356WebSocketComponent extends DefaultComponent {
     }
 
     public static void sendMessage(final Session session, final Object message) throws IOException {
-        final RemoteEndpoint.Basic basicRemote = session.getBasicRemote(); // todo: handle async?
+        final RemoteEndpoint.Basic basicRemote = session.getBasicRemote(); // todo:
+                                                                           // handle
+                                                                           // async?
         synchronized (session) {
             if (String.class.isInstance(message)) {
                 basicRemote.sendText(String.valueOf(message));
@@ -70,13 +73,11 @@ public class JSR356WebSocketComponent extends DefaultComponent {
     }
 
     public static ContextBag getContext(final String context) {
-        return ofNullable(context)
-                .map(SERVER_CONTAINERS::get)
-                .orElseGet(() -> SERVER_CONTAINERS.size() == 1 ?
-                        SERVER_CONTAINERS.values().iterator().next() : SERVER_CONTAINERS.get(""));
+        return ofNullable(context).map(SERVER_CONTAINERS::get)
+            .orElseGet(() -> SERVER_CONTAINERS.size() == 1 ? SERVER_CONTAINERS.values().iterator().next() : SERVER_CONTAINERS.get(""));
     }
 
-    public static class ContextBag {
+    public static final class ContextBag {
         private final ServerContainer container;
         private final Map<String, CamelServerEndpoint> endpoints = new HashMap<>();
 
