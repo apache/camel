@@ -34,6 +34,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.meecrowave.Meecrowave;
 import org.apache.meecrowave.junit.MeecrowaveRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -53,6 +54,7 @@ public class JSR356ProducerTest extends CamelTestSupport {
     @Produce(uri = "direct:ensureServerModeSendsProperly")
     private ProducerTemplate serverProducer;
 
+    @Ignore
     @Test
     public void ensureServerModeSendsProperly() throws Exception {
         final String body = getClass().getName() + "#" + testName.getMethodName();
