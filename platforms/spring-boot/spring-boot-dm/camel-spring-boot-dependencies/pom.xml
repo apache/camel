@@ -3050,6 +3050,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-websocket-jsr356</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-websocket-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3528,7 +3533,7 @@
       <dependency>
         <groupId>org.knowm.xchange</groupId>
         <artifactId>xchange-core</artifactId>
-        <version>4.3.12</version>
+        <version>4.3.13</version>
       </dependency>
       <dependency>
         <groupId>org.mozilla</groupId>
