@@ -41,13 +41,11 @@ a number of protocols. However, we have tested the HTTP protocol only.
 The default port is port 80. We do not automatically switch default port
 based on the protocol yet.
 
-You can append query options to the URI in the following format,
+You can append query options to the URI in the following format:
 `?option=value&option=value&...`
 
- 
-
-INFO: It seems Restlet is case sensitive in understanding headers. For example
-to use content-type, use Content-Type, and for location use Location and
+NOTE: It seems Restlet is case sensitive in understanding headers. For example
+to use content-type, use `Content-Type`, and for location use `Location` and
 so on.
 
 WARNING: We have received a report about drop in performance in camel-restlet in
