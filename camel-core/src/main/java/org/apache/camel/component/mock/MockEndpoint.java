@@ -517,6 +517,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedHeaderReceived(final String name, final Object value) {
+        if (expectedCount == -1) {
+            expectedMessageCount(1);
+        }
         if (expectedHeaderValues == null) {
             expectedHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             // we just wants to expects to be called once
