@@ -30,8 +30,9 @@ import javax.websocket.Session;
 import javax.websocket.server.ServerContainer;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.IOHelper;
 
 public class JSR356WebSocketComponent extends DefaultComponent {
