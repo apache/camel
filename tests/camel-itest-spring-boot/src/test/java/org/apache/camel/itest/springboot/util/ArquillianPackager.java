@@ -461,7 +461,7 @@ public final class ArquillianPackager {
             }
 
             if (FAIL_ON_TEST_LIBRARY_MISMATCH) {
-                throw new RuntimeException(message.toString());
+                throw new InvocationException(new RuntimeException(message.toString()));
             } else {
                 debug(message.toString());
             }
