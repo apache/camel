@@ -16,8 +16,6 @@
  */
 package org.apache.camel.websocket.jsr356;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
 
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.CloseReason;

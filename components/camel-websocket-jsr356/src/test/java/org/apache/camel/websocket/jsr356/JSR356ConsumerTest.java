@@ -41,10 +41,12 @@ import org.junit.rules.TestName;
 
 public class JSR356ConsumerTest extends CamelTestSupport {
     @Rule
-    public final MeecrowaveRule servlet = new MeecrowaveRule(new Meecrowave.Builder() {{
-        randomHttpPort();
-        setScanningPackageIncludes("org.apache.camel.websocket.jsr356.JSR356ConsumerTest$"); // deploy test classes
-    }}, "");
+    public final MeecrowaveRule servlet = new MeecrowaveRule(new Meecrowave.Builder() {
+        {
+            randomHttpPort();
+            setScanningPackageIncludes("org.apache.camel.websocket.jsr356.JSR356ConsumerTest$");
+        }
+    }, "");
 
     @Rule
     public final TestName testName = new TestName();
@@ -54,7 +56,9 @@ public class JSR356ConsumerTest extends CamelTestSupport {
         final String message = ExistingServerEndpoint.class.getName() + "#" + testName.getMethodName();
         final MockEndpoint mockEndpoint = getMockEndpoint("mock:" + testName.getMethodName());
         mockEndpoint.expectedBodiesReceived(message);
-        ExistingServerEndpoint.self.doSend(); // to avoid lifecycle issue suring startup we send the message only here
+        ExistingServerEndpoint.self.doSend(); // to avoid lifecycle issue suring
+                                              // startup we send the message
+                                              // only here
         mockEndpoint.assertIsSatisfied();
         // note that this test leaks a connection
     }
@@ -82,15 +86,10 @@ public class JSR356ConsumerTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("websocket-jsr356:///test")
-                        .id("camel_consumer_acts_as_server")
-                        .convertBodyTo(String.class)
-                        .to("mock:ensureServerModeReceiveProperlyExchanges");
+                from("websocket-jsr356:///test").id("camel_consumer_acts_as_server").convertBodyTo(String.class).to("mock:ensureServerModeReceiveProperlyExchanges");
 
-                from("websocket-jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver")
-                        .id("camel_consumer_acts_as_client")
-                        .convertBodyTo(String.class)
-                        .to("mock:ensureClientModeReceiveProperlyExchanges");
+                from("websocket-jsr356://ws://localhost:" + servlet.getConfiguration().getHttpPort() + "/existingserver").id("camel_consumer_acts_as_client")
+                    .convertBodyTo(String.class).to("mock:ensureClientModeReceiveProperlyExchanges");
             }
         };
     }
