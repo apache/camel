@@ -48,7 +48,7 @@ import org.apache.camel.spi.UnitOfWork;
  * and set it as the in for the next {@link Processor}. If the previous {@link Processor} did not
  * produce an out, then the in of the previous {@link Processor} is sent as the next in. At the
  * end of the processing chain, depending on the {@link ExchangePattern Message Exchange Pattern} (or MEP)
- * the last out (or in of no out available) is sent by the {@link Consumer} back to the original caller.
+ * the last out (or in if no out available) is sent by the {@link Consumer} back to the original caller.
  * <p/>
  * Camel, in addition to providing out-of-the-box a large number of useful processors, it also allows 
  * you to implement and use your own. When the Exchange is passed to a {@link Processor}, it always 
