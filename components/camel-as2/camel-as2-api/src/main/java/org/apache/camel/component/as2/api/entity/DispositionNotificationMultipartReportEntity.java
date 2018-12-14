@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.as2.api.entity;
 
+import java.security.PrivateKey;
 import java.util.Map;
 
 import org.apache.camel.component.as2.api.AS2Charset;
@@ -49,7 +50,8 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
                                                         Map<String, String> extensionFields,
                                                         String charset,
                                                         String boundary,
-                                                        boolean isMainBody)
+                                                        boolean isMainBody,
+                                                        PrivateKey decryptingPrivateKey)
             throws HttpException {
         super(charset, isMainBody, boundary);
         removeHeaders(AS2Header.CONTENT_TYPE);
@@ -58,7 +60,7 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
         addPart(buildPlainTextReport(request, response, dispositionMode, dispositionType, dispositionModifier,
                 failureFields, errorFields, warningFields, extensionFields));
         addPart(new AS2MessageDispositionNotificationEntity(request, response, dispositionMode, dispositionType,
-                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, false));
+                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, false, decryptingPrivateKey));
     }
 
     public String getMainMessageContentType() {

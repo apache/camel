@@ -155,11 +155,7 @@
                     <apiName>client</apiName>
                     <proxyClass>org.apache.camel.component.as2.api.AS2ClientManager</proxyClass>
                     <fromJavadoc>
-                      <excludeMethods>createSigningGenerator</excludeMethods>
-                      <excludeMethods>createEncryptingGenerator</excludeMethods>
-                      <excludeMethods>createCompressorGenerator</excludeMethods>
-                      <excludeMethods>createEncryptor</excludeMethods>
-                      <excludeMethods>createCompressor</excludeMethods>
+                      <excludeMethods>createSigningGenerator|createEncryptingGenerator|createCompressorGenerator|createEncryptor|createCompressor</excludeMethods>
                     </fromJavadoc>
                     <nullableOptions>
                         <nullableOption>ediMessageTransferEncoding</nullableOption>
@@ -171,7 +167,6 @@
                         <nullableOption>signedReceiptMicAlgorithms</nullableOption>
                         <nullableOption>encryptingAlgorithm</nullableOption>
                         <nullableOption>encryptingCertificateChain</nullableOption>
-                        <nullableOption>encryptingPrivateKey</nullableOption>
                     </nullableOptions>
                 </api>
                 <api>
@@ -181,7 +176,10 @@
                       <excludeMethods>stopListening|handleMDNResponse</excludeMethods>
 	                </fromJavadoc>
                     <excludeConfigNames>handler</excludeConfigNames>
-                </api>
+<!--                     <nullableOptions>
+                        <nullableOption>decryptingPrivateKey</nullableOption>
+                    </nullableOptions>
+ -->                </api>
               </apis>
               <!-- Specify global values for all APIs here, these are overridden at API level
               <substitutions/>

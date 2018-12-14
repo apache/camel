@@ -422,6 +422,11 @@ public final class EntityParser {
     public static void parseAS2MessageEntity(HttpMessage message) throws HttpException {
         if (EntityUtils.hasEntity(message)) {
             HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
+            
+            if (entity instanceof MimeEntity) {
+                // already parsed
+                return;
+            }
 
             try {
                 // Determine Content Type of Message
@@ -1138,8 +1143,8 @@ public final class EntityParser {
             break;
         }
         case AS2MimeType.APPLICATION_PKCS7_MIME: {
-            if (contentType.getParameter("mime-type").equals("compressed-data")) {
-                throw new HttpException("Failed to extract EDI payload: invalid mime type '" + contentType.getParameter("mime-type") + "' for AS2 enveloped entity");
+            if (!"compressed-data".equals(contentType.getParameter("smime-type"))) {
+                throw new HttpException("Failed to extract EDI payload: invalid mime type '" + contentType.getParameter("smime-type") + "' for AS2 enveloped entity");
             }
             ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity = (ApplicationPkcs7MimeCompressedDataEntity) entity;
             ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);

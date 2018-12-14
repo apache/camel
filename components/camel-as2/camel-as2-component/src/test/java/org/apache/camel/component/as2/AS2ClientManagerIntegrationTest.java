@@ -161,6 +161,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
     private X509Certificate issueCert;
 
     private KeyPair signingKP;
+    private KeyPair decryptingKP;
     private X509Certificate signingCert;
     private List<X509Certificate> certList;
     private AS2SignedDataGenerator gen;
@@ -299,8 +300,6 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         headers.put("CamelAS2.encryptingAlgorithm", AS2EncryptionAlgorithm.AES128_CBC);
         // parameter type is java.security.cert.Certificate[]
         headers.put("CamelAS2.encryptingCertificateChain", certList);
-        // parameter type is java.security.PrivateKey
-        headers.put("CamelAS2.encryptingPrivateKey", signingKP.getPrivate());
 
         final org.apache.http.protocol.HttpCoreContext result = requestBodyAndHeaders("direct://SEND", EDI_MESSAGE, headers);
 
@@ -312,7 +311,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
         assertNotNull("Request body", entity);
         assertTrue("Request body does not contain ApplicationPkcs7Mime entity", entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity);
-        MimeEntity envelopeEntity = ((ApplicationPkcs7MimeEnvelopedDataEntity)entity).getEncryptedEntity(signingKP.getPrivate());
+        MimeEntity envelopeEntity = ((ApplicationPkcs7MimeEnvelopedDataEntity)entity).getEncryptedEntity(decryptingKP.getPrivate());
         assertTrue("Enveloped entity is not an EDI entity", envelopeEntity instanceof ApplicationEDIEntity);
         String ediMessage = ((ApplicationEDIEntity)envelopeEntity).getEdiMessage();
         assertEquals("EDI message is different", EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""));
@@ -437,7 +436,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected value for disposition type", AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType());
         
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
-        ReceivedContentMic computedContentMic = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest)request);
+        ReceivedContentMic computedContentMic = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest)request, decryptingKP.getPrivate());
         assertEquals("Received content MIC does not match computed", computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest());
     }
 
@@ -524,7 +523,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         assertEquals("Unexpected value for disposition type", AS2DispositionType.PROCESSED, messageDispositionNotificationEntity.getDispositionType());
         
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
-        ReceivedContentMic computedContentMic = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest)request);
+        ReceivedContentMic computedContentMic = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest)request, decryptingKP.getPrivate());
         assertEquals("Received content MIC does not match computed", computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest());
     }
 
@@ -564,7 +563,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         DispositionNotificationMultipartReportEntity mdn = new DispositionNotificationMultipartReportEntity(request,
                 response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields, null, "boundary",
-                true);
+                true, serverSigningKP.getPrivate());
 
         // Send MDN
         @SuppressWarnings("unused")
@@ -648,7 +647,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
 
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(AS2_VERSION, ORIGIN_SERVER_NAME,
-                SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA, serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate());
+                SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA, serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate(), serverSigningKP.getPrivate());
         serverConnection.listen("/", new RequestHandler());
     }
 
@@ -678,5 +677,7 @@ public class AS2ClientManagerIntegrationTest extends AbstractAS2TestSupport {
         certList.add(signingCert);
         certList.add(issueCert);
 
+        // keys used to encrypt/decrypt
+        decryptingKP = signingKP;
     }
 }
