@@ -194,7 +194,7 @@ public class AS2ComponentConfiguration
         /**
          * The key used to encrypt the EDI message.
          */
-        private PrivateKey encryptingPrivateKey;
+        private PrivateKey decryptingPrivateKey;
 
         public AS2ApiName getApiName() {
             return apiName;
@@ -412,12 +412,12 @@ public class AS2ComponentConfiguration
             this.encryptingCertificateChain = encryptingCertificateChain;
         }
 
-        public PrivateKey getEncryptingPrivateKey() {
-            return encryptingPrivateKey;
+        public PrivateKey getDecryptingPrivateKey() {
+            return decryptingPrivateKey;
         }
 
-        public void setEncryptingPrivateKey(PrivateKey encryptingPrivateKey) {
-            this.encryptingPrivateKey = encryptingPrivateKey;
+        public void setDecryptingPrivateKey(PrivateKey decryptingPrivateKey) {
+            this.decryptingPrivateKey = decryptingPrivateKey;
         }
     }
 }
