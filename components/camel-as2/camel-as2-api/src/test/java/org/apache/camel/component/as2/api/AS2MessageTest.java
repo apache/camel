@@ -140,14 +140,17 @@ public class AS2MessageTest {
 
     private AS2SignedDataGenerator gen;
 
-    private KeyPair issueKP;
-    private X509Certificate issueCert;
+    private static KeyPair issueKP;
+    private static X509Certificate issueCert;
 
-    private KeyPair signingKP;
-    private X509Certificate signingCert;
-    private List<X509Certificate> certList;
+    private static KeyPair signingKP;
+    private static X509Certificate signingCert;
+    private static List<X509Certificate> certList;
+    
+    @BeforeClass
+    public static void setUpOnce() throws Exception {
+        Security.addProvider(new BouncyCastleProvider());
 
-    private void setupKeysAndCertificates() throws Exception {
         //
         // set up our certificates
         //
@@ -170,38 +173,11 @@ public class AS2MessageTest {
 
         certList.add(signingCert);
         certList.add(issueCert);
-
-    }
-
-    @BeforeClass
-    public static void setUpOnce() throws Exception {
-        Security.addProvider(new BouncyCastleProvider());
-
-        //
-        // set up our certificates
-        //
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
-
-        kpg.initialize(1024, new SecureRandom());
-
-        String issueDN = "O=Punkhorn Software, C=US";
-        KeyPair issueKP = kpg.generateKeyPair();
-        X509Certificate issueCert = Utils.makeCertificate(issueKP, issueDN, issueKP, issueDN);
-
-        //
-        // certificate we sign against
-        //
-        String signingDN = "CN=William J. Collins, E=punkhornsw@gmail.com, O=Punkhorn Software, C=US";
-        KeyPair signingKP = kpg.generateKeyPair();
-        X509Certificate signingCert = Utils.makeCertificate(signingKP, signingDN, issueKP, issueDN);
-
-        List<X509Certificate> certList = new ArrayList<>();
-
-        certList.add(signingCert);
-        certList.add(issueCert);
+        
+        KeyPair decryptingKP = signingKP;
 
         testServer = new AS2ServerConnection(AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
-                certList.toArray(new Certificate[0]), signingKP.getPrivate());
+                certList.toArray(new Certificate[0]), signingKP.getPrivate(), decryptingKP.getPrivate());
         testServer.listen("*", new HttpRequestHandler() {
             @Override
             public void handle(HttpRequest request, HttpResponse response, HttpContext context)
@@ -226,8 +202,6 @@ public class AS2MessageTest {
     @Before
     public void setUp() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-
-        setupKeysAndCertificates();
 
         // Create and populate certificate store.
         JcaCertStore certs = new JcaCertStore(certList);
@@ -703,7 +677,7 @@ public class AS2MessageTest {
         DispositionNotificationMultipartReportEntity mdn = new DispositionNotificationMultipartReportEntity(request,
                 response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields, null, "boundary",
-                true);
+                true, null);
 
         // Send MDN
         HttpCoreContext httpContext = mdnManager.send(mdn, RECIPIENT_DELIVERY_ADDRESS);
@@ -730,7 +704,7 @@ public class AS2MessageTest {
         assertArrayEquals("Unexpected value for Error Fields", errorFields, mdnEntity.getErrorFields());
         assertArrayEquals("Unexpected value for Warning Fields", warningFields, mdnEntity.getWarningFields());
         assertEquals("Unexpected value for Extension Fields", extensionFields, mdnEntity.getExtensionFields());
-        ReceivedContentMic expectedMic = MicUtils.createReceivedContentMic(request);
+        ReceivedContentMic expectedMic = MicUtils.createReceivedContentMic(request, null);
         ReceivedContentMic mdnMic = mdnEntity.getReceivedContentMic();
         assertEquals("Unexpected value for Recieved Content Mic", expectedMic.getEncodedMessageDigest(),
                 mdnMic.getEncodedMessageDigest());

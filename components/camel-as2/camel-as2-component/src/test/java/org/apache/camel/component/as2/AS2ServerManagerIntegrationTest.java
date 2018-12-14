@@ -26,19 +26,24 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2ClientConnection;
 import org.apache.camel.component.as2.api.AS2ClientManager;
+import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
+import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
+import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDataEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7SignatureEntity;
+import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
@@ -60,6 +65,7 @@ import org.bouncycastle.asn1.smime.SMIMEEncryptionKeyPreferenceAttribute;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,14 +118,21 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
             + "UNT+23+00000000000117'\n"
             + "UNZ+1+00000000000778'";
 
-    private AS2SignedDataGenerator gen;
+    private static AS2SignedDataGenerator gen;
 
-    private KeyPair issueKP;
-    private X509Certificate issueCert;
+    private static KeyPair issueKP;
+    private static X509Certificate issueCert;
 
-    private KeyPair signingKP;
-    private X509Certificate signingCert;
-    private List<X509Certificate> certList;
+    private static KeyPair signingKP;
+    private static X509Certificate signingCert;
+    private static List<X509Certificate> certList;
+    
+    private static KeyPair decryptingKP;
+    
+    @BeforeClass
+    public static void  setup() throws Exception {
+        setupSigningGenerator();
+    }
 
     @Test
     public void receivePlainEDIMessageTest() throws Exception {
@@ -178,7 +191,6 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
     @Test
     public void receiveMultipartSignedMessageTest() throws Exception {
-        setupSigningGenerator();
 
         AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
@@ -245,8 +257,70 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
         // Validate Signature
         assertTrue("Signature is invalid", signedEntity.isValid());
     }
+    
+    @Test
+    public void receiveEnvelopedMessageTest() throws Exception {
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
-    private void setupSigningGenerator() throws Exception {
+        clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.ENCRYPTED,
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, null, null, null,
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, AS2EncryptionAlgorithm.AES128_CBC, certList.toArray(new Certificate[0]));
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30,  TimeUnit.SECONDS));
+        mockEndpoint.assertIsSatisfied();
+
+        final List<Exchange> exchanges = mockEndpoint.getExchanges();
+        assertNotNull("listen result", exchanges);
+        assertFalse("listen result", exchanges.isEmpty());
+        LOG.debug("poll result: " + exchanges);
+
+        Exchange exchange = exchanges.get(0);
+        Message message = exchange.getIn();
+        assertNotNull("exchange message", message);
+        BasicHttpContext context = message.getBody(BasicHttpContext.class);
+        assertNotNull("context", context);
+        HttpCoreContext coreContext = HttpCoreContext.adapt(context);
+        HttpRequest request = coreContext.getRequest();
+        assertNotNull("request", request);
+        assertEquals("Unexpected method value", METHOD, request.getRequestLine().getMethod());
+        assertEquals("Unexpected request URI value", REQUEST_URI, request.getRequestLine().getUri());
+        assertEquals("Unexpected HTTP version value", HttpVersion.HTTP_1_1, request.getRequestLine().getProtocolVersion());
+        assertEquals("Unexpected subject value", SUBJECT, request.getFirstHeader(AS2Header.SUBJECT).getValue());
+        assertEquals("Unexpected from value", FROM, request.getFirstHeader(AS2Header.FROM).getValue());
+        assertEquals("Unexpected AS2 version value", AS2_VERSION, request.getFirstHeader(AS2Header.AS2_VERSION).getValue());
+        assertEquals("Unexpected AS2 from value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_FROM).getValue());
+        assertEquals("Unexpected AS2 to value", AS2_NAME, request.getFirstHeader(AS2Header.AS2_TO).getValue());
+        assertTrue("Unexpected message id value", request.getFirstHeader(AS2Header.MESSAGE_ID).getValue().endsWith(CLIENT_FQDN + ">"));
+        assertEquals("Unexpected target host value", TARGET_HOST + ":" + TARGET_PORT, request.getFirstHeader(AS2Header.TARGET_HOST).getValue());
+        assertEquals("Unexpected user agent value", USER_AGENT, request.getFirstHeader(AS2Header.USER_AGENT).getValue());
+        assertNotNull("Date value missing", request.getFirstHeader(AS2Header.DATE));
+        assertNotNull("Content length value missing", request.getFirstHeader(AS2Header.CONTENT_LENGTH));
+        assertTrue("Unexpected content type for message", request.getFirstHeader(AS2Header.CONTENT_TYPE).getValue().startsWith(AS2MimeType.APPLICATION_PKCS7_MIME));
+
+
+        assertTrue("Request does not contain entity", request instanceof BasicHttpEntityEnclosingRequest);
+        HttpEntity entity = ((BasicHttpEntityEnclosingRequest) request).getEntity();
+        assertNotNull("Request does not contain entity", entity);
+        assertTrue("Unexpected request entity type", entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity);
+        ApplicationPkcs7MimeEnvelopedDataEntity envelopedEntity = (ApplicationPkcs7MimeEnvelopedDataEntity) entity;
+        assertTrue("Entity not set as main body of request", envelopedEntity.isMainBody());
+
+        // Validated enveloped part.
+        MimeEntity encryptedEntity = envelopedEntity.getEncryptedEntity(signingKP.getPrivate());
+        assertTrue("Enveloped mime part incorrect type ", encryptedEntity instanceof ApplicationEDIFACTEntity);
+        ApplicationEDIFACTEntity ediEntity = (ApplicationEDIFACTEntity) encryptedEntity;
+        assertTrue("Unexpected content type for enveloped mime part",
+                ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT));
+        assertFalse("Enveloped mime type set as main body of request", ediEntity.isMainBody());
+        assertEquals("Unexpected content for enveloped mime part", EDI_MESSAGE.replaceAll("[\n\r]", ""),
+                ediEntity.getEdiMessage().replaceAll("[\n\r]", ""));
+
+    }
+
+    private static void setupSigningGenerator() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
 
         setupKeysAndCertificates();
@@ -270,7 +344,7 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
     }
 
-    private void setupKeysAndCertificates() throws Exception {
+    private static void setupKeysAndCertificates() throws Exception {
         //
         // set up our certificates
         //
@@ -295,9 +369,19 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
         certList.add(signingCert);
         certList.add(issueCert);
+        
+        decryptingKP = signingKP;
 
     }
-
+    
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        AS2Component as2Component = (AS2Component) context.getComponent("as2");
+        AS2Configuration configuration = as2Component.getConfiguration();
+        configuration.setDecryptingPrivateKey(decryptingKP.getPrivate());
+        return context;
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

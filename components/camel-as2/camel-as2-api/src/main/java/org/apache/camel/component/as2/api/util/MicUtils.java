@@ -19,21 +19,17 @@ package org.apache.camel.component.as2.api.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MicAlgorithm;
-import org.apache.camel.component.as2.api.AS2MimeType;
-import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
-import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
 import org.apache.camel.component.as2.api.entity.EntityParser;
-import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +79,7 @@ public final class MicUtils {
         }
     }
 
-    public static ReceivedContentMic createReceivedContentMic(HttpEntityEnclosingRequest request) throws HttpException {
+    public static ReceivedContentMic createReceivedContentMic(HttpEntityEnclosingRequest request, PrivateKey decryptingPrivateKey) throws HttpException {
 
         String dispositionNotificationOptionsString =  HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
         if (dispositionNotificationOptionsString == null) {
@@ -97,7 +93,7 @@ public final class MicUtils {
             return null;
         }
 
-        HttpEntity entity = EntityParser.extractEdiPayload(request, null);
+        HttpEntity entity = EntityParser.extractEdiPayload(request, decryptingPrivateKey);
 
         byte[] content = EntityUtils.getContent(entity);
 
