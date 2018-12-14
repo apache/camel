@@ -194,7 +194,7 @@ public final class Olingo4AppImpl implements Olingo4App {
     @Override
     public void setServiceUri(String serviceUri) {
         if (serviceUri == null || serviceUri.isEmpty()) {
-            throw new IllegalArgumentException("serviceUri");
+            throw new IllegalArgumentException("serviceUri is not set");
         }
         this.serviceUri = serviceUri.endsWith(SEPARATOR) ? serviceUri.substring(0, serviceUri.length() - 1) : serviceUri;
     }
