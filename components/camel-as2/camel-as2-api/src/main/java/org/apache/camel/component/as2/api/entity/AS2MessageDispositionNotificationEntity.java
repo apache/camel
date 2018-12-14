@@ -18,6 +18,7 @@ package org.apache.camel.component.as2.api.entity;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.PrivateKey;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -76,7 +77,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                                                    String[] warningFields,
                                                    Map<String, String> extensionFields,
                                                    String charset,
-                                                   boolean isMainBody) throws HttpException {
+                                                   boolean isMainBody,
+                                                   PrivateKey decryptingPrivateKey) throws HttpException {
         setMainBody(isMainBody);
         setContentType(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, charset));
 
@@ -87,7 +89,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
         this.originalMessageId  = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
 
-        this.receivedContentMic = MicUtils.createReceivedContentMic(request);
+        this.receivedContentMic = MicUtils.createReceivedContentMic(request, decryptingPrivateKey);
 
         this.reportingUA = HttpMessageUtils.getHeaderValue(response, AS2Header.SERVER);
 

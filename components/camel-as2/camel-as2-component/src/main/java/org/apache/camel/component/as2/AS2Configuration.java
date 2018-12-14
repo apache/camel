@@ -118,7 +118,7 @@ public class AS2Configuration {
     private Certificate[] encryptingCertificateChain;
 
     @UriParam
-    private PrivateKey encryptingPrivateKey;
+    private PrivateKey decryptingPrivateKey;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -452,14 +452,14 @@ public class AS2Configuration {
         this.encryptingCertificateChain = signingCertificateChain;
     }
 
-    public PrivateKey getEncryptingPrivateKey() {
-        return encryptingPrivateKey;
+    public PrivateKey getDecryptingPrivateKey() {
+        return decryptingPrivateKey;
     }
 
     /**
      * The key used to encrypt the EDI message.
      */
-    public void setEncryptingPrivateKey(PrivateKey signingPrivateKey) {
-        this.encryptingPrivateKey = signingPrivateKey;
+    public void setDecryptingPrivateKey(PrivateKey signingPrivateKey) {
+        this.decryptingPrivateKey = signingPrivateKey;
     }
 }
