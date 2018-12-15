@@ -29,13 +29,6 @@
 		<camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=iota</camel.osgi.export.service>
 	</properties>
 
-	<repositories>
-		<repository>
-		    <id>spring-plugin</id>
-		    <url>http://repo.spring.io/plugins-release</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 
 		<dependency>
