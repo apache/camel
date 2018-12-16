@@ -944,14 +944,14 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
                 throw new XmlSignatureException(
                         "The XAdES-EPES configuration is invalid. The digest algorithm for the signature policy is missing.");
             }
-            Element digestMethod = createDigSigElement("DigestMethod", doc, input.getPrefixForXmlSignatureNamespace());
+            Element digestMethod = createElementNS(doc, input, "DigestMethod");
             sigPolicyHash.appendChild(digestMethod);
             setAttribute(digestMethod, "Algorithm", getSignaturePolicyDigestAlgorithm());
             if (getSignaturePolicyDigestValue() == null || getSignaturePolicyDigestValue().isEmpty()) {
                 throw new XmlSignatureException(
                         "The XAdES-EPES configuration is invalid. The digest value for the signature policy is missing.");
             }
-            Element digestValue = createDigSigElement("DigestValue", doc, input.getPrefixForXmlSignatureNamespace());
+            Element digestValue = createElementNS(doc, input, "DigestValue");
             sigPolicyHash.appendChild(digestValue);
             digestValue.setTextContent(getSignaturePolicyDigestValue());
 
@@ -1142,10 +1142,10 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         String digest = calculateDigest(algorithm, cert.getEncoded());
         Element certDigest = createElement("CertDigest", doc, input);
         elCert.appendChild(certDigest);
-        Element digestMethod = createDigSigElement("DigestMethod", doc, input.getPrefixForXmlSignatureNamespace());
+        Element digestMethod = createElementNS(doc, input, "DigestMethod");
         certDigest.appendChild(digestMethod);
         setAttribute(digestMethod, "Algorithm", getDigestAlgorithmForSigningCertificate());
-        Element digestValue = createDigSigElement("DigestValue", doc, input.getPrefixForXmlSignatureNamespace());
+        Element digestValue = createElementNS(doc, input, "DigestValue");
         certDigest.appendChild(digestValue);
         digestValue.setTextContent(digest);
 
@@ -1187,6 +1187,16 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         MessageDigest digest = MessageDigest.getInstance(algorithm);
         byte[] digestBytes = digest.digest(bytes);
         return new Base64().encodeAsString(digestBytes);
+    }
+
+    protected Element createElementNS(Document doc, Input input, String elementName) {
+        Element digestMethod;
+        if (HTTP_URI_ETSI_ORG_01903_V1_1_1.equals(findNamespace(input.getMessage()))) {
+            digestMethod = createElement(elementName, doc, input);
+        } else {
+            digestMethod = createDigSigElement(elementName, doc, input.getPrefixForXmlSignatureNamespace());
+        }
+        return digestMethod;
     }
 
     protected Element createDigSigElement(String localName, Document doc, String prefixForXmlSignatureNamespace) {
