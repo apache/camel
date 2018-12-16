@@ -59,7 +59,7 @@ public class IOTAProducer extends DefaultProducer {
 
             String tag = StringUtils.rightPad(endpoint.getTag(), IOTAConstants.TAG_LENGTH, '9');
 
-            String message = TrytesConverter.toTrytes(exchange.getIn().getBody(String.class));
+            String message = TrytesConverter.asciiToTrytes(exchange.getIn().getBody(String.class));
 
             if (LOG.isDebugEnabled()) {
                 // LOG.debug("seed {}", seed);
@@ -70,8 +70,7 @@ public class IOTAProducer extends DefaultProducer {
 
             List<Transfer> transfers = new ArrayList<>();
             transfers.add(new Transfer(address, value, message, tag));
-            SendTransferResponse response = endpoint.getApiClient().sendTransfer(seed, endpoint.getSecurityLevel(), endpoint.getDepth(), endpoint.getMinWeightMagnitude(),
-                                                                                 transfers, null, null, false);
+            SendTransferResponse response = endpoint.getApiClient().sendTransfer(seed, endpoint.getSecurityLevel(), endpoint.getDepth(), endpoint.getMinWeightMagnitude(), transfers, null, null, false, true, null);
 
             exchange.getIn().setBody(response.getTransactions());
         } else if (endpoint.getOperation().equals(IOTAConstants.GET_NEW_ADDRESS_OPERATION)) {
