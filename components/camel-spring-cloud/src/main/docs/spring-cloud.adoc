@@ -1,6 +1,5 @@
 [[SpringCloud-SpringCloud]]
-Spring Cloud
-~~~~~~~~~~~
+== Spring Cloud
 
 *Available as of Camel 2.19*
 

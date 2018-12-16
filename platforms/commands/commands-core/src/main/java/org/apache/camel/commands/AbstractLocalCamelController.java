@@ -130,7 +130,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             if (context.getStreamCachingStrategy().isEnabled()) {
                 answer.put("streamCachingEnabled", true);
                 answer.put("streamCaching.spoolDirectory", context.getStreamCachingStrategy().getSpoolDirectory());
-                answer.put("streamCaching.spoolChiper", context.getStreamCachingStrategy().getSpoolChiper());
+                answer.put("streamCaching.spoolCipher", context.getStreamCachingStrategy().getSpoolCipher());
                 answer.put("streamCaching.spoolThreshold", context.getStreamCachingStrategy().getSpoolThreshold());
                 answer.put("streamCaching.spoolUsedHeapMemoryThreshold", context.getStreamCachingStrategy().getSpoolUsedHeapMemoryThreshold());
                 answer.put("streamCaching.spoolUsedHeapMemoryLimit", context.getStreamCachingStrategy().getSpoolUsedHeapMemoryLimit());
@@ -230,7 +230,11 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
     public void startContext(String camelContextName) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.start();
+            if (context.getStatus().equals(ServiceStatus.Suspended)) {
+                context.resume();
+            } else {
+                context.start();
+            }
         }
     }
 

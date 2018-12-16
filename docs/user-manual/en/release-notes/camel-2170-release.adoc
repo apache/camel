@@ -28,7 +28,7 @@ and link:ftp.html[FTP] endpoints is now case in-sensitive out of the
 box.
 * Resource based component such
 as link:xslt.html[XSLT], link:velocity.html[Velocity] etc can load the
-resource file from the link:registry.html[Registry] by using `ref:` as
+resource file from the link:../registry.adoc[Registry] by using `ref:` as
 prefix.
 * Upgraded camel-amqp to the latest qpid-jms-client (also AMQP < 1.0 is
 not supported anymore).
@@ -44,9 +44,9 @@ MultiGet operation
 performant and use a rolling window for time periods which gives a
 better flow.
 * The `setHeader` and `setExchangeProperty` allows to use a dynamic
-header key using the link:simple.html[Simple] language if the name of
-the key is a link:simple.html[Simple] language expression.
-* Add collate function to link:simple.html[Simple] language to make it
+header key using the <<simple-language,Simple>> language if the name of
+the key is a <<simple-language,Simple>> language expression.
+* Add collate function to <<simple-language,Simple>> language to make it
 easier to split a message body into sub lists of a specified size. The
 function is similar to the collate function from Groovy.
 * The link:camel-run-maven-goal.html[Camel Run Maven Goal] is able to
@@ -59,7 +59,7 @@ Multisearch and exists operation
 Main class/JVM also, as it does when hitting ctrl + c.
 * Added option to skipFirst to the link:tokenizer.html[Tokenizer]
 language to make it easy to skip the very first element, when for
-example splitting a CSV file using the link:splitter.html[Splitter] EIP.
+example splitting a CSV file using the <<split-eip,Splitter>> EIP.
 * The link:rest-dsl.html[Rest DSL] now supports default values for query
 parameters
 * The link:rest-dsl.html[Rest DSL] now only binds from POJO to JSon/XML
@@ -72,29 +72,29 @@ bodies.
 * Camel link:error-handler.html[Error Handler] no longer log message
 body/header details when logging the link:message-history.html[Message
 History]. This avoids logging any sensitive details from message bodies.
-* Camel link:exception-clause.html[Exception Clause]
+* Camel link:../exception-clause.adoc[Exception Clause]
 and link:error-handler.html[Error Handler] now supports using a
 custom `Processor` to be invoked right after an exception was thrown
 using the new *onExceptionOccurred* option.
 * link:rabbitmq.html[RabbitMQ] consumer more resilient to auto
 re-connect in case of connection failures
-* The link:json.html[JSON] `camel-jackson` can be used as a type
+* The link:../json.adoc[JSON] `camel-jackson` can be used as a type
 converter to convert json to/from POJO and String/byte[] types, if
 enabled.
 * The link:sql-component.html[SQL Component] now supports loading the
 SQL queries from external files on the classpath or file system, where
 you can format the queries using newlines and indenting.
-* The link:mail.html[Mail] consumer allows to use an idempotent
+* The <<mail-component,Mail>> consumer allows to use an idempotent
 repository which allows to cluster consuming from the same mailbox, and
 let the repository coordinate whether a mail message is valid for the
 consumer to process.
 * Added support for completion interval on the link:sjms-batch.html[SJMS
 Batch] component, which allows to trigger batch completion in a fixed
 scheduled interval.
-* The link:http.html[HTTP] and link:http4.html[HTTP4] producers now
+* The <<http-component,HTTP>> and link:http4.html[HTTP4] producers now
 support the `disableStreamCache` option to allow to use the raw response
 stream as the message body instead of wrapping
-using link:stream-caching.html[Stream caching]
+using link:stream-caching.adoc[Stream caching]
 * The link:cdi.html[Camel CDI] component has been improved to better fit
 into the CDI programming model, cover a larger set of containers, and
 provide these new features:
@@ -130,14 +130,14 @@ local IP address (eg 0.0.0.0) by default.
 * link:quartz2.html[Camel-quartz2] now supports customCalendar to avoid
 specific range of dates (Holidays for example) in Scheduler and
 Triggers.
-* Improved link:bean-language.html[Bean Language] to be able to invoke
+* Improved <<bean-language,Bean Language>> to be able to invoke
 static methods on pure static classes.
-* When link:bean-language.html[Bean Language] failed to invoke a method
+* When <<bean-language,Bean Language>> failed to invoke a method
 from an OGNL method chain (eg invoke the following 3 methods
 "doFoo.doSomething.getBar") and a method returned null which prevent
 further method invocation as that would cause a NullPointerException.
 Now you have a more detailed exception message to better explain this.
-* link:jaxb.html[JAXB] data format and type converter now supports
+* <<jaxb-dataformat,JAXB>> data format and type converter now supports
 converting from XML to POJO for classes that are using ObjectFactory
 classes instead of XmlRootElement annotations.
 * The link:kafka.html[Kafka] component has been migrated to use the Java
@@ -183,13 +183,13 @@ api-docs could lead to api-doc route being added multiple times
 using link:swagger-java.html[Swagger Java]
 * Fixed using `statement.xxx` options on the link:jdbc.html[JDBC]
 consumer would only be used in first poll.
-* Fixed  link:http.html[HTTP] and link:http4.html[HTTP4] to keep
+* Fixed  <<http-component,HTTP>> and link:http4.html[HTTP4] to keep
 trailing slash if provided in uri when calling remote HTTP service.
 * Fixed link:oncompletion.html[OnCompletion] to keep any caught
 exception stored as property on the `Exchange` which allows to access
 that information to know if there was an exception during routing.
-* Fixed an issue with link:bean.html[Bean] component
-or link:simple.html[Simple] language with OGNL method call, would pick
+* Fixed an issue with <<bean-component,Bean>> component
+or <<simple-language,Simple>> language with OGNL method call, would pick
 method with java.lang.Object type over a better suited method, when the
 method is overloaded.
 * Fixed `camel-blueprint` to wait for the bundles with the component and
@@ -207,10 +207,10 @@ should let Camel handle the lifecycle of these resources.
 * Fixed link:cxfrs.html[CXFRS] using simple binding mode would use the
 content-length header from the incoming message in the response, instead
 of calculating the length based on the output message body.
-* Fixed an issue with link:simple.html[Simple] if starting the
+* Fixed an issue with <<simple-language,Simple>> if starting the
 expression with `file:` could fail with an error.
 * Fixed link:spring-boot.html[Spring Boot] may report spring type
-converter errors if link:stream-caching.html[Stream caching] is enabled.
+converter errors if link:stream-caching.adoc[Stream caching] is enabled.
 * Fixed link:idempotent-consumer.html[Idempotent Consumer] would not
 propagate exception thrown from `IdempotentRepository` to
 Camel's link:error-handler.html[Error Handler] such as `onException```
@@ -244,8 +244,8 @@ link:sql-stored-procedure.html[sql-stored component].
 
 ### New Data Formats
 
-* link:mime-multipart.html[MIME-Multipart] - mime based data format.
-* link:lzf-data-format.html[LZF Data Format] - LZF based data format. 
+* <<mime-multipart-dataformat,MIME-Multipart>> - mime based data format.
+* <<lzf-dataformat,LZF Data Format>> - LZF based data format. 
 * link:yaml-data-format.html[YAML Data Format] - YAML based data format.
 * Hessian - Caucho Hessian based data format.
 
@@ -372,12 +372,12 @@ from the Camel Parent BOM to the tooling BOM (to have them separated).
 * camel-amqp do not support 0.9 anymore. 
 * camel-spring-integration feature has been removed from the Camel
 karaf.
-* The link:mail.html[Mail] component now requires to configure to, cc,
+* The <<mail-component,Mail>> component now requires to configure to, cc,
 and bcc using lower case keys, eg to=foo@bar.com, instead
 of mailto:To=foo@bar.com[To=foo@bar.com] as previously.
-* The link:file2.html[File] consumer no longer probe the file content by
+* The <<file-component,File>> consumer no longer probe the file content by
 default. See the option `probeContentType` for more details.
-* If using link:bean.html[Bean] or link:class.html[Class] component and
+* If using <<bean-component,Bean>> or link:class.html[Class] component and
 specifying additional parameters in the endpoint uri to configure on the
 bean, then these options should now be prefixed with bean., eg
 `foo=123` is now `bean.foo=123`.

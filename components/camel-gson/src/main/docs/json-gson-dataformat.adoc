@@ -29,7 +29,7 @@ The JSon GSon dataformat supports 19 options, which are listed below.
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
 | library | XStream | JsonLibrary | Which json library to use.
 | unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
-| jsonView |  | Class<?> | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
+| jsonView |  | Class | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
 | include |  | String | If you want to marshal a pojo to JSON, and the pojo has some fields with null values. And you want to skip these null values, you can set this option to NON_NULL
 | allowJmsType | false | Boolean | Used for JMS users to allow the JMSType header from the JMS spec to specify a FQN classname to use to unmarshal to.
 | collectionTypeName |  | String | Refers to a custom collection type to lookup in the registry to use. This option should rarely be used, but allows to use different collection types than java.util.Collection based as default.

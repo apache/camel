@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -34,6 +35,7 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
@@ -473,6 +475,10 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     continue;
                 }
 
+                if (isGroovyMetaClassProperty(method)) {
+                    continue;
+                }
+
                 // must be a getter/setter pair
                 String fieldName = methodName.substring(3);
                 fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
@@ -810,5 +816,22 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     }
 
     // CHECKSTYLE:ON
+
+    private static boolean isGroovyMetaClassProperty(final ExecutableElement method) {
+        final String methodName = method.getSimpleName().toString();
+        
+        if (!"setMetaClass".equals(methodName)) {
+            return false;
+        }
+
+        if (method.getReturnType() instanceof DeclaredType) {
+            final DeclaredType returnType = (DeclaredType) method.getReturnType();
+
+            return "groovy.lang.MetaClass".equals(returnType.asElement().getSimpleName());
+        } else {
+            // Eclipse (Groovy?) compiler returns javax.lang.model.type.NoType, no other way to check but to look at toString output
+            return method.toString().contains("(groovy.lang.MetaClass)");
+        }
+    }
 
 }

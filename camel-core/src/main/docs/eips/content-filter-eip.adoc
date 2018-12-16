@@ -1,0 +1,65 @@
+[[ContentFilter-eip]]
+== Content Filter
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/ContentFilter.html[Content
+Filter] from the
+<<EnterpriseIntegrationPatterns-EnterpriseIntegrationPatterns,EIP patterns>>
+using one of the following mechanisms in the routing logic to transform
+content from the inbound message.
+
+* <<messageTranslator-eip,Message Translator>>
+* invoking a <<BeanIntegration-BeanIntegration,Java bean>>
+* <<Processor-Processor,Processor>> object
+
+image:http://www.enterpriseintegrationpatterns.com/img/ContentFilter.gif[image]
+
+A common way to filter messages is to use an
+<<Expression-Expressions,Expression>> in the <<DSL-DSL,DSL>> like
+<<xquery-language,XQuery>>, <<sql-language,SQL>> or one of the supported
+<<ScriptingLanguages-ScriptingLanguages,Scripting Languages>>.
+
+=== Using the <<FluentBuilders-FluentBuilders,Fluent Builders>>
+
+Here is a simple example using the <<DSL-DSL,DSL>> directly
+
+In this example we add our own <<Processor-Processor,Processor>>
+
+For further examples of this pattern in use you could look at one of the
+JUnit tests
+
+* link:../../../test/java/org/apache/camel/processor/TransformTest.java?[TransformTest]
+* link:../../../test/java/org/apache/camel/processor/TransformViaDSLTest.java[TransformViaDSLTest]
+
+=== Using Spring XML
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:Input"/>
+  <bean ref="myBeanName" method="doTransform"/>
+  <to uri="activemq:Output"/>
+</route>
+----
+
+You can also use XPath to filter out part of the message you are
+interested in:
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:Input"/>
+  <setBody><xpath resultType="org.w3c.dom.Document">//foo:bar</xpath></setBody>
+  <to uri="activemq:Output"/>
+</route> 
+----
+
+[[ContentFilter-UsingThisPattern]]
+=== Using This Pattern
+
+If you would like to use this EIP Pattern then please read the
+<<GettingStarted-GettingStarted,Getting Started>>, you may also find the
+<<Architecture-Architecture,Architecture>> useful particularly the description
+of <<Endpoint-Endpoints,Endpoint>> and <<URIs-URIs,URIs>>. Then you could
+try out some of the <<Examples-Examples,Examples>> first before trying
+this pattern out.

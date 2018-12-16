@@ -27,6 +27,19 @@ public class DestinationNameParser {
         }
         return destinationName.startsWith("topic:");
     }
+    
+    public boolean isNamedReplyToTopic(String namedReplyTo, boolean isDestinationTopic) {
+        if (namedReplyTo == null) {
+            throw new IllegalArgumentException("namedReplyTo is null");
+        }
+        if (namedReplyTo.startsWith("topic:")) {
+            return true;
+        } else if (namedReplyTo.startsWith("queue:")) {
+            return false;
+        } else {
+            return isDestinationTopic;
+        }
+    }
 
     public String getShortName(String destinationName) {
         if (destinationName == null) {

@@ -1,0 +1,1 @@
+../../../../../components/camel-test-karaf/src/main/docs/test-karaf.adoc

@@ -86,7 +86,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
@@ -109,7 +109,6 @@ The component supports 90 options, which are listed below.
 | *camel.component.consul.cluster.service.connect-timeout-millis* |  |  | Long
 | *camel.component.consul.cluster.service.consistency-mode* |  |  | ConsistencyMode
 | *camel.component.consul.cluster.service.datacenter* |  |  | String
-| *camel.component.consul.cluster.service.dc* |  |  | String
 | *camel.component.consul.cluster.service.enabled* | Sets if the consul cluster service should be enabled or not, default is false. | false | Boolean
 | *camel.component.consul.cluster.service.first-index* |  |  | BigInteger
 | *camel.component.consul.cluster.service.id* | Cluster Service ID |  | String
@@ -136,7 +135,6 @@ The component supports 90 options, which are listed below.
 | *camel.component.consul.configuration.consistency-mode* | The consistencyMode used for queries, default ConsistencyMode.DEFAULT |  | ConsistencyMode
 | *camel.component.consul.configuration.consul-client* | Reference to a `com.orbitz.consul.Consul` in the registry. |  | Consul
 | *camel.component.consul.configuration.datacenter* | The data center |  | String
-| *camel.component.consul.configuration.dc* | The data center  @deprecated replaced by {@link #setDatacenter(String)} ()} |  | String
 | *camel.component.consul.configuration.first-index* | The first index for watch for, default 0 |  | BigInteger
 | *camel.component.consul.configuration.key* | The default key. Can be overridden by CamelConsulKey |  | String
 | *camel.component.consul.configuration.near-node* | The near node to use for queries. |  | String
@@ -168,7 +166,6 @@ The component supports 90 options, which are listed below.
 | *camel.component.consul.service-registry.connect-timeout-millis* |  |  | Long
 | *camel.component.consul.service-registry.consistency-mode* |  |  | ConsistencyMode
 | *camel.component.consul.service-registry.datacenter* |  |  | String
-| *camel.component.consul.service-registry.dc* |  |  | String
 | *camel.component.consul.service-registry.deregister-after* |  |  | Integer
 | *camel.component.consul.service-registry.deregister-services-on-stop* |  |  | Boolean
 | *camel.component.consul.service-registry.enabled* | Sets if the consul service registry should be enabled or not, default is false. | false | Boolean
@@ -192,6 +189,9 @@ The component supports 90 options, which are listed below.
 | *camel.component.consul.url* | The Consul agent URL |  | String
 | *camel.component.consul.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.component.consul.user-name* | Sets the username to be used for basic authentication |  | String
+| *camel.component.consul.cluster.service.dc* |  |  | String
+| *camel.component.consul.configuration.dc* | The data center  @deprecated replaced by {@link #setDatacenter(String)} ()} |  | String
+| *camel.component.consul.service-registry.dc* |  |  | String
 |===
 // spring-boot-auto-configure options: END
 

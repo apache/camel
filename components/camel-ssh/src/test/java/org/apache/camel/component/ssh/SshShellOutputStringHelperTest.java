@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.ssh;
 
-import org.junit.Test;
-
 import org.junit.Assert;
+import org.junit.Test;
 
 public class SshShellOutputStringHelperTest extends Assert {
     

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import org.apache.camel.maven.packaging.StringHelper;
+
 public class DataFormatOptionModel {
 
     private String name;
@@ -110,19 +112,7 @@ public class DataFormatOptionModel {
     }
 
     public String getShortJavaType() {
-        if (javaType.startsWith("java.util.Map")) {
-            return "Map";
-        } else if (javaType.startsWith("java.util.Set")) {
-            return "Set";
-        } else if (javaType.startsWith("java.util.List")) {
-            return "List";
-        }
-        int pos = javaType.lastIndexOf(".");
-        if (pos != -1) {
-            return javaType.substring(pos + 1);
-        } else {
-            return javaType;
-        }
+        return StringHelper.getClassShortName(javaType);
     }
 
 }

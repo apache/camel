@@ -1,0 +1,1 @@
+../../../../../components/camel-sip/src/main/docs/sip-component.adoc

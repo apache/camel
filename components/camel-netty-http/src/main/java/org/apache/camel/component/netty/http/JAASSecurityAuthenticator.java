@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import java.security.Principal;
+
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;

@@ -28,6 +28,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
+import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -95,7 +96,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
     @Override
     protected RemoteFileConsumer<FTPFile> buildConsumer(Processor processor) {
         try {
-            return new FtpConsumer(this, processor, createRemoteFileOperations(), createGenericFileStrategy());
+            return new FtpConsumer(this, processor, createRemoteFileOperations(), processStrategy != null ? processStrategy : createGenericFileStrategy());
         } catch (Exception e) {
             throw new FailedToCreateConsumerException(this, e);
         }
@@ -103,10 +104,21 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
 
     protected GenericFileProducer<FTPFile> buildProducer() {
         try {
+            if (this.getMoveExistingFileStrategy() == null) {
+                this.setMoveExistingFileStrategy(createDefaultFtpMoveExistingFileStrategy());
+            }
             return new RemoteFileProducer<>(this, createRemoteFileOperations());
         } catch (Exception e) {
             throw new FailedToCreateProducerException(this, e);
         }
+    }
+
+    /**
+     * Default Existing File Move Strategy
+     * @return the default implementation for ftp components
+     */
+    private FileMoveExistingStrategy createDefaultFtpMoveExistingFileStrategy() {
+        return new FtpDefaultMoveExistingFileStrategy();
     }
 
     public RemoteFileOperations<FTPFile> createRemoteFileOperations() throws Exception {

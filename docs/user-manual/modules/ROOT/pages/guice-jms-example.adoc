@@ -1,0 +1,61 @@
+[[GuiceJMSExample-GuiceJMSExample]]
+=== Guice JMS Example
+
+*Available as of Camel 1.5 onwards*
+
+The Guice JMS example is functionally similar to both the
+link:walk-through-an-example.adoc[first example] and the
+link:spring-example.adoc[Spring Example] but using
+link:guice.adoc[Guice] as the Dependency Injection framework.
+
+In this example we just write RouteBuilder implementations, then we
+write a Guice module
+https://github.com/apache/camel/blob/master/examples/camel-example-guice-jms/src/main/java/org/apache/camel/example/guice/jms/MyModule.java[MyModule]
+to create the CamelContext, bind any RouteBuilder instances and
+configure any components and endpoints, then we create a
+https://github.com/apache/camel/blob/master/examples/camel-example-guice-jms/src/main/resources/guicejndi.properties[guicejndi.properties]
+file to bootstrap Guice and Camel.
+
+To run the example we currently use the maven exec plugin. For example
+from the source or binary distribution the following should work
+
+[source,java]
+----
+cd examples/camel-example-guice-jms
+mvn compile exec:java
+----
+
+What this does is boot up the Guice based JNDI provider from
+https://github.com/apache/camel/blob/master/examples/camel-example-guice-jms/src/main/resources/guicejndi.properties[guicejndi.properties]
+file on the classpath. This then bootstraps the Guice injector and loads
+whatever Guice modules are defined in the guicejndi.properties file --
+then injects the remaining properties in the file.
+
+
+[[GuiceJMSExample-ConfiguringComponents]]
+==== Configuring Components
+
+If you see the `jms()` method of the Guice
+https://github.com/apache/camel/blob/master/examples/camel-example-guice-jms/src/main/java/org/apache/camel/example/guice/jms/MyModule.java[MyModule]
+you will see it is annotated with `@Provides` to indicate to Guice that
+it is a provider and it is annotated with `@JndiBind("jms")` to bind it
+to the JNDI name `jms` when it is created.
+
+This method then configures the component. The provider method is
+parameterized by the `@Named("activemq.brokerURL")` property which is
+injected from the
+https://github.com/apache/camel/blob/master/examples/camel-example-guice-jms/src/main/resources/guicejndi.properties[guicejndi.properties]
+file. This lets you define the properties which should be environment
+specific (such as URLs, machine names, usernames/passwords and so forth)
+while leaving all of the other configuration which does not change in
+different environments in Java code.
+
+So you can use link:guice.adoc[Guice] to dependency inject whatever
+objects you need to create, be it an link:endpoint.adoc[Endpoint],
+link:component.adoc[Component], link:route-builder.adoc[RouteBuilder] or
+arbitrary link:bean-integration.adoc[bean used within a route]. Then you
+can inject any properties from the jndi.properties file easily -- so that
+most of your configuration is all in Java code which is typesafe and
+easily refactorable - then leaving some properties to be environment
+specific (the guicejndi.properties file) which you can then change based
+on development, testing, production, etc.

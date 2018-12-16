@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.wordpress.api.service.impl;
-import org.junit.Before;
-
 import java.util.List;
+
 import org.apache.camel.component.wordpress.api.auth.WordpressBasicAuthentication;
 import org.apache.camel.component.wordpress.api.model.User;
 import org.apache.camel.component.wordpress.api.model.UserSearchCriteria;
@@ -26,6 +25,7 @@ import org.apache.camel.component.wordpress.api.test.WordpressMockServerTestSupp
 import org.apache.camel.component.wordpress.api.test.WordpressServerHttpRequestHandler;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;

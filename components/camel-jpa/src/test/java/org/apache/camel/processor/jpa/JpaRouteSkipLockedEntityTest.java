@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.jpa;
-import org.junit.Before;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -27,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.VersionedItem;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 

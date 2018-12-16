@@ -17,11 +17,13 @@
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
+
 import org.apache.camel.component.wordpress.api.model.Category;
 import org.apache.camel.component.wordpress.api.model.CategorySearchCriteria;
 import org.apache.camel.component.wordpress.api.model.Context;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceCategories;
 import org.apache.camel.component.wordpress.api.service.spi.CategoriesSPI;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class WordpressServiceCategoriesAdapter extends AbstractWordpressCrudServiceAdapter<CategoriesSPI, Category, CategorySearchCriteria> implements WordpressServiceCategories {

@@ -22,8 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AbstractAmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.BatchGetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.BatchGetItemResult;
@@ -56,7 +55,7 @@ import com.amazonaws.services.dynamodbv2.model.UpdateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.UpdateTableResult;
 
 
-public class AmazonDDBClientMock extends AmazonDynamoDBClient {
+public class AmazonDDBClientMock extends AbstractAmazonDynamoDB {
     public static final long NOW = 1327709390233L;
     DescribeTableRequest describeTableRequest;
     CreateTableRequest createTableRequest;
@@ -71,7 +70,7 @@ public class AmazonDDBClientMock extends AmazonDynamoDBClient {
     QueryRequest queryRequest;
 
     public AmazonDDBClientMock() {
-        super(new BasicAWSCredentials("user", "secret"));
+        super();
     }
 
     @Override

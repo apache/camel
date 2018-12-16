@@ -23,9 +23,7 @@ import java.util.stream.StreamSupport;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.MongoCollection;
-
 import org.apache.camel.builder.RouteBuilder;
-
 import org.junit.Test;
 
 public class MongoDbDynamicityTest extends AbstractMongoDbTest {

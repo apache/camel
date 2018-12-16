@@ -18,6 +18,7 @@ package org.apache.camel.component.lumberjack;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.Processor;

@@ -19,7 +19,6 @@ package org.apache.camel.converter.dozer;
 import java.util.Arrays;
 
 import com.github.dozermapper.core.Mapper;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.converter.dozer.dto.AddressDTO;
 import org.apache.camel.converter.dozer.dto.CustomerDTO;

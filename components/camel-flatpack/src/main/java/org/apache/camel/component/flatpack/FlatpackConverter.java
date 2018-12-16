@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -63,7 +64,9 @@ public final class FlatpackConverter {
 
     @Converter
     public static Document toDocument(DataSet dataSet) throws ParserConfigurationException {
-        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        Document doc = dbf.newDocumentBuilder().newDocument();
 
         if (dataSet.getIndex() == -1) {
             Element list = doc.createElement("Dataset");

@@ -76,16 +76,16 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *hashFunction* (common) | The hash function to use. |  | HashFunction<byte[]>
+| *hashFunction* (common) | The hash function to use. |  | HashFunction
 | *initialCapacity* (common) | The inital capcity of the store. | 100 | int
-| *keySerializer* (common) | The serializer that will be used to serialize the key. |  | Object>
+| *keySerializer* (common) | The serializer that will be used to serialize the key. |  | Serializer
 | *segmentFactory* (common) | Sets the segment factory of the target store. |  | SegmentFactory
 | *segmentFileSize* (common) | Data store segments size in MB. | 64 | int
-| *valueSerializer* (common) | The serializer that will be used to serialize the value. |  | Object>
+| *valueSerializer* (common) | The serializer that will be used to serialize the value. |  | Serializer
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *maxMessagesPerPoll* (consumer) | The maximum number of messages which can be received in one poll. This can be used to avoid reading in too much data and taking up too much memory. |  | int
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
 | *key* (producer) | The key. |  | String

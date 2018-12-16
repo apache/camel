@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mqtt;
-import org.junit.Before;
-import org.junit.After;
-
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

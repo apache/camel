@@ -1,6 +1,5 @@
 [[CDITesting-CDITesting]]
-CDI Testing
-~~~~~~~~~~~
+== CDI Testing
 
 http://camel.apache.org/testing.html[Testing] is a crucial part of any
 development or integration work. In case you're using the Camel CDI

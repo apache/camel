@@ -1,0 +1,98 @@
+[[WhycanInotusewhenorotherwiseinaJavaCamelroute-WhycanInotusewhenotherwiseinaJavaCamelroute]]
+=== Why can I not use when/otherwise in a Java Camel route?
+
+When using the <<contentBasedRouter-eip,Content Based Router>> in
+the Java DSL you may have a situation where the compiler will not accept
+the following `when()` or `otherwise()` statement.
+
+[TIP]
+====
+**Quick tip**
+
+Use `.endChoice()` to return "back" to the
+<<contentBasedRouter-eip,Content Based Router>>.
+====
+
+For example as shown in the route below where we use the
+<<loadBalance-eip,Load Balancer>> inside the
+<<contentBasedRouter-eip,Content Based Router>> in the first when:
+
+*Code will not compile*
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(body().contains("Camel"))
+            .loadBalance().roundRobin().to("mock:foo").to("mock:bar")
+        .otherwise()
+            .to("mock:result");
+----
+
+Well the first issue is that the <<loadBalance-eip,Load Balancer>>
+uses the additional routing to know what to use in the load balancing.
+In this example that would be the:
+
+[source,java]
+----
+.to("mock:foo").to("mock:bar")
+----
+
+To indicate when the balancing stops, you should use `.end()` to denote
+the end. So the route is updates as follows:
+
+*Code will still not compile*
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(body().contains("Camel"))
+            .loadBalance().roundRobin().to("mock:foo").to("mock:bar").end()
+        .otherwise()
+            .to("mock:result");
+----
+
+But the code will still not compile. The reason is we have stretched how
+far we can take the good old Java language in terms of
+link:../dsl.adoc[DSL]. In a more modern language such as
+link:../scala-dsl.adoc[Scala] or link:../groovy-dsl.adoc[Groovy] you would be able
+to let it be stack based, so the `.end()` will pop the last type of the
+stack, and you would return back to the scope of the
+<<contentBasedRouter-eip,Content Based Router>>. However that's not
+easily doable in Java. So we need to help Java a bit, which you do by
+using `.endChoice()`, which tells Camel to "pop the stack" and return
+back to the scope of the link:content-based-router.html[Content Based
+Router].
+
+*Code compiles*
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(body().contains("Camel"))
+            .loadBalance().roundRobin().to("mock:foo").to("mock:bar").endChoice()
+        .otherwise()
+            .to("mock:result");
+----
+
+You only need to use `.endChoice()` when using certain
+link:../enterprise-integration-patterns.adoc[EIP]s which often have additional
+methods to configure or as part of the
+link:../enterprise-integration-patterns.adoc[EIP] itself. For example the
+<<split-eip,Splitter>> EIP has a sub-route which denotes the
+routing of each splitted message. You would also have to use
+`.endChoice()` to indicate the end of the sub-route and to return back
+to the <<contentBasedRouter-eip,Content Based Router>>. Note
+`.endChoice()` is *available as of Camel 2.7*.
+
+[[WhycanInotusewhenorotherwiseinaJavaCamelroute-Stillproblems]]
+==== Still problems
+
+If there are still problems, then you can split your route into multiple
+routes, and link them together using the <<direct-component,Direct>>
+component.
+There can be some combinations of link:../enterprise-integration-patterns.adoc[EIP]s
+that can hit limits in how far we can take the fluent builder DSL with
+generics you can do in Java programming language (1.7 and below).

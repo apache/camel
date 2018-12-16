@@ -1,0 +1,1 @@
+../../../../../components/camel-syslog/src/main/docs/syslog-dataformat.adoc

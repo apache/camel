@@ -37,6 +37,7 @@ public enum ElasticsearchOperation {
     BulkIndex("BulkIndex"),
     GetById("GetById"),
     MultiGet("MultiGet"),
+    MultiSearch("MultiSearch"),
     Delete("Delete"),
     DeleteIndex("DeleteIndex"),
     Search("Search"),

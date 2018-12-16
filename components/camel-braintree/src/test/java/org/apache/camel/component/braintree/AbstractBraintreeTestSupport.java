@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.braintreegateway.BraintreeGateway;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;

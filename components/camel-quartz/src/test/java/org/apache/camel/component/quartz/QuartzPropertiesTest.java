@@ -15,11 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.quartz;
-import org.junit.After;
-
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.junit.After;
 import org.junit.Test;
 import org.quartz.SchedulerException;
 

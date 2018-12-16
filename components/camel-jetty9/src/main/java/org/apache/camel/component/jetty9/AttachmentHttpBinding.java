@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 import org.apache.camel.Attachment;
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
@@ -76,6 +77,12 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
     protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
+        //remove Content-Encoding from request
+        if (request instanceof org.eclipse.jetty.server.Request) {
+            org.eclipse.jetty.server.Request jettyRequest = (org.eclipse.jetty.server.Request)request;
+            jettyRequest.getHttpFields().remove(Exchange.CONTENT_ENCODING);
+        }
+        
         Enumeration<?> names = request.getParameterNames();
         while (names.hasMoreElements()) {
             String name = (String)names.nextElement();

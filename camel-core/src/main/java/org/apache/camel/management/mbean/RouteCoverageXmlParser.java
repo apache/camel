@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import java.io.InputStream;
 import java.util.Stack;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
@@ -62,8 +63,10 @@ public final class RouteCoverageXmlParser {
      */
     public static Document parseXml(final CamelContext camelContext, final InputStream is) throws Exception {
         final SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         final SAXParser parser = factory.newSAXParser();
         final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        docBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         final DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         final Document doc = docBuilder.newDocument();
 

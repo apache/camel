@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;

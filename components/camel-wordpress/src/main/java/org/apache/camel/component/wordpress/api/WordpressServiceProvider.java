@@ -17,6 +17,7 @@
 package org.apache.camel.component.wordpress.api;
 
 import java.util.HashMap;
+
 import org.apache.camel.component.wordpress.api.service.WordpressService;
 import org.apache.camel.component.wordpress.api.service.WordpressServicePosts;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceUsers;
@@ -24,6 +25,7 @@ import org.apache.camel.component.wordpress.api.service.impl.WordpressServicePos
 import org.apache.camel.component.wordpress.api.service.impl.WordpressServiceUsersAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.emptyToNull;
 import static com.google.common.base.Strings.isNullOrEmpty;

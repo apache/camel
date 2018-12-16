@@ -33,7 +33,6 @@ import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
-
 import org.junit.Rule;
 import org.junit.Test;
 

@@ -21,10 +21,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.opentracing.Span;
+import io.opentracing.propagation.TextMap;
 import io.opentracing.tag.Tags;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.SpanDecorator;
+import org.apache.camel.opentracing.propagation.CamelHeadersExtractAdapter;
+import org.apache.camel.opentracing.propagation.CamelHeadersInjectAdapter;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
@@ -40,17 +43,18 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
 
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
-        // OpenTracing aims to use low cardinality operation names. Ideally a specific
-        // span decorator should be defined for all relevant Camel components that
+        // OpenTracing aims to use low cardinality operation names. Ideally a
+        // specific
+        // span decorator should be defined for all relevant Camel components
+        // that
         // identify a meaningful operation name
         return getComponentName(endpoint);
     }
 
     /**
-     * This method removes the scheme, any leading slash characters and
-     * options from the supplied URI. This is intended to extract a meaningful
-     * name from the URI that can be used in situations, such as the operation
-     * name.
+     * This method removes the scheme, any leading slash characters and options
+     * from the supplied URI. This is intended to extract a meaningful name from
+     * the URI that can be used in situations, such as the operation name.
      *
      * @param endpoint The endpoint
      * @return The stripped value from the URI
@@ -63,8 +67,7 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
             start++;
         }
         int end = endpoint.getEndpointUri().indexOf('?');
-        return end == -1 ? endpoint.getEndpointUri().substring(start)
-                : endpoint.getEndpointUri().substring(start, end);
+        return end == -1 ? endpoint.getEndpointUri().substring(start) : endpoint.getEndpointUri().substring(start, end);
     }
 
     @Override
@@ -72,7 +75,8 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         String scheme = getComponentName(endpoint);
         span.setTag(Tags.COMPONENT.getKey(), CAMEL_COMPONENT + scheme);
 
-        // Including the endpoint URI provides access to any options that may have been provided, for
+        // Including the endpoint URI provides access to any options that may
+        // have been provided, for
         // subsequent analysis
         span.setTag("camel.uri", URISupport.sanitizeUri(endpoint.getEndpointUri()));
     }
@@ -126,4 +130,15 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         }
     }
 
+    @Override
+    public TextMap getExtractAdapter(final Map<String, Object> map, boolean encoding) {
+        // no encoding supported per default
+        return new CamelHeadersExtractAdapter(map);
+    }
+
+    @Override
+    public TextMap getInjectAdapter(final Map<String, Object> map, boolean encoding) {
+        // no encoding supported per default
+        return new CamelHeadersInjectAdapter(map);
+    }
 }

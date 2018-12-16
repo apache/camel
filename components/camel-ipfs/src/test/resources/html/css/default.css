@@ -1,0 +1,38 @@
+body {
+    font-family: "Verdana";
+    color: #137cb9
+}
+
+a {
+    #text-decoration: none;
+    color: #137cb9
+}
+
+a.gray {
+    color: gray;
+}
+
+h1 {
+	font-weight: normal;
+    font-size: 20px;
+}
+
+h2 {
+    font-weight: normal;
+	font-size: 15px;
+}
+
+th {
+	text-align: left;
+    font-weight: normal;
+    font-size: 14px;
+    color: gray;
+}
+
+td.gray {
+    color: gray;
+}
+tr.gray {
+    color: gray;
+}
+

@@ -22,4 +22,6 @@ package org.apache.camel.component.aws.iam;
 public interface IAMConstants {
     String OPERATION = "CamelAwsIAMOperation";
     String USERNAME = "CamelAwsIAMUsername";
+    String ACCESS_KEY_ID = "CamelAwsIAMAccessKeyID";
+    String ACCESS_KEY_STATUS = "CamelAwsIAMAccessKeyStatus";
 }

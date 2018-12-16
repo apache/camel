@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.xmlsecurity;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;

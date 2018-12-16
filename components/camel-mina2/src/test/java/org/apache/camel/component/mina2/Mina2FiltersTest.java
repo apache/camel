@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mina2;
-import org.junit.After;
-
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.naming.Context;
 
 import org.apache.camel.Endpoint;
@@ -30,6 +29,7 @@ import org.apache.camel.util.jndi.JndiContext;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.filterchain.IoFilterAdapter;
 import org.apache.mina.core.session.IoSession;
+import org.junit.After;
 import org.junit.Test;
 
 /**

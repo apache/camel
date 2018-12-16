@@ -1,0 +1,1 @@
+../../../../../components/camel-groovy/src/main/docs/groovy-language.adoc

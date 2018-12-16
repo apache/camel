@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.slack.helper.SlackMessage;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,7 +36,7 @@ import org.json.simple.JSONObject;
  * The slack component allows you to send messages to Slack.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel", label = "social")
-public class SlackEndpoint extends DefaultEndpoint {
+public class SlackEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
     @Metadata(required = "true")
@@ -53,6 +53,8 @@ public class SlackEndpoint extends DefaultEndpoint {
     private String token;
     @UriParam(label = "consumer", defaultValue = "10")
     private String maxResults = "10";
+    @UriParam(label = "consumer", defaultValue = "https://slack.com")
+    private String serverUrl = "https://slack.com";
 
     /**
      * Constructor for SlackEndpoint
@@ -79,6 +81,7 @@ public class SlackEndpoint extends DefaultEndpoint {
             throw new RuntimeCamelException("Missing required endpoint configuration: token must be defined for Slack consumer");
         }
         SlackConsumer consumer = new SlackConsumer(this, processor);
+        configureConsumer(consumer);
         return consumer;
     }
 
@@ -165,6 +168,17 @@ public class SlackEndpoint extends DefaultEndpoint {
      */
     public void setMaxResults(String maxResult) {
         this.maxResults = maxResult;
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
+    
+    /**
+     * The Server URL of the Slack instance
+     */
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 
     public Exchange createExchange(JSONObject object) {

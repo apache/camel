@@ -1,0 +1,1 @@
+../../../../../components/camel-cm-sms/src/main/docs/cm-sms-component.adoc

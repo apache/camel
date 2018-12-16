@@ -1,0 +1,1 @@
+../../../../../components/camel-spring-redis/src/main/docs/spring-redis-component.adoc

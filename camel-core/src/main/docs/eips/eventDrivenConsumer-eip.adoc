@@ -1,0 +1,58 @@
+[[eventDrivenConsumer-eip]]
+== Event Driven Consumer
+
+Camel supports the
+http://www.enterpriseintegrationpatterns.com/EventDrivenConsumer.html[Event Driven Consumer]
+from the
+<<EnterpriseIntegrationPatterns-EnterpriseIntegrationPatterns,EIP patterns>>.
+The default consumer model is event based (i.e. asynchronous)
+as this means that the Camel container can then manage pooling,
+threading and concurrency for you in a declarative manner.
+
+image:http://www.enterpriseintegrationpatterns.com/img/EventDrivenConsumerSolution.gif[image]
+
+The Event Driven Consumer is implemented by consumers implementing the
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+interface which is invoked by the <<messageEndpoint-eip,Message Endpoint>>
+when a <<message-eip,Message>> is available for processing.
+
+[[eventDrivenConsumer-Example]]
+=== Example
+
+The following demonstrates a
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+defined in the Camel <<Registry-Registry,Registry>> which is
+invoked when an event occurs from a <<jms-component,JMS>> queue.
+
+*Using the <<FluentBuilders-FluentBuilders,Fluent Builders>>*
+
+[source,java]
+----
+from("jms:queue:foo")
+    .processRef("processor");
+----
+
+**Using the <<SpringXMLExtensions-SpringXMLExtensions,Spring XML Extensions>>**
+
+[source,xml]
+----
+<route>
+    <from uri="jms:queue:foo"/>
+    <to uri="processor"/>
+</route>
+----
+
+For more details see:
+
+* <<message-eip,Message>>
+* <<messageEndpoint-eip,Message Endpoint>>
+
+[[eventDrivenConsumer-UsingThisPattern]]
+=== Using This Pattern
+
+If you would like to use this EIP Pattern then please read the
+<<GettingStarted-GettingStarted,Getting Started>>, you may also find the
+<<Architecture-Architecture,Architecture>> useful particularly the description
+of <<Endpoint-Endpoints,Endpoint>> and <<URIs-URIs,URIs>>. Then you could
+try out some of the <<Examples-Examples,Examples>> first before trying
+this pattern out.

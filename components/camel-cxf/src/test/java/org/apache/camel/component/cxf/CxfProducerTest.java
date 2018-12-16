@@ -155,7 +155,7 @@ public class CxfProducerTest extends Assert {
         LOG.info("Received output text: " + result);
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>)out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
-        assertEquals("Get the wrong wsdl opertion name", "{http://apache.org/hello_world_soap_http}greetMe", responseContext.get("javax.xml.ws.wsdl.operation").toString());
+        assertEquals("Get the wrong wsdl operation name", "{http://apache.org/hello_world_soap_http}greetMe", responseContext.get("javax.xml.ws.wsdl.operation").toString());
         assertEquals("reply body on Camel", "Hello " + TEST_MESSAGE, result);
         
         // check the other camel header copying

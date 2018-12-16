@@ -16,10 +16,9 @@
  */
 package org.apache.camel.builder.script.example;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

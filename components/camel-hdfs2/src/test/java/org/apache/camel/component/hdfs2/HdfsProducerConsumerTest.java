@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hdfs2;
-import org.junit.After;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.linkedin.api;
-import org.junit.Before;
-
 import java.util.Date;
 
 import org.apache.camel.component.linkedin.api.model.GroupMemberships;
@@ -106,9 +104,14 @@ public class PeopleResourceIntegrationTest extends AbstractResourceIntegrationTe
 
         // mark OAuth token as expired
         final OAuthToken oAuthToken = requestFilter.getOAuthToken();
+        final long expiryTime = oAuthToken.getExpiryTime();
         oAuthToken.setExpiryTime(new Date().getTime());
 
-        peopleResource.getPerson("", false);
+        try {
+            peopleResource.getPerson("", false);
+        } finally {
+            token.setExpiryTime(expiryTime);
+        }
     }
 
     @Test

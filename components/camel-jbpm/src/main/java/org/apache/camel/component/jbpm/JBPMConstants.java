@@ -30,10 +30,27 @@ public interface JBPMConstants {
     String TASK_ID = "CamelJBPMTaskId";
     String TASK = "CamelJBPMTask";
     String USER_ID = "CamelJBPMUserId";
-    String TARGET_USER_ID = "CamelJBPMTargetUserId";
-    String LANGUAGE = "CamelJBPMLanguage";
+    String TARGET_USER_ID = "CamelJBPMTargetUserId";    
     String ATTACHMENT_ID = "CamelJBPMAttachmentId";
     String CONTENT_ID = "CamelJBPMContentId";
     String ENTITY_LIST = "CamelJBPMEntityList";
     String STATUS_LIST = "CamelJBPMStatusList";
+    String RESULT_PAGE = "CamelJBPMResultPage";
+    String RESULT_PAGE_SIZE = "CamelJBPMResultPageSize";
+    
+    
+    String JBPM_PROCESS_EVENT_LISTENER = "process";
+    String JBPM_TASK_EVENT_LISTENER = "task";
+    String JBPM_CASE_EVENT_LISTENER = "case";
+    String JBPM_EVENT_EMITTER = "emitter";
+    
+    String GLOBAL_CAMEL_CONTEXT_SERVICE_KEY = "GlobalCamelService";
+    String DEPLOYMENT_CAMEL_CONTEXT_SERVICE_KEY_POSTFIX = "_CamelService";
+    String CAMEL_ENDPOINT_ID_WI_PARAM = "CamelEndpointId";
+    String RESPONSE_WI_PARAM = "Response";
+    String MESSAGE_WI_PARAM = "Message";
+    
+    String CAMEL_CONTEXT_BUILDER_KEY = "CamelContextBuilder";
+
+    
 }

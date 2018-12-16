@@ -15,9 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.twitter.deprecated;
-import org.junit.Before;
-
 import org.apache.camel.component.twitter.CamelTwitterConsumerTestSupport;
+import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

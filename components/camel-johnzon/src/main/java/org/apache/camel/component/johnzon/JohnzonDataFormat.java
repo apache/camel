@@ -209,7 +209,7 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
             if (ObjectHelper.isNotEmpty(attributeOrder)) {
                 builder.setAttributeOrder(attributeOrder);
             }
-            objectMapper = new MapperBuilder().build();
+            objectMapper = builder.build();
         }
     }
 

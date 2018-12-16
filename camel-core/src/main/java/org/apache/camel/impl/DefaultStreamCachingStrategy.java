@@ -58,7 +58,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
     private int spoolUsedHeapMemoryThreshold;
     private SpoolUsedHeapMemoryLimit spoolUsedHeapMemoryLimit;
-    private String spoolChiper;
+    private String spoolCihper;
     private int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
     private boolean removeSpoolDirectoryWhenStopping = true;
     private final UtilizationStatistics statistics = new UtilizationStatistics();
@@ -118,11 +118,19 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     }
 
     public String getSpoolChiper() {
-        return spoolChiper;
+        return getSpoolCipher();
     }
 
     public void setSpoolChiper(String spoolChiper) {
-        this.spoolChiper = spoolChiper;
+        setSpoolCipher(spoolChiper);
+    }
+
+    public String getSpoolCipher() {
+        return spoolCihper;
+    }
+
+    public void setSpoolCipher(String spoolCipher) {
+        this.spoolCihper = spoolCipher;
     }
 
     public int getBufferSize() {
@@ -237,7 +245,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
         String bufferSize = camelContext.getGlobalOption(BUFFER_SIZE);
         String hold = camelContext.getGlobalOption(THRESHOLD);
-        String chiper = camelContext.getGlobalOption(CIPHER_TRANSFORMATION);
+        String cipher = camelContext.getGlobalOption(CIPHER_TRANSFORMATION);
         String dir = camelContext.getGlobalOption(TEMP_DIR);
 
         boolean warn = false;
@@ -249,9 +257,9 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             warn = true;
             this.spoolThreshold = camelContext.getTypeConverter().convertTo(Long.class, hold);
         }
-        if (chiper != null) {
+        if (cipher != null) {
             warn = true;
-            this.spoolChiper = chiper;
+            this.spoolCihper = cipher;
         }
         if (dir != null) {
             warn = true;
@@ -337,7 +345,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     public String toString() {
         return "DefaultStreamCachingStrategy["
             + "spoolDirectory=" + spoolDirectory
-            + ", spoolChiper=" + spoolChiper
+            + ", spoolCihper=" + spoolCihper
             + ", spoolThreshold=" + spoolThreshold
             + ", spoolUsedHeapMemoryThreshold=" + spoolUsedHeapMemoryThreshold
             + ", bufferSize=" + bufferSize

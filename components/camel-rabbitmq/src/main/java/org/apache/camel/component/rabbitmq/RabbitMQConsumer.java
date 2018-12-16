@@ -25,7 +25,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.rabbitmq.client.Connection;
-
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;

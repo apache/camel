@@ -112,7 +112,7 @@ public final class LoginConfigHelper {
             System.out.println("| salesforce.keystore.password | SALESFORCE_KEYSTORE_PASSWORD | JWT    |");
             System.out.println("| salesforce.login.url         | SALESFORCE_LOGIN_URL         | ALL    |");
             System.out.println();
-            System.out.println("* ALL - required allways");
+            System.out.println("* ALL - required always");
             System.out.println("* UP  - when using username and password authentication");
             System.out.println("* RT  - when using refresh token flow");
             System.out.println("* JWT - when using JWT flow");

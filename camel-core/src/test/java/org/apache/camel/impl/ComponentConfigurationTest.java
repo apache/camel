@@ -278,7 +278,7 @@ public class ComponentConfigurationTest {
 
     /**
      * Shows we can introspect the parameters of a DefaultComponent (i.e. a non {@link UriEndpointComponent})
-     * though we only get to introspect the parameter values from teh current configuration
+     * though we only get to introspect the parameter values from the current configuration
      */
     @Test
     public void testIntrospectDefaultComponentParameters() throws Exception {

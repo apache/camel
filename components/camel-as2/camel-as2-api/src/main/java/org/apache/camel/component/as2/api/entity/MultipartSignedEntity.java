@@ -22,10 +22,8 @@ import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
-import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
-import org.apache.http.entity.ContentType;
-import org.apache.http.message.BasicHeader;
+import org.apache.http.HttpException;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cms.CMSProcessable;
@@ -38,10 +36,9 @@ import org.bouncycastle.util.Store;
 
 public class MultipartSignedEntity extends MultipartMimeEntity {
 
-    public MultipartSignedEntity(MimeEntity data, AS2SignedDataGenerator signer, String signatureCharSet, String signatureTransferEncoding, boolean isMainBody, String boundary) throws Exception {
+    public MultipartSignedEntity(MimeEntity data, AS2SignedDataGenerator signer, String signatureCharSet, String signatureTransferEncoding, boolean isMainBody, String boundary) throws HttpException {
         super(null, isMainBody, boundary);
-        ContentType contentType = signer.createMultipartSignedContentType(this.boundary);
-        this.contentType = new BasicHeader(AS2Header.CONTENT_TYPE, contentType.toString());
+        setContentType(signer.createMultipartSignedContentType(this.boundary));
         addPart(data);
         ApplicationPkcs7SignatureEntity signature = new ApplicationPkcs7SignatureEntity(data, signer, signatureCharSet, signatureTransferEncoding, false);
         addPart(signature);

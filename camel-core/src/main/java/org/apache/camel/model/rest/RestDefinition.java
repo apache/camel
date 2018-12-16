@@ -658,6 +658,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         verb.setRoute(route);
         return route;
     }
+    
+    /**
+     * Build the from endpoint uri for the verb
+     */
+    public String buildFromUri(VerbDefinition verb) {
+        return "rest:" + verb.asVerb() + ":" + buildUri(verb);
+    }
 
     // Implementation
     //-------------------------------------------------------------------------
@@ -799,6 +806,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return answer;
     }
 
+    @SuppressWarnings("rawtypes")
     private void addRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, String component) {
         for (VerbDefinition verb : getVerbs()) {
             // either the verb has a singular to or a embedded route
@@ -877,7 +885,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             route.setRestBindingDefinition(binding);
 
             // create the from endpoint uri which is using the rest component
-            String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
+            String from = buildFromUri(verb);
 
             // append options
             Map<String, Object> options = new HashMap<>();
@@ -902,23 +910,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             if (outType != null) {
                 options.put("outType", outType);
             }
-            // if no route id has been set, then use the verb id as route id
-            if (!route.hasCustomIdAssigned()) {
-                // use id of verb as route id
-                String id = verb.getId();
-                if (id != null) {
-                    route.setId(id);
-                }
-            }
 
-            String routeId = verb.idOrCreate(camelContext.getNodeIdFactory());
-
-            if (!verb.getUsedForGeneratingNodeId()) {
-                routeId = route.idOrCreate(camelContext.getNodeIdFactory());
-            }
-
-            verb.setRouteId(routeId);
-            options.put("routeId", routeId);
             if (component != null && !component.isEmpty()) {
                 options.put("componentName", component);
             }
@@ -1012,7 +1004,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             // the route should be from this rest endpoint
             route.fromRest(from);
-            route.routeId(routeId);
             route.setRestDefinition(this);
             answer.add(route);
         }

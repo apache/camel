@@ -17,6 +17,7 @@
 package org.apache.camel.component.atom;
 
 import java.text.SimpleDateFormat;
+
 import javax.naming.Context;
 
 import org.apache.camel.builder.RouteBuilder;

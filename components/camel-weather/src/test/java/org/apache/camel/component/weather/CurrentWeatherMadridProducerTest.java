@@ -68,7 +68,7 @@ public class CurrentWeatherMadridProducerTest extends BaseWeatherConsumerTest {
         // as the default delay option is one hour long, we expect exactly one message exchange
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "Hello World", WeatherConstants.WEATHER_LOCATION, "current");
+        template.sendBodyAndHeader("direct:start", "Hello World", WeatherConstants.WEATHER_LOCATION, "Rome,Italy");
 
         mock.assertIsSatisfied();
 

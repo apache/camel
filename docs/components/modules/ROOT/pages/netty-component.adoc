@@ -1,0 +1,1 @@
+../../../../../components/camel-netty/src/main/docs/netty-component.adoc

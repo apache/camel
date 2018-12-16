@@ -1,0 +1,1 @@
+../../../../../components/camel-boon/src/main/docs/boon-dataformat.adoc

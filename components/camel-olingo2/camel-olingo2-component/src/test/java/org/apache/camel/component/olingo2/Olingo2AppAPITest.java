@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.olingo2;
-import org.junit.Before;
-import org.junit.After;
-
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -57,6 +54,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

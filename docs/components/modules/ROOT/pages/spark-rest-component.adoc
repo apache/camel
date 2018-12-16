@@ -1,0 +1,1 @@
+../../../../../components/camel-spark-rest/src/main/docs/spark-rest-component.adoc

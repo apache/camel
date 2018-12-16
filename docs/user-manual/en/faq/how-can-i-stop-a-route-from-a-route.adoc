@@ -1,0 +1,70 @@
+[[HowcanIstoparoutefromaroute-HowcanIstoparoutefromaroute]]
+=== How can I stop a route from a route
+
+The link:../camelcontext.adoc[CamelContext] provides API for managing
+routes at runtime. It has a `stopRoute(id)` and `startRoute(id)`
+methods.
+
+Stopping a route during routing an existing message is a bit tricky. The
+reason for that is Camel will link:../graceful-shutdown.adoc[Graceful
+Shutdown] the route you are stopping. And if you do that while a message
+is being routed the link:../graceful-shutdown.adoc[Graceful Shutdown] will
+try to wait until that message has been processed.
+
+The best practice for stopping a route from a route, is to either:
+
+* signal to another thread to stop the route
+* spin off a new thread to stop the route
+
+Using another thread to stop the route is also what is normally used
+when stopping Camel itself, or for example when an application in a
+server is stopped etc. Its too tricky and hard to stop a route using the
+same thread that currently is processing a message from the route. This
+is not advised to do, and can cause unforeseen side effects.
+
+[[HowcanIstoparoutefromaroute-UsingalatchtostopCamelfromaroute]]
+==== Using a latch to stop Camel from a route
+
+In this example we use a `CountdownLatch` to signal when Camel should
+stop, triggered from a route.
+
+And in the route we call the latch as shown:
+
+[[HowcanIstoparoutefromaroute-Usingathreadtostoparoutefromaroute]]
+==== Using a thread to stop a route from a route
+
+In this example we use a separate `Thread` to stop the route, triggered
+from the route itself.
+
+And in the route we create the thread and call the `stopRoute` method as
+shown:
+
+[[HowcanIstoparoutefromaroute-Alternativesolutions]]
+==== Alternative solutions
+
+Camel provides another feature for managing routes at runtime which is
+link:routepolicy.adoc[RoutePolicy].
+
+And link:../camelcontext.adoc[CamelContext] also provides API for
+suspend/resume of routes, and shutdown as well.
+
+* suspend/resume is faster than stop/start. For example a HTTP server
+will still run but deny any incoming requests.
+Whereas if it was stopped the HTTP listener would have been stopped.
+* shutdown means the route is being removed from
+link:../camelcontext.adoc[CamelContext] and cannot be started again. Its
+also removed from JMX.
+A route must have been stopped prior to be shutdown.
+
+See more details about the link:../lifecycle.adoc[Lifecycle].
+
+NOTE: You can also use the <<controlbus-component,ControlBus>> component to let
+it stop/start routes.
+
+[[HowcanIstoparoutefromaroute-SeeAlso]]
+==== See Also
+
+* link:routepolicy.adoc[RoutePolicy]
+* link:../graceful-shutdown.adoc[Graceful Shutdown]
+* link:../lifecycle.adoc[Lifecycle]
+* <<controlbus-component,ControlBus>>

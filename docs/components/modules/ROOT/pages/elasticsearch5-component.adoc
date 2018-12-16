@@ -1,0 +1,1 @@
+../../../../../components/camel-elasticsearch5/src/main/docs/elasticsearch5-component.adoc

@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.disruptor.vm;
 
-import org.junit.Test;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
+import org.junit.Test;
 
 /**
  * @version

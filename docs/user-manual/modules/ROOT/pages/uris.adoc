@@ -1,0 +1,28 @@
+[[URIs-URIs]]
+=== URIs
+
+Camel makes extensive use of URIs to allow you to refer to endpoints
+which are lazily created by a link:component.adoc[Component] if you
+refer to them within link:routes.adoc[Routes].
+
+[IMPORTANT]
+====
+Make sure to read
+link:faq/how-do-i-configure-endpoints.adoc[How do I configure endpoints]
+to learn more about configuring endpoints. For
+example how to refer to beans in the link:registry.adoc[Registry] or how
+to use raw values for password options, and using
+link:using-propertyplaceholder.adoc[property placeholders] etc.
+====
+
+
+[[URIs-CurrentSupportedURIs]]
+==== Current Supported URIs
+
+===== Core Components
+
+include::../../../camel-core/readme.adoc[]
+
+===== Components
+
+include::../../../components/readme.adoc[]

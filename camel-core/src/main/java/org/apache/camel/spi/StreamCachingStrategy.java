@@ -168,10 +168,28 @@ public interface StreamCachingStrategy extends StaticService {
      * Sets a chiper name to use when spooling to disk to write with encryption.
      * <p/>
      * By default the data is not encrypted.
+     *
+     * @deprecated use {@link #setSpoolCipher(String)}
      */
+    @Deprecated
+    // TODO: Remove this in Camel 3
     void setSpoolChiper(String chiper);
 
+    /**
+     * @deprecated use {@link #getSpoolCipher()}
+     */
+    @Deprecated
+    // TODO: Remove this in Camel 3
     String getSpoolChiper();
+
+    /**
+     * Sets a cipher name to use when spooling to disk to write with encryption.
+     * <p/>
+     * By default the data is not encrypted.
+     */
+    void setSpoolCipher(String cipher);
+
+    String getSpoolCipher();
 
     /**
      * Whether to remove the temporary directory when stopping.

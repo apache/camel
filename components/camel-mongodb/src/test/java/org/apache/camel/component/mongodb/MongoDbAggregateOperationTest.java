@@ -23,7 +23,6 @@ import java.util.Map;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.MongoIterable;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 

@@ -24,7 +24,7 @@
   <parent>
     <artifactId>tests</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>2.24.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-itest-spring-boot</artifactId>
@@ -204,7 +204,7 @@
             </property>
             <property>
               <name>itest.springboot.includeTestDependencies</name>
-              <value>true</value>
+              <value>false</value>
             </property>
             <property>
               <name>itest.springboot.mavenOfflineResolution</name>

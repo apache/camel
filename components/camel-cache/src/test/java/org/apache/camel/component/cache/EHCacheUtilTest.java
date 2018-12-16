@@ -21,7 +21,6 @@ import java.net.URL;
 
 import net.sf.ehcache.config.Configuration;
 import net.sf.ehcache.config.ConfigurationFactory;
-
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -60,19 +60,27 @@ public class AS2ServerConnection {
         private final HttpService httpService;
         private UriHttpRequestHandlerMapper reqistry;
 
-        public RequestListenerThread(String as2Version, String originServer, String serverFqdn, int port, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey) throws IOException {
+        public RequestListenerThread(String as2Version,
+                                     String originServer,
+                                     String serverFqdn,
+                                     int port,
+                                     AS2SignatureAlgorithm signatureAlgorithm,
+                                     Certificate[] signingCertificateChain,
+                                     PrivateKey signingPrivateKey)
+                throws IOException {
             setName(REQUEST_LISTENER_THREAD_NAME_PREFIX + port);
             serversocket = new ServerSocket(port);
 
             // Set up HTTP protocol processor for incoming connections
-            final HttpProcessor inhttpproc = initProtocolProcessor(as2Version, originServer, serverFqdn, port, signingCertificateChain, signingPrivateKey);
+            final HttpProcessor inhttpproc = initProtocolProcessor(as2Version, originServer, serverFqdn, port,
+                    signatureAlgorithm, signingCertificateChain, signingPrivateKey);
 
             reqistry = new UriHttpRequestHandlerMapper();
 
             // Set up the HTTP service
             httpService = new HttpService(inhttpproc, reqistry);
         }
-        
+
         @Override
         public void run() {
             LOG.info("Listening on port {}", this.serversocket.getLocalPort());
@@ -171,6 +179,7 @@ public class AS2ServerConnection {
     private String originServer;
     private String serverFqdn;
     private Integer serverPortNumber;
+    private AS2SignatureAlgorithm signingAlgorithm;
     private Certificate[] signingCertificateChain;
     private PrivateKey signingPrivateKey;
 
@@ -178,6 +187,7 @@ public class AS2ServerConnection {
                                String originServer,
                                String serverFqdn,
                                Integer serverPortNumber,
+                               AS2SignatureAlgorithm signingAlgorithm,
                                Certificate[] signingCertificateChain,
                                PrivateKey signingPrivateKey)
             throws IOException {
@@ -185,10 +195,12 @@ public class AS2ServerConnection {
         this.originServer = Args.notNull(originServer, "userAgent");
         this.serverFqdn = Args.notNull(serverFqdn, "serverFqdn");
         this.serverPortNumber = Args.notNull(serverPortNumber, "serverPortNumber");
+        this.signingAlgorithm = signingAlgorithm;
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;
 
-        listenerThread = new RequestListenerThread(this.as2Version, this.originServer, this.serverFqdn, this.serverPortNumber, this.signingCertificateChain, this.signingPrivateKey);
+        listenerThread = new RequestListenerThread(this.as2Version, this.originServer, this.serverFqdn,
+                this.serverPortNumber, this.signingAlgorithm, this.signingCertificateChain, this.signingPrivateKey);
         listenerThread.setDaemon(true);
         listenerThread.start();
     }
@@ -226,11 +238,13 @@ public class AS2ServerConnection {
                                                   String originServer,
                                                   String serverFqdn,
                                                   int port,
+                                                  AS2SignatureAlgorithm signatureAlgorithm,
                                                   Certificate[] signingCertificateChain,
                                                   PrivateKey signingPrivateKey) {
         return HttpProcessorBuilder.create().add(new ResponseContent(true)).add(new ResponseServer(originServer))
-                .add(new ResponseDate()).add(new ResponseConnControl())
-                .add(new ResponseMDN(as2Version, serverFqdn, signingCertificateChain, signingPrivateKey)).build();
+                .add(new ResponseDate()).add(new ResponseConnControl()).add(new ResponseMDN(as2Version, serverFqdn,
+                        signatureAlgorithm, signingCertificateChain, signingPrivateKey))
+                .build();
     }
 
 }

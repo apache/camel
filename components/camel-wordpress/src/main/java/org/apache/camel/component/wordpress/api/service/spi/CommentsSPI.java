@@ -18,6 +18,7 @@ package org.apache.camel.component.wordpress.api.service.spi;
 
 import java.util.Date;
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -27,6 +28,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
 import org.apache.camel.component.wordpress.api.model.Comment;
 import org.apache.camel.component.wordpress.api.model.CommentOrderBy;
 import org.apache.camel.component.wordpress.api.model.CommentStatus;

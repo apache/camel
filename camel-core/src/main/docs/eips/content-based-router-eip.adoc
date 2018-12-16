@@ -13,7 +13,7 @@ The following example shows how to route a request from an input
 *seda:a* endpoint to either *seda:b*, *seda:c* or *seda:d* depending on
 the evaluation of various link:predicate.html[Predicate] expressions
 
-=== Using the link:fluent-builders.html[Fluent Builders]
+=== Using the <<FluentBuilders-FluentBuilders,Fluent Builders>>
 
 [source,java]
 ----
@@ -41,7 +41,7 @@ can I not use when or otherwise in a Java Camel route] if you have
 problems with the Java DSL, accepting using `when` or `otherwise`.
 ====
 
-=== Using the link:spring-xml-extensions.html[Spring XML Extensions]
+=== Using the <<SpringXMLExtensions-SpringXMLExtensions,Spring XML Extensions>>
 
 [source,java]
 ----
@@ -74,6 +74,6 @@ https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/
 If you would like to use this EIP Pattern then please read the
 <<GettingStarted-GettingStarted,Getting Started>>. You may also find the
 <<Architecture-Architecture,Architecture>> useful particularly the description
-of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could
-try out some of the link:examples.html[Examples] first before trying
+of <<Endpoint-Endpoints,Endpoint>> and link:uris.html[URIs]. Then you could
+try out some of the <<Examples-Examples,Examples>> first before trying
 this pattern out.

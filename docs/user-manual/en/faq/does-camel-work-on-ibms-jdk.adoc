@@ -1,0 +1,32 @@
+[[DoesCamelworkonIBMsJDK-DoesCamelworkonIBMsJDK]]
+=== Does Camel work on IBM's JDK?
+
+Yes, we've tested Camel with IBM's JDK on the AIX and Linux platforms.
+There are a few things to look out for though.
+
+[[DoesCamelworkonIBMsJDK-Exceptionusingcamel-http]]
+==== Exception using camel-http
+
+You may get a `sun.io.MalformedInputException` when using camel-http on
+IBM's JDK.
+http://www-128.ibm.com/developerworks/java/jdk/linux/142/runtimeguide.lnx.en.html
+lists a possible solution: if `LANG=en_US.UTF-8`, just set it to
+`LANG=en_US`.
+
+[[DoesCamelworkonIBMsJDK-Buildingcamel-springcomponent]]
+==== Building camel-spring component
+
+The schema generation portion of camel-spring uses Sun specific tools
+and thus cannot run on IBM's JDK. It will currently try to download an
+XSD generated from a previous build and then run the tests against that.
+So, if you need to change Camel's model, you will need to rebuild
+camel-spring on another JDK (preferably a Sun JDK).
+
+[[DoesCamelworkonIBMsJDK-Rubyscriptingsupport]]
+==== Ruby scripting support
+
+Ruby scripting on IBM's JDK works for Camel 2.0 and onward. For earlier
+versions you'll need to use one of the other
+link:../scripting-languages.adoc[Scripting Languages]. See
+https://issues.apache.org/activemq/browse/CAMEL-1030[CAMEL-1030] for
+more details.

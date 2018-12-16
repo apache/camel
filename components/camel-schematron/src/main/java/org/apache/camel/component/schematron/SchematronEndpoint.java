@@ -19,6 +19,7 @@ package org.apache.camel.component.schematron;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+
 import javax.xml.transform.Templates;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;

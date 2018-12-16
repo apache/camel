@@ -2049,7 +2049,9 @@ public final class ExpressionBuilder {
      *
      * @param uri endpoint uri to send the exchange to
      * @return an expression object which will return the OUT body
+     * @deprecated not in use, and not available in XML DSL
      */
+    @Deprecated
     public static Expression toExpression(final String uri) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {

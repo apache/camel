@@ -30,8 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.AbstractAmazonSQS;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityResult;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
@@ -47,7 +46,7 @@ import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
 import com.amazonaws.services.sqs.model.SetQueueAttributesResult;
 
-public class AmazonSQSClientMock extends AmazonSQSClient {
+public class AmazonSQSClientMock extends AbstractAmazonSQS {
 
     List<Message> messages = new ArrayList<>();
     Map<String, Map<String, String>> queueAttributes = new HashMap<>();
@@ -57,7 +56,7 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
     private ScheduledExecutorService scheduler;
 
     public AmazonSQSClientMock() {
-        super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
+        super();
     }
 
     @Override

@@ -171,7 +171,7 @@ with the following path and query parameters:
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *type* (consumer) | Endpoint type to use. Only streaming supports event type. | polling | EndpointType
 | *distanceMetric* (consumer) | Used by the non-stream geography search, to search by radius using the configured metrics. The unit can either be mi for miles, or km for kilometers. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. | km | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *extendedMode* (consumer) | Used for enabling full text from twitter (eg receive tweets that contains more than 140 characters). | true | boolean
 | *latitude* (consumer) | Used by the non-stream geography search to search by latitude. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double

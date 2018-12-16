@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.File;
 import java.io.IOException;
+
 import javax.activation.DataHandler;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

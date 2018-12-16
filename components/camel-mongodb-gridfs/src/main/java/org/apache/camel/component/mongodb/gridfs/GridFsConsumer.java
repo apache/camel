@@ -28,7 +28,6 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.mongodb.util.JSON;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;

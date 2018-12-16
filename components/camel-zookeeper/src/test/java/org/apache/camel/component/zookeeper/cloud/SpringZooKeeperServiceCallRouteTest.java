@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.zookeeper.cloud;
-import org.junit.After;
-
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.curator.framework.CuratorFramework;
@@ -27,6 +25,7 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

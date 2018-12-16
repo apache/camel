@@ -26,12 +26,12 @@ import com.networknt.schema.ValidationMessage;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.StreamCache;
 import org.apache.camel.ValidationException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +75,20 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
     
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
-        InputStream is = null;
+        StreamCache cache = null;
+
+        // if the content is an input stream then its likely not re-readable so we need to make it stream cached
+        Object content = getContentToValidate(exchange);
+        if (!(content instanceof StreamCache) && content instanceof InputStream) {
+            cache = exchange.getContext().getTypeConverter().convertTo(StreamCache.class, exchange, content);
+            if (cache != null) {
+                if (shouldUseHeader()) {
+                    exchange.getIn().setHeader(headerName, cache);
+                } else {
+                    exchange.getIn().setBody(cache);
+                }
+            }
+        }
 
         // Get a local copy of the current schema to improve concurrency.
         JsonSchema localSchema = this.schema;
@@ -83,19 +96,26 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
             localSchema = getOrCreateSchema();
         }
         try {
-            is = getContentToValidate(exchange, InputStream.class);
             if (shouldUseHeader()) {
-                if (is == null && isFailOnNullHeader()) {
+                if (content == null && isFailOnNullHeader()) {
                     throw new NoJsonHeaderValidationException(exchange, headerName);
                 }
             } else {
-                if (is == null && isFailOnNullBody()) {
+                if (content == null && isFailOnNullBody()) {
                     throw new NoJsonBodyValidationException(exchange);
                 }
             }
-            if (is != null) {
+            if (content != null) {
+                // favour using stream caching
+                if (cache == null) {
+                    cache = exchange.getContext().getTypeConverter().convertTo(StreamCache.class, exchange, content);
+                }
                 ObjectMapper mapper = new ObjectMapper();
+                InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, cache != null ? cache : content);
                 JsonNode node = mapper.readTree(is);
+                if (node == null) {
+                    throw new NoJsonBodyValidationException(exchange);
+                }
                 Set<ValidationMessage> errors = localSchema.validate(node);
 
                 if (errors.size() > 0) {
@@ -114,15 +134,17 @@ public class JsonValidatorEndpoint extends ResourceEndpoint {
                 this.errorHandler.handleErrors(exchange, schema, e);
             }
         } finally {
-            IOHelper.close(is);
+            if (cache != null) {
+                cache.reset();
+            }
         }
     }
     
-    private <T> T getContentToValidate(Exchange exchange, Class<T> clazz) {
+    private Object getContentToValidate(Exchange exchange) {
         if (shouldUseHeader()) {
-            return exchange.getIn().getHeader(headerName, clazz);
+            return exchange.getIn().getHeader(headerName);
         } else {
-            return exchange.getIn().getBody(clazz);
+            return exchange.getIn().getBody();
         }
     }
 

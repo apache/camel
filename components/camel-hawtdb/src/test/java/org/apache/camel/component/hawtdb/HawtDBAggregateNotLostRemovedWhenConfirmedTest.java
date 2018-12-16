@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hawtdb;
-import org.junit.Before;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
@@ -26,6 +24,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtdb.api.Index;
 import org.fusesource.hawtdb.api.Transaction;
+import org.junit.Before;
 import org.junit.Test;
 
 public class HawtDBAggregateNotLostRemovedWhenConfirmedTest extends CamelTestSupport {

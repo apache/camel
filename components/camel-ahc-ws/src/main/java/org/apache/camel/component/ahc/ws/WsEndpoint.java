@@ -23,6 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ahc.AhcEndpoint;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.asynchttpclient.AsyncHttpClient;
@@ -68,7 +69,9 @@ public class WsEndpoint extends AhcEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new WsConsumer(this, processor);
+        WsConsumer consumer = new WsConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     WebSocket getWebSocket() throws Exception {
@@ -170,6 +173,10 @@ public class WsEndpoint extends AhcEndpoint {
                 reConnect();
             } catch (Exception e) {
                 LOG.warn("Error re-connecting to websocket", e);
+                ExceptionHandler exceptionHandler = getExceptionHandler();
+                if (exceptionHandler != null) {
+                    exceptionHandler.handleException("Error re-connecting to websocket", e);
+                }
             }
         }
 
@@ -199,6 +206,10 @@ public class WsEndpoint extends AhcEndpoint {
             }
         }
 
+        public void onPingFrame(byte[] payload) {
+            LOG.debug("Received ping --> {}", payload);
+            websocket.sendPongFrame(payload);
+        }
     }
 
 }

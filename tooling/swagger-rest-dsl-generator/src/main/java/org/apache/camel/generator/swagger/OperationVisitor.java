@@ -75,7 +75,10 @@ class OperationVisitor<T> {
             if (ObjectHelper.isNotEmpty(collectionFormat)) {
                 emit("collectionFormat", CollectionFormat.valueOf(collectionFormat));
             }
-            emit("defaultValue", serializableParameter.getDefault());
+            if (ObjectHelper.isNotEmpty(serializableParameter.getDefault())) {
+                String value = serializableParameter.getDefault().toString();
+                emit("defaultValue", value);
+            }
 
             final Property items = serializableParameter.getItems();
             if ("array".equals(dataType) && items != null) {

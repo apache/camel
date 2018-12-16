@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
-
 import org.junit.Test;
 
 public class NettyTCPAsyncTest extends BaseNettyTest {

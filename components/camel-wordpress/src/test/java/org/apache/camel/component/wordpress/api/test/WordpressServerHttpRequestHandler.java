@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
+
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpException;

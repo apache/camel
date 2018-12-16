@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.reactivex.Flowable;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;

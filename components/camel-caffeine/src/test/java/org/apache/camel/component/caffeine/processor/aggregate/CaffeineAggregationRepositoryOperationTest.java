@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.caffeine.processor.aggregate;
-import org.junit.After;
-
 import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Test;
 
 public class CaffeineAggregationRepositoryOperationTest extends CamelTestSupport {

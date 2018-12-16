@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.bean.validator;
-import org.junit.Before;
-
 import java.lang.annotation.ElementType;
 import java.util.Locale;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
@@ -28,6 +27,7 @@ import javax.validation.TraversableResolver;
 
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 /**

@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.Expression;
-import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

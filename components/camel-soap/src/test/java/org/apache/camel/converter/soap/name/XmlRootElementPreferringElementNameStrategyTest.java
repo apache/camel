@@ -17,6 +17,7 @@
 package org.apache.camel.converter.soap.name;
 
 import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;

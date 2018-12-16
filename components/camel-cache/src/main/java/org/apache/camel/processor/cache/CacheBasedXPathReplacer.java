@@ -19,6 +19,7 @@ package org.apache.camel.processor.cache;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -29,7 +30,6 @@ import org.w3c.dom.Document;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;

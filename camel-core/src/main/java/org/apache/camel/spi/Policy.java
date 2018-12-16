@@ -41,7 +41,7 @@ public interface Policy {
      * Hook invoked before the wrap.
      * <p/>
      * This allows you to do any custom logic before the processor is wrapped. For example to
-     * manipulate the {@link org.apache.camel.model.ProcessorDefinition definiton}
+     * manipulate the {@link org.apache.camel.model.ProcessorDefinition definition}
      *
      * @param routeContext   the route context
      * @param definition     the processor definition

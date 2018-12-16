@@ -68,6 +68,7 @@
         <include>org.apache.camel:camel-connector</include>
         <include>org.apache.camel:camel-consul</include>
         <include>org.apache.camel:camel-context</include>
+        <include>org.apache.camel:camel-corda</include>
         <include>org.apache.camel:camel-couchdb</include>
         <include>org.apache.camel:camel-couchbase</include>
         <include>org.apache.camel:camel-crypto</include>
@@ -105,6 +106,7 @@
         <include>org.apache.camel:camel-git</include>
         <include>org.apache.camel:camel-github</include>
         <include>org.apache.camel:camel-google-calendar</include>
+        <include>org.apache.camel:camel-google-sheets</include>
         <include>org.apache.camel:camel-google-drive</include>
         <include>org.apache.camel:camel-google-mail</include>
         <include>org.apache.camel:camel-google-bigquery</include>
@@ -134,6 +136,7 @@
         <include>org.apache.camel:camel-infinispan</include>
         <include>org.apache.camel:camel-influxdb</include>
         <include>org.apache.camel:camel-ignite</include>
+        <include>org.apache.camel:camel-ipfs</include>
         <include>org.apache.camel:camel-irc</include>
         <include>org.apache.camel:camel-ironmq</include>
         <include>org.apache.camel:camel-jackson</include>
@@ -150,6 +153,7 @@
         <include>org.apache.camel:camel-jetty</include>
         <include>org.apache.camel:camel-jetty9</include>
         <include>org.apache.camel:camel-jgroups</include>
+        <include>org.apache.camel:camel-jgroups-raft</include>
         <include>org.apache.camel:camel-jibx</include>
         <include>org.apache.camel:camel-jing</include>
         <include>org.apache.camel:camel-jira</include>
@@ -200,6 +204,7 @@
         <include>org.apache.camel:camel-netty4</include>
         <include>org.apache.camel:camel-netty-http</include>
         <include>org.apache.camel:camel-netty4-http</include>
+        <include>org.apache.camel:camel-nsq</include>
         <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-olingo2-api</include>
         <include>org.apache.camel:camel-olingo2</include>
@@ -299,6 +304,7 @@
         <include>org.apache.camel:camel-weather</include>
         <include>org.apache.camel:camel-web3j</include>
         <include>org.apache.camel:camel-websocket</include>
+        <include>org.apache.camel:camel-websocket-jsr356</include>
         <include>org.apache.camel:camel-wordpress</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xchange</include>
@@ -391,6 +397,7 @@
         <include>org.apache.camel:camel-cometd-starter</include>
         <include>org.apache.camel:camel-consul-starter</include>
         <include>org.apache.camel:camel-context-starter</include>
+        <include>org.apache.camel:camel-corda-starter</include>
         <include>org.apache.camel:camel-core-starter</include>
         <include>org.apache.camel:camel-couchdb-starter</include>
         <include>org.apache.camel:camel-couchbase-starter</include>
@@ -428,6 +435,7 @@
         <include>org.apache.camel:camel-git-starter</include>
         <include>org.apache.camel:camel-google-bigquery-starter</include>
         <include>org.apache.camel:camel-google-calendar-starter</include>
+        <include>org.apache.camel:camel-google-sheets-starter</include>
         <include>org.apache.camel:camel-google-drive-starter</include>
         <include>org.apache.camel:camel-google-mail-starter</include>
         <include>org.apache.camel:camel-google-pubsub-starter</include>
@@ -456,6 +464,7 @@
         <include>org.apache.camel:camel-ignite-starter</include>
         <include>org.apache.camel:camel-infinispan-starter</include>
         <include>org.apache.camel:camel-influxdb-starter</include>
+        <include>org.apache.camel:camel-ipfs-starter</include>
         <include>org.apache.camel:camel-irc-starter</include>
         <include>org.apache.camel:camel-ironmq-starter</include>
         <include>org.apache.camel:camel-jackson-starter</include>
@@ -472,6 +481,7 @@
         <include>org.apache.camel:camel-jetty-common-starter</include>
         <include>org.apache.camel:camel-jetty-starter</include>
         <include>org.apache.camel:camel-jgroups-starter</include>
+        <include>org.apache.camel:camel-jgroups-raft-starter</include>
         <include>org.apache.camel:camel-jibx-starter</include>
         <include>org.apache.camel:camel-jing-starter</include>
         <include>org.apache.camel:camel-jira-starter</include>
@@ -503,7 +513,7 @@
         <include>org.apache.camel:camel-mail-starter</include>
         <include>org.apache.camel:camel-master-starter</include>
         <include>org.apache.camel:camel-metrics-starter</include>
-        <include>org.apache.camel:camel-micrometer-starter</include>		
+        <include>org.apache.camel:camel-micrometer-starter</include>
         <include>org.apache.camel:camel-milo-starter</include>
         <include>org.apache.camel:camel-mina2-starter</include>
         <include>org.apache.camel:camel-mllp-starter</include>
@@ -521,6 +531,7 @@
         <include>org.apache.camel:camel-netty4-starter</include>
         <include>org.apache.camel:camel-netty-http-starter</include>
         <include>org.apache.camel:camel-netty-starter</include>
+        <include>org.apache.camel:camel-nsq-starter</include>
         <include>org.apache.camel:camel-ognl-starter</include>
         <include>org.apache.camel:camel-olingo2-starter</include>
         <include>org.apache.camel:camel-olingo4-starter</include>
@@ -606,6 +617,7 @@
         <include>org.apache.camel:camel-weather-starter</include>
         <include>org.apache.camel:camel-web3j-starter</include>
         <include>org.apache.camel:camel-websocket-starter</include>
+        <include>org.apache.camel:camel-websocket-jsr356-starter</include>
         <include>org.apache.camel:camel-wordpress-starter</include>
         <include>org.apache.camel:camel-xmlbeans-starter</include>
         <include>org.apache.camel:camel-xchange-starter</include>

@@ -70,7 +70,7 @@ with the following path and query parameters:
 | *persistentTSObject* (consumer) | If the QueryType uses a persistent timestamp, this is the ID of the object in the collection to store the timestamp. | camel-timestamp | String
 | *query* (consumer) | Additional query parameters (in JSON) that are used to configure the query used for finding files in the GridFsConsumer |  | String
 | *queryStrategy* (consumer) | Sets the QueryStrategy that is used for polling for new files. Default is Timestamp | TimeStamp | QueryStrategy
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *operation* (producer) | Sets the operation this endpoint will execute against GridRS. |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean

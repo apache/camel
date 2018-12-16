@@ -17,6 +17,7 @@
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
+
 import org.apache.camel.component.wordpress.api.model.Context;
 import org.apache.camel.component.wordpress.api.model.Page;
 import org.apache.camel.component.wordpress.api.model.PageSearchCriteria;
@@ -27,6 +28,7 @@ import org.apache.camel.component.wordpress.api.service.spi.PostsSPI;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 

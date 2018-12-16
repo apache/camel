@@ -45,7 +45,6 @@ public class MailSplitAttachmentsTest extends CamelTestSupport {
         Mailbox.clearAll();
     }
 
-
     @Before
     public void setup() {
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.

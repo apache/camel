@@ -15,13 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stream;
-import org.junit.After;
-
 import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.stream.mock.MockURLConnection;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Test;
 
 /**

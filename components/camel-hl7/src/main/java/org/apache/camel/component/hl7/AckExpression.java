@@ -20,7 +20,6 @@ import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.ObjectHelper;

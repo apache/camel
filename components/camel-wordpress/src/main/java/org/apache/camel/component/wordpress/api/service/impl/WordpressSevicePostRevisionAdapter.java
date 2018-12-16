@@ -17,10 +17,12 @@
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
+
 import org.apache.camel.component.wordpress.api.model.Context;
 import org.apache.camel.component.wordpress.api.model.PostRevision;
 import org.apache.camel.component.wordpress.api.service.WordpressServicePostRevision;
 import org.apache.camel.component.wordpress.api.service.spi.PostRevisionsSPI;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class WordpressSevicePostRevisionAdapter extends AbstractWordpressServiceAdapter<PostRevisionsSPI> implements WordpressServicePostRevision {

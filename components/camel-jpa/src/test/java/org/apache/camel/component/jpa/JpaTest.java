@@ -92,7 +92,7 @@ public class JpaTest extends Assert {
                 LOG.info("Received exchange: " + e.getIn());
                 receivedExchange = e;
                 // should have a EntityManager
-                EntityManager entityManager = e.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class);
+                EntityManager entityManager = e.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class);
                 assertNotNull("Should have a EntityManager as header", entityManager);
                 latch.countDown();
             }

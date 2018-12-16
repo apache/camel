@@ -36,6 +36,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.strategy.FileMoveExistingStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -135,6 +136,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected Expression preMove;
     @UriParam(label = "producer", javaType = "java.lang.String")
     protected Expression moveExisting;
+    @UriParam(label = "producer,advanced")
+    protected FileMoveExistingStrategy moveExistingFileStrategy;
     @UriParam(label = "consumer,filter", defaultValue = "false")
     protected Boolean idempotent;
     @UriParam(label = "consumer,filter", javaType = "java.lang.String")
@@ -570,6 +573,18 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     public void setMoveExisting(Expression moveExisting) {
         this.moveExisting = moveExisting;
     }
+    
+    public FileMoveExistingStrategy getMoveExistingFileStrategy() {
+        return moveExistingFileStrategy;
+    }
+
+    /**
+     * Strategy (Custom Strategy) used to move file with special naming token to use when fileExist=Move is configured.
+     * By default, there is an implementation used if no custom strategy is provided
+     */
+    public void setMoveExistingFileStrategy(FileMoveExistingStrategy moveExistingFileStrategy) {
+        this.moveExistingFileStrategy = moveExistingFileStrategy;
+    }
 
     public void setMoveExisting(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
@@ -920,7 +935,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * Logging level used when a read lock could not be acquired.
-     * By default a WARN is logged.
+     * By default a DEBUG is logged.
      * You can change this level, for example to OFF to not have any logging.
      * This option is only applicable for readLock of types: changed, fileLock, idempotent, idempotent-changed, idempotent-rename, rename.
      */
@@ -1405,8 +1420,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
         pattern = pattern.replaceFirst("\\$\\{file:name\\}", onlyName);
         pattern = pattern.replaceFirst("\\$simple\\{file:name\\}", onlyName);
-        pattern = pattern.replaceFirst("\\$\\{file:name.noext\\}", FileUtil.stripExt(onlyName));
-        pattern = pattern.replaceFirst("\\$simple\\{file:name.noext\\}", FileUtil.stripExt(onlyName));
+        pattern = pattern.replaceFirst("\\$\\{file:name.noext\\}", FileUtil.stripExt(onlyName, true));
+        pattern = pattern.replaceFirst("\\$simple\\{file:name.noext\\}", FileUtil.stripExt(onlyName, true));
 
         // must be able to resolve all placeholders supported
         if (StringHelper.hasStartToken(pattern, "simple")) {

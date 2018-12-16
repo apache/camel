@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -45,9 +46,12 @@ import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
+import net.sf.saxon.om.AllElementsSpaceStrippingRule;
 import net.sf.saxon.om.DocumentInfo;
+import net.sf.saxon.om.IgnorableSpaceStrippingRule;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.SpaceStrippingRule;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
@@ -698,7 +702,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             LOG.debug("Initializing XQueryBuilder {}", this);
             if (configuration == null) {
                 configuration = new Configuration();
-                configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
+                configuration.getParseOptions().setSpaceStrippingRule(isStripsAllWhiteSpace() ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance());
                 LOG.debug("Created new Configuration {}", configuration);
             } else {
                 LOG.debug("Using existing Configuration {}", configuration);

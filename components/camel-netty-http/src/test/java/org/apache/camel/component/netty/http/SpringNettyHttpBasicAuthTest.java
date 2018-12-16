@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty.http;
-import org.junit.Before;
-import org.junit.After;
-
 import javax.annotation.Resource;
 
-import org.junit.Assert;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,0 +1,66 @@
+[[DefaultErrorHandler-DefaultErrorHandler]]
+=== DefaultErrorHandler
+
+This is the new default error handler in Camel 2.0 onwards.
+
+It has the same power as the <<deadLetterChannel-eip,Dead Letter Channel>>,
+however it does *not* support a _dead letter queue_, which is
+the only difference between the two of them.
+
+The DefaultErrorHandler is configured differently from
+<<deadLetterChannel-eip,Dead Letter Channel>> as
+it is configured to:
+
+* not redeliver
+* not handled
+* no dead letter queue (not possible)
+
+By default, any exception thrown during routing will be propagated back
+to the caller and the link:exchange.adoc[Exchange] ends immediately.
+However, you can use the link:exception-clause.adoc[Exception Clause] to
+catch a given exception and lower the exception by marking it as
+handled. If so, the exception will *not* be sent back to the caller, and
+the link:exchange.adoc[Exchange] continues to be routed.
+
+[[DefaultErrorHandler-Example]]
+==== Example
+
+In this route below, any exception thrown in, eg the `validateOrder`
+bean, will be propagated back to the caller via the jetty endpoint. It
+will return an HTTP error message back to the client.
+
+[source,java]
+----
+from("jetty:http://localhost/myservice/order")
+  .to("bean:validateOrder")
+  .to("jms:queue:order");
+----
+
+We can add an *onException* in case we want to catch certain exceptions
+and route them differently, for instance to catch a
+*ValidationException* and return a fixed response to the caller.
+
+[source,java]
+----
+onException(ValidationException.class)
+  .handled(true)
+  .transform(body(constant("INVALID ORDER")));
+
+from("jetty:http://localhost/myservice/order")
+  .to("bean:validateOrder")
+  .to("jms:queue:order");
+----
+
+When the `ValidationException` is thrown from the `validateOrder` bean,
+it is intercepted by the DefaultErrorHandler that lets the
+`onException(ValidationException.class)` handle it, so the
+link:exchange.adoc[Exchange] is routed to this onException route, and
+since we use `handled(true)`, then the original exception is cleared,
+and we transform the message into a fixed response that is returned to
+jetty endpoint that returns it to the original caller.
+
+[[DefaultErrorHandler-SeeAlso]]
+==== See Also
+
+* link:error-handler.adoc[Error Handler]
+* <<deadLetterChannel-eip,Dead Letter Channel>>

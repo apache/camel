@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+
 import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -35,7 +36,6 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
 import reactor.core.publisher.Flux;
 
 /**

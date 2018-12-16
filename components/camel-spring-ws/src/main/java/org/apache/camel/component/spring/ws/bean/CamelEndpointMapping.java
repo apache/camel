@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -27,6 +29,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
 import org.w3c.dom.Node;
+
 import org.xml.sax.SAXException;
 
 import org.apache.camel.RuntimeCamelException;
@@ -44,6 +47,7 @@ import org.springframework.ws.server.endpoint.MessageEndpoint;
 import org.springframework.ws.server.endpoint.mapping.AbstractEndpointMapping;
 import org.springframework.ws.server.endpoint.support.PayloadRootUtils;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.addressing.server.AbstractAddressingEndpointMapping;
 import org.springframework.ws.soap.server.SoapEndpointInvocationChain;
 import org.springframework.ws.soap.server.SoapEndpointMapping;
 import org.springframework.ws.transport.WebServiceConnection;
@@ -245,6 +249,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
             xmlConverter.setTransformerFactory(transformerFactory);
         } else {
             transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         }
     }
 

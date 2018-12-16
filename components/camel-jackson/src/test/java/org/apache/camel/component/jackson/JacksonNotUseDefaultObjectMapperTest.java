@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jackson;
-import org.junit.Before;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 public class JacksonNotUseDefaultObjectMapperTest extends CamelTestSupport {

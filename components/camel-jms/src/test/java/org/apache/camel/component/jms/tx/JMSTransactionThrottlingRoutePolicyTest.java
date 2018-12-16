@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jms.tx;
-import org.junit.Before;
-
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

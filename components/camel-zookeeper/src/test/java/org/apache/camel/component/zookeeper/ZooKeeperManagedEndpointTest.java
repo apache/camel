@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.zookeeper;
-import org.junit.Before;
-import org.junit.After;
-
 import java.util.ArrayList;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -27,6 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jmx.support.JmxUtils;
 

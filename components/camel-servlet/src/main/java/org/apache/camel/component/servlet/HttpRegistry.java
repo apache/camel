@@ -20,14 +20,15 @@ import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.http.common.HttpConsumer;
 
 /**
- * Keeps track of HttpConsumers and CamelServlets and 
+ * Keeps track of HttpConsumers and CamelServlets and
  * connects them to each other. In OSGi there should
  * be one HttpRegistry per bundle.
  * 
  * A CamelServlet that should serve more than one
  * bundle should be registered as an OSGi service.
- * The HttpRegistryImpl can then be configured to listen
- * to service changes. See /tests/camel-itest-osgi/../servlet
+ * The {@link DefaultHttpRegistry} can then be configured to listen
+ * to service changes.
+ * See /examples/camel-example-servlet-httpregistry-blueprint
  * for an example how to use this.
  */
 public interface HttpRegistry {

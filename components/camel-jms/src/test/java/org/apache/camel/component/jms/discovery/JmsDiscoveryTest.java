@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.discovery;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 

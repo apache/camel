@@ -15,9 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.beanio;
-import org.junit.Before;
-import org.junit.After;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,11 +25,9 @@ import java.util.Locale;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.beanio.InvalidRecordException;
 import org.beanio.UnexpectedRecordException;
 import org.beanio.UnidentifiedRecordException;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;

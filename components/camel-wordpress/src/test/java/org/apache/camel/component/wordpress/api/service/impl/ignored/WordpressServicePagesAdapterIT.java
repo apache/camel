@@ -17,6 +17,7 @@
 package org.apache.camel.component.wordpress.api.service.impl.ignored;
 
 import java.util.List;
+
 import org.apache.camel.component.wordpress.WordpressTestConstants;
 import org.apache.camel.component.wordpress.api.WordpressServiceProvider;
 import org.apache.camel.component.wordpress.api.model.Page;
@@ -25,6 +26,7 @@ import org.apache.camel.component.wordpress.api.service.WordpressServicePages;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;

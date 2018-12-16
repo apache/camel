@@ -20,6 +20,7 @@ package org.apache.camel.component.xslt;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;

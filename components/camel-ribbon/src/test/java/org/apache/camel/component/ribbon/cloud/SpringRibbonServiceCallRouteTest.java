@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.PropertyInject;
 import org.apache.camel.Route;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -30,16 +31,23 @@ import org.springframework.test.annotation.DirtiesContext;
 
 @DirtiesContext
 public abstract class SpringRibbonServiceCallRouteTest extends CamelSpringTestSupport {
+    
+    @PropertyInject("firstPort")
+    private String firstPort;
+
+    @PropertyInject("secondPort")
+    private String secondPort;
+
     @Test
     public void testServiceCall() throws Exception {
-        getMockEndpoint("mock:9090").expectedMessageCount(1);
-        getMockEndpoint("mock:9091").expectedMessageCount(1);
+        getMockEndpoint("mock:{{firstPort}}").expectedMessageCount(1);
+        getMockEndpoint("mock:{{secondPort}}").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         String out = template.requestBody("direct:start", null, String.class);
         String out2 = template.requestBody("direct:start", null, String.class);
-        assertEquals("9091", out);
-        assertEquals("9090", out2);
+        assertEquals(secondPort, out);
+        assertEquals(firstPort, out2);
 
         assertMockEndpointsSatisfied();
     }

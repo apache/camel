@@ -17,8 +17,6 @@
 
 package org.apache.camel.component.disruptor.vm;
 
-import org.junit.Test;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class DisruptorVmSplitterTest extends AbstractVmTestSupport {
 

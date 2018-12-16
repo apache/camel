@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan.util;
 
 import java.util.List;
+
 import org.infinispan.protostream.sampledomain.User;
 
 public final class UserUtils {

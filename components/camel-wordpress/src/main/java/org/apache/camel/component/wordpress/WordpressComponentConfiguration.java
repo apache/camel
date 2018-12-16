@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.camel.component.wordpress.api.WordpressConstants;
 import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 import org.apache.camel.spi.Metadata;

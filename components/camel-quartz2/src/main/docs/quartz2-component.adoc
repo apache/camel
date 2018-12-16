@@ -104,7 +104,7 @@ with the following path and query parameters:
 | *pauseJob* (consumer) | If set to true, then the trigger automatically pauses when route stop. Else if set to false, it will remain in scheduler. When set to false, it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true. | false | boolean
 | *recoverableJob* (consumer) | Instructs the scheduler whether or not the job should be re-executed if a 'recovery' or 'fail-over' situation is encountered. | false | boolean
 | *stateful* (consumer) | Uses a Quartz PersistJobDataAfterExecution and DisallowConcurrentExecution instead of the default job. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *customCalendar* (advanced) | Specifies a custom calendar to avoid specific range of date |  | Calendar
 | *jobParameters* (advanced) | To configure additional options on the job. |  | Map

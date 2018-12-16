@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.xmljson;
-import org.junit.Before;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -26,14 +24,11 @@ import org.w3c.dom.Document;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
-
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -147,6 +148,9 @@ public class JmsBinding {
                 if (payload instanceof DefaultExchangeHolder) {
                     DefaultExchangeHolder holder = (DefaultExchangeHolder) payload;
                     DefaultExchangeHolder.unmarshal(exchange, holder);
+                    // enrich with JMS headers also as otherwise they will get lost when use the transferExchange option.
+                    Map<String, Object> jmsHeaders = extractHeadersFromJms(message, exchange);
+                    exchange.getIn().getHeaders().putAll(jmsHeaders);
                     return exchange.getIn().getBody();
                 } else {
                     return objectMessage.getObject();

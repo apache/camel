@@ -24,12 +24,12 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>platforms</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>2.24.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
   <artifactId>myfoo-connector</artifactId>
-  <name>Camel :: Platforms :: My Foo Connector</name>
+  <name>Camel :: Platforms :: My Foo Connector (deprecated)</name>
   <description>Camel My Foo Connector</description>
   <packaging>jar</packaging>
 

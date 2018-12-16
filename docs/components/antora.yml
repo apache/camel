@@ -1,0 +1,5 @@
+name: components
+title: Component reference
+version: latest
+nav:
+- modules/ROOT/nav.adoc

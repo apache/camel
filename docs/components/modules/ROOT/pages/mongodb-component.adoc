@@ -1,0 +1,1 @@
+../../../../../components/camel-mongodb/src/main/docs/mongodb-component.adoc

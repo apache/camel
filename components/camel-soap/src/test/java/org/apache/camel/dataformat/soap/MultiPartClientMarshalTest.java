@@ -22,7 +22,6 @@ import java.util.Map;
 import com.example.customerservice.multipart.GetCustomersByName;
 import com.example.customerservice.multipart.MultiPartCustomerService;
 import com.example.customerservice.multipart.Product;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

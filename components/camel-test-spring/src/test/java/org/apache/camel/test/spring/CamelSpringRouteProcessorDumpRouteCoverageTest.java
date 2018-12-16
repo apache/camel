@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.test.spring;
-import org.junit.Before;
-
 import java.io.File;
 
 import org.apache.camel.management.ManagedManagementStrategy;

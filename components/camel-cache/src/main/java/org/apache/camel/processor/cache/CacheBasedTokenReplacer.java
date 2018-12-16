@@ -20,7 +20,6 @@ import java.io.InputStream;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;

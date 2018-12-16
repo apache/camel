@@ -1,0 +1,1 @@
+../../../../../components/camel-dozer/src/main/docs/dozer-component.adoc

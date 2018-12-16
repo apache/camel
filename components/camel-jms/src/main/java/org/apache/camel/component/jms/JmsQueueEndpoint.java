@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.jms.JMSException;
 import javax.jms.Queue;
 

@@ -172,7 +172,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 }
 
                 // we are done so prepare the result
-                ExchangeHelper.copyResults(exchange, target);
+                ExchangeHelper.copyResults(original, target);
                 LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 callback.done(false);
             }

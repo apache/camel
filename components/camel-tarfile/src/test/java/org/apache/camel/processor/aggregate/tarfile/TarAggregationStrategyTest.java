@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.tarfile;
-import org.junit.Before;
-
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -26,6 +24,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TarAggregationStrategyTest extends CamelTestSupport {

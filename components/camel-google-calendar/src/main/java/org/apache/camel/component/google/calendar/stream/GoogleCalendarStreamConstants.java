@@ -19,12 +19,14 @@ package org.apache.camel.component.google.calendar.stream;
 /**
  * Constants used in Camel Google Calendar Stream
  */
-public interface GoogleCalendarStreamConstants {
+public final class GoogleCalendarStreamConstants {
 
-    String MAIL_TO = "CamelGoogleMailStreamTo";
-    String MAIL_FROM = "CamelGoogleMailStreamFrom";
-    String MAIL_CC = "CamelGoogleMailStreamCc";
-    String MAIL_BCC = "CamelGoogleMailStreamBcc";
-    String MAIL_SUBJECT = "CamelGoogleMailStreamSubject";
-    String MAIL_ID = "CamelGoogleMailId";
+    public static final String EVENT_ID = "CamelGoogleCalendarEventId";
+
+    /**
+     * Prevent instantiation.
+     */
+    private GoogleCalendarStreamConstants() {
+        super();
+    }
 }

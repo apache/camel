@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.util.Date;
+
 import javax.mail.Flags;
 import javax.mail.Message;
 import javax.mail.search.AndTerm;

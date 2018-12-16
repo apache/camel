@@ -1,0 +1,1 @@
+../../../../../components/camel-jsonpath/src/main/docs/jsonpath-language.adoc

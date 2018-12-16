@@ -19,9 +19,11 @@ package org.apache.camel.component.wordpress.api.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
 import static com.google.common.base.MoreObjects.toStringHelper;
 
 @JacksonXmlRootElement

@@ -11,7 +11,7 @@ bean:beanID[?options]
 ----
 
 Where *beanID* can be any string which is used to look up the bean in
-the link:registry.html[Registry]
+the <<Registry-Registry,Registry>>
 
 === EIP options
 

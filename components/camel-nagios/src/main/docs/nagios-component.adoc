@@ -105,7 +105,6 @@ The component supports 10 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.nagios.configuration.connection-timeout* | Connection timeout in millis. | 5000 | Integer
 | *camel.component.nagios.configuration.encryption* | To specify an encryption method. |  | Encryption
-| *camel.component.nagios.configuration.encryption-method* | To specify an encryption method. |  | NagiosEncryptionMethod
 | *camel.component.nagios.configuration.host* | This is the address of the Nagios host where checks should be send. |  | String
 | *camel.component.nagios.configuration.nagios-settings* |  |  | NagiosSettings
 | *camel.component.nagios.configuration.password* | Password to be authenticated when sending checks to Nagios. |  | String
@@ -113,6 +112,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.nagios.configuration.timeout* | Sending timeout in millis. | 5000 | Integer
 | *camel.component.nagios.enabled* | Enable nagios component | true | Boolean
 | *camel.component.nagios.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.nagios.configuration.encryption-method* | To specify an encryption method. |  | NagiosEncryptionMethod
 |===
 // spring-boot-auto-configure options: END
 

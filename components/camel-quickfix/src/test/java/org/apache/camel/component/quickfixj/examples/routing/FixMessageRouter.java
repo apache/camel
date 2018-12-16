@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.FieldMap;
 import quickfix.Message;
 import quickfix.Message.Header;

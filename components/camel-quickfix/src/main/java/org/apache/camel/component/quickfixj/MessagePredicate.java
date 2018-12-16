@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.util.ObjectHelper;
-
 import quickfix.Field;
 import quickfix.FieldMap;
 import quickfix.FieldNotFound;

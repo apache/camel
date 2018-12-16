@@ -1,0 +1,1 @@
+../../../../../components/camel-spring-boot/src/main/docs/spring-boot.adoc

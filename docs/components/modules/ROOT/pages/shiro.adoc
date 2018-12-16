@@ -1,0 +1,1 @@
+../../../../../components/camel-shiro/src/main/docs/shiro.adoc

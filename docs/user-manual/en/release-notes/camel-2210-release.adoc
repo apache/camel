@@ -15,8 +15,8 @@ This release supports only Spring Boot 1.5.x. Support for Spring Boot
 
 * Upgraded to JAXB 2.3.0 which is more JDK9 compliant.
 * Added better support for `javax.jms.StreamMessage` types
-in link:jms.html[JMS] component.
-* Optimised link:jms.html[JMS] to support ActiveMQ Artemis
+in <<jms-component,JMS>> component.
+* Optimised <<jms-component,JMS>> to support ActiveMQ Artemis
 http://activemq.apache.org/artemis/docs/latest/large-messages.html[large
 messages] so you can send and receive big messages such as GB's in size.
 There is an example demonstrating this in
@@ -36,9 +36,9 @@ back-on via the apiVendorExtension option.
 used to download a single known file without use LIST operation on the
 FTP server (which can be slow if the FTP server has many files in the
 LIST results)
-* Camel link:json.html[JSON] with camel-jackson will now automatic use
+* Camel link:../json.adoc[JSON] with camel-jackson will now automatic use
 shared ObjectMapper instance if there is only one instance in
-the link:registry.html[Registry]. For example users with Spring Boot
+the link:../registry.adoc[Registry]. For example users with Spring Boot
 then allows Camel to easily use the default mapper from Spring Boot.
 * Added `ExtendedStartupListener` that allows a callback just after the
 CamelContext has been fully started.
@@ -47,7 +47,7 @@ are included in the generated Swagger api-doc via camel-swagger-java.
 * Improved file/ftp consumer to use current thread to poll, instead of a
 scheduled background task, when using pollEnrich
 (link:content-enricher.html[Content Enricher]).
-* link:direct.html[Direct] component now blocks by default if sending to
+* <<direct-component,Direct>> component now blocks by default if sending to
 a consumer which is not yet ready, which may happen during startup
 (little window of opportunity). This
 avoids `DirectConsumerNotAvailableException` being thrown during startup
@@ -59,7 +59,7 @@ operations. You can also find this information for the consumer in JMX. 
 For example if you download big files and has connection problems with
 the FTP server. Then later when the connectivity works again, Camel can
 resume download the in-progress file.
-* The link:jetty.html[Jetty] and link:servlet.html[SERVLET] consumers
+* The <<jetty-component,Jetty>> and link:servlet.html[SERVLET] consumers
 will now return HTTP Status 405 (method not allowed) for requests that
 would have been processed by another HTTP request method, for example
 calling REST services with the wrong method. Beforehand a 404 error code
@@ -93,7 +93,7 @@ that occurred at INFO level.
 * You can now configure many of the link:rabbitmq.html[RabbitMQ] options
 on the component level instead of having to repeat them on each
 endpoint.
-* The link:bean.html[Bean] language can now refer to method name via the
+* The <<bean-component,Bean>> language can now refer to method name via the
 double colon syntax, eg `.to("bean:myBean::myMethod")`
 
 The following issues has been fixed
@@ -102,7 +102,7 @@ The following issues has been fixed
 later and after CamelContext has been fully started.
 * Fixed an issue testing with @UseAdviceWith and Camel on Spring Boot.
 * Fixed link:oncompletion.html[OnCompletion] would not be triggered from
-a route using link:splitter.html[Splitter] and an exception was thrown
+a route using <<split-eip,Splitter>> and an exception was thrown
 during splitting.
 * Fixed link:kafka.html[Kafka] consumer stops consuming messages when
 exception occurs during offset commit.
@@ -112,7 +112,7 @@ requests come in faster than it can process existing in-flight messages.
 * Fixed an issue with link:routing-slip.html[Routing Slip]
 and link:dynamic-router.html[Dynamic Router] when using context scoped
 error handler, could cause the error handler to become stopped.
-* Fixed link:rest-dsl.html[Rest DSL] with link:jetty.html[Jetty]
+* Fixed link:rest-dsl.html[Rest DSL] with <<jetty-component,Jetty>>
 security via custom define security handler and turned on api-doc as
 well would not startup Jetty server due missing NoLoginService error.
 * Fixed Blueprint error: "name is already instanciated as null and
@@ -153,7 +153,7 @@ to `org.apache.camel.http.common.ServletResolveConsumerStrategy`
 
 * Jetty has been upgraded to 9.4 by default, and camel-jetty is requring
 version 9.3 or 9.4 to run in OSGi.
-* link:direct.html[Direct] component now blocks by default if sending to
+* <<direct-component,Direct>> component now blocks by default if sending to
 a consumer which is not yet ready, which may happen during startup
 (little window of opportunity). This
 avoids `DirectConsumerNotAvailableException` being thrown during startup

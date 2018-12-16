@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.UUID;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -90,6 +91,7 @@ public class CMSenderOneMessageImpl implements CMSender {
 
             final ByteArrayOutputStream xml = new ByteArrayOutputStream();
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
             factory.setNamespaceAware(true);
 
             // Get the DocumentBuilder
@@ -158,7 +160,9 @@ public class CMSenderOneMessageImpl implements CMSender {
             }
 
             // Creatate XML as String
-            final Transformer aTransformer = TransformerFactory.newInstance().newTransformer();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            final Transformer aTransformer = transformerFactory.newTransformer();
             aTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
             final Source src = new DOMSource(doc);
             final Result dest = new StreamResult(xml);

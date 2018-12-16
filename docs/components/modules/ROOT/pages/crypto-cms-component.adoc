@@ -1,0 +1,1 @@
+../../../../../components/camel-crypto-cms/src/main/docs/crypto-cms-component.adoc

@@ -74,7 +74,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     private final Map<Class<?>, ObjectReader> readers = new HashMap<>();
 
-    private final Map<Class<?>, ObjectWriter> writters = new HashMap<>();
+    private final Map<Class<?>, ObjectWriter> writers = new HashMap<>();
 
     private final XStream xStreamCompositeBatch;
 
@@ -183,7 +183,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     ObjectWriter jsonWriterFor(final Object obj) {
         final Class<?> type = obj.getClass();
 
-        return Optional.ofNullable(writters.get(type)).orElseGet(() -> mapper.writerFor(type));
+        return Optional.ofNullable(writers.get(type)).orElseGet(() -> mapper.writerFor(type));
     }
 
     ContentProvider serialize(final XStream xstream, final Object body, final Class<?>... additionalTypes)

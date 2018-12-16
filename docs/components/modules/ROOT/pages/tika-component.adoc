@@ -1,0 +1,1 @@
+../../../../../components/camel-tika/src/main/docs/tika-component.adoc

@@ -17,7 +17,9 @@
 package org.apache.camel.component.wordpress.api.model;
 
 import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import static com.google.common.base.MoreObjects.toStringHelper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

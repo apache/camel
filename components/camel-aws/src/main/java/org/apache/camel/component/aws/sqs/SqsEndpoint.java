@@ -129,7 +129,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
             if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
                 String host = configuration.getAmazonAWSHost();
                 host = FileUtil.stripTrailingSeparator(host);
-                queueUrl = "https://sqs." + configuration.getRegion() + "." + host + "/"
+                queueUrl = "https://sqs." + Regions.valueOf(configuration.getRegion()).getName() + "." + host + "/"
                         + configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
             } else if (configuration.getQueueOwnerAWSAccountId() != null) {
                 GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
@@ -183,8 +183,19 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
             request.getAttributes().put(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
         }
+        if (getConfiguration().getDelaySeconds() != null && getConfiguration().isDelayQueue()) {
+            request.getAttributes().put(QueueAttributeName.DelaySeconds.name(), String.valueOf(getConfiguration().getDelaySeconds()));
+        }
         if (getConfiguration().getRedrivePolicy() != null) {
             request.getAttributes().put(QueueAttributeName.RedrivePolicy.name(), getConfiguration().getRedrivePolicy());
+        }
+        if (getConfiguration().isServerSideEncryptionEnabled()) {
+            if (getConfiguration().getKmsMasterKeyId() != null) {
+                request.getAttributes().put(QueueAttributeName.KmsMasterKeyId.name(), getConfiguration().getKmsMasterKeyId());
+            }
+            if (getConfiguration().getKmsDataKeyReusePeriodSeconds() != null) {
+                request.getAttributes().put(QueueAttributeName.KmsDataKeyReusePeriodSeconds.name(), String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
+            }
         }
         LOG.trace("Creating queue [{}] with request [{}]...", configuration.getQueueName(), request);
 
@@ -212,8 +223,19 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
         if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
             request.getAttributes().put(QueueAttributeName.ReceiveMessageWaitTimeSeconds.name(), String.valueOf(getConfiguration().getReceiveMessageWaitTimeSeconds()));
         }
+        if (getConfiguration().getDelaySeconds() != null && getConfiguration().isDelayQueue()) {
+            request.getAttributes().put(QueueAttributeName.DelaySeconds.name(), String.valueOf(getConfiguration().getDelaySeconds()));
+        }
         if (getConfiguration().getRedrivePolicy() != null) {
             request.getAttributes().put(QueueAttributeName.RedrivePolicy.name(), getConfiguration().getRedrivePolicy());
+        }
+        if (getConfiguration().isServerSideEncryptionEnabled()) {
+            if (getConfiguration().getKmsMasterKeyId() != null) {
+                request.getAttributes().put(QueueAttributeName.KmsMasterKeyId.name(), getConfiguration().getKmsMasterKeyId());
+            }
+            if (getConfiguration().getKmsDataKeyReusePeriodSeconds() != null) {
+                request.getAttributes().put(QueueAttributeName.KmsDataKeyReusePeriodSeconds.name(), String.valueOf(getConfiguration().getKmsDataKeyReusePeriodSeconds()));
+            }
         }
         if (!request.getAttributes().isEmpty()) {
             LOG.trace("Updating queue '{}' with the provided queue attributes...", configuration.getQueueName());

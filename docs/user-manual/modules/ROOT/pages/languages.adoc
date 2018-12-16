@@ -1,0 +1,50 @@
+[[Languages-Languages]]
+=== Languages
+
+To support flexible and powerful
+link:enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns], Camel supports various Languages to create an
+link:expression.adoc[Expression] or link:predicate.adoc[Predicate]
+within either the link:dsl.adoc[Routing Domain Specific Language] or the
+link:xml-configuration.adoc[XML Configuration].
+
+==== Note
+*Combining Predicates**
+
+When creating predicates (expressions that evaluate to `true` or
+`false`), you can combine several predicates -- regardless of the
+language they are built with -- by using the `PredicateBuilder` class.
+For more information, see link:predicate.adoc[Compound Predicates].
+====
+
+The following is the list of currently supported languages:
+
+* <<bean-language,Bean Language>> for using Java for expressions
+* <<constant-language,Constant>>
+* the unified <<el-language,EL>> from JSP and JSF
+* <<header-language,Header>>
+* <<jsonpath-language,JSonPath>>
+* <<jxpath-language,JXPath>>
+* <<mvel-language,Mvel>>
+* <<ognl-language,OGNL>>
+* <<ref-language,Ref Language>>
+* <<exchangeproperty-language,ExchangeProperty>> / <<property-language,Property>>
+* <<scripting-languages-language,Scripting Languages>> such as:
+** <<beanshell-language,BeanShell>>
+** <<javascript-language,JavaScript>>
+** <<groovy-language,Groovy>>
+** <<python-language,Python>>
+** <<php-language,PHP>>
+** <<ruby-language,Ruby>>
+* <<simple-language,Simple>>
+** <<file-language,File Language>>
+* <<spel-language,Spring Expression Language>>
+* <<sql-language,SQL>>
+* <<tokenizer-language,Tokenizer>>
+* <<xpath-language,XPath>>
+* <<xquery-language,XQuery>>
+* https://github.com/camel-extra/camel-extra/blob/master/components/camel-vtdxml/src/main/docs/vtdxml-component.adoc[VTD-XML]
+
+Most of these languages are also supported used as
+link:annotation-based-expression-language.html[Annotation Based
+Expression Language].

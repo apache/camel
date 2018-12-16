@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.jsonpath;
-import org.junit.After;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;

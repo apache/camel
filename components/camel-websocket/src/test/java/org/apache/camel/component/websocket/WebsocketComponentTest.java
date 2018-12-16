@@ -18,6 +18,7 @@ package org.apache.camel.component.websocket;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.eclipse.jetty.server.Server;

@@ -19,7 +19,6 @@ package org.apache.camel.component.caffeine.load;
 import java.util.Map;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.caffeine.CaffeineConfiguration;

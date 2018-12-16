@@ -24,15 +24,33 @@ final class ResourceHelper {
     private ResourceHelper() {
     }
 
-    static URL getResource(String path) {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        if (loader == null) {
-            loader = ResourceHelper.class.getClassLoader();
-        }
-        if (loader == null) {
-            loader = ClassLoader.getSystemClassLoader();
+    static URL getResource(String path, ClassLoader classLoader) {
+        // Try resource loading from the ClassLoader associated with the @ImportResource annotated class
+        URL url = loadResource(path, classLoader);
+        if (url != null) {
+            return url;
         }
 
-        return loader.getResource(path);
+        // Try resource loading from TCCL
+        url = loadResource(path, Thread.currentThread().getContextClassLoader());
+        if (url != null) {
+            return url;
+        }
+
+        // Try resource loading from this class ClassLoader
+        url = loadResource(path, ResourceHelper.class.getClassLoader());
+        if (url != null) {
+            return url;
+        }
+
+        // Fall back to resource loading via the system ClassLoader
+        return loadResource(path, ClassLoader.getSystemClassLoader());
+    }
+
+    private static URL loadResource(String path, ClassLoader classLoader) {
+        if (classLoader != null) {
+            return classLoader.getResource(path);
+        }
+        return null;
     }
 }

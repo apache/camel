@@ -17,6 +17,7 @@
 package org.apache.camel.component.krati;
 
 import java.io.IOException;
+
 import krati.store.DataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

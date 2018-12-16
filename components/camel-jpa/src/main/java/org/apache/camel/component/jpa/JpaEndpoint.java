@@ -388,7 +388,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     /**
      * If set to true, then Camel will use the EntityManager from the header
-     * JpaConstants.ENTITYMANAGER instead of the configured entity manager on the component/endpoint.
+     * JpaConstants.ENTITY_MANAGER instead of the configured entity manager on the component/endpoint.
      * This allows end users to control which entity manager will be in use.
      */
     public void setUsePassedInEntityManager(boolean usePassedIn) {

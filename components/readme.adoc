@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 302 in 204 JAR artifacts (22 deprecated)
+Number of Components: 310 in 210 JAR artifacts (22 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -179,6 +179,9 @@ Number of Components: 302 in 204 JAR artifacts (22 deprecated)
 | link:../camel-core/src/main/docs/controlbus-component.adoc[Control Bus] (camel-core) +
 `controlbus:command:language` | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
 
+| link:camel-corda/src/main/docs/corda-component.adoc[corda] (camel-corda) +
+`corda:url` | 2.23 | The corda component uses the corda-rpc to interact with corda nodes.
+
 | link:camel-couchbase/src/main/docs/couchbase-component.adoc[Couchbase] (camel-couchbase) +
 `couchbase:protocol:hostname:port` | 2.19 | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
 
@@ -260,7 +263,7 @@ Number of Components: 302 in 204 JAR artifacts (22 deprecated)
 | link:camel-facebook/src/main/docs/facebook-component.adoc[Facebook] (camel-facebook) +
 `facebook:methodName` | 2.14 | The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
 
-| link:camel-fhir/src/main/docs/fhir-component.adoc[FHIR] (camel-fhir) +
+| link:camel-fhir/camel-fhir-component/src/main/docs/fhir-component.adoc[FHIR] (camel-fhir) +
 `fhir:apiName/methodName` | 2.23 | The fhir component is used for working with the FHIR protocol (health care).
 
 | link:../camel-core/src/main/docs/file-component.adoc[File] (camel-core) +
@@ -296,11 +299,14 @@ Number of Components: 302 in 204 JAR artifacts (22 deprecated)
 | link:camel-google-bigquery/src/main/docs/google-bigquery-component.adoc[Google BigQuery] (camel-google-bigquery) +
 `google-bigquery:projectId:datasetId:tableName` | 2.20 | Google BigQuery data warehouse for analytics.
 
+| link:camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc[Google BigQuery Standard SQL] (camel-google-bigquery) +
+`google-bigquery-sql:query` | 2.23 | Google BigQuery data warehouse for analytics (using SQL queries).
+
 | link:camel-google-calendar/src/main/docs/google-calendar-component.adoc[Google Calendar] (camel-google-calendar) +
 `google-calendar:apiName/methodName` | 2.15 | The google-calendar component provides access to Google Calendar.
 
 | link:camel-google-calendar/src/main/docs/google-calendar-stream-component.adoc[Google Calendar Stream] (camel-google-calendar) +
-`google-calendar-stream:index` | 2.23 | The google-calendar component provides access to Google Calendar in a streaming mod.
+`google-calendar-stream:index` | 2.23 | The google-calendar component provides access to Google Calendar in a streaming mode.
 
 | link:camel-google-drive/src/main/docs/google-drive-component.adoc[Google Drive] (camel-google-drive) +
 `google-drive:apiName/methodName` | 2.14 | The google-drive component provides access to Google Drive file storage service.
@@ -313,6 +319,12 @@ Number of Components: 302 in 204 JAR artifacts (22 deprecated)
 
 | link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
 `google-pubsub:projectId:destinationName` | 2.19 | Messaging client for Google Cloud Platform PubSub Service
+
+| link:camel-google-sheets/src/main/docs/google-sheets-component.adoc[Google Sheets] (camel-google-sheets) +
+`google-sheets:apiName/methodName` | 2.23 | The google-sheets component provides access to Google Sheets.
+
+| link:camel-google-sheets/src/main/docs/google-sheets-stream-component.adoc[Google Sheets Stream] (camel-google-sheets) +
+`google-sheets-stream:apiName` | 2.23 | The google-sheets component provides access to Google Sheets.
 
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
@@ -413,6 +425,9 @@ Number of Components: 302 in 204 JAR artifacts (22 deprecated)
 | link:camel-influxdb/src/main/docs/influxdb-component.adoc[InfluxDB] (camel-influxdb) +
 `influxdb:connectionBean` | 2.18 | The influxdb component allows you to interact with InfluxDB, a time series database.
 
+| link:camel-ipfs/src/main/docs/ipfs-component.adoc[IPFS] (camel-ipfs) +
+`ipfs:host:port/cmd` | 2.23 | The camel-ipfs component provides access to the Interplanetary File System (IPFS).
+
 | link:camel-irc/src/main/docs/irc-component.adoc[IRC] (camel-irc) +
 `irc:hostname:port` | 1.1 | The irc component implements an IRC (Internet Relay Chat) transport.
 
@@ -421,6 +436,9 @@ Number of Components: 302 in 204 JAR artifacts (22 deprecated)
 
 | link:camel-javaspace/src/main/docs/javaspace-component.adoc[JavaSpace] (camel-javaspace) +
 `javaspace:url` | 2.1 | *deprecated* Sending and receiving messages through JavaSpace.
+
+| link:camel-websocket-jsr356/src/main/docs/websocket-jsr356-component.adoc[Javax Websocket] (camel-websocket-jsr356) +
+`websocket-jsr356:/resourceUri` | 2.23 | Camel WebSocket using JSR356 (javax)
 
 | link:camel-jbpm/src/main/docs/jbpm-component.adoc[JBPM] (camel-jbpm) +
 `jbpm:connectionURL` | 2.6 | The jbpm component provides integration with jBPM (Business Process Management).
@@ -445,6 +463,9 @@ Number of Components: 302 in 204 JAR artifacts (22 deprecated)
 
 | link:camel-jgroups/src/main/docs/jgroups-component.adoc[JGroups] (camel-jgroups) +
 `jgroups:clusterName` | 2.13 | The jgroups component provides exchange of messages between Camel and JGroups clusters.
+
+| link:camel-jgroups-raft/src/main/docs/jgroups-raft-component.adoc[JGroups raft] (camel-jgroups-raft) +
+`jgroups-raft:clusterName` | 2.24 | The jgroups component provides exchange of messages between Camel and JGroups clusters.
 
 | link:camel-jing/src/main/docs/jing-component.adoc[Jing] (camel-jing) +
 `jing:resourceUri` | 1.1 | Validates the payload of a message using RelaxNG Syntax using Jing library.
@@ -613,6 +634,9 @@ Number of Components: 302 in 204 JAR artifacts (22 deprecated)
 
 | link:camel-netty4-http/src/main/docs/netty4-http-component.adoc[Netty4 HTTP] (camel-netty4-http) +
 `netty4-http:protocol:host:port/path` | 2.14 | Netty HTTP server and client using the Netty 4.x library.
+
+| link:camel-nsq/src/main/docs/nsq-component.adoc[NSQ] (camel-nsq) +
+`nsq:lookupServer` | 2.23 | Represents a nsq endpoint.
 
 | link:camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
 `olingo2:apiName/methodName` | 2.14 | Communicates with OData 2.0 services using Apache Olingo.
@@ -922,7 +946,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 48 in 39 JAR artifacts (4 deprecated)
+Number of Data Formats: 50 in 40 JAR artifacts (4 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -951,6 +975,10 @@ Number of Data Formats: 48 in 39 JAR artifacts (4 deprecated)
 | link:camel-crypto/src/main/docs/crypto-dataformat.adoc[Crypto (Java Cryptographic Extension)] (camel-crypto) | 2.3 | Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.
 
 | link:camel-csv/src/main/docs/csv-dataformat.adoc[CSV] (camel-csv) | 1.3 | The CSV data format is used for handling CSV payloads.
+
+| link:camel-fhir/camel-fhir-component/src/main/docs/fhirJson-dataformat.adoc[FHIR JSon] (camel-fhir) | 2.21 | The FHIR JSon data format is used to marshall/unmarshall to/from FHIR objects to/from JSON.
+
+| link:camel-fhir/camel-fhir-component/src/main/docs/fhirXml-dataformat.adoc[FHIR XML] (camel-fhir) | 2.21 | The FHIR XML data format is used to marshall/unmarshall from/to FHIR objects to/from XML.
 
 | link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1 | The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
 

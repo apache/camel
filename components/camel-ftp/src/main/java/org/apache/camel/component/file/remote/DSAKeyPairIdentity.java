@@ -28,7 +28,6 @@ import java.security.interfaces.DSAPublicKey;
 
 import com.jcraft.jsch.Identity;
 import com.jcraft.jsch.JSchException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

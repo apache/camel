@@ -33,7 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.quickfixj.jmx.JmxExporter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.Acceptor;
 import quickfix.Application;
 import quickfix.ConfigError;

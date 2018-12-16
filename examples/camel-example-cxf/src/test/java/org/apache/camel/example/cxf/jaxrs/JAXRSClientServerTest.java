@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.example.cxf.jaxrs;
-import org.junit.Before;
-import org.junit.After;
-
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookNotFoundFault;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.cxf.BusFactory;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;

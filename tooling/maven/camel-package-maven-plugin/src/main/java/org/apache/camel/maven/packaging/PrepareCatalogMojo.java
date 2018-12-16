@@ -553,6 +553,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
             File[] dataFormats = componentsDir.listFiles();
             if (dataFormats != null) {
                 for (File dir : dataFormats) {
+                    // special for this as the data format is in the sub dir
+                    if (dir.isDirectory() && "camel-fhir".equals(dir.getName())) {
+                        dir = new File(dir, "camel-fhir-component");
+                    }
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
                         findDataFormatFilesRecursive(target, jsonFiles, dataFormatFiles, new CamelDataFormatsFileFilter());

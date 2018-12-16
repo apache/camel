@@ -23,7 +23,7 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
 import com.amazonaws.regions.Region;
-import com.amazonaws.services.lambda.AWSLambda;
+import com.amazonaws.services.lambda.AbstractAWSLambda;
 import com.amazonaws.services.lambda.model.AddPermissionRequest;
 import com.amazonaws.services.lambda.model.AddPermissionResult;
 import com.amazonaws.services.lambda.model.CreateAliasRequest;
@@ -40,6 +40,7 @@ import com.amazonaws.services.lambda.model.DeleteFunctionConcurrencyRequest;
 import com.amazonaws.services.lambda.model.DeleteFunctionConcurrencyResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionRequest;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
+import com.amazonaws.services.lambda.model.EventSourceMappingConfiguration;
 import com.amazonaws.services.lambda.model.FunctionConfiguration;
 import com.amazonaws.services.lambda.model.GetAccountSettingsRequest;
 import com.amazonaws.services.lambda.model.GetAccountSettingsResult;
@@ -92,7 +93,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joda.time.DateTime;
 
-public class AmazonLambdaClientMock implements AWSLambda {
+public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     public AmazonLambdaClientMock() {
         super();
@@ -111,7 +112,12 @@ public class AmazonLambdaClientMock implements AWSLambda {
 
     @Override
     public CreateEventSourceMappingResult createEventSourceMapping(CreateEventSourceMappingRequest createEventSourceMappingRequest) {
-        throw new UnsupportedOperationException();
+        CreateEventSourceMappingResult result = new CreateEventSourceMappingResult();
+        result.setBatchSize(100);
+        result.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + createEventSourceMappingRequest.getFunctionName());
+        result.setState("Enabled");
+        result.setEventSourceArn("arn:aws:sqs:eu-central-1:643534317684:testqueue");
+        return result;
     }
 
     @Override
@@ -152,7 +158,10 @@ public class AmazonLambdaClientMock implements AWSLambda {
 
     @Override
     public DeleteEventSourceMappingResult deleteEventSourceMapping(DeleteEventSourceMappingRequest deleteEventSourceMappingRequest) {
-        throw new UnsupportedOperationException();
+        DeleteEventSourceMappingResult result = new DeleteEventSourceMappingResult();
+        result.setUUID("a1239494949382882383");
+        result.setState("Deleting");
+        return result;
     }
 
     @Override
@@ -230,7 +239,16 @@ public class AmazonLambdaClientMock implements AWSLambda {
 
     @Override
     public ListEventSourceMappingsResult listEventSourceMappings(ListEventSourceMappingsRequest listEventSourceMappingsRequest) {
-        throw new UnsupportedOperationException();
+        ListEventSourceMappingsResult result = new ListEventSourceMappingsResult();
+        List<EventSourceMappingConfiguration> confList = new ArrayList<EventSourceMappingConfiguration>();
+        EventSourceMappingConfiguration conf = new EventSourceMappingConfiguration();
+        conf.setBatchSize(100);
+        conf.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + listEventSourceMappingsRequest.getFunctionName());
+        conf.setState("Enabled");
+        conf.setEventSourceArn("arn:aws:sqs:eu-central-1:643534317684:testqueue");
+        confList.add(conf);
+        result.setEventSourceMappings(confList);
+        return result;
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.ssl;
 
 import java.io.InputStream;
 import java.security.KeyStore;
+
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;

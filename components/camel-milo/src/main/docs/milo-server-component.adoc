@@ -42,7 +42,7 @@ The OPC UA Server component supports 20 options, which are listed below.
 | *serverName* (common) | Server name |  | String
 | *hostname* (common) | Server hostname |  | String
 | *securityPolicies* (common) | Security policies |  | Set
-| *securityPoliciesById* (common) | Security policies by URI or name |  | String>
+| *securityPoliciesById* (common) | Security policies by URI or name |  | Collection
 | *userAuthentication Credentials* (common) | Set user password combinations in the form of user1:pwd1,user2:pwd2 Usernames and passwords will be URL decoded |  | String
 | *enableAnonymous Authentication* (common) | Enable anonymous authentication, disabled by default | false | boolean
 | *usernameSecurityPolicy Uri* (common) | Set the UserTokenPolicy used when |  | SecurityPolicy
@@ -50,7 +50,7 @@ The OPC UA Server component supports 20 options, which are listed below.
 | *buildInfo* (common) | Server build info |  | BuildInfo
 | *serverCertificate* (common) | Server certificate |  | Result
 | *certificateManager* (common) | Server certificate manager |  | CertificateManager
-| *certificateValidator* (common) | Validator for client certificates |  | CertificateValidator>
+| *certificateValidator* (common) | Validator for client certificates |  | Supplier
 | *defaultCertificate Validator* (common) | Validator for client certificates using default file based approach |  | File
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
@@ -101,7 +101,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
@@ -132,7 +132,7 @@ The component supports 21 options, which are listed below.
 | *camel.component.milo-server.product-uri* | The product URI |  | String
 | *camel.component.milo-server.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.milo-server.security-policies* | Security policies. The option is a java.util.Set<org.eclipse.milo.opcua.stack.core.security.SecurityPolicy> type. |  | String
-| *camel.component.milo-server.security-policies-by-id* | Security policies by URI or name |  | String>
+| *camel.component.milo-server.security-policies-by-id* | Security policies by URI or name |  | Collection
 | *camel.component.milo-server.server-certificate* | Server certificate. The option is a org.apache.camel.component.milo.KeyStoreLoader.Result type. |  | String
 | *camel.component.milo-server.server-name* | Server name |  | String
 | *camel.component.milo-server.strict-endpoint-urls-enabled* | Set whether strict endpoint URLs are enforced | false | Boolean

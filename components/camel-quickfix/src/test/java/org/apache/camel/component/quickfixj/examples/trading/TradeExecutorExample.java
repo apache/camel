@@ -33,7 +33,6 @@ import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecremen
 import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.field.ClOrdID;
 import quickfix.field.HandlInst;
 import quickfix.field.MsgType;

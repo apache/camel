@@ -19,7 +19,6 @@ package org.apache.camel.component.jclouds;
 import java.util.Set;
 
 import com.google.common.base.Predicate;
-
 import org.apache.camel.CamelException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;

@@ -16,10 +16,9 @@
  */
 package org.apache.camel.example.guice.jms;
 
-import org.junit.Test;
-
-import org.junit.Assert;
 import org.apache.camel.guice.Main;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @version 

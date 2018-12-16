@@ -19,7 +19,6 @@ package org.apache.camel.component.sjms.support;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.util.ObjectHelper;
-
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

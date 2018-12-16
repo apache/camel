@@ -1,0 +1,99 @@
+[[Processor-Processor]]
+=== Processor
+
+The
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Processor.html[Processor]
+interface is used to implement consumers of message exchanges or to
+implement a <<messageTranslator-eip,Message Translator>>.
+
+[[Processor-Usingaprocessorinaroute]]
+==== Using a processor in a route
+
+Once you have written a class which implements processor like this...
+
+[source,java]
+----
+public class MyProcessor implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        // do something...
+    }
+}
+----
+
+You can then easily use this inside a route by declaring the bean in
+Spring, say via the XML (or registering it in JNDI if that is your
+link:registry.adoc[Registry]):
+
+[source,xml]
+----
+<bean id="myProcessor" class="com.acme.MyProcessor"/>
+----
+
+Then in Camel you can do:
+
+[source,java]
+----
+from("activemq:myQueue").to("myProcessor");
+----
+
+[[Processor-UsingtheprocessDSL]]
+===== Using the process DSL
+
+In your route you can also use the `process` DSL syntax for invoking a
+processor.
+
+[source,java]
+----
+Processor myProcessor = new MyProcessor();
+...
+from("activemq:myQueue").process(myProcessor);
+----
+
+If you need to lookup the processor in the link:registry.adoc[Registry]
+then you should use the `processRef` DSL:
+
+[source,java]
+----
+from("activemq:myQueue").processRef("myProcessor");
+----
+
+[[Processor-Whyuseprocesswhenyoucanusetoinstead]]
+==== Why use process when you can use to instead?
+
+The process can be used in routes as an anonymous inner class such:
+
+[source,java]
+----
+    from("activemq:myQueue").process(new Processor() {
+        public void process(Exchange exchange) throws Exception {
+            String payload = exchange.getIn().getBody(String.class);
+            // do something with the payload and/or exchange here
+           exchange.getIn().setBody("Changed body");
+       }
+    }).to("activemq:myOtherQueue");
+----
+
+This is usable for quickly whirling up some code. If the code in the
+inner class gets a bit more complicated it is of course advised to
+refactor it into a separate class.
+
+[[Processor-TurningyourprocessorintoafullComponent]]
+==== Turning your processor into a full Component
+
+There is a base class called
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/ProcessorEndpoint.html[ProcessorEndpoint]
+which supports the full link:endpoint.adoc[Endpoint] semantics given a
+Processor instance.
+
+So you just need to create a link:component.adoc[Component] class by
+deriving from
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/impl/DefaultComponent.html[DefaultComponent]
+which returns instances of ProcessorEndpoint. For more details see
+link:writing-components.adoc[Writing Components]
+
+[[Processor-SeeAlso]]
+==== See Also
+
+* <<messageTranslator-eip,Message Translator>>
+* <<enrich-eip,Content Enricher>>
+* <<ContentFilter-eip,Content Filter>>

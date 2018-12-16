@@ -19,6 +19,7 @@ package org.apache.camel.script.osgi;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
+
 import javax.script.ScriptEngineFactory;
 
 import org.junit.Before;

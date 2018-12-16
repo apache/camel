@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.Set;
+
 import javax.jms.ConnectionFactory;
 import javax.management.Attribute;
 import javax.management.MBeanServer;

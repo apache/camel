@@ -19,7 +19,6 @@ package org.apache.camel.component.ahc;
 import java.io.ByteArrayOutputStream;
 
 import io.netty.handler.codec.http.HttpHeaders;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;

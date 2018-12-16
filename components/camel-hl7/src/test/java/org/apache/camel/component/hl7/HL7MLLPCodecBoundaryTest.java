@@ -20,14 +20,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
-
 import org.junit.Test;
 
 /**

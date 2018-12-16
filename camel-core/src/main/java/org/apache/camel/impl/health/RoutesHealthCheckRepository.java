@@ -29,11 +29,13 @@ import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRepository;
 
+@DeferredContextBinding
 public class RoutesHealthCheckRepository implements CamelContextAware, HealthCheckRepository {
     private final ConcurrentMap<Route, HealthCheck> checks;
     private Set<String> blacklist;

@@ -37,10 +37,8 @@ import org.apache.camel.component.quickfixj.examples.transform.QuickfixjMessageJ
 import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecrementer;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IOHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.FieldNotFound;
 import quickfix.SessionID;
 import quickfix.field.AvgPx;

@@ -207,7 +207,7 @@ the <<simple-language,Simple>> language, but it has more power than so.
 
 === Embedding Camel routes
 
-Each of the rest service becomes a Camel route, so in the first example
+Each of the rest services becomes a Camel route, so in the first example
 we have 2 x get and 1 x post REST service, which each become a Camel
 route. And we have 2 regular Camel routes, meaning we have 3 + 2 = 5
 routes in total. 
@@ -258,7 +258,7 @@ today.
 
 === Managing Rest services
 
-Each of the rest service becomes a Camel route, so in the first example
+Each of the rest services becomes a Camel route, so in the first example
 we have 2 x get and 1 x post REST service, which each become a Camel
 route. This makes it _the same_ from Camel to manage and run these
 services - as they are just Camel routes. This means any tooling and API
@@ -585,7 +585,7 @@ whether the Content-Type and Accept headers from
                         A key without a prefix is a common key for all situations.
 
                         From Camel 2.17: the options value can use the # notation to refer to a bean to lookup in the Registry
-|apiProperties | -|Sets additional options on api level.
+|apiProperty | -|Sets additional options on api level.
 |corsHeaders | -|Allows to configure custom CORS headers.
 |===
 
@@ -913,3 +913,24 @@ And in XML DSL:
 
 </restConfiguration>
 ----
+
+==== Supported API properties
+
+The following table lists supported API properties and explains their effect. To set them use `apiProperty(String, String)` in the Java DSL
+or `<apiProperty>` when defining the REST API via XML configuration. Properties in **bold** are required by the OpenAPI 2.0 specification. 
+Most of the properties affect the OpenAPI https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#infoObject[Info object], https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#licenseObject[License object] or https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#contact-object[Contact object].
+
+|===
+|Property | Description
+| **api.version** | Version of the API 
+| **api.title** | Title of the API
+| api.description | Description of the API
+| api.termsOfService | API Terms of Service of the API
+| api.license.name | License information of the API
+| api.license.url | URL for the License of the API
+| api.contact.name | The identifying name of the contact person/organization
+| api.contact.url | The URL pointing to the contact information
+| api.contact.email | The email address of the contact person/organization
+| api.specification.contentType.json | The Content-Type of the served OpenAPI JSON specification, `application/json` by default
+| api.specification.contentType.yaml | The Content-Type of the served OpenAPI YAML specification, `text/yaml` by default
+|===

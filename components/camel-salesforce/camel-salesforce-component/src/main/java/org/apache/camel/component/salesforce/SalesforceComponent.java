@@ -80,6 +80,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     public static final String HTTP_PROXY_REALM = "httpProxyRealm";
 
     static final int CONNECTION_TIMEOUT = 60000;
+    static final int IDLE_TIMEOUT = 5000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
     static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
@@ -116,7 +117,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         label = "common,security", secret = true)
     private String refreshToken;
 
-    @Metadata(description = "Username used in OAuth flow to gain access to access token. It's easy to get started with" 
+    @Metadata(description = "Username used in OAuth flow to gain access to access token. It's easy to get started with"
         + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows.",
         label = "common,security")
     private String userName;
@@ -716,6 +717,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         // default settings, use httpClientProperties to set other
         // properties
         httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
+        httpClient.setIdleTimeout(IDLE_TIMEOUT);
 
         return httpClient;
     }

@@ -20,10 +20,9 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
-import org.apache.camel.component.as2.api.AS2Algorithm;
+import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.http.HttpException;
 import org.apache.http.util.Args;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.jcajce.JceCMSContentEncryptorBuilder;
@@ -55,11 +54,10 @@ public final class EncryptingUtils {
         }
     }
     
-    public static OutputEncryptor createEncryptor(String encryptionAlgorithmName) throws HttpException {
-        Args.notNull(encryptionAlgorithmName, "encryptionAlgorithmName");
+    public static OutputEncryptor createEncryptor(AS2EncryptionAlgorithm encryptionAlgorithm) throws HttpException {
+        Args.notNull(encryptionAlgorithm, "encryptionAlgorithmName");
         try {
-            ASN1ObjectIdentifier algorithmOID = AS2Algorithm.getAS2Algorithm(encryptionAlgorithmName).getAlgorithmOID();
-            return new JceCMSContentEncryptorBuilder(algorithmOID).build();
+            return new JceCMSContentEncryptorBuilder(encryptionAlgorithm.getAlgorithmOID()).build();
         } catch (CMSException e) {
             throw new HttpException("Failed to create encryptor ", e);
         }

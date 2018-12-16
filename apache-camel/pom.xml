@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>2.24.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -220,6 +220,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-corda</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-couchbase</artifactId>
     </dependency>
     <dependency>
@@ -368,6 +372,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-google-sheets</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-google-drive</artifactId>
     </dependency>
     <dependency>
@@ -492,6 +500,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ipfs</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-irc</artifactId>
     </dependency>
     <dependency>
@@ -553,6 +565,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jgroups</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jgroups-raft</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -760,6 +776,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-netty4-http</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-nsq</artifactId>
     </dependency>
      <dependency>
       <groupId>org.apache.camel</groupId>
@@ -1163,6 +1183,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-websocket-jsr356</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-wordpress</artifactId>
     </dependency>
     <dependency>
@@ -1420,6 +1444,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-corda-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-couchdb-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1541,7 +1570,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-fhir-starter</artifactId>
       <version>${project.version}</version>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-flatpack-starter</artifactId>
@@ -1595,6 +1624,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-google-calendar-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-google-sheets-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -1739,6 +1773,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ipfs-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-irc-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1815,6 +1854,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jgroups-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jgroups-raft-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2060,6 +2104,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-netty-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-nsq-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2475,6 +2524,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-websocket-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-websocket-jsr356-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

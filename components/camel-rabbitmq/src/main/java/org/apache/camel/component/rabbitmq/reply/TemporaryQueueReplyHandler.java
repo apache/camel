@@ -17,7 +17,6 @@
 package org.apache.camel.component.rabbitmq.reply;
 
 import com.rabbitmq.client.AMQP;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;

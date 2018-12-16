@@ -29,7 +29,6 @@ import org.apache.camel.component.quickfixj.QuickfixjEventCategory;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.ConfigError;
 import quickfix.DataDictionary;
 import quickfix.FieldNotFound;

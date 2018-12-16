@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cm.test;
-import org.junit.After;
-
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat;
 import org.apache.camel.component.cm.CMConstants;

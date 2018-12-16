@@ -18,6 +18,7 @@ package org.apache.camel.component.wordpress.api.model;
 
 import java.io.Serializable;
 import java.util.List;
+
 import static com.google.common.base.MoreObjects.toStringHelper;
 
 public class SearchCriteria implements Serializable {

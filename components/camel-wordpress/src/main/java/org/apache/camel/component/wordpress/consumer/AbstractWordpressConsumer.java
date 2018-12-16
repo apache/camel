@@ -17,6 +17,7 @@
 package org.apache.camel.component.wordpress.consumer;
 
 import java.util.concurrent.ScheduledExecutorService;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.wordpress.WordpressComponentConfiguration;

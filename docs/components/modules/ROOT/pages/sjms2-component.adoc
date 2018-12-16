@@ -1,0 +1,1 @@
+../../../../../components/camel-sjms2/src/main/docs/sjms2-component.adoc

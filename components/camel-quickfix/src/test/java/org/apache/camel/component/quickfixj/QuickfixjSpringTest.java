@@ -15,12 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.quickfixj;
-import org.junit.Before;
-
 import java.util.Properties;
 
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.hamcrest.CoreMatchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

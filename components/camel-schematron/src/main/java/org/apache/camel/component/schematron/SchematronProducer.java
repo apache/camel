@@ -19,9 +19,12 @@ package org.apache.camel.component.schematron;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.transform.Source;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.exception.SchematronValidationException;
+import org.apache.camel.component.schematron.processor.SchematronProcessor;
 import org.apache.camel.component.schematron.processor.SchematronProcessorFactory;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
@@ -33,7 +36,6 @@ import org.slf4j.LoggerFactory;
 public class SchematronProducer extends DefaultProducer {
     private Logger logger = LoggerFactory.getLogger(SchematronProducer.class);
     private SchematronEndpoint endpoint;
-
 
     /**
      * @param endpoint the schematron endpoint.
@@ -50,9 +52,22 @@ public class SchematronProducer extends DefaultProducer {
      * @throws Exception
      */
     public void process(Exchange exchange) throws Exception {
-        String payload = exchange.getIn().getBody(String.class);
-        logger.debug("Applying schematron validation on payload: {}", payload);
-        String report = SchematronProcessorFactory.newScehamtronEngine(endpoint.getRules()).validate(payload);
+        final SchematronProcessor schematronProcessor = SchematronProcessorFactory.newScehamtronEngine(endpoint.getRules());
+        final Object payload = exchange.getIn().getBody();
+        final String report;
+
+        if (payload instanceof Source) {
+            logger.debug("Applying schematron validation on payload: {}", payload);
+            report = schematronProcessor.validate((Source)payload);
+        } else if (payload instanceof String) {
+            logger.debug("Applying schematron validation on payload: {}", payload);
+            report = schematronProcessor.validate((String)payload);
+        } else {
+            String stringPayload = exchange.getIn().getBody(String.class);
+            logger.debug("Applying schematron validation on payload: {}", stringPayload);
+            report = schematronProcessor.validate(stringPayload);
+        }
+
         logger.debug("Schematron validation report \n {}", report);
         String status = getValidationStatus(report);
         logger.info("Schematron validation status : {}", status);

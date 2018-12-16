@@ -758,10 +758,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                             doAggregate(getAggregationStrategy(subExchange), result, subExchange);
                         }
                     } catch (Throwable e) {
-                        // wrap in exception to explain where it failed
-                        subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, e));
+                        original.setException(e);
                         // and do the done work
-                        doDone(original, subExchange, pairs, callback, false, true);
+                        doDone(original, null, pairs, callback, false, true);
                         return;
                     }
 

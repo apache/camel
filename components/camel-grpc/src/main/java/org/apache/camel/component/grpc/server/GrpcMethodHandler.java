@@ -22,9 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.grpc.stub.StreamObserver;
-
 import javassist.util.proxy.MethodHandler;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.grpc.GrpcConstants;
 import org.apache.camel.component.grpc.GrpcConsumer;

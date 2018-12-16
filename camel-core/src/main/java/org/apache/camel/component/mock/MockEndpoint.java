@@ -513,10 +513,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * <p/>
      * You can set multiple expectations for different header names.
      * If you set a value of <tt>null</tt> that means we accept either the header is absent, or its value is <tt>null</tt>
-     * <p/>
-     * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedHeaderReceived(final String name, final Object value) {
+        // default to 1 expected message if unset message count
+        if (expectedCount == -1 && expectedMinimumCount == -1) {
+            expectedMessageCount(1);
+        }
         if (expectedHeaderValues == null) {
             expectedHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             // we just wants to expects to be called once

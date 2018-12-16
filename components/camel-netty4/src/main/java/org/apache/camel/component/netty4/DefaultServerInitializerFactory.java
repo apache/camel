@@ -26,7 +26,6 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.EventExecutorGroup;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.netty4.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;

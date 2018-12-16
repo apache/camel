@@ -22,7 +22,6 @@ import com.googlecode.jsendnsca.Level;
 import com.googlecode.jsendnsca.MessagePayload;
 import com.googlecode.jsendnsca.NonBlockingNagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.PassiveCheckSender;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 

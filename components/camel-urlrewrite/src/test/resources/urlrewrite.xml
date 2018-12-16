@@ -44,7 +44,7 @@
       the url /rewrite-status will be rewritten to /test/status/.
 
       The above rule and this outbound-rule means that end users should never see the
-      url /rewrite-status only /test/status/ both in thier location bar and in hyperlinks
+      url /rewrite-status only /test/status/ both in their location bar and in hyperlinks
       in your pages.
     </note>
     <from>/rewrite-status</from>

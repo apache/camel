@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.etcd.cloud;
-import org.junit.After;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +27,7 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.etcd.EtcdConfiguration;
 import org.apache.camel.component.etcd.EtcdHelper;
 import org.apache.camel.component.etcd.EtcdTestSupport;
+import org.junit.After;
 import org.junit.Test;
 
 public class EtcdServiceDiscoveryTest extends EtcdTestSupport {

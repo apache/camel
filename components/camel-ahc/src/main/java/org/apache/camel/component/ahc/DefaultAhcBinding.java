@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import io.netty.handler.codec.http.HttpHeaders;
-
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

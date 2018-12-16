@@ -1,0 +1,9 @@
+[[HodoIspecifywhichmethodtousewhenusingbeansinroutes-HodoIspecifywhichmethodtousewhenusingbeansinroutes]]
+=== Ho do I specify which method to use when using beans in routes?
+
+See <<bean-component,Bean>>, link:../bean-integration.adoc[Bean Integration]
+and link:bean-binding.adoc[Bean Binding]
+
+However if you have overloaded methods you need to specify which of
+those overloaded method you want to use by specifying parameter type
+qualifiers. See more details at link:bean-binding.adoc[Bean Binding].

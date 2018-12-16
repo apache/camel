@@ -16,18 +16,14 @@
  */
 
 package org.apache.camel.component.spring.ws.security;
-import org.junit.Before;
-
 import net.javacrumbs.calc.model.PlusRequest;
 import net.javacrumbs.calc.model.PlusResponse;
-
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.ws.client.core.WebServiceTemplate;

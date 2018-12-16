@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.InputStream;
+
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atomix.client.multimap;
-import org.junit.After;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -32,6 +30,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
 import org.apache.camel.component.atomix.client.AtomixClientTestSupport;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;

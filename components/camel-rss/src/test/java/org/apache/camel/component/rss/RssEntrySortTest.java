@@ -17,6 +17,7 @@
 package org.apache.camel.component.rss;
 
 import java.util.Date;
+
 import javax.naming.Context;
 
 import com.sun.syndication.feed.synd.SyndEntry;

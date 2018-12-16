@@ -22,7 +22,7 @@
 
     <feature name='camel-example-cafe' version='${project.version}'>
         <feature version="${project.version}">camel</feature>
-        <bundle>mvn:org.apache.camel/camel-example-cafe/${project.version}</bundle>
+        <bundle>mvn:org.apache.camel.example/camel-example-cafe/${project.version}</bundle>
     </feature>
 
 </features>

@@ -15,10 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.openshift;
-import org.junit.Before;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 public class OpenShiftAddEmbeddedCartridgeTest extends CamelTestSupport {

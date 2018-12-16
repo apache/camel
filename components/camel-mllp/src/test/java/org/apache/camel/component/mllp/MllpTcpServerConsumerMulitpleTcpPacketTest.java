@@ -25,16 +25,11 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-
 import org.apache.camel.test.AvailablePortFinder;
-
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
-
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.apache.camel.test.mllp.Hl7TestMessageGenerator;
 import org.apache.camel.test.mllp.PassthroughProcessor;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Rule;

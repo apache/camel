@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jetty;
-import org.junit.Before;
-
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 

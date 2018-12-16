@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.telegram.integration;
-import org.junit.Before;
 
 import java.io.IOException;
 import java.util.Arrays;

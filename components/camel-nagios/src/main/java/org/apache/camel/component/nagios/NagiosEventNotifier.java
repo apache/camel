@@ -23,7 +23,6 @@ import com.googlecode.jsendnsca.MessagePayload;
 import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.NagiosSettings;
 import com.googlecode.jsendnsca.PassiveCheckSender;
-
 import org.apache.camel.management.event.CamelContextStartupFailureEvent;
 import org.apache.camel.management.event.CamelContextStopFailureEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;

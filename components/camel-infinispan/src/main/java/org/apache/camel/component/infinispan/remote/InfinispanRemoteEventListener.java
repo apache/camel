@@ -17,6 +17,7 @@
 package org.apache.camel.component.infinispan.remote;
 
 import java.util.Set;
+
 import org.apache.camel.component.infinispan.InfinispanConsumer;
 import org.apache.camel.component.infinispan.InfinispanEventListener;
 import org.infinispan.client.hotrod.annotation.ClientCacheEntryCreated;

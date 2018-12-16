@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.regex.PatternSyntaxException;
+
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -1379,7 +1381,10 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
             int archetypes = 0;
             try {
                 String xml = archetypeCatalogAsXml();
-                Document dom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
+
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+                Document dom = dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
                 Object val = XPathFactory.newInstance().newXPath().evaluate("count(/archetype-catalog/archetypes/archetype)", dom, XPathConstants.NUMBER);
                 double num = (double) val;
                 archetypes = (int) num;

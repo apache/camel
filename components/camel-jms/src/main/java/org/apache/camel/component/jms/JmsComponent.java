@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import javax.jms.Message;

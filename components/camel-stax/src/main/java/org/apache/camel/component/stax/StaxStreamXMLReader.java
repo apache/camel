@@ -18,6 +18,7 @@ package org.apache.camel.component.stax;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import javax.xml.namespace.QName;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;

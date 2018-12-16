@@ -18,11 +18,11 @@ package org.apache.camel.component.ahc;
 
 import java.net.URI;
 import java.util.Map;
+
 import javax.net.ssl.SSLContext;
 
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.JdkSslContext;
-
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;

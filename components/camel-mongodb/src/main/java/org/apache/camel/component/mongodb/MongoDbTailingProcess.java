@@ -25,7 +25,6 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoCursorNotFoundException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

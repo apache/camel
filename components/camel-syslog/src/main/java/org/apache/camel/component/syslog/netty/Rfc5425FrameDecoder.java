@@ -23,7 +23,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
-
 import org.apache.camel.component.netty4.ChannelHandlerFactory;
 
 public class Rfc5425FrameDecoder extends ByteToMessageDecoder implements ChannelHandlerFactory {

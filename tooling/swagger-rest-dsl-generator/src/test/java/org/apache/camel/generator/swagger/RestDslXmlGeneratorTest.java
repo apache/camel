@@ -63,5 +63,17 @@ public class RestDslXmlGeneratorTest {
         assertThat(xml).isEqualToIgnoringWhitespace(expectedContent);
     }
 
+    @Test
+    public void shouldGenerateXmlWithRestComponent() throws Exception {
+        final CamelContext context = new DefaultCamelContext();
+
+        final String xml = RestDslGenerator.toXml(swagger).withRestComponent("servlet").withRestContextPath("/foo").generate(context);
+
+        final URI file = RestDslGeneratorTest.class.getResource("/SwaggerPetstoreWithRestComponentXml.txt").toURI();
+        final String expectedContent = new String(Files.readAllBytes(Paths.get(file)), StandardCharsets.UTF_8);
+
+        assertThat(xml).isEqualTo(expectedContent);
+    }
+
 
 }

@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.spring.ws;
-import org.junit.Before;
-
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.spring.ws.bean.CamelEndpointMapping;
@@ -25,6 +23,7 @@ import org.apache.camel.component.spring.ws.jaxb.QuoteResponse;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

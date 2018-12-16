@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>connectors-examples</artifactId>
-  <name>Camel :: Connectors :: Examples</name>
+  <name>Camel :: Connectors :: Examples (deprecated)</name>
   <description>Camel Connectors Examples</description>
   <packaging>pom</packaging>
 

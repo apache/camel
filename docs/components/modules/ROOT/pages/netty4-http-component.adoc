@@ -1,0 +1,1 @@
+../../../../../components/camel-netty4-http/src/main/docs/netty4-http-component.adoc

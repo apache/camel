@@ -18,9 +18,9 @@ package org.apache.camel.component.smpp;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.HashMap;
 import java.util.Map;
+
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;

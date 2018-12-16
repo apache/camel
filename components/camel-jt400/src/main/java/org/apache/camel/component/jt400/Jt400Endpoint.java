@@ -18,7 +18,9 @@ package org.apache.camel.component.jt400;
 
 import java.net.URISyntaxException;
 import java.util.Arrays;
+
 import javax.naming.OperationNotSupportedException;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
 import org.apache.camel.CamelException;

@@ -1,0 +1,1 @@
+../../../../../components/camel-jira/src/main/docs/jira-component.adoc

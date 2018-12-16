@@ -17,9 +17,7 @@
 package org.apache.camel.component.mongodb;
 
 import com.mongodb.WriteResult;
-
 import org.apache.camel.builder.RouteBuilder;
-
 import org.junit.Ignore;
 import org.junit.Test;
 

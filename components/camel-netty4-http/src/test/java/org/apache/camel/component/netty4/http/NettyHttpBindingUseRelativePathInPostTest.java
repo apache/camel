@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty4.http;
 
 import io.netty.handler.codec.http.FullHttpRequest;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

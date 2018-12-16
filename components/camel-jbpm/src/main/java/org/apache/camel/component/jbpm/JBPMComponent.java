@@ -26,7 +26,11 @@ public class JBPMComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JBPMConfiguration configuration = new JBPMConfiguration();
-        configuration.setConnectionURL(new URL(remaining));
+        if (remaining.startsWith("events")) {
+            configuration.setEventListenerType(remaining.split(":")[1]);
+        } else {        
+            configuration.setConnectionURL(new URL(remaining));
+        }
         setProperties(configuration, parameters);
         return new JBPMEndpoint(uri, this, configuration);
     }

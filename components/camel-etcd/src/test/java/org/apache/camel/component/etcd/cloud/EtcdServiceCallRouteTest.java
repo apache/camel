@@ -16,8 +16,6 @@
  */
 
 package org.apache.camel.component.etcd.cloud;
-import org.junit.After;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +28,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.etcd.EtcdHelper;
 import org.apache.camel.component.etcd.EtcdTestSupport;
+import org.junit.After;
 import org.junit.Test;
 
 public class EtcdServiceCallRouteTest extends EtcdTestSupport {

@@ -50,7 +50,12 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
     }
 
     public String getSpoolChiper() {
-        return streamCachingStrategy.getSpoolChiper();
+        return streamCachingStrategy.getSpoolCipher();
+    }
+
+    @Override
+    public String getSpoolCipher() {
+        return streamCachingStrategy.getSpoolCipher();
     }
 
     public void setSpoolThreshold(long threshold) {

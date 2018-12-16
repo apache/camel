@@ -43,6 +43,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.SedaConstants;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -65,8 +66,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     private String name;
     @UriParam(label = "advanced", description = "Define the queue instance which will be used by the endpoint")
     private BlockingQueue queue;
-    @UriParam(defaultValue = "" + Integer.MAX_VALUE)
-    private int size = Integer.MAX_VALUE;
+    @UriParam(defaultValue = "" + SedaConstants.QUEUE_SIZE)
+    private int size = SedaConstants.QUEUE_SIZE;
 
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
@@ -166,7 +167,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             // can use the already existing queue referenced from the component
             if (getComponent() != null) {
                 // use null to indicate default size (= use what the existing queue has been configured with)
-                Integer size = getSize() == Integer.MAX_VALUE ? null : getSize();
+                Integer size = (getSize() == Integer.MAX_VALUE || getSize() == SedaConstants.QUEUE_SIZE) ? null : getSize();
                 QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
                 queue = ref.getQueue();
                 String key = getComponent().getQueueKey(getEndpointUri());
@@ -259,6 +260,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     /**
      * The maximum capacity of the SEDA queue (i.e., the number of messages it can hold).
+     * Will by default use the defaultSize set on the SEDA component.
      */
     public void setSize(int size) {
         this.size = size;

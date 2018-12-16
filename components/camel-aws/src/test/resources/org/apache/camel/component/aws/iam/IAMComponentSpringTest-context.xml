@@ -40,6 +40,11 @@
             <to uri="mock:result"/>
         </route>
         <route>
+            <from uri="direct:getUser"/>
+            <to uri="aws-iam://Test?iamClient=#amazonIAMClient&amp;operation=getUser"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
             <from uri="direct:listUsers"/>
             <to uri="aws-iam://Test?iamClient=#amazonIAMClient&amp;operation=listUsers"/>
             <to uri="mock:result"/>
@@ -52,6 +57,11 @@
         <route>
             <from uri="direct:deleteAccessKey"/>
             <to uri="aws-iam://Test?iamClient=#amazonIAMClient&amp;operation=deleteAccessKey"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="direct:updateAccessKey"/>
+            <to uri="aws-iam://Test?iamClient=#amazonIAMClient&amp;operation=updateAccessKey"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

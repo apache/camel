@@ -21,7 +21,6 @@ import java.net.SocketTimeoutException;
 
 import org.apache.camel.test.stub.tcp.SocketInputStreamStub;
 import org.apache.camel.test.stub.tcp.SocketStub;
-
 import org.junit.Before;
 import org.junit.Test;
 

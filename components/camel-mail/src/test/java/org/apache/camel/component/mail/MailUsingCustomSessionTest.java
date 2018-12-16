@@ -19,6 +19,7 @@ package org.apache.camel.component.mail;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.Session;
 

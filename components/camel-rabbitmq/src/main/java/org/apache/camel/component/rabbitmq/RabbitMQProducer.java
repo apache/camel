@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;

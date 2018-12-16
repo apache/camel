@@ -17,6 +17,7 @@
 package org.apache.camel.component.ejb;
 
 import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 

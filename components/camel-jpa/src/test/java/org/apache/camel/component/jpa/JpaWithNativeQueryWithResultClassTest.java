@@ -30,7 +30,7 @@ public class JpaWithNativeQueryWithResultClassTest extends JpaWithNamedQueryTest
     @Override
     protected void assertReceivedResult(Exchange exchange) {
         assertNotNull(exchange);
-        MultiSteps result = (MultiSteps) exchange.getIn().getBody();
+        MultiSteps result = exchange.getIn().getBody(MultiSteps.class);
         assertNotNull("Received an object array", result);
         assertEquals("address property", "foo@bar.com", result.getAddress());
     }

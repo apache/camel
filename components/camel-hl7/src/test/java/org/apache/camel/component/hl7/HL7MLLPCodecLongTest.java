@@ -22,13 +22,11 @@ import java.io.InputStreamReader;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
 import ca.uhn.hl7v2.model.v25.segment.MSH;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
-
 import org.junit.Test;
 
 

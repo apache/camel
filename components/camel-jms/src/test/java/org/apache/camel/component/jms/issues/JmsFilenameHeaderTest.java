@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.issues;
 
 import java.io.File;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;

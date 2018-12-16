@@ -25,7 +25,6 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.junit.After;

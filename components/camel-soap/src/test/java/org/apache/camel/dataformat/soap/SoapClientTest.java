@@ -22,7 +22,6 @@ import com.example.customerservice.Customer;
 import com.example.customerservice.CustomerService;
 import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
-
 import org.apache.camel.Produce;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;

@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms.batch;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.Endpoint;
