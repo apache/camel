@@ -61,7 +61,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
     private PrivateKey signingPrivateKey;
     private PrivateKey decryptingPrivateKey;
 
-    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey) {
+    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, 
+                       Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
         this.signingAlgorithm = signingAlgorithm;
