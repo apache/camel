@@ -224,6 +224,13 @@ public class SalesforceSession implements Service {
             byte[] signed = signature.sign();
 
             token.append('.').append(Base64.getUrlEncoder().encodeToString(signed));
+
+            // Clean the private key from memory
+            try {
+                key.destroy();
+            } catch (javax.security.auth.DestroyFailedException ex) {
+                LOG.debug("Error destroying private key: {}", ex.getMessage());
+            }
         } catch (IOException | GeneralSecurityException e) {
             throw new IllegalStateException(e);
         }

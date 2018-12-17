@@ -38,6 +38,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.security.auth.Destroyable;
 import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
@@ -651,6 +652,16 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
                 throw ex;
             }
         }
+
+        // Clean the private key from memory
+        if (keyEncryptionKey instanceof Destroyable) {
+            try {
+                ((Destroyable)keyEncryptionKey).destroy();
+            } catch (javax.security.auth.DestroyFailedException ex) {
+                LOG.debug("Error destroying private key: {}", ex.getMessage());
+            }
+        }
+
         return  ret;
     }
     
