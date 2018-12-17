@@ -35,8 +35,8 @@ import org.apache.camel.Message;
 
 
 /**
- * Accesses the private key from a key-store and returns a KeyInfo which
- * contains the X.509 certificate chain corresponding to the private key.
+ * Accesses the public key from a key-store and returns a KeyInfo which
+ * contains the X.509 certificate chain corresponding to the public key.
  */
 public class DefaultKeyAccessor extends DefaultKeySelector implements KeyAccessor {
 
