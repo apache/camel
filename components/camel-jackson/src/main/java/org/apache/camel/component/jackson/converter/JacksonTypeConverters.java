@@ -24,6 +24,7 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.component.jackson.JacksonConstants;
@@ -42,6 +43,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
  * default the converter only attempts to convert to primitive types such as String and numbers. To convert to any kind, then
  * enable this by setting {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} to <tt>true</tt> on {@link CamelContext#getGlobalOptions()}.
  */
+@Converter
 public final class JacksonTypeConverters {
 
     private final ObjectMapper defaultMapper;
