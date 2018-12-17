@@ -1,6 +1,8 @@
+[[javaScript-language]]
 == JavaScript Language (deprecated)
 
 *Available as of Camel version 1.0*
+
 *Available as of Camel version 1.0*
 
 
