@@ -127,12 +127,12 @@ The component supports 29 options, which are listed below.
 | *camel.component.as2.configuration.as2-version* | The version of the AS2 protocol. | 1.1 | String
 | *camel.component.as2.configuration.client-fqdn* | The Client Fully Qualified Domain Name (FQDN). Used in message ids sent by endpoint. | camel.apache.org | String
 | *camel.component.as2.configuration.compression-algorithm* | The algorithm used to compress EDI message. |  | AS2Compression Algorithm
+| *camel.component.as2.configuration.decrypting-private-key* | The key used to encrypt the EDI message. |  | PrivateKey
 | *camel.component.as2.configuration.disposition-notification-to* | The value of the Disposition-Notification-To header. Assigning a value to this parameter requests a message disposition notification (MDN) for the AS2 message. |  | String
 | *camel.component.as2.configuration.edi-message-transfer-encoding* | The transfer encoding of EDI message. |  | String
 | *camel.component.as2.configuration.edi-message-type* | The content type of EDI message. One of application/edifact, application/edi-x12, application/edi-consent |  | ContentType
 | *camel.component.as2.configuration.encrypting-algorithm* | The algorithm used to encrypt EDI message. |  | AS2EncryptionAlgorithm
 | *camel.component.as2.configuration.encrypting-certificate-chain* | The chain of certificates used to encrypt EDI message. |  | Certificate[]
-| *camel.component.as2.configuration.encrypting-private-key* | The key used to encrypt the EDI message. |  | PrivateKey
 | *camel.component.as2.configuration.from* | The value of the From header of AS2 message. |  | String
 | *camel.component.as2.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.as2.configuration.request-uri* | The request URI of EDI message. | / | String
