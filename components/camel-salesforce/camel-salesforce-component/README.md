@@ -29,7 +29,7 @@ For example, the following producer endpoint uses the upsertSObject API, with th
 The request message body should be an SObject DTO generated using the maven plugin. 
 The response message will either be NULL if an existing record was updated, or [CreateSObjectResult] with an id of the new record, or a list of errors while creating the new object.
 
-	...to("force:upsertSObject?sObjectIdName=Name")...
+	...to("salesforce:upsertSObject?sObjectIdName=Name")...
 
 ## Bulk API ##
 
@@ -53,7 +53,7 @@ and the response may also be saved to a file to be correlated with the request.
 For example, the following producer endpoint uses the createBatch API to create a Job Batch. 
 The in message must contain a body that can be converted into an InputStream (usually UTF-8 CSV or XML content from a file, etc.) and header fields 'jobId' for the Job and 'contentType' for the Job content type, which can be XML, CSV, ZIP\_XML or ZIP\_CSV. The put message body will contain [BatchInfo] on success, or throw a [SalesforceException] on error.
 
-	...to("force:createBatchJob")..
+	...to("salesforce:createBatchJob")..
 
 ## Streaming API ##
 
@@ -61,11 +61,11 @@ Consumer endpoints can use the following sytax for streaming endpoints to receiv
 
 To create and subscribe to a topic
 
-	from("force:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
+	from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&sObjectName=Merchandise__c&updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c")...
 
 To subscribe to an existing topic
 
-	from("force:CamelTestTopic&sObjectName=Merchandise__c")...
+	from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
 
 ## Developing the Camel Salesforce component
 
