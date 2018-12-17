@@ -89,7 +89,7 @@ The Jetty 9 component supports 33 options, which are listed below.
 | *proxyHost* (proxy) | To use a http proxy to configure the hostname. |  | String
 | *proxyPort* (proxy) | To use a http proxy to configure the port number. |  | Integer
 | *useXForwardedFor Header* (common) | To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr. | false | boolean
-| *sendServerVersion* (consumer) | If the option is true, jetty server will send the date header to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected. | true | boolean
+| *sendServerVersion* (consumer) | If the option is true, jetty will send the server header with the jetty version information to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected. | true | boolean
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
