@@ -61,6 +61,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.RestProducerFactoryHelper;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -1102,7 +1103,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
      * If the option is true, jetty will send the server header with the jetty version information to the client which sends the request.
      * NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.
      */
-    @Metadata(description = "If the option is true, jetty server will send the date header to the client which sends the request."
+    @Metadata(description = "If the option is true, jetty will send the server header with the jetty version information to the client which sends the request."
             + " NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.",
             defaultValue = "true", label = "consumer")
     public void setSendServerVersion(boolean sendServerVersion) {
