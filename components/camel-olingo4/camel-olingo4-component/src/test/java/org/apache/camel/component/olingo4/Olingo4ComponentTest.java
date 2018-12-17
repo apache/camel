@@ -98,13 +98,8 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         final Long count = (Long)requestBodyAndHeaders("direct:readcount", null, headers);
         assertEquals(20, count.intValue());
 
-<<<<<<< HEAD
-        final ClientPrimitiveValue value = (ClientPrimitiveValue)requestBodyAndHeaders("direct://readvalue", null, headers);
-        LOG.info("Client value \"{}\" has type {}", value.toString(), value.getTypeName());
-=======
         final ClientPrimitiveValue value = (ClientPrimitiveValue)requestBodyAndHeaders("direct:readvalue", null, headers);
         LOG.info("Client value \"{}\" has type {}", value, value.getTypeName());
->>>>>>> ce98b24341a... CAMEL-13005: olingo4 component serviceUri not set
         assertEquals("Male", value.asPrimitive().toString());
 
         final ClientPrimitiveValue singleProperty = (ClientPrimitiveValue)requestBodyAndHeaders("direct:readsingleprop", null, headers);
