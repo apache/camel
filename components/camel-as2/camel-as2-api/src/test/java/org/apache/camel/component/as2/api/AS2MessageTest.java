@@ -137,15 +137,14 @@ public class AS2MessageTest {
     private static final HttpDateGenerator DATE_GENERATOR = new HttpDateGenerator();
 
     private static AS2ServerConnection testServer;
-
-    private AS2SignedDataGenerator gen;
-
     private static KeyPair issueKP;
     private static X509Certificate issueCert;
 
     private static KeyPair signingKP;
     private static X509Certificate signingCert;
     private static List<X509Certificate> certList;
+
+    private AS2SignedDataGenerator gen;
     
     @BeforeClass
     public static void setUpOnce() throws Exception {
