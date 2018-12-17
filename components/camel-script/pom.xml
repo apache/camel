@@ -28,7 +28,7 @@
 
     <artifactId>camel-script</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Script</name>
+    <name>Camel :: Script (deprecated)</name>
     <description>Camel Script support</description>
 
     <properties>

@@ -333,7 +333,9 @@ public class ExpressionClauseSupport<T> {
      *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
+     * @deprecated JavaScript is deprecated in Java 11 onwards
      */
+    @Deprecated
     public T javaScript(String text) {
         return expression(new JavaScriptExpression(text));
     }

@@ -25,11 +25,14 @@ import org.apache.camel.spi.Metadata;
 /**
  * To use JavaScript in Camel expressions or predicates.
  *
- * @version 
+ * @deprecated JavaScript is deprecated in Java 11 onwards
+ * @version
  */
-@Metadata(firstVersion = "1.0.0", label = "language,script", title = "JavaScript")
+@Metadata(firstVersion = "1.0.0", label = "language,script", title = "JavaScript",
+    deprecationNode = "JavaScript is deprecated in Java 11 onwards")
 @XmlRootElement(name = "javaScript")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class JavaScriptExpression extends ExpressionDefinition {
 
     public JavaScriptExpression() {

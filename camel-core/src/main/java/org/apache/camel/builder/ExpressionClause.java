@@ -432,6 +432,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T el(String text) {
         return delegate.el(text);
     }
@@ -454,7 +455,9 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
+     * @deprecated JavaScript is deprecated in Java 11 onwards
      */
+    @Deprecated
     public T javaScript(String text) {
         return delegate.javaScript(text);
     }
@@ -571,6 +574,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T jxpath(String text) {
         return delegate.jxpath(text);
     }
@@ -582,6 +586,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param lenient to configure whether lenient is in use or not
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T jxpath(String text, boolean lenient) {
         return delegate.jxpath(text, lenient);
     }
@@ -615,6 +620,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T php(String text) {
         return delegate.php(text);
     }
@@ -626,6 +632,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T python(String text) {
         return delegate.python(text);
     }
@@ -648,6 +655,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T ruby(String text) {
         return delegate.ruby(text);
     }
@@ -659,6 +667,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
+    @Deprecated
     public T sql(String text) {
         return delegate.sql(text);
     }
