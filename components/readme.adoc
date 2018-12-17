@@ -1006,7 +1006,7 @@ Number of Languages: 18 in 9 JAR artifacts (0 deprecated)
 
 | link:camel-hl7/src/main/docs/terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
 
-| link:camel-script/src/main/docs/javaScript-language.adoc[JavaScript] (camel-script) | 1.0 | To use JavaScript in Camel expressions or predicates.
+| link:camel-script/src/main/docs/javaScript-language.adoc[JavaScript] (camel-script) | 1.0 | *deprecated* To use JavaScript in Camel expressions or predicates.
 
 | link:camel-jsonpath/src/main/docs/jsonpath-language.adoc[JsonPath] (camel-jsonpath) | 2.13 | To use JsonPath in Camel expressions or predicates.
 
