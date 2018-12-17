@@ -720,8 +720,13 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             for (Map.Entry<String, String> entry : entries) {
                 String prefix = entry.getKey();
                 String uri = entry.getValue();
-                staticQueryContext.declareNamespace(prefix, uri);
-                staticQueryContext.setInheritNamespaces(true);
+                // skip invalid prefix or uri according to XQuery spec
+                boolean invalid = "xml".equals(prefix) || "xmlns".equals(prefix);
+                if (!invalid) {
+                    LOG.debug("Declaring namespace [prefix: {}, uri: {}]", prefix, uri);
+                    staticQueryContext.declareNamespace(prefix, uri);
+                    staticQueryContext.setInheritNamespaces(true);
+                }
             }
             expression = createQueryExpression(staticQueryContext);
 
