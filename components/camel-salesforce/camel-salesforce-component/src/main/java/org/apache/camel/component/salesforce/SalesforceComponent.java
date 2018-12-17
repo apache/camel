@@ -83,7 +83,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         + " directly on the component as well", label = "common,security")
     private SalesforceLoginConfig loginConfig;
 
-    @Metadata(description = "URL of the Salesforce instance used after authantication, by default received from"
+    @Metadata(description = "URL of the Salesforce instance used after authentication, by default received from"
         + " Salesforce on successful authentication", label = "common,security")
     private String instanceUrl;
 
@@ -134,7 +134,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private AuthenticationType authenticationType;
 
     @Metadata(description = "If set to true prevents the component from authenticating to Salesforce with the start of"
-        + " the component. You would generaly set this to the (default) false and authenticate early and be immediately"
+        + " the component. You would generally set this to the (default) false and authenticate early and be immediately"
         + " aware of any authentication issues.", defaultValue = "false", label = "common,security")
     private boolean lazyLogin;
 

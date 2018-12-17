@@ -81,7 +81,7 @@ You can append query options to the URI in the following format,
 With Camel 2.21 there is support to pass https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/headers.htm[Salesforce headers]
 via inbound message headers, header names that start with `Sforce` or
 `x-sfdc` on the Camel message will be passed on in the request, and
-response headers that start with `Sforce` will be present in the outboud
+response headers that start with `Sforce` will be present in the outbound
 message headers.
 
 For example to fetch API limits you can specify:
@@ -204,7 +204,7 @@ error.
 
 ==== Rest Streaming API
 
-Consumer endpoints can use the following sytax for streaming endpoints
+Consumer endpoints can use the following syntax for streaming endpoints
 to receive Salesforce notifications on create/update.
 
 To create and subscribe to a topic
@@ -227,7 +227,7 @@ To emit a platform event use `createSObject` operation. And set the
 message body can be JSON string or InputStream with key-value data --
 in that case `sObjectName` needs to be set to the API name of the
 event, or a class that extends from AbstractDTOBase with the
-appropriate class name for the event.  
+appropriate class name for the event.
 
 For example using a DTO:
 
@@ -605,7 +605,7 @@ The Salesforce component supports 29 options, which are listed below.
 | Name | Description | Default | Type
 | *authenticationType* (security) | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. |  | AuthenticationType
 | *loginConfig* (security) | All authentication configuration in one nested bean, all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
-| *instanceUrl* (security) | URL of the Salesforce instance used after authantication, by default received from Salesforce on successful authentication |  | String
+| *instanceUrl* (security) | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
 | *loginUrl* (security) | *Required* URL of the Salesforce instance used for authentication, by default set to https://login.salesforce.com | https://login.salesforce.com | String
 | *clientId* (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
 | *clientSecret* (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
@@ -613,7 +613,7 @@ The Salesforce component supports 29 options, which are listed below.
 | *refreshToken* (security) | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token, or configure using the builtin callback at https://login.salesforce.com/services/oauth2/success or https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
 | *userName* (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. |  | String
 | *password* (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
-| *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generaly set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
+| *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
 | *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpoint Config
 | *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | *longPollingTransport Properties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
@@ -788,11 +788,9 @@ The component supports 85 options, which are listed below.
 | *camel.component.salesforce.http-proxy-realm* | Realm of the proxy server, used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
 | *camel.component.salesforce.http-proxy-use-digest-auth* | If set to true Digest authentication will be used when authenticating to the HTTP proxy,otherwise Basic authorization method will be used | false | Boolean
 | *camel.component.salesforce.http-proxy-username* | Username to use to authenticate against the HTTP proxy server. |  | String
-| *camel.component.salesforce.instance-url* | URL of the Salesforce instance used after authantication, by default received from Salesforce on successful authentication |  | String
+| *camel.component.salesforce.instance-url* | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
 | *camel.component.salesforce.is-http-proxy-secure* | If set to false disables the use of TLS when accessing the HTTP proxy. | true | Boolean
 | *camel.component.salesforce.is-http-proxy-socks4* | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | Boolean
-| *camel.component.salesforce.keystore* | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. The option is a org.apache.camel.support.jsse.KeyStoreParameters type. |  | String
-| *camel.component.salesforce.lazy-login* | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generaly set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | Boolean
 | *camel.component.salesforce.login-config.client-id* | Salesforce connected application Consumer Key |  | String
 | *camel.component.salesforce.login-config.client-secret* | Salesforce connected application Consumer Secret |  | String
 | *camel.component.salesforce.login-config.instance-url* |  |  | String
