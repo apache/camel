@@ -57,7 +57,7 @@ The in message must contain a body that can be converted into an InputStream (us
 
 ## Streaming API ##
 
-Consumer endpoints can use the following sytax for streaming endpoints to receive Salesforce notifications on create/update. 
+Consumer endpoints can use the following syntax for streaming endpoints to receive Salesforce notifications on create/update. 
 
 To create and subscribe to a topic
 
