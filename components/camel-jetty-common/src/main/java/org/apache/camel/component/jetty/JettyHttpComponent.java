@@ -61,7 +61,6 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.RestProducerFactoryHelper;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
