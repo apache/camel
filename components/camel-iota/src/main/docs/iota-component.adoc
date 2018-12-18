@@ -25,44 +25,51 @@ for this component:
 iota:name?url=nodeurl[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
+=== Options
+
+// component options: START
+The IOTA component has no options.
+// component options: END
+
+// endpoint options: START
+The IOTA endpoint is configured using URI syntax:
+
+----
+iota:name
+----
+
+with the following path and query parameters:
+
 ==== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *name* | *Required* Name of component to use. |  | String
+| *name* | *Required* Component name |  | String
 |===
 
 
-==== Query Parameters (5 parameters):
+==== Query Parameters (10 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *url* (common) | *Required* Node url |  | String
-| *operation* (producer) | *Required* Supported operations are 'sendTransfer', 'getNewAddress', 'getTransfers' |  | String
-| *tag* (producer) | TAG |  | String
-| *securityLevel* (producer) | Address security level | 1 | int
-| *minWeightMagnitude* (producer) | The minWeightMagnitude is the minimum number of zeroes that a proof-of-work output/transaction hash must end with to be considered valid by full nodes | 14 | int
-| *depth* (producer) | The depth determines how deep the tangle is analysed for getting Tips | 9 | int
+| *depth* (common) | The depth determines how deep the tangle is analysed for getting Tips | 9 | Integer
+| *minWeightMagnitude* (common) | The minWeightMagnitude is the minimum number of zeroes that a proof-of-work output/transaction hash must end with to be considered valid by full nodes | 14 | Integer
+| *operation* (common) | Supported operations are 'sendTransfer', 'getNewAddress' |  | String
+| *securityLevel* (common) | Address security level | 1 | Integer
+| *tag* (common) | TAG |  | String
+| *url* (common) | Node url |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
-
-
-The component supports 2 options, which are listed below.
-
-
-
-[width="100%",cols="2,5,^1,2",options="header"]
-|===
-| Name | Description | Default | Type
-| *camel.component.iota.enabled* | Enable IOTA component | true | Boolean
-| *camel.component.iota.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-|===
 // spring-boot-auto-configure options: END
 
 === Sample route
