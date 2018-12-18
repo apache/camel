@@ -17,7 +17,9 @@
 package org.apache.camel.component.netty4.http;
 
 import org.apache.camel.http.common.HttpSendDynamicAware;
+import org.apache.camel.spi.annotations.SendDynamic;
 
+@SendDynamic("netty4-http")
 public class NettyHttpSendDynamicAware extends HttpSendDynamicAware {
 
     @Override

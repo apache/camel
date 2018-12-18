@@ -21,8 +21,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
+import org.apache.camel.spi.annotations.CloudServiceFactory;
 import org.apache.camel.util.ObjectHelper;
 
+@CloudServiceFactory("caching-service-discovery")
 public class CachingServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private Integer timeout;
     private TimeUnit units;

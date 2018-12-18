@@ -19,7 +19,9 @@ package org.apache.camel.component.undertow.cloud;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.cloud.ServiceExpressionFactory;
+import org.apache.camel.spi.annotations.CloudServiceFactory;
 
+@CloudServiceFactory("undertow-service-expression")
 public class UndertowServiceExpressionFactory implements ServiceExpressionFactory {
     @Override
     public Expression newInstance(CamelContext camelContext) throws Exception {
