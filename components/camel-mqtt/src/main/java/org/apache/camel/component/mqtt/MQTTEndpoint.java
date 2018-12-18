@@ -225,6 +225,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         super.doStart();
 
         createConnection();
+        connect();
     }
 
     protected void createConnection() {
