@@ -63,7 +63,7 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
 
     @Test
     public void testExactlyOnceQualityOfServiceConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("mqtt:todo?qualityOfService=exactlyOnce");
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?qualityOfService=exactlyOnce&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
         assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
         MQTTEndpoint mqttEndpoint = (MQTTEndpoint)endpoint;
 
@@ -72,7 +72,7 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
 
     @Test
     public void testAtLeastOnceQualityOfServiceConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("mqtt:todo?qualityOfService=AtLeastOnce");
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?qualityOfService=AtLeastOnce&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
         assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
         MQTTEndpoint mqttEndpoint = (MQTTEndpoint)endpoint;
 
@@ -81,7 +81,7 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
 
     @Test
     public void testAtMostOnceQualityOfServiceConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("mqtt:todo?qualityOfService=AtMostOnce");
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?qualityOfService=AtMostOnce&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
         assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
         MQTTEndpoint mqttEndpoint = (MQTTEndpoint)endpoint;
 
