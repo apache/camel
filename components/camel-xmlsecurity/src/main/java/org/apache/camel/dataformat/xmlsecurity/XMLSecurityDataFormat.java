@@ -34,10 +34,10 @@ import java.util.Arrays;
 import java.util.Map;
 
 import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.security.auth.Destroyable;
 import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
@@ -378,7 +378,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
                 + " ] exists in " + "the configured trust store.");
         }
         
-        Key dataEncryptionKey = generateDataEncryptionKey();
+        SecretKey dataEncryptionKey = generateDataEncryptionKey();
         
         XMLCipher keyCipher;
         if (null != this.getKeyCipherAlgorithm()) {
@@ -386,14 +386,21 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         } else {
             keyCipher = XMLCipher.getInstance(XMLCipher.RSA_OAEP, null, digestAlgorithm);
         }
-        
+
         keyCipher.init(XMLCipher.WRAP_MODE, keyEncryptionKey);
         encrypt(exchange, document, stream, dataEncryptionKey, keyCipher, keyEncryptionKey);
+
+        // Clean the secret key from memory
+        try {
+            dataEncryptionKey.destroy();
+        } catch (javax.security.auth.DestroyFailedException ex) {
+            LOG.debug("Error destroying key: {}", ex.getMessage());
+        }
     }
      
     private void encryptSymmetric(Exchange exchange, Document document, OutputStream stream) throws Exception {
-        Key keyEncryptionKey;
-        Key dataEncryptionKey;
+        SecretKey keyEncryptionKey;
+        SecretKey dataEncryptionKey;
         if (xmlCipherAlgorithm.equals(XMLCipher.TRIPLEDES)) {
             keyEncryptionKey = generateKeyEncryptionKey("DESede");
             dataEncryptionKey = generateDataEncryptionKey();
@@ -412,6 +419,19 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         keyCipher.init(XMLCipher.WRAP_MODE, keyEncryptionKey);
         
         encrypt(exchange, document, stream, dataEncryptionKey, keyCipher, keyEncryptionKey);
+
+        // Clean the secret keys from memory
+        try {
+            dataEncryptionKey.destroy();
+        } catch (javax.security.auth.DestroyFailedException ex) {
+            LOG.debug("Error destroying key: {}", ex.getMessage());
+        }
+        
+        try {
+            keyEncryptionKey.destroy();
+        } catch (javax.security.auth.DestroyFailedException ex) {
+            LOG.debug("Error destroying key: {}", ex.getMessage());
+        }
     }
     
     
@@ -419,10 +439,10 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
      * Returns the private key for the specified alias, or null if the alias or private key is not found.
      */
     // TODO Move this to a crypto utility class
-    private Key getPrivateKey(KeyStore keystore, String alias, String password) throws Exception {
+    private PrivateKey getPrivateKey(KeyStore keystore, String alias, String password) throws Exception {
         Key key = keystore.getKey(alias, password.toCharArray());
         if (key instanceof PrivateKey) {
-            return key;
+            return (PrivateKey)key;
         } else {
             return null;
         }
@@ -499,7 +519,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     }
     
     private Object decodeWithSymmetricKey(Exchange exchange, Document encodedDocument) throws Exception {
-        Key keyEncryptionKey;
+        SecretKey keyEncryptionKey;
         if (xmlCipherAlgorithm.equals(XMLCipher.TRIPLEDES)) {
             keyEncryptionKey = generateKeyEncryptionKey("DESede");
         } else {
@@ -517,6 +537,14 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
                 throw ex;
             }
         }
+
+        // Clean the secret key from memory
+        try {
+            keyEncryptionKey.destroy();
+        } catch (javax.security.auth.DestroyFailedException ex) {
+            LOG.debug("Error destroying key: {}", ex.getMessage());
+        }
+
         return  ret;
     }
     
@@ -531,7 +559,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
             throw new IllegalStateException("A key store must be defined for asymmetric key decryption.");
         }
         
-        Key keyEncryptionKey = getPrivateKey(this.keyStore, this.recipientKeyAlias, 
+        PrivateKey keyEncryptionKey = getPrivateKey(this.keyStore, this.recipientKeyAlias,
                  this.keyPassword != null ? this.keyPassword : this.keyStorePassword);
         Object ret = null;
         try {
@@ -546,12 +574,10 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         }
 
         // Clean the private key from memory
-        if (keyEncryptionKey instanceof Destroyable) {
-            try {
-                ((Destroyable)keyEncryptionKey).destroy();
-            } catch (javax.security.auth.DestroyFailedException ex) {
-                LOG.debug("Error destroying private key: {}", ex.getMessage());
-            }
+        try {
+            keyEncryptionKey.destroy();
+        } catch (javax.security.auth.DestroyFailedException ex) {
+            LOG.debug("Error destroying key: {}", ex.getMessage());
         }
 
         return  ret;
@@ -613,11 +639,11 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
     }
     
     
-    private Key generateKeyEncryptionKey(String algorithm) throws 
+    private SecretKey generateKeyEncryptionKey(String algorithm) throws
             InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException {
 
         DESedeKeySpec keySpec;
-        Key secretKey;
+        SecretKey secretKey;
         try {
             if (algorithm.equalsIgnoreCase("DESede")) {
                 keySpec = new DESedeKeySpec(passPhrase);
@@ -644,7 +670,7 @@ public class XMLSecurityDataFormat extends ServiceSupport implements DataFormat,
         return secretKey;
     }
     
-    private Key generateDataEncryptionKey() throws Exception {      
+    private SecretKey generateDataEncryptionKey() throws Exception {
         KeyGenerator keyGenerator = null;
         if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.TRIPLEDES)) {
             keyGenerator = KeyGenerator.getInstance("DESede");
