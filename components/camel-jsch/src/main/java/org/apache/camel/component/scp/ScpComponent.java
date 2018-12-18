@@ -24,9 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
-import org.apache.camel.component.file.strategy.FileProcessStrategyFactory;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.spi.annotations.Factory;
 
 /**
  * Component providing secure messaging using JSch

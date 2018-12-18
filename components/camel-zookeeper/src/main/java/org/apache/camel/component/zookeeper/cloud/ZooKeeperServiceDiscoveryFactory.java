@@ -23,10 +23,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryFactory;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
+import org.apache.camel.spi.annotations.CloudServiceFactory;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.AuthInfo;
 import org.apache.curator.framework.CuratorFramework;
 
+@CloudServiceFactory("zookeeper-service-discovery")
 public class ZooKeeperServiceDiscoveryFactory implements ServiceDiscoveryFactory {
 
     private ZooKeeperCuratorConfiguration configuration;

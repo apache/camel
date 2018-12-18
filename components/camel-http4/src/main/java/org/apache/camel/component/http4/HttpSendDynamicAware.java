@@ -14,17 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http4.cloud;
+package org.apache.camel.component.http4;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
-import org.apache.camel.cloud.ServiceExpressionFactory;
-import org.apache.camel.spi.annotations.CloudServiceFactory;
+import org.apache.camel.spi.annotations.SendDynamic;
 
-@CloudServiceFactory("http4-service-expression,https4-service-expression")
-public class Http4ServiceExpressionFactory implements ServiceExpressionFactory {
-    @Override
-    public Expression newInstance(CamelContext camelContext) throws Exception {
-        return new Http4ServiceExpression();
-    }
+@SendDynamic("http4,https4")
+public class HttpSendDynamicAware extends org.apache.camel.http.common.HttpSendDynamicAware {
+
 }
