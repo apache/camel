@@ -791,6 +791,8 @@ The component supports 85 options, which are listed below.
 | *camel.component.salesforce.instance-url* | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
 | *camel.component.salesforce.is-http-proxy-secure* | If set to false disables the use of TLS when accessing the HTTP proxy. | true | Boolean
 | *camel.component.salesforce.is-http-proxy-socks4* | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | Boolean
+| *camel.component.salesforce.keystore* | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. The option is a org.apache.camel.support.jsse.KeyStoreParameters type. |  | String
+| *camel.component.salesforce.lazy-login* | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | Boolean
 | *camel.component.salesforce.login-config.client-id* | Salesforce connected application Consumer Key |  | String
 | *camel.component.salesforce.login-config.client-secret* | Salesforce connected application Consumer Secret |  | String
 | *camel.component.salesforce.login-config.instance-url* |  |  | String
