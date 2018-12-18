@@ -64,7 +64,7 @@ public class SalesforceComponentConfiguration
      */
     private SalesforceLoginConfigNestedConfiguration loginConfig;
     /**
-     * URL of the Salesforce instance used after authantication, by default
+     * URL of the Salesforce instance used after authentication, by default
      * received from Salesforce on successful authentication
      */
     private String instanceUrl;
@@ -119,7 +119,7 @@ public class SalesforceComponentConfiguration
     private String password;
     /**
      * If set to true prevents the component from authenticating to Salesforce
-     * with the start of the component. You would generaly set this to the
+     * with the start of the component. You would generally set this to the
      * (default) false and authenticate early and be immediately aware of any
      * authentication issues.
      */
