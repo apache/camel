@@ -148,12 +148,14 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     }
 
     class ConnectorRef {
+        CamelContext camelContext;
         Server server;
         Connector connector;
         CamelServlet servlet;
         int refCount;
 
-        ConnectorRef(Server server, Connector connector, CamelServlet servlet) {
+        ConnectorRef(CamelContext camelContext, Server server, Connector connector, CamelServlet servlet) {
+            this.camelContext = camelContext;
             this.server = server;
             this.connector = connector;
             this.servlet = servlet;
@@ -316,6 +318,34 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
     protected abstract JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException;
 
+    @Override
+    public boolean canConnect(HttpConsumer consumer) throws Exception {
+        // Make sure that there is a connector for the requested endpoint.
+        JettyHttpEndpoint endpoint = (JettyHttpEndpoint)consumer.getEndpoint();
+        String connectorKey = getConnectorKey(endpoint);
+
+        synchronized (CONNECTORS) {
+            ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
+
+            // check if there are already another consumer on the same context-path and if so fail
+            if (connectorRef != null) {
+                for (Map.Entry<String, HttpConsumer> entry : connectorRef.servlet.getConsumers().entrySet()) {
+                    String path = entry.getValue().getPath();
+                    CamelContext camelContext = entry.getValue().getEndpoint().getCamelContext();
+                    if (consumer.getPath().equals(path)) {
+                        // its allowed if they are from the same camel context
+                        boolean sameContext = consumer.getEndpoint().getCamelContext() == camelContext;
+                        if (!sameContext) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Connects the URL specified on the endpoint to the specified processor.
      */
@@ -339,16 +369,19 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 }
                 server.addConnector(connector);
 
-                connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
+                connectorRef = new ConnectorRef(getCamelContext(), server, connector, createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
                 // must enable session before we start
                 if (endpoint.isSessionSupport()) {
                     enableSessionSupport(connectorRef.server, connectorKey);
                 }
                 connectorRef.server.start();
 
+                LOG.debug("Adding connector key: {} -> {}", connectorKey, connectorRef);
                 CONNECTORS.put(connectorKey, connectorRef);
 
             } else {
+                LOG.debug("Using existing connector key: {} -> {}", connectorKey, connectorRef);
+
                 // check if there are any new handlers, and if so then we need to re-start the server
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
                     List<Handler> existingHandlers = new ArrayList<>();

@@ -21,7 +21,9 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.impl.DefaultConsumer;
 
 public class HttpConsumer extends DefaultConsumer implements Suspendable {
+    protected volatile boolean canConnected;
     private volatile boolean suspended;
+
     private boolean traceEnabled;
     private boolean optionsEnabled;
 
@@ -51,14 +53,20 @@ public class HttpConsumer extends DefaultConsumer implements Suspendable {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        getEndpoint().connect(this);
-        suspended = false;
+        if (getEndpoint().canConnect(this)) {
+            canConnected = true;
+            getEndpoint().connect(this);
+            suspended = false;
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
         suspended = false;
-        getEndpoint().disconnect(this);
+        if (canConnected) {
+            canConnected = false;
+            getEndpoint().disconnect(this);
+        }
         super.doStop();
     }
 
