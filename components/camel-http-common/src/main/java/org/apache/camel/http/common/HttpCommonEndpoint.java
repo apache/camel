@@ -179,6 +179,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         component.disconnect(consumer);
     }
 
+    public boolean canConnect(HttpConsumer consumer) throws Exception {
+        return component.canConnect(consumer);
+    }
+
     @Override
     public HttpCommonComponent getComponent() {
         return (HttpCommonComponent) super.getComponent();
