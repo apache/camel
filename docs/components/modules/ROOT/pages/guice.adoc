@@ -1,1 +1,0 @@
-../../../../../components/camel-guice/src/main/docs/guice.adoc

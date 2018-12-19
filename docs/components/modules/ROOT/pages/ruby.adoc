@@ -1,1 +1,0 @@
-../../../../../components/camel-ruby/src/main/docs/ruby.adoc

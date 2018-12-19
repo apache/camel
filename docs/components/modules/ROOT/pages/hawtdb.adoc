@@ -1,1 +1,0 @@
-../../../../../components/camel-hawtdb/src/main/docs/hawtdb.adoc

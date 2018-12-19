@@ -1,1 +1,0 @@
-../../../../../components/camel-openshift/src/main/docs/openshift-component.adoc
