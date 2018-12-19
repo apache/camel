@@ -35,10 +35,10 @@ import org.apache.camel.component.apns.model.ReconnectionPolicy;
 import org.apache.camel.component.apns.util.AssertUtils;
 import org.apache.camel.component.apns.util.ParamUtils;
 import org.apache.camel.component.apns.util.ResourceUtils;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public class ApnsServiceFactory implements CamelContextAware {
 
