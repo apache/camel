@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.DefaultProducer;
 import org.fusesource.mqtt.client.BlockingConnection;
 import org.fusesource.mqtt.client.MQTT;
 import org.fusesource.mqtt.client.Message;
@@ -57,7 +58,7 @@ public class MQTTLoopProducerTest extends MQTTBaseTest {
         });
         thread.start();
 
-        Producer producer = context.getEndpoint("direct:foo").createProducer();
+        DefaultProducer producer = (DefaultProducer) context.getEndpoint("direct:foo").createProducer();
         for (int i = 0; i < numberOfMessages; i++) {
             Exchange exchange = producer.createExchange();
             exchange.getIn().setBody("test message " + i);
