@@ -71,10 +71,10 @@ public class MQTTLoopProducerTest extends MQTTBaseTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:foo")
-                .setHeader(MQTTConfiguration.MQTT_PUBLISH_TOPIC, constant(TEST_TOPIC))
-                .to("mqtt:boo1?host=" + MQTTTestSupport.getHostForMQTTEndpoint() + "&qualityOfService=AtMostOnce")
-                .setHeader(MQTTConfiguration.MQTT_PUBLISH_TOPIC, constant(TEST_TOPIC))
-                .to("mqtt:boo2?host=" + MQTTTestSupport.getHostForMQTTEndpoint() + "&qualityOfService=AtMostOnce");
+                    .setHeader(MQTTConfiguration.MQTT_PUBLISH_TOPIC, constant(TEST_TOPIC))
+                    .to("mqtt:boo1?host=" + MQTTTestSupport.getHostForMQTTEndpoint() + "&qualityOfService=AtMostOnce")
+                    .setHeader(MQTTConfiguration.MQTT_PUBLISH_TOPIC, constant(TEST_TOPIC))
+                    .to("mqtt:boo2?host=" + MQTTTestSupport.getHostForMQTTEndpoint() + "&qualityOfService=AtMostOnce");
             }
         };
     }
