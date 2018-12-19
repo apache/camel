@@ -44,6 +44,8 @@ public class JettySessionSupportTest extends BaseJettyTest {
             fail("Should have thrown an exception");
         } catch (IllegalStateException e) {
             assertEquals("Server has already been started. Cannot enabled sessionSupport on http:localhost:" + getPort(), e.getMessage());
+        } finally {
+            context.stop();
         }
     }
 

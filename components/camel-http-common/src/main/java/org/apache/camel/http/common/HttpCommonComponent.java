@@ -88,6 +88,16 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
     public void disconnect(HttpConsumer consumer) throws Exception {
     }
 
+    /**
+     * Checks whether the consumer is possible to connect to the endoint.
+     *
+     * @param consumer the consumer
+     * @throws Exception can be thrown
+     */
+    public boolean canConnect(HttpConsumer consumer) throws Exception {
+        return true;
+    }
+
     @Override
     protected boolean useIntrospectionOnEndpoint() {
         return false;
