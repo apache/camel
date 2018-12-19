@@ -1,11 +1,16 @@
-const gulp = require('gulp')
-const { dest, src, symlink } = require('gulp');
+const { dest, series, src, symlink } = require('gulp');
+const del = require('del');
+const inject = require('gulp-inject');
 const map = require('map-stream')
 const path = require('path');
-const inject = require('gulp-inject');
 const rename = require('gulp-rename');
+const sort = require('gulp-sort');
 
-gulp.task('symlinks', () => {
+function deleteSymlinks() {
+    return del(['components/modules/ROOT/pages/*', '!components/modules/ROOT/pages/index.adoc']);
+}
+
+function createSymlinks() {
     return src('../components/*/src/main/docs/*.adoc')
         .pipe(map((file, done) => {
             // this flattens the output to just .../pages/....adoc
@@ -16,11 +21,11 @@ gulp.task('symlinks', () => {
         .pipe(symlink('components/modules/ROOT/pages/', {
             relativeSymlinks: true
         }));
-});
+}
 
-gulp.task('nav', () => {
+function nav() {
     return src('nav.adoc.template')
-        .pipe(inject(src('../components/*/src/main/docs/*.adoc'), {
+        .pipe(inject(src('../components/*/src/main/docs/*.adoc').pipe(sort()), {
             removeTags: true,
             transform: (filename, file) => {
                 const filepath = path.basename(filename);
@@ -33,6 +38,10 @@ gulp.task('nav', () => {
         }))
         .pipe(rename('nav.adoc'))
         .pipe(dest('components/modules/ROOT/'))
-});
+}
 
-gulp.task('default', gulp.series('symlinks', 'nav'));
+const symlinks = series(deleteSymlinks, createSymlinks);
+
+exports.symlinks = symlinks;
+exports.nav = nav;
+exports.default = series(symlinks, nav);
