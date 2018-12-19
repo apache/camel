@@ -183,7 +183,7 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        HttpConsumer answer = new HttpConsumer(this, processor);
+        JettyHttpConsumer answer = new JettyHttpConsumer(this, processor);
         configureConsumer(answer);
         return answer;
     }
