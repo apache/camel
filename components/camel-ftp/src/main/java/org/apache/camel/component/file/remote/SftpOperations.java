@@ -593,8 +593,18 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         // that
         if (FileUtil.hasLeadingSeparator(path)) {
             // change to root path
-            doChangeDirectory(path.substring(0, 1));
-            path = path.substring(1);
+            if (!path.matches("^[a-zA-Z]:(//|\\\\).*$")) {
+                doChangeDirectory(path.substring(0, 1));
+                path = path.substring(1);
+            } else {
+                if(path.matches("^[a-zA-Z]:(//).*$")) {
+                    doChangeDirectory(path.substring(0, 3));
+                    path = path.substring(3);
+                } else if(path.matches("^[a-zA-Z]:(\\\\).*$")) {
+                    doChangeDirectory(path.substring(0, 4));
+                    path = path.substring(4);
+                }
+            }
         }
 
         // split into multiple dirs
