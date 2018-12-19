@@ -1,1 +1,0 @@
-../../../../../components/camel-castor/src/main/docs/castor-dataformat.adoc

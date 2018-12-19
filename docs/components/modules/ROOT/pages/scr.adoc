@@ -1,1 +1,0 @@
-../../../../../components/camel-scr/src/main/docs/scr.adoc

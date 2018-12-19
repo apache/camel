@@ -1,1 +1,0 @@
-../../../../../components/camel-servletlistener/src/main/docs/servletlistener.adoc

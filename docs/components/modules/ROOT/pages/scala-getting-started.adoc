@@ -1,1 +1,0 @@
-../../../../../components/camel-scala/src/main/docs/scala-getting-started.adoc

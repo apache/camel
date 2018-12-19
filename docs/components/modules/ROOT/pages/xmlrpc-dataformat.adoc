@@ -1,1 +1,0 @@
-../../../../../components/camel-xmlrpc/src/main/docs/xmlrpc-dataformat.adoc

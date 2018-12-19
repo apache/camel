@@ -1,1 +1,0 @@
-../../../../../components/camel-bam/src/main/docs/bam-example.adoc

@@ -1,1 +1,0 @@
-../../../../../components/camel-xmlbeans/src/main/docs/xmlBeans-dataformat.adoc

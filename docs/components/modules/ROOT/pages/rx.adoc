@@ -1,1 +1,0 @@
-../../../../../components/camel-rx/src/main/docs/rx.adoc
