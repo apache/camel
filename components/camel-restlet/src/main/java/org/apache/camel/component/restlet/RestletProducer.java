@@ -34,8 +34,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.util.URISupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.URISupport;
+
 import org.restlet.Client;
 import org.restlet.Context;
 import org.restlet.Request;
