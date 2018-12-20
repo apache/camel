@@ -221,7 +221,7 @@ and refer to it in your Camel azure-blob component configuration:
 
 [source,java]
 --------------------------------------------------------------------------------
-from("azure-blob:/camelazure/container1/blockBlob?azureBlobClient=#client")
+from("azure-blob://camelazure/container1/blockBlob?azureBlobClient=#client")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
