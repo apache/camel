@@ -286,8 +286,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             request.setEntity(form.getWebRepresentation());
             LOG.debug("Populate Restlet {} request from exchange body as form using media type {}", method, mediaType);
         } else {
-            // include body if PUT or POST
-            if (request.getMethod().equals(Method.PUT) || request.getMethod().equals(Method.POST)) {
+            // include body if PUT, POST or PATCH
+            if (request.getMethod().equals(Method.PUT) || request.getMethod().equals(Method.POST) || request.getMethod().equals(Method.PATCH)) {
                 Representation body = createRepresentationFromBody(exchange, mediaType);
                 request.setEntity(body);
                 LOG.debug("Populate Restlet {} request from exchange body: {} using media type {}", method, body, mediaType);
