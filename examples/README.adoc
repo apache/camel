@@ -218,8 +218,6 @@ Number of Examples: 110 (8 deprecated)
 
 | link:camel-example-swagger-cdi/README.md[Swagger CDI] (camel-example-swagger-cdi) | Rest | An example using REST DSL and Swagger Java with CDI
 
-| link:camel-example-swagger-xml/README.md[Swagger XML] (camel-example-swagger-xml) | Rest | An example using REST DSL in XML and Swagger with Swagger UI (web console)
-
 | link:camel-example-spring-security/README.md[Spring Security] (camel-example-spring-security) | Security | An example showing how to work with Camel and Spring Security
 
 | link:camel-example-simplejirabot/README.md[JIRA Bot] (camel-example-simplejirabot) | Social | An example showing how to work with RSS and IRC endpoints
