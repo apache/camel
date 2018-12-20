@@ -118,7 +118,7 @@
     <plugins>
       <!-- so we can run mvn jetty:run -->
       <plugin>
-        <groupId>org.mortbay.jetty</groupId>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
         <version>${jetty-plugin-version}</version>
         <configuration>
