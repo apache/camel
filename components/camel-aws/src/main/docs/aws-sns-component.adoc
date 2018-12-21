@@ -192,6 +192,14 @@ Registry, while the `#amazonSQSClient` refers to an `AmazonSQS` client.
 By specifying `subscribeSNStoSQS` to true and a `queueUrl` of an existing SQS Queue,
 you'll be able to subscribe your SQS Queue to your SNS Topic.
 
+At this point you can consume messages coming from SNS Topic through your SQS Queue
+
+[source,java]
+-------------------------------------------------
+from("aws-sqs://test-camel?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5")
+    .to(...);
+-------------------------------------------------
+
 ### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
