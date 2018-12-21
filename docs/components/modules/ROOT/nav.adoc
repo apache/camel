@@ -20,6 +20,7 @@
 * xref:aws-ddb-component.adoc[AWS DynamoDB Component]
 * xref:aws-ddbstream-component.adoc[AWS DynamoDB Streams Component]
 * xref:aws-ec2-component.adoc[AWS EC2 Component]
+* xref:aws-eks-component.adoc[AWS EKS Component]
 * xref:aws-iam-component.adoc[AWS IAM Component]
 * xref:aws-kinesis-component.adoc[AWS Kinesis Component]
 * xref:aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose Component]

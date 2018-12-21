@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 290 in 193 JAR artifacts (1 deprecated)
+Number of Components: 291 in 193 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -73,6 +73,9 @@ Number of Components: 290 in 193 JAR artifacts (1 deprecated)
 
 | link:camel-aws/src/main/docs/aws-ec2-component.adoc[AWS EC2] (camel-aws) +
 `aws-ec2:label` | 2.16 | The aws-ec2 is used for managing Amazon EC2 instances.
+
+| link:camel-aws/src/main/docs/aws-eks-component.adoc[AWS EKS] (camel-aws) +
+`aws-eks:label` | 3.0 | The aws-kms is used for managing Amazon EKS
 
 | link:camel-aws/src/main/docs/aws-iam-component.adoc[AWS IAM] (camel-aws) +
 `aws-iam:label` | 2.23 | The aws-iam is used for managing Amazon IAM
