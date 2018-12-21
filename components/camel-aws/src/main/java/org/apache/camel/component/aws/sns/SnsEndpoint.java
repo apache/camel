@@ -101,7 +101,6 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             headerFilterStrategy = new SnsHeaderFilterStrategy();
         }
         
-        System.err.println(configuration.getTopicArn());
         if (configuration.getTopicArn() == null) {
             try {
                 String nextToken = null;

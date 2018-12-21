@@ -122,7 +122,8 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSNSClient", mock);
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSQSClient", mockSQS);
         SnsComponent component = new SnsComponent(context);
-        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy&amazonSQSClient=#amazonSQSClient&queueUrl=arn:aws:sqs:us-east-1:541925086079:MyQueue&subscribeSNStoSQS=true");
+        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&" + 
+        "accessKey=xxx&secretKey=yyy&amazonSQSClient=#amazonSQSClient&queueUrl=arn:aws:sqs:us-east-1:541925086079:MyQueue&subscribeSNStoSQS=true");
         
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -135,7 +136,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getPolicy());
     }
     
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithSQSSubscriptionIllegalArgument() throws Exception {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
         AmazonSQSClientMock mockSQS = new AmazonSQSClientMock();
@@ -143,7 +144,8 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSNSClient", mock);
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSQSClient", mockSQS);
         SnsComponent component = new SnsComponent(context);
-        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy&amazonSQSClient=#amazonSQSClient&subscribeSNStoSQS=true");
+        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx" + 
+        "&secretKey=yyy&amazonSQSClient=#amazonSQSClient&subscribeSNStoSQS=true");
         
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
