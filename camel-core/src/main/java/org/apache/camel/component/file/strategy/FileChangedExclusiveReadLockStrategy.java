@@ -71,9 +71,9 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
                 }
             }
 
-            if(!target.exists()) {
-            	 CamelLogger.log(LOG,readLockLoggingLevel,"File "+target.getName()+" got deleted.");
-            	return false;
+            if (!target.exists()) {
+                CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
+                return false;
             }
 
             long newLastModified = target.lastModified();
