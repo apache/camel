@@ -9,6 +9,8 @@ target
 .project
 .settings
 .checkstyle
+.vscode
+*.code-workspace
 *.log
 test-salesforce-login.properties
 dependency-reduced-pom.xml
