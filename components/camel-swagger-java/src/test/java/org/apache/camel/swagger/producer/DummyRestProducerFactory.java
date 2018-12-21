@@ -22,9 +22,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.StringHelper;
 
 public class DummyRestProducerFactory implements RestProducerFactory {

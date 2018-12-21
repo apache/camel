@@ -21,7 +21,6 @@ import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -78,8 +77,8 @@ import org.apache.camel.model.rest.RestSecurityOAuth2;
 import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.FileUtil;
 
 /**
  * A Camel REST-DSL swagger reader that parse the rest-dsl into a swagger model representation.
