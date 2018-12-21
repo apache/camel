@@ -22,11 +22,16 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 
-public class URISupportTest extends ContextTestSupport {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class URISupportTest {
 
     @Test
     public void testNormalizeEndpointUri() throws Exception {
@@ -377,45 +382,45 @@ public class URISupportTest extends ContextTestSupport {
 
     @Test
     public void shouldStripPrefixes() {
-        Assertions.assertThat(URISupport.stripPrefix(null, null)).isNull();
-        Assertions.assertThat(URISupport.stripPrefix("", null)).isEmpty();
-        Assertions.assertThat(URISupport.stripPrefix(null, "")).isNull();
-        Assertions.assertThat(URISupport.stripPrefix("", "")).isEmpty();
-        Assertions.assertThat(URISupport.stripPrefix("a", "b")).isEqualTo("a");
-        Assertions.assertThat(URISupport.stripPrefix("a", "a")).isEmpty();
-        Assertions.assertThat(URISupport.stripPrefix("ab", "b")).isEqualTo("ab");
-        Assertions.assertThat(URISupport.stripPrefix("a", "ab")).isEqualTo("a");
+        assertThat(URISupport.stripPrefix(null, null)).isNull();
+        assertThat(URISupport.stripPrefix("", null)).isEmpty();
+        assertThat(URISupport.stripPrefix(null, "")).isNull();
+        assertThat(URISupport.stripPrefix("", "")).isEmpty();
+        assertThat(URISupport.stripPrefix("a", "b")).isEqualTo("a");
+        assertThat(URISupport.stripPrefix("a", "a")).isEmpty();
+        assertThat(URISupport.stripPrefix("ab", "b")).isEqualTo("ab");
+        assertThat(URISupport.stripPrefix("a", "ab")).isEqualTo("a");
     }
 
     @Test
     public void shouldStripSuffixes() {
-        Assertions.assertThat(URISupport.stripSuffix(null, null)).isNull();
-        Assertions.assertThat(URISupport.stripSuffix("", null)).isEmpty();
-        Assertions.assertThat(URISupport.stripSuffix(null, "")).isNull();
-        Assertions.assertThat(URISupport.stripSuffix("", "")).isEmpty();
-        Assertions.assertThat(URISupport.stripSuffix("a", "b")).isEqualTo("a");
-        Assertions.assertThat(URISupport.stripSuffix("a", "a")).isEmpty();
-        Assertions.assertThat(URISupport.stripSuffix("ab", "b")).isEqualTo("a");
-        Assertions.assertThat(URISupport.stripSuffix("a", "ab")).isEqualTo("a");
+        assertThat(URISupport.stripSuffix(null, null)).isNull();
+        assertThat(URISupport.stripSuffix("", null)).isEmpty();
+        assertThat(URISupport.stripSuffix(null, "")).isNull();
+        assertThat(URISupport.stripSuffix("", "")).isEmpty();
+        assertThat(URISupport.stripSuffix("a", "b")).isEqualTo("a");
+        assertThat(URISupport.stripSuffix("a", "a")).isEmpty();
+        assertThat(URISupport.stripSuffix("ab", "b")).isEqualTo("a");
+        assertThat(URISupport.stripSuffix("a", "ab")).isEqualTo("a");
     }
 
     @Test
     public void shouldJoinPaths() {
-        Assertions.assertThat(URISupport.joinPaths(null, null)).isEmpty();
-        Assertions.assertThat(URISupport.joinPaths("", null)).isEmpty();
-        Assertions.assertThat(URISupport.joinPaths(null, "")).isEmpty();
-        Assertions.assertThat(URISupport.joinPaths("", "")).isEmpty();
-        Assertions.assertThat(URISupport.joinPaths("a", "")).isEqualTo("a");
-        Assertions.assertThat(URISupport.joinPaths("a", "b")).isEqualTo("a/b");
-        Assertions.assertThat(URISupport.joinPaths("/a", "b")).isEqualTo("/a/b");
-        Assertions.assertThat(URISupport.joinPaths("/a", "b/")).isEqualTo("/a/b/");
-        Assertions.assertThat(URISupport.joinPaths("/a/", "b/")).isEqualTo("/a/b/");
-        Assertions.assertThat(URISupport.joinPaths("/a/", "/b/")).isEqualTo("/a/b/");
-        Assertions.assertThat(URISupport.joinPaths("a", "b", "c")).isEqualTo("a/b/c");
-        Assertions.assertThat(URISupport.joinPaths("a", null, "c")).isEqualTo("a/c");
-        Assertions.assertThat(URISupport.joinPaths("/a/", "/b", "c/", "/d/")).isEqualTo("/a/b/c/d/");
-        Assertions.assertThat(URISupport.joinPaths("/a/", "/b", "c/", null)).isEqualTo("/a/b/c/");
-        Assertions.assertThat(URISupport.joinPaths("/a/", null, null, null)).isEqualTo("/a/");
-        Assertions.assertThat(URISupport.joinPaths("a/", "/b", null, null)).isEqualTo("a/b");
+        assertThat(URISupport.joinPaths(null, null)).isEmpty();
+        assertThat(URISupport.joinPaths("", null)).isEmpty();
+        assertThat(URISupport.joinPaths(null, "")).isEmpty();
+        assertThat(URISupport.joinPaths("", "")).isEmpty();
+        assertThat(URISupport.joinPaths("a", "")).isEqualTo("a");
+        assertThat(URISupport.joinPaths("a", "b")).isEqualTo("a/b");
+        assertThat(URISupport.joinPaths("/a", "b")).isEqualTo("/a/b");
+        assertThat(URISupport.joinPaths("/a", "b/")).isEqualTo("/a/b/");
+        assertThat(URISupport.joinPaths("/a/", "b/")).isEqualTo("/a/b/");
+        assertThat(URISupport.joinPaths("/a/", "/b/")).isEqualTo("/a/b/");
+        assertThat(URISupport.joinPaths("a", "b", "c")).isEqualTo("a/b/c");
+        assertThat(URISupport.joinPaths("a", null, "c")).isEqualTo("a/c");
+        assertThat(URISupport.joinPaths("/a/", "/b", "c/", "/d/")).isEqualTo("/a/b/c/d/");
+        assertThat(URISupport.joinPaths("/a/", "/b", "c/", null)).isEqualTo("/a/b/c/");
+        assertThat(URISupport.joinPaths("/a/", null, null, null)).isEqualTo("/a/");
+        assertThat(URISupport.joinPaths("a/", "/b", null, null)).isEqualTo("a/b");
     }
 }
