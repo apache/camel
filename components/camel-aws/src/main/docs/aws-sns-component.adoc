@@ -177,6 +177,21 @@ AmazonSNS client = new AmazonSNSClient(awsCredentials, clientConfiguration);
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
 
+#### Create a subscription between an AWS SNS Topic and an AWS SQS Queue
+
+You can create a subscription of an SQS Queue to an SNS Topic in this way:
+
+[source,java]
+-------------------------------------------------
+from("direct:start")
+.to("aws-sns://test-camel-sns1?amazonSNSClient=#amazonSNSClient&amazonSQSClient=#amazonSQSClient&subscribeSNStoSQS=true&queueUrl=https://sqs.eu-central-1.amazonaws.com/780410022472/test-camel");
+-------------------------------------------------
+
+The `#amazonSNSClient` refers to a `AmazonSNS` in the
+Registry, while the `#amazonSQSClient` refers to an `AmazonSQS` client.
+By specifying `subscribeSNStoSQS` to true and a `queueUrl` of an existing SQS Queue,
+you'll be able to subscribe your SQS Queue to your SNS Topic.
+
 ### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
