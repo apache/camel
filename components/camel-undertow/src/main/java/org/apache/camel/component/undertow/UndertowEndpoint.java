@@ -19,7 +19,6 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
-
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpServerExchange;
@@ -36,15 +35,15 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.CollectionHelper;
 import org.xnio.Option;
 import org.xnio.OptionMap;
 import org.xnio.Options;
