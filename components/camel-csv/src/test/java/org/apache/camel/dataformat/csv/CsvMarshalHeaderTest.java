@@ -55,11 +55,11 @@ public class CsvMarshalHeaderTest extends CamelTestSupport {
 
     @Test
     public void testSendBodyWithList() throws IOException {
-        List<List<String>> body = Collections.singletonList(Arrays.asList("Christian", "Ribeaud"));
+        List<List<String>> body = Collections.singletonList(Arrays.asList("John", "Doe"));
         String fileName = outputFile.getName();
         assertEquals("output.csv", fileName);
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
-        body = Collections.singletonList(Arrays.asList("Tanja", "Berg"));
+        body = Collections.singletonList(Arrays.asList("Max", "Mustermann"));
         producerTemplate.sendBodyAndHeader(body, Exchange.FILE_NAME, fileName);
         List<String> lines = Files.lines(Paths.get(outputFile.toURI()))
                 .filter(l -> l.trim().length() > 0).collect(Collectors.toList());
