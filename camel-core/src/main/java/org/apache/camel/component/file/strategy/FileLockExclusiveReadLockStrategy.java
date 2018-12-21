@@ -86,6 +86,11 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                     }
                 }
 
+                if (!target.exists()) {
+                    CamelLogger.log(LOG, readLockLoggingLevel, "Cannot acquire read lock as file no longer exists. Will skip the file: " + file);
+                    return false;
+                }
+
                 // get the lock using either try lock or not depending on if we are using timeout or not
                 try {
                     lock = timeout > 0 ? channel.tryLock() : channel.lock();
