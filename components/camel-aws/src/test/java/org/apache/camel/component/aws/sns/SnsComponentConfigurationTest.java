@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.sns;
 
 import com.amazonaws.regions.Regions;
 
+import org.apache.camel.component.aws.sqs.AmazonSQSClientMock;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -41,6 +42,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getSubject());
         assertNull(endpoint.getConfiguration().getPolicy());
     }
+    
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
         SnsComponent component = new SnsComponent(context);
@@ -112,6 +114,50 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
                 endpoint.getConfiguration().getPolicy());
     }
     
+    @Test
+    public void createEndpointWithSQSSubscription() throws Exception {
+        AmazonSNSClientMock mock = new AmazonSNSClientMock();
+        AmazonSQSClientMock mockSQS = new AmazonSQSClientMock();
+        
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSNSClient", mock);
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSQSClient", mockSQS);
+        SnsComponent component = new SnsComponent(context);
+        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy&amazonSQSClient=#amazonSQSClient&queueUrl=arn:aws:sqs:us-east-1:541925086079:MyQueue&subscribeSNStoSQS=true");
+        
+        assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("arn:aws:sqs:us-east-1:541925086079:MyQueue", endpoint.getConfiguration().getQueueUrl());
+        assertNotNull(endpoint.getConfiguration().getAmazonSNSClient());
+        assertNotNull(endpoint.getConfiguration().getAmazonSQSClient());
+        assertNull(endpoint.getConfiguration().getTopicArn());
+        assertNull(endpoint.getConfiguration().getSubject());
+        assertNull(endpoint.getConfiguration().getPolicy());
+    }
+    
+    @Test
+    public void createEndpointWithSQSSubscriptionIllegalArgument() throws Exception {
+        AmazonSNSClientMock mock = new AmazonSNSClientMock();
+        AmazonSQSClientMock mockSQS = new AmazonSQSClientMock();
+        
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSNSClient", mock);
+        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSQSClient", mockSQS);
+        SnsComponent component = new SnsComponent(context);
+        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy&amazonSQSClient=#amazonSQSClient&subscribeSNStoSQS=true");
+        
+        assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertNull(endpoint.getConfiguration().getQueueUrl());
+        assertNotNull(endpoint.getConfiguration().getAmazonSNSClient());
+        assertNotNull(endpoint.getConfiguration().getAmazonSQSClient());
+        assertNull(endpoint.getConfiguration().getTopicArn());
+        assertNull(endpoint.getConfiguration().getSubject());
+        assertNull(endpoint.getConfiguration().getPolicy());
+        
+        endpoint.start();
+    }
+    
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
         SnsComponent component = new SnsComponent(context);
@@ -155,7 +201,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         AmazonSNSClientMock mock = new AmazonSNSClientMock();
         
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSNSClient", mock);
-          
+
         SnsComponent component = new SnsComponent(context);
         component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
     }

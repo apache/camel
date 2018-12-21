@@ -30,6 +30,7 @@ import com.amazonaws.services.sns.model.CreateTopicResult;
 import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.Topic;
+import com.amazonaws.services.sns.util.Topics;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -100,6 +101,7 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             headerFilterStrategy = new SnsHeaderFilterStrategy();
         }
         
+        System.err.println(configuration.getTopicArn());
         if (configuration.getTopicArn() == null) {
             try {
                 String nextToken = null;
@@ -139,6 +141,15 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             snsClient.setTopicAttributes(new SetTopicAttributesRequest(configuration.getTopicArn(), "Policy", configuration.getPolicy()));
             
             log.trace("Topic policy updated");
+        }
+        
+        if (configuration.isSubscribeSNStoSQS()) {
+            if (ObjectHelper.isNotEmpty(configuration.getAmazonSQSClient()) && ObjectHelper.isNotEmpty(configuration.getQueueUrl())) {
+                String subscriptionARN = Topics.subscribeQueue(snsClient, configuration.getAmazonSQSClient(), configuration.getTopicArn(), configuration.getQueueUrl());
+                log.trace("Subscription of SQS Queue to SNS Topic done with Amazon resource name: {}", subscriptionARN);
+            } else {
+                throw new IllegalArgumentException("Using the SubscribeSNStoSQS option require both AmazonSQSClient and Queue URL options");
+            }
         }
         
     }
