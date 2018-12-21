@@ -28,6 +28,7 @@ public class IrcProducer extends DefaultProducer {
     public static final String[] COMMANDS = new String[] {"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES",
         "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO", "WHOIS", "WHOWAS", "USERHOST"};
 
+    private final IrcConfiguration configuration;
     private IRCConnection connection;
     private IrcEndpoint endpoint;
     private IRCEventAdapter listener;
@@ -36,6 +37,7 @@ public class IrcProducer extends DefaultProducer {
         super(endpoint);
         this.endpoint = endpoint;
         this.connection = connection;
+        this.configuration = endpoint.getConfiguration();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -67,6 +69,13 @@ public class IrcProducer extends DefaultProducer {
         super.doStart();
         listener = getListener();
         connection.addIRCEventListener(listener);
+        log.debug("Sleeping for {} seconds before sending commands.", configuration.getCommandTimeout() / 1000);
+        // sleep for a few seconds as the server sometimes takes a moment to fully connect, print banners, etc after connection established
+        try {
+            Thread.sleep(configuration.getCommandTimeout());
+        } catch (InterruptedException ex) {
+            // ignore
+        }
         endpoint.joinChannels();
     }
 
