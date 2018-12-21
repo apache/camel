@@ -70,6 +70,10 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
                     return false;
                 }
             }
+            if(!target.exists()) {
+            	 CamelLogger.log(LOG,readLockLoggingLevel,"File "+target.getName()+" got deleted.");
+            	return false;
+            }
 
             long newLastModified = target.lastModified();
             long newLength = target.length();
