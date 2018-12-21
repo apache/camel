@@ -29,8 +29,8 @@ import com.amazonaws.services.sqs.model.SendMessageResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;

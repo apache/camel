@@ -21,28 +21,28 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 public class S3Component extends DefaultComponent {
-    
+
     @Metadata
     private String accessKey;
     @Metadata
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private S3Configuration configuration;
-    
+
     public S3Component() {
         this(null);
     }
 
     public S3Component(CamelContext context) {
         super(context);
-        
+
         this.configuration = new S3Configuration();
         registerExtension(new S3ComponentVerifierExtension());
     }
@@ -76,7 +76,7 @@ public class S3Component extends DefaultComponent {
         setProperties(endpoint, parameters);
         return endpoint;
     }
-    
+
     public S3Configuration getConfiguration() {
         return configuration;
     }
@@ -87,7 +87,7 @@ public class S3Component extends DefaultComponent {
     public void setConfiguration(S3Configuration configuration) {
         this.configuration = configuration;
     }
-    
+
     public String getAccessKey() {
         return configuration.getAccessKey();
     }
@@ -109,7 +109,7 @@ public class S3Component extends DefaultComponent {
     public void setSecretKey(String secretKey) {
         configuration.setSecretKey(secretKey);
     }
-    
+
     public String getRegion() {
         return configuration.getRegion();
     }
