@@ -92,6 +92,8 @@ public class IrcConfiguration implements Cloneable {
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "security", secret = true)
     private String nickPassword;
+    @UriParam(defaultValue = "5000")
+    private long commandTimeout = 5000L;
 
     public IrcConfiguration() {
     }
@@ -459,7 +461,19 @@ public class IrcConfiguration implements Cloneable {
     public void setNickPassword(String nickPassword) {
         this.nickPassword = nickPassword;
     }
-    
+
+    /**
+     * Delay in milliseconds before sending commands after the connection is established.
+     * @param timeout timeout value in milliseconds
+     */
+    public void setCommandTimeout(long timeout) {
+        this.commandTimeout = timeout;
+    }
+
+    public long getCommandTimeout() {
+        return commandTimeout;
+    }
+
     public boolean isNamesOnJoin() {
         return namesOnJoin;
     }
