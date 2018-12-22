@@ -30,10 +30,10 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.support.jsse.SSLContextParameters;
 import org.schwering.irc.lib.ssl.SSLDefaultTrustManager;
 import org.schwering.irc.lib.ssl.SSLTrustManager;
 import org.slf4j.Logger;
@@ -92,6 +92,8 @@ public class IrcConfiguration implements Cloneable {
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "security", secret = true)
     private String nickPassword;
+    @UriParam(defaultValue = "5000")
+    private long commandTimeout = 5000L;
 
     public IrcConfiguration() {
     }
@@ -459,7 +461,19 @@ public class IrcConfiguration implements Cloneable {
     public void setNickPassword(String nickPassword) {
         this.nickPassword = nickPassword;
     }
-    
+
+    /**
+     * Delay in milliseconds before sending commands after the connection is established.
+     * @param timeout timeout value in milliseconds
+     */
+    public void setCommandTimeout(long timeout) {
+        this.commandTimeout = timeout;
+    }
+
+    public long getCommandTimeout() {
+        return commandTimeout;
+    }
+
     public boolean isNamesOnJoin() {
         return namesOnJoin;
     }
