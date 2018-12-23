@@ -26,11 +26,11 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.slf4j.LoggerFactory;
 

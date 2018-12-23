@@ -18,8 +18,8 @@ package org.apache.camel.builder;
 
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 /**
  * Builder to build {@link org.apache.camel.spi.ThreadPoolProfile}.

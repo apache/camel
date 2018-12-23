@@ -22,9 +22,9 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultComponent;
 import org.slf4j.Logger;
 
