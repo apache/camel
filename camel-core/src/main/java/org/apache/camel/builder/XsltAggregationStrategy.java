@@ -26,6 +26,7 @@ import javax.xml.transform.URIResolver;
 
 import org.w3c.dom.Document;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -33,7 +34,6 @@ import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.component.xslt.XsltEndpoint;
 import org.apache.camel.component.xslt.XsltOutput;
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
