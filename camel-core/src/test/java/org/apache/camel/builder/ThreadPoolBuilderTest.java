@@ -22,8 +22,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.Test;
 
 public class ThreadPoolBuilderTest extends ContextTestSupport {

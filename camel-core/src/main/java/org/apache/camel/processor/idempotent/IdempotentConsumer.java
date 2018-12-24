@@ -28,11 +28,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ServiceHelper;
 
 /**

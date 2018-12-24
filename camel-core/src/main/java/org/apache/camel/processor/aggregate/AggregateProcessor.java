@@ -321,7 +321,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         }
     }
 
-     protected void doInOptimisticLock(Exchange exchange, String key, AsyncCallback callback, int attempt) {
+    protected void doInOptimisticLock(Exchange exchange, String key, AsyncCallback callback, int attempt) {
         while (true) {
             attempt++;
             try {
@@ -735,27 +735,30 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
             String completedBy = exchange.getProperty(Exchange.AGGREGATED_COMPLETED_BY, String.class);
             switch (completedBy) {
-                case COMPLETED_BY_INTERVAL:
-                    completedByInterval.incrementAndGet();
-                    break;
-                case COMPLETED_BY_TIMEOUT:
-                    completedByTimeout.incrementAndGet();
-                    break;
-                case COMPLETED_BY_FORCE:
-                    completedByForce.incrementAndGet();
-                    break;
-                case COMPLETED_BY_CONSUMER:
-                    completedByBatchConsumer.incrementAndGet();
-                    break;
-                case COMPLETED_BY_PREDICATE:
-                    completedByPredicate.incrementAndGet();
-                    break;
-                case COMPLETED_BY_SIZE:
-                    completedBySize.incrementAndGet();
-                    break;
-                case COMPLETED_BY_STRATEGY:
-                    completedByStrategy.incrementAndGet();
-                    break;
+            case COMPLETED_BY_INTERVAL:
+                completedByInterval.incrementAndGet();
+                break;
+            case COMPLETED_BY_TIMEOUT:
+                completedByTimeout.incrementAndGet();
+                break;
+            case COMPLETED_BY_FORCE:
+                completedByForce.incrementAndGet();
+                break;
+            case COMPLETED_BY_CONSUMER:
+                completedByBatchConsumer.incrementAndGet();
+                break;
+            case COMPLETED_BY_PREDICATE:
+                completedByPredicate.incrementAndGet();
+                break;
+            case COMPLETED_BY_SIZE:
+                completedBySize.incrementAndGet();
+                break;
+            case COMPLETED_BY_STRATEGY:
+                completedByStrategy.incrementAndGet();
+                break;
+            default:
+                log.error("Invalid value of {} property: {}", Exchange.AGGREGATED_COMPLETED_BY, exchange);
+                break;
             }
         }
 

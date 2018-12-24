@@ -24,7 +24,6 @@ import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.reifier.loadbalancer.LoadBalancerReifier;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.AsyncProcessorConverterHelper;
 
 class LoadBalanceReifier extends ProcessorReifier<LoadBalanceDefinition> {
 

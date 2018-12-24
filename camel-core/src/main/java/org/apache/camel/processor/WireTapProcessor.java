@@ -145,15 +145,15 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
 
         // send the exchange to the destination using an executor service
         executorService.submit(() -> {
-                taskCount.increment();
-                log.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
-                AsyncProcessorConverterHelper.convert(processor).process(wireTapExchange, doneSync -> {
-                    if (wireTapExchange.getException() != null) {
-                        log.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", wireTapExchange.getException());
-                    }
-                    taskCount.decrement();
-                });
+            taskCount.increment();
+            log.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
+            AsyncProcessorConverterHelper.convert(processor).process(wireTapExchange, doneSync -> {
+                if (wireTapExchange.getException() != null) {
+                    log.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", wireTapExchange.getException());
+                }
+                taskCount.decrement();
             });
+        });
 
         // continue routing this synchronously
         callback.done(true);

@@ -16,9 +16,9 @@
  */
 package org.apache.camel.impl.validator;
 
+import org.apache.camel.ValueHolder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.DataType;
-import org.apache.camel.ValueHolder;
 
 /**
  * Key used in {@link org.apache.camel.spi.ValidatorRegistry} in {@link DefaultCamelContext},

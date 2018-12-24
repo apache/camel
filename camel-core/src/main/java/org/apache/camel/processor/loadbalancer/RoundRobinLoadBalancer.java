@@ -29,7 +29,7 @@ public class RoundRobinLoadBalancer extends QueueLoadBalancer {
 
     protected AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
         int size = processors.length;
-        int c = counter.updateAndGet(x -> (++x < size ? x : 0));
+        int c = counter.updateAndGet(x -> ++x < size ? x : 0);
         return processors[c];
     }
 

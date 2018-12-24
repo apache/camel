@@ -426,8 +426,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 boolean isDeadLetterChannel = isDeadLetterChannel() && target == deadLetter;
                 deliverToFailureProcessor(target, isDeadLetterChannel, exchange);
                 // we are breaking out
-            }
-            else if (redeliveryCounter > 0) {
+            } else if (redeliveryCounter > 0) {
                 // calculate the redelivery delay
                 redeliveryDelay = determineRedeliveryDelay(exchange, currentRedeliveryPolicy, redeliveryDelay, redeliveryCounter);
 
@@ -477,8 +476,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                     // execute the task immediately
                     ReactiveHelper.schedule(this::redeliver);
                 }
-            }
-            else {
+            } else {
                 // Simple delivery
                 outputAsync.process(exchange, doneSync -> {
                     // only process if the exchange hasn't failed

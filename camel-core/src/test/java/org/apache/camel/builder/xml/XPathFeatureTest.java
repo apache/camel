@@ -93,7 +93,8 @@ public class XPathFeatureTest extends ContextTestSupport {
             xpath("/").documentType(Exchange.class).stringResult().evaluate(createExchange(XML_DATA));
             fail("Expect an Exception here");
         } catch (RuntimeCamelException ex) {
-            assertTrue("Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + NoTypeConversionAvailableException.class, ex.getCause() instanceof NoTypeConversionAvailableException);
+            assertTrue("Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " 
+                           + NoTypeConversionAvailableException.class, ex.getCause() instanceof NoTypeConversionAvailableException);
         }
     }
 

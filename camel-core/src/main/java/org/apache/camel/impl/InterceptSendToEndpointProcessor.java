@@ -23,9 +23,9 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ServiceHelper;
 

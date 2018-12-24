@@ -16,8 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Exchange;
 import org.apache.camel.support.ServiceSupport;
 
 public class MyAggregationStrategyService extends ServiceSupport implements AggregationStrategy {

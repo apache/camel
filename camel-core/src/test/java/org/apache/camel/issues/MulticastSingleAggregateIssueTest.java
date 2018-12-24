@@ -16,10 +16,10 @@
  */
 package org.apache.camel.issues;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.AggregationStrategy;
 import org.junit.Test;
 
 public class MulticastSingleAggregateIssueTest extends ContextTestSupport {

@@ -24,10 +24,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cluster.CamelClusterMember;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
-import org.apache.camel.support.cluster.ClusterServiceSelectors;
 import org.apache.camel.component.file.cluster.FileLockClusterService;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.cluster.AbstractCamelClusterView;
+import org.apache.camel.support.cluster.ClusterServiceSelectors;
 import org.junit.Assert;
 import org.junit.Test;
 

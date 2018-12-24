@@ -25,23 +25,23 @@ public enum LogicalOperatorType {
 
     public static LogicalOperatorType asOperator(String text) {
         switch (text) {
-            case "&&":
-                return AND;
-            case "||":
-                return OR;
-            default:
-                throw new IllegalArgumentException("Operator not supported: " + text);
+        case "&&":
+            return AND;
+        case "||":
+            return OR;
+        default:
+            throw new IllegalArgumentException("Operator not supported: " + text);
         }
     }
 
     public String getOperatorText(LogicalOperatorType operator) {
         switch (operator) {
-            case AND:
-                return "&&";
-            case OR:
-                return "||";
-            default:
-                return "";
+        case AND:
+            return "&&";
+        case OR:
+            return "||";
+        default:
+            return "";
         }
     }
 

@@ -17,13 +17,12 @@
 package org.apache.camel.support;
 
 import java.util.LinkedList;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ReactiveHelper {
+public final class ReactiveHelper {
 
     private static final ThreadLocal<Worker> WORKERS = ThreadLocal.withInitial(Worker::new);
 
@@ -116,7 +115,7 @@ public class ReactiveHelper {
 //                Thread thread = Thread.currentThread();
 //                String name = thread.getName();
                 try {
-                    for (; ; ) {
+                    for (;;) {
                         final Runnable polled = queue.poll();
                         if (polled == null) {
                             if (back != null && !back.isEmpty()) {

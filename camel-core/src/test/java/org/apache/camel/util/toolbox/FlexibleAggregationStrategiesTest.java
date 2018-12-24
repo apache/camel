@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.w3c.dom.Node;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -36,7 +37,6 @@ import org.apache.camel.builder.FlexibleAggregationStrategy.CompletionAwareMixin
 import org.apache.camel.builder.FlexibleAggregationStrategy.TimeoutAwareMixin;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.AggregationStrategy;
 import org.junit.Test;
 
 /**

@@ -23,6 +23,11 @@ import org.apache.camel.util.function.TriConsumer;
 @SuppressWarnings("unchecked")
 public class DoubleMap<K1, K2, V> {
 
+    private static final double MAX_LOAD_FACTOR = 1.2;
+    private static final int MAX_TABLE_SIZE = 32768;
+    private static final int C1 = 0xcc9e2d51;
+    private static final int C2 = 0x1b873593;
+
     static class Entry {
         Object k1;
         Object k2;
@@ -164,11 +169,6 @@ public class DoubleMap<K1, K2, V> {
     public synchronized void clear() {
         this.table = new Entry[table.length];
     }
-
-    private static final double MAX_LOAD_FACTOR = 1.2;
-    private static final int MAX_TABLE_SIZE = 32768;
-    private static final int C1 = 0xcc9e2d51;
-    private static final int C2 = 0x1b873593;
 
     static int smear(int hashCode) {
         return C2 * Integer.rotateLeft(hashCode * C1, 15);

@@ -16,12 +16,12 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultClaimCheckRepository;
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.spi.ClaimCheckRepository;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorSupport;

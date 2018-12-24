@@ -22,10 +22,10 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
-import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.AsyncProcessorSupport;
 
 /**

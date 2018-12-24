@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.runtimecatalog.JSonSchemaResolver;
-import org.apache.camel.runtimecatalog.impl.AbstractCamelCatalog;
 import org.junit.Before;
 import org.junit.Test;
 
