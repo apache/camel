@@ -24,7 +24,6 @@ import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 
@@ -36,7 +35,8 @@ public interface ProducerCache extends Service {
 
     Exchange send(Endpoint endpoint, Exchange exchange, Processor resultProcessor);
 
-    CompletableFuture<Exchange> asyncSendExchange(Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor, Exchange inExchange, CompletableFuture<Exchange> exchangeFuture);
+    CompletableFuture<Exchange> asyncSendExchange(Endpoint endpoint, ExchangePattern pattern, 
+            Processor processor, Processor resultProcessor, Exchange inExchange, CompletableFuture<Exchange> exchangeFuture);
 
     Object getSource();
 
