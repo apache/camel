@@ -19,7 +19,7 @@ package org.apache.camel.impl.event;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
 
-public class CamelContextSuspendingEvent extends AbstractContextEvent implements CamelEvent.CamelContextSuspendingEvent{
+public class CamelContextSuspendingEvent extends AbstractContextEvent implements CamelEvent.CamelContextSuspendingEvent {
     private static final long serialVersionUID = 6761726800283072241L;
 
     public CamelContextSuspendingEvent(CamelContext source) {

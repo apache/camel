@@ -172,7 +172,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         int attempts;
         // use a copy of the original exchange before failover to avoid populating side effects
         // directly into the original exchange
-        Exchange copy = null;
+        Exchange copy;
 
         public State(Exchange exchange, AsyncCallback callback, AsyncProcessor[] processors) {
             this.exchange = exchange;
@@ -184,7 +184,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
                 int idx = lastGoodIndex.get();
                 index = idx > 0 ? idx : 0;
             } else if (isRoundRobin()) {
-                index = counter.updateAndGet(x -> (++x < processors.length ? x : 0));
+                index = counter.updateAndGet(x -> ++x < processors.length ? x : 0);
             }
             log.trace("Failover starting with endpoint index {}", index);
         }
@@ -247,7 +247,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
             // process the exchange
             log.debug("Processing failover at attempt {} for {}", attempts, copy);
             processor.process(copy, doneSync -> ReactiveHelper.schedule(this::run));
-       }
+        }
 
     }
 

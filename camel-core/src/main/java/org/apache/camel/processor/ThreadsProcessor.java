@@ -24,11 +24,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.Rejectable;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 /**
  * Threads processor that leverage a thread pool for continue processing the {@link Exchange}s

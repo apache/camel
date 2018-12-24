@@ -16,8 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.ValueHolder;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Key used in {@link DefaultEndpointRegistry} in {@link DefaultCamelContext},

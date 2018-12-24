@@ -44,154 +44,154 @@ public final class EventHelper {
 
     public static boolean notifyCamelContextStarting(CamelContext context) {
         return doNotify(context,
-                factory -> factory.createCamelContextStartingEvent(context),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextStartingEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     public static boolean notifyCamelContextStarted(CamelContext context) {
         return doNotify(context,
-                factory -> factory.createCamelContextStartedEvent(context),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextStartedEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     public static boolean notifyCamelContextStartupFailed(CamelContext context, Throwable cause) {
         return doNotify(context,
-                factory -> factory.createCamelContextStartupFailureEvent(context, cause),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextStartupFailureEvent(context, cause),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     public static boolean notifyCamelContextStopping(CamelContext context) {
         return doNotify(context,
-                factory -> factory.createCamelContextStoppingEvent(context),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextStoppingEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     public static boolean notifyCamelContextStopped(CamelContext context) {
         return doNotify(context,
-                factory -> factory.createCamelContextStoppedEvent(context),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextStoppedEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     public static boolean notifyCamelContextStopFailure(CamelContext context, Throwable cause) {
         return doNotify(context,
-                factory -> factory.createCamelContextStopFailureEvent(context, cause),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextStopFailureEvent(context, cause),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     public static boolean notifyServiceStopFailure(CamelContext context, Object service, Throwable cause) {
         return doNotify(context,
-                factory -> factory.createServiceStopFailureEvent(context, service, cause),
-                EventNotifier::isIgnoreServiceEvents);
+            factory -> factory.createServiceStopFailureEvent(context, service, cause),
+            EventNotifier::isIgnoreServiceEvents);
     }
 
     public static boolean notifyServiceStartupFailure(CamelContext context, Object service, Throwable cause) {
         return doNotify(context,
-                factory -> factory.createServiceStartupFailureEvent(context, service, cause),
-                EventNotifier::isIgnoreServiceEvents);
+            factory -> factory.createServiceStartupFailureEvent(context, service, cause),
+            EventNotifier::isIgnoreServiceEvents);
     }
 
     public static boolean notifyRouteStarted(CamelContext context, Route route) {
         return doNotify(context,
-                factory -> factory.createRouteStartedEvent(route),
-                EventNotifier::isIgnoreRouteEvents);
+            factory -> factory.createRouteStartedEvent(route),
+            EventNotifier::isIgnoreRouteEvents);
     }
 
     public static boolean notifyRouteStopped(CamelContext context, Route route) {
         return doNotify(context,
-                factory -> factory.createRouteStoppedEvent(route),
-                EventNotifier::isIgnoreRouteEvents);
+            factory -> factory.createRouteStoppedEvent(route),
+            EventNotifier::isIgnoreRouteEvents);
     }
 
     public static boolean notifyRouteAdded(CamelContext context, Route route) {
         return doNotify(context,
-                factory -> factory.createRouteAddedEvent(route),
-                EventNotifier::isIgnoreRouteEvents);
+            factory -> factory.createRouteAddedEvent(route),
+            EventNotifier::isIgnoreRouteEvents);
     }
 
     public static boolean notifyRouteRemoved(CamelContext context, Route route) {
         return doNotify(context,
-                factory -> factory.createRouteRemovedEvent(route),
-                EventNotifier::isIgnoreRouteEvents);
+            factory -> factory.createRouteRemovedEvent(route),
+            EventNotifier::isIgnoreRouteEvents);
     }
 
     public static boolean notifyExchangeCreated(CamelContext context, Exchange exchange) {
         return doNotifyExchange(context, exchange,
-                factory -> factory.createExchangeCreatedEvent(exchange),
-                EventNotifier::isIgnoreExchangeCreatedEvent);
+            factory -> factory.createExchangeCreatedEvent(exchange),
+            EventNotifier::isIgnoreExchangeCreatedEvent);
     }
 
     public static boolean notifyExchangeDone(CamelContext context, Exchange exchange) {
         return doNotifyExchange(context, exchange,
-                factory -> factory.createExchangeCompletedEvent(exchange),
-                EventNotifier::isIgnoreExchangeCompletedEvent);
+            factory -> factory.createExchangeCompletedEvent(exchange),
+            EventNotifier::isIgnoreExchangeCompletedEvent);
     }
 
     public static boolean notifyExchangeFailed(CamelContext context, Exchange exchange) {
         return doNotifyExchange(context, exchange,
-                factory -> factory.createExchangeFailedEvent(exchange),
-                EventNotifier::isIgnoreExchangeFailedEvents);
+            factory -> factory.createExchangeFailedEvent(exchange),
+            EventNotifier::isIgnoreExchangeFailedEvents);
     }
 
     public static boolean notifyExchangeFailureHandling(CamelContext context, Exchange exchange, Processor failureHandler,
                                                      boolean deadLetterChannel, String deadLetterUri) {
         return doNotifyExchange(context, exchange,
-                factory -> factory.createExchangeFailureHandlingEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri),
-                EventNotifier::isIgnoreExchangeFailedEvents);
+            factory -> factory.createExchangeFailureHandlingEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri),
+            EventNotifier::isIgnoreExchangeFailedEvents);
     }
 
     public static boolean notifyExchangeFailureHandled(CamelContext context, Exchange exchange, Processor failureHandler,
                                                     boolean deadLetterChannel, String deadLetterUri) {
         return doNotifyExchange(context, exchange,
-                factory -> factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri),
-                EventNotifier::isIgnoreExchangeFailedEvents);
+            factory -> factory.createExchangeFailureHandledEvent(exchange, failureHandler, deadLetterChannel, deadLetterUri),
+            EventNotifier::isIgnoreExchangeFailedEvents);
     }
 
     public static boolean notifyExchangeRedelivery(CamelContext context, Exchange exchange, int attempt) {
         return doNotifyExchange(context, exchange,
-                factory -> factory.createExchangeRedeliveryEvent(exchange, attempt),
-                EventNotifier::isIgnoreExchangeRedeliveryEvents);
+            factory -> factory.createExchangeRedeliveryEvent(exchange, attempt),
+            EventNotifier::isIgnoreExchangeRedeliveryEvents);
     }
 
     public static boolean notifyExchangeSending(CamelContext context, Exchange exchange, Endpoint endpoint) {
         return doNotifyExchange(context, exchange,
-                factory -> factory.createExchangeSendingEvent(exchange, endpoint),
-                EventNotifier::isIgnoreExchangeSendingEvents);
+            factory -> factory.createExchangeSendingEvent(exchange, endpoint),
+            EventNotifier::isIgnoreExchangeSendingEvents);
     }
 
     public static boolean notifyExchangeSent(CamelContext context, Exchange exchange, Endpoint endpoint, long timeTaken) {
         return doNotifyExchange(context, exchange,
-                factory -> factory.createExchangeSentEvent(exchange, endpoint, timeTaken),
-                EventNotifier::isIgnoreExchangeSentEvents);
+            factory -> factory.createExchangeSentEvent(exchange, endpoint, timeTaken),
+            EventNotifier::isIgnoreExchangeSentEvents);
     }
 
     public static boolean notifyCamelContextSuspending(CamelContext context) {
         return doNotify(context,
-                factory -> factory.createCamelContextSuspendingEvent(context),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextSuspendingEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     public static boolean notifyCamelContextSuspended(CamelContext context) {
         return doNotify(context,
-                factory -> factory.createCamelContextSuspendedEvent(context),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextSuspendedEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     public static boolean notifyCamelContextResuming(CamelContext context) {
         return doNotify(context,
-                factory -> factory.createCamelContextResumingEvent(context),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextResumingEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     public static boolean notifyCamelContextResumed(CamelContext context) {
         return doNotify(context,
-                factory -> factory.createCamelContextResumedEvent(context),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextResumedEvent(context),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     public static boolean notifyCamelContextResumeFailed(CamelContext context, Throwable cause) {
         return doNotify(context,
-                factory -> factory.createCamelContextResumeFailureEvent(context, cause),
-                EventNotifier::isIgnoreCamelContextEvents);
+            factory -> factory.createCamelContextResumeFailureEvent(context, cause),
+            EventNotifier::isIgnoreCamelContextEvents);
     }
 
     private static boolean doNotifyExchange(CamelContext context, Exchange exchange, Function<EventFactory, CamelEvent> eventSupplier, Predicate<EventNotifier> notifierFilter) {

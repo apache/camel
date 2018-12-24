@@ -16,9 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.util.concurrent.CountDownLatch;
-
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;

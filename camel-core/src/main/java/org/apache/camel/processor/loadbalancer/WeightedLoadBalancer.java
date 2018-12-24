@@ -21,12 +21,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
-    transient int lastIndex = -1;
-
     protected final List<DistributionRatio> ratios;
     protected final int distributionRatioSum;
     protected int runtimeRatioSum;
-
+    
+    transient int lastIndex = -1;
     
     public WeightedLoadBalancer(List<Integer> distributionRatios) {
         List<DistributionRatio> ratios = distributionRatios.stream()

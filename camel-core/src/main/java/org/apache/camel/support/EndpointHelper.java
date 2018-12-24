@@ -36,12 +36,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.spi.BrowsableEndpoint;
-import static org.apache.camel.util.StringHelper.after;
 
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.StringHelper.after;
 
 /**
  * Some helper methods for working with {@link Endpoint} instances

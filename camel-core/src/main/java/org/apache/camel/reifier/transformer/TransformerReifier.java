@@ -37,6 +37,12 @@ public abstract class TransformerReifier<T> {
         map.put(EndpointTransformerDefinition.class, EndpointTransformeReifier::new);
         TRANSFORMERS = map;
     }
+    
+    protected final T definition;
+
+    public TransformerReifier(T definition) {
+        this.definition = definition;
+    }
 
     public static TransformerReifier<? extends TransformerDefinition> reifier(TransformerDefinition definition) {
         Function<TransformerDefinition, TransformerReifier<? extends TransformerDefinition>> reifier = TRANSFORMERS.get(definition.getClass());
@@ -44,12 +50,6 @@ public abstract class TransformerReifier<T> {
             return reifier.apply(definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
-    }
-
-    protected final T definition;
-
-    public TransformerReifier(T definition) {
-        this.definition = definition;
     }
 
     public Transformer createTransformer(CamelContext context) throws Exception {

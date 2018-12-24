@@ -16,10 +16,10 @@
  */
 package org.apache.camel.impl.transformer;
 
+import org.apache.camel.ValueHolder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.ValueHolder;
 
 /**
  * Key used in {@link org.apache.camel.spi.TransformerRegistry} in {@link DefaultCamelContext},
