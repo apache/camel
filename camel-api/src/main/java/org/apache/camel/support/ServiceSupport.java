@@ -217,18 +217,18 @@ public abstract class ServiceSupport implements StatefulService {
     @Override
     public ServiceStatus getStatus() {
         switch (status) {
-            case STARTING:
-                return ServiceStatus.Starting;
-            case STARTED:
-                return ServiceStatus.Started;
-            case SUSPENDING:
-                return ServiceStatus.Suspending;
-            case SUSPENDED:
-                return ServiceStatus.Suspended;
-            case STOPPING:
-                return ServiceStatus.Stopping;
-            default:
-                return ServiceStatus.Stopped;
+        case STARTING:
+            return ServiceStatus.Starting;
+        case STARTED:
+            return ServiceStatus.Started;
+        case SUSPENDING:
+            return ServiceStatus.Suspending;
+        case SUSPENDED:
+            return ServiceStatus.Suspended;
+        case STOPPING:
+            return ServiceStatus.Stopping;
+        default:
+            return ServiceStatus.Stopped;
         }
     }
 

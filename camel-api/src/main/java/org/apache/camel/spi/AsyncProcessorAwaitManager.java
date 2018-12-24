@@ -17,7 +17,6 @@
 package org.apache.camel.spi;
 
 import java.util.Collection;
-import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -128,7 +127,7 @@ public interface AsyncProcessorAwaitManager extends StaticService {
      * @param processor the async processor to call
      * @param exchange the exchange to process
      */
-    void process(final AsyncProcessor processor, final Exchange exchange);
+    void process(AsyncProcessor processor, Exchange exchange);
 
     /**
      * Number of threads that are blocked waiting for other threads to trigger the callback when they are done processing
