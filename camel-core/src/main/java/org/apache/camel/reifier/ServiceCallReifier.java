@@ -200,22 +200,22 @@ class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
     private ServiceDiscovery retrieveServiceDiscovery(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
-                () -> (definition.getServiceDiscoveryConfiguration() != null) ? definition.getServiceDiscoveryConfiguration().newInstance(camelContext) : null,
-                // Local configuration
-                () -> retrieve(ServiceDiscovery.class, camelContext, definition::getServiceDiscovery, definition::getServiceDiscoveryRef),
-                // Linked configuration
-                () -> retrieveServiceDiscovery(camelContext, this::retrieveConfig),
-                // Default configuration
-                () -> retrieveServiceDiscovery(camelContext, this::retrieveDefaultConfig),
-                // Check if there is a single instance in the registry
-                () -> findByType(camelContext, ServiceDiscovery.class),
-                // From registry
-                () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_DISCOVERY_ID, ServiceDiscovery.class)
+            () -> (definition.getServiceDiscoveryConfiguration() != null) ? definition.getServiceDiscoveryConfiguration().newInstance(camelContext) : null,
+            // Local configuration
+            () -> retrieve(ServiceDiscovery.class, camelContext, definition::getServiceDiscovery, definition::getServiceDiscoveryRef),
+            // Linked configuration
+            () -> retrieveServiceDiscovery(camelContext, this::retrieveConfig),
+            // Default configuration
+            () -> retrieveServiceDiscovery(camelContext, this::retrieveDefaultConfig),
+            // Check if there is a single instance in the registry
+            () -> findByType(camelContext, ServiceDiscovery.class),
+            // From registry
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_DISCOVERY_ID, ServiceDiscovery.class)
         ).orElseGet(
-                // Default, that's s little ugly but a load balancer may live without
-                // (i.e. the Ribbon one) so let's delegate the null check to the actual
-                // impl.
-                () -> null
+            // Default, that's s little ugly but a load balancer may live without
+            // (i.e. the Ribbon one) so let's delegate the null check to the actual
+            // impl.
+            () -> null
         );
     }
 
@@ -256,20 +256,20 @@ class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
     private ServiceFilter retrieveServiceFilter(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
-                () -> (definition.getServiceFilterConfiguration() != null) ? definition.getServiceFilterConfiguration().newInstance(camelContext) : null,
-                // Local configuration
-                () -> retrieve(ServiceFilter.class, camelContext, definition::getServiceFilter, definition::getServiceFilterRef),
-                // Linked configuration
-                () -> retrieveServiceFilter(camelContext, this::retrieveConfig),
-                // Default configuration
-                () -> retrieveServiceFilter(camelContext, this::retrieveDefaultConfig),
-                // Check if there is a single instance in the registry
-                () -> findByType(camelContext, ServiceFilter.class),
-                // From registry
-                () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_FILTER_ID, ServiceFilter.class)
+            () -> (definition.getServiceFilterConfiguration() != null) ? definition.getServiceFilterConfiguration().newInstance(camelContext) : null,
+            // Local configuration
+            () -> retrieve(ServiceFilter.class, camelContext, definition::getServiceFilter, definition::getServiceFilterRef),
+            // Linked configuration
+            () -> retrieveServiceFilter(camelContext, this::retrieveConfig),
+            // Default configuration
+            () -> retrieveServiceFilter(camelContext, this::retrieveDefaultConfig),
+            // Check if there is a single instance in the registry
+            () -> findByType(camelContext, ServiceFilter.class),
+            // From registry
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_FILTER_ID, ServiceFilter.class)
         ).orElseGet(
-                // Default
-                () -> new HealthyServiceFilter()
+            // Default
+            () -> new HealthyServiceFilter()
         );
     }
 
@@ -306,19 +306,19 @@ class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
     private ServiceChooser retrieveServiceChooser(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
-                // Local configuration
-                () -> retrieve(ServiceChooser.class, camelContext, definition::getServiceChooser, definition::getServiceChooserRef),
-                // Linked configuration
-                () -> retrieveServiceChooser(camelContext, this::retrieveConfig),
-                // Default configuration
-                () -> retrieveServiceChooser(camelContext, this::retrieveDefaultConfig),
-                // Check if there is a single instance in the registry
-                () -> findByType(camelContext, ServiceChooser.class),
-                // From registry
-                () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class)
+            // Local configuration
+            () -> retrieve(ServiceChooser.class, camelContext, definition::getServiceChooser, definition::getServiceChooserRef),
+            // Linked configuration
+            () -> retrieveServiceChooser(camelContext, this::retrieveConfig),
+            // Default configuration
+            () -> retrieveServiceChooser(camelContext, this::retrieveDefaultConfig),
+            // Check if there is a single instance in the registry
+            () -> findByType(camelContext, ServiceChooser.class),
+            // From registry
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class)
         ).orElseGet(
-                // Default
-                () -> new RoundRobinServiceChooser()
+            // Default
+            () -> new RoundRobinServiceChooser()
         );
     }
 
@@ -348,20 +348,20 @@ class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
     private ServiceLoadBalancer retrieveLoadBalancer(CamelContext camelContext) throws Exception {
         return Suppliers.firstNotNull(
-                () -> (definition.getLoadBalancerConfiguration() != null) ? definition.getLoadBalancerConfiguration().newInstance(camelContext) : null,
-                // Local configuration
-                () -> retrieve(ServiceLoadBalancer.class, camelContext, definition::getLoadBalancer, definition::getLoadBalancerRef),
-                // Linked configuration
-                () -> retrieveLoadBalancer(camelContext, this::retrieveConfig),
-                // Default configuration
-                () -> retrieveLoadBalancer(camelContext, this::retrieveDefaultConfig),
-                // Check if there is a single instance in the registry
-                () -> findByType(camelContext, ServiceLoadBalancer.class),
-                // From registry
-                () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_LOAD_BALANCER_ID, ServiceLoadBalancer.class)
+            () -> (definition.getLoadBalancerConfiguration() != null) ? definition.getLoadBalancerConfiguration().newInstance(camelContext) : null,
+            // Local configuration
+            () -> retrieve(ServiceLoadBalancer.class, camelContext, definition::getLoadBalancer, definition::getLoadBalancerRef),
+            // Linked configuration
+            () -> retrieveLoadBalancer(camelContext, this::retrieveConfig),
+            // Default configuration
+            () -> retrieveLoadBalancer(camelContext, this::retrieveDefaultConfig),
+            // Check if there is a single instance in the registry
+            () -> findByType(camelContext, ServiceLoadBalancer.class),
+            // From registry
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_LOAD_BALANCER_ID, ServiceLoadBalancer.class)
         ).orElseGet(
-                // Default
-                () -> new DefaultServiceLoadBalancer()
+            // Default
+            () -> new DefaultServiceLoadBalancer()
         );
     }
 
@@ -391,15 +391,15 @@ class ServiceCallReifier extends ProcessorReifier<ServiceCallDefinition> {
 
     private Expression retrieveExpression(CamelContext camelContext, String component) throws Exception {
         Optional<Expression> expression = Suppliers.firstNotNull(
-                () -> (definition.getExpressionConfiguration() != null) ? definition.getExpressionConfiguration().newInstance(camelContext) : null,
-                // Local configuration
-                () -> retrieve(Expression.class, camelContext, definition::getExpression, definition::getExpressionRef),
-                // Linked configuration
-                () -> retrieveExpression(camelContext, this::retrieveConfig),
-                // Default configuration
-                () -> retrieveExpression(camelContext, this::retrieveDefaultConfig),
-                // From registry
-                () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID, Expression.class)
+            () -> (definition.getExpressionConfiguration() != null) ? definition.getExpressionConfiguration().newInstance(camelContext) : null,
+            // Local configuration
+            () -> retrieve(Expression.class, camelContext, definition::getExpression, definition::getExpressionRef),
+            // Linked configuration
+            () -> retrieveExpression(camelContext, this::retrieveConfig),
+            // Default configuration
+            () -> retrieveExpression(camelContext, this::retrieveDefaultConfig),
+            // From registry
+            () -> lookup(camelContext, ServiceCallDefinitionConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID, Expression.class)
         );
 
         if (expression.isPresent()) {

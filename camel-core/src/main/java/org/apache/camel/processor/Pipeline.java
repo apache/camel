@@ -107,8 +107,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             processor.process(exchange, doneSync ->
                     ReactiveHelper.schedule(() -> doProcess(exchange, callback, processors, false),
                             "Step[" + exchange.getExchangeId() + "," + Pipeline.this + "]"));
-        }
-        else {
+        } else {
             ExchangeHelper.copyResults(exchange, exchange);
 
             // logging nextExchange as it contains the exchange that might have altered the payload and since

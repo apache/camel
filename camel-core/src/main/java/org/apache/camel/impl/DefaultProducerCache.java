@@ -244,7 +244,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         try {
             if (processor instanceof AsyncProcessor) {
                 ((AsyncProcessor) processor).process(exchange,
-                        doneSync -> doInAsyncProducer(endpoint, exchange, ds -> future.complete(exchange), cb));
+                    doneSync -> doInAsyncProducer(endpoint, exchange, ds -> future.complete(exchange), cb));
             } else {
                 if (processor != null) {
                     processor.process(exchange);

@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.AggregationStrategy;
 import org.junit.Test;
 
 public class SplitterStreamCachingInSubRouteTest extends ContextTestSupport {

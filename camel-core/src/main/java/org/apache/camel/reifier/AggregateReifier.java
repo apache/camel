@@ -19,6 +19,7 @@ package org.apache.camel.reifier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -29,7 +30,6 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.aggregate.AggregateController;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.RouteContext;

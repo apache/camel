@@ -182,6 +182,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         map.put(WhenDefinition.class, WhenReifier::new);
         PROCESSORS = map;
     }
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    protected final T definition;
+    
+    public ProcessorReifier(T definition) {
+        this.definition = definition;
+    }
 
     public static ProcessorReifier<? extends ProcessorDefinition<?>> reifier(ProcessorDefinition<?> definition) {
         Function<ProcessorDefinition<?>, ProcessorReifier<? extends ProcessorDefinition<?>>> reifier = PROCESSORS.get(definition.getClass());
@@ -189,14 +196,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
             return reifier.apply(definition);
         }
         throw new IllegalStateException("Unsupported definition: " + definition);
-    }
-
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-
-    protected final T definition;
-
-    public ProcessorReifier(T definition) {
-        this.definition = definition;
     }
 
     /**

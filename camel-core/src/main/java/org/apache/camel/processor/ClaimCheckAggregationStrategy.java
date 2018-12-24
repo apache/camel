@@ -20,8 +20,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Exchange;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;

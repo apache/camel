@@ -16,8 +16,8 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Exchange;
 
 public class BodyOutAggregatingStrategy implements AggregationStrategy {
 

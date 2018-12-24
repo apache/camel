@@ -23,9 +23,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
-import static org.apache.camel.model.RoutingSlipDefinition.DEFAULT_DELIMITER;
+
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.spi.RouteContext;
+
+import static org.apache.camel.model.RoutingSlipDefinition.DEFAULT_DELIMITER;
 
 class RoutingSlipReifier extends ExpressionReifier<RoutingSlipDefinition<?>> {
 

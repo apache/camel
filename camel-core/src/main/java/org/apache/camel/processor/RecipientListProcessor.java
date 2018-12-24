@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -32,7 +33,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducerCache;
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RecipientListProcessor extends MulticastProcessor {
 
-    private static final Logger log = LoggerFactory.getLogger(RecipientListProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RecipientListProcessor.class);
     private final Iterator<?> iter;
     private boolean ignoreInvalidEndpoints;
     private ProducerCache producerCache;
@@ -109,20 +109,20 @@ public class RecipientListProcessor extends MulticastProcessor {
 
         public void begin() {
             // we have already acquired and prepare the producer
-            log.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
+            LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
             exchange.setProperty(Exchange.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
             // ensure stream caching is reset
             MessageHelper.resetStreamCache(exchange.getIn());
             // if the MEP on the endpoint is different then
             if (pattern != null) {
                 originalPattern = exchange.getPattern();
-                log.trace("Using exchangePattern: {} on exchange: {}", pattern, exchange);
+                LOG.trace("Using exchangePattern: {} on exchange: {}", pattern, exchange);
                 exchange.setPattern(pattern);
             }
         }
 
         public void done() {
-            log.trace("RecipientProcessorExchangePair #{} done: {}", index, exchange);
+            LOG.trace("RecipientProcessorExchangePair #{} done: {}", index, exchange);
             try {
                 // preserve original MEP
                 if (originalPattern != null) {
@@ -131,8 +131,8 @@ public class RecipientListProcessor extends MulticastProcessor {
                 // when we are done we should release back in pool
                 producerCache.releaseProducer(endpoint, producer);
             } catch (Exception e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Error releasing producer: " + producer + ". This exception will be ignored.", e);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Error releasing producer: " + producer + ". This exception will be ignored.", e);
                 }
             }
         }

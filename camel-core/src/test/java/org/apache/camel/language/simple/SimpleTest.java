@@ -771,7 +771,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     public void assertOnglOnExchangePropertiesWithBracket(String key) throws Exception {
         exchange.setProperty(key, new OrderLine(123, "Camel in Action"));
-                assertExpression("${exchangeProperty[" + key + "].name}", "Camel in Action");
+        assertExpression("${exchangeProperty[" + key + "].name}", "Camel in Action");
         assertExpression("${exchangeProperty['" + key + "'].name}", "Camel in Action");
     }
 

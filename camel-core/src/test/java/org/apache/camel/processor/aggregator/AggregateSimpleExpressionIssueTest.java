@@ -22,11 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.junit.Before;
@@ -35,9 +35,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
 @Ignore("Manual unit test")
 public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
 

@@ -16,13 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.AggregationStrategy;
 import org.junit.Test;
 
 public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSupport {

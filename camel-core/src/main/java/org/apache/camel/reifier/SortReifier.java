@@ -20,14 +20,15 @@ import java.util.Comparator;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SortDefinition;
 import org.apache.camel.processor.SortProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ObjectHelper;
+
+import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 class SortReifier<T, U extends SortDefinition<T>> extends ExpressionReifier<U> {
 
