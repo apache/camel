@@ -35,9 +35,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
-import org.apache.camel.api.management.ManagedCamelContext;
 
 /**
  * An XML parser that uses SAX to enrich route stats in the route dump.

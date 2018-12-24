@@ -25,8 +25,8 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedClusterServiceMBean;
 import org.apache.camel.cluster.CamelClusterService;
-import org.apache.camel.support.cluster.ClusterServiceHelper;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.support.cluster.ClusterServiceHelper;
 
 public class ManagedClusterService implements ManagedClusterServiceMBean {
     private final CamelContext context;
