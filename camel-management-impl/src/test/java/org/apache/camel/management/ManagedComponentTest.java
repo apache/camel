@@ -28,10 +28,10 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Result;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Scope;
+import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.support.DefaultComponent;

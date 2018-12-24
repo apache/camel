@@ -17,18 +17,12 @@
 package org.apache.camel.management.mbean;
 
 import java.io.IOException;
-import java.util.AbstractList;
-import java.util.AbstractMap;
-import java.util.AbstractSet;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.management.openmbean.CompositeData;
@@ -44,6 +38,7 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
+import org.apache.camel.api.management.mbean.ComponentVerifierExtension;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Result;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Result.Status;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Scope;
@@ -53,10 +48,6 @@ import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Verifica
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.VerificationError.HttpAttribute;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.VerificationError.StandardCode;
 import org.apache.camel.api.management.mbean.ManagedComponentMBean;
-import org.apache.camel.api.management.mbean.ComponentVerifierExtension;
-import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError.Attribute;
-import org.apache.camel.component.extension.verifier.ResultBuilder;
-import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.JsonSchemaHelper;

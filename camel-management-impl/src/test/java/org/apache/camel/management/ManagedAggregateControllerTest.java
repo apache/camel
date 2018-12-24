@@ -19,18 +19,15 @@ package org.apache.camel.management;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedAggregateProcessorMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregateController;
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.processor.aggregate.DefaultAggregateController;
 import org.junit.Test;
 
-/**
- *
- */
 public class ManagedAggregateControllerTest extends ManagementTestSupport {
 
     private AggregateController controller = new DefaultAggregateController();
