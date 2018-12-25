@@ -18,7 +18,6 @@ package org.apache.camel.component.netty4.http;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import io.netty.channel.ChannelHandler;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty4.NettyConfiguration;

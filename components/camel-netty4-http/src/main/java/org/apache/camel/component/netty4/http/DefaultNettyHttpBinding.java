@@ -506,6 +506,15 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         HttpMethod method = NettyHttpHelper.createMethod(message, body != null);
         request.setMethod(method);
         
+        // we use the relative path by default for GET Requests
+        if (request.method().equals(HttpMethod.GET)) {
+            int indexOfPath = uri.indexOf((new URI(uri)).getPath());
+            if (indexOfPath > 0) {
+                uriForRequest = uri.substring(indexOfPath);
+            }
+            request.setUri(uriForRequest);
+        }
+ 
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
 
         // if we bridge endpoint then we need to skip matching headers with the HTTP_QUERY to avoid sending
