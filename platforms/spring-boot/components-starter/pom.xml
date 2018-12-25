@@ -128,6 +128,7 @@
     <module>camel-braintree-starter</module>
     <module>camel-caffeine-starter</module>
     <module>camel-cassandraql-starter</module>
+    <module>camel-chatscript-starter</module>
     <module>camel-chronicle-starter</module>
     <module>camel-chunk-starter</module>
     <module>camel-cm-sms-starter</module>
