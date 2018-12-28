@@ -16,16 +16,22 @@
  */
 package org.apache.camel.swagger;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+
+import org.w3c.dom.Document;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -38,7 +44,9 @@ import io.swagger.models.License;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
@@ -48,6 +56,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.CamelVersionHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,6 +143,48 @@ public class RestSwaggerSupport {
         swaggerConfig.setInfo(info);
     }
 
+    public List<RestDefinition> getRestDefinitions(CamelContext camelContext) throws Exception {
+        ModelCamelContext context = camelContext.adapt(ModelCamelContext.class);
+        List<RestDefinition> rests = context.getRestDefinitions();
+        if (rests.isEmpty()) {
+            return null;
+        }
+
+        // use a routes definition to dump the rests
+        RestsDefinition def = new RestsDefinition();
+        def.setRests(rests);
+        String xml = ModelHelper.dumpModelAsXml(context, def);
+
+        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
+        final AtomicBoolean changed = new AtomicBoolean();
+        InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
+        Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
+            @Override
+            public String transform(String text) {
+                try {
+                    String after = context.resolvePropertyPlaceholders(text);
+                    if (!changed.get()) {
+                        changed.set(!text.equals(after));
+                    }
+                    return after;
+                } catch (Exception e) {
+                    // ignore
+                    return text;
+                }
+            }
+        });
+        // okay there were some property placeholder replaced so re-create the model
+        if (changed.get()) {
+            xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
+            RestsDefinition model = ModelHelper.createModelFromXml(context, xml, RestsDefinition.class);
+            if (model != null) {
+                return model.getRests();
+            }
+        }
+
+        return rests;
+    }
+
     public List<RestDefinition> getRestDefinitions(String camelId) throws Exception {
         ObjectName found = null;
         boolean supportResolvePlaceholder = false;
@@ -201,15 +252,21 @@ public class RestSwaggerSupport {
         return answer;
     }
 
-    public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
-            Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration) throws Exception {
+    public void renderResourceListing(CamelContext camelContext, RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
+                                      Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration) throws Exception {
         LOG.trace("renderResourceListing");
 
         if (cors) {
             setupCorsHeaders(response, configuration.getCorsHeaders());
         }
 
-        List<RestDefinition> rests = getRestDefinitions(contextId);
+        List<RestDefinition> rests = null;
+        if (camelContext != null && camelContext.getName().equals(contextId)) {
+            rests = getRestDefinitions(camelContext);
+        } else {
+            rests = getRestDefinitions(contextId);
+        }
+
         if (rests != null) {
             final Map<String, Object> apiProperties = configuration.getApiProperties() != null ? configuration.getApiProperties() : new HashMap<>();
             if (json) {

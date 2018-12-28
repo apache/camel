@@ -22,6 +22,7 @@ their `pom.xml` for this component:
 The camel-swagger-java module can be used from
 the REST components (without the need for servlet)
 
+NOTE: The camel-swagger-java component requires JMX enabled when using Camel 2.x.
 
 === Using Swagger in rest-dsl
 
