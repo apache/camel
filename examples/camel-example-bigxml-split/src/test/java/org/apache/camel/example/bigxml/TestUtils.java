@@ -72,14 +72,7 @@ public class TestUtils {
                 xsw.flush();
                 xsw.close();
             }
-            System.gc();
         }
-    }
-
-    public static long getUsedMemoryInKb() {
-        System.gc();
-        Runtime rt = Runtime.getRuntime();
-        return (rt.totalMemory() - rt.freeMemory()) / 1024;
     }
 
 }

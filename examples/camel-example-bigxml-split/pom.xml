@@ -93,7 +93,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-Xmx1g -Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                    <argLine>-Xmx20m -Dfile.encoding=${project.build.sourceEncoding}</argLine>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <rerunFailingTestsCount>0</rerunFailingTestsCount>
                     <forkCount>1</forkCount>

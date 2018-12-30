@@ -16,6 +16,7 @@
  */
 package org.apache.camel.example.bigxml;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -26,8 +27,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class XmlTokenizerTest extends CamelTestSupport {
-
-    private final DoNothingBean doNothing = new DoNothingBean();
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -43,8 +42,7 @@ public class XmlTokenizerTest extends CamelTestSupport {
     public void test() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(TestUtils.getNumOfRecords()).create();
         boolean matches = notify.matches(TestUtils.getMaxWaitTime(), TimeUnit.MILLISECONDS);
-        log.info("Processed XML file with {} (used memory: {} kB)", 
-            TestUtils.getNumOfRecords(), TestUtils.getUsedMemoryInKb());
+        log.info("Processed XML file with {} records", TestUtils.getNumOfRecords());
         assertTrue("Test completed", matches);
     }
 
@@ -55,15 +53,10 @@ public class XmlTokenizerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("file:" + TestUtils.getBasePath() + "?readLock=changed&noop=true")
                     .split(body().tokenizeXML("record", "records")).streaming().stopOnException()
-                        .bean(doNothing)
+                        .log(LoggingLevel.TRACE, "${body}")
                     .end();
             }
         };
-    }
-
-    public class DoNothingBean {
-        public void doNothing() {
-        }
     }
 
 }
