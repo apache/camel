@@ -358,7 +358,7 @@ public final class CamelJavaRestDslParserHelper {
             verb.setDescription(extractValueFromFirstArgument(clazz, block, mi));
         } else  if ("bindingMode".equals(name)) {
             verb.setBindingMode(extractValueFromFirstArgument(clazz, block, mi));
-        } else  if ("skipBindingOnErrorcode".equals(name)) {
+        } else  if ("skipBindingOnErrorCode".equals(name)) {
             verb.setSkipBindingOnErrorCode(extractValueFromFirstArgument(clazz, block, mi));
         } else  if ("clientRequestValidation".equals(name)) {
             verb.setClientRequestValidation(extractValueFromFirstArgument(clazz, block, mi));
