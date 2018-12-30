@@ -35,7 +35,7 @@ mvn clean test
 Tested on MacBook Pro 2,8 GHz Intel Core i7; 16 GB 2133 MHz LPDDR3; Java 1.8.0_181.
 
 tokenizer | numOfRecords | maxWaitTime (ms) | XML size (kB) | time (ms) 
---- | --- | --- | --- | --- | --- 
+--- | --- | --- | --- | --- 
 StAX | 40000 | 5000 | 3543 | 3081
 XML | 40000 | 5000 | 3543 | 2567
 StAX | 1000000 | 20000 | 89735 | 11535
