@@ -156,22 +156,22 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
         this.serviceReferenceUsageMap.clear();
     }
 
-    void drainServiceUsage(ServiceReference<?> serviceReference, AtomicLong serviceUsageCount) {
+    private void drainServiceUsage(ServiceReference<?> serviceReference, AtomicLong serviceUsageCount) {
         if (serviceUsageCount != null && serviceReference != null) {
-            while(serviceUsageCount.decrementAndGet() >= 0) {
+            while (serviceUsageCount.decrementAndGet() >= 0) {
                 this.bundleContext.ungetService(serviceReference);
             }
         }
     }
-    
-    void incrementServiceUsage(ServiceReference<?> sr) {
+
+    private void incrementServiceUsage(ServiceReference<?> sr) {
         AtomicLong serviceUsageCount = this.serviceReferenceUsageMap.get(sr);
         if (serviceUsageCount != null) {
             serviceUsageCount.incrementAndGet();
         } else {
-            this.serviceReferenceUsageMap.merge(sr, new AtomicLong(1), 
-                (existingServiceUsageCount, newServiceUsageCount)->{
-                        existingServiceUsageCount.getAndAdd(newServiceUsageCount.get());
+            this.serviceReferenceUsageMap.merge(sr, new AtomicLong(1),
+                (existingServiceUsageCount, newServiceUsageCount) -> {
+                    existingServiceUsageCount.getAndAdd(newServiceUsageCount.get());
                     return existingServiceUsageCount;
                 });
         }
