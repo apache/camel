@@ -83,7 +83,7 @@ public final class RouteCoverageHelper {
     }
 
     public static Map<String, List<CoverageData>> parseDumpRouteCoverageByClassAndTestMethod(String directory) throws Exception {
-        Map<String, List<CoverageData>> answer = new LinkedHashMap();
+        Map<String, List<CoverageData>> answer = new LinkedHashMap<>();
 
         File[] files = new File(directory).listFiles(f -> f.getName().endsWith(".xml"));
         if (files == null) {
@@ -138,10 +138,10 @@ public final class RouteCoverageHelper {
 
         // only calculate for elements within the route or children of policy/transaction
         if (!"route".equals(key) && !"policy".equals(key) && !"transacted".equals(key)) {
-            Integer count = 0;
+            int count = 0;
             Node total = node.getAttributes().getNamedItem("exchangesTotal");
             if (total != null) {
-                count = Integer.valueOf(total.getNodeValue());
+                count = Integer.parseInt(total.getNodeValue());
             }
             CoverageData holder = data.size() > counter.get() ? data.get(counter.get()) : null;
             if (holder != null && holder.getNode().equals(key)) {
