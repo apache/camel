@@ -231,6 +231,8 @@ Number of Examples: 102 (2 deprecated)
 | link:camel-example-cxf-ws-security-signature/README.md[CXF using WS-Security Signature] (camel-example-cxf-ws-security-signature) | WebService | CXF example using WS-Security Signature Action
 
 | link:camel-example-spring-ws/README.md[Spring WebService] (camel-example-spring-ws) | WebService | An example showing how to work with Camel and Spring Web Services
+
+| link:camel-example-billboard-aggr/README.md[Aggregation Test] (camel-example-billboard-aggr) | Testing | Billboard TOP100 aggregation example
 |===
 // examples: END
 
