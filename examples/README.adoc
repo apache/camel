@@ -245,6 +245,8 @@ Number of Examples: 110 (8 deprecated)
 | link:camel-example-cxf-tomcat/README.md[CXF Tomcat] (camel-example-cxf-tomcat) | WebService | An example using Camel CXF (code first) with Apache Tomcat
 
 | link:camel-example-spring-ws/README.md[Spring WebService] (camel-example-spring-ws) | WebService | An example showing how to work with Camel and Spring Web Services
+
+| link:camel-example-billboard-aggr/README.md[Aggregation Test] (camel-example-billboard-aggr) | Testing | Billboard TOP100 aggregation example
 |===
 // examples: END
 
