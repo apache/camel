@@ -18,9 +18,16 @@ function createSymlinks() {
             file.base = path.dirname(file.path);
             done(null, file);
         }))
-        .pipe(symlink('components/modules/ROOT/pages/', {
-            relativeSymlinks: true
-        }));
+        // Antora disabled symlinks, there is an issue open
+        // https://gitlab.com/antora/antora/issues/188
+        // to reinstate symlink support, until that's resolved
+        // we'll simply copy over instead of creating symlinks
+        // .pipe(symlink('components/modules/ROOT/pages/', {
+        //     relativeSymlinks: true
+        // }));
+        // uncomment above .pipe() and remove the .pipe() below
+        // when antora#188 is resolved
+        .pipe(dest('components/modules/ROOT/pages/'));
 }
 
 function nav() {
