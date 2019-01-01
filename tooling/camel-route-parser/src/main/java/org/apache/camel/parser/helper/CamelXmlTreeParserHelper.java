@@ -75,11 +75,13 @@ public final class CamelXmlTreeParserHelper {
         boolean isRoute = "route".equals(name) || "from".equals(name);
         // must be an eip model that has either input or output as we only want to track processors (also accept from)
         boolean isEip = camelCatalog.findModelNames().contains(name) && (hasInput(name) || hasOutput(name));
+        // skip when/otherwise (as we do this in Java DSL)
+        boolean isWhenOrOtherwise = "when".equals(name) || "otherwise".equals(name);
 
         // only include if its a known Camel model (dont include languages)
         if (isRoute || isEip) {
-            // skip route as we just keep from
-            if (!"route".equals(name)) {
+            // skip route as we just keep from (and also skip when/otherwise)
+            if (!"route".equals(name) && !isWhenOrOtherwise) {
                 String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
                 String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
                 newNode = nodeFactory.newNode(parent, name);
