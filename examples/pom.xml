@@ -58,6 +58,7 @@
     <module>camel-example-cxf-blueprint</module>
     <module>camel-example-cxf-proxy</module>
     <module>camel-example-cxf-tomcat</module>
+    <module>camel-example-cxf-ws-security-signature</module>
     <module>camel-example-console</module>
     <module>camel-example-ehcache-blueprint</module>
     <module>camel-example-ftp</module>
