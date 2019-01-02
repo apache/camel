@@ -1,4 +1,6 @@
 # Splitting big XML payloads
+
+### Introduction
 This example shows how to deal with big XML files in Camel.  
 
 The XPath tokenizer will load the entire XML content into memory, so it's not well suited for very big XML payloads.  
@@ -21,9 +23,15 @@ The test XML contains a simple collection of records.
 </records>
 ```
 
-You can customize numOfRecords and maxWaitTime to test time performance with different payloads.  
-The available memory is restricted to 20 MB (see `pom.xml`), there is no cache enabled, no parallel processing 
-and no mock endpoints that store exchanges into memory. 
+You can customize numOfRecords and maxWaitTime to do performance tests with different payloads.  
+Max JVM heap is restricted to 20 MB to show that it works with a very limited amount of memory (see `pom.xml`).
+
+There are also a number of optional runtime settings: 
+- no cache enabled
+- no parallel processing
+- no mock endpoints with in-memory exchange store
+- enabled Throughput Logging for DEBUG level
+- disabled JMX instrumentation
 
 ### Build and run
 The test XML file is built once beforehand using `@BeforeClass`.
@@ -36,12 +44,12 @@ Tested on MacBook Pro 2,8 GHz Intel Core i7; 16 GB 2133 MHz LPDDR3; Java 1.8.0_1
 
 tokenizer | numOfRecords | maxWaitTime (ms) | XML size (kB) | time (ms) 
 --- | --- | --- | --- | --- 
-StAX | 40000 | 5000 | 3543 | 3081
-XML | 40000 | 5000 | 3543 | 2567
-StAX | 1000000 | 20000 | 89735 | 11535
-XML | 1000000 | 20000 | 89735 | 11431
-StAX | 15000000 | 180000 | 1366102 | 131786
-XML | 15000000 | 180000 | 1366102 | 137322
+StAX | 40000 | 5000 | 3543 | 3226
+XML | 40000 | 5000 | 3543 | 2749
+StAX | 1000000 | 20000 | 89735 | 13660
+XML | 1000000 | 20000 | 89735 | 13431
+StAX | 15000000 | 200000 | 1366102 | 157741
+XML | 15000000 | 200000 | 1366102 | 173253
 
 ### Forum, Help, etc
 If you hit an problems please let us know on the Camel Forums
