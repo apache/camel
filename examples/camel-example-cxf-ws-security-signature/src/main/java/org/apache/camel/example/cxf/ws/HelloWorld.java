@@ -15,12 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.example.cxf.ws;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 
 @WebService(name = "HelloWorld", targetNamespace = "http://cxf.apache.org/wsse/handler/helloworld")
 public interface HelloWorld {
+
     @WebMethod
     String sayHello(@WebParam(name = "toWhom") String to);
 

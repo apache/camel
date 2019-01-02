@@ -1,32 +1,15 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 CXF WS-SECURITY OSGi HTTP WEB SERVICE
 =========================
 
 ### Introduction
--------
+
 Create a web service with CXF using WS-SECURITY Signature action and expose it through the OSGi HTTP
 Service, the main purpose is to demonstrate how to use signaturePropRefId WSS4J configuration in
 OSGi container.
 
 
-Explanation
------------
+### Explanation
+
 The web service is a simple JAX-WS web service with ws-security Signature and UsernameToken action called HelloWorldSecurity. The 
 interface and the implementation are located in the src/main/java/org/
 apache/camel/example/cxf/ws directory of this example.
@@ -76,7 +59,7 @@ directory:
 ### Build
 You will need to compile this example first:
 
-	mvn install
+    mvn install
 
 ### Run
 
@@ -86,19 +69,21 @@ To run the example on Apache Karaf 4.x or newer
 
 Launch the server
 
-	karaf / karaf.bat
+    karaf / karaf.bat
 
 #### Step 2: Add features
 
 Add features required
 
-	feature:install cxf
-	feature:install camel
-	feature:install camel-cxf
+    feature:install cxf
+    feature:install camel
+    feature:install camel-cxf
 
 #### Step 3: Deploy
+
 Deploy the example
-                 install -s mvn:org.apache.camel.example/camel-example-cxf-ws-security-signature/${version}
+
+    install -s mvn:org.apache.camel.example/camel-example-cxf-ws-security-signature/${version}
 
 To view the service WSDL, open your browser and go to the following
 URL:
@@ -106,9 +91,8 @@ URL:
   http://localhost:8181/cxf/HelloWorldSecurity?wsdl
 
 
+### Running a Client
 
-Running a Client
-----------------
 To run the java code client:
 
 1. Change to the <camel_home>/examples/camel-example-cxf-ws-security-signature
@@ -116,10 +100,9 @@ To run the java code client:
 
 2. Run the following command:
 
-     mvn compile exec:java
+   `mvn compile exec:java`
 
-   If the client request is successful, 
-   it will print out
+   If the client request is successful, it will print out:
        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><ns2:sayHelloResponse xmlns:ns2="http://cxf.apache.org/wsse/handler/helloworld"><return>Hello CXF</return></ns2:sayHelloResponse></soap:Body></soap:Envelope>
        
 ### Forum, Help, etc

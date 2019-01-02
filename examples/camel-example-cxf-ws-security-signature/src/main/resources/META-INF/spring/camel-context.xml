@@ -19,54 +19,47 @@
 -->
 <!-- Configures the Camel Context-->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xmlns:jaxws="http://cxf.apache.org/jaxws"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd       
-     http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-      http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
-   
-   <bean id="myPasswordCallback" class="org.apache.camel.example.cxf.ws.UserPasswordCallback"/>
-   
-    <jaxws:endpoint id="helloWorld"
-        implementor="org.apache.camel.example.cxf.ws.HelloWorldImpl"
-        address="/HelloWorldSecurity">
-        <jaxws:inInterceptors>
-            <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
-                <constructor-arg>
-                    <map>
-                        <entry key="action" value="UsernameToken Signature"/>
-                        <entry key="passwordType" value="PasswordText"/>
-                        <entry key="passwordCallbackRef">
-                            <ref bean="myPasswordCallback"/>
-                        </entry>
-                        <entry key="signaturePropRefId" value="wsCryptoProperties"/>
-                        <entry key="wsCryptoProperties" value-ref="wsCryptoProperties"/>
-                    </map>
-                </constructor-arg>
-            </bean>
-            <bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor" />
-        </jaxws:inInterceptors>
-    </jaxws:endpoint>
-    
-    <util:properties id="wsCryptoProperties">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
-       <prop
-            key="org.apache.ws.security.crypto.provider">org.apache.ws.security.components.crypto.Merlin</prop>
+  <bean id="myPasswordCallback" class="org.apache.camel.example.cxf.ws.UserPasswordCallback"/>
 
-       <prop
-            key="org.apache.ws.security.crypto.merlin.keystore.type">jks</prop>
+  <!-- setup CXF endpoint -->
+  <jaxws:endpoint id="helloWorld"
+                  implementor="org.apache.camel.example.cxf.ws.HelloWorldImpl"
+                  address="/HelloWorldSecurity">
+    <jaxws:inInterceptors>
+      <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+        <constructor-arg>
+          <map>
+            <entry key="action" value="UsernameToken Signature"/>
+            <entry key="passwordType" value="PasswordText"/>
+            <entry key="passwordCallbackRef">
+              <ref bean="myPasswordCallback"/>
+            </entry>
+            <entry key="signaturePropRefId" value="wsCryptoProperties"/>
+            <entry key="wsCryptoProperties" value-ref="wsCryptoProperties"/>
+          </map>
+        </constructor-arg>
+      </bean>
+      <bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor"/>
+    </jaxws:inInterceptors>
+  </jaxws:endpoint>
 
-       <prop
-           key="org.apache.ws.security.crypto.merlin.keystore.password">storepassword</prop>
+  <util:properties id="wsCryptoProperties">
+    <prop key="org.apache.ws.security.crypto.provider">org.apache.ws.security.components.crypto.Merlin</prop>
+    <prop key="org.apache.ws.security.crypto.merlin.keystore.type">jks</prop>
+    <prop key="org.apache.ws.security.crypto.merlin.keystore.password">storepassword</prop>
+    <prop key="org.apache.ws.security.crypto.merlin.keystore.file">server-truststore.jks</prop>
+  </util:properties>
 
-       <prop
-           key="org.apache.ws.security.crypto.merlin.keystore.file">server-truststore.jks</prop>
-    </util:properties>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <!-- no routes -->
+  </camelContext>
 
-   
-    <camelContext id="test-example-context" xmlns="http://camel.apache.org/schema/spring">
-     
-    </camelContext>
 </beans>

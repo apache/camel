@@ -24,8 +24,8 @@ import java.net.URLConnection;
 
 import org.apache.commons.io.IOUtils;
 
-
 public class Client {
+
     public static void main(String[] args) {
         try {
             new Client().sendRequest();
