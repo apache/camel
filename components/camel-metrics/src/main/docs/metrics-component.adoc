@@ -209,7 +209,7 @@ metrics:counter:metricname[?options]
 
 #### Options
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",options="header"]
 |=====================================================
 |Name |Default |Description
 |increment  |- |Long value to add to the counter
@@ -284,7 +284,7 @@ metrics:histogram:metricname[?options]
 
 #### Options
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",options="header"]
 |===================================
 |Name |Default |Description
 |value |- |Value to use in histogram
@@ -340,7 +340,7 @@ metrics:meter:metricname[?options]
 
 #### Options
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",options="header"]
 |===================================
 |Name |Default |Description
 |mark  |- |Long value to use as mark
@@ -393,7 +393,7 @@ metrics:timer:metricname[?options]
 
 #### Options
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",options="header"]
 |==========================
 |Name |Default |Description
 |action |- |start or stop
@@ -446,7 +446,7 @@ metrics:gauge:metricname[?options]
 
 #### Options
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",options="header"]
 |=====================================================
 |Name |Default |Description
 |subject  |- |Any object to be observed by the gauge
@@ -512,7 +512,7 @@ And from XML DSL you define a <bean> as follows:
 The `MetricsRoutePolicyFactory` and `MetricsRoutePolicy` supports the
 following options:
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",options="header"]
 |=======================================================================
 |Name |Default |Description
 |useJmx |false |Whether to report fine grained statistics to JMX by
@@ -588,7 +588,7 @@ And from XML DSL you define a <bean> as follows:
 
 The following options is supported on the factory:
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",options="header"]
 |=======================================================================
 |Name |Default |Description
 |useJmx |false |Whether to report fine grained statistics to JMX by
