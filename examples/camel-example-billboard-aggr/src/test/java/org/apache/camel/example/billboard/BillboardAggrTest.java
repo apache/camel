@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Test;
@@ -34,6 +35,13 @@ import org.junit.Test;
 public class BillboardAggrTest extends CamelTestSupport {
 
     private final static String basePath = System.getProperty("user.dir") + "/target/test-classes/data";
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext ctx = super.createCamelContext();
+        ctx.disableJMX();
+        return ctx;
+    }
 
     @Override
     protected int getShutdownTimeout() {
