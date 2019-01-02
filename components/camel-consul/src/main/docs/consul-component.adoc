@@ -201,7 +201,7 @@ The component supports 90 options, which are listed below.
 
 ### Headers
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",options="header"]
 |=======================================================================
 |Name |Type |Description
 |CamelConsulAction|String|The Producer action

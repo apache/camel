@@ -40,7 +40,7 @@ their `pom.xml` for this component:
 
 ### Headers
 
-[width="100%",cols="10%,10%,80%",options="header",]
+[width="100%",options="header"]
 |=======================================================================
 |Name |Type |Description
 
