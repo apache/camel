@@ -34,7 +34,7 @@ import org.junit.Test;
 
 public class BillboardAggrTest extends CamelTestSupport {
 
-    private final static String basePath = System.getProperty("user.dir") + "/target/test-classes/data";
+    private final static String basePath = System.getProperty("user.dir") + "/src/data";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
