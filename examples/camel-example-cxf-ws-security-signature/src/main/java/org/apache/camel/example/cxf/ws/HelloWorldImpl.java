@@ -23,6 +23,7 @@ import javax.jws.WebService;
 @WebService(name = "HelloWorld", targetNamespace = "http://cxf.apache.org/wsse/handler/helloworld", 
             endpointInterface = "org.apache.camel.example.cxf.ws.HelloWorld")
 public class HelloWorldImpl implements HelloWorld {
+
     @WebMethod
     public String sayHello(@WebParam(name = "toWhom") String toWhom) {
         return "Hello " + toWhom;

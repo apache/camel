@@ -19,128 +19,125 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
- <modelVersion>4.0.0</modelVersion>
-	
- <parent>
-   <groupId>org.apache.camel.example</groupId>
-   <artifactId>examples</artifactId>
-   <version>3.0.0-SNAPSHOT</version>
- </parent>
-  
- <artifactId>camel-example-cxf-ws-security-signature</artifactId>
- <packaging>jar</packaging>
- <name>Camel :: Example :: CXF :: WS-Security Signature</name>
- <description>CXF example using WS-Security Signature Action</description>
-	
- <properties>
-   <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-   <version.maven-bundle-plugin>${project.version}</version.maven-bundle-plugin>
-   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
- </properties>
-	
- <dependencies>
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.camel.example</groupId>
+    <artifactId>examples</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camel-example-cxf-ws-security-signature</artifactId>
+  <packaging>jar</packaging>
+  <name>Camel :: Example :: CXF :: WS-Security Signature</name>
+  <description>CXF example using WS-Security Signature Action</description>
+
+  <properties>
+    <category>WebService</category>
+    <title>CXF using WS-Security Signature</title>
+  </properties>
+
+  <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-	<dependency>
-	  <groupId>org.apache.camel</groupId>
-	  <artifactId>camel-spring</artifactId>
-	</dependency>
-	<dependency>
-	  <groupId>org.apache.camel</groupId>
-	  <artifactId>camel-cxf</artifactId>
-	</dependency>
-	<dependency>
-	  <groupId>org.apache.cxf</groupId>
-	  <artifactId>cxf-rt-ws-security</artifactId>
-	</dependency>
-	<dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cxf</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-security</artifactId>
+    </dependency>
+    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
-	<dependency>
-	  <groupId>org.slf4j</groupId>
-	  <artifactId>slf4j-api</artifactId>
-	</dependency>
-	<dependency>
-	  <groupId>org.slf4j</groupId>
-	  <artifactId>slf4j-log4j12</artifactId>
-	</dependency>
-	<dependency>
-	  <groupId>log4j</groupId>
-	  <artifactId>log4j</artifactId>
-	</dependency>
-	<dependency>
-	  <groupId>org.apache.camel</groupId>
-	  <artifactId>camel-test-spring</artifactId>
-	  <scope>test</scope>
-	</dependency>
-	</dependencies>
-	
-	<build>
-		<defaultGoal>install</defaultGoal>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<!-- <version></version> -->
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Bundle-SymbolicName>camel-example-cxf-ws-security-signature</Bundle-SymbolicName>
-						<Bundle-Name>Camel :: Example :: CXF ::WS-Security Signature</Bundle-Name>
-						<Import-Package>
-                            javax.jws,
-                            javax.xml.bind.annotation,
-                            javax.xml.namespace,
-                            javax.wsdl,
-                            org.apache.cxf.bus,
-                            org.apache.cxf.bus.spring,
-                            org.apache.cxf.bus.resource,
-                            org.apache.cxf.configuration.spring,
-                            org.apache.cxf.resource,
-                            org.apache.cxf.transport.http,
-                            org.apache.cxf.ws.security.wss4j,
-                            org.springframework.beans.factory.config,
-                            javax.security.auth.callback,
-                            org.apache.wss4j.common.ext,
-                            org.apache.cxf.binding.soap.saaj,
-			                org.apache.commons.io
-                        </Import-Package>
-					</instructions>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<configuration>
-					<encoding>UTF-8</encoding>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.camel</groupId>
-				<artifactId>camel-maven-plugin</artifactId>
-				<configuration>
-					<fileApplicationContextUri>src/main/resources/META-INF/spring/camel-context.xml</fileApplicationContextUri>
-				</configuration>
-			</plugin>
-			 <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>org.apache.camel.example.cxf.ws.Client</mainClass>
-                    <includePluginDependencies>false</includePluginDependencies>
-                </configuration>
-            </plugin>
-		</plugins>
-	</build>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>camel-example-cxf-ws-security-signature</Bundle-SymbolicName>
+            <Bundle-Name>Camel :: Example :: CXF :: WS-Security Signature</Bundle-Name>
+            <Import-Package>
+              javax.jws,
+              javax.xml.bind.annotation,
+              javax.xml.namespace,
+              javax.wsdl,
+              org.apache.cxf.bus,
+              org.apache.cxf.bus.spring,
+              org.apache.cxf.bus.resource,
+              org.apache.cxf.configuration.spring,
+              org.apache.cxf.resource,
+              org.apache.cxf.transport.http,
+              org.apache.cxf.ws.security.wss4j,
+              org.springframework.beans.factory.config,
+              javax.security.auth.callback,
+              org.apache.wss4j.common.ext,
+              org.apache.cxf.binding.soap.saaj,
+              org.apache.commons.io
+            </Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <configuration>
+          <fileApplicationContextUri>src/main/resources/META-INF/spring/camel-context.xml</fileApplicationContextUri>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>org.apache.camel.example.cxf.ws.Client</mainClass>
+          <includePluginDependencies>false</includePluginDependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <profiles>
     <profile>
       <id>jdk9+-build</id>
@@ -152,11 +149,21 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <argLine>--add-modules java.activation,java.xml.bind,java.xml.ws,jdk.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED --add-exports=java.xml.bind/com.sun.xml.internal.bind=ALL-UNNAMED --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2=ALL-UNNAMED --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime.reflect=ALL-UNNAMED --add-exports=java.xml.ws/com.sun.xml.internal.messaging.saaj.soap.impl=ALL-UNNAMED --add-exports=java.xml.ws/com.sun.xml.internal.messaging.saaj.soap=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED</argLine>
+              <argLine>--add-modules java.activation,java.xml.bind,java.xml.ws,jdk.xml.bind --add-opens
+                java.base/java.lang=ALL-UNNAMED --add-exports=java.naming/com.sun.jndi.ldap=ALL-UNNAMED
+                --add-exports=java.xml.bind/com.sun.xml.internal.bind=ALL-UNNAMED
+                --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2=ALL-UNNAMED
+                --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime.reflect=ALL-UNNAMED
+                --add-exports=java.xml.ws/com.sun.xml.internal.messaging.saaj.soap.impl=ALL-UNNAMED
+                --add-exports=java.xml.ws/com.sun.xml.internal.messaging.saaj.soap=ALL-UNNAMED --add-opens
+                java.base/java.net=ALL-UNNAMED
+                --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED
+              </argLine>
             </configuration>
           </plugin>
         </plugins>
       </build>
     </profile>
   </profiles>
+  
 </project>
