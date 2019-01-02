@@ -369,7 +369,7 @@ situation, the SimpleTrigger wants to be
 re-scheduled to the next scheduled time after 'now' - taking into
 account any associated Calendar, and with the repeat count left unchanged.
 
-WARNING: This instruction could cause the <code>Trigger</code>
+WARNING: This instruction could cause the Trigger
 to go directly to the 'COMPLETE' state if the end-time of the trigger
 has arrived.
 
