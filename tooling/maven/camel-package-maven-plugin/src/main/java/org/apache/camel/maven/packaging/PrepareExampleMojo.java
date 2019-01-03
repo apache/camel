@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,41 +101,43 @@ public class PrepareExampleMojo extends AbstractMojo {
 
                 if (file.isDirectory() && file.getName().startsWith("camel-example")) {
                     File pom = new File(file, "pom.xml");
-                    String existing = FileUtils.readFileToString(pom);
+                    if (pom.exists()) {
+                        String existing = FileUtils.readFileToString(pom, Charset.defaultCharset());
 
-                    ExampleModel model = new ExampleModel();
-                    model.setFileName(file.getName());
+                        ExampleModel model = new ExampleModel();
+                        model.setFileName(file.getName());
 
-                    String name = StringHelper.between(existing, "<name>", "</name>");
-                    String title = StringHelper.between(existing, "<title>", "</title>");
-                    String description = StringHelper.between(existing, "<description>", "</description>");
-                    String category = StringHelper.between(existing, "<category>", "</category>");
+                        String name = StringHelper.between(existing, "<name>", "</name>");
+                        String title = StringHelper.between(existing, "<title>", "</title>");
+                        String description = StringHelper.between(existing, "<description>", "</description>");
+                        String category = StringHelper.between(existing, "<category>", "</category>");
 
-                    if (title != null) {
-                        model.setTitle(title);
-                    } else {
-                        // fallback and use file name as title
-                        model.setTitle(asTitle(file.getName()));
-                    }
-                    if (description != null) {
-                        model.setDescription(description);
-                    }
-                    if (category != null) {
-                        model.setCategory(category);
-                    }
-                    if (name != null && name.contains("(deprecated)")) {
-                        model.setDeprecated("true");
-                    } else {
-                        model.setDeprecated("false");
-                    }
+                        if (title != null) {
+                            model.setTitle(title);
+                        } else {
+                            // fallback and use file name as title
+                            model.setTitle(asTitle(file.getName()));
+                        }
+                        if (description != null) {
+                            model.setDescription(description);
+                        }
+                        if (category != null) {
+                            model.setCategory(category);
+                        }
+                        if (name != null && name.contains("(deprecated)")) {
+                            model.setDeprecated("true");
+                        } else {
+                            model.setDeprecated("false");
+                        }
 
-                    // readme files is either readme.md or readme.adoc
-                    String[] readmes = new File(file, ".").list((folder, fileName) -> fileName.toLowerCase().startsWith("readme"));
-                    if (readmes != null && readmes.length == 1) {
-                        model.setReadmeFileName(readmes[0]);
-                    }
+                        // readme files is either readme.md or readme.adoc
+                        String[] readmes = new File(file, ".").list((folder, fileName) -> fileName.toLowerCase().startsWith("readme"));
+                        if (readmes != null && readmes.length == 1) {
+                            model.setReadmeFileName(readmes[0]);
+                        }
 
-                    models.add(model);
+                        models.add(model);
+                    }
                 }
             }
 
