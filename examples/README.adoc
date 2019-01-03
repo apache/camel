@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 110 (8 deprecated)
+Number of Examples: 102 (2 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -39,8 +39,6 @@ Number of Examples: 110 (8 deprecated)
 | link:camel-example-rest-swagger/README.md[REST Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a REST service defined using Swagger specification
 
 | link:camel-example-servlet-tomcat/README.md[Servlet Tomcat] (camel-example-servlet-tomcat) | Beginner | An example using Camel Servlet with Apache Tomcat
-
-| link:camel-example-servlet-tomcat-no-spring/README.md[Servlet Tomcat without Spring] (camel-example-servlet-tomcat-no-spring) | Beginner | An example using Camel Servlet with Apache Tomcat without using Spring
 
 | link:camel-example-spring/README.md[Spring] (camel-example-spring) | Beginner | An example showing how to work with Camel and Spring
 
@@ -127,8 +125,6 @@ Number of Examples: 110 (8 deprecated)
 
 | link:camel-example-validator-spring-boot/readme.adoc[Validator Spring Boot] (camel-example-validator-spring-boot) | Input/Output Type Contract | An example showing how to work with declarative validation and Spring Boot
 
-| link:camel-example-bam/README.md[BAM (deprecated)] (camel-example-bam) | Management and Monitoring | *deprecated* An example showing how to use Camel as a Business Activity Monitoring tool
-
 | link:camel-example-cdi-metrics/README.md[CDI Metrics] (camel-example-cdi-metrics) | Management and Monitoring | Dropwizard Metrics CDI example
 
 | link:camel-example-jmx/README.md[JMX] (camel-example-jmx) | Management and Monitoring | An example showing how to work with Camel and JMX
@@ -143,8 +139,6 @@ Number of Examples: 110 (8 deprecated)
 
 | link:camel-example-spring-boot-supervising-route-controller/readme.adoc[Spring Boot Supervising Route Controller] (camel-example-spring-boot-supervising-route-controller) | Management and Monitoring | An example showing how to work with Camel's Supervising Route Controller and Spring Boot
 
-| link:camel-example-tracer/README.md[Tracer] (camel-example-tracer) | Management and Monitoring | *deprecated* An example showing how to persist Camel trace event messages using JPA
-
 | link:camel-example-zipkin/README.md[Zipkin] (camel-example-zipkin) | Management and Monitoring | An example showing how to trace incoming and outgoing messages from Camel with Zipkin
 
 | link:camel-example-activemq-tomcat/README.md[ActiveMQ Tomcat] (camel-example-activemq-tomcat) | Messaging | An example using ActiveMQ Broker and Camel with Apache Tomcat
@@ -157,8 +151,6 @@ Number of Examples: 110 (8 deprecated)
 
 | link:camel-example-google-pubsub/README.adoc[Google Pubsub] (camel-example-google-pubsub) | Messaging | An example for Google Pubsub
 
-| link:camel-example-guice-jms/README.md[Guice JMS] (camel-example-guice-jms) | Messaging | *deprecated* An example showing how to work with Camel, Guice and JMS
-
 | link:camel-example-jms-file/README.md[JMS-File] (camel-example-jms-file) | Messaging | An example that persists messages from JMS to files
 
 | link:camel-example-kafka/README.adoc[Kafka] (camel-example-kafka) | Messaging | An example for Kafka
@@ -170,8 +162,6 @@ Number of Examples: 110 (8 deprecated)
 | link:camel-example-spring-boot-activemq/readme.adoc[Spring Boot Activemq] (camel-example-spring-boot-activemq) | Messaging | An example showing how to work with Camel, ActiveMQ and Spring Boot
 
 | link:camel-example-spring-jms/README.md[Spring JMS] (camel-example-spring-jms) | Messaging | An example using Spring XML to talk to the JMS server from different kind of client techniques
-
-| link:camel-example-cdi-osgi/README.md[CDI OSGi] (camel-example-cdi-osgi) | OSGi | *deprecated* PAX CDI example
 
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
 
@@ -194,13 +184,7 @@ Number of Examples: 110 (8 deprecated)
 
 | link:camel-example-swagger-osgi/README.md[Swagger OSGi] (camel-example-swagger-osgi) | OSGi | An example using REST DSL in XML and Swagger API
 
-| link:camel-example-groovy/ReadMe.md[Groovy] (camel-example-groovy) | Other Languages | *deprecated* A Camel route using Groovy DSL
-
 | link:camel-example-kotlin/ReadMe.md[Kotlin] (camel-example-kotlin) | Other Languages | A Camel route using Kotlin
-
-| link:camel-example-scala/ReadMe.md[Scala] (camel-example-scala) | Other Languages | *deprecated* A Camel route using Scala
-
-| link:camel-example-java8-rx/readme.adoc[Java8 RX] (camel-example-java8-rx) | Reactive | An example for showing Camel RX for Java 8
 
 | link:camel-example-reactive-streams/readme.adoc[Reactive Streams] (camel-example-reactive-streams) | Reactive | An example that shows how Camel can exchange data using reactive streams with Spring Boot reactor
 
@@ -243,6 +227,8 @@ Number of Examples: 110 (8 deprecated)
 | link:camel-example-cxf-proxy/README.md[CXF Proxy] (camel-example-cxf-proxy) | WebService | An example which uses Camel to proxy a web service
 
 | link:camel-example-cxf-tomcat/README.md[CXF Tomcat] (camel-example-cxf-tomcat) | WebService | An example using Camel CXF (code first) with Apache Tomcat
+
+| link:camel-example-cxf-ws-security-signature/README.md[CXF using WS-Security Signature] (camel-example-cxf-ws-security-signature) | WebService | CXF example using WS-Security Signature Action
 
 | link:camel-example-spring-ws/README.md[Spring WebService] (camel-example-spring-ws) | WebService | An example showing how to work with Camel and Spring Web Services
 |===
