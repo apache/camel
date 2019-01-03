@@ -126,10 +126,11 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
         <version>${project.version}</version>
-        <!-- allows to fail if not all routes are fully covered during testing -->
+        <!-- allows to fail if not all routes are covered during testing -->
 <!--
         <configuration>
           <failOnError>true</failOnError>
+          <coverageThreshold>90</coverageThreshold>
         </configuration>
 -->
       </plugin>
