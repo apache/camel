@@ -68,12 +68,23 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     protected MavenProject project;
 
     /**
-     * Whether to fail if a route was not fully covered
+     * Whether to fail if a route was not fully covered.
+     * 
+     * Note the option coverageThreshold can be used
+     * to set a minimum coverage threshold in percentage.
      *
      * @parameter property="camel.failOnError"
      *            default-value="false"
      */
     private boolean failOnError;
+
+    /**
+     * The minimum route coverage in percent when using failOnError.
+     *
+     * @parameter property="camel.coverageThreshold"
+     *            default-value="100"
+     */
+    private byte coverageThreshold = 100;
 
     /**
      * Whether to include test source code
@@ -327,8 +338,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             sw.println("Route:\t" + routeId);
         }
         sw.println();
-        sw.println(String.format("%8s   %8s   %s", "Line #", "Count", "Route"));
-        sw.println(String.format("%8s   %8s   %s", "------", "-----", "-----"));
+        sw.println(String.format("%8s    %8s    %s", "Line #", "Count", "Route"));
+        sw.println(String.format("%8s    %8s    %s", "------", "-----", "-----"));
 
         int covered = 0;
         for (RouteCoverageNode node : model) {
@@ -336,18 +347,22 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                 covered++;
             }
             String pad = padString(node.getLevel());
-            sw.println(String.format("%8s   %8s   %s", node.getLineNumber(), node.getCount(), pad + node.getName()));
-        }
-
-        if (covered != model.size()) {
-            // okay here is a route that was not fully covered
-            notCovered.incrementAndGet();
+            sw.println(String.format("%8s    %8s    %s", node.getLineNumber(), node.getCount(), pad + node.getName()));
         }
 
         // calculate percentage of route coverage (must use double to have decimals)
         double percentage = ((double) covered / (double) model.size()) * 100;
+
+        boolean success = true;
+        if (covered != model.size() && percentage < coverageThreshold) {
+            // okay here is a route that was not fully covered
+            notCovered.incrementAndGet();
+            success = false;
+        }
+
         sw.println();
-        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format("%.1f", percentage) + "%)");
+        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format("%.1f", percentage) + "% / threshold " + coverageThreshold + ".0%)");
+        sw.println("Status: " + (success ? "Success" : "Failed"));
         sw.println();
 
         return bos.toString();
