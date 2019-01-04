@@ -39,8 +39,7 @@ public class Update implements Serializable {
     @JsonProperty("channel_post")
     private IncomingMessage channelpost;
 
-   
-	public Update() {
+    public Update() {
     }
 
     public Long getUpdateId() {
