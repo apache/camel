@@ -61,6 +61,12 @@ public class TelegramEndpoint extends ScheduledPollEndpoint {
             if (update.getMessage().getChat() != null) {
                 exchange.getIn().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getMessage().getChat().getId());
             }
+        }else if(update.getChannelPost() != null) {
+        	exchange.getIn().setBody(update.getChannelPost());
+
+            if (update.getChannelPost().getChat() != null) {
+                exchange.getIn().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getChannelPost().getChat().getId());
+            }
         }
 
         return exchange;
