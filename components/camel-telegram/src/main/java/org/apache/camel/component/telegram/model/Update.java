@@ -32,9 +32,15 @@ public class Update implements Serializable {
     @JsonProperty("update_id")
     private Long updateId;
 
-    private IncomingMessage message;
 
-    public Update() {
+    private IncomingMessage message;
+    
+    
+    @JsonProperty("channel_post")
+    private IncomingMessage channelpost;
+
+   
+	public Update() {
     }
 
     public Long getUpdateId() {
@@ -52,12 +58,22 @@ public class Update implements Serializable {
     public void setMessage(IncomingMessage message) {
         this.message = message;
     }
+    
+    public IncomingMessage getChannelPost() {
+		return channelpost;
+	}
+
+	public void setChannelpost(IncomingMessage channelpost) {
+		this.channelpost = channelpost;
+	}
+
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Update{");
         sb.append("updateId=").append(updateId);
         sb.append(", message=").append(message);
+        sb.append(", channel_post=").append(channelpost);
         sb.append('}');
         return sb.toString();
     }
