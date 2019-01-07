@@ -52,7 +52,7 @@ public final class ReactiveHelper {
     }
 
     public static void scheduleLast(Runnable runnable, String description) {
-        WORKERS.get().schedule(describe(runnable, description), false, true, false);
+        WORKERS.get().schedule(describe(runnable, description), false, false, false);
     }
 
     public static void scheduleSync(Runnable runnable, String description) {
