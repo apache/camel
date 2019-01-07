@@ -324,7 +324,6 @@
     <module>camel-wordpress</module>
     <module>camel-xchange</module>
     <module>camel-xmlbeans</module>
-    <module>camel-xmljson</module>
     <module>camel-xmlrpc</module>
     <module>camel-xmlsecurity</module>
     <module>camel-xmpp</module>

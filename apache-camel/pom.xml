@@ -1203,10 +1203,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-xmljson</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-xmlsecurity</artifactId>
     </dependency>
     <dependency>
@@ -2558,11 +2554,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-xmlbeans-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-xmljson-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

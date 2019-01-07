@@ -309,7 +309,6 @@
         <include>org.apache.camel:camel-wordpress</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xchange</include>
-        <include>org.apache.camel:camel-xmljson</include>
         <include>org.apache.camel:camel-xmlrpc</include>
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
@@ -623,7 +622,6 @@
         <include>org.apache.camel:camel-wordpress-starter</include>
         <include>org.apache.camel:camel-xmlbeans-starter</include>
         <include>org.apache.camel:camel-xchange-starter</include>
-        <include>org.apache.camel:camel-xmljson-starter</include>
         <include>org.apache.camel:camel-xmlrpc-starter</include>
         <include>org.apache.camel:camel-xmlsecurity-starter</include>
         <include>org.apache.camel:camel-xmpp-starter</include>

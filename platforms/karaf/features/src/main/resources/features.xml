@@ -2506,18 +2506,6 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlbeans/${xmlbeans-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xmlbeans/${project.version}</bundle>
   </feature>
-  <feature name='camel-xmljson' version='${project.version}' resolver='(obr)' start-level='50'>
-     <!-- NOTICE: XOM cannot be included by default due to an incompatible license; please review its license model and install the dependency manually if you agree. -->
-    <details>Before using this feature make sure to install this bundle first manually: mvn:xom/xom/${xom-version}</details>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:commons-beanutils/commons-beanutils/${commons-beanutils-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.oro/${oro-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ezmorph/${ezmorph-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.json-lib/${jsonlib-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
-    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-xmljson/${project.version}</bundle>
-  </feature>
   <feature name='camel-xmlrpc' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>

@@ -363,7 +363,6 @@
     <module>camel-wordpress-starter</module>
     <module>camel-xchange-starter</module>
     <module>camel-xmlbeans-starter</module>
-    <module>camel-xmljson-starter</module>
     <module>camel-xmlrpc-starter</module>
     <module>camel-xmlsecurity-starter</module>
     <module>camel-xmpp-starter</module>
