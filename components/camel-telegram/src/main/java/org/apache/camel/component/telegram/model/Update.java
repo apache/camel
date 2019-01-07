@@ -32,10 +32,8 @@ public class Update implements Serializable {
     @JsonProperty("update_id")
     private Long updateId;
 
-
     private IncomingMessage message;
-    
-    
+
     @JsonProperty("channel_post")
     private IncomingMessage channelpost;
 
@@ -57,15 +55,14 @@ public class Update implements Serializable {
     public void setMessage(IncomingMessage message) {
         this.message = message;
     }
-    
+
     public IncomingMessage getChannelPost() {
-		return channelpost;
-	}
+        return channelpost;
+    }
 
-	public void setChannelpost(IncomingMessage channelpost) {
-		this.channelpost = channelpost;
-	}
-
+    public void setChannelpost(IncomingMessage channelpost) {
+        this.channelpost = channelpost;
+    }
 
     @Override
     public String toString() {
