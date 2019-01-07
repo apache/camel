@@ -44,12 +44,12 @@ Tested on MacBook Pro 2,8 GHz Intel Core i7; 16 GB 2133 MHz LPDDR3; Java 1.8.0_1
 
 tokenizer | numOfRecords | maxWaitTime (ms) | XML size (kB) | time (ms) 
 --- | --- | --- | --- | --- 
-StAX | 40000 | 5000 | 3543 | 3226
-XML | 40000 | 5000 | 3543 | 2749
-StAX | 1000000 | 20000 | 89735 | 13660
-XML | 1000000 | 20000 | 89735 | 13431
-StAX | 15000000 | 200000 | 1366102 | 157741
-XML | 15000000 | 200000 | 1366102 | 173253
+StAX | 40000 | 5000 | 3543 | 3052
+XML | 40000 | 5000 | 3543 | 2756
+StAX | 1000000 | 20000 | 89735 | 11740
+XML | 1000000 | 20000 | 89735 | 11137
+StAX | 15000000 | 200000 | 1366102 | 132176
+XML | 15000000 | 200000 | 1366102 | 132549
 
 ### Forum, Help, etc
 If you hit an problems please let us know on the Camel Forums
