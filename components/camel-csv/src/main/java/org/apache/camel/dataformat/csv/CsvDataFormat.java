@@ -67,6 +67,8 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     private boolean useOrderedMaps;
     private CsvRecordConverter<?> recordConverter;
 
+    private CsvMarshallerFactory marshallerFactory = CsvMarshallerFactory.DEFAULT;
+
     private volatile CsvMarshaller marshaller;
     private volatile CsvUnmarshaller unmarshaller;
 
@@ -92,7 +94,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     @Override
     protected void doStart() throws Exception {
-        marshaller = CsvMarshaller.create(getActiveFormat(), this);
+        marshaller = marshallerFactory.create(getActiveFormat(), this);
         unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
     }
 
@@ -163,15 +165,15 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         if (skipHeaderRecord != null) {
             answer = answer.withSkipHeaderRecord(skipHeaderRecord);
         }
-        
+
         if (trim != null) {
             answer = answer.withTrim(trim);
         }
-        
+
         if (ignoreHeaderCase != null) {
             answer = answer.withIgnoreHeaderCase(ignoreHeaderCase);
         }
-        
+
         if (trailingDelimiter != null) {
             answer = answer.withTrailingDelimiter(trailingDelimiter);
         }
@@ -203,6 +205,27 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     public CsvDataFormat setFormat(CSVFormat format) {
         this.format = (format == null) ? CSVFormat.DEFAULT : format;
         return this;
+    }
+
+    /**
+     * Sets the {@link CsvMarshaller} factory.
+     * If {@code null}, then {@link CsvMarshallerFactory#DEFAULT} is used instead.
+     *
+     * @param marshallerFactory
+     * @return Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setMarshallerFactory(CsvMarshallerFactory marshallerFactory) {
+        this.marshallerFactory = (marshallerFactory == null) ? CsvMarshallerFactory.DEFAULT : marshallerFactory;
+        return this;
+    }
+
+    /**
+     * Returns the used {@link CsvMarshallerFactory}.
+     *
+     * @return never {@code null}.
+     */
+    public CsvMarshallerFactory getMarshallerFactory() {
+        return marshallerFactory;
     }
 
     /**
@@ -722,7 +745,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
      * <p>
      * If {@code null} then the default value of the format used.
      * </p>
-     * 
+     *
      * @param trim whether or not to trim leading and trailing blanks.
      *            <code>null</code> value allowed.
      * @return Current {@code CsvDataFormat}, fluent API.
@@ -734,7 +757,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     /**
      * Indicates whether or not to trim leading and trailing blanks.
-     * 
+     *
      * @return {@link Boolean#TRUE} if leading and trailing blanks should be
      *         trimmed. {@link Boolean#FALSE} otherwise. Could return
      *         <code>null</code> if value has NOT been set.
@@ -748,7 +771,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
      * <p>
      * If {@code null} then the default value of the format used.
      * </p>
-     * 
+     *
      * @param ignoreHeaderCase whether or not to ignore case when accessing header names.
      *            <code>null</code> value allowed.
      * @return Current {@code CsvDataFormat}, fluent API.
@@ -760,7 +783,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     /**
      * Indicates whether or not to ignore case when accessing header names.
-     * 
+     *
      * @return {@link Boolean#TRUE} if case should be ignored when accessing
      *         header name. {@link Boolean#FALSE} otherwise. Could return
      *         <code>null</code> if value has NOT been set.
@@ -774,7 +797,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
      * <p>
      * If {@code null} then the default value of the format used.
      * </p>
-     * 
+     *
      * @param trailingDelimiter whether or not to add a trailing delimiter.
      * @return Current {@code CsvDataFormat}, fluent API.
      */
@@ -785,7 +808,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     /**
      * Indicates whether or not to add a trailing delimiter.
-     * 
+     *
      * @return {@link Boolean#TRUE} if a trailing delimiter should be added.
      *         {@link Boolean#FALSE} otherwise. Could return <code>null</code>
      *         if value has NOT been set.

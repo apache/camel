@@ -36,10 +36,10 @@ import org.apache.commons.csv.CSVPrinter;
 /**
  * This class marshal data into a CSV format.
  */
-abstract class CsvMarshaller {
+public abstract class CsvMarshaller {
     private final CSVFormat format;
 
-    private CsvMarshaller(CSVFormat format) {
+    protected CsvMarshaller(CSVFormat format) {
         this.format = format;
     }
 
@@ -73,7 +73,7 @@ abstract class CsvMarshaller {
      * @throws IOException                        if we cannot write into the given stream
      */
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
-        CSVPrinter printer = new CSVPrinter(new OutputStreamWriter(outputStream, ExchangeHelper.getCharsetName(exchange)), format);
+        CSVPrinter printer = createPrinter(exchange, outputStream);
         try {
             Iterator it = ObjectHelper.createIterator(object);
             while (it.hasNext()) {
@@ -83,6 +83,17 @@ abstract class CsvMarshaller {
         } finally {
             IOHelper.close(printer);
         }
+    }
+
+    /**
+     * Creates and returns a {@link CSVPrinter}.
+     *
+     * @param exchange     Exchange (used for access to type conversion). Could NOT be <code>null</code>.
+     * @param outputStream Output stream of the CSV. Could NOT be <code>null</code>.
+     * @return a new {@link CSVPrinter}. Never <code>null</code>.
+     */
+    protected CSVPrinter createPrinter(Exchange exchange, OutputStream outputStream) throws IOException {
+        return new CSVPrinter(new OutputStreamWriter(outputStream, ExchangeHelper.getCharsetName(exchange)), format);
     }
 
     private Iterable<?> getRecordValues(Exchange exchange, Object data) throws NoTypeConversionAvailableException {
