@@ -21,20 +21,20 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import org.apache.camel.AggregationStrategy;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.AggregationStrategy;
-import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Test;
 
 public class BillboardAggrTest extends CamelTestSupport {
 
-    private final static String basePath = System.getProperty("user.dir") + "/src/data";
+    private static final String BASEPATH = System.getProperty("user.dir") + "/src/data";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -56,7 +56,7 @@ public class BillboardAggrTest extends CamelTestSupport {
 
         Map<String, Integer> top20 = ((MyAggregationStrategy) 
             mock.getReceivedExchanges().get(0).getIn().getHeader("myAggregation")).getTop20Artists();
-        top20.forEach((k,v) -> log.info("{}, {}", k, v));
+        top20.forEach((k, v) -> log.info("{}, {}", k, v));
         assertEquals(20, top20.size());
         assertEquals(35, (int) top20.get("madonna"));
         assertEquals(26, (int) top20.get("elton john"));
@@ -68,7 +68,7 @@ public class BillboardAggrTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:" + basePath + "?noop=true")
+                from("file:" + BASEPATH + "?noop=true")
                     .split(body().tokenize("\n")).streaming().parallelProcessing()
                         // skip first line with headers
                         .choice().when(simple("${property.CamelSplitIndex} > 0"))
@@ -79,7 +79,7 @@ public class BillboardAggrTest extends CamelTestSupport {
                                 // malformed record trace
                                 .setBody(simple("${property.CamelSplitIndex}:${body}"))
                                 .transform(body().append("\n")) 
-                                .to("file:" + basePath + "?fileName=waste.log&fileExist=append")
+                                .to("file:" + BASEPATH + "?fileName=waste.log&fileExist=append")
                             .end();
 
                 from("seda:aggregate?concurrentConsumers=10")
@@ -114,7 +114,7 @@ public class BillboardAggrTest extends CamelTestSupport {
         public Map<String, Integer> getTop20Artists() {
             return map.entrySet()
                 .stream()
-                .sorted((Map.Entry.<String, Integer>comparingByValue().reversed()))
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
                 .limit(20)
                 .collect(Collectors.toMap(Map.Entry::getKey, 
                     Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
