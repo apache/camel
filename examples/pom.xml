@@ -39,6 +39,7 @@
     <module>camel-example-aggregate</module>
     <module>camel-example-artemis-amqp-blueprint</module>
     <module>camel-example-artemis-large-messages</module>
+    <module>camel-example-billboard-aggr</module> 
     <module>camel-example-cafe</module>
     <module>camel-example-cassandra-kubernetes</module>
     <module>camel-example-cdi</module>
