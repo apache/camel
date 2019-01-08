@@ -3,6 +3,9 @@
 
 *Available as of Camel version 2.21*
 
+NOTICE: This component is not working anymore because the https://developer.yahoo.com/yql/[YQL service] has been retired on Jan 3, 2019
+This component will be removed in the next releases.
+
 The *yql* component is used for accessing the https://developer.yahoo.com/yql/[Yahoo Query Language platform].
 
 The YQL (Yahoo! Query Language) platform enables you to query, filter, and combine data across the web through
