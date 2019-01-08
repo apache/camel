@@ -25,37 +25,40 @@ import javax.xml.stream.XMLStreamWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestUtils {
+public final class TestUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(TestUtils.class);
-    private final static String basePath = System.getProperty("user.dir") + "/target/data";
-    private final static int numOfRecords = 40000;
-    private final static int maxWaitTime = 5000;
+    private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
+    private static final String BASEPATH = System.getProperty("user.dir") + "/target/data";
+    private static final int NUM_RECORDS = 40000;
+    private static final int MAX_WAIT_TIME = 5000;
+    
+    private TestUtils() {
+    }
 
     public static String getBasePath() {
-        return basePath;
+        return BASEPATH;
     }
 
     public static int getNumOfRecords() {
-        return numOfRecords;
+        return NUM_RECORDS;
     }
 
     public static int getMaxWaitTime() {
-        return maxWaitTime;
+        return MAX_WAIT_TIME;
     }
 
     public static void buildTestXml() throws Exception {
-        new File(basePath).mkdir();
-        File f = new File(basePath + "/test.xml");
+        new File(BASEPATH).mkdir();
+        File f = new File(BASEPATH + "/test.xml");
         if (!f.exists()) {
-            log.info("Building test XML file...");
+            LOG.info("Building test XML file...");
             XMLOutputFactory xof = XMLOutputFactory.newInstance();
             XMLStreamWriter xsw = xof.createXMLStreamWriter(new FileOutputStream(f), "UTF-8");
             try {
                 xsw.writeStartDocument("UTF-8", "1.0");
                 xsw.writeStartElement("records");
                 xsw.writeAttribute("xmlns", "http://fvaleri.it/records");
-                for (int i = 0; i < numOfRecords; i++) {
+                for (int i = 0; i < NUM_RECORDS; i++) {
                     xsw.writeStartElement("record");
                     xsw.writeStartElement("key");
                     xsw.writeCharacters("" + i);
@@ -68,7 +71,7 @@ public class TestUtils {
                 xsw.writeEndElement();
                 xsw.writeEndDocument();
             } finally {
-                log.info("Test XML file ready (size: {} kB)", f.length() / 1024);
+                LOG.info("Test XML file ready (size: {} kB)", f.length() / 1024);
                 xsw.flush();
                 xsw.close();
             }

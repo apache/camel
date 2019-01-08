@@ -16,17 +16,17 @@
  */
 package org.apache.camel.example.bigxml;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
-import static org.apache.camel.component.stax.StAXBuilder.stax;
-
-import java.util.concurrent.TimeUnit;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static org.apache.camel.component.stax.StAXBuilder.stax;
 
 public class StaxTokenizerTest extends CamelTestSupport {
 
