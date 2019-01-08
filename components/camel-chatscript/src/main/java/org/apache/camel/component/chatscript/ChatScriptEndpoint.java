@@ -16,25 +16,28 @@
  */
 package org.apache.camel.component.chatscript;
 
+
+
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.chatscript.utils.ChatScriptConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.*;
+import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DEFAULT_PORT;
 /**
  * Represents a ChatScript endpoint.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botname",  producerOnly = true, label = "ai,chatscript")
 public class ChatScriptEndpoint extends DefaultEndpoint { 
-    private static final String URI_ERROR = "Invalid URI. Format must be of the form chatscript://host[:port]/botname?[options...]";
     @UriPath (description = "Hostname or IP of the server on which CS server is running") 
     @Metadata(required = "true")
     private String host;
@@ -42,9 +45,9 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     private int port;
     @UriPath(description = "Name of the Bot in CS to converse with")
     @Metadata(required = "true")
-    private String botname;
+    private String botName;
     @UriParam(description = "Username who initializes the CS conversation. To be set when chat is initialized from camel route", label = "username")
-    private String chatusername;
+    private String chatUserName;
     @UriParam (description = "Issues :reset command to start a new conversation everytime", label = "reset", defaultValue = "false")
     private boolean resetchat;
     private ChatScriptBot bot;
@@ -58,18 +61,18 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
         URI remainingUri = new URI("tcp://" + remaining);
         port = remainingUri.getPort() == -1 ? DEFAULT_PORT : remainingUri.getPort();
         if (ObjectHelper.isEmpty(remainingUri.getPath())) {
-            throw new IllegalArgumentException(URI_ERROR);
+            throw new IllegalArgumentException(ChatScriptConstants.URI_ERROR);
         }
         host = remainingUri.getHost();
         if (ObjectHelper.isEmpty(host)) { 
-            throw new IllegalArgumentException(URI_ERROR);
+            throw new IllegalArgumentException(ChatScriptConstants.URI_ERROR);
         }
-        botname = remainingUri.getPath();
-        if (ObjectHelper.isEmpty(botname)) {
-            throw new IllegalArgumentException(URI_ERROR);
+        botName = remainingUri.getPath();
+        if (ObjectHelper.isEmpty(botName)) {
+            throw new IllegalArgumentException(ChatScriptConstants.URI_ERROR);
         }
-        botname = botname.substring(1);
-        setBot(new ChatScriptBot(getHostName(), getPort(), getBotName(), ""));
+        botName = botName.substring(1);
+        setBot(new ChatScriptBot(getHost(), getPort(), getBotName(), ""));
 
     }
     public boolean isResetChat() {
@@ -81,11 +84,11 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     }
 
     public String getChatUserName() {
-        return chatusername;
+        return chatUserName;
     }
 
     public void setChatUserName(String chatusername) {
-        this.chatusername = chatusername;
+        this.chatUserName = chatusername;
     }
 
     public Producer createProducer() throws Exception {
@@ -95,16 +98,14 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Chatscript consumer not supported");
     }
-
     public boolean isSingleton() {
         return true;
     }
-
-    public String getHostName() {
+    public String getHost() {
         return host;
     }
 
-    public void setHostName(String hostName) {
+    public void setHost(String hostName) {
         this.host = hostName;
     }
 
@@ -117,11 +118,11 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     }
 
     public String getBotName() {
-        return botname;
+        return botName;
     }
 
     public void setBotName(String botname) {
-        this.botname = botname;
+        this.botName = botname;
     }
 
     public static int getDefaultPort() {

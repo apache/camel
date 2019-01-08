@@ -15,19 +15,5 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 
-# Root logger option
-log4j.rootLogger=DEBUG, file, console
- 
-# Direct log messages to a log file
-log4j.appender.file=org.apache.log4j.FileAppender
-log4j.appender.file.file=target/test.log
-log4j.appender.file.layout=org.apache.log4j.PatternLayout
-log4j.appender.file.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p [%c] (%t) - %m%n
-log4j.appender.file.threshold=DEBUG
- 
-# Direct log messages to console
-log4j.appender.console=org.apache.log4j.ConsoleAppender
-log4j.appender.console.target=System.out
-log4j.appender.console.layout=org.apache.log4j.PatternLayout
-log4j.appender.console.layout.ConversionPattern=%d{yyyy-MM-dd HH:mm:ss} %-5p [%c] (%t) - %m%n
-log4j.appender.console.threshold=WARN
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.apache.camel.component.chatscript.springboot.ChatScriptComponentAutoConfiguration
