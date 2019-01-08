@@ -22,8 +22,13 @@ import com.amazonaws.services.mq.model.CreateBrokerResult;
 import com.amazonaws.services.mq.model.DeleteBrokerResult;
 import com.amazonaws.services.mq.model.DeploymentMode;
 import com.amazonaws.services.mq.model.DescribeBrokerResult;
+import com.amazonaws.services.mq.model.EngineType;
 import com.amazonaws.services.mq.model.ListBrokersResult;
 import com.amazonaws.services.mq.model.UpdateBrokerResult;
+import com.amazonaws.services.mq.model.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -68,6 +73,15 @@ public class MQProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(MQConstants.OPERATION, MQOperations.createBroker);
                 exchange.getIn().setHeader(MQConstants.BROKER_NAME, "test");
                 exchange.getIn().setHeader(MQConstants.BROKER_DEPLOYMENT_MODE, DeploymentMode.SINGLE_INSTANCE);
+                exchange.getIn().setHeader(MQConstants.BROKER_INSTANCE_TYPE, "mq.t2.micro");
+                exchange.getIn().setHeader(MQConstants.BROKER_ENGINE, EngineType.ACTIVEMQ.name());
+                exchange.getIn().setHeader(MQConstants.BROKER_ENGINE_VERSION, "5.15.6");
+                List<User> users = new ArrayList<>();
+                User user = new User();
+                user.setUsername("camel");
+                user.setPassword("camelcamel12");
+                users.add(user);
+                exchange.getIn().setHeader(MQConstants.BROKER_USERS, users);
             }
         });
         
