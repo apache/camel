@@ -29,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2ClientConnection;
@@ -51,7 +52,10 @@ import org.apache.camel.component.as2.internal.AS2ServerManagerApiMethod;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.protocol.BasicHttpContext;
@@ -65,6 +69,7 @@ import org.bouncycastle.asn1.smime.SMIMEEncryptionKeyPreferenceAttribute;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.io.Streams;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -75,6 +80,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
+    private static final String PROCESSOR_EXCEPTION_MSG = "Processor Exception";
+    private static final String EXPECTED_EXCEPTION_MSG = "Failed to process AS2 message: " + PROCESSOR_EXCEPTION_MSG;
     private static final Logger LOG = LoggerFactory.getLogger(AS2ServerManagerIntegrationTest.class);
     private static final String PATH_PREFIX = AS2ApiCollection.getCollection().getApiName(AS2ServerManagerApiMethod.class).getName();
 
@@ -320,6 +327,27 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
 
     }
 
+    @Test
+    public void sendEditMessageToFailingProcessorTest() throws Exception {
+        AS2ClientConnection clientConnection = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+        AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
+
+        HttpCoreContext context = clientManager.send(EDI_MESSAGE, "/process_error", SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, AS2Charset.US_ASCII), null, null, null, null,
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null);
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:as2RcvMsgs");
+        mockEndpoint.expectedMinimumMessageCount(0);
+        mockEndpoint.setResultWaitTime(TimeUnit.MILLISECONDS.convert(30,  TimeUnit.SECONDS));
+        mockEndpoint.assertIsSatisfied();
+
+        HttpResponse response = context.getResponse();
+        assertEquals("Unexpected status code for response", HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatusLine().getStatusCode());
+        HttpEntity responseEntity = response.getEntity();
+        String errorMessage = new String(Streams.readAll(responseEntity.getContent()));
+        assertEquals("", EXPECTED_EXCEPTION_MSG, errorMessage);
+    }
+
     private static void setupSigningGenerator() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
 
@@ -389,6 +417,16 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
             public void configure() {
                 // test route for listen
                 from("as2://" + PATH_PREFIX + "/listen?requestUriPattern=/")
+                    .to("mock:as2RcvMsgs");
+
+                // test route processing exception
+                Processor failing_processor = new Processor() {
+                    public void process(org.apache.camel.Exchange exchange) throws Exception {
+                        throw new Exception(PROCESSOR_EXCEPTION_MSG);
+                    }
+                };
+                from("as2://" + PATH_PREFIX + "/listen?requestUriPattern=/process_error")
+                    .process(failing_processor)
                     .to("mock:as2RcvMsgs");
 
             }
