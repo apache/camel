@@ -240,7 +240,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         if (isParallelProcessing()) {
             executorService.submit(() -> ReactiveHelper.schedule(runnable));
         } else {
-            ReactiveHelper.scheduleLast(runnable, "Multicast next step");
+            ReactiveHelper.schedule(runnable, "Multicast next step");
         }
     }
 

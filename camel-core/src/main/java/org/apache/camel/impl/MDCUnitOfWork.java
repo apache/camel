@@ -132,12 +132,14 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync) {
+        /*
         if (!doneSync) {
             // must clear MDC on current thread as the exchange is being processed asynchronously
             // by another thread
             clear();
         }
         super.afterProcess(processor, exchange, callback, doneSync);
+        */
     }
 
     /**
