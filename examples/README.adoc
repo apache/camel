@@ -233,6 +233,8 @@ Number of Examples: 103 (2 deprecated)
 | link:camel-example-cxf-ws-security-signature/README.md[CXF using WS-Security Signature] (camel-example-cxf-ws-security-signature) | WebService | CXF example using WS-Security Signature Action
 
 | link:camel-example-spring-ws/README.md[Spring WebService] (camel-example-spring-ws) | WebService | An example showing how to work with Camel and Spring Web Services
+
+| link:camel-example-bigxml-split/README.md[Split Test] camel-example-bigxml-split) | Testing | An example showing how to deal with big XML files in Camel
 |===
 // examples: END
 
