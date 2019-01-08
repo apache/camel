@@ -48,7 +48,6 @@ import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 
-
 public class GitProducer extends DefaultProducer {
 
     private final GitEndpoint endpoint;
@@ -93,7 +92,7 @@ public class GitProducer extends DefaultProducer {
         case GitOperation.CLONE_OPERATION:
             doClone(exchange, operation);
             break;
-            
+
         case GitOperation.CHECKOUT_OPERATION:
             doCheckout(exchange, operation);
             break;
@@ -149,7 +148,7 @@ public class GitProducer extends DefaultProducer {
         case GitOperation.PULL_OPERATION:
             doPull(exchange, operation);
             break;
-            
+
         case GitOperation.MERGE_OPERATION:
             doMerge(exchange, operation);
             break;
@@ -165,15 +164,15 @@ public class GitProducer extends DefaultProducer {
         case GitOperation.SHOW_BRANCHES_OPERATION:
             doShowBranches(exchange, operation);
             break;
-            
+
         case GitOperation.SHOW_TAGS_OPERATION:
             doShowTags(exchange, operation);
             break;
-           
+
         case GitOperation.CLEAN_OPERATION:
             doClean(exchange, operation);
             break;
-            
+
         case GitOperation.GC_OPERATION:
             doGc(exchange, operation);
             break;
@@ -217,17 +216,17 @@ public class GitProducer extends DefaultProducer {
             }
         }
     }
-    
+
     protected void doCheckout(Exchange exchange, String operation) throws Exception {
         if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
             throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
         }
         try {
-        	if (ObjectHelper.isEmpty(endpoint.getTagName())) {
+            if (ObjectHelper.isEmpty(endpoint.getTagName())) {
                 git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).call();
-        	} else {
-        		git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).setStartPoint(endpoint.getTagName()).call();
-        	}
+            } else {
+                git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).setStartPoint(endpoint.getTagName()).call();
+            }
         } catch (Exception e) {
             log.error("There was an error in Git {} operation", operation);
             throw e;
@@ -472,7 +471,7 @@ public class GitProducer extends DefaultProducer {
         }
         updateExchange(exchange, result);
     }
-    
+
     protected void doMerge(Exchange exchange, String operation) throws Exception {
         MergeResult result = null;
         ObjectId mergeBase;
@@ -524,7 +523,7 @@ public class GitProducer extends DefaultProducer {
         }
         updateExchange(exchange, result);
     }
-    
+
     protected void doShowTags(Exchange exchange, String operation) throws Exception {
         List<Ref> result = null;
         try {
@@ -559,7 +558,7 @@ public class GitProducer extends DefaultProducer {
         }
         updateExchange(exchange, result);
     }
-    
+
     protected void doClean(Exchange exchange, String operation) throws Exception {
         Set<String> result = null;
         try {
@@ -573,7 +572,7 @@ public class GitProducer extends DefaultProducer {
         }
         updateExchange(exchange, result);
     }
-    
+
     protected void doGc(Exchange exchange, String operation) throws Exception {
         Properties result = null;
         try {
