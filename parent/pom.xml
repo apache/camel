@@ -207,6 +207,7 @@
     <elasticsearch-rest-bundle-version>6.5.3_1</elasticsearch-rest-bundle-version>
     <elsql-version>1.3</elsql-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
+    <eddsa-version>0.3.0</eddsa-version>
     <embedmongo-version>2.1.1</embedmongo-version>
     <etcd4j-version>2.16.0</etcd4j-version>
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
@@ -345,7 +346,7 @@
     <java-util-version>1.34.0</java-util-version>
     <java-util-bundle-version>1.34.0_1</java-util-bundle-version>
     <jna-version>4.2.2</jna-version>
-    <jnats-version>2.1.2</jnats-version>
+    <jnats-version>2.4.1</jnats-version>
     <javacc-maven-plugin-version>2.6</javacc-maven-plugin-version>
     <javacrumbs-version>0.22</javacrumbs-version>
     <javapoet-version>1.11.1</javapoet-version>
