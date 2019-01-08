@@ -85,7 +85,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     @Test
     public void testProducerComplexByExpression() throws Exception {
         // need one extra subdirectory (=foo) to be able to start with .. in the fileName option
-        String url = "ftp://admin@localhost:" + getPort() + "/filelanguage/foo?password=admin";
+        String url = "ftp://admin@localhost:" + getPort() + "/filelanguage/foo?password=admin&jailStartingDirectory=false";
         
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
         template.sendBody(url + "&fileName=" + expression, "Hello World");
