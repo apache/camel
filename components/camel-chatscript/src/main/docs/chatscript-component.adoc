@@ -1,10 +1,10 @@
 [[chatscript-component]]
 == ChatScript Component
 == ChatScript Component
-*Available as of Camel version 2.24*
+*Available as of Camel version 3.0.0*
 
 
-*Available as of Camel version 2.24*
+*Available as of Camel version 3.0.0*
 
 The *ChatScript:* component allows you to interact with ChatScript Server and have conversations. This component is stateless and relies on ChatScript to maintain chat history. 
 
@@ -61,7 +61,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *host* | *Required* Hostname or IP of the server on which CS server is running |  | String
 | *port* | Port on which ChatScript is listening to | 1024 | int
-| *botname* | *Required* Name of the Bot in CS to converse with |  | String
+| *botName* | *Required* Name of the Bot in CS to converse with |  | String
 |===
 
 
@@ -73,7 +73,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *resetchat* (reset) | Issues :reset command to start a new conversation everytime | false | boolean
-| *chatusername* (username) | Username who initializes the CS conversation. To be set when chat is initialized from camel route |  | String
+| *chatUserName* (username) | Username who initializes the CS conversation. To be set when chat is initialized from camel route |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
