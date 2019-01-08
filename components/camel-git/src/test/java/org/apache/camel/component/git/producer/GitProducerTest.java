@@ -58,6 +58,76 @@ public class GitProducerTest extends GitTestSupport {
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
     }
+    
+    @Test
+    public void checkoutTest() throws Exception {
+        // Init
+        Git git = getGitTestRepository();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameToAdd).call();
+        Status status = git.status().call();
+        assertTrue(status.getAdded().contains(filenameToAdd));
+        git.commit().setMessage(commitMessage).call();
+
+        // Test camel-git checkout
+        template.sendBody("direct:checkout", "");
+
+        // Check
+        List<Ref> ref = git.branchList().call();
+        boolean branchCreated = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/heads/" + branchTest)) {
+                branchCreated = true;
+            }
+        }
+        assertEquals(branchCreated, true);
+        git.close();
+    }
+    
+    
+    @Test
+    public void checkoutSpecificTagTest() throws Exception {
+        // Init
+        Git git = getGitTestRepository();
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+        git.add().addFilepattern(filenameToAdd).call();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        Status status = git.status().call();
+        assertTrue(status.getAdded().contains(filenameToAdd));
+        git.commit().setMessage(commitMessage).call();
+        
+        // Test camel-git create tag
+        template.sendBody("direct:create-tag", "");
+
+        // Check
+        List<Ref> ref = git.tagList().call();
+        boolean tagCreated = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/tags/" + tagTest)) {
+                tagCreated = true;
+            }
+        }
+        assertEquals(tagCreated, true);
+
+        // Test camel-git create-branch
+        template.sendBody("direct:checkout-specific-tag", "");
+
+        // Check
+        ref = git.branchList().call();
+        boolean branchCreated = false;
+        for (Ref refInternal : ref) {
+            if (refInternal.getName().equals("refs/heads/" + branchTest)) {
+                branchCreated = true;
+            }
+        }
+        assertEquals(branchCreated, true);
+        git.close();
+    }
 
     @Test(expected = CamelExecutionException.class)
     public void doubleCloneOperationTest() throws Exception {
@@ -814,6 +884,8 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:clone").to("git://" + gitLocalRepo + "?remotePath=https://github.com/oscerd/json-webserver-example.git&operation=clone");
                 from("direct:init").to("git://" + gitLocalRepo + "?operation=init");
                 from("direct:add").to("git://" + gitLocalRepo + "?operation=add");
+                from("direct:checkout").to("git://" + gitLocalRepo + "?operation=checkout&branchName=" + branchTest);
+                from("direct:checkout-specific-tag").to("git://" + gitLocalRepo + "?operation=checkout&branchName=" + branchTest + "&tagName=" + tagTest);
                 from("direct:remove").to("git://" + gitLocalRepo + "?operation=remove");
                 from("direct:add-on-branch").to("git://" + gitLocalRepo + "?operation=add&branchName=" + branchTest);
                 from("direct:remove-on-branch").to("git://" + gitLocalRepo + "?operation=add&branchName=" + branchTest);
