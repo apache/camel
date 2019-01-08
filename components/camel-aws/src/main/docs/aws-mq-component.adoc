@@ -131,6 +131,14 @@ the https://aws.amazon.com/it/ec2/[Amazon EC2] service.
 |`CamelAwsMQBrokerId` |`String` |The broker id
 
 |`CamelAwsMQBrokerDeploymentMode` |`String` |The deployment mode for the broker in the createBroker operation
+
+|`CamelAwsMQBrokerInstanceType` |`String` |The instance type for the EC2 machine in the createBroker operation
+
+|`CamelAwsMQBrokerEngine` |`String` |The Broker Engine for MQ. Default is ACTIVEMQ
+
+|`CamelAwsMQBrokerEngineVersion` |`String` |The Broker Engine Version for MQ. Currently you can choose between 5.15.6 and 5.15.0 of ACTIVEMQ
+
+|`CamelAwsMQBrokerUsers` |`List<User>` |The list of users for MQ
 |=======================================================================
 
 Dependencies
