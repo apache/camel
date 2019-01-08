@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws.mq;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.amazonaws.services.mq.model.BrokerState;
 import com.amazonaws.services.mq.model.ConfigurationId;
 import com.amazonaws.services.mq.model.CreateBrokerResult;
@@ -26,9 +29,6 @@ import com.amazonaws.services.mq.model.EngineType;
 import com.amazonaws.services.mq.model.ListBrokersResult;
 import com.amazonaws.services.mq.model.UpdateBrokerResult;
 import com.amazonaws.services.mq.model.User;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;

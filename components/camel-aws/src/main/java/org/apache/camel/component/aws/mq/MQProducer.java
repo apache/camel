@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.mq;
 
+import java.util.List;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.mq.AmazonMQ;
 import com.amazonaws.services.mq.model.ConfigurationId;
@@ -43,8 +45,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
-
-import java.util.List;
 
 /**
  * A Producer which sends messages to the Amazon MQ Service
