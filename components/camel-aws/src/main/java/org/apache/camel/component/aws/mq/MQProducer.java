@@ -26,12 +26,14 @@ import com.amazonaws.services.mq.model.DeleteBrokerResult;
 import com.amazonaws.services.mq.model.DeploymentMode;
 import com.amazonaws.services.mq.model.DescribeBrokerRequest;
 import com.amazonaws.services.mq.model.DescribeBrokerResult;
+import com.amazonaws.services.mq.model.EngineType;
 import com.amazonaws.services.mq.model.ListBrokersRequest;
 import com.amazonaws.services.mq.model.ListBrokersResult;
 import com.amazonaws.services.mq.model.RebootBrokerRequest;
 import com.amazonaws.services.mq.model.RebootBrokerResult;
 import com.amazonaws.services.mq.model.UpdateBrokerRequest;
 import com.amazonaws.services.mq.model.UpdateBrokerResult;
+import com.amazonaws.services.mq.model.User;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -41,6 +43,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
+
+import java.util.List;
 
 /**
  * A Producer which sends messages to the Amazon MQ Service
@@ -123,7 +127,11 @@ public class MQProducer extends DefaultProducer {
 
     private void createBroker(AmazonMQ mqClient, Exchange exchange) {
         String brokerName;
+        String brokerEngine;
+        String brokerEngineVersion;
         String deploymentMode;
+        String instanceType;
+        List<User> users;
         CreateBrokerRequest request = new CreateBrokerRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_NAME))) {
             brokerName = exchange.getIn().getHeader(MQConstants.BROKER_NAME, String.class);
@@ -131,11 +139,35 @@ public class MQProducer extends DefaultProducer {
         } else {
             throw new IllegalArgumentException("Broker Name must be specified");
         }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_ENGINE))) {
+            brokerEngine = exchange.getIn().getHeader(MQConstants.BROKER_ENGINE, String.class);
+            request.withEngineType(EngineType.fromValue(brokerEngine));
+        } else {
+            request.withEngineType(EngineType.ACTIVEMQ.name());
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_ENGINE_VERSION))) {
+            brokerEngineVersion = exchange.getIn().getHeader(MQConstants.BROKER_ENGINE_VERSION, String.class);
+            request.withEngineVersion(brokerEngineVersion);
+        } else {
+            throw new IllegalArgumentException("Broker Engine Version must be specified");
+        }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_DEPLOYMENT_MODE))) {
             deploymentMode = exchange.getIn().getHeader(MQConstants.BROKER_DEPLOYMENT_MODE, String.class);
             request.withDeploymentMode(DeploymentMode.fromValue(deploymentMode));
         } else {
             throw new IllegalArgumentException("Deployment Mode must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_INSTANCE_TYPE))) {
+            instanceType = exchange.getIn().getHeader(MQConstants.BROKER_INSTANCE_TYPE, String.class);
+            request.withHostInstanceType(instanceType);
+        } else {
+            throw new IllegalArgumentException("Instance Type must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_USERS))) {
+            users = exchange.getIn().getHeader(MQConstants.BROKER_USERS, List.class);
+            request.withUsers(users);
+        } else {
+            throw new IllegalArgumentException("A Users list must be specified");
         }
         CreateBrokerResult result;
         try {
