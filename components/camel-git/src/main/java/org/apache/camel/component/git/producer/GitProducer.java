@@ -93,6 +93,10 @@ public class GitProducer extends DefaultProducer {
         case GitOperation.CLONE_OPERATION:
             doClone(exchange, operation);
             break;
+            
+        case GitOperation.CHECKOUT_OPERATION:
+            doCheckout(exchange, operation);
+            break;
 
         case GitOperation.INIT_OPERATION:
             doInit(exchange, operation);
@@ -211,6 +215,22 @@ public class GitProducer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(result)) {
                 result.close();
             }
+        }
+    }
+    
+    protected void doCheckout(Exchange exchange, String operation) throws Exception {
+        if (ObjectHelper.isEmpty(endpoint.getBranchName())) {
+            throw new IllegalArgumentException("Branch Name must be specified to execute " + operation);
+        }
+        try {
+        	if (ObjectHelper.isEmpty(endpoint.getTagName())) {
+                git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).call();
+        	} else {
+        		git.checkout().setCreateBranch(true).setName(endpoint.getBranchName()).setStartPoint(endpoint.getTagName()).call();
+        	}
+        } catch (Exception e) {
+            log.error("There was an error in Git {} operation", operation);
+            throw e;
         }
     }
 
