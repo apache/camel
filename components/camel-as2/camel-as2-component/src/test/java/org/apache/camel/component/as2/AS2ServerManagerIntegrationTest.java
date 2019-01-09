@@ -55,7 +55,6 @@ import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
-import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.protocol.BasicHttpContext;
@@ -420,13 +419,13 @@ public class AS2ServerManagerIntegrationTest extends AbstractAS2TestSupport {
                     .to("mock:as2RcvMsgs");
 
                 // test route processing exception
-                Processor failing_processor = new Processor() {
+                Processor failingProcessor = new Processor() {
                     public void process(org.apache.camel.Exchange exchange) throws Exception {
                         throw new Exception(PROCESSOR_EXCEPTION_MSG);
                     }
                 };
                 from("as2://" + PATH_PREFIX + "/listen?requestUriPattern=/process_error")
-                    .process(failing_processor)
+                    .process(failingProcessor)
                     .to("mock:as2RcvMsgs");
 
             }
