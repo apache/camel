@@ -28,7 +28,7 @@ public class FtpProducerJailStartingDirectoryTest extends FtpServerTestSupport {
     }
 
     @Test
-    public void testJailed() throws Exception {
+    public void testWriteOutsideStartingDirectory() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
@@ -44,7 +44,7 @@ public class FtpProducerJailStartingDirectoryTest extends FtpServerTestSupport {
     }
 
     @Test
-    public void testNotJailed() throws Exception {
+    public void testWriteInsideStartingDirectory() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 

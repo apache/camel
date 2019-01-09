@@ -33,7 +33,7 @@ public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testJailed() throws Exception {
+    public void testWriteOutsideStartingDirectory() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
@@ -49,7 +49,7 @@ public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
     }
 
     @Test
-    public void testNotJailed() throws Exception {
+    public void testWriteInsideStartingDirectory() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 

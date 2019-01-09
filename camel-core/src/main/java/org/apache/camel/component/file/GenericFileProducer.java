@@ -304,7 +304,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         log.debug("Wrote [{}] to [{}]", fileName, getEndpoint());
     }
 
-    public String createFileName(Exchange exchange) throws CamelExchangeException {
+    public String createFileName(Exchange exchange) {
         String answer;
 
         // overrule takes precedence
