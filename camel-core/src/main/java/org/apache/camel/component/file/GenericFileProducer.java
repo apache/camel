@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultExchange;
@@ -331,7 +332,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             exchange.getIn().setHeader(Exchange.FILE_NAME, value);
         }
 
-        if (value != null && value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
+        if (value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
             log.warn("Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).", value, Exchange.FILE_NAME);
         }
 
@@ -376,6 +377,15 @@ public class GenericFileProducer<T> extends DefaultProducer {
         } else {
             // use a generated filename if no name provided
             answer = baseDir + endpoint.getGeneratedFileName(exchange.getIn());
+        }
+
+        if (endpoint.isJailStartingDirectory()) {
+            // check for file must be within starting directory (need to compact first as the name can be using relative paths via ../ etc)
+            String compatchAnswer = FileUtil.compactPath(answer);
+            String compatchBaseDir = FileUtil.compactPath(baseDir);
+            if (!compatchAnswer.startsWith(compatchBaseDir)) {
+                throw new IllegalArgumentException("Cannot write file with name: " + compatchAnswer + " as the filename is jailed to the starting directory: " + compatchBaseDir);
+            }
         }
 
         if (endpoint.getConfiguration().needToNormalize()) {
