@@ -337,7 +337,6 @@
 * xref:json-xstream-dataformat.adoc[JSon XStream DataFormat]
 * xref:xstream-dataformat.adoc[XStream DataFormat]
 * xref:yammer-component.adoc[Yammer Component]
-* xref:yql-component.adoc[Yahoo Query Language Component]
 * xref:zendesk-component.adoc[Zendesk Component]
 * xref:zipfile-dataformat.adoc[Zip File DataFormat]
 * xref:zipkin.adoc[Zipkin Component]

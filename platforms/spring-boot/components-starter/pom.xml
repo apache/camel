@@ -338,7 +338,6 @@
     <module>camel-xmpp-starter</module>
     <module>camel-xstream-starter</module>
     <module>camel-yammer-starter</module>
-    <module>camel-yql-starter</module>
     <module>camel-zendesk-starter</module>
     <module>camel-zipfile-starter</module>
     <module>camel-zipkin-starter</module>
