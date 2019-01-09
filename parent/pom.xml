@@ -2327,11 +2327,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-yql</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-zendesk</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3777,11 +3772,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yammer-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-yql-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
