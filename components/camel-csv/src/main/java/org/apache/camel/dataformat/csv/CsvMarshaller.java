@@ -28,8 +28,8 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
