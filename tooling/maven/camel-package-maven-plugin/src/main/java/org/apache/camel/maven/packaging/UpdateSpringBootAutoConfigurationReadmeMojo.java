@@ -287,8 +287,6 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
             return "string-template";
         } else if ("tagsoup".equals(componentName)) {
             return "tidyMarkup";
-        } else if ("xmlbeans".equals(componentName)) {
-            return "xmlBeans";
         }
         return componentName;
     }
