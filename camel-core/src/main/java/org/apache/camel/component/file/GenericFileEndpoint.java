@@ -94,6 +94,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean keepLastModified;
     @UriParam(label = "producer,advanced")
     protected boolean allowNullBody;
+    @UriParam(label = "producer", defaultValue = "true")
+    protected boolean jailStartingDirectory = true;
 
     // consumer options
 
@@ -1249,6 +1251,19 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setAllowNullBody(boolean allowNullBody) {
         this.allowNullBody = allowNullBody;
+    }
+
+    public boolean isJailStartingDirectory() {
+        return jailStartingDirectory;
+    }
+
+    /**
+     * Used for jailing (restricting) writing files to the starting directory (and sub) only.
+     * This is enabled by default to not allow Camel to write files to outside directories (to be more secured out of the box).
+     * You can turn this off to allow writing files to directories outside the starting directory, such as parent or root folders.
+     */
+    public void setJailStartingDirectory(boolean jailStartingDirectory) {
+        this.jailStartingDirectory = jailStartingDirectory;
     }
 
     public ExceptionHandler getOnCompletionExceptionHandler() {
