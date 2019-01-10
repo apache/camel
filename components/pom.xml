@@ -314,6 +314,7 @@
             <id>prepare</id>
             <goals>
               <goal>prepare-components</goal>
+              <goal>generate-legal</goal>
             </goals>
             <phase>generate-resources</phase>
           </execution>
