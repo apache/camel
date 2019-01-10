@@ -42,7 +42,7 @@ import org.apache.camel.support.DefaultProducer;
 @UriEndpoint(firstVersion = "1.3.0", scheme = "browse", title = "Browse", syntax = "browse:name", label = "core,monitoring")
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
-    @UriPath(description = "A name which can be any string to uniquely identify the endpoint") @Metadata(required = "true")
+    @UriPath(description = "A name which can be any string to uniquely identify the endpoint") @Metadata(required = true)
     private String name;
 
     private List<Exchange> exchanges;

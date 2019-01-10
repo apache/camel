@@ -28,10 +28,10 @@ import org.apache.camel.spi.UriPath;
 public class LambdaConfiguration implements Cloneable {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String function;
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private LambdaOperations operation;
     @UriParam(label = "security", secret = true)
     private String accessKey;

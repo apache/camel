@@ -36,9 +36,9 @@ public class MetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry registry;
 
-    @UriPath(description = "Type of metrics") @Metadata(required = "true")
+    @UriPath(description = "Type of metrics") @Metadata(required = true)
     protected final MetricsType metricsType;
-    @UriPath(description = "Name of metrics") @Metadata(required = "true")
+    @UriPath(description = "Name of metrics") @Metadata(required = true)
     protected final String metricsName;
     @UriParam(description = "Action when using timer type")
     private MetricsTimerAction action;

@@ -40,7 +40,7 @@ public class WebsocketEndpoint extends ServletEndpoint {
     private WebSocketStore store;
     private WebsocketConsumer websocketConsumer;
 
-    @UriPath(description = "Name of websocket endpoint") @Metadata(required = "true")
+    @UriPath(description = "Name of websocket endpoint") @Metadata(required = true)
     private String servicePath;
     @UriParam
     private boolean sendToAll;

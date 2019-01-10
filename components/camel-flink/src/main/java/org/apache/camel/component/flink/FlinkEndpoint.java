@@ -34,7 +34,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 public class FlinkEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private EndpointType endpointType;
     @UriParam
     private DataSet dataSet;

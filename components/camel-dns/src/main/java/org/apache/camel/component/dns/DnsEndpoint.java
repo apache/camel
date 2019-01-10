@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(firstVersion = "2.7.0", scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true, label = "networking")
 public class DnsEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private DnsType dnsType;
 
     public DnsEndpoint(String endpointUri, Component component) {

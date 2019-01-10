@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 public class MiloServerEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String itemId;
 
     private final CamelNamespace namespace;

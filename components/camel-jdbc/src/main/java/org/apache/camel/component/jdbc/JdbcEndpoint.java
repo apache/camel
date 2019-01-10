@@ -38,7 +38,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private DataSource dataSource;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String dataSourceName;
     @UriParam
     private int readSize;

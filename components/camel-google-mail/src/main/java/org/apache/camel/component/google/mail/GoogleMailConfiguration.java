@@ -31,11 +31,11 @@ import org.apache.camel.spi.UriPath;
  */
 @UriParams
 public class GoogleMailConfiguration {
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private GoogleMailApiName apiName;
 
     @UriPath(enums = "attachments,create,delete,get,getProfile,gmailImport,insert,list,modify,patch,send,trash,untrash,update")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String methodName;
 
     @UriParam

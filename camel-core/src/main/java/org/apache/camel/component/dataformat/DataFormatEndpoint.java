@@ -43,9 +43,9 @@ public class DataFormatEndpoint extends DefaultEndpoint {
     private AsyncProcessor processor;
     private DataFormat dataFormat;
 
-    @UriPath(description = "Name of data format") @Metadata(required = "true")
+    @UriPath(description = "Name of data format") @Metadata(required = true)
     private String name;
-    @UriPath(enums = "marshal,unmarshal") @Metadata(required = "true")
+    @UriPath(enums = "marshal,unmarshal") @Metadata(required = true)
     private String operation;
 
     public DataFormatEndpoint() {

@@ -24,7 +24,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class OptaPlannerConfiguration {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String configFile;
     @UriParam(label = "common", defaultValue = "DEFAULT_SOLVER")
     private String solverId = OptaPlannerConstants.DEFAULT_SOLVER_ID;

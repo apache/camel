@@ -43,10 +43,10 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 public class DrillEndpoint extends DefaultPollingEndpoint {
 
     @UriPath(description = "Host name or IP address")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host;
     @UriParam(description = "Port number")
-    @Metadata(required = "false", defaultValue = "2181")
+    @Metadata(required = false, defaultValue = "2181")
     private Integer port = 2181;
     @UriParam(description = "Drill directory", defaultValue = "")
     private String directory = "";

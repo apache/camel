@@ -39,7 +39,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "inputType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeDefinition> {
-    @XmlAttribute @Metadata(required = "true")
+    @XmlAttribute @Metadata(required = true)
     private String urn;
     @XmlAttribute  @Metadata(defaultValue = "false")
     private Boolean validate = false;

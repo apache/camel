@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 public class CMISEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to the cmis repository")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String cmsUrl;
 
     @UriParam(label = "producer")

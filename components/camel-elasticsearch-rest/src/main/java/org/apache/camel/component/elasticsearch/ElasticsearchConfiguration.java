@@ -29,7 +29,7 @@ public class ElasticsearchConfiguration {
 
     private List<HttpHost> hostAddressesList;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String clusterName;
     @UriParam
     private ElasticsearchOperation operation;
@@ -39,7 +39,7 @@ public class ElasticsearchConfiguration {
     private String indexType;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS)
     private int waitForActiveShards = ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String hostAddresses;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT)
     private int socketTimeout = ElasticsearchConstants.DEFAULT_SOCKET_TIMEOUT;

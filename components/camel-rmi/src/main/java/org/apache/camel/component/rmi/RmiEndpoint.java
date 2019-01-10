@@ -47,7 +47,7 @@ public class RmiEndpoint extends DefaultEndpoint {
     private String hostname;
     @UriPath(description = "Port number of RMI server", defaultValue = "" + Registry.REGISTRY_PORT)
     private int port;
-    @UriPath(description = "Name to use when binding to RMI server") @Metadata(required = "true")
+    @UriPath(description = "Name to use when binding to RMI server") @Metadata(required = true)
     private String name;
     @UriParam
     private List<Class<?>> remoteInterfaces;

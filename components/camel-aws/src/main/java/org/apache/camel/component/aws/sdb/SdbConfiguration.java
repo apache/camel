@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class SdbConfiguration {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String domainName;
     @UriParam
     private AmazonSimpleDB amazonSDBClient;

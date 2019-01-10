@@ -42,7 +42,7 @@ import org.apache.ignite.IgniteMessaging;
 public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topic;
 
     @UriParam(label = "consumer,producer")

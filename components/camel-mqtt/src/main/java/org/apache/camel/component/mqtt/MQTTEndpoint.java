@@ -68,7 +68,7 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private volatile boolean connected;
     private final List<MQTTConsumer> consumers = new CopyOnWriteArrayList<>();
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
 
     @UriParam

@@ -34,7 +34,7 @@ import org.apache.camel.spi.UriPath;
 public class TwitterSearchEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The search keywords. Multiple values can be separated with comma.")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String keywords;
 
     public TwitterSearchEndpoint(String uri, String remaining, TwitterSearchComponent component, TwitterConfiguration properties) {

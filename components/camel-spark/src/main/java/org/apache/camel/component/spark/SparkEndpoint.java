@@ -44,7 +44,7 @@ public class SparkEndpoint extends DefaultEndpoint {
 
     // Endpoint collaborators
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private EndpointType endpointType;
     @UriParam
     private JavaRDDLike rdd;

@@ -42,7 +42,7 @@ import ${package}.internal.${name}PropertiesHelper;
              consumerClass = ${name}Consumer.class, label = "custom")
 public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}Configuration> {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
 
     // TODO create and manage API proxy

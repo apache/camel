@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class CwConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String namespace;
     @UriParam
     private AmazonCloudWatch amazonCwClient;

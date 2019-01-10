@@ -39,7 +39,7 @@ public class IOTAEndpoint extends DefaultEndpoint {
     private IotaAPI apiClient;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String name;
 
     @UriParam

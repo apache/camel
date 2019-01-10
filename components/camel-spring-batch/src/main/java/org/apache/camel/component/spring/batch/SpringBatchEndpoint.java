@@ -39,7 +39,7 @@ import org.springframework.batch.core.launch.JobLauncher;
 public class SpringBatchEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String jobName;
 
     @UriParam

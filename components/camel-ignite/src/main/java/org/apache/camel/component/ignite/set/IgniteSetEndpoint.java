@@ -41,7 +41,7 @@ import org.apache.ignite.configuration.CollectionConfiguration;
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-set", title = "Ignite Sets", syntax = "ignite-set:name", label = "nosql,cache", producerOnly = true)
 public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
 
     @UriParam(label = "producer")

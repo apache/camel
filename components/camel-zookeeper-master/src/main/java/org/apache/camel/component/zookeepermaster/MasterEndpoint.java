@@ -40,11 +40,11 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
     private final Endpoint consumerEndpoint;
 
     @UriPath(description = "The name of the cluster group to use")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String groupName;
 
     @UriPath(description = "The consumer endpoint to use in master/slave mode")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String consumerEndpointUri;
 
     public MasterEndpoint(String uri, MasterComponent component, String groupName, String consumerEndpointUri) {

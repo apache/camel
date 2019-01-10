@@ -65,7 +65,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The quartz group name to use. The combination of group name and timer name should be unique.", defaultValue = "Camel")
     private String groupName;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String triggerName;
     @UriParam
     private String cron;

@@ -45,9 +45,9 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     private transient String address;
 
-    @UriPath(description = "Hostname of the SNMP enabled device") @Metadata(required = "true")
+    @UriPath(description = "Hostname of the SNMP enabled device") @Metadata(required = true)
     private String host;
-    @UriPath(description = "Port number of the SNMP enabled device") @Metadata(required = "true")
+    @UriPath(description = "Port number of the SNMP enabled device") @Metadata(required = true)
     private Integer port;
     @UriParam(defaultValue = "udp", enums = "tcp,udp")
     private String protocol = "udp";

@@ -36,7 +36,7 @@ public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
 
     public RefEndpoint(String endpointUri, Component component) {

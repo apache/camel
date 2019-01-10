@@ -41,7 +41,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
 
     // component name is implied as the protocol, eg ftp/ftps etc
     private String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
     @UriPath
     private int port;

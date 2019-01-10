@@ -32,15 +32,15 @@ import org.apache.camel.spi.UriPath;
 public class GrpcConfiguration {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private int port;
     
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String service;
     
     @UriParam(label = "producer")

@@ -69,7 +69,7 @@ public class JMXEndpoint extends DefaultEndpoint {
     /**
      * The domain for the mbean you're connecting to
      */
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String objectDomain;
 
     /**

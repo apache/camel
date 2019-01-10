@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(firstVersion = "${version}", scheme = "${scheme}", title = "${name}", syntax="${scheme}:name", 
              consumerClass = ${name}Consumer.class, label = "custom")
 public class ${name}Endpoint extends DefaultEndpoint {
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
     @UriParam(defaultValue = "10")
     private int option = 10;

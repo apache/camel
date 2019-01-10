@@ -51,7 +51,7 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private String raftId;
     private String channelProperties;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String clusterName;
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean enableRoleChangeEvents;

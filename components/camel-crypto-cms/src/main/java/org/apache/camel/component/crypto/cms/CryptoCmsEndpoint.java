@@ -39,10 +39,10 @@ public class CryptoCmsEndpoint extends DefaultEndpoint {
     private final Processor processor;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private CryptoOperation cryptoOperation;
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String name;
 
     // to include different kind of configuration params

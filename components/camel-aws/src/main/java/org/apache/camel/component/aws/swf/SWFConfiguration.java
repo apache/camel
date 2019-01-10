@@ -35,7 +35,7 @@ import org.apache.camel.spi.UriPath;
 public class SWFConfiguration implements Cloneable {
 
     @UriPath(enums = "activity,workflow")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String type;
     @UriParam
     private AmazonSimpleWorkflowClient amazonSWClient;

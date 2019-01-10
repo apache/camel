@@ -35,7 +35,7 @@ import org.apache.camel.spi.UriPath;
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     protected HazelcastCommand command;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     protected String cacheName;
     @UriParam
     protected HazelcastInstance hazelcastInstance;

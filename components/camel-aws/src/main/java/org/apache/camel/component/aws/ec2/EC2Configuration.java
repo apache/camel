@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class EC2Configuration implements Cloneable {
 
-    @UriPath(description = "Logical name") @Metadata(required = "true")
+    @UriPath(description = "Logical name") @Metadata(required = true)
     private String label;
     @UriParam(label = "producer")
     private AmazonEC2Client amazonEc2Client;
@@ -36,7 +36,7 @@ public class EC2Configuration implements Cloneable {
     @UriParam(label = "producer", secret = true)
     private String secretKey;
     @UriParam(label = "producer")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private EC2Operations operation;
     @UriParam(label = "producer")
     private String proxyHost;

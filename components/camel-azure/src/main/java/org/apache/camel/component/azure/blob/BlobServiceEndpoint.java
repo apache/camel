@@ -38,7 +38,7 @@ import org.apache.camel.spi.UriPath;
 public class BlobServiceEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Container or Blob compact Uri")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String containerOrBlobUri; // to support component docs
     @UriParam
     private BlobServiceConfiguration configuration;

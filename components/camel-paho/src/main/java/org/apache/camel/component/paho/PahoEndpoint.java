@@ -44,7 +44,7 @@ public class PahoEndpoint extends DefaultEndpoint {
 
     // Configuration members
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topic;
     @UriParam
     private String clientId = "camel-" + System.nanoTime();

@@ -40,10 +40,10 @@ public class WeatherConfiguration {
     private final WeatherQuery weatherQuery;
 
     @UriPath(description = "The name value is not used.")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String name;
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String appid;
     @UriParam
     private WeatherApi weatherApi;
@@ -93,10 +93,10 @@ public class WeatherConfiguration {
     @UriParam(label = "advanced")
     private HttpConnectionManager httpConnectionManager;
     @UriParam(label = "security")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String geolocationAccessKey;
     @UriParam(label = "security")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String geolocationRequestHostIP;
 
     public WeatherConfiguration(WeatherComponent component) {

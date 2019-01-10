@@ -33,10 +33,10 @@ import static org.apache.camel.component.nsq.NsqConstants.NSQ_DEFAULT_PORT;
 public class NsqConfiguration {
 
     @UriPath(description = "The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer).")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String servers;
     @UriParam(description = "The NSQ topic")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topic;
     @UriParam(label = "consumer", description = "The NSQ channel")
     private String channel;

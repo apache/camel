@@ -87,14 +87,14 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in"
             + " Swagger specification and in the component configuration.",
         defaultValue = "", label = "producer")
-    @Metadata(required = "false")
+    @Metadata(required = false)
     private String basePath;
 
     @UriParam(description = "Name of the Camel component that will perform the requests. The compnent must be present"
         + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
         + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides"
         + " component configuration.", label = "producer")
-    @Metadata(required = "false")
+    @Metadata(required = false)
     private String componentName;
 
     @UriParam(
@@ -114,7 +114,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
     private String host;
 
     @UriPath(description = "ID of the operation from the Swagger specification.", label = "producer")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String operationId;
 
     @UriParam(description = "What payload type this component is producing. For example `application/json`"

@@ -36,7 +36,7 @@ public class AtmosConfiguration {
 
     @UriPath
     private String name;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private AtmosOperation operation;
     @UriParam
     private String secretKey;

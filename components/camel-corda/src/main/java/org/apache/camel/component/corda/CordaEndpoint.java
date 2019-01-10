@@ -38,7 +38,7 @@ import org.apache.camel.support.DefaultEndpoint;
 public class CordaEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to the corda node")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private CordaConfiguration configuration;
     private CordaRPCConnection rpcConnection;
     private CordaRPCOps proxy;

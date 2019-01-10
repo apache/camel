@@ -50,9 +50,9 @@ public class PgEventEndpoint extends DefaultEndpoint {
     private String host = "localhost";
     @UriPath(defaultValue = "5432")
     private Integer port = 5432;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String database;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String channel;
     @UriParam(defaultValue = "postgres", label = "security", secret = true)
     private String user = "postgres";

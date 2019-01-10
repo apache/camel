@@ -66,11 +66,11 @@ public class MllpEndpoint extends DefaultEndpoint {
     public static final Charset DEFAULT_CHARSET = MllpComponent.getDefaultCharset();
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     String hostname;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     int port = -1;
 
     @UriParam(label = "advanced")

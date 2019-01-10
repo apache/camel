@@ -32,7 +32,7 @@ import org.apache.camel.support.EndpointHelper;
 @UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true, label = "transformation")
 public class StAXEndpoint extends ProcessorEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String contentHandlerClass;
 
     public StAXEndpoint(String endpointUri, Component component) {

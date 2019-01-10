@@ -31,12 +31,12 @@ import org.kie.api.task.model.Task;
 public class JBPMConfiguration {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private URL connectionURL;
     @UriParam(label = "producer", defaultValue = "startProcess")
     private String operation;
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String deploymentId;
     @UriParam
     private Long processInstanceId;

@@ -39,10 +39,10 @@ public class MicrometerEndpoint extends DefaultEndpoint {
     protected MeterRegistry registry;
 
     @UriPath(description = "Type of metrics")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     protected final Meter.Type metricsType;
     @UriPath(description = "Name of metrics")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     protected final String metricsName;
     @UriPath(description = "Tags of metrics")
     protected final Iterable<Tag> tags;

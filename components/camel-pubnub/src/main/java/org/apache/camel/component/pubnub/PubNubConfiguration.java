@@ -25,7 +25,7 @@ import org.apache.camel.spi.UriPath;
 public class PubNubConfiguration {
 
     @UriPath()
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String channel;
 
     @UriParam(label = "security", secret = true)

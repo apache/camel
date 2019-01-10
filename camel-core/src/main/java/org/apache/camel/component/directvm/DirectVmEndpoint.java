@@ -36,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.10.0", scheme = "direct-vm", title = "Direct VM", syntax = "direct-vm:name", consumerClass = DirectConsumer.class, label = "core,endpoint")
 public class DirectVmEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
-    @UriPath(description = "Name of direct-vm endpoint") @Metadata(required = "true")
+    @UriPath(description = "Name of direct-vm endpoint") @Metadata(required = true)
     private String name;
 
     @UriParam(label = "producer", defaultValue = "true")

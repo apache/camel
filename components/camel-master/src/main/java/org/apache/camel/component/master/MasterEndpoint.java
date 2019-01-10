@@ -49,11 +49,11 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
     private final CamelClusterService clusterService;
 
     @UriPath(description = "The name of the cluster namespace to use")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String namespace;
 
     @UriPath(description = "The endpoint uri to use in master/slave mode")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String delegateUri;
 
     public MasterEndpoint(String uri, MasterComponent component, CamelClusterService clusterService, String namespace, String delegateUri) {

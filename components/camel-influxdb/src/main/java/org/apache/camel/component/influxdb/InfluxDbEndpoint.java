@@ -36,7 +36,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private InfluxDB influxDB;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String connectionBean;
     @UriParam
     private String databaseName;

@@ -50,11 +50,11 @@ public class BoxConfiguration {
     public static final String RSA_SHA_256 = "RSA_SHA_256";
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private BoxApiName apiName;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String methodName;
 
     @UriParam

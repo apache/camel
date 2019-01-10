@@ -49,7 +49,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/restapi/";
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String path;
     @UriPath
     private String contextIdPattern;

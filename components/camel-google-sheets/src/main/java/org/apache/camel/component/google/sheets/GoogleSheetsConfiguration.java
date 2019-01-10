@@ -29,11 +29,11 @@ import org.apache.camel.spi.UriPath;
 public class GoogleSheetsConfiguration {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private GoogleSheetsApiName apiName;
 
     @UriPath(enums = "create,get,update,append,batchUpdate,clear")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String methodName;
 
     @UriParam

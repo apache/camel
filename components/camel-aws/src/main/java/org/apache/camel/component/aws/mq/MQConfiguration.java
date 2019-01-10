@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 public class MQConfiguration implements Cloneable {
 
     @UriPath(description = "Logical name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String label;
     @UriParam(label = "producer")
     private AmazonMQ amazonMqClient;
@@ -37,7 +37,7 @@ public class MQConfiguration implements Cloneable {
     @UriParam(label = "producer", secret = true)
     private String secretKey;
     @UriParam(label = "producer")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private MQOperations operation;
     @UriParam(label = "producer")
     private String proxyHost;

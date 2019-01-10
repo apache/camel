@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 public class InfinispanEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The cache to use")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String cacheName;
 
     @UriParam

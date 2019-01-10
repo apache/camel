@@ -30,7 +30,7 @@ import static com.github.dozermapper.core.util.DozerConstants.DEFAULT_MAPPING_FI
 @UriParams
 public class DozerConfiguration {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
     @UriParam
     private String marshalId;
@@ -38,7 +38,7 @@ public class DozerConfiguration {
     private String unmarshalId;
     @UriParam
     private String sourceModel;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String targetModel;
     @UriParam(defaultValue = DEFAULT_MAPPING_FILE)
     private String mappingFile;

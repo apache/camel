@@ -42,7 +42,7 @@ public class JGroupsRaftComponent extends DefaultComponent {
     @Metadata(defaultValue = "NopStateMachine")
     private StateMachine stateMachine = new NopStateMachine();
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String raftId;
     @UriParam
     @Metadata(defaultValue = "raft.xml")

@@ -38,7 +38,7 @@ import org.apache.camel.spi.UriPath;
 public class QueueServiceEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Container Queue compact Uri")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String containerAndQueueUri; // to support component docs
     @UriParam
     private QueueServiceConfiguration configuration;

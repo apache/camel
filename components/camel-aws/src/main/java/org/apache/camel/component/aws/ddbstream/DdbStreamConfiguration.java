@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 public class DdbStreamConfiguration implements Cloneable {
     
     @UriPath(label = "consumer", description = "Name of the dynamodb table")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String tableName;
     
     @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")

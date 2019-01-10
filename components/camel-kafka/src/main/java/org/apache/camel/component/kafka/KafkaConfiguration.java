@@ -53,7 +53,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     //Common configuration properties
     @UriPath(label = "common")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topic;
     @UriParam(label = "common")
     private String brokers;

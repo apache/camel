@@ -55,9 +55,9 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private PlatformTransactionManager transactionManager;
     private Expression producerExpression;
 
-    @UriPath(description = "Entity class name") @Metadata(required = "true")
+    @UriPath(description = "Entity class name") @Metadata(required = true)
     private Class<?> entityType;
-    @UriParam(defaultValue = "camel") @Metadata(required = "true")
+    @UriParam(defaultValue = "camel") @Metadata(required = true)
     private String persistenceUnit = "camel";
     @UriParam(defaultValue = "true")
     private boolean joinTransaction = true;

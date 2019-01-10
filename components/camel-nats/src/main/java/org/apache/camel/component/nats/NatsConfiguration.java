@@ -33,10 +33,10 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 public class NatsConfiguration {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String servers;
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topic;
     @UriParam
     private Connection connection;

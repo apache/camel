@@ -56,7 +56,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
 
     private FacebookNameStyle nameStyle;
 
-    @UriPath(name = "methodName", description = "What operation to perform") @Metadata(required = "true")
+    @UriPath(name = "methodName", description = "What operation to perform") @Metadata(required = true)
 
     private String method;
     private FacebookMethodsType methodName;

@@ -32,11 +32,11 @@ public class ThriftConfiguration {
     private String host;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private int port;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String service;
 
     @UriParam(label = "producer")

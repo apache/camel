@@ -30,10 +30,10 @@ import org.apache.camel.spi.UriPath;
 public abstract class AbstractEtcdPollingEndpoint extends DefaultPollingEndpoint implements EtcdEndpoint {
 
     @UriPath(description = "The API namespace to use", enums = "keys,stats,watch")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final EtcdNamespace namespace;
     @UriPath(description = "The path the endpoint refers to")
-    @Metadata(required = "false")
+    @Metadata(required = false)
     private final String path;
     @UriParam
     private final EtcdConfiguration configuration;

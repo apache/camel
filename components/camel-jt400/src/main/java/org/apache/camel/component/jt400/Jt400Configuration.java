@@ -71,19 +71,19 @@ public class Jt400Configuration {
 
     private final AS400ConnectionPool connectionPool;
 
-    @UriPath @Metadata(required = "true", secret = true)
+    @UriPath @Metadata(required = true, secret = true)
     private String userID;
 
-    @UriPath @Metadata(required = "true", secret = true)
+    @UriPath @Metadata(required = true, secret = true)
     private String password;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String systemName;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String objectPath;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private Jt400Type type;
 
     @UriParam

@@ -30,7 +30,7 @@ public class SplunkConfiguration {
 
     private SplunkConnectionFactory connectionFactory;
 
-    @UriPath(description = "Name has no purpose") @Metadata(required = "true")
+    @UriPath(description = "Name has no purpose") @Metadata(required = true)
     private String name;
     @UriParam(defaultValue = "https")
     private String scheme = Service.DEFAULT_SCHEME;

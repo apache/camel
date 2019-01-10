@@ -25,7 +25,7 @@ public final class ComponentOption {
     private String name;
     private String displayName;
     private String type;
-    private String required;
+    private boolean required;
     private String defaultValue;
     private String defaultValueNote;
     private String documentation;
@@ -37,7 +37,7 @@ public final class ComponentOption {
     private boolean enumType;
     private Set<String> enums;
 
-    public ComponentOption(String name, String displayName, String type, String required, String defaultValue, String defaultValueNote,
+    public ComponentOption(String name, String displayName, String type, boolean required, String defaultValue, String defaultValueNote,
                            String documentation, boolean deprecated, String deprecationNode, boolean secret, String group, String label,
                            boolean enumType, Set<String> enums) {
         this.name = name;
@@ -68,7 +68,7 @@ public final class ComponentOption {
         return type;
     }
 
-    public String getRequired() {
+    public boolean isRequired() {
         return required;
     }
 

@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(firstVersion = "2.20.0", scheme = "ldif", title = "LDIF", syntax = "ldif:ldapConnectionName", producerOnly = true, label = "ldap")
 public class LdifEndpoint extends DefaultEndpoint {
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String ldapConnectionName;
 
     protected LdifEndpoint(String endpointUri, String remaining, LdifComponent component) throws URISyntaxException {

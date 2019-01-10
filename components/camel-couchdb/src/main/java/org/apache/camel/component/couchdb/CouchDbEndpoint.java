@@ -42,13 +42,13 @@ public class CouchDbEndpoint extends DefaultEndpoint {
 
     private static final String URI_ERROR = "Invalid URI. Format must be of the form couchdb:http[s]://hostname[:port]/database?[options...]";
 
-    @UriPath(enums = "http,https") @Metadata(required = "true")
+    @UriPath(enums = "http,https") @Metadata(required = true)
     private String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String hostname;
     @UriPath(defaultValue = "" + DEFAULT_PORT)
     private int port;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String database;
     @UriParam(label = "consumer", enums = "all_docs,main_only", defaultValue = DEFAULT_STYLE)
     private String style = DEFAULT_STYLE;

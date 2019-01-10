@@ -46,7 +46,7 @@ public class MailConfiguration implements Cloneable {
 
     // protocol is implied by component name so it should not be in UriPath
     private String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
     @UriPath
     private int port = -1;

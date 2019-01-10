@@ -49,11 +49,11 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
     private static final int DEFAULT_SOCKET_TIMEOUT = 30000;
     private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
 
-    @UriPath(enums = "http,https") @Metadata(required = "true")
+    @UriPath(enums = "http,https") @Metadata(required = true)
     private String protocol = DEFAULT_PROTOCOL;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host = DEFAULT_HOST;
-    @UriPath(defaultValue = "80") @Metadata(required = "true")
+    @UriPath(defaultValue = "80") @Metadata(required = true)
     private int port = DEFAULT_PORT;
     @UriPath
     private String uriPattern;

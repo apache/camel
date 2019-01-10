@@ -44,9 +44,9 @@ public class GridFsEndpoint extends DefaultEndpoint {
     public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
     public static final String GRIDFS_FILE_ID_PRODUCED = "gridfs.fileid";
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String connectionBean;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String database;
     @UriParam(defaultValue = GridFS.DEFAULT_BUCKET)
     private String bucket;

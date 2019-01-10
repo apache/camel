@@ -61,7 +61,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private volatile XsltBuilder xslt;
     private Map<String, Object> parameters;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String resourceUri;
     @UriParam(defaultValue = "true")
     private boolean contentCache = true;

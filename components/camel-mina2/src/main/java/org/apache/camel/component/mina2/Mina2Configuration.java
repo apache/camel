@@ -35,11 +35,11 @@ import org.apache.mina.filter.codec.ProtocolCodecFactory;
 @UriParams
 public class Mina2Configuration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private int port;
     @UriParam(defaultValue = "true")
     private boolean sync = true;

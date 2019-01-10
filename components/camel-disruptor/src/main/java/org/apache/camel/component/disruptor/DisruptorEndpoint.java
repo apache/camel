@@ -58,7 +58,7 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<>();
     private final DisruptorReference disruptorReference;
 
-    @UriPath(description = "Name of queue") @Metadata(required = "true")
+    @UriPath(description = "Name of queue") @Metadata(required = true)
     private String name;
     @UriParam(label = "consumer", defaultValue = "1")
     private final int concurrentConsumers;

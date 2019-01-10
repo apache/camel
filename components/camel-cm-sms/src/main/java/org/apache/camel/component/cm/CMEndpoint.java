@@ -35,7 +35,7 @@ import org.apache.camel.util.StringHelper;
 public class CMEndpoint extends DefaultEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host;
     @UriParam
     private CMConfiguration configuration;

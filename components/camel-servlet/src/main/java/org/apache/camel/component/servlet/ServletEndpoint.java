@@ -40,7 +40,7 @@ public class ServletEndpoint extends HttpCommonEndpoint {
 
     private HttpBinding binding;
 
-    @UriPath(label = "consumer") @Metadata(required = "true")
+    @UriPath(label = "consumer") @Metadata(required = true)
     private String contextPath;
     @UriParam(label = "consumer", defaultValue = "CamelServlet")
     private String servletName;

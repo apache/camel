@@ -56,7 +56,7 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
     private final ServiceDefinition serviceDefinition;
 
     @UriPath(description = "The endpoint uri to expose as service")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String delegateUri;
 
     public ServiceEndpoint(String uri, ServiceComponent component, ServiceRegistry serviceRegistry, Map<String, String> serviceParameters, String delegateUri) {

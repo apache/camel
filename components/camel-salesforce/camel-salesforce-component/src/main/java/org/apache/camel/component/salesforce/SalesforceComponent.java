@@ -89,12 +89,12 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     // allow fine grained login as well
     @Metadata(description = "URL of the Salesforce instance used for authentication, by default set to "
-    + DEFAULT_LOGIN_URL, label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = "true")
+    + DEFAULT_LOGIN_URL, label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = true)
     private String loginUrl;
 
     @Metadata(description = "OAuth Consumer Key of the connected app configured in the Salesforce instance setup."
         + " Typically a connected app needs to be configured but one can be provided by installing a package.",
-        label = "common,security", required = "true")
+        label = "common,security", required = true)
     private String clientId;
 
     @Metadata(description = "OAuth Consumer Secret of the connected app configured in the Salesforce instance setup.",

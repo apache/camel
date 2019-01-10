@@ -43,7 +43,7 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     private DataSource dataSource;
 
     @UriPath(description = "Sets the StoredProcedure template to perform")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String template;
     @UriParam(description = "Enables or disables batch mode")
     private boolean batch;

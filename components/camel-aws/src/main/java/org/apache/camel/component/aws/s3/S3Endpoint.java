@@ -53,7 +53,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     private AmazonS3 s3Client;
 
     @UriPath(description = "Bucket name or ARN")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String bucketNameOrArn; // to support component docs
     @UriParam
     private S3Configuration configuration;

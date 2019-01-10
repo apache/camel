@@ -50,7 +50,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
     public static final String ENDPOINT_SERVICE_POST = "post, user";
 
     @UriPath(description = "The endpoint operation.", enums = ENDPOINT_SERVICE_POST)
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String operation;
 
     @UriPath(description = "The second part of an endpoint operation. Needed only when endpoint semantic is not enough, like wordpress:post:delete", enums = "delete")

@@ -35,7 +35,7 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowEndpoint.class);
 
     @UriPath(description = "The ServiceNow instance name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String instanceName;
 
     @UriParam

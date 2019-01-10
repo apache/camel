@@ -35,7 +35,7 @@ public class DigitalOceanConfiguration {
     private DigitalOceanOperations operation;
 
     @UriParam(enums = "account,actions,blockStorages,droplets,mages,snapshots,keys,regions,sizes,floatingIPs,tags")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private DigitalOceanResources resource;
 
     @UriParam(label = "advanced")

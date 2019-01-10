@@ -28,10 +28,10 @@ public class GoogleBigQuerySQLConfiguration {
     @UriParam(description = "ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used")
     private GoogleBigQueryConnectionFactory connectionFactory;
     @UriPath(label = "common", description = "Google Cloud Project Id")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String projectId;
     @UriPath(label = "common", description = "BigQuery standard SQL query")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String query;
 
     public void parseRemaining(String remaining) {

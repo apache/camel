@@ -34,7 +34,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorHandlerDefinition extends IdentifiedType {
-    @XmlAttribute @Metadata(defaultValue = "DefaultErrorHandler", required = "true")
+    @XmlAttribute @Metadata(defaultValue = "DefaultErrorHandler", required = true)
     private ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
     @XmlAttribute
     private String deadLetterUri;

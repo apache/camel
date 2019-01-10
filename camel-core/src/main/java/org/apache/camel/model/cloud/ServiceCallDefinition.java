@@ -41,7 +41,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "serviceCall")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinition> {
-    @XmlAttribute @Metadata(required = "true")
+    @XmlAttribute @Metadata(required = true)
     private String name;
     @XmlAttribute
     private String uri;

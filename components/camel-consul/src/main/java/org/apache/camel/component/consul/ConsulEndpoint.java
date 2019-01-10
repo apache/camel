@@ -39,7 +39,7 @@ public class ConsulEndpoint extends DefaultEndpoint {
     private final ConsulConfiguration configuration;
 
     @UriPath(description = "The API endpoint")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String apiEndpoint;
 
     private final Optional<ConsulFactories.ProducerFactory> producerFactory;

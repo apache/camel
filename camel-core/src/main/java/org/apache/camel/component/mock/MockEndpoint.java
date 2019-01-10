@@ -112,7 +112,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     private volatile int counter;
 
-    @UriPath(description = "Name of mock endpoint") @Metadata(required = "true")
+    @UriPath(description = "Name of mock endpoint") @Metadata(required = true)
     private String name;
     @UriParam(label = "producer", defaultValue = "-1")
     private int expectedCount;

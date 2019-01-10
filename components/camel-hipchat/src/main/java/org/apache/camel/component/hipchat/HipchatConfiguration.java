@@ -26,10 +26,10 @@ import org.apache.http.impl.client.HttpClients;
 @UriParams
 public class HipchatConfiguration {
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String protocol;
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host = HipchatConstants.DEFAULT_HOST;
     @UriPath(defaultValue = "" + HipchatConstants.DEFAULT_PORT)
     private Integer port = HipchatConstants.DEFAULT_PORT;

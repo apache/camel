@@ -57,7 +57,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     public static final String SERIALIZE_HEADER = "CamelSerialize";
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String exchangeName;
     @UriParam(label = "common")
     private String hostname;

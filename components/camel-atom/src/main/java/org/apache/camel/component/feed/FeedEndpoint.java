@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     protected String feedUri;
     @UriParam(defaultValue = "true")
     protected boolean splitEntries = true;

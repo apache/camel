@@ -33,9 +33,9 @@ import spark.route.HttpMethod;
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "spark-rest", title = "Spark Rest", syntax = "spark-rest:verb:path", consumerOnly = true, consumerClass =  SparkConsumer.class, label = "rest")
 public class SparkEndpoint extends DefaultEndpoint {
-    @UriPath(enums = "get,post,put,patch,delete,head,trace,connect,options") @Metadata(required = "true")
+    @UriPath(enums = "get,post,put,patch,delete,head,trace,connect,options") @Metadata(required = true)
     private String verb;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String path;
     @UriParam
     private String accept;
