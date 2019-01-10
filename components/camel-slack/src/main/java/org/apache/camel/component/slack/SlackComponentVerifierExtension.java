@@ -34,6 +34,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONObject;
+import org.json.simple.JsonObject;
 import org.json.simple.Jsoner;
 
 import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
@@ -106,7 +107,7 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
             } catch (Exception e) {
                 builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid webhookUrl").parameterKey("webhookUrl").build());
             }
-        } else if (ObjectHelper.isNotEmpty((String)parameters.get("token"))) {
+        } if (ObjectHelper.isNotEmpty((String)parameters.get("token"))) {
             String token = (String)parameters.get("token");
 
             try {
@@ -123,7 +124,7 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
                 if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
                     builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token").parameterKey("token").build());
                 }
-                JSONObject obj = (JSONObject) Jsoner.deserialize(jsonString);
+                JsonObject obj = (JsonObject) Jsoner.deserialize(jsonString);
                 if (obj.get("ok") != null && obj.get("ok").equals(false)) {
                     builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid token").parameterKey("token").build());
                 }
