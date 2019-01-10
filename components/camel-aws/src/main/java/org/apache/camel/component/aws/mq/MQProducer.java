@@ -130,6 +130,7 @@ public class MQProducer extends DefaultProducer {
         String brokerEngineVersion;
         String deploymentMode;
         String instanceType;
+        Boolean publiclyAccessible;
         List<User> users;
         CreateBrokerRequest request = new CreateBrokerRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_NAME))) {
@@ -165,6 +166,12 @@ public class MQProducer extends DefaultProducer {
             request.withUsers(users);
         } else {
             throw new IllegalArgumentException("A Users list must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_PUBLICLY_ACCESSIBLE))) {
+            publiclyAccessible = exchange.getIn().getHeader(MQConstants.BROKER_PUBLICLY_ACCESSIBLE, Boolean.class);
+            request.withPubliclyAccessible(publiclyAccessible);
+        } else {
+            request.withPubliclyAccessible(false);
         }
         CreateBrokerResult result;
         try {
