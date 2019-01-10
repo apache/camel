@@ -1617,11 +1617,6 @@
     <bundle dependency='true'>mvn:org.apache.camel/camel-olingo4-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-olingo4/${project.version}</bundle>
   </feature>
-  <feature name='camel-openshift' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>wrap:mvn:com.openshift/openshift-java-client/${openshift-java-client-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-openshift/${project.version}</bundle>
-  </feature>
   <feature name='camel-optaplanner' version='${project.version}' resolver='(obr)' start-level='50'>
     <details>The camel-optaplanner feature can only run on a SUN JVM. You need to add the package com.sun.tools.xjc to the java platform packages in the etc/jre.properties file.</details>
     <feature version='${project.version}'>camel-core</feature>
