@@ -51,6 +51,8 @@ public abstract class CsvMarshaller {
      * @return New instance
      */
     public static CsvMarshaller create(CSVFormat format, CsvDataFormat dataFormat) {
+        org.apache.camel.util.ObjectHelper.notNull(format, "CSV format");
+        org.apache.camel.util.ObjectHelper.notNull(dataFormat, "CSV data format");
         // If we don't want the header record, clear it
         if (format.getSkipHeaderRecord()) {
             format = format.withHeader((String[]) null);
@@ -93,6 +95,8 @@ public abstract class CsvMarshaller {
      * @return a new {@link CSVPrinter}. Never <code>null</code>.
      */
     protected CSVPrinter createPrinter(Exchange exchange, OutputStream outputStream) throws IOException {
+        org.apache.camel.util.ObjectHelper.notNull(exchange, "Exchange");
+        org.apache.camel.util.ObjectHelper.notNull(outputStream, "Output stream");
         return new CSVPrinter(new OutputStreamWriter(outputStream, ExchangeHelper.getCharsetName(exchange)), format);
     }
 
