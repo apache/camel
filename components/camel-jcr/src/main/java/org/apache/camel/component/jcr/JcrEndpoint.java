@@ -44,7 +44,7 @@ public class JcrEndpoint extends DefaultEndpoint {
     private Credentials credentials;
     private Repository repository;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
     @UriPath
     private String base;

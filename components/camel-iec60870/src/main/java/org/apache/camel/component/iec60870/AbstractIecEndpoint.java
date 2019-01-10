@@ -36,7 +36,7 @@ public abstract class AbstractIecEndpoint<T extends AbstractConnectionMultiplexo
      * The object information address
      */
     @UriPath(name = "uriPath")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final ObjectAddress address;
 
     // dummy for doc generation

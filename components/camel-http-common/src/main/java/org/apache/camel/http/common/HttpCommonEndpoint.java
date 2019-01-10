@@ -37,7 +37,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     HttpCommonComponent component;
 
-    @UriPath(label = "producer", description = "The url of the HTTP endpoint to call.") @Metadata(required = "true")
+    @UriPath(label = "producer", description = "The url of the HTTP endpoint to call.") @Metadata(required = true)
     URI httpUri;
     @UriParam(label = "common", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();

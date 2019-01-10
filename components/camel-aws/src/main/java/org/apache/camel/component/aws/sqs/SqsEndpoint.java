@@ -64,7 +64,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
     private String queueUrl;
 
     @UriPath(description = "Queue name or ARN")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String queueNameOrArn; // to support component docs
     @UriParam
     private SqsConfiguration configuration;

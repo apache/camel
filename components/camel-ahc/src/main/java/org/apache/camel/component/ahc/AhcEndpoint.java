@@ -49,7 +49,7 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
     private AsyncHttpClient client;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private URI httpUri;
     @UriParam
     private boolean bridgeEndpoint;

@@ -48,7 +48,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     private JChannel channel;
     private JChannel resolvedChannel;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String clusterName;
     @UriParam
     private String channelProperties;

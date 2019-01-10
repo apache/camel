@@ -39,7 +39,7 @@ public class ExecEndpoint extends DefaultEndpoint {
      */
     public static final long NO_TIMEOUT = Long.MAX_VALUE;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String executable;
     @UriParam
     private String args;

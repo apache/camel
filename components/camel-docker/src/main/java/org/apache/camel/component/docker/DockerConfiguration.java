@@ -31,11 +31,11 @@ public class DockerConfiguration implements Cloneable {
     @UriPath(enums = "events,stats,auth,info,ping,version,imagebuild,imagecreate,imageinspect,imagelist,imagepull,imagepush"
             + "imageremove,imagesearch,imagetag,containerattach,containercommit,containercopyfile,containercreate,containerdiff"
             + "inspectcontainer,containerkill,containerlist,containerlog,containerpause,containerrestart,containerremove,containerstart"
-            + "containerstop,containertop,containerunpause,containerwait,execcreate,execstart") @Metadata(required = "true")
+            + "containerstop,containertop,containerunpause,containerwait,execcreate,execstart") @Metadata(required = true)
     private DockerOperation operation;
-    @UriParam(defaultValue = "localhost") @Metadata(required = "true")
+    @UriParam(defaultValue = "localhost") @Metadata(required = true)
     private String host = "localhost";
-    @UriParam(defaultValue = "2375") @Metadata(required = "true")
+    @UriParam(defaultValue = "2375") @Metadata(required = true)
     private Integer port = 2375;
     @UriParam(label = "security", secret = true)
     private String username;

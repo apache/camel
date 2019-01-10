@@ -42,13 +42,13 @@ import org.apache.ignite.IgniteCompute;
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-compute", title = "Ignite Compute", syntax = "ignite-compute:endpointId", label = "nosql,cache,compute", producerOnly = true)
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String endpointId;
 
     @UriParam(label = "producer")
     private ClusterGroupExpression clusterGroupExpression;
 
-    @UriParam(label = "producer") @Metadata(required = "true")
+    @UriParam(label = "producer") @Metadata(required = true)
     private IgniteComputeExecutionType executionType;
 
     @UriParam(label = "producer")

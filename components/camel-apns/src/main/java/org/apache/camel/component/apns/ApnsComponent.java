@@ -28,7 +28,7 @@ import org.apache.camel.support.DefaultComponent;
  */
 public class ApnsComponent extends DefaultComponent {
 
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private ApnsService apnsService;
 
     public ApnsComponent() {

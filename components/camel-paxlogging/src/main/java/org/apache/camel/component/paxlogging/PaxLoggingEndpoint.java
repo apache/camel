@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
     consumerOnly = true, consumerClass = PaxLoggingConsumer.class, label = "monitoring")
 public class PaxLoggingEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private final String appender;
 
     public PaxLoggingEndpoint(String uri, PaxLoggingComponent component, String appender) {

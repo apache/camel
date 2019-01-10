@@ -44,7 +44,7 @@ public class DirectEndpoint extends DefaultEndpoint {
     private final Map<String, DirectConsumer> consumers;
     private final List<DirectProducer> producers = new ArrayList<>();
 
-    @UriPath(description = "Name of direct endpoint") @Metadata(required = "true")
+    @UriPath(description = "Name of direct endpoint") @Metadata(required = true)
     private String name;
 
     @UriParam(label = "producer", defaultValue = "true")

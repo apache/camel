@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public abstract class AbstractAtomixClientEndpoint<T extends AbstractAtomixClientComponent, C extends AtomixClientConfiguration> extends DefaultEndpoint {
     @UriPath(description = "The distributed resource name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String resourceName;
 
     private AtomixClient atomix;

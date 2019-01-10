@@ -37,7 +37,7 @@ public class PropertiesEndpoint extends DefaultEndpoint implements DelegateEndpo
     private volatile Endpoint endpoint;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String key;
     @UriParam
     private String locations;

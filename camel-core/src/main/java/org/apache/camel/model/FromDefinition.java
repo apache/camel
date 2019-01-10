@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "from")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition> implements EndpointRequiredDefinition {
-    @XmlAttribute @Metadata(required = "true")
+    @XmlAttribute @Metadata(required = true)
     private String uri;
     @XmlTransient
     private Endpoint endpoint;

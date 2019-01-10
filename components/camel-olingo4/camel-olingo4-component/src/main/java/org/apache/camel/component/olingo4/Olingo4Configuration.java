@@ -40,9 +40,9 @@ public class Olingo4Configuration {
     private static final int DEFAULT_TIMEOUT = 30 * 1000;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private Olingo4ApiName apiName;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String methodName;
     @UriParam
     private String serviceUri;

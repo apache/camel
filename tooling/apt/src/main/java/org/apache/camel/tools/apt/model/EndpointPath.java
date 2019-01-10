@@ -23,7 +23,7 @@ public final class EndpointPath {
     private String name;
     private String displayName;
     private String type;
-    private String required;
+    private boolean required;
     private String defaultValue;
     private String documentation;
     private boolean deprecated;
@@ -34,7 +34,7 @@ public final class EndpointPath {
     private boolean enumType;
     private Set<String> enums;
 
-    public EndpointPath(String name, String displayName, String type, String required, String defaultValue, String documentation,
+    public EndpointPath(String name, String displayName, String type, boolean required, String defaultValue, String documentation,
                         boolean deprecated, String deprecationNote, boolean secret, String group, String label,
                         boolean enumType, Set<String> enums) {
         this.name = name;
@@ -64,7 +64,7 @@ public final class EndpointPath {
         return type;
     }
 
-    public String getRequired() {
+    public boolean isRequired() {
         return required;
     }
 

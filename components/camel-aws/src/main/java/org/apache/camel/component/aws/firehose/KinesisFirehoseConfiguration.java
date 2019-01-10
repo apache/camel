@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 public class KinesisFirehoseConfiguration implements Cloneable {
 
     @UriPath(description = "Name of the stream")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String streamName;
     @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
     private String accessKey;

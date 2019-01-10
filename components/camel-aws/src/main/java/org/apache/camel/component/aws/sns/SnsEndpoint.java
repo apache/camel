@@ -55,7 +55,7 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private AmazonSNS snsClient;
 
     @UriPath(description = "Topic name or ARN")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topicNameOrArn; // to support component docs
     @UriParam
     private SnsConfiguration configuration;

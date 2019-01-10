@@ -36,7 +36,7 @@ import org.apache.fop.apps.FopFactory;
 @UriEndpoint(firstVersion = "2.10.0", scheme = "fop", title = "FOP", syntax = "fop:outputType", producerOnly = true, label = "transformation")
 public class FopEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private FopOutputType outputType;
     @UriParam
     private String userConfigURL;

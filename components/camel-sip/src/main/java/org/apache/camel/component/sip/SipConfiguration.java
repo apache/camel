@@ -64,7 +64,7 @@ public class SipConfiguration {
     private String protocol;
     private Map<String, Object> parameters;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private URI uri;
     @UriParam(label = "advanced")
     private AddressFactory addressFactory;

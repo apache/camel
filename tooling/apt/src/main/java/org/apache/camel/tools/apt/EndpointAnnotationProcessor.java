@@ -224,7 +224,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             }
             // as its json we need to sanitize the docs
             doc = sanitizeDescription(doc, false);
-            Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            Boolean required = entry.isRequired();
             String defaultValue = entry.getDefaultValue();
             if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
                 // fallback as false for boolean types
@@ -276,7 +276,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             }
             // as its json we need to sanitize the docs
             doc = sanitizeDescription(doc, false);
-            Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            boolean required = entry.isRequired();
             String defaultValue = entry.getDefaultValue();
             if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
                 // fallback as false for boolean types
@@ -324,7 +324,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             }
             // as its json we need to sanitize the docs
             doc = sanitizeDescription(doc, false);
-            Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
+            Boolean required = entry.isRequired();
             String defaultValue = entry.getDefaultValue();
             if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
                 // fallback as false for boolean types
@@ -489,7 +489,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     metadata = field.getAnnotation(Metadata.class);
                 }
 
-                String required = metadata != null ? metadata.required() : null;
+                boolean required = metadata != null && metadata.required();
                 String label = metadata != null ? metadata.label() : null;
                 boolean secret = metadata != null && metadata.secret();
                 String displayName = metadata != null ? metadata.displayName() : null;
@@ -606,7 +606,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     if (Strings.isNullOrEmpty(defaultValue) && metadata != null) {
                         defaultValue = metadata.defaultValue();
                     }
-                    String required = metadata != null ? metadata.required() : null;
+                    boolean required = metadata != null && metadata.required();
                     String label = path.label();
                     if (Strings.isNullOrEmpty(label) && metadata != null) {
                         label = metadata.label();
@@ -686,7 +686,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         defaultValue = metadata.defaultValue();
                     }
                     String defaultValueNote = param.defaultValueNote();
-                    String required = metadata != null ? metadata.required() : null;
+                    boolean required = metadata != null && metadata.required();
                     String label = param.label();
                     if (Strings.isNullOrEmpty(label) && metadata != null) {
                         label = metadata.label();

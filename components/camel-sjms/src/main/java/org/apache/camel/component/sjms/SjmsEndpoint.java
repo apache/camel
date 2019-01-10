@@ -72,7 +72,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
 
     @UriPath(enums = "queue,topic", defaultValue = "queue", description = "The kind of destination to use")
     private String destinationType;
-    @UriPath(description = "DestinationName is a JMS queue or topic name. By default, the destinationName is interpreted as a queue name.") @Metadata(required = "true")
+    @UriPath(description = "DestinationName is a JMS queue or topic name. By default, the destinationName is interpreted as a queue name.") @Metadata(required = true)
     private String destinationName;
     @UriParam(label = "consumer", defaultValue = "true",
             description = "Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).")

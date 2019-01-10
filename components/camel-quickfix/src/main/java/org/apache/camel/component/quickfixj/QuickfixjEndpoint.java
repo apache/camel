@@ -48,7 +48,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     private final QuickfixjEngine engine;
     private final List<QuickfixjConsumer> consumers = new CopyOnWriteArrayList<>();
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String configurationName;
     @UriParam
     private SessionID sessionID;

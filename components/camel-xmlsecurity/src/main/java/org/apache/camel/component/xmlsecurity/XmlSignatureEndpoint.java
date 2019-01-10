@@ -37,9 +37,9 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "xmlsecurity", title = "XML Security", syntax = "xmlsecurity:command:name", producerOnly = true, label = "security,transformation")
 public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private XmlCommand command;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
     // to include both kind of configuration params
     @UriParam

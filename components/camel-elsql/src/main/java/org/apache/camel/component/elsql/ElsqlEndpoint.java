@@ -53,7 +53,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String elsqlName;
     @UriPath
     private String resourceUri;

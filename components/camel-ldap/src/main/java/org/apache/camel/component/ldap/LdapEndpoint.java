@@ -40,7 +40,7 @@ public class LdapEndpoint extends DefaultEndpoint {
     public static final String ONELEVEL_SCOPE = "onelevel";
     public static final String SUBTREE_SCOPE = "subtree";
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String dirContextName;
     @UriParam(defaultValue = SYSTEM_DN)
     private String base = SYSTEM_DN;

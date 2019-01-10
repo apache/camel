@@ -32,22 +32,22 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", consumerClass = AsteriskConsumer.class, label = "voip")
 public class AsteriskEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of component")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String name;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String hostname;
 
     @UriParam(label = "producer")
     private AsteriskAction action;
 
     @UriParam(secret = true)
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String username;
 
     @UriParam(secret = true)
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String password;
 
     public AsteriskEndpoint(String uri, AsteriskComponent component) {

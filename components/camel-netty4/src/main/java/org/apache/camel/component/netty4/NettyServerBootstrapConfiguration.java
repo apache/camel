@@ -32,11 +32,11 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 public class NettyServerBootstrapConfiguration implements Cloneable {
     public static final String DEFAULT_ENABLED_PROTOCOLS = "TLSv1,TLSv1.1,TLSv1.2";
 
-    @UriPath(enums = "tcp,udp") @Metadata(required = "true")
+    @UriPath(enums = "tcp,udp") @Metadata(required = true)
     protected String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     protected String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     protected int port;
     @UriParam(label = "consumer")
     protected boolean broadcast;

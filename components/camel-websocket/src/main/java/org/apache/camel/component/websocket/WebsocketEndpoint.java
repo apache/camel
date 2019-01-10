@@ -49,7 +49,7 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     private String host;
     @UriPath(defaultValue = "9292")
     private Integer port;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String resourceUri;
 
     @UriParam(label = "producer")

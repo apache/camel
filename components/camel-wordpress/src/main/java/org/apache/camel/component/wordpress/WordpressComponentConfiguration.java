@@ -34,7 +34,7 @@ import org.apache.camel.util.StringHelper;
 public class WordpressComponentConfiguration {
 
     @UriParam(description = "The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String url;
     @UriParam(description = "The Wordpress REST API version", defaultValue = WordpressConstants.API_VERSION)
     private String apiVersion = WordpressConstants.API_VERSION;

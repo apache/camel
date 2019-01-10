@@ -41,7 +41,7 @@ import org.apache.camel.util.StringHelper;
 @UriEndpoint(firstVersion = "1.1.0", scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String resourceUri;
     @UriParam
     private boolean compactSyntax;

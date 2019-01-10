@@ -60,7 +60,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
     private volatile boolean multicastStarted;
     private volatile ExecutorService multicastExecutor;
 
-    @UriPath(description = "Name of queue") @Metadata(required = "true")
+    @UriPath(description = "Name of queue") @Metadata(required = true)
     private String name;
     @UriParam(label = "advanced", description = "Define the queue instance which will be used by the endpoint")
     private BlockingQueue queue;

@@ -58,7 +58,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     @XmlAttribute
     @XmlID
     private String id;
-    @XmlValue @Metadata(required = "true")
+    @XmlValue @Metadata(required = true)
     private String expression;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean trim;

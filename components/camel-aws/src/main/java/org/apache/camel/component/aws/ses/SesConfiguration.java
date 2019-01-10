@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class SesConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String from;
     @UriParam
     private AmazonSimpleEmailService amazonSESClient;

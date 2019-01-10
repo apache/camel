@@ -48,7 +48,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     private Logger providedLogger;
     private ExchangeFormatter localFormatter;
 
-    @UriPath(description = "Name of the logging category to use") @Metadata(required = "true")
+    @UriPath(description = "Name of the logging category to use") @Metadata(required = true)
     private String loggerName;
     @UriParam(defaultValue = "INFO", enums = "ERROR,WARN,INFO,DEBUG,TRACE,OFF")
     private String level;

@@ -38,11 +38,11 @@ import org.apache.http.entity.ContentType;
 public class AS2Configuration {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private AS2ApiName apiName;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String methodName;
 
     @UriParam(defaultValue = "1.1", enums = "1.0,1.1")

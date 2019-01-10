@@ -40,7 +40,7 @@ import org.apache.ignite.IgniteAtomicSequence;
 public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String name;
 
     @UriParam(label = "producer")

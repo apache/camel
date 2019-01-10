@@ -55,7 +55,7 @@ public class PdfConfiguration {
     }
 
     @UriPath(description = "Operation type")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private PdfOperation operation;
     @UriParam(defaultValue = "20")
     private int marginTop = 20;

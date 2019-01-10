@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(scheme = "dummy", syntax = "dummy:drink", title = "Dummy", label = "bar", producerOnly = true)
 public class DummyEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private Drinks drink;
 
     @UriParam(defaultValue = "1")

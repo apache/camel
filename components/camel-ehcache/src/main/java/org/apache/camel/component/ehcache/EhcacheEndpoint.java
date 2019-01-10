@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(firstVersion = "2.18.0", scheme = "ehcache", title = "Ehcache", syntax = "ehcache:cacheName", consumerClass = EhcacheConsumer.class, label = "cache,datagrid,clustering")
 public class EhcacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String cacheName;
     @UriParam
     private final EhcacheConfiguration configuration;

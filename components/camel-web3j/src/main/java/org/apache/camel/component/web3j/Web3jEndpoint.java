@@ -49,7 +49,7 @@ public class Web3jEndpoint extends DefaultEndpoint {
 
     private final Web3j web3j;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String nodeAddress;
 
     @UriParam

@@ -42,11 +42,11 @@ public class CometdEndpoint extends DefaultEndpoint {
     private CometdComponent component;
 
     private URI uri;
-    @UriPath(description = "Hostname") @Metadata(required = "true")
+    @UriPath(description = "Hostname") @Metadata(required = true)
     private String host;
-    @UriPath(description = "Host port number") @Metadata(required = "true")
+    @UriPath(description = "Host port number") @Metadata(required = true)
     private int port;
-    @UriPath(description = "The channelName represents a topic that can be subscribed to by the Camel endpoints.") @Metadata(required = "true")
+    @UriPath(description = "The channelName represents a topic that can be subscribed to by the Camel endpoints.") @Metadata(required = true)
     private String channelName;
     @UriParam
     private String baseResource;

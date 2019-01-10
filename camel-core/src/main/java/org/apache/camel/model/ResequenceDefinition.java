@@ -42,7 +42,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
-    @Metadata(required = "false")
+    @Metadata(required = false)
     @XmlElements({
         @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
         @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)}
@@ -52,7 +52,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     private BatchResequencerConfig batchConfig;
     @XmlTransient
     private StreamResequencerConfig streamConfig;
-    @XmlElementRef @Metadata(required = "true")
+    @XmlElementRef @Metadata(required = true)
     private ExpressionDefinition expression;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();

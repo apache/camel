@@ -34,7 +34,7 @@ import org.springframework.messaging.MessageChannel;
         consumerClass = SpringIntegrationConsumer.class, label = "spring,eventbus")
 public class SpringIntegrationEndpoint extends DefaultEndpoint {
     private MessageChannel messageChannel;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String defaultChannel;
     @UriParam(label = "consumer")
     private String inputChannel;

@@ -37,7 +37,7 @@ import org.apache.camel.spi.UriPath;
 public class TwitterStreamingEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The streaming type to consume.")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private StreamingType streamingType;
 
     @UriParam(description = "Can be used for a streaming filter. Multiple values can be separated with comma.", label = "consumer,filter")

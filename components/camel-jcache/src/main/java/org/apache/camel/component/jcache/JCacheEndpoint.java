@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 public class JCacheEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The name of the cache")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String cacheName;
     @UriParam
     private final JCacheConfiguration cacheConfiguration;

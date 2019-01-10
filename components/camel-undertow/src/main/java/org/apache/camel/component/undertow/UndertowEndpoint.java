@@ -62,7 +62,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private CamelWebSocketHandler webSocketHttpHandler;
     private boolean isWebSocket;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private URI httpURI;
     @UriParam(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;

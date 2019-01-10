@@ -50,7 +50,7 @@ public class SchematronEndpoint extends DefaultEndpoint {
 
     private TransformerFactory transformerFactory;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String path;
     @UriParam
     private boolean abort;

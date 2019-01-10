@@ -36,7 +36,7 @@ import org.apache.camel.support.DefaultEndpoint;
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;
-    @UriPath(description = "Sets the name of the bean to invoke") @Metadata(required = "true")
+    @UriPath(description = "Sets the name of the bean to invoke") @Metadata(required = true)
     private String beanName;
     @UriParam(description = "Sets the name of the method to invoke on the bean")
     private String method;

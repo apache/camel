@@ -38,7 +38,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @UriEndpoint(firstVersion = "2.11.0", scheme = "controlbus", title = "Control Bus", syntax = "controlbus:command:language", producerOnly = true, label = "core,monitoring")
 public class ControlBusEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Command can be either route or language", enums = "route,language") @Metadata(required = "true")
+    @UriPath(description = "Command can be either route or language", enums = "route,language") @Metadata(required = true)
     private String command;
     @UriPath(enums = "bean,constant,el,exchangeProperty,file,groovy,header,jsonpath,mvel,ognl,ref,simple,spel,sql,terser,tokenize,xpath,xquery,xtokenize")
     private Language language;

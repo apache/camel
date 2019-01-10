@@ -29,24 +29,24 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class CordaConfiguration implements Cloneable {
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String operation;
 
     @UriParam
-    @Metadata(required = "true", secret = true)
+    @Metadata(required = true, secret = true)
     private String username;
 
     @UriParam
-    @Metadata(required = "true", secret = true)
+    @Metadata(required = true, secret = true)
     private String password;
 
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host;
 
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private int port;
 
-    @Metadata(required = "false", defaultValue = "true")
+    @Metadata(required = false, defaultValue = "true")
     private boolean processSnapshot = true;
 
     private Class<FlowLogic<?>> flowLociClass;

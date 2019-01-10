@@ -32,9 +32,9 @@ public class NagiosConfiguration implements Cloneable {
 
     private transient NagiosSettings nagiosSettings;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private int port;
     @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;

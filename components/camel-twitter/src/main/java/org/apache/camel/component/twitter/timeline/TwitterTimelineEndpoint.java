@@ -37,7 +37,7 @@ import org.apache.camel.spi.UriPath;
 public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The timeline type to produce/consume.")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private TimelineType timelineType;
     @UriParam(description = "The username when using timelineType=user")
     private String user;

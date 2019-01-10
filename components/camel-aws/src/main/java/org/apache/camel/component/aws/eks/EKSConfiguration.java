@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 public class EKSConfiguration implements Cloneable {
 
     @UriPath(description = "Logical name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String label;
     @UriParam(label = "producer")
     private AmazonEKS eksClient;
@@ -37,7 +37,7 @@ public class EKSConfiguration implements Cloneable {
     @UriParam(label = "producer", secret = true)
     private String secretKey;
     @UriParam(label = "producer")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private EKSOperations operation;
     @UriParam(label = "producer")
     private String proxyHost;

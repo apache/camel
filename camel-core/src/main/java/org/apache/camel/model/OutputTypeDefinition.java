@@ -39,7 +39,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "outputType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTypeDefinition> {
-    @XmlAttribute @Metadata(required = "true")
+    @XmlAttribute @Metadata(required = true)
     private String urn;
     @XmlAttribute  @Metadata(defaultValue = "false")
     private Boolean validate = false;

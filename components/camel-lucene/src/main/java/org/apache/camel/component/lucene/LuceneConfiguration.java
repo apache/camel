@@ -35,9 +35,9 @@ public class LuceneConfiguration {
     private String authority;
     private Version luceneVersion = LuceneConstants.LUCENE_VERSION;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private LuceneOperation operation;
     @UriParam(name = "srcDir")
     private File sourceDirectory;

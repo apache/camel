@@ -50,7 +50,7 @@ public class HBaseEndpoint extends DefaultEndpoint {
     private final Connection connection;
     private HBaseAdmin admin;
 
-    @UriPath(description = "The name of the table") @Metadata(required = "true")
+    @UriPath(description = "The name of the table") @Metadata(required = true)
     private final String tableName;
     @UriParam(label = "producer", defaultValue = "100")
     private int maxResults = 100;

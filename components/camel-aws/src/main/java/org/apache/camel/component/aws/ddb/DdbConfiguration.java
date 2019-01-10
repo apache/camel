@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class DdbConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String tableName;
     @UriParam(label = "security", secret = true)
     private String accessKey;

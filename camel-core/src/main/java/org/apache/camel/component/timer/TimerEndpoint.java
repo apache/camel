@@ -41,7 +41,7 @@ import org.apache.camel.support.DefaultEndpoint;
 @ManagedResource(description = "Managed TimerEndpoint")
 @UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String timerName;
     @UriParam(defaultValue = "1000", description = "If greater than 0, generate periodic events every period milliseconds."
             + " You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour).")

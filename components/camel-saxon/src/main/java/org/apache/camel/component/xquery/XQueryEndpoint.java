@@ -41,7 +41,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
 
     private volatile XQueryBuilder xquery;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String resourceUri;
     @UriParam(label = "advanced")
     private Configuration configuration;

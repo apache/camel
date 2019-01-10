@@ -32,7 +32,7 @@ public class SshConfiguration implements Cloneable {
     public static final int DEFAULT_SSH_PORT = 22;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host;
     @UriPath(defaultValue = "" + DEFAULT_SSH_PORT)
     private int port = DEFAULT_SSH_PORT;

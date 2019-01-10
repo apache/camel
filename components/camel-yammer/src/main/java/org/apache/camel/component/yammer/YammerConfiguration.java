@@ -24,14 +24,14 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class YammerConfiguration {
 
-    @UriPath(name = "function") @Metadata(required = "true")
+    @UriPath(name = "function") @Metadata(required = true)
     private YammerFunctionType functionType;
     private String function;
-    @UriParam(label = "security") @Metadata(required = "true", secret = true)
+    @UriParam(label = "security") @Metadata(required = true, secret = true)
     private String consumerKey;
-    @UriParam(label = "security") @Metadata(required = "true", secret = true)
+    @UriParam(label = "security") @Metadata(required = true, secret = true)
     private String consumerSecret;
-    @UriParam(label = "security") @Metadata(required = "true")
+    @UriParam(label = "security") @Metadata(required = true)
     private String accessToken;
     @UriParam
     private boolean useJson;

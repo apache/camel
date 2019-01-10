@@ -62,7 +62,7 @@ import org.apache.camel.util.StringHelper;
 @UriEndpoint(firstVersion = "2.15.0", scheme = "github", title = "GitHub", syntax = "github:type/branchName", label = "api,file")
 public class GitHubEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private GitHubType type;
     @UriPath(label = "consumer")
     private String branchName;
@@ -72,9 +72,9 @@ public class GitHubEndpoint extends DefaultEndpoint {
     private String password;
     @UriParam
     private String oauthToken;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String repoOwner;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String repoName;
     @UriParam(label = "producer", enums = "error,failure,pending,success")
     private String state;

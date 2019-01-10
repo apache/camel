@@ -37,10 +37,10 @@ import org.apache.camel.util.ObjectHelper;
 public class FhirConfiguration {
 
     @UriPath
-    @Metadata(enums = "capabilities, create, delete, history, load-page, meta, patch, read, search, transaction, update, validate", required = "true")
+    @Metadata(enums = "capabilities, create, delete, history, load-page, meta, patch, read, search, transaction, update, validate", required = true)
     private FhirApiName apiName;
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String methodName;
 
     @UriParam(description = "The FHIR server base URL")

@@ -37,7 +37,7 @@ public class SagaEndpoint extends DefaultEndpoint {
     }
 
     @UriPath(description = "Action to execute (complete or compensate)")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final SagaEndpointAction action;
 
     public SagaEndpoint(String endpointUri, SagaComponent component, String action) {

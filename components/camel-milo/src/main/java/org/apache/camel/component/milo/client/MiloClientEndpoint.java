@@ -39,7 +39,7 @@ public class MiloClientEndpoint extends DefaultEndpoint {
      * The OPC UA server endpoint
      */
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String endpointUri;
 
     /**

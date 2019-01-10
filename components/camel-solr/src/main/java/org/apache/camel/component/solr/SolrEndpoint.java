@@ -41,7 +41,7 @@ public class SolrEndpoint extends DefaultEndpoint {
     private String scheme = "http://";
 
     @UriPath(description = "Hostname and port for the solr server")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String url;
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
     private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;

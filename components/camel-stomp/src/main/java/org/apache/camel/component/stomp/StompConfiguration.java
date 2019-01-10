@@ -25,7 +25,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class StompConfiguration implements Cloneable {
     @UriParam(defaultValue = "tcp://localhost:61613")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String brokerURL = "tcp://localhost:61613";
     @UriParam(label = "security", secret = true)
     private String login;

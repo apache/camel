@@ -56,9 +56,9 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
     private JmsBinding binding;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String destinationName;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private AggregationStrategy aggregationStrategy;
     @UriParam(defaultValue = "1")
     private int consumerCount = 1;

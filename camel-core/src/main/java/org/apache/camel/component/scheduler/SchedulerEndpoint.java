@@ -37,7 +37,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
     consumerOnly = true, consumerClass = SchedulerConsumer.class, label = "core,scheduling")
 public class SchedulerEndpoint extends ScheduledPollEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
     @UriParam(defaultValue = "1", label = "scheduler")
     private int concurrentTasks = 1;

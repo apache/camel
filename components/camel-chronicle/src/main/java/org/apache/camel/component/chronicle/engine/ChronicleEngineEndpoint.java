@@ -40,10 +40,10 @@ import org.apache.camel.spi.UriPath;
 public class ChronicleEngineEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Engine addresses. Multiple addresses can be separated by comma.")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String addresses;
     @UriPath(description = "Engine path")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String path;
     @UriParam
     private ChronicleEngineConfiguration configuration;

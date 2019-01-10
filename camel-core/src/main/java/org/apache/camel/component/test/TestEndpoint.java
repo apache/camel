@@ -47,7 +47,7 @@ public class TestEndpoint extends MockEndpoint {
 
     private Endpoint expectedMessageEndpoint;
 
-    @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing") @Metadata(required = "true")
+    @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing") @Metadata(required = true)
     private String name;
     @UriParam
     private boolean anyOrder;

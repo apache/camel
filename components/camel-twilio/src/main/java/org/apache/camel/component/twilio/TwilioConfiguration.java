@@ -30,11 +30,11 @@ import org.apache.camel.spi.UriPath;
 public class TwilioConfiguration implements Cloneable {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private TwilioApiName apiName;
 
     @UriPath(enums = "create,delete,fetch,read,update")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String methodName;
 
     /**

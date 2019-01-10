@@ -63,7 +63,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private MongoClient mongoConnection;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String connectionBean;
     @UriParam
     private String database;

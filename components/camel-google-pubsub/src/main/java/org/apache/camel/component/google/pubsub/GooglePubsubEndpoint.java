@@ -45,11 +45,11 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     private Logger log;
 
     @UriPath(description = "Project Id")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String projectId;
 
     @UriPath(description = "Destination Name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String destinationName;
 
     @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")

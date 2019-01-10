@@ -46,7 +46,7 @@ public class IrcConfiguration implements Cloneable {
     private boolean usingSSL;
     private List<IrcChannel> channels = new ArrayList<>();
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String hostname;
     @UriPath
     private int port;

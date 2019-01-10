@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(firstVersion = "2.20.0", scheme = "caffeine-cache", title = "Caffeine Cache", syntax = "caffeine-cache:cacheName", label = "cache,datagrid,clustering")
 public class CaffeineCacheEndpoint extends DefaultEndpoint {
     @UriPath(description = "the cache name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String cacheName;
     @UriParam
     private final CaffeineConfiguration configuration;

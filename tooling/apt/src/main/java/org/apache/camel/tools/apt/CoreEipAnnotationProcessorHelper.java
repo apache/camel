@@ -1016,9 +1016,7 @@ public class CoreEipAnnotationProcessorHelper {
     private boolean findRequired(VariableElement fieldElement, boolean defaultValue) {
         Metadata metadata = fieldElement.getAnnotation(Metadata.class);
         if (metadata != null) {
-            if (!Strings.isNullOrEmpty(metadata.required())) {
-                defaultValue = "true".equals(metadata.required());
-            }
+            return metadata.required();
         }
         return defaultValue;
     }

@@ -69,27 +69,27 @@ public final class ApprovalRequest implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private Action actionType;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String contextActorId;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String contextId;
 
     @UriParam
     private String comments;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     @XStreamImplicit(itemFieldName = "nextApproverIds")
     private List<String> nextApproverIds;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String processDefinitionNameOrId;
 
     @UriParam

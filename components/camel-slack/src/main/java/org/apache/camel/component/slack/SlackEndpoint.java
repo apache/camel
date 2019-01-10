@@ -39,7 +39,7 @@ import org.json.simple.JSONObject;
 public class SlackEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String channel;
     @UriParam(label = "producer")
     private String webhookUrl;

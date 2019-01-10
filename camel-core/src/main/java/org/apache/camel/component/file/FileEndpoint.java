@@ -50,7 +50,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private final FileOperations operations = new FileOperations(this);
 
-    @UriPath(name = "directoryName") @Metadata(required = "true")
+    @UriPath(name = "directoryName") @Metadata(required = true)
     private File file;
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean copyAndDeleteOnRenameFail = true;

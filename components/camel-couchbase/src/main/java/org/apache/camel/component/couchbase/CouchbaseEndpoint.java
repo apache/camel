@@ -61,10 +61,10 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VI
 public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String protocol;
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String hostname;
     @UriPath(defaultValue = "8091")
     private int port;

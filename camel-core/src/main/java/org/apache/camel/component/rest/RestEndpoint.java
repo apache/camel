@@ -52,9 +52,9 @@ public class RestEndpoint extends DefaultEndpoint {
     public static final String DEFAULT_API_COMPONENT_NAME = "swagger";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
 
-    @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = "true")
+    @UriPath(label = "common", enums = "get,post,put,delete,patch,head,trace,connect,options") @Metadata(required = true)
     private String method;
-    @UriPath(label = "common") @Metadata(required = "true")
+    @UriPath(label = "common") @Metadata(required = true)
     private String path;
     @UriPath(label = "common")
     private String uriTemplate;

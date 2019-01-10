@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 public class ZendeskConfiguration {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String methodName;
 
     @UriParam
