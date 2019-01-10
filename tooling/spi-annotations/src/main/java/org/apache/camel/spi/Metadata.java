@@ -98,6 +98,6 @@ public @interface Metadata {
     /**
      * Additional description that can explain the user about the deprecation and give reference to what to use instead.
      */
-    String deprecationNode() default "";
+    String deprecationNote() default "";
 
 }

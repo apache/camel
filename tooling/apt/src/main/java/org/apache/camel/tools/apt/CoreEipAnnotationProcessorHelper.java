@@ -175,8 +175,8 @@ public class CoreEipAnnotationProcessorHelper {
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
         buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\",");
         buffer.append("\n    \"deprecated\": ").append(eipModel.isDeprecated()).append(",");
-        if (eipModel.getDeprecationNode() != null) {
-            buffer.append("\n    \"deprecationNote\": \"").append(safeNull(eipModel.getDeprecationNode())).append("\",");
+        if (eipModel.getDeprecationNote() != null) {
+            buffer.append("\n    \"deprecationNote\": \"").append(safeNull(eipModel.getDeprecationNote())).append("\",");
         }
         buffer.append("\n    \"input\": ").append(eipModel.getInput()).append(",");
         buffer.append("\n    \"output\": ").append(eipModel.getOutput());
@@ -202,7 +202,7 @@ public class CoreEipAnnotationProcessorHelper {
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
-                    entry.isDeprecated(), entry.getDeprecationNode(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(),
+                    entry.isDeprecated(), entry.getDeprecationNote(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(),
                     entry.isAsPredicate(), null, null, false));
         }
         buffer.append("\n  }");
@@ -394,7 +394,7 @@ public class CoreEipAnnotationProcessorHelper {
         boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
         String deprecationNote = null;
         if (metadata != null) {
-            deprecationNote = metadata.deprecationNode();
+            deprecationNote = metadata.deprecationNote();
         }
 
         EipOption ep = new EipOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, false, null, false);
@@ -436,7 +436,7 @@ public class CoreEipAnnotationProcessorHelper {
         boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
         String deprecationNote = null;
         if (metadata != null) {
-            deprecationNote = metadata.deprecationNode();
+            deprecationNote = metadata.deprecationNote();
         }
 
         EipOption ep = new EipOption(name, displayName, "value", fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, false, null, false);
@@ -538,7 +538,7 @@ public class CoreEipAnnotationProcessorHelper {
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             String deprecationNote = null;
             if (metadata != null) {
-                deprecationNote = metadata.deprecationNode();
+                deprecationNote = metadata.deprecationNote();
             }
 
             EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, isOneOf, oneOfTypes, asPredicate);
@@ -581,7 +581,7 @@ public class CoreEipAnnotationProcessorHelper {
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             String deprecationNote = null;
             if (metadata != null) {
-                deprecationNote = metadata.deprecationNode();
+                deprecationNote = metadata.deprecationNote();
             }
 
             EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, false);
@@ -819,7 +819,7 @@ public class CoreEipAnnotationProcessorHelper {
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             String deprecationNote = null;
             if (metadata != null) {
-                deprecationNote = metadata.deprecationNode();
+                deprecationNote = metadata.deprecationNote();
             }
 
             EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, true, "", "", deprecated, deprecationNote, false, null, true, oneOfTypes, false);
@@ -871,7 +871,7 @@ public class CoreEipAnnotationProcessorHelper {
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             String deprecationNote = null;
             if (metadata != null) {
-                deprecationNote = metadata.deprecationNode();
+                deprecationNote = metadata.deprecationNote();
             }
 
             EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, true, "", docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, false);
@@ -934,7 +934,7 @@ public class CoreEipAnnotationProcessorHelper {
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             String deprecationNote = null;
             if (metadata != null) {
-                deprecationNote = metadata.deprecationNode();
+                deprecationNote = metadata.deprecationNote();
             }
 
             EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, true, "", docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, asPredicate);
@@ -977,7 +977,7 @@ public class CoreEipAnnotationProcessorHelper {
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             String deprecationNote = null;
             if (metadata != null) {
-                deprecationNote = metadata.deprecationNode();
+                deprecationNote = metadata.deprecationNote();
             }
 
             EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, false, "", docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, asPredicate);
@@ -1080,7 +1080,7 @@ public class CoreEipAnnotationProcessorHelper {
         private String label;
         private String description;
         private boolean deprecated;
-        private String deprecationNode;
+        private String deprecationNote;
         private boolean input;
         private boolean output;
         private String firstVersion;
@@ -1133,12 +1133,12 @@ public class CoreEipAnnotationProcessorHelper {
             this.deprecated = deprecated;
         }
 
-        public String getDeprecationNode() {
-            return deprecationNode;
+        public String getDeprecationNote() {
+            return deprecationNote;
         }
 
-        public void setDeprecationNode(String deprecationNode) {
-            this.deprecationNode = deprecationNode;
+        public void setDeprecationNote(String deprecationNote) {
+            this.deprecationNote = deprecationNote;
         }
 
         public boolean isInput() {
@@ -1184,7 +1184,7 @@ public class CoreEipAnnotationProcessorHelper {
         private String defaultValue;
         private String documentation;
         private boolean deprecated;
-        private String deprecationNode;
+        private String deprecationNote;
         private boolean enumType;
         private Set<String> enums;
         private boolean oneOf;
@@ -1192,7 +1192,7 @@ public class CoreEipAnnotationProcessorHelper {
         private boolean asPredicate;
 
         private EipOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String documentation,
-                          boolean deprecated, String deprecationNode, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes, boolean asPredicate) {
+                          boolean deprecated, String deprecationNote, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes, boolean asPredicate) {
             this.name = name;
             this.displayName = displayName;
             this.kind = kind;
@@ -1201,7 +1201,7 @@ public class CoreEipAnnotationProcessorHelper {
             this.defaultValue = defaultValue;
             this.documentation = documentation;
             this.deprecated = deprecated;
-            this.deprecationNode = deprecationNode;
+            this.deprecationNote = deprecationNote;
             this.enumType = enumType;
             this.enums = enums;
             this.oneOf = oneOf;
@@ -1241,8 +1241,8 @@ public class CoreEipAnnotationProcessorHelper {
             return deprecated;
         }
 
-        public String getDeprecationNode() {
-            return deprecationNode;
+        public String getDeprecationNote() {
+            return deprecationNote;
         }
 
         public boolean isEnumType() {
