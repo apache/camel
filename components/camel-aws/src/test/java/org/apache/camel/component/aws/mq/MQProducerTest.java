@@ -75,6 +75,7 @@ public class MQProducerTest extends CamelTestSupport {
                 exchange.getIn().setHeader(MQConstants.BROKER_INSTANCE_TYPE, "mq.t2.micro");
                 exchange.getIn().setHeader(MQConstants.BROKER_ENGINE, EngineType.ACTIVEMQ.name());
                 exchange.getIn().setHeader(MQConstants.BROKER_ENGINE_VERSION, "5.15.6");
+                exchange.getIn().setHeader(MQConstants.BROKER_PUBLICLY_ACCESSIBLE, false);
                 List<User> users = new ArrayList<>();
                 User user = new User();
                 user.setUsername("camel");
