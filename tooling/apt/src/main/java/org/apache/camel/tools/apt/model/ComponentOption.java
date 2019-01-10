@@ -30,7 +30,7 @@ public final class ComponentOption {
     private String defaultValueNote;
     private String documentation;
     private boolean deprecated;
-    private String deprecationNode;
+    private String deprecationNote;
     private boolean secret;
     private String group;
     private String label;
@@ -38,7 +38,7 @@ public final class ComponentOption {
     private Set<String> enums;
 
     public ComponentOption(String name, String displayName, String type, boolean required, String defaultValue, String defaultValueNote,
-                           String documentation, boolean deprecated, String deprecationNode, boolean secret, String group, String label,
+                           String documentation, boolean deprecated, String deprecationNote, boolean secret, String group, String label,
                            boolean enumType, Set<String> enums) {
         this.name = name;
         this.displayName = displayName;
@@ -48,7 +48,7 @@ public final class ComponentOption {
         this.defaultValueNote = defaultValueNote;
         this.documentation = documentation;
         this.deprecated = deprecated;
-        this.deprecationNode = deprecationNode;
+        this.deprecationNote = deprecationNote;
         this.secret = secret;
         this.group = group;
         this.label = label;
@@ -84,8 +84,8 @@ public final class ComponentOption {
         return deprecated;
     }
 
-    public String getDeprecationNode() {
-        return deprecationNode;
+    public String getDeprecationNote() {
+        return deprecationNote;
     }
 
     public boolean isSecret() {
@@ -100,8 +100,8 @@ public final class ComponentOption {
             sb.append(". Default value notice: ").append(defaultValueNote);
         }
 
-        if (!isNullOrEmpty(deprecationNode)) {
-            sb.append(". Deprecation note: ").append(deprecationNode);
+        if (!isNullOrEmpty(deprecationNote)) {
+            sb.append(". Deprecation note: ").append(deprecationNote);
         }
 
         return sb.toString();

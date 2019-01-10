@@ -289,7 +289,7 @@ public class SpringAnnotationProcessorHelper {
         boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
         String deprecationNote = null;
         if (metadata != null) {
-            deprecationNote = metadata.deprecationNode();
+            deprecationNote = metadata.deprecationNote();
         }
 
         // special for id as its inherited from camel-core
@@ -424,7 +424,7 @@ public class SpringAnnotationProcessorHelper {
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             String deprecationNote = null;
             if (metadata != null) {
-                deprecationNote = metadata.deprecationNode();
+                deprecationNote = metadata.deprecationNote();
             }
 
             EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, oneOf, oneOfTypes, asPredicate);
@@ -470,7 +470,7 @@ public class SpringAnnotationProcessorHelper {
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             String deprecationNote = null;
             if (metadata != null) {
-                deprecationNote = metadata.deprecationNode();
+                deprecationNote = metadata.deprecationNote();
             }
 
             EipOption ep = new EipOption(name, kind, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, false);
