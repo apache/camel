@@ -388,7 +388,6 @@
     <jibx-version>1.2.6</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
-    <jini-version>2.1</jini-version>
     <jira-rest-client-version>1.2-m01</jira-rest-client-version>
     <jira-rest-client-api-version>2.0.0-m30</jira-rest-client-api-version>
     <jmh-version>1.21</jmh-version>
