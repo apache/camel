@@ -54,6 +54,8 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     private BlueprintContainer blueprintContainer;
     private ServiceRegistration<?> registration;
 
+    private BlueprintCamelStateService bundleStateService;
+
     public BlueprintCamelContext(BundleContext bundleContext, BlueprintContainer blueprintContainer) {
         super(false);
         this.bundleContext = bundleContext;
@@ -91,6 +93,14 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
         this.blueprintContainer = blueprintContainer;
     }
+
+    public BlueprintCamelStateService getBundleStateService() {
+        return bundleStateService;
+    }
+
+    public void setBundleStateService(BlueprintCamelStateService bundleStateService) {
+        this.bundleStateService = bundleStateService;
+    }
    
     public void doInit() {
         log.trace("init {}", this);
@@ -121,6 +131,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             }
             registration = null;
         }
+        bundleStateService.setBundleState(bundleContext.getBundle(), this.getName(), null);
 
         // must stop Camel
         stop();
@@ -236,8 +247,11 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         try {
             // let's set a more suitable TCCL while starting the context
             Thread.currentThread().setContextClassLoader(getApplicationContextClassLoader());
+            bundleStateService.setBundleState(bundleContext.getBundle(), this.getName(), BlueprintCamelStateService.State.Starting);
             super.start();
+            bundleStateService.setBundleState(bundleContext.getBundle(), this.getName(), BlueprintCamelStateService.State.Active);
         } catch (Exception e) {
+            bundleStateService.setBundleState(bundleContext.getBundle(), this.getName(), BlueprintCamelStateService.State.Failure, e);
             routeDefinitionValid.set(false);
             throw e;
         } finally {
