@@ -1154,11 +1154,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-elasticsearch</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-elasticsearch5</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2654,11 +2649,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ehcache-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-elasticsearch-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
