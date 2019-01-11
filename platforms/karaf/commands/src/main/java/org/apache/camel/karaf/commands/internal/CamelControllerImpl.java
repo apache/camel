@@ -22,9 +22,11 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.commands.AbstractLocalCamelController;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -98,6 +100,71 @@ public class CamelControllerImpl extends AbstractLocalCamelController {
         }
 
         return answer;
+    }
+
+    @Override
+    public void startContext(String camelContextName) throws Exception {
+        final CamelContext context = getLocalCamelContext(camelContextName);
+        if (context != null) {
+            ObjectHelper.callWithTCCL(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    context.start();
+                    return null;
+                }
+            }, getClassLoader(context));
+        }
+    }
+
+    @Override
+    public void resumeContext(String camelContextName) throws Exception {
+        final CamelContext context = getLocalCamelContext(camelContextName);
+        if (context != null) {
+            ObjectHelper.callWithTCCL(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    context.resume();
+                    return null;
+                }
+            }, getClassLoader(context));
+        }
+    }
+
+    @Override
+    public void startRoute(String camelContextName, final String routeId) throws Exception {
+        final CamelContext context = getLocalCamelContext(camelContextName);
+        if (context != null) {
+            ObjectHelper.callWithTCCL(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    context.startRoute(routeId);
+                    return null;
+                }
+            }, getClassLoader(context));
+        }
+    }
+
+    @Override
+    public void resumeRoute(String camelContextName, final String routeId) throws Exception {
+        final CamelContext context = getLocalCamelContext(camelContextName);
+        if (context != null) {
+            ObjectHelper.callWithTCCL(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    context.resumeRoute(routeId);
+                    return null;
+                }
+            }, getClassLoader(context));
+        }
+    }
+
+    /**
+     * Gets classloader associated with {@link CamelContext}
+     * @param context
+     * @return
+     */
+    private ClassLoader getClassLoader(CamelContext context) {
+        return context.getApplicationContextClassLoader();
     }
 
 }
