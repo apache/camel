@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.ignite.idgen;
 
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
-import org.apache.camel.component.ignite.IgniteComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -51,14 +49,6 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     @UriParam(label = "producer")
     private IgniteIdGenOperation operation;
-
-    @Deprecated
-    public IgniteIdGenEndpoint(String endpointUri, URI remainingUri, Map<String, Object> parameters, IgniteComponent igniteComponent) throws Exception {
-        super(endpointUri, igniteComponent);
-        name = remainingUri.getHost();
-
-        ObjectHelper.notNull(name, "ID Generator name");
-    }
 
     public IgniteIdGenEndpoint(String endpointUri, String remaining, Map<String, Object> parameters, IgniteIdGenComponent igniteComponent) throws Exception {
         super(endpointUri, igniteComponent);

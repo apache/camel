@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.ignite.set;
 
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
-import org.apache.camel.component.ignite.IgniteComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -49,22 +47,6 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     @UriParam(label = "producer")
     private IgniteSetOperation operation;
-
-    @Deprecated
-    public IgniteSetEndpoint(String endpointUri, URI remainingUri, Map<String, Object> parameters, IgniteComponent igniteComponent) throws Exception {
-        super(endpointUri, igniteComponent);
-        name = remainingUri.getHost();
-
-        ObjectHelper.notNull(name, "Set name");
-
-        // Set the configuration values.
-        if (!parameters.containsKey("configuration")) {
-            Map<String, Object> configProps = IntrospectionSupport.extractProperties(parameters, "config.");
-            EndpointHelper.setReferenceProperties(this.getCamelContext(), configProps, parameters);
-            EndpointHelper.setProperties(this.getCamelContext(), configProps, parameters);
-        }
-
-    }
 
     public IgniteSetEndpoint(String endpointUri, String remaining, Map<String, Object> parameters, IgniteSetComponent igniteComponent) throws Exception {
         super(endpointUri, igniteComponent);
