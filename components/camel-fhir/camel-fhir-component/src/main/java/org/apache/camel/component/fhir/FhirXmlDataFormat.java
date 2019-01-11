@@ -22,8 +22,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import ca.uhn.fhir.parser.IParser;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
+@Dataformat("fhirXml")
 public class FhirXmlDataFormat extends FhirDataFormat {
     
 

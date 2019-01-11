@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The saga component for interacting with the saga processing framework.
  */
+@org.apache.camel.spi.annotations.Component("saga")
 public class SagaComponent extends DefaultComponent {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());

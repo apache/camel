@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.StringHelper;
@@ -27,6 +28,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * The <a href="http://camel.apache.org/dataformat-component.html">Data Format Component</a> enables using <a href="https://camel.apache.org/data-format.html">Data Format</a> as a component.
  */
+@Component("dataformat")
 public class DataFormatComponent extends DefaultComponent {
 
     public DataFormatComponent() {

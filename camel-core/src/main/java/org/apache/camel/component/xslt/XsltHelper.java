@@ -56,7 +56,7 @@ final class XsltHelper {
         if (saxonConfigurationProperties != null && !saxonConfigurationProperties.isEmpty()) {
             Method method = factoryClass.getMethod("getConfiguration");
             if (method != null) {
-                Object configuration = method.invoke(factory, null);
+                Object configuration = method.invoke(factory);
                 if (configuration != null) {
                     method = configuration.getClass().getMethod("setConfigurationProperty", String.class, Object.class);
                     for (Map.Entry<String, Object> entry : saxonConfigurationProperties.entrySet()) {
@@ -73,7 +73,7 @@ final class XsltHelper {
         if (saxonExtensionFunctions != null && !saxonExtensionFunctions.isEmpty()) {
             Method method = factoryClass.getMethod("getConfiguration");
             if (method != null) {
-                Object configuration = method.invoke(factory, null);
+                Object configuration = method.invoke(factory);
                 if (configuration != null) {
                     Class<?> extensionClass = camelContext.getClassResolver().resolveMandatoryClass(
                         SAXON_EXTENDED_FUNCTION_DEFINITION_CLASS_NAME, XsltComponent.class.getClassLoader()

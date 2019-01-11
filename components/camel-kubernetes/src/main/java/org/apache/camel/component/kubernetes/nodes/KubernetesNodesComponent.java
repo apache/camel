@@ -18,7 +18,9 @@ package org.apache.camel.component.kubernetes.nodes;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("kubernetes-nodes")
 public class KubernetesNodesComponent extends AbstractKubernetesComponent {
 
     protected KubernetesNodesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {

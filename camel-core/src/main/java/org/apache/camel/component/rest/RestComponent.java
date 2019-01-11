@@ -39,6 +39,7 @@ import org.apache.camel.util.URISupport;
 /**
  * Rest component.
  */
+@org.apache.camel.spi.annotations.Component("rest")
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class RestComponent extends DefaultComponent {
 

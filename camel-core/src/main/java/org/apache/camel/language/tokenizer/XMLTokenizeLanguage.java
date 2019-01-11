@@ -19,6 +19,7 @@ package org.apache.camel.language.tokenizer;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -33,6 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  *     <li>unwrap - unwrapping the extracted token to its child content</li>
  * </ul>
  */
+@Language("xtokenize")
 public class XMLTokenizeLanguage extends LanguageSupport {
 
     private String path;

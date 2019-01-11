@@ -19,12 +19,14 @@ package org.apache.camel.component.yammer;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Represents the component that manages {@link YammerEndpoint}.
  */
+@Component("yammer")
 public class YammerComponent extends DefaultComponent {
 
     @Metadata(label = "security", secret = true)

@@ -26,11 +26,13 @@ import javax.validation.ValidatorFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link CMEndpoint}s.
  */
+@Component("cm-sms")
 public class CMComponent extends DefaultComponent {
 
     private Validator validator;

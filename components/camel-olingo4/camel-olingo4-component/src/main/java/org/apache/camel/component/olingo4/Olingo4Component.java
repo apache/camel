@@ -28,6 +28,7 @@ import org.apache.camel.component.olingo4.api.impl.Olingo4AppImpl;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiCollection;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.HttpHost;
@@ -38,6 +39,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 /**
  * Represents the component that manages {@link Olingo4Endpoint}.
  */
+@Component("olingo4")
 public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Olingo4Configuration, Olingo4ApiCollection> implements SSLContextParametersAware {
 
     @Metadata(label = "security", defaultValue = "false")

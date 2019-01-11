@@ -19,8 +19,10 @@ package org.apache.camel.component.couchdb;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
+@Component("couchdb")
 public class CouchDbComponent extends DefaultComponent {
 
     public CouchDbComponent() {

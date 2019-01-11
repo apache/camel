@@ -19,8 +19,10 @@ package org.apache.camel.component.influxdb;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
+@Component("influxdb")
 public class InfluxDbComponent extends DefaultComponent {
 
     public InfluxDbComponent() {

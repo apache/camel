@@ -22,6 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.StaticService;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
@@ -96,6 +97,7 @@ import org.slf4j.LoggerFactory;
  * <br/>
  * The <b>only</b> file is the filename only with all paths clipped.
  */
+@Language("simple")
 public class SimpleLanguage extends LanguageSupport implements StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SimpleLanguage.class);

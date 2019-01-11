@@ -24,6 +24,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
@@ -32,6 +33,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Represents the component that manages metrics endpoints.
  */
+@Component("metrics")
 public class MetricsComponent extends DefaultComponent {
 
     public static final String METRIC_REGISTRY_NAME = "metricRegistry";

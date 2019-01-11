@@ -19,11 +19,13 @@ package org.apache.camel.component.redis;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link RedisEndpoint}.
  */
+@Component("spring-redis")
 public class RedisComponent extends DefaultComponent {
 
     private final ExchangeConverter exchangeConverter = new ExchangeConverter();

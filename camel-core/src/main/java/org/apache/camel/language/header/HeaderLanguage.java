@@ -26,6 +26,7 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
 /**
  * A language for header expressions.
  */
+@org.apache.camel.spi.annotations.Language("header")
 public class HeaderLanguage implements Language, IsSingleton {
 
     public static Expression header(String headerName) {        

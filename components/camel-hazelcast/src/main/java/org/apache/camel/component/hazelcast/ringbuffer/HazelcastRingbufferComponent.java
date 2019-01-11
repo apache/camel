@@ -23,7 +23,9 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("hazelcast-ringbuffer")
 public class HazelcastRingbufferComponent extends HazelcastDefaultComponent {
 
     public HazelcastRingbufferComponent() {

@@ -18,10 +18,12 @@ package org.apache.camel.component.sjms2;
 
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.SjmsEndpoint;
+import org.apache.camel.spi.annotations.Component;
 
 /**
  * The <a href="http://camel.apache.org/sjms">Simple JMS2</a> component.
  */
+@Component("sjms2")
 public class Sjms2Component extends SjmsComponent {
 
     public Sjms2Component() {

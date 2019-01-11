@@ -25,11 +25,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
 /**
  * Represents the component that manages {@link GoogleCalendarEndpoint}.
  */
+@Component("google-calendar")
 public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendarApiName, GoogleCalendarConfiguration, GoogleCalendarApiCollection> {
 
     @Metadata(label = "advanced")

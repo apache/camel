@@ -34,11 +34,13 @@ import org.apache.camel.component.crypto.cms.sig.SignedDataCreator;
 import org.apache.camel.component.crypto.cms.sig.SignedDataCreatorConfiguration;
 import org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration;
 import org.apache.camel.component.crypto.cms.sig.SignedDataVerifierFromHeader;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+@Component("crypto-cms")
 public class CryptoCmsComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

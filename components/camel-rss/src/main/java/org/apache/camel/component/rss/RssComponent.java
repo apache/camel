@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -29,6 +30,7 @@ import org.apache.camel.util.URISupport;
  * <p/>
  * Camel uses <a href="https://rome.dev.java.net/">ROME</a> as the RSS implementation.  
  */
+@Component("rss")
 public class RssComponent extends FeedComponent {
 
     public RssComponent() {

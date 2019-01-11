@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 
+@org.apache.camel.spi.annotations.Component("scheduler")
 public class SchedulerComponent extends DefaultComponent {
 
     private final Map<String, ScheduledExecutorService> executors = new HashMap<>();

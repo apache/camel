@@ -38,6 +38,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.ServiceHelper;
@@ -50,6 +51,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 /**
  * Netty HTTP based component.
  */
+@Component("netty-http,netty4-http")
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
 
     // factories which is created by this component and therefore manage their lifecycles

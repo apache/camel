@@ -41,6 +41,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.ServiceHelper;
@@ -69,6 +70,7 @@ import org.apache.http.ssl.SSLContexts;
  * Component</a>
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
+@Component("http,http4,https,https4")
 public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, SSLContextParametersAware {
 
     @Metadata(label = "advanced", description = "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")

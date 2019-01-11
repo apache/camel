@@ -26,6 +26,7 @@ import org.apache.camel.support.DefaultComponent;
  * <p/>
  * This component uses the <tt>ref:</tt> notation instead of the mostly common <tt>uri:</tt> notation. 
  */
+@org.apache.camel.spi.annotations.Component("ref")
 public class RefComponent extends DefaultComponent {
 
     public RefComponent() {

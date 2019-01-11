@@ -28,10 +28,12 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.annotations.Component;
 
 /**
  * EJB component to invoke EJBs like the {@link org.apache.camel.component.bean.BeanComponent}.
  */
+@Component("ejb")
 public class EjbComponent extends BeanComponent {
 
     private Context context;

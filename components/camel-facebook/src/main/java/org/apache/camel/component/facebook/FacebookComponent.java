@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.IntrospectionSupport;
@@ -30,6 +31,7 @@ import org.apache.camel.support.IntrospectionSupport;
 /**
  * Represents the component that manages {@link FacebookEndpoint}.
  */
+@Component("facebook")
 public class FacebookComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

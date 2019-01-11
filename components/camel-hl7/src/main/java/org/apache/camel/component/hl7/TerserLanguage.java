@@ -29,6 +29,7 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 
+@org.apache.camel.spi.annotations.Language("terser")
 public class TerserLanguage implements Language {
 
     public static Expression terser(final String expression) {

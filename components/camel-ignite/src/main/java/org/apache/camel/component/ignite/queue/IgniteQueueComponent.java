@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.ignite.AbstractIgniteComponent;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.configuration.IgniteConfiguration;
@@ -29,6 +30,7 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 /**
  * The Ignite Queue Component.
  */
+@Component("ignite-queue")
 public class IgniteQueueComponent extends AbstractIgniteComponent {
 
     public static IgniteQueueComponent fromIgnite(Ignite ignite) {

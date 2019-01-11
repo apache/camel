@@ -21,8 +21,11 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.component.file.remote.strategy.FtpProcessStrategyFactory;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -31,6 +34,8 @@ import org.apache.commons.net.ftp.FTPFile;
  * <p/>
  * If desired, the JVM property <tt>-Djavax.net.debug=all</tt> can be used to see wire-level SSL details.
  */
+@Component("ftps")
+@FileProcessStrategy(FtpProcessStrategyFactory.class)
 public class FtpsComponent extends FtpComponent implements SSLContextParametersAware {
 
     @Metadata(label = "security", defaultValue = "false")

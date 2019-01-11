@@ -19,6 +19,7 @@ package org.apache.camel.component.beanstalk;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
@@ -39,6 +40,7 @@ import org.apache.camel.support.DefaultComponent;
  * @see BeanstalkEndpoint
  * @see ConnectionSettingsFactory
  */
+@Component("beanstalk")
 public class BeanstalkComponent extends DefaultComponent {
     public static final String DEFAULT_TUBE = "default";
 

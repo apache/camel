@@ -25,6 +25,7 @@ import org.apache.camel.support.DefaultComponent;
 /**
  * The <a href="http://camel.apache.org/validation.html">Validator Component</a> is for validating XML against a schema
  */
+@org.apache.camel.spi.annotations.Component("validator")
 public class ValidatorComponent extends DefaultComponent {
 
     @Metadata(label = "advanced", description = "To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI")

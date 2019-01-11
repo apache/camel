@@ -20,9 +20,11 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.tika.config.TikaConfig;
 
+@Component("tika")
 public class TikaComponent extends DefaultComponent {
 
     private static final String TIKA_CONFIG = "tikaConfig";

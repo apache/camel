@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
@@ -30,6 +31,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * A JPA Component
  */
+@Component("jpa")
 public class JpaComponent extends DefaultComponent {
 
     private ExecutorService pollingConsumerExecutorService;

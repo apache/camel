@@ -25,6 +25,7 @@ import javax.xml.transform.URIResolver;
 import org.apache.camel.Endpoint;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ResourceHelper;
@@ -32,6 +33,7 @@ import org.apache.camel.support.ResourceHelper;
 /**
  * The <a href="http://camel.apache.org/xslt.html">XSLT Component</a> is for performing XSLT transformations of messages
  */
+@Component("xslt")
 public class XsltComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

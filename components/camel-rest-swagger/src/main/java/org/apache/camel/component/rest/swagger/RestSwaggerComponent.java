@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
@@ -76,6 +77,7 @@ import static org.apache.camel.util.StringHelper.notEmpty;
  * from(...).to("petstore:getPetById")
  * </pre>
  */
+@Component("rest-swagger")
 public final class RestSwaggerComponent extends DefaultComponent implements SSLContextParametersAware {
     public static final String DEFAULT_BASE_PATH = "/";
 

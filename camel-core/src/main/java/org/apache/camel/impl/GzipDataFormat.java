@@ -25,11 +25,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.util.IOHelper;
 
 /**
  * GZip {@link org.apache.camel.spi.DataFormat} for reading/writing data using gzip.
  */
+@Dataformat("gzip")
 public class GzipDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat, DataFormatName {
 
     @Override

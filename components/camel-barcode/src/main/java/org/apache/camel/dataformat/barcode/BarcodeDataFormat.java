@@ -39,6 +39,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.ExchangeHelper;
 
@@ -49,6 +50,7 @@ import org.apache.camel.support.ExchangeHelper;
  * <p/>
  * https://github.com/zxing/zxing
  */
+@Dataformat("barcode")
 public class BarcodeDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     /**

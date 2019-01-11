@@ -30,6 +30,7 @@ import org.apache.camel.component.vm.VmComponent;
  * Allows you to easily stub out a middleware transport by prefixing the URI with "stub:" which is
  * handy for testing out routes, or isolating bits of middleware.
  */
+@org.apache.camel.spi.annotations.Component("stub")
 public class StubComponent extends VmComponent {
 
     public StubComponent() {

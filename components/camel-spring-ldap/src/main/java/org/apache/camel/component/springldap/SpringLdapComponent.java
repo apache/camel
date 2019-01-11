@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Registry;
 import org.springframework.ldap.core.LdapTemplate;
@@ -27,6 +28,7 @@ import org.springframework.ldap.core.LdapTemplate;
 /**
  * Creates endpoints for the Spring LDAP component.
  */
+@Component("spring-ldap")
 public class SpringLdapComponent extends DefaultComponent {
 
     public SpringLdapComponent() {

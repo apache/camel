@@ -25,6 +25,7 @@ import org.apache.camel.support.DefaultComponent;
 /**
  * Component for <a href="http://camel.apache.org/dataset.html">DataSet</a>.
  */
+@org.apache.camel.spi.annotations.Component("dataset")
 public class DataSetComponent extends DefaultComponent {
 
     public DataSetComponent() {

@@ -18,7 +18,9 @@ package org.apache.camel.component.kubernetes.persistent_volumes;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("kubernetes-persistent-volumes")
 public class KubernetesPersistentVolumesComponent extends AbstractKubernetesComponent {
 
     protected KubernetesPersistentVolumesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {

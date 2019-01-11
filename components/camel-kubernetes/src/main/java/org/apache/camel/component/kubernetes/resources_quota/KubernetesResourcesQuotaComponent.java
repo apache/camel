@@ -18,7 +18,9 @@ package org.apache.camel.component.kubernetes.resources_quota;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("kubernetes-resources-quota")
 public class KubernetesResourcesQuotaComponent extends AbstractKubernetesComponent {
 
     protected KubernetesResourcesQuotaEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {

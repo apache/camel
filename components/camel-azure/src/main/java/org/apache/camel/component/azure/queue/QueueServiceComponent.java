@@ -23,8 +23,10 @@ import com.microsoft.azure.storage.queue.CloudQueue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
+@Component("azure-queue")
 public class QueueServiceComponent extends DefaultComponent {
 
     public QueueServiceComponent() {

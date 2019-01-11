@@ -33,6 +33,7 @@ import org.apache.camel.support.DefaultComponent;
  * Represents the component that manages {@link TimerEndpoint}.  It holds the
  * list of {@link TimerConsumer} objects that are started.
  */
+@org.apache.camel.spi.annotations.Component("timer")
 public class TimerComponent extends DefaultComponent {
     private final Map<String, Timer> timers = new HashMap<>();
     private final Map<String, AtomicInteger> refCounts = new HashMap<>();

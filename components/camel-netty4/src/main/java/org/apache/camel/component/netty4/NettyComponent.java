@@ -26,12 +26,14 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
+@Component("netty,netty4")
 public class NettyComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")

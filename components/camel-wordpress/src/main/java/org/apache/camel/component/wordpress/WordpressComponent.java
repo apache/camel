@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.IntrospectionSupport;
@@ -28,6 +29,7 @@ import org.apache.camel.support.IntrospectionSupport;
 /**
  * Represents the component that manages {@link WordpressEndpoint}.
  */
+@Component("wordpress")
 public class WordpressComponent extends DefaultComponent {
 
     private static final String OP_SEPARATOR = ":";

@@ -18,7 +18,9 @@ package org.apache.camel.component.kubernetes.job;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("kubernetes-job")
 public class KubernetesJobComponent extends AbstractKubernetesComponent {
 
     protected KubernetesJobEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {

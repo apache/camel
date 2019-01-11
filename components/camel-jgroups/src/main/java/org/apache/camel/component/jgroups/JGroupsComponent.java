@@ -19,6 +19,7 @@ package org.apache.camel.component.jgroups;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.jgroups.JChannel;
@@ -26,6 +27,7 @@ import org.jgroups.JChannel;
 /**
  * Component providing support for messages multicasted from- or to JGroups channels ({@code org.jgroups.Channel}).
  */
+@Component("jgroups")
 public class JGroupsComponent extends DefaultComponent {
 
     private JChannel channel;

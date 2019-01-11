@@ -26,6 +26,7 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
 /**
  * A language for constant expressions.
  */
+@org.apache.camel.spi.annotations.Language("constant")
 public class ConstantLanguage implements Language, IsSingleton {
 
     public static Expression constant(Object value) {        

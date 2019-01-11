@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.URISupport;
 
@@ -32,6 +33,7 @@ import org.apache.camel.util.URISupport;
  * at @see <a href="https://www.hipchat.com/account/api">Hipchat Auth Token</a>. The messages produced and consumed
  * would be from/to owner of the provided auth token.
  */
+@Component("hipchat")
 public class HipchatComponent extends DefaultComponent {
 
     public HipchatComponent() {

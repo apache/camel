@@ -19,11 +19,13 @@ package org.apache.camel.component.xchange;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeFactory;
 import org.knowm.xchange.utils.Assert;
 
+@Component("xchange")
 public class XChangeComponent extends DefaultComponent {
 
     private XChange exchange;

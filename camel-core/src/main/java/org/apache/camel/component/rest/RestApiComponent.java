@@ -24,6 +24,7 @@ import org.apache.camel.support.DefaultComponent;
 /**
  * Rest API component.
  */
+@org.apache.camel.spi.annotations.Component("rest-api")
 public class RestApiComponent extends DefaultComponent {
 
     public RestApiComponent() {

@@ -25,12 +25,14 @@ import org.apache.camel.component.google.sheets.BatchGoogleSheetsClientFactory;
 import org.apache.camel.component.google.sheets.GoogleSheetsClientFactory;
 import org.apache.camel.component.google.sheets.GoogleSheetsVerifierExtension;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link GoogleSheetsStreamEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
+@Component("google-sheets-stream")
 public class GoogleSheetsStreamComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

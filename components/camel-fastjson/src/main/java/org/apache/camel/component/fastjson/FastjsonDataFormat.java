@@ -28,12 +28,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ServiceSupport;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="https://github.com/alibaba/fastjson">Fastjson</a> to marshal to and from JSON.
  */
+@Dataformat("json-fastjson")
 public class FastjsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private FastJsonConfig config;

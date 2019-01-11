@@ -29,6 +29,7 @@ import org.apache.camel.util.URISupport;
  * Component for testing by polling test messages from another endpoint on startup as the expected message bodies to
  * receive during testing.
  */
+@org.apache.camel.spi.annotations.Component("test")
 public class TestComponent extends DefaultComponent {
 
     public TestComponent() {

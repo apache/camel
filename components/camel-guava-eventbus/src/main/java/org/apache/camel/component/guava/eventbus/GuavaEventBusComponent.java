@@ -20,6 +20,7 @@ import java.util.Map;
 
 import com.google.common.eventbus.EventBus;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
@@ -27,6 +28,7 @@ import org.apache.camel.support.DefaultComponent;
  * (http://docs.guava-libraries.googlecode.com/git/javadoc/com/google/common/eventbus/EventBus.html). Supports both
  * producer and consumer endpoints.
  */
+@Component("guava-eventbus")
 public class GuavaEventBusComponent extends DefaultComponent {
 
     private EventBus eventBus;

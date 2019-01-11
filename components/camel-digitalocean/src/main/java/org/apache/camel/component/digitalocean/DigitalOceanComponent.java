@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanResources;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link DigitalOceanEndpoint}.
  */
+@Component("digitalocean")
 public class DigitalOceanComponent extends DefaultComponent {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanComponent.class);

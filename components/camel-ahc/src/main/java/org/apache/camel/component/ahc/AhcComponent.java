@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
@@ -38,6 +39,7 @@ import org.asynchttpclient.Realm.Builder;
 /**
  *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
  */
+@Component("ahc")
 public class AhcComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
     
     private static final String CLIENT_CONFIG_PREFIX = "clientConfig.";

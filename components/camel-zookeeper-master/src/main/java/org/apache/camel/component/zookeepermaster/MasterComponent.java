@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -27,6 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  * point in time with all other JVMs being hot standbys which wait until the master JVM dies before
  * taking over to provide high availability of a single consumer.
  */
+@Component("zookeeper-master")
 public class MasterComponent extends ZookeeperComponentSupport {
 
     private ContainerIdFactory containerIdFactory = new DefaultContainerIdFactory();

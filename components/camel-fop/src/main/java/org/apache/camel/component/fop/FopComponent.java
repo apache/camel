@@ -19,11 +19,13 @@ package org.apache.camel.component.fop;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link FopEndpoint}.
  */
+@Component("fop")
 public class FopComponent extends DefaultComponent {
 
     public FopComponent() {

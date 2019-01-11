@@ -21,9 +21,11 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.atmos.util.AtmosOperation;
 import org.apache.camel.component.atmos.validator.AtmosConfigurationValidator;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
+@Component("atmos")
 public class AtmosComponent extends DefaultComponent {
 
     @Metadata(label = "security")
