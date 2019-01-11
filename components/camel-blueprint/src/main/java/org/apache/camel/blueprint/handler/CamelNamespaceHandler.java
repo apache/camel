@@ -56,6 +56,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.blueprint.BlueprintCamelContext;
+import org.apache.camel.blueprint.BlueprintCamelStateService;
 import org.apache.camel.blueprint.BlueprintModelJAXBContextFactory;
 import org.apache.camel.blueprint.CamelContextFactoryBean;
 import org.apache.camel.blueprint.CamelEndpointFactoryBean;
@@ -279,6 +280,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         ctx.setRuntimeClass(BlueprintCamelContext.class);
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getContext");
+        ctx.addProperty("bundleStateService", createRef(context, ".camelBlueprint.bundleStateService"));
         ctx.setInitMethod("init");
         ctx.setDestroyMethod("destroy");
 
@@ -287,6 +289,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         registerBeans(context, contextId, ccfb.getEndpoints());
         registerBeans(context, contextId, ccfb.getRedeliveryPolicies());
         registerBeans(context, contextId, ccfb.getBeansFactory());
+
+        // Register single CamelBundleStateService - shared for all bundles and all Blueprint Camel contexts
+        registerBundleStateService(context);
 
         // Register processors
         MutablePassThroughMetadata beanProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);
@@ -626,6 +631,27 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         e.addDependsOn(".camelBlueprint.processor.bean." + contextId);
 
         context.getComponentDefinitionRegistry().registerComponentDefinition(e);
+    }
+
+    /**
+     * There's single instance of {@link BlueprintCamelStateService} that's used by all Blueprint Camel contexts
+     * to inform about state of Camel contexts. If Karaf is available, this information will propagate to
+     * <em>extended bundle info</em>.
+     * See CAMEL-12980
+     * @param context
+     */
+    private void registerBundleStateService(ParserContext context) {
+        ComponentDefinitionRegistry componentDefinitionRegistry = context.getComponentDefinitionRegistry();
+        ComponentMetadata cm = componentDefinitionRegistry.getComponentDefinition(".camelBlueprint.bundleStateService");
+        if (cm == null) {
+            MutableBeanMetadata ssm = context.createMetadata(MutableBeanMetadata.class);
+            ssm.setId(".camelBlueprint.bundleStateService");
+            ssm.setRuntimeClass(BlueprintCamelStateService.class);
+            ssm.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
+            ssm.setInitMethod("init");
+            ssm.setDestroyMethod("destroy");
+            componentDefinitionRegistry.registerComponentDefinition(ssm);
+        }
     }
 
     protected BlueprintContainer getBlueprintContainer(ParserContext context) {
