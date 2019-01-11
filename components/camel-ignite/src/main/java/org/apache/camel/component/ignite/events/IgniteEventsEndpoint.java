@@ -17,7 +17,6 @@
 package org.apache.camel.component.ignite.events;
 
 import java.lang.reflect.Field;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.ClusterGroupExpression;
-import org.apache.camel.component.ignite.IgniteComponent;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -56,17 +54,6 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
     @UriParam(label = "consumer")
     private ClusterGroupExpression clusterGroupExpression;
-
-    @Deprecated
-    public IgniteEventsEndpoint(String uri, URI remainingUri, Map<String, Object> parameters, IgniteComponent igniteComponent) {
-        super(uri, igniteComponent);
-
-        // Initialize subscribed event types with ALL.
-        events = new HashSet<>();
-        for (Integer eventType : EventType.EVTS_ALL) {
-            events.add(eventType);
-        }
-    }
 
     public IgniteEventsEndpoint(String uri, String remaining, Map<String, Object> parameters, IgniteEventsComponent igniteComponent) {
         super(uri, igniteComponent);

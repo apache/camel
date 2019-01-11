@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ignite.cache;
 
-import java.net.URI;
 import java.util.Map;
 
 import javax.cache.Cache.Entry;
@@ -26,7 +25,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
-import org.apache.camel.component.ignite.IgniteComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -79,12 +77,6 @@ public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     @UriParam(label = "consumer", defaultValue = "0", defaultValueNote = "ContinuousQuery.DFLT_TIME_INTERVAL")
     private long timeInterval = ContinuousQuery.DFLT_TIME_INTERVAL;
-
-    @Deprecated
-    public IgniteCacheEndpoint(String endpointUri, URI remainingUri, Map<String, Object> parameters, IgniteComponent igniteComponent) {
-        super(endpointUri, igniteComponent);
-        cacheName = remainingUri.getHost();
-    }
 
     public IgniteCacheEndpoint(String endpointUri, String remaining, Map<String, Object> parameters, IgniteCacheComponent igniteComponent) {
         super(endpointUri, igniteComponent);
