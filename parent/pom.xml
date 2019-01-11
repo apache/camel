@@ -565,9 +565,6 @@
     <qpid-broker-version>7.1.0</qpid-broker-version>
     <qpid-proton-j-version>0.31.0</qpid-proton-j-version>
     <qpid-jms-client-version>0.40.0</qpid-jms-client-version>
-    <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
-    <quartz-version>1.8.6</quartz-version>
-    <quartz-version-range>[1.8,2)</quartz-version-range>
     <quartz2-version>2.3.0</quartz2-version>
     <quickfixj-version>2.1.0</quickfixj-version>
     <rabbitmq-amqp-client-version>5.5.2</rabbitmq-amqp-client-version>
@@ -1761,11 +1758,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pubnub</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-quartz</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
