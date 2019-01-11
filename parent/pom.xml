@@ -388,8 +388,6 @@
     <jibx-version>1.2.6</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
-    <jira-rest-client-version>1.2-m01</jira-rest-client-version>
-    <jira-rest-client-api-version>2.0.0-m30</jira-rest-client-api-version>
     <jmh-version>1.21</jmh-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.10.1</jodatime2-bundle-version>
@@ -1469,11 +1467,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jibx</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-       <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jira</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2933,11 +2926,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jing-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-jira-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -4603,13 +4591,6 @@
         <groupId>com.cloudbees.thirdparty</groupId>
         <artifactId>zendesk-java-client</artifactId>
         <version>${zendesk-client-version}</version>
-      </dependency>
-
-      <!-- Optional Jira -->
-      <dependency>
-        <groupId>com.atlassian.jira</groupId>
-        <artifactId>jira-rest-java-client</artifactId>
-        <version>${jira-rest-client-version}</version>
       </dependency>
 
       <!-- optional misc -->
