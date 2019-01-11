@@ -32,9 +32,6 @@
   <description>The grape component allows you to fetch, load and manage additional jars when CamelContext is running</description>
 
   <properties>
-    <groovy-eclipse-batch.version>2.4.3-01</groovy-eclipse-batch.version>
-    <groovy-eclipse-compiler.version>2.9.2-01</groovy-eclipse-compiler.version>
-    <plexus-compiler-api.version>2.8.3</plexus-compiler-api.version>
     <camel.osgi.export.pkg />
   </properties>
 
@@ -90,63 +87,6 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-eclipse-batch</artifactId>
-            <version>${groovy-eclipse-batch.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-eclipse-compiler</artifactId>
-            <version>${groovy-eclipse-compiler.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-compiler-api</artifactId>
-            <version>${plexus-compiler-api.version}</version>
-          </dependency>
-        </dependencies>
-        <configuration>
-          <compilerId>groovy-eclipse-compiler</compilerId>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-eclipse-compiler</artifactId>
-        <version>${groovy-eclipse-compiler.version}</version>
-        <extensions>true</extensions>
-      </plugin>
-      <plugin>
-        <groupId>com.google.code.maven-replacer-plugin</groupId>
-        <artifactId>replacer</artifactId>
-        <version>1.5.3</version>
-        <executions>
-          <execution>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>replace</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <file>${basedir}/target/classes/org/apache/camel/component/grape/grape.json</file>
-          <replacements>
-            <replacement>
-              <token>ARTIFACT_VERSION</token>
-              <value>${project.version}</value>
-            </replacement>
-          </replacements>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <profiles>
     <profile>

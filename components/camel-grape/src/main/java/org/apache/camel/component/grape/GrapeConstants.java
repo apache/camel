@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.grape
+package org.apache.camel.component.grape;
 
-class GrapeConstants {
+public class GrapeConstants {
 
-    static final String GRAPE_COMMAND = 'CamelGrapeCommand'
+    public static final String GRAPE_COMMAND = "CamelGrapeCommand";
 
 }
