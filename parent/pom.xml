@@ -1295,11 +1295,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-hawtdb</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-hazelcast</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2765,11 +2760,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-guava-eventbus-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-hawtdb-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
