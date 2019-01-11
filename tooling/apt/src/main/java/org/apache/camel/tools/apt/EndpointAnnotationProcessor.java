@@ -26,10 +26,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
@@ -40,7 +38,6 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
-import javax.tools.Diagnostic.Kind;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -56,7 +53,6 @@ import org.apache.camel.tools.apt.model.ComponentOption;
 import org.apache.camel.tools.apt.model.EndpointOption;
 import org.apache.camel.tools.apt.model.EndpointPath;
 
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findFieldElement;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
@@ -72,33 +68,19 @@ import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
  * Processes all Camel {@link UriEndpoint}s and generate json schema documentation for the endpoint/component.
  */
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
-public class EndpointAnnotationProcessor extends AbstractProcessor {
+public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcessor {
 
     // CHECKSTYLE:OFF
 
     private static final String HEADER_FILTER_STRATEGY_JAVADOC = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
 
-    public boolean process(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
-        try {
-            if (roundEnv.processingOver()) {
-                return true;
+    protected void doProcess(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) throws Exception {
+        Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(UriEndpoint.class);
+        for (Element element : elements) {
+            if (element instanceof TypeElement) {
+                processEndpointClass(roundEnv, (TypeElement) element);
             }
-            Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(UriEndpoint.class);
-            for (Element element : elements) {
-                if (element instanceof TypeElement) {
-                    processEndpointClass(roundEnv, (TypeElement) element);
-                }
-            }
-        } catch (Throwable e) {
-            processingEnv.getMessager().printMessage(Kind.ERROR, "Unable to process elements annotated with @UriEndpoint: " + e.getMessage());
-            dumpExceptionToErrorFile("camel-apt-error.log", "Error processing @UriEndpoint", e);
         }
-        return true;
-    }
-
-    @Override
-    public SourceVersion getSupportedSourceVersion() {
-        return SourceVersion.latest();
     }
 
     private void processEndpointClass(final RoundEnvironment roundEnv, final TypeElement classElement) {
@@ -129,14 +111,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     String name = canonicalClassName(classElement.getQualifiedName().toString());
                     String packageName = name.substring(0, name.lastIndexOf("."));
                     String fileName = alias + ".json";
-                    Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
-                        @Override
-                        public Void call(PrintWriter writer) {
-                            writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes);
-                            return null;
-                        }
-                    };
-                    processFile(processingEnv, packageName, fileName, handler);
+                    processFile(processingEnv, packageName, fileName,
+                            writer -> writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes));
                 }
             }
         }
