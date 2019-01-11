@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.grape
+package org.apache.camel.component.grape;
 
-interface PatchesRepository {
+public enum GrapeCommand {
 
-    void install(String coordinates);
-
-    List<String> listPatches();
-
-    void clear();
+    grab,
+    listPatches,
+    clearPatches
 
 }
