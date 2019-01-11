@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.cluster.CamelClusterService;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.cluster.ClusterServiceHelper;
 import org.apache.camel.support.cluster.ClusterServiceSelectors;
@@ -36,6 +37,7 @@ import org.apache.camel.util.StringHelper;
  * This feature is useful if you need to consume from a backend that does not
  * support concurrent consumption.
  */
+@Component("master")
 public class MasterComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private CamelClusterService service;

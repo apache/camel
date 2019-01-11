@@ -41,6 +41,7 @@ import static java.util.Collections.singletonList;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.milo.KeyStoreLoader;
 import org.apache.camel.component.milo.server.internal.CamelNamespace;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig;
@@ -65,6 +66,7 @@ import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USE
 /**
  * OPC UA Server based component
  */
+@Component("milo-server")
 public class MiloServerComponent extends DefaultComponent {
     public static final String DEFAULT_NAMESPACE_URI = "urn:org:apache:camel";
 

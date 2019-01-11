@@ -21,11 +21,13 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link NsqEndpoint}.
  */
+@Component("nsq")
 public class NsqComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "security", defaultValue = "false")

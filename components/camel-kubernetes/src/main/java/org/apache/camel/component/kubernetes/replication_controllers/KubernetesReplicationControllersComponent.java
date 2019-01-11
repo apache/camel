@@ -18,7 +18,9 @@ package org.apache.camel.component.kubernetes.replication_controllers;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("kubernetes-replication-controllers")
 public class KubernetesReplicationControllersComponent extends AbstractKubernetesComponent {
 
     protected KubernetesReplicationControllersEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {

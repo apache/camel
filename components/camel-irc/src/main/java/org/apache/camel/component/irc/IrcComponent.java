@@ -21,6 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.SSLContextParametersAware;
+
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -31,6 +33,7 @@ import org.schwering.irc.lib.ssl.SSLIRCConnection;
 /**
  * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
  */
+@Component("irc,ircs")
 public class IrcComponent extends DefaultComponent implements SSLContextParametersAware {
 
     private final transient Map<String, IRCConnection> connectionCache = new HashMap<>();

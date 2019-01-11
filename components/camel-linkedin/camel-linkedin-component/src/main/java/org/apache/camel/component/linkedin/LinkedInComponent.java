@@ -29,6 +29,7 @@ import org.apache.camel.component.linkedin.api.OAuthSecureStorage;
 import org.apache.camel.component.linkedin.internal.CachingOAuthSecureStorage;
 import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
@@ -36,6 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents the component that manages {@link LinkedInEndpoint}.
  */
+@Component("linkedin")
 public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, LinkedInConfiguration, LinkedInApiCollection> {
 
     private LinkedInOAuthRequestFilter requestFilter;

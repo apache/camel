@@ -23,6 +23,7 @@ import freemarker.cache.NullCacheStorage;
 import freemarker.cache.URLTemplateLoader;
 import freemarker.template.Configuration;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
@@ -31,6 +32,7 @@ import org.apache.camel.support.ResourceHelper;
 /**
  * Freemarker component.
  */
+@Component("freemarker")
 public class FreemarkerComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

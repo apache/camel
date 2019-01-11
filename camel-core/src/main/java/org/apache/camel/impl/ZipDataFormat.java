@@ -26,12 +26,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.util.IOHelper;
 
 /**
  * "Deflate" compression data format.
  * See {@link org.apache.camel.model.dataformat.ZipFileDataFormat} for Zip file compression.
  */
+@Dataformat("zip")
 public class ZipDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat, DataFormatName {
 
     private int compressionLevel;

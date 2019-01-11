@@ -20,11 +20,13 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * A component for integrating with JSR-170 (JCR) compliant content repositories
  */
+@Component("jcr")
 public class JcrComponent extends DefaultComponent {
 
     public JcrComponent() {

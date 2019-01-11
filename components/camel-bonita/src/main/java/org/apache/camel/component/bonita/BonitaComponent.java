@@ -21,8 +21,10 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.bonita.util.BonitaOperation;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
+@Component("bonita")
 public class BonitaComponent extends DefaultComponent {
 
     public BonitaComponent() {

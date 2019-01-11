@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import quickfix.LogFactory;
@@ -30,6 +31,7 @@ import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
 import quickfix.SessionSettings;
 
+@Component("quickfix")
 public class QuickfixjComponent extends DefaultComponent implements StartupListener {
 
     private static final String PARAMETER_LAZY_CREATE_ENGINE = "lazyCreateEngine";

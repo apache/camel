@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.IntrospectionSupport;
@@ -32,6 +33,7 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 /**
  * Represents the component that manages {@link HBaseEndpoint}.
  */
+@Component("hbase")
 public class HBaseComponent extends DefaultComponent {
 
     private Connection connection;

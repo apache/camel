@@ -25,11 +25,13 @@ import javax.cache.configuration.Configuration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link JCacheEndpoint}.
  */
+@Component("jcache")
 public class JCacheComponent extends DefaultComponent {
 
     private String cachingProvider;

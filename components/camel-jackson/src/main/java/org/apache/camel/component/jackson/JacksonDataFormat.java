@@ -40,6 +40,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -49,6 +50,7 @@ import org.apache.camel.support.ObjectHelper;
  * ({@link DataFormat}) using <a href="http://jackson.codehaus.org/">Jackson</a>
  * to marshal to and from JSON.
  */
+@Dataformat("json-jackson")
 public class JacksonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private CamelContext camelContext;

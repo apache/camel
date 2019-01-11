@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
@@ -29,6 +30,7 @@ import org.apache.hadoop.conf.Configuration;
 
 import static org.apache.camel.component.gora.GoraConstants.GORA_DEFAULT_DATASTORE_KEY;
 
+@Component("gora")
 public class GoraComponent extends DefaultComponent {
 
     /**

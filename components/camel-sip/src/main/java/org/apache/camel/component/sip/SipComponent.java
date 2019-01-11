@@ -20,8 +20,10 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
+@Component("sip,sips")
 public class SipComponent extends DefaultComponent {
 
     public SipComponent() {

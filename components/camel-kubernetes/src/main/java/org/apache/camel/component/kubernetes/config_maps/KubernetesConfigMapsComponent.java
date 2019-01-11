@@ -18,7 +18,9 @@ package org.apache.camel.component.kubernetes.config_maps;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("kubernetes-config-maps")
 public class KubernetesConfigMapsComponent extends AbstractKubernetesComponent {
 
     protected KubernetesConfigMapsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {

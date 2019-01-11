@@ -23,6 +23,7 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
@@ -31,6 +32,7 @@ import org.apache.camel.util.StringHelper;
 /**
  * Represents the component that manages Micrometer endpoints.
  */
+@Component("micrometer")
 public class MicrometerComponent extends DefaultComponent {
 
     public static final Meter.Type DEFAULT_METER_TYPE = Meter.Type.COUNTER;

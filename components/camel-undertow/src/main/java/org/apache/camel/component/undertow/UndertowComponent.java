@@ -40,6 +40,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
@@ -55,6 +56,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  * Represents the component that manages {@link UndertowEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
+@Component("undertow")
 public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
 
     private final Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<>();

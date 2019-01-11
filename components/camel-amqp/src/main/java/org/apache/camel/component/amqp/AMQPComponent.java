@@ -23,11 +23,13 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.qpid.jms.JmsConnectionFactory;
 
 /**
  * Messaging with AMQP protocol using Apache QPid Client.
  */
+@Component("amqp")
 public class AMQPComponent extends JmsComponent {
 
     // Constructors

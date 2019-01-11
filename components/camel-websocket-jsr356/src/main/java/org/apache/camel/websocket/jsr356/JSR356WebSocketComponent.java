@@ -32,9 +32,11 @@ import javax.websocket.server.ServerContainer;
 import org.apache.camel.Endpoint;
 
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.IOHelper;
 
+@Component("websocket-jsr356")
 public class JSR356WebSocketComponent extends DefaultComponent {
     // didn't find a better way to handle that unless we can assume the
     // CamelContext is in the ServletContext

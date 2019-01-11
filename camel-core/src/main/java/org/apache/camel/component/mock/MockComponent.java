@@ -28,6 +28,7 @@ import org.apache.camel.support.DefaultComponent;
 /**
  * The <a href="http://camel.apache.org/mock.html">Mock Component</a> provides mock endpoints for testing.
  */
+@org.apache.camel.spi.annotations.Component("mock")
 public class MockComponent extends DefaultComponent {
 
     public MockComponent() {

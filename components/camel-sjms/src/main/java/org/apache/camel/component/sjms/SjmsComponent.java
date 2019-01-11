@@ -32,10 +32,12 @@ import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 
 /**
  * The <a href="http://camel.apache.org/sjms">Simple JMS</a> component.
  */
+@Component("sjms")
 public class SjmsComponent extends HeaderFilterStrategyComponent {
 
     private ExecutorService asyncStartStopExecutorService;

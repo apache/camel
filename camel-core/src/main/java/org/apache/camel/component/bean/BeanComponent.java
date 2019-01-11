@@ -28,6 +28,7 @@ import org.apache.camel.support.LRUCacheFactory;
 /**
  * The <a href="http://camel.apache.org/bean.html">Bean Component</a> is for invoking Java beans from Camel.
  */
+@org.apache.camel.spi.annotations.Component("bean")
 public class BeanComponent extends DefaultComponent {
 
     // use an internal soft cache for BeanInfo as they are costly to introspect

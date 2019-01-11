@@ -37,6 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  * Where as the pair mode only supports <tt>token</tt> and <tt>endToken</tt>.
  * And the <tt>xml</tt> mode supports the <tt>inheritNamespaceTagName</tt> option.
  */
+@org.apache.camel.spi.annotations.Language("tokenize")
 public class TokenizeLanguage implements Language, IsSingleton {
 
     private String token;

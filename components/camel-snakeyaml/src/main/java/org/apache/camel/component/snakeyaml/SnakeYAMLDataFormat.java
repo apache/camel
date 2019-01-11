@@ -35,6 +35,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.yaml.snakeyaml.DumperOptions;
@@ -52,6 +53,7 @@ import org.yaml.snakeyaml.resolver.Resolver;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://www.snakeyaml.org">SnakeYAML</a> to marshal to and from YAML.
  */
+@Dataformat("yaml-snakeyaml")
 public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private final ThreadLocal<WeakReference<Yaml>> yamlCache;
     private Function<CamelContext, BaseConstructor> constructor;

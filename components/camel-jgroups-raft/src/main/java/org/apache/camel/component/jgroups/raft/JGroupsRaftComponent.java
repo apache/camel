@@ -23,6 +23,7 @@ import org.apache.camel.component.jgroups.raft.utils.NopStateMachine;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.jgroups.protocols.raft.StateMachine;
 import org.jgroups.raft.RaftHandle;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Component providing support for JGroups-raft leader election and shared state machine implementation ({@code org.jgroups.raft.RaftHandle}).
  */
+@Component("jgroups-raft")
 public class JGroupsRaftComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftComponent.class);
 

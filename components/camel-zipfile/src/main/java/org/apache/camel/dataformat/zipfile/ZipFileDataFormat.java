@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -40,6 +41,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
  * Zip file data format.
  * See {@link org.apache.camel.model.dataformat.ZipDataFormat} for "deflate" compression.
  */
+@Dataformat("zipfile")
 public class ZipFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private boolean usingIterator;
     private boolean allowEmptyDirectory;

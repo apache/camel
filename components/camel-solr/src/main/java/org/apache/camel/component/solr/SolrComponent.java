@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
@@ -31,6 +32,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 /**
  * Represents the component that manages {@link SolrEndpoint}.
  */
+@Component("solr,solrCloud,solrs")
 public class SolrComponent extends DefaultComponent {
 
     private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<>();

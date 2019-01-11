@@ -19,12 +19,14 @@ package org.apache.camel.component.stream;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.URISupport;
 
 /**
  * Component providing streams connectivity
  */
+@Component("stream")
 public class StreamComponent extends DefaultComponent {
 
     public StreamComponent() {

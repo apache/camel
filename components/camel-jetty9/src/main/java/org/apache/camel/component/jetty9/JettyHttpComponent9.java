@@ -26,6 +26,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jetty.CamelHttpClient;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.IntrospectionSupport;
 import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.server.AbstractConnector;
@@ -39,6 +40,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Component("jetty")
 public class JettyHttpComponent9 extends JettyHttpComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent9.class);

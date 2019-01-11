@@ -32,12 +32,14 @@ import com.thoughtworks.xstream.io.xml.StaxWriter;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.util.IOHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using XStream to marshal to and from XML
  */
+@Dataformat("xstream")
 public class XStreamDataFormat extends AbstractXStreamWrapper  {
     private String encoding;
     

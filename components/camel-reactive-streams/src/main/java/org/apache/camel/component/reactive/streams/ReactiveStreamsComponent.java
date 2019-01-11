@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineConfiguration;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.ServiceHelper;
@@ -29,6 +30,7 @@ import org.apache.camel.support.ServiceHelper;
 /**
  * The Camel reactive-streams component.
  */
+@Component("reactive-streams")
 public class ReactiveStreamsComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private ReactiveStreamsEngineConfiguration internalEngineConfiguration = new ReactiveStreamsEngineConfiguration();

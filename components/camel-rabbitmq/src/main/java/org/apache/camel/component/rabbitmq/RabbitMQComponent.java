@@ -25,10 +25,12 @@ import javax.net.ssl.TrustManager;
 import com.rabbitmq.client.Address;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.IntrospectionSupport;
 
+@Component("rabbitmq")
 public class RabbitMQComponent extends DefaultComponent {
 
     public static final String ARG_PREFIX = "arg.";

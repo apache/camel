@@ -39,10 +39,12 @@ import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
+import org.apache.camel.spi.annotations.Dataformat;
 
 /**
  * Data format supporting SOAP 1.1 and 1.2.
  */
+@Dataformat("soapjaxb")
 public class SoapJaxbDataFormat extends JaxbDataFormat {
 
     public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";

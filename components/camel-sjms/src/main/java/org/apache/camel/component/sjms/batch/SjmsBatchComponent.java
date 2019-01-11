@@ -24,8 +24,10 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.ObjectHelper;
 
+@Component("sjms-batch")
 public class SjmsBatchComponent extends HeaderFilterStrategyComponent {
 
     private ExecutorService asyncStartStopExecutorService;

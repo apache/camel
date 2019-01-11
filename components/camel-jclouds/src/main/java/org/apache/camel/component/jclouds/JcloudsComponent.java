@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.jclouds.Context;
 import org.jclouds.blobstore.BlobStore;
@@ -28,6 +29,7 @@ import org.jclouds.compute.ComputeService;
 /**
  * Represents the component that manages {@link JcloudsEndpoint}.
  */
+@Component("jclouds")
 public class JcloudsComponent extends DefaultComponent {
 
     private List<BlobStore> blobStores;

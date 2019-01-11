@@ -25,10 +25,12 @@ import com.univocity.parsers.fixed.FixedWidthParser;
 import com.univocity.parsers.fixed.FixedWidthParserSettings;
 import com.univocity.parsers.fixed.FixedWidthWriter;
 import com.univocity.parsers.fixed.FixedWidthWriterSettings;
+import org.apache.camel.spi.annotations.Dataformat;
 
 /**
  * This class is the data format that uses the fixed-width uniVocity parser.
  */
+@Dataformat("univocity-fixed")
 public class UniVocityFixedWidthDataFormat extends AbstractUniVocityDataFormat<FixedWidthFormat, FixedWidthWriterSettings,
         FixedWidthWriter, FixedWidthParserSettings, FixedWidthParser, UniVocityFixedWidthDataFormat> {
     protected int[] fieldLengths;

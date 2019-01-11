@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
@@ -31,6 +32,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * The <a href="http://camel.apache.org/sql-component.html">SQL Component</a> is for working with databases using JDBC queries.
  */
+@Component("sql")
 public class SqlComponent extends DefaultComponent {
 
     private DataSource dataSource;

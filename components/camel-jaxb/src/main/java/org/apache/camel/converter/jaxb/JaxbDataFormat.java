@@ -56,6 +56,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.CamelContextHelper;
@@ -68,6 +69,7 @@ import org.apache.camel.support.ResourceHelper;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using JAXB2 to marshal to and from XML
  */
+@Dataformat("jaxb")
 public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     private static final BlockingQueue<SchemaFactory> SCHEMA_FACTORY_POOL = new LinkedBlockingQueue<>();

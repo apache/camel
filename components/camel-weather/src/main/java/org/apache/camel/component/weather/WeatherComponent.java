@@ -23,6 +23,7 @@ import org.apache.camel.component.weather.http.AuthenticationHttpClientConfigure
 import org.apache.camel.component.weather.http.AuthenticationMethod;
 import org.apache.camel.component.weather.http.CompositeHttpConfigurer;
 import org.apache.camel.component.weather.http.HttpClientConfigurer;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
@@ -34,6 +35,7 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
  * <p/>
  * Camel uses <a href="http://openweathermap.org/api#weather">Open Weather</a> to get the information.
  */
+@Component("weather")
 public class WeatherComponent extends DefaultComponent {
 
     private HttpClient httpClient;

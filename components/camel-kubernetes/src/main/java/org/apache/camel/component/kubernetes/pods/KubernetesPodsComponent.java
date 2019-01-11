@@ -18,7 +18,9 @@ package org.apache.camel.component.kubernetes.pods;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("kubernetes-pods")
 public class KubernetesPodsComponent extends AbstractKubernetesComponent {
 
     protected KubernetesPodsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {

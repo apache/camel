@@ -33,6 +33,7 @@ import org.apache.camel.component.spring.ws.filter.impl.BasicMessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
@@ -45,6 +46,7 @@ import org.springframework.xml.xpath.XPathExpressionFactory;
 /**
  * Apache Camel component for working with Spring Web Services (a.k.a Spring-WS).
  */
+@Component("spring-ws")
 public class SpringWebserviceComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "security", defaultValue = "false")

@@ -37,6 +37,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.flatpack.DataSetList;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -55,6 +56,7 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * <b>Notice:</b> The Flatpack library does currently not support header and trailers for the marshal operation.
  */
+@Dataformat("flatpack")
 public class FlatpackDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private static final Logger LOG = LoggerFactory.getLogger(FlatpackDataFormat.class);
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();

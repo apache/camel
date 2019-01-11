@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IOHelper;
@@ -48,6 +49,7 @@ import org.quartz.impl.StdSchedulerFactory;
  * of the code, but mostly has been re-written in attempt to be more easier to maintain, and use Quartz more
  * fully.</p>
  */
+@Component("quartz,quartz2")
 public class QuartzComponent extends DefaultComponent implements StartupListener {
 
     @Metadata(label = "advanced")

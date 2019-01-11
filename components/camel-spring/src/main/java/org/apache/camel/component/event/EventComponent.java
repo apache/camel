@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 /**
  * The <a href="http://camel.apache.org/event.html">Event Component</a> is for working with Spring ApplicationEvents.
  */
+@Component("spring-event")
 public class EventComponent extends DefaultComponent implements ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(EventComponent.class);
     private ApplicationContext applicationContext;

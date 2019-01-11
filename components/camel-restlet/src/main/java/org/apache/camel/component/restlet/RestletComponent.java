@@ -58,6 +58,7 @@ import org.restlet.security.MapVerifier;
 /**
  * A Camel component embedded Restlet that produces and consumes exchanges.
  */
+@org.apache.camel.spi.annotations.Component("restlet")
 public class RestletComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware, HeaderFilterStrategyAware {
 
     private static final Object LOCK = new Object();

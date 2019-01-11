@@ -37,6 +37,7 @@ import org.apache.camel.util.StringHelper;
  * As of Camel 1.5 the bean language also supports invoking a provided bean by
  * its classname or the bean itself.
  */
+@org.apache.camel.spi.annotations.Language("bean")
 public class BeanLanguage implements Language, IsSingleton {
 
     /**

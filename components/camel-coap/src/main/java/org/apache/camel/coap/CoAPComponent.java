@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link CoAPEndpoint}.
  */
+@Component("coap")
 public class CoAPComponent extends DefaultComponent implements RestConsumerFactory {
     static final int DEFAULT_PORT = 5684;
     private static final Logger LOG = LoggerFactory.getLogger(CoAPComponent.class);

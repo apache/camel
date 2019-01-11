@@ -22,11 +22,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.jivesoftware.smack.ReconnectionManager;
 
+@Component("xmpp")
 public class XmppComponent extends DefaultComponent {
 
     // keep a cache of endpoints so they can be properly cleaned up

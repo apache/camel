@@ -21,12 +21,14 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.ServiceHelper;
 
 /**
  * The <a href="http://camel.apache.org/direct.html">Direct Component</a> manages {@link DirectEndpoint} and holds the list of named direct endpoints.
  */
+@Component("direct")
 public class DirectComponent extends DefaultComponent {
 
     // must keep a map of consumers on the component to ensure endpoints can lookup old consumers

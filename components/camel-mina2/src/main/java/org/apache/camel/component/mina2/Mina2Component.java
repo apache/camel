@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
@@ -31,6 +32,7 @@ import org.apache.mina.core.filterchain.IoFilter;
 /**
  * Component for Apache MINA 2.x.
  */
+@Component("mina,mina2")
 public class Mina2Component extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")

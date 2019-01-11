@@ -29,6 +29,7 @@ import org.apache.camel.support.PredicateToExpressionAdapter;
 /**
  * A language for referred expressions or predicates.
  */
+@org.apache.camel.spi.annotations.Language("ref")
 public class RefLanguage implements Language, IsSingleton {
 
     public static Expression ref(Object value) {

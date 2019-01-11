@@ -25,6 +25,7 @@ import org.apache.camel.support.DefaultComponent;
  * The <a href="http://camel.apache.org/browse.html">Browse Component</a> provides a simple
  * <a href="http://camel.apache.org/browsableendpoint.html">BrowsableEndpoint</a> for testing visualization or debugging.
  */
+@org.apache.camel.spi.annotations.Component("browse")
 public class BrowseComponent extends DefaultComponent {
 
     public BrowseComponent() {

@@ -32,6 +32,7 @@ import org.slf4j.Logger;
  * The <a href="http://camel.apache.org/log.html">Log Component</a>
  * is for logging message exchanges via the underlying logging mechanism.
  */
+@org.apache.camel.spi.annotations.Component("log")
 public class LogComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

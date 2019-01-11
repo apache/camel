@@ -19,6 +19,7 @@ package org.apache.camel.component.jmx;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
@@ -29,6 +30,7 @@ import org.apache.camel.support.IntrospectionSupport;
  * an ObjectName to listen to and any JMX Notifications received from
  * that object will flow into the route.
  */
+@Component("jmx")
 public class JMXComponent extends DefaultComponent {
 
     public JMXComponent() {

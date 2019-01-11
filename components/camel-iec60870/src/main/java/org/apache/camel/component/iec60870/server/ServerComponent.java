@@ -25,8 +25,10 @@ import org.apache.camel.component.iec60870.AbstractIecComponent;
 import org.apache.camel.component.iec60870.ConnectionId;
 import org.apache.camel.component.iec60870.Constants;
 import org.apache.camel.component.iec60870.ObjectAddress;
+import org.apache.camel.spi.annotations.Component;
 import org.eclipse.neoscada.protocol.iec60870.server.data.DataModuleOptions;
 
+@Component("iec60870-server")
 public class ServerComponent extends AbstractIecComponent<ServerConnectionMultiplexor, ServerOptions> {
 
     public ServerComponent(final CamelContext context) {

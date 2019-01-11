@@ -23,11 +23,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
 /**
  * Represents the component that manages {@link GoogleMailEndpoint}.
  */
+@Component("google-mail")
 public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName, GoogleMailConfiguration, GoogleMailApiCollection> {
 
     @Metadata(label = "advanced")

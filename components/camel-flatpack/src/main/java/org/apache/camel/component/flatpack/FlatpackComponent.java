@@ -19,12 +19,14 @@ package org.apache.camel.component.flatpack;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * A <a href="http://flatpack.sourceforge.net/">Flatpack Component</a>
  * for working with fixed width and delimited files
  */
+@Component("flatpack")
 public class FlatpackComponent extends DefaultComponent {
 
     public static final String HEADER_ID = "header";

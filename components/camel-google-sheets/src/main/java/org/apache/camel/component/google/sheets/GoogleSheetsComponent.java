@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiCollection;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
 
@@ -29,6 +30,7 @@ import org.apache.camel.support.component.AbstractApiComponent;
  * Represents the component that manages {@link GoogleSheetsEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
+@Component("google-sheets")
 public class GoogleSheetsComponent extends AbstractApiComponent<GoogleSheetsApiName, GoogleSheetsConfiguration, GoogleSheetsApiCollection> {
 
     @Metadata(label = "advanced")

@@ -19,6 +19,7 @@ package org.apache.camel.component.flink;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.flink.api.java.DataSet;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -26,6 +27,7 @@ import org.apache.flink.streaming.api.datastream.DataStream;
 /**
  * The flink component can be used to send DataSet or DataStream jobs to Apache Flink cluster.
  */
+@Component("flink")
 public class FlinkComponent extends DefaultComponent {
 
     private DataSet ds;

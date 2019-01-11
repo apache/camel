@@ -23,12 +23,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.calendar.BatchGoogleCalendarClientFactory;
 import org.apache.camel.component.google.calendar.GoogleCalendarClientFactory;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Represents the component that manages {@link GoogleCalendarStreamEndpoint}.
  */
+@Component("google-calendar-stream")
 public class GoogleCalendarStreamComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

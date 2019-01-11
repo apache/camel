@@ -23,11 +23,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.twitter.AbstractTwitterComponent;
 import org.apache.camel.component.twitter.TwitterConfiguration;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 
 /**
  * Twitter Search component.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
+@Component("twitter-search")
 public class TwitterSearchComponent extends AbstractTwitterComponent {
 
     public TwitterSearchComponent() {

@@ -34,6 +34,7 @@ import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.ExchangeHelper;
 
@@ -86,6 +87,7 @@ import static org.apache.camel.component.hl7.HL7Constants.HL7_VERSION_ID;
  *
  * @see org.apache.camel.component.hl7.HL7MLLPCodec
  */
+@Dataformat("hl7")
 public class HL7DataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private static final Map<String, String> HEADER_MAP = new HashMap<>();

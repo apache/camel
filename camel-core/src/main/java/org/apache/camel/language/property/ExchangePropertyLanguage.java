@@ -26,6 +26,7 @@ import org.apache.camel.support.ExpressionToPredicateAdapter;
 /**
  * A language for exchange property expressions.
  */
+@org.apache.camel.spi.annotations.Language("exchangeProperty")
 public class ExchangePropertyLanguage implements Language, IsSingleton {
 
     public static Expression exchangeProperty(String propertyName) {

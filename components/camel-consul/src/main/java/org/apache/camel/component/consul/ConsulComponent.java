@@ -33,6 +33,7 @@ import org.apache.camel.component.consul.endpoint.ConsulKeyValueProducer;
 import org.apache.camel.component.consul.endpoint.ConsulPreparedQueryProducer;
 import org.apache.camel.component.consul.endpoint.ConsulSessionProducer;
 import org.apache.camel.component.consul.endpoint.ConsulStatusProducer;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -40,6 +41,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 /**
  * Represents the component that manages {@link ConsulEndpoint}.
  */
+@Component("consul")
 public class ConsulComponent extends DefaultComponent implements SSLContextParametersAware {
 
     @Metadata(label = "advanced")

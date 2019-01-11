@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
@@ -27,6 +28,7 @@ import org.apache.sshd.common.keyprovider.KeyPairProvider;
 /**
  * Represents the component that manages {@link SshEndpoint}.
  */
+@Component("ssh")
 public class SshComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private SshConfiguration configuration = new SshConfiguration();

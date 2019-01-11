@@ -112,7 +112,9 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
         // if there is any packages to scan and load @Converter classes, then do it
         if (packageNames != null && packageNames.length > 0) {
-            LOG.trace("Found converter packages to scan: {}", packageNames);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Found converter packages to scan: {}", String.join(", ", packageNames));
+            }
             Set<Class<?>> scannedClasses = resolver.findAnnotated(Converter.class, packageNames);
             if (scannedClasses.isEmpty()) {
                 throw new TypeConverterLoaderException("Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));

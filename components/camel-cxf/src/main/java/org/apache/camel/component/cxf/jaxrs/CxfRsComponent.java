@@ -27,6 +27,7 @@ import org.apache.camel.component.cxf.blueprint.BlueprintSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.support.ObjectHelper;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/cxfrs.html">CXF RS Component</a> 
  */
+@Component("cxfrs")
 public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsComponent.class);
