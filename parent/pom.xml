@@ -437,7 +437,6 @@
     <karaf2-version>2.4.4</karaf2-version>
     <karaf4-version>4.2.1</karaf4-version>
     <kie-version>7.14.0.Final</kie-version>
-    <krati-version>0.4.9</krati-version>
     <kubernetes-client-version>4.1.1</kubernetes-client-version>
     <kubernetes-model-version>4.1.1</kubernetes-model-version>
     <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
@@ -4690,13 +4689,6 @@
         <groupId>org.apache.zookeeper</groupId>
         <artifactId>zookeeper</artifactId>
         <version>${zookeeper-version}</version>
-      </dependency>
-
-      <!-- optional krati dependency -->
-      <dependency>
-        <groupId>com.sna-projects.krati</groupId>
-        <artifactId>krati</artifactId>
-        <version>${krati-version}</version>
       </dependency>
 
       <!-- optional OptaPlanner dependencies -->
