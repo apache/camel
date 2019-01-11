@@ -1291,11 +1291,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-guice</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-gson</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2771,11 +2766,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-guava-eventbus-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-guice-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -4299,12 +4289,6 @@
         <version>1.0</version>
       </dependency>
 
-      <!-- optional guice dependencies -->
-      <dependency>
-        <groupId>com.google.inject</groupId>
-        <artifactId>guice</artifactId>
-        <version>${guice-version}</version>
-      </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
