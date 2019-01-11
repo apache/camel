@@ -50,6 +50,12 @@
       <groupId>com.cedarsoftware</groupId>
       <artifactId>java-util</artifactId>
       <version>${java-util-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>log4j-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- testing -->
