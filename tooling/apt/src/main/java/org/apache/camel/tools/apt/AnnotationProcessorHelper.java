@@ -16,18 +16,19 @@
  */
 package org.apache.camel.tools.apt;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -319,40 +320,15 @@ public final class AnnotationProcessorHelper {
     /**
      * Helper method to produce class output text file using the given handler
      */
-    public static void processFile(ProcessingEnvironment processingEnv, String packageName, String fileName, Func1<PrintWriter, Void> handler) {
-        PrintWriter writer = null;
+    public static void processFile(ProcessingEnvironment processingEnv, String packageName, String fileName, Consumer<PrintWriter> handler) {
         try {
-            Writer out;
             Filer filer = processingEnv.getFiler();
-            FileObject resource;
-            try {
-                resource = filer.getResource(StandardLocation.CLASS_OUTPUT, packageName, fileName);
-            } catch (Throwable e) {
-                resource = filer.createResource(StandardLocation.CLASS_OUTPUT, packageName, fileName);
-            }
-            URI uri = resource.toUri();
-            File file = null;
-            if (uri != null) {
-                try {
-                    file = new File(uri.getPath());
-                } catch (Exception e) {
-                    warning(processingEnv, "Cannot convert output directory resource URI to a file " + e);
-                }
-            }
-            if (file == null) {
-                warning(processingEnv, "No class output directory could be found!");
-            } else {
-                file.getParentFile().mkdirs();
-                out = new FileWriter(file);
-                writer = new PrintWriter(out);
-                handler.call(writer);
+            FileObject resource = filer.createResource(StandardLocation.CLASS_OUTPUT, packageName, fileName);
+            try (Writer w = resource.openWriter(); PrintWriter writer = new PrintWriter(w)) {
+                handler.accept(writer);
             }
         } catch (IOException e) {
             log(processingEnv, e);
-        } finally {
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 
@@ -403,18 +379,12 @@ public final class AnnotationProcessorHelper {
     }
 
     public static void dumpExceptionToErrorFile(String fileName, String message, Throwable e) {
-        File file = new File(fileName);
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
+        try (BufferedWriter w = Files.newBufferedWriter(Paths.get(fileName))) {
+            w.append(message);
+            w.append("\n\n");
+            PrintWriter pw = new PrintWriter(w);
             e.printStackTrace(pw);
-            fos.write(message.getBytes());
-            fos.write("\n\n".getBytes());
-            fos.write(sw.toString().getBytes());
-            pw.close();
-            sw.close();
-            fos.close();
+            pw.flush();
         } catch (Throwable t) {
             // ignore
         }

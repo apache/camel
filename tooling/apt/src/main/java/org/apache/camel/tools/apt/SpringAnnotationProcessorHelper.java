@@ -22,6 +22,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.ElementKind;
@@ -85,14 +86,8 @@ public class SpringAnnotationProcessorHelper {
         }
 
         // write json schema
-        Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
-            @Override
-            public Void call(PrintWriter writer) {
-                writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name);
-                return null;
-            }
-        };
-        processFile(processingEnv, packageName, fileName, handler);
+        processFile(processingEnv, packageName, fileName,
+                writer -> writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name));
     }
 
     protected void writeJSonSchemeDocumentation(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv,
