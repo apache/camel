@@ -837,14 +837,6 @@ public abstract class AbstractCamelCatalog {
         return null;
     }
 
-    public String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException {
-        return doAsEndpointUri(scheme, json, "&", encode);
-    }
-
-    public String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException {
-        return doAsEndpointUri(scheme, json, "&amp;", encode);
-    }
-
     private String doAsEndpointUri(String scheme, String json, String ampersand, boolean encode) throws URISyntaxException {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
