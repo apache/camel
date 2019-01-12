@@ -48,10 +48,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-catalog-connector</artifactId>
-    </dependency>
 
     <!-- use groovy grape to download JARs as that is easy to use -->
     <dependency>
