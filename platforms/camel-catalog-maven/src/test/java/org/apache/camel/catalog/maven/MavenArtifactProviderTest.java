@@ -16,14 +16,10 @@
  */
 package org.apache.camel.catalog.maven;
 
-import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.connector.CamelConnectorCatalog;
-import org.apache.camel.catalog.connector.ConnectorDto;
-import org.apache.camel.catalog.connector.DefaultCamelConnectorCatalog;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -39,36 +35,12 @@ public class MavenArtifactProviderTest extends Assert {
 
         int before = camelCatalog.findComponentNames().size();
 
-        Set<String> names = provider.addArtifactToCatalog(camelCatalog, null, "org.apache.camel", "dummy-component", camelCatalog.getCatalogVersion());
+        Set<String> names = provider.addArtifactToCatalog(camelCatalog, "org.apache.camel", "dummy-component", camelCatalog.getCatalogVersion());
         assertTrue(names.contains("dummy"));
 
         int after = camelCatalog.findComponentNames().size();
 
         assertTrue("Should find 1 new component", after - before == 1);
-    }
-
-    @Test
-    public void testAddConnector() {
-        CamelCatalog camelCatalog = new DefaultCamelCatalog();
-        CamelConnectorCatalog camelConnectorCatalog = new DefaultCamelConnectorCatalog();
-        MavenArtifactProvider provider = new DefaultMavenArtifactProvider();
-        provider.setCacheDirectory("target/cache");
-
-        int before = camelCatalog.findComponentNames().size();
-        List<ConnectorDto> list = camelConnectorCatalog.findConnector("foo", false);
-        assertEquals(0, list.size());
-
-        Set<String> names = provider.addArtifactToCatalog(camelCatalog, camelConnectorCatalog, "org.apache.camel", "myfoo-connector", camelCatalog.getCatalogVersion());
-        assertTrue(names.contains("MyFoo"));
-
-        int after = camelCatalog.findComponentNames().size();
-
-        assertTrue("Should find 1 new component", after - before == 1);
-
-        list = camelConnectorCatalog.findConnector("foo", false);
-        assertEquals(1, list.size());
-        assertEquals("MyFoo", list.get(0).getName());
-        assertTrue(camelCatalog.findComponentNames().contains("my-foo"));
     }
 
 }

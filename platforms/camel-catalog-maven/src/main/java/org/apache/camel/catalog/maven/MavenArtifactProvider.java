@@ -19,7 +19,6 @@ package org.apache.camel.catalog.maven;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 
 /**
  * Provider which allows downloading artifact using Maven and add content to the {@link CamelCatalog}.
@@ -45,16 +44,15 @@ public interface MavenArtifactProvider {
 
     /**
      * Downloads the artifact using the Maven coordinates and scans the JAR for Camel components
-     * which will be added to the CamelCatalog or CamelConnectorCatalog.
+     * which will be added to the CamelCatalog.
      *
      * @param camelCatalog          The Camel Catalog
-     * @param camelConnectorCatalog The Camel Connector Catalog
      * @param groupId               Maven group id
      * @param artifactId            Maven artifact id
      * @param version               Maven version
      * @return the names of the components that was added, or an empty set if none found or they already exists in the catalog
      */
-    Set<String> addArtifactToCatalog(CamelCatalog camelCatalog, CamelConnectorCatalog camelConnectorCatalog,
+    Set<String> addArtifactToCatalog(CamelCatalog camelCatalog,
                                      String groupId, String artifactId, String version);
 
 }
