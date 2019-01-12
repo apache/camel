@@ -272,10 +272,6 @@
                 <exclude>**/npm-shrinkwrap.json</exclude>
                 <exclude>**/package.json</exclude>
                 <exclude>**/user-manual/**</exclude>
-                <!-- camel connector -->
-                <exclude>**/camel-connector.json</exclude>
-                <exclude>**/camel-connector-schema.json</exclude>
-                <exclude>**/src/main/resources/META-INF/MANIFEST.MF</exclude>
                 <!-- examples -->
                 <exclude>**/fabric8/*.yaml</exclude>
                 <exclude>**/src/main/resources/consul/services.json</exclude>
