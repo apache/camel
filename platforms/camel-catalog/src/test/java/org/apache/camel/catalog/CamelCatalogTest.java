@@ -308,20 +308,6 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testAsEndpointUriJson() throws Exception {
-        String json = loadText(CamelCatalogTest.class.getClassLoader().getResourceAsStream("sample.json"));
-        String uri = catalog.asEndpointUri("ftp", json, true);
-        assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
-    }
-
-    @Test
-    public void testAsEndpointUriJsonPrettyJson() throws Exception {
-        String json = loadText(CamelCatalogTest.class.getClassLoader().getResourceAsStream("sample-pretty.json"));
-        String uri = catalog.asEndpointUri("ftp", json, true);
-        assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
-    }
-
-    @Test
     public void testEndpointProperties() throws Exception {
         Map<String, String> map = catalog.endpointProperties("ftp:someserver:21/foo?connectTimeout=5000");
         assertNotNull(map);
