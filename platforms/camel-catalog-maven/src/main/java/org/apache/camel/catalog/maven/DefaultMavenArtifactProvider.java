@@ -81,7 +81,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                 param.put("group", groupId);
                 param.put("module", artifactId);
                 param.put("version", version);
-                // no need to download transitive dependencies as we only need to check the component or connector itself
+                // no need to download transitive dependencies as we only need to check the component itself
                 param.put("validate", false);
                 param.put("transitive", false);
 
