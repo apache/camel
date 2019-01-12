@@ -21,20 +21,14 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import groovy.grape.Grape;
 import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.extractComponentJavaType;
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentJSonSchema;
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentProperties;
-import static org.apache.camel.catalog.maven.ConnectorArtifactHelper.loadJSonSchemas;
 
 /**
  * Default {@link MavenArtifactProvider} which uses Groovy Grape to download the artifact.
@@ -66,7 +60,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
     }
 
     @Override
-    public Set<String> addArtifactToCatalog(CamelCatalog camelCatalog, CamelConnectorCatalog camelConnectorCatalog,
+    public Set<String> addArtifactToCatalog(CamelCatalog camelCatalog,
                                             String groupId, String artifactId, String version) {
         final Set<String> names = new LinkedHashSet<>();
 
@@ -100,9 +94,6 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                 if (camelCatalog != null) {
                     scanCamelComponents(camelCatalog, classLoader, names);
                 }
-                if (camelConnectorCatalog != null) {
-                    scanCamelConnectors(camelConnectorCatalog, classLoader, groupId, artifactId, version, names);
-                }
             }
 
         } catch (Exception e) {
@@ -135,40 +126,6 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                                 names.add(scheme);
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    protected void scanCamelConnectors(CamelConnectorCatalog camelConnectorCatalog, ClassLoader classLoader,
-                                       String groupId, String artifactId, String version,
-                                       Set<String> names) {
-        String[] json = loadJSonSchemas(log, classLoader);
-        if (json != null) {
-            if (!camelConnectorCatalog.hasConnector(groupId, artifactId, version)) {
-                try {
-                    ObjectMapper mapper = new ObjectMapper();
-                    JsonNode tree = mapper.readTree(json[0]);
-                    String name = tree.get("name").textValue();
-                    String scheme = tree.get("scheme").textValue();
-                    String javaType = tree.get("javaType").textValue();
-                    String description = tree.get("description").textValue();
-
-                    String csb = StreamSupport.stream(tree.withArray("labels").spliterator(), false)
-                            .map(JsonNode::textValue)
-                            .collect(Collectors.joining(","));
-
-                    if (log) {
-                        System.out.println("Adding connector: " + name + " with scheme: " + scheme);
-                    }
-                    camelConnectorCatalog.addConnector(groupId, artifactId, version,
-                        name, scheme, javaType, description, csb, json[0], json[1], json[2]);
-
-                    names.add(name);
-                } catch (Throwable e) {
-                    if (log) {
-                        System.out.println("WARN: Error parsing Connector JSon due " + e.getMessage());
                     }
                 }
             }
