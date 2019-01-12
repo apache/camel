@@ -36,12 +36,12 @@
   <inceptionYear>2007</inceptionYear>
 
   <prerequisites>
-    <maven>3.3.3</maven>
+    <maven>3.5.0</maven>
   </prerequisites>
 
   <properties>
     <!-- enforce to require using at least this maven version -->
-    <maven-enforcer-require-maven-version>3.2.5</maven-enforcer-require-maven-version>
+    <maven-enforcer-require-maven-version>3.5.0</maven-enforcer-require-maven-version>
 
     <!-- unify the encoding for all the modules -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
