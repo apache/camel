@@ -146,11 +146,6 @@ public class ValidateComponentMojo extends AbstractMojo {
                 return false;
             }
 
-            // skip connector metadata
-            if ("camel-connector-schema.json".equals(pathname.getName()) || "camel-component-schema.json".equals(pathname.getName())) {
-                return false;
-            }
-
             if (pathname.isFile() && pathname.getName().endsWith(".json")) {
                 // must be a components json file
                 try {

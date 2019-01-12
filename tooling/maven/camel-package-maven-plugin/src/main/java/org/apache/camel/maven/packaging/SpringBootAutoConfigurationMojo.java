@@ -145,7 +145,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private static final List<String> JAVA_LANG_TYPES = Arrays.asList("Boolean", "Byte", "Character", "Class", "Double", "Float", "Integer", "Long", "Object", "Short", "String");
 
-    private static final String[] IGNORE_MODULES = {/* Non-standard -> */ "camel-grape", "camel-connector"};
+    private static final String[] IGNORE_MODULES = {/* Non-standard -> */ "camel-grape"};
 
     /**
      * The output directory for generated component schema file
