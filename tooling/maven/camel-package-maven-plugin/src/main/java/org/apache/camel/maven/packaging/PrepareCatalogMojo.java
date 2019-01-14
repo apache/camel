@@ -342,6 +342,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-servicenow-component/target/classes");
                         } else if ("camel-fhir".equals(dir.getName())) {
                             target = new File(dir, "camel-fhir-component/target/classes");
+                        } else {
+                            // this module must be active with a source folder
+                            File src = new File(dir, "src");
+                            boolean active = src.isDirectory() && src.exists();
+                            if (!active) {
+                                continue;
+                            }
                         }
 
                         int before = componentFiles.size();
@@ -354,7 +361,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         if (before != after && before2 == after2) {
                             missingComponents.add(dir);
                         }
-
                     }
                 }
             }
@@ -542,7 +548,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     }
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
-                        findDataFormatFilesRecursive(target, jsonFiles, dataFormatFiles, new CamelDataFormatsFileFilter());
+                        // this module must be active with a source folder
+                        File src = new File(dir, "src");
+                        boolean active = src.isDirectory() && src.exists();
+                        if (active) {
+                            findDataFormatFilesRecursive(target, jsonFiles, dataFormatFiles, new CamelDataFormatsFileFilter());
+                        }
                     }
                 }
             }
@@ -660,7 +671,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (File dir : languages) {
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
-                        findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
+                        // this module must be active with a source folder
+                        File src = new File(dir, "src");
+                        boolean active = src.isDirectory() && src.exists();
+                        if (active) {
+                            findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
+                        }
                     }
                 }
             }
@@ -798,7 +814,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
-                        findOtherFilesRecursive(target, jsonFiles, otherFiles, new CamelOthersFileFilter());
+                        if (target.exists()) {
+                            // this module must be active with a source folder
+                            File src = new File(dir, "src");
+                            boolean active = src.isDirectory() && src.exists();
+                            if (active) {
+                                findOtherFilesRecursive(target, jsonFiles, otherFiles, new CamelOthersFileFilter());
+                            }
+                        }
                     }
                 }
             }
