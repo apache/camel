@@ -352,55 +352,21 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             model.setFirstVersion(firstVersion);
         }
 
-        String data = loadResource(processingEnv, "META-INF/services/org/apache/camel/component", scheme);
-        if (data != null) {
-            Map<String, String> map = parseAsMap(data);
-            model.setJavaType(map.get("class"));
+        // we can mark a component as deprecated by using the annotation
+        boolean deprecated = endpointClassElement.getAnnotation(Deprecated.class) != null;
+        model.setDeprecated(deprecated);
+        String deprecationNote = null;
+        if (endpointClassElement.getAnnotation(Metadata.class) != null) {
+            deprecationNote = endpointClassElement.getAnnotation(Metadata.class).deprecationNote();
         }
+        model.setDeprecationNote(deprecationNote);
 
-        data = loadResource(processingEnv, "META-INF/services/org/apache/camel", "component.properties");
-        if (data != null) {
-            Map<String, String> map = parseAsMap(data);
-            // now we have a lot more data, so we need to load it as key/value
-            // need to sanitize the description first
-            String doc = map.get("projectDescription");
-            if (doc != null) {
-                model.setDescription(sanitizeDescription(doc, true));
-            } else {
-                model.setDescription("");
-            }
-
-            // we can mark a component as deprecated by using the annotation or in the pom.xml
-            boolean deprecated = endpointClassElement.getAnnotation(Deprecated.class) != null;
-            if (!deprecated) {
-                String name = map.get("projectName");
-                // we may have marked a component as deprecated in the project name
-                deprecated = name != null && name.contains("(deprecated)");
-            }
-            model.setDeprecated(deprecated);
-
-            String deprecationNote = null;
-            if (endpointClassElement.getAnnotation(Metadata.class) != null) {
-                deprecationNote = endpointClassElement.getAnnotation(Metadata.class).deprecationNote();
-            }
-            model.setDeprecationNote(deprecationNote);
-
-            if (map.containsKey("groupId")) {
-                model.setGroupId(map.get("groupId"));
-            } else {
-                model.setGroupId("");
-            }
-            if (map.containsKey("artifactId")) {
-                model.setArtifactId(map.get("artifactId"));
-            } else {
-                model.setArtifactId("");
-            }
-            if (map.containsKey("version")) {
-                model.setVersionId(map.get("version"));
-            } else {
-                model.setVersionId("");
-            }
-        }
+        // these information is not available at compile time and we enrich these later during the camel-package-maven-plugin
+        model.setJavaType("REPLACE-ME");
+        model.setDescription("REPLACE-ME");
+        model.setGroupId("REPLACE-ME");
+        model.setArtifactId("REPLACE-ME");
+        model.setVersionId("REPLACE-ME");
 
         // favor to use endpoint class javadoc as description
         Elements elementUtils = processingEnv.getElementUtils();

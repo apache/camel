@@ -91,6 +91,7 @@ public @interface UriEndpoint {
     /**
      * Represents the consumer class which is injected and created by consumers
      */
+    @Deprecated
     Class<?> consumerClass() default Object.class;
 
     /**
