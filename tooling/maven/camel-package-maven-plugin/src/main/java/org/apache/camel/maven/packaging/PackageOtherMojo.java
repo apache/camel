@@ -89,24 +89,18 @@ public class PackageOtherMojo extends AbstractMojo {
     public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
                                      File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
-        // are there any components, data formats or languages?
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            File comp = new File(f, "META-INF/services/org/apache/camel/component");
-            if (comp.exists() && comp.isDirectory()) {
-                return;
-            }
-            File df = new File(f, "META-INF/services/org/apache/camel/dataformat");
-            if (df.exists() && df.isDirectory()) {
-                return;
-            }
-            File lan = new File(f, "META-INF/services/org/apache/camel/language");
-            if (lan.exists() && lan.isDirectory()) {
-                return;
-            }
+        File f = new File(project.getBasedir(), "target/classes");
+        File comp = new File(f, "META-INF/services/org/apache/camel/component");
+        if (comp.exists() && comp.isDirectory()) {
+            return;
+        }
+        File df = new File(f, "META-INF/services/org/apache/camel/dataformat");
+        if (df.exists() && df.isDirectory()) {
+            return;
+        }
+        File lan = new File(f, "META-INF/services/org/apache/camel/language");
+        if (lan.exists() && lan.isDirectory()) {
+            return;
         }
 
         // okay none of those then this is a other kind of artifact

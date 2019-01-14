@@ -311,12 +311,14 @@
         </configuration>
         <executions>
           <execution>
-            <id>prepare</id>
+            <id>generate</id>
             <goals>
-              <goal>prepare-components</goal>
+              <goal>generate-components-list</goal>
+              <goal>generate-dataformats-list</goal>
+              <goal>generate-languages-list</goal>
               <goal>generate-legal</goal>
             </goals>
-            <phase>generate-resources</phase>
+            <phase>process-classes</phase>
           </execution>
           <execution>
             <id>validate</id>
@@ -333,6 +335,34 @@
               <goal>update-readme</goal>
             </goals>
             <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-generated-resources</id>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/components</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/dataformats</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/languages</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/legal</directory>
+                </resource>
+              </resources>
+            </configuration>
           </execution>
         </executions>
       </plugin>

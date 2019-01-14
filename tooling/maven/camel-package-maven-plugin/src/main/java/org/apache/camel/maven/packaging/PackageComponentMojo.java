@@ -94,29 +94,24 @@ public class PackageComponentMojo extends AbstractMojo {
 
         StringBuilder buffer = new StringBuilder();
         int count = 0;
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/component");
 
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory
-                        if (file.isDirectory()) {
-                            continue;
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/component");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // skip directories as there may be a sub .resolver directory
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    String name = file.getName();
+                    if (name.charAt(0) != '.') {
+                        count++;
+                        if (buffer.length() > 0) {
+                            buffer.append(" ");
                         }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
-                            count++;
-                            if (buffer.length() > 0) {
-                                buffer.append(" ");
-                            }
-                            buffer.append(name);
-                        }
+                        buffer.append(name);
                     }
                 }
             }
