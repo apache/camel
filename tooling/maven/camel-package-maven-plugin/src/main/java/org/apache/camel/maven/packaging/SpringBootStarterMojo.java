@@ -89,7 +89,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
         /* Java EE -> */ "camel-cdi", "camel-ejb",
         /* deprecated (and not working perfectly) -> */ "camel-swagger", "camel-mina", "camel-ibatis",
         /* currently incompatible */ "camel-spark-rest",
-        /* others (not managed) -> */ "camel-core-xml", "camel-scala"};
+        /* others (not managed) -> */ "camel-core-xml"};
 
     private static final boolean IGNORE_TEST_MODULES = true;
 
