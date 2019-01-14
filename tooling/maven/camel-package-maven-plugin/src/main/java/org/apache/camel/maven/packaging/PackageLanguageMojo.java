@@ -114,24 +114,19 @@ public class PackageLanguageMojo extends AbstractMojo {
 
         StringBuilder buffer = new StringBuilder();
         int count = 0;
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/language");
 
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        String javaType = readClassFromCamelResource(file, buffer, buildContext);
-                        if (!file.isDirectory() && file.getName().charAt(0) != '.') {
-                            count++;
-                        }
-                        if (javaType != null) {
-                            javaTypes.put(file.getName(), javaType);
-                        }
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/language");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    String javaType = readClassFromCamelResource(file, buffer, buildContext);
+                    if (!file.isDirectory() && file.getName().charAt(0) != '.') {
+                        count++;
+                    }
+                    if (javaType != null) {
+                        javaTypes.put(file.getName(), javaType);
                     }
                 }
             }

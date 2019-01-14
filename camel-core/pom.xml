@@ -425,54 +425,23 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
         <version>${project.version}</version>
+        <configuration>
+          <!-- set to true to make build fail fast if missing documentation in docs files -->
+          <failFast>false</failFast>
+        </configuration>
         <executions>
           <execution>
-            <id>components</id>
-            <goals>
-              <goal>generate-components-list</goal>
-            </goals>
-            <phase>generate-resources</phase>
-          </execution>
-          <execution>
-            <id>eips</id>
-            <goals>
-              <goal>generate-eips-list</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-          <!-- camel-core needs to generate dataformats after compilation -->
-          <execution>
-            <id>dataformats</id>
-            <goals>
-              <goal>generate-dataformats-list</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-          <!-- camel-core needs to generate languages after compilation -->
-          <execution>
-            <id>languages</id>
-            <goals>
-              <goal>generate-languages-list</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-          <!-- camel-core needs to generate jaxb.index files -->
-          <execution>
-            <id>generate-jaxb-list</id>
+            <id>generate</id>
             <goals>
               <goal>generate-jaxb-list</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-          <!-- camel-core needs to generate legal files -->
-          <execution>
-            <id>generate-legal</id>
-            <goals>
+              <goal>generate-eips-list</goal>
+              <goal>generate-components-list</goal>
+              <goal>generate-dataformats-list</goal>
+              <goal>generate-languages-list</goal>
               <goal>generate-legal</goal>
             </goals>
             <phase>process-classes</phase>
           </execution>
-          <!-- camel-core needs to validate before packaging -->
           <execution>
             <id>validate</id>
             <goals>
