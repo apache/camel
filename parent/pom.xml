@@ -5125,14 +5125,25 @@
 
     <plugins>
 
-      <!-- skip site-plugin as we dont use maven site (inherited from Apache BOM) -->
+      <!-- skip site-plugin as we dont use Maven site (inherited from Apache BOM) -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
         <executions>
           <execution>
             <id>attach-descriptor</id>
-            <phase/> 
+            <phase/>
+         </execution>
+        </executions>
+      </plugin>
+      <!-- skip enforcer-plugin to speedup building (inherited from Apache BOM) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-maven-version</id>
+            <phase/>
          </execution>
         </executions>
       </plugin>
