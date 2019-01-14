@@ -2,877 +2,877 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 289 in 1 JAR artifacts (0 deprecated)
+Number of Components: 289 in 191 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Component | Available From | Description
 
-| link:null/src/main/docs/ahc-component.adoc[AHC] (null) +
+| link:camel-ahc/src/main/docs/ahc-component.adoc[AHC] (camel-ahc) +
 `ahc:httpUri` | 2.8 | To call external HTTP services using Async Http Client.
 
-| link:null/src/main/docs/ahc-ws-component.adoc[AHC Websocket] (null) +
+| link:camel-ahc-ws/src/main/docs/ahc-ws-component.adoc[AHC Websocket] (camel-ahc-ws) +
 `ahc-ws:httpUri` | 2.14 | To exchange data with external Websocket servers using Async Http Client.
 
-| link:null/src/main/docs/amqp-component.adoc[AMQP] (null) +
+| link:camel-amqp/src/main/docs/amqp-component.adoc[AMQP] (camel-amqp) +
 `amqp:destinationType:destinationName` | 1.2 | Messaging with AMQP protocol using Apache QPid Client.
 
-| link:null/src/main/docs/flink-component.adoc[Apache Flink] (null) +
+| link:camel-flink/src/main/docs/flink-component.adoc[Apache Flink] (camel-flink) +
 `flink:endpointType` | 2.18 | The flink component can be used to send DataSet jobs to Apache Flink cluster.
 
-| link:null/src/main/docs/spark-component.adoc[Apache Spark] (null) +
+| link:camel-spark/src/main/docs/spark-component.adoc[Apache Spark] (camel-spark) +
 `spark:endpointType` | 2.17 | The spark component can be used to send RDD or DataFrame jobs to Apache Spark cluster.
 
-| link:null/src/main/docs/apns-component.adoc[APNS] (null) +
+| link:camel-apns/src/main/docs/apns-component.adoc[APNS] (camel-apns) +
 `apns:name` | 2.8 | For sending notifications to Apple iOS devices.
 
-| link:null/src/main/docs/as2-component.adoc[AS2] (null) +
+| link:camel-as2/camel-as2-component/src/main/docs/as2-component.adoc[AS2] (camel-as2) +
 `as2:apiName` | 2.22 | Component used for transferring data secure and reliable over the internet using the AS2 protocol.
 
-| link:null/src/main/docs/asterisk-component.adoc[Asterisk] (null) +
+| link:camel-asterisk/src/main/docs/asterisk-component.adoc[Asterisk] (camel-asterisk) +
 `asterisk:name` | 2.18 | The asterisk component is used to interact with Asterisk PBX Server.
 
-| link:null/src/main/docs/atmos-component.adoc[Atmos] (null) +
+| link:camel-atmos/src/main/docs/atmos-component.adoc[Atmos] (camel-atmos) +
 `atmos:name/operation` | 2.15 | The atmos component is used for integrating with EMC's Atomos Storage.
 
-| link:null/src/main/docs/atmosphere-websocket-component.adoc[Atmosphere Websocket] (null) +
+| link:camel-atmosphere-websocket/src/main/docs/atmosphere-websocket-component.adoc[Atmosphere Websocket] (camel-atmosphere-websocket) +
 `atmosphere-websocket:servicePath` | 2.14 | To exchange data with external Websocket clients using Atmosphere.
 
-| link:null/src/main/docs/atom-component.adoc[Atom] (null) +
+| link:camel-atom/src/main/docs/atom-component.adoc[Atom] (camel-atom) +
 `atom:feedUri` | 1.2 | The atom component is used for consuming Atom RSS feeds.
 
-| link:null/src/main/docs/atomix-map-component.adoc[Atomix Map] (null) +
+| link:camel-atomix/src/main/docs/atomix-map-component.adoc[Atomix Map] (camel-atomix) +
 `atomix-map:resourceName` | 2.20 | The atomix-map component is used to access Atomix's distributed map.
 
-| link:null/src/main/docs/atomix-messaging-component.adoc[Atomix Messaging] (null) +
+| link:camel-atomix/src/main/docs/atomix-messaging-component.adoc[Atomix Messaging] (camel-atomix) +
 `atomix-messaging:resourceName` | 2.20 | The atomix-messaging component is used to access Atomix's group messaging.
 
-| link:null/src/main/docs/atomix-multimap-component.adoc[Atomix MultiMap] (null) +
+| link:camel-atomix/src/main/docs/atomix-multimap-component.adoc[Atomix MultiMap] (camel-atomix) +
 `atomix-multimap:resourceName` | 2.20 | The atomix-multimap component is used to access Atomix's distributed multi map.
 
-| link:null/src/main/docs/atomix-queue-component.adoc[Atomix Queue] (null) +
+| link:camel-atomix/src/main/docs/atomix-queue-component.adoc[Atomix Queue] (camel-atomix) +
 `atomix-queue:resourceName` | 2.20 | The atomix-queue component is used to access Atomix's distributed queue.
 
-| link:null/src/main/docs/atomix-set-component.adoc[Atomix Set] (null) +
+| link:camel-atomix/src/main/docs/atomix-set-component.adoc[Atomix Set] (camel-atomix) +
 `atomix-set:resourceName` | 2.20 | The atomix-set component is used to access Atomix's distributed set.
 
-| link:null/src/main/docs/atomix-value-component.adoc[Atomix Value] (null) +
+| link:camel-atomix/src/main/docs/atomix-value-component.adoc[Atomix Value] (camel-atomix) +
 `atomix-value:resourceName` | 2.20 | The atomix-value component is used to access Atomix's distributed value.
 
-| link:null/src/main/docs/avro-component.adoc[Avro] (null) +
+| link:camel-avro/src/main/docs/avro-component.adoc[Avro] (camel-avro) +
 `avro:transport:host:port/messageName` | 2.10 | Working with Apache Avro for data serialization.
 
-| link:null/src/main/docs/aws-cw-component.adoc[AWS CloudWatch] (null) +
+| link:camel-aws/src/main/docs/aws-cw-component.adoc[AWS CloudWatch] (camel-aws) +
 `aws-cw:namespace` | 2.11 | The aws-cw component is used for sending metrics to an Amazon CloudWatch.
 
-| link:null/src/main/docs/aws-ddb-component.adoc[AWS DynamoDB] (null) +
+| link:camel-aws/src/main/docs/aws-ddb-component.adoc[AWS DynamoDB] (camel-aws) +
 `aws-ddb:tableName` | 2.10 | The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
 
-| link:null/src/main/docs/aws-ddbstream-component.adoc[AWS DynamoDB Streams] (null) +
+| link:camel-aws/src/main/docs/aws-ddbstream-component.adoc[AWS DynamoDB Streams] (camel-aws) +
 `aws-ddbstream:tableName` | 2.17 | The aws-ddbstream component is used for working with Amazon DynamoDB Streams.
 
-| link:null/src/main/docs/aws-ec2-component.adoc[AWS EC2] (null) +
+| link:camel-aws/src/main/docs/aws-ec2-component.adoc[AWS EC2] (camel-aws) +
 `aws-ec2:label` | 2.16 | The aws-ec2 is used for managing Amazon EC2 instances.
 
-| link:null/src/main/docs/aws-eks-component.adoc[AWS EKS] (null) +
+| link:camel-aws/src/main/docs/aws-eks-component.adoc[AWS EKS] (camel-aws) +
 `aws-eks:label` | 3.0 | The aws-kms is used for managing Amazon EKS
 
-| link:null/src/main/docs/aws-iam-component.adoc[AWS IAM] (null) +
+| link:camel-aws/src/main/docs/aws-iam-component.adoc[AWS IAM] (camel-aws) +
 `aws-iam:label` | 2.23 | The aws-iam is used for managing Amazon IAM
 
-| link:null/src/main/docs/aws-kinesis-component.adoc[AWS Kinesis] (null) +
+| link:camel-aws/src/main/docs/aws-kinesis-component.adoc[AWS Kinesis] (camel-aws) +
 `aws-kinesis:streamName` | 2.17 | The aws-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
 
-| link:null/src/main/docs/aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose] (null) +
+| link:camel-aws/src/main/docs/aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose] (camel-aws) +
 `aws-kinesis-firehose:streamName` | 2.19 | The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
 
-| link:null/src/main/docs/aws-kms-component.adoc[AWS KMS] (null) +
+| link:camel-aws/src/main/docs/aws-kms-component.adoc[AWS KMS] (camel-aws) +
 `aws-kms:label` | 2.21 | The aws-kms is used for managing Amazon KMS
 
-| link:null/src/main/docs/aws-lambda-component.adoc[AWS Lambda] (null) +
+| link:camel-aws/src/main/docs/aws-lambda-component.adoc[AWS Lambda] (camel-aws) +
 `aws-lambda:function` | 2.20 | The aws-lambda is used for managing and invoking functions from Amazon Lambda.
 
-| link:null/src/main/docs/aws-mq-component.adoc[AWS MQ] (null) +
+| link:camel-aws/src/main/docs/aws-mq-component.adoc[AWS MQ] (camel-aws) +
 `aws-mq:label` | 2.21 | The aws-mq is used for managing Amazon MQ instances.
 
-| link:null/src/main/docs/aws-s3-component.adoc[AWS S3 Storage Service] (null) +
+| link:camel-aws/src/main/docs/aws-s3-component.adoc[AWS S3 Storage Service] (camel-aws) +
 `aws-s3:bucketNameOrArn` | 2.8 | The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
 
-| link:null/src/main/docs/aws-ses-component.adoc[AWS Simple Email Service] (null) +
+| link:camel-aws/src/main/docs/aws-ses-component.adoc[AWS Simple Email Service] (camel-aws) +
 `aws-ses:from` | 2.9 | The aws-ses component is used for sending emails with Amazon's SES service.
 
-| link:null/src/main/docs/aws-sns-component.adoc[AWS Simple Notification System] (null) +
+| link:camel-aws/src/main/docs/aws-sns-component.adoc[AWS Simple Notification System] (camel-aws) +
 `aws-sns:topicNameOrArn` | 2.8 | The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
 
-| link:null/src/main/docs/aws-sqs-component.adoc[AWS Simple Queue Service] (null) +
+| link:camel-aws/src/main/docs/aws-sqs-component.adoc[AWS Simple Queue Service] (camel-aws) +
 `aws-sqs:queueNameOrArn` | 2.6 | The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
 
-| link:null/src/main/docs/aws-swf-component.adoc[AWS Simple Workflow] (null) +
+| link:camel-aws/src/main/docs/aws-swf-component.adoc[AWS Simple Workflow] (camel-aws) +
 `aws-swf:type` | 2.13 | The aws-swf component is used for managing workflows from Amazon Simple Workflow.
 
-| link:null/src/main/docs/aws-sdb-component.adoc[AWS SimpleDB] (null) +
+| link:camel-aws/src/main/docs/aws-sdb-component.adoc[AWS SimpleDB] (camel-aws) +
 `aws-sdb:domainName` | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
 
-| link:null/src/main/docs/azure-blob-component.adoc[Azure Storage Blob Service] (null) +
+| link:camel-azure/src/main/docs/azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) +
 `azure-blob:containerOrBlobUri` | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
 
-| link:null/src/main/docs/azure-queue-component.adoc[Azure Storage Queue Service] (null) +
+| link:camel-azure/src/main/docs/azure-queue-component.adoc[Azure Storage Queue Service] (camel-azure) +
 `azure-queue:containerAndQueueUri` | 2.19 | The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
 
-| link:null/src/main/docs/bean-component.adoc[Bean] (null) +
+| link:../camel-core/src/main/docs/bean-component.adoc[Bean] (camel-core) +
 `bean:beanName` | 1.0 | The bean component is for invoking Java beans from Camel.
 
-| link:null/src/main/docs/bean-validator-component.adoc[Bean Validator] (null) +
+| link:camel-bean-validator/src/main/docs/bean-validator-component.adoc[Bean Validator] (camel-bean-validator) +
 `bean-validator:label` | 2.3 | The Validator component performs bean validation of the message body using the Java Bean Validation API.
 
-| link:null/src/main/docs/beanstalk-component.adoc[Beanstalk] (null) +
+| link:camel-beanstalk/src/main/docs/beanstalk-component.adoc[Beanstalk] (camel-beanstalk) +
 `beanstalk:connectionSettings` | 2.15 | The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
 
-| link:null/src/main/docs/bonita-component.adoc[Bonita] (null) +
+| link:camel-bonita/src/main/docs/bonita-component.adoc[Bonita] (camel-bonita) +
 `bonita:operation` | 2.19 | Used for communicating with a remote Bonita BPM process engine.
 
-| link:null/src/main/docs/box-component.adoc[Box] (null) +
+| link:camel-box/camel-box-component/src/main/docs/box-component.adoc[Box] (camel-box) +
 `box:apiName/methodName` | 2.14 | For uploading downloading and managing files folders groups collaborations etc on box DOT com.
 
-| link:null/src/main/docs/braintree-component.adoc[Braintree] (null) +
+| link:camel-braintree/src/main/docs/braintree-component.adoc[Braintree] (camel-braintree) +
 `braintree:apiName/methodName` | 2.17 | The braintree component is used for integrating with the Braintree Payment System.
 
-| link:null/src/main/docs/browse-component.adoc[Browse] (null) +
+| link:../camel-core/src/main/docs/browse-component.adoc[Browse] (camel-core) +
 `browse:name` | 1.3 | The browse component is used for viewing the messages received on endpoints that supports BrowsableEndpoint.
 
-| link:null/src/main/docs/caffeine-cache-component.adoc[Caffeine Cache] (null) +
+| link:camel-caffeine/src/main/docs/caffeine-cache-component.adoc[Caffeine Cache] (camel-caffeine) +
 `caffeine-cache:cacheName` | 2.20 | The caffeine-cache component is used for integration with Caffeine Cache.
 
-| link:null/src/main/docs/caffeine-loadcache-component.adoc[Caffeine LoadCache] (null) +
+| link:camel-caffeine/src/main/docs/caffeine-loadcache-component.adoc[Caffeine LoadCache] (camel-caffeine) +
 `caffeine-loadcache:cacheName` | 2.20 | The caffeine-loadcache component is used for integration with Caffeine Load Cache.
 
-| link:null/src/main/docs/cql-component.adoc[Cassandra CQL] (null) +
+| link:camel-cassandraql/src/main/docs/cql-component.adoc[Cassandra CQL] (camel-cassandraql) +
 `cql:beanRef:hosts:port/keyspace` | 2.15 | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
 
-| link:null/src/main/docs/chronicle-engine-component.adoc[Chronicle Engine] (null) +
+| link:camel-chronicle/src/main/docs/chronicle-engine-component.adoc[Chronicle Engine] (camel-chronicle) +
 `chronicle-engine:addresses/path` | 2.18 | The camel chronicle-engine component let you leverage the power of OpenHFT's Chronicle-Engine.
 
-| link:null/src/main/docs/chunk-component.adoc[Chunk] (null) +
+| link:camel-chunk/src/main/docs/chunk-component.adoc[Chunk] (camel-chunk) +
 `chunk:resourceUri` | 2.15 | Transforms the message using a Chunk template.
 
-| link:null/src/main/docs/class-component.adoc[Class] (null) +
+| link:../camel-core/src/main/docs/class-component.adoc[Class] (camel-core) +
 `class:beanName` | 2.4 | The Class Component is for invoking Java Classes (Java beans) from Camel.
 
-| link:null/src/main/docs/cm-sms-component.adoc[CM SMS Gateway] (null) +
+| link:camel-cm-sms/src/main/docs/cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) +
 `cm-sms:host` | 2.18 | The cm-sms component allows to integrate with CM SMS Gateway.
 
-| link:null/src/main/docs/cmis-component.adoc[CMIS] (null) +
+| link:camel-cmis/src/main/docs/cmis-component.adoc[CMIS] (camel-cmis) +
 `cmis:cmsUrl` | 2.11 | The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
 
-| link:null/src/main/docs/coap-component.adoc[CoAP] (null) +
+| link:camel-coap/src/main/docs/coap-component.adoc[CoAP] (camel-coap) +
 `coap:uri` | 2.16 | The coap component is used for sending and receiving messages from COAP capable devices.
 
-| link:null/src/main/docs/cometd-component.adoc[CometD] (null) +
+| link:camel-cometd/src/main/docs/cometd-component.adoc[CometD] (camel-cometd) +
 `cometd:host:port/channelName` | 2.0 | The cometd component is a transport for working with the Jetty implementation of the cometd/bayeux protocol.
 
-| link:null/src/main/docs/consul-component.adoc[Consul] (null) +
+| link:camel-consul/src/main/docs/consul-component.adoc[Consul] (camel-consul) +
 `consul:apiEndpoint` | 2.18 | The camel consul component allows you to work with Consul, a distributed, highly available, datacenter-aware, service discovery and configuration system.
 
-| link:null/src/main/docs/controlbus-component.adoc[Control Bus] (null) +
+| link:../camel-core/src/main/docs/controlbus-component.adoc[Control Bus] (camel-core) +
 `controlbus:command:language` | 2.11 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
 
-| link:null/src/main/docs/corda-component.adoc[corda] (null) +
+| link:camel-corda/src/main/docs/corda-component.adoc[corda] (camel-corda) +
 `corda:url` | 2.23 | The corda component uses the corda-rpc to interact with corda nodes.
 
-| link:null/src/main/docs/couchbase-component.adoc[Couchbase] (null) +
+| link:camel-couchbase/src/main/docs/couchbase-component.adoc[Couchbase] (camel-couchbase) +
 `couchbase:protocol:hostname:port` | 2.19 | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
 
-| link:null/src/main/docs/couchdb-component.adoc[CouchDB] (null) +
+| link:camel-couchdb/src/main/docs/couchdb-component.adoc[CouchDB] (camel-couchdb) +
 `couchdb:protocol:hostname:port/database` | 2.11 | The couchdb component is used for integrate with CouchDB databases.
 
-| link:null/src/main/docs/crypto-component.adoc[Crypto (JCE)] (null) +
+| link:camel-crypto/src/main/docs/crypto-component.adoc[Crypto (JCE)] (camel-crypto) +
 `crypto:cryptoOperation:name` | 2.3 | The crypto component is used for signing and verifying exchanges using the Signature Service of the Java Cryptographic Extension (JCE).
 
-| link:null/src/main/docs/crypto-cms-component.adoc[Crypto CMS] (null) +
+| link:camel-crypto-cms/src/main/docs/crypto-cms-component.adoc[Crypto CMS] (camel-crypto-cms) +
 `crypto-cms:cryptoOperation:name` | 2.20 | The crypto cms component is used for encrypting data in CMS Enveloped Data format, decrypting CMS Enveloped Data, signing data in CMS Signed Data format, and verifying CMS Signed Data.
 
-| link:null/src/main/docs/cxf-component.adoc[CXF] (null) +
+| link:camel-cxf/src/main/docs/cxf-component.adoc[CXF] (camel-cxf) +
 `cxf:beanId:address` | 1.0 | The cxf component is used for SOAP WebServices using Apache CXF.
 
-| link:null/src/main/docs/cxfrs-component.adoc[CXF-RS] (null) +
+| link:camel-cxf/src/main/docs/cxfrs-component.adoc[CXF-RS] (camel-cxf) +
 `cxfrs:beanId:address` | 2.0 | The cxfrs component is used for JAX-RS REST services using Apache CXF.
 
-| link:null/src/main/docs/dataformat-component.adoc[Data Format] (null) +
+| link:../camel-core/src/main/docs/dataformat-component.adoc[Data Format] (camel-core) +
 `dataformat:name:operation` | 2.12 | The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
 
-| link:null/src/main/docs/dataset-component.adoc[Dataset] (null) +
+| link:../camel-core/src/main/docs/dataset-component.adoc[Dataset] (camel-core) +
 `dataset:name` | 1.3 | The dataset component provides a mechanism to easily perform load & soak testing of your system.
 
-| link:null/src/main/docs/digitalocean-component.adoc[DigitalOcean] (null) +
+| link:camel-digitalocean/src/main/docs/digitalocean-component.adoc[DigitalOcean] (camel-digitalocean) +
 `digitalocean:operation` | 2.19 | The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.
 
-| link:null/src/main/docs/direct-component.adoc[Direct] (null) +
+| link:../camel-core/src/main/docs/direct-component.adoc[Direct] (camel-core) +
 `direct:name` | 1.0 | The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
 
-| link:null/src/main/docs/direct-vm-component.adoc[Direct VM] (null) +
+| link:../camel-core/src/main/docs/direct-vm-component.adoc[Direct VM] (camel-core) +
 `direct-vm:name` | 2.10 | The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
 
-| link:null/src/main/docs/disruptor-component.adoc[Disruptor] (null) +
+| link:camel-disruptor/src/main/docs/disruptor-component.adoc[Disruptor] (camel-disruptor) +
 `disruptor:name` | 2.12 | The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
 
-| link:null/src/main/docs/dns-component.adoc[DNS] (null) +
+| link:camel-dns/src/main/docs/dns-component.adoc[DNS] (camel-dns) +
 `dns:dnsType` | 2.7 | To lookup domain information and run DNS queries using DNSJava.
 
-| link:null/src/main/docs/docker-component.adoc[Docker] (null) +
+| link:camel-docker/src/main/docs/docker-component.adoc[Docker] (camel-docker) +
 `docker:operation` | 2.15 | The docker component is used for managing Docker containers.
 
-| link:null/src/main/docs/dozer-component.adoc[Dozer] (null) +
+| link:camel-dozer/src/main/docs/dozer-component.adoc[Dozer] (camel-dozer) +
 `dozer:name` | 2.15 | The dozer component provides the ability to map between Java beans using the Dozer mapping library.
 
-| link:null/src/main/docs/drill-component.adoc[Drill] (null) +
+| link:camel-drill/src/main/docs/drill-component.adoc[Drill] (camel-drill) +
 `drill:host` | 2.19 | The drill component gives you the ability to quering into apache drill cluster.
 
-| link:null/src/main/docs/dropbox-component.adoc[Dropbox] (null) +
+| link:camel-dropbox/src/main/docs/dropbox-component.adoc[Dropbox] (camel-dropbox) +
 `dropbox:operation` | 2.14 | For uploading, downloading and managing files, folders, groups, collaborations, etc on dropbox DOT com.
 
-| link:null/src/main/docs/ehcache-component.adoc[Ehcache] (null) +
+| link:camel-ehcache/src/main/docs/ehcache-component.adoc[Ehcache] (camel-ehcache) +
 `ehcache:cacheName` | 2.18 | The ehcache component enables you to perform caching operations using Ehcache as cache implementation.
 
-| link:null/src/main/docs/ejb-component.adoc[EJB] (null) +
+| link:camel-ejb/src/main/docs/ejb-component.adoc[EJB] (camel-ejb) +
 `ejb:beanName` | 2.4 | The ejb component is for invoking EJB Java beans from Camel.
 
-| link:null/src/main/docs/elasticsearch-rest-component.adoc[Elastichsearch Rest] (null) +
+| link:camel-elasticsearch-rest/src/main/docs/elasticsearch-rest-component.adoc[Elastichsearch Rest] (camel-elasticsearch-rest) +
 `elasticsearch-rest:clusterName` | 2.21 | The elasticsearch component is used for interfacing with ElasticSearch server using REST API.
 
-| link:null/src/main/docs/elsql-component.adoc[ElSQL] (null) +
+| link:camel-elsql/src/main/docs/elsql-component.adoc[ElSQL] (camel-elsql) +
 `elsql:elsqlName:resourceUri` | 2.16 | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
 
-| link:null/src/main/docs/etcd-component.adoc[etcd] (null) +
+| link:camel-etcd/src/main/docs/etcd-component.adoc[etcd] (camel-etcd) +
 `etcd:namespace/path` | 2.18 | The camel etcd component allows you to work with Etcd, a distributed reliable key-value store.
 
-| link:null/src/main/docs/exec-component.adoc[Exec] (null) +
+| link:camel-exec/src/main/docs/exec-component.adoc[Exec] (camel-exec) +
 `exec:executable` | 2.3 | The exec component can be used to execute OS system commands.
 
-| link:null/src/main/docs/facebook-component.adoc[Facebook] (null) +
+| link:camel-facebook/src/main/docs/facebook-component.adoc[Facebook] (camel-facebook) +
 `facebook:methodName` | 2.14 | The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
 
-| link:null/src/main/docs/fhir-component.adoc[FHIR] (null) +
+| link:camel-fhir/camel-fhir-component/src/main/docs/fhir-component.adoc[FHIR] (camel-fhir) +
 `fhir:apiName/methodName` | 2.23 | The fhir component is used for working with the FHIR protocol (health care).
 
-| link:null/src/main/docs/file-component.adoc[File] (null) +
+| link:../camel-core/src/main/docs/file-component.adoc[File] (camel-core) +
 `file:directoryName` | 1.0 | The file component is used for reading or writing files.
 
-| link:null/src/main/docs/flatpack-component.adoc[Flatpack] (null) +
+| link:camel-flatpack/src/main/docs/flatpack-component.adoc[Flatpack] (camel-flatpack) +
 `flatpack:type:resourceUri` | 1.4 | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
 
-| link:null/src/main/docs/fop-component.adoc[FOP] (null) +
+| link:camel-fop/src/main/docs/fop-component.adoc[FOP] (camel-fop) +
 `fop:outputType` | 2.10 | The fop component allows you to render a message into different output formats using Apache FOP.
 
-| link:null/src/main/docs/freemarker-component.adoc[Freemarker] (null) +
+| link:camel-freemarker/src/main/docs/freemarker-component.adoc[Freemarker] (camel-freemarker) +
 `freemarker:resourceUri` | 2.10 | Transforms the message using a FreeMarker template.
 
-| link:null/src/main/docs/ftp-component.adoc[FTP] (null) +
+| link:camel-ftp/src/main/docs/ftp-component.adoc[FTP] (camel-ftp) +
 `ftp:host:port/directoryName` | 1.1 | The ftp component is used for uploading or downloading files from FTP servers.
 
-| link:null/src/main/docs/ftps-component.adoc[FTPS] (null) +
+| link:camel-ftp/src/main/docs/ftps-component.adoc[FTPS] (camel-ftp) +
 `ftps:host:port/directoryName` | 2.2 | The ftps (FTP secure SSL/TLS) component is used for uploading or downloading files from FTP servers.
 
-| link:null/src/main/docs/ganglia-component.adoc[Ganglia] (null) +
+| link:camel-ganglia/src/main/docs/ganglia-component.adoc[Ganglia] (camel-ganglia) +
 `ganglia:host:port` | 2.15 | The ganglia component is used for sending metrics to the Ganglia monitoring system.
 
-| link:null/src/main/docs/geocoder-component.adoc[Geocoder] (null) +
+| link:camel-geocoder/src/main/docs/geocoder-component.adoc[Geocoder] (camel-geocoder) +
 `geocoder:address:latlng` | 2.12 | The geocoder component is used for looking up geocodes (latitude and longitude) for a given address, or reverse lookup.
 
-| link:null/src/main/docs/git-component.adoc[Git] (null) +
+| link:camel-git/src/main/docs/git-component.adoc[Git] (camel-git) +
 `git:localPath` | 2.16 | The git component is used for working with git repositories.
 
-| link:null/src/main/docs/github-component.adoc[GitHub] (null) +
+| link:camel-github/src/main/docs/github-component.adoc[GitHub] (camel-github) +
 `github:type/branchName` | 2.15 | The github component is used for integrating Camel with github.
 
-| link:null/src/main/docs/google-bigquery-component.adoc[Google BigQuery] (null) +
+| link:camel-google-bigquery/src/main/docs/google-bigquery-component.adoc[Google BigQuery] (camel-google-bigquery) +
 `google-bigquery:projectId:datasetId:tableName` | 2.20 | Google BigQuery data warehouse for analytics.
 
-| link:null/src/main/docs/google-bigquery-sql-component.adoc[Google BigQuery Standard SQL] (null) +
+| link:camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc[Google BigQuery Standard SQL] (camel-google-bigquery) +
 `google-bigquery-sql:query` | 2.23 | Google BigQuery data warehouse for analytics (using SQL queries).
 
-| link:null/src/main/docs/google-calendar-component.adoc[Google Calendar] (null) +
+| link:camel-google-calendar/src/main/docs/google-calendar-component.adoc[Google Calendar] (camel-google-calendar) +
 `google-calendar:apiName/methodName` | 2.15 | The google-calendar component provides access to Google Calendar.
 
-| link:null/src/main/docs/google-calendar-stream-component.adoc[Google Calendar Stream] (null) +
+| link:camel-google-calendar/src/main/docs/google-calendar-stream-component.adoc[Google Calendar Stream] (camel-google-calendar) +
 `google-calendar-stream:index` | 2.23 | The google-calendar component provides access to Google Calendar in a streaming mode.
 
-| link:null/src/main/docs/google-drive-component.adoc[Google Drive] (null) +
+| link:camel-google-drive/src/main/docs/google-drive-component.adoc[Google Drive] (camel-google-drive) +
 `google-drive:apiName/methodName` | 2.14 | The google-drive component provides access to Google Drive file storage service.
 
-| link:null/src/main/docs/google-mail-component.adoc[Google Mail] (null) +
+| link:camel-google-mail/src/main/docs/google-mail-component.adoc[Google Mail] (camel-google-mail) +
 `google-mail:apiName/methodName` | 2.15 | The google-mail component provides access to Google Mail.
 
-| link:null/src/main/docs/google-mail-stream-component.adoc[Google Mail Stream] (null) +
+| link:camel-google-mail/src/main/docs/google-mail-stream-component.adoc[Google Mail Stream] (camel-google-mail) +
 `google-mail-stream:index` | 2.22 | The google-mail component provides access to Google Mail.
 
-| link:null/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (null) +
+| link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
 `google-pubsub:projectId:destinationName` | 2.19 | Messaging client for Google Cloud Platform PubSub Service
 
-| link:null/src/main/docs/google-sheets-component.adoc[Google Sheets] (null) +
+| link:camel-google-sheets/src/main/docs/google-sheets-component.adoc[Google Sheets] (camel-google-sheets) +
 `google-sheets:apiName/methodName` | 2.23 | The google-sheets component provides access to Google Sheets.
 
-| link:null/src/main/docs/google-sheets-stream-component.adoc[Google Sheets Stream] (null) +
+| link:camel-google-sheets/src/main/docs/google-sheets-stream-component.adoc[Google Sheets Stream] (camel-google-sheets) +
 `google-sheets-stream:apiName` | 2.23 | The google-sheets component provides access to Google Sheets.
 
-| link:null/src/main/docs/gora-component.adoc[Gora] (null) +
+| link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
-| link:null/src/main/docs/grape-component.adoc[Grape] (null) +
+| link:camel-grape/src/main/docs/grape-component.adoc[Grape] (camel-grape) +
 `grape:defaultCoordinates` | 2.16 | The grape component allows you to fetch, load and manage additional jars when CamelContext is running.
 
-| link:null/src/main/docs/grpc-component.adoc[gRPC] (null) +
+| link:camel-grpc/src/main/docs/grpc-component.adoc[gRPC] (camel-grpc) +
 `grpc:host:port/service` | 2.19 | The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
 
-| link:null/src/main/docs/guava-eventbus-component.adoc[Guava EventBus] (null) +
+| link:camel-guava-eventbus/src/main/docs/guava-eventbus-component.adoc[Guava EventBus] (camel-guava-eventbus) +
 `guava-eventbus:eventBusRef` | 2.10 | The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
 
-| link:null/src/main/docs/hazelcast-atomicvalue-component.adoc[Hazelcast Atomic Number] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-atomicvalue-component.adoc[Hazelcast Atomic Number] (camel-hazelcast) +
 `hazelcast-atomicvalue:cacheName` | 2.7 | The hazelcast-atomicvalue component is used to access Hazelcast atomic number, which is an object that simply provides a grid wide number (long).
 
-| link:null/src/main/docs/hazelcast-instance-component.adoc[Hazelcast Instance] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-instance-component.adoc[Hazelcast Instance] (camel-hazelcast) +
 `hazelcast-instance:cacheName` | 2.7 | The hazelcast-instance component is used to consume join/leave events of the cache instance in the cluster.
 
-| link:null/src/main/docs/hazelcast-list-component.adoc[Hazelcast List] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-list-component.adoc[Hazelcast List] (camel-hazelcast) +
 `hazelcast-list:cacheName` | 2.7 | The hazelcast-list component is used to access Hazelcast distributed list.
 
-| link:null/src/main/docs/hazelcast-map-component.adoc[Hazelcast Map] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-map-component.adoc[Hazelcast Map] (camel-hazelcast) +
 `hazelcast-map:cacheName` | 2.7 | The hazelcast-map component is used to access Hazelcast distributed map.
 
-| link:null/src/main/docs/hazelcast-multimap-component.adoc[Hazelcast Multimap] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-multimap-component.adoc[Hazelcast Multimap] (camel-hazelcast) +
 `hazelcast-multimap:cacheName` | 2.7 | The hazelcast-multimap component is used to to access Hazelcast distributed multimap.
 
-| link:null/src/main/docs/hazelcast-queue-component.adoc[Hazelcast Queue] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-queue-component.adoc[Hazelcast Queue] (camel-hazelcast) +
 `hazelcast-queue:cacheName` | 2.7 | The hazelcast-queue component is used to access Hazelcast distributed queue.
 
-| link:null/src/main/docs/hazelcast-replicatedmap-component.adoc[Hazelcast Replicated Map] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-replicatedmap-component.adoc[Hazelcast Replicated Map] (camel-hazelcast) +
 `hazelcast-replicatedmap:cacheName` | 2.16 | The hazelcast-replicatedmap component is used to access Hazelcast replicated map.
 
-| link:null/src/main/docs/hazelcast-ringbuffer-component.adoc[Hazelcast Ringbuffer] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-ringbuffer-component.adoc[Hazelcast Ringbuffer] (camel-hazelcast) +
 `hazelcast-ringbuffer:cacheName` | 2.16 | The hazelcast-ringbuffer component is used to access Hazelcast distributed ringbuffer.
 
-| link:null/src/main/docs/hazelcast-seda-component.adoc[Hazelcast SEDA] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-seda-component.adoc[Hazelcast SEDA] (camel-hazelcast) +
 `hazelcast-seda:cacheName` | 2.7 | The hazelcast-seda component is used to access Hazelcast BlockingQueue.
 
-| link:null/src/main/docs/hazelcast-set-component.adoc[Hazelcast Set] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-set-component.adoc[Hazelcast Set] (camel-hazelcast) +
 `hazelcast-set:cacheName` | 2.7 | The camel Endpoint to access Hazelcast distributed set.
 
-| link:null/src/main/docs/hazelcast-topic-component.adoc[Hazelcast Topic] (null) +
+| link:camel-hazelcast/src/main/docs/hazelcast-topic-component.adoc[Hazelcast Topic] (camel-hazelcast) +
 `hazelcast-topic:cacheName` | 2.15 | The hazelcast-topic component is used to access Hazelcast distributed topic.
 
-| link:null/src/main/docs/hbase-component.adoc[HBase] (null) +
+| link:camel-hbase/src/main/docs/hbase-component.adoc[HBase] (camel-hbase) +
 `hbase:tableName` | 2.10 | For reading/writing from/to an HBase store (Hadoop database).
 
-| link:null/src/main/docs/hdfs2-component.adoc[HDFS2] (null) +
+| link:camel-hdfs2/src/main/docs/hdfs2-component.adoc[HDFS2] (camel-hdfs2) +
 `hdfs2:hostName:port/path` | 2.14 | For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
 
-| link:null/src/main/docs/hipchat-component.adoc[Hipchat] (null) +
+| link:camel-hipchat/src/main/docs/hipchat-component.adoc[Hipchat] (camel-hipchat) +
 `hipchat:protocol:host:port` | 2.15 | The hipchat component supports producing and consuming messages from/to Hipchat service.
 
-| link:null/src/main/docs/http4-component.adoc[HTTP4] (null) +
+| link:camel-http4/src/main/docs/http4-component.adoc[HTTP4] (camel-http4) +
 `http4:httpUri` | 2.3 | For calling out to external HTTP servers using Apache HTTP Client 4.x.
 
-| link:null/src/main/docs/iec60870-client-component.adoc[IEC 60870 Client] (null) +
+| link:camel-iec60870/src/main/docs/iec60870-client-component.adoc[IEC 60870 Client] (camel-iec60870) +
 `iec60870-client:uriPath` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
 
-| link:null/src/main/docs/iec60870-server-component.adoc[IEC 60870 Server] (null) +
+| link:camel-iec60870/src/main/docs/iec60870-server-component.adoc[IEC 60870 Server] (camel-iec60870) +
 `iec60870-server:uriPath` | 2.20 | IEC 60870 component used for telecontrol (supervisory control and data acquisition) such as controlling electric power transmission grids and other geographically widespread control systems.
 
-| link:null/src/main/docs/ignite-cache-component.adoc[Ignite Cache] (null) +
+| link:camel-ignite/src/main/docs/ignite-cache-component.adoc[Ignite Cache] (camel-ignite) +
 `ignite-cache:cacheName` | 2.17 | The Ignite Cache endpoint is one of camel-ignite endpoints which allows you to interact with an Ignite Cache.
 
-| link:null/src/main/docs/ignite-compute-component.adoc[Ignite Compute] (null) +
+| link:camel-ignite/src/main/docs/ignite-compute-component.adoc[Ignite Compute] (camel-ignite) +
 `ignite-compute:endpointId` | 2.17 | The Ignite Compute endpoint is one of camel-ignite endpoints which allows you to run compute operations on the cluster by passing in an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their parameters if necessary.
 
-| link:null/src/main/docs/ignite-events-component.adoc[Ignite Events] (null) +
+| link:camel-ignite/src/main/docs/ignite-events-component.adoc[Ignite Events] (camel-ignite) +
 `ignite-events:endpointId` | 2.17 | The Ignite Events endpoint is one of camel-ignite endpoints which allows you to receive events from the Ignite cluster by creating a local event listener.
 
-| link:null/src/main/docs/ignite-idgen-component.adoc[Ignite ID Generator] (null) +
+| link:camel-ignite/src/main/docs/ignite-idgen-component.adoc[Ignite ID Generator] (camel-ignite) +
 `ignite-idgen:name` | 2.17 | The Ignite ID Generator endpoint is one of camel-ignite endpoints which allows you to interact with Ignite Atomic Sequences and ID Generators.
 
-| link:null/src/main/docs/ignite-messaging-component.adoc[Ignite Messaging] (null) +
+| link:camel-ignite/src/main/docs/ignite-messaging-component.adoc[Ignite Messaging] (camel-ignite) +
 `ignite-messaging:topic` | 2.17 | The Ignite Messaging endpoint is one of camel-ignite endpoints which allows you to send and consume messages from an Ignite topic.
 
-| link:null/src/main/docs/ignite-queue-component.adoc[Ignite Queues] (null) +
+| link:camel-ignite/src/main/docs/ignite-queue-component.adoc[Ignite Queues] (camel-ignite) +
 `ignite-queue:name` | 2.17 | The Ignite Queue endpoint is one of camel-ignite endpoints which allows you to interact with Ignite Queue data structures.
 
-| link:null/src/main/docs/ignite-set-component.adoc[Ignite Sets] (null) +
+| link:camel-ignite/src/main/docs/ignite-set-component.adoc[Ignite Sets] (camel-ignite) +
 `ignite-set:name` | 2.17 | The Ignite Sets endpoint is one of camel-ignite endpoints which allows you to interact with Ignite Set data structures.
 
-| link:null/src/main/docs/infinispan-component.adoc[Infinispan] (null) +
+| link:camel-infinispan/src/main/docs/infinispan-component.adoc[Infinispan] (camel-infinispan) +
 `infinispan:cacheName` | 2.13 | For reading/writing from/to Infinispan distributed key/value store and data grid.
 
-| link:null/src/main/docs/influxdb-component.adoc[InfluxDB] (null) +
+| link:camel-influxdb/src/main/docs/influxdb-component.adoc[InfluxDB] (camel-influxdb) +
 `influxdb:connectionBean` | 2.18 | The influxdb component allows you to interact with InfluxDB, a time series database.
 
-| link:null/src/main/docs/iota-component.adoc[IOTA] (null) +
+| link:camel-iota/src/main/docs/iota-component.adoc[IOTA] (camel-iota) +
 `iota:name` | 2.23 | Component for integrate IOTA DLT
 
-| link:null/src/main/docs/ipfs-component.adoc[IPFS] (null) +
+| link:camel-ipfs/src/main/docs/ipfs-component.adoc[IPFS] (camel-ipfs) +
 `ipfs:host:port/cmd` | 2.23 | The camel-ipfs component provides access to the Interplanetary File System (IPFS).
 
-| link:null/src/main/docs/irc-component.adoc[IRC] (null) +
+| link:camel-irc/src/main/docs/irc-component.adoc[IRC] (camel-irc) +
 `irc:hostname:port` | 1.1 | The irc component implements an IRC (Internet Relay Chat) transport.
 
-| link:null/src/main/docs/ironmq-component.adoc[IronMQ] (null) +
+| link:camel-ironmq/src/main/docs/ironmq-component.adoc[IronMQ] (camel-ironmq) +
 `ironmq:queueName` | 2.17 | The ironmq provides integration with IronMQ an elastic and durable hosted message queue as a service.
 
-| link:null/src/main/docs/websocket-jsr356-component.adoc[Javax Websocket] (null) +
-`websocket-jsr356:/resourceUri` | 2.23 | null
+| link:camel-websocket-jsr356/src/main/docs/websocket-jsr356-component.adoc[Javax Websocket] (camel-websocket-jsr356) +
+`websocket-jsr356:/resourceUri` | 2.23 | Camel WebSocket using JSR356 (javax)
 
-| link:null/src/main/docs/jbpm-component.adoc[JBPM] (null) +
+| link:camel-jbpm/src/main/docs/jbpm-component.adoc[JBPM] (camel-jbpm) +
 `jbpm:connectionURL` | 2.6 | The jbpm component provides integration with jBPM (Business Process Management).
 
-| link:null/src/main/docs/jcache-component.adoc[JCache] (null) +
+| link:camel-jcache/src/main/docs/jcache-component.adoc[JCache] (camel-jcache) +
 `jcache:cacheName` | 2.17 | The jcache component enables you to perform caching operations using JSR107/JCache as cache implementation.
 
-| link:null/src/main/docs/jclouds-component.adoc[JClouds] (null) +
+| link:camel-jclouds/src/main/docs/jclouds-component.adoc[JClouds] (camel-jclouds) +
 `jclouds:command:providerId` | 2.9 | For interacting with cloud compute & blobstore service via jclouds.
 
-| link:null/src/main/docs/jcr-component.adoc[JCR] (null) +
+| link:camel-jcr/src/main/docs/jcr-component.adoc[JCR] (camel-jcr) +
 `jcr:host/base` | 1.3 | The jcr component allows you to add/read nodes to/from a JCR compliant content repository.
 
-| link:null/src/main/docs/jdbc-component.adoc[JDBC] (null) +
+| link:camel-jdbc/src/main/docs/jdbc-component.adoc[JDBC] (camel-jdbc) +
 `jdbc:dataSourceName` | 1.2 | The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
 
-| link:null/src/main/docs/jetty-component.adoc[Jetty 9] (null) +
+| link:camel-jetty9/src/main/docs/jetty-component.adoc[Jetty 9] (camel-jetty9) +
 `jetty:httpUri` | 1.2 | The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
 
-| link:null/src/main/docs/websocket-component.adoc[Jetty Websocket] (null) +
+| link:camel-websocket/src/main/docs/websocket-component.adoc[Jetty Websocket] (camel-websocket) +
 `websocket:host:port/resourceUri` | 2.10 | The websocket component provides websocket endpoints with Jetty for communicating with clients using websocket.
 
-| link:null/src/main/docs/jgroups-component.adoc[JGroups] (null) +
+| link:camel-jgroups/src/main/docs/jgroups-component.adoc[JGroups] (camel-jgroups) +
 `jgroups:clusterName` | 2.13 | The jgroups component provides exchange of messages between Camel and JGroups clusters.
 
-| link:null/src/main/docs/jgroups-raft-component.adoc[JGroups raft] (null) +
+| link:camel-jgroups-raft/src/main/docs/jgroups-raft-component.adoc[JGroups raft] (camel-jgroups-raft) +
 `jgroups-raft:clusterName` | 2.24 | The jgroups component provides exchange of messages between Camel and JGroups clusters.
 
-| link:null/src/main/docs/jing-component.adoc[Jing] (null) +
+| link:camel-jing/src/main/docs/jing-component.adoc[Jing] (camel-jing) +
 `jing:resourceUri` | 1.1 | Validates the payload of a message using RelaxNG Syntax using Jing library.
 
-| link:null/src/main/docs/jms-component.adoc[JMS] (null) +
+| link:camel-jms/src/main/docs/jms-component.adoc[JMS] (camel-jms) +
 `jms:destinationType:destinationName` | 1.0 | The jms component allows messages to be sent to (or consumed from) a JMS Queue or Topic.
 
-| link:null/src/main/docs/jmx-component.adoc[JMX] (null) +
+| link:camel-jmx/src/main/docs/jmx-component.adoc[JMX] (camel-jmx) +
 `jmx:serverURL` | 2.6 | The jmx component allows to receive JMX notifications.
 
-| link:null/src/main/docs/jolt-component.adoc[JOLT] (null) +
+| link:camel-jolt/src/main/docs/jolt-component.adoc[JOLT] (camel-jolt) +
 `jolt:resourceUri` | 2.16 | The jolt component allows you to process a JSON messages using an JOLT specification (such as JSON-JSON transformation).
 
-| link:null/src/main/docs/jpa-component.adoc[JPA] (null) +
+| link:camel-jpa/src/main/docs/jpa-component.adoc[JPA] (camel-jpa) +
 `jpa:entityType` | 1.0 | The jpa component enables you to store and retrieve Java objects from databases using JPA.
 
-| link:null/src/main/docs/json-validator-component.adoc[JSON Schema Validator] (null) +
+| link:camel-json-validator/src/main/docs/json-validator-component.adoc[JSON Schema Validator] (camel-json-validator) +
 `json-validator:resourceUri` | 2.20 | Validates the payload of a message using NetworkNT JSON Schema library.
 
-| link:null/src/main/docs/jt400-component.adoc[JT400] (null) +
+| link:camel-jt400/src/main/docs/jt400-component.adoc[JT400] (camel-jt400) +
 `jt400:userID:password/systemName/objectPath.type` | 1.5 | The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
 
-| link:null/src/main/docs/kafka-component.adoc[Kafka] (null) +
+| link:camel-kafka/src/main/docs/kafka-component.adoc[Kafka] (camel-kafka) +
 `kafka:topic` | 2.13 | The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
 
-| link:null/src/main/docs/kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-config-maps-component.adoc[Kubernetes ConfigMap] (camel-kubernetes) +
 `kubernetes-config-maps:masterUrl` | 2.17 | The Kubernetes Configmaps component provides a producer to execute kubernetes configmap operations.
 
-| link:null/src/main/docs/kubernetes-deployments-component.adoc[Kubernetes Deployments] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-deployments-component.adoc[Kubernetes Deployments] (camel-kubernetes) +
 `kubernetes-deployments:masterUrl` | 2.20 | The Kubernetes Nodes component provides a producer to execute kubernetes node operations and a consumer to consume node events.
 
-| link:null/src/main/docs/kubernetes-hpa-component.adoc[Kubernetes HPA] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-hpa-component.adoc[Kubernetes HPA] (camel-kubernetes) +
 `kubernetes-hpa:masterUrl` | 2.23 | The Kubernetes HPA component provides a producer to execute kubernetes hpa operations and a consumer to consume HPA events.
 
-| link:null/src/main/docs/kubernetes-job-component.adoc[Kubernetes Job] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-job-component.adoc[Kubernetes Job] (camel-kubernetes) +
 `kubernetes-job:masterUrl` | 2.23 | The Kubernetes Jobs component provides a producer to execute kubernetes job operations
 
-| link:null/src/main/docs/kubernetes-namespaces-component.adoc[Kubernetes Namespaces] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-namespaces-component.adoc[Kubernetes Namespaces] (camel-kubernetes) +
 `kubernetes-namespaces:masterUrl` | 2.17 | The Kubernetes Namespaces component provides a producer to execute kubernetes namespace operations and a consumer to consume namespace events.
 
-| link:null/src/main/docs/kubernetes-nodes-component.adoc[Kubernetes Nodes] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-nodes-component.adoc[Kubernetes Nodes] (camel-kubernetes) +
 `kubernetes-nodes:masterUrl` | 2.17 | The Kubernetes Nodes component provides a producer to execute kubernetes node operations and a consumer to consume node events.
 
-| link:null/src/main/docs/kubernetes-persistent-volumes-component.adoc[Kubernetes Persistent Volume] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-persistent-volumes-component.adoc[Kubernetes Persistent Volume] (camel-kubernetes) +
 `kubernetes-persistent-volumes:masterUrl` | 2.17 | The Kubernetes Persistent Volumes component provides a producer to execute kubernetes persistent volume operations.
 
-| link:null/src/main/docs/kubernetes-persistent-volumes-claims-component.adoc[Kubernetes Persistent Volume Claim] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-persistent-volumes-claims-component.adoc[Kubernetes Persistent Volume Claim] (camel-kubernetes) +
 `kubernetes-persistent-volumes-claims:masterUrl` | 2.17 | The Kubernetes Persistent Volumes Claims component provides a producer to execute kubernetes persistent volume claim operations.
 
-| link:null/src/main/docs/kubernetes-pods-component.adoc[Kubernetes Pods] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-pods-component.adoc[Kubernetes Pods] (camel-kubernetes) +
 `kubernetes-pods:masterUrl` | 2.17 | The Kubernetes Pods component provides a producer to execute kubernetes pod operations and a consumer to consume pod events.
 
-| link:null/src/main/docs/kubernetes-replication-controllers-component.adoc[Kubernetes Replication Controller] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-replication-controllers-component.adoc[Kubernetes Replication Controller] (camel-kubernetes) +
 `kubernetes-replication-controllers:masterUrl` | 2.17 | The Kubernetes Replication Controllers component provides a producer to execute kubernetes replication controller operations and a consumer to consume replication controller events.
 
-| link:null/src/main/docs/kubernetes-resources-quota-component.adoc[Kubernetes Resources Quota] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-resources-quota-component.adoc[Kubernetes Resources Quota] (camel-kubernetes) +
 `kubernetes-resources-quota:masterUrl` | 2.17 | The Kubernetes Resources Quota component provides a producer to execute kubernetes resources quota operations.
 
-| link:null/src/main/docs/kubernetes-secrets-component.adoc[Kubernetes Secrets] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-secrets-component.adoc[Kubernetes Secrets] (camel-kubernetes) +
 `kubernetes-secrets:masterUrl` | 2.17 | The Kubernetes Secrets component provides a producer to execute kubernetes secret operations.
 
-| link:null/src/main/docs/kubernetes-service-accounts-component.adoc[Kubernetes Service Account] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-service-accounts-component.adoc[Kubernetes Service Account] (camel-kubernetes) +
 `kubernetes-service-accounts:masterUrl` | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service account operations.
 
-| link:null/src/main/docs/kubernetes-services-component.adoc[Kubernetes Services] (null) +
+| link:camel-kubernetes/src/main/docs/kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) +
 `kubernetes-services:masterUrl` | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service operations and a consumer to consume service events.
 
-| link:null/src/main/docs/language-component.adoc[Language] (null) +
+| link:../camel-core/src/main/docs/language-component.adoc[Language] (camel-core) +
 `language:languageName:resourceUri` | 2.5 | The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
 
-| link:null/src/main/docs/ldap-component.adoc[LDAP] (null) +
+| link:camel-ldap/src/main/docs/ldap-component.adoc[LDAP] (camel-ldap) +
 `ldap:dirContextName` | 1.5 | The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
 
-| link:null/src/main/docs/ldif-component.adoc[LDIF] (null) +
+| link:camel-ldif/src/main/docs/ldif-component.adoc[LDIF] (camel-ldif) +
 `ldif:ldapConnectionName` | 2.20 | The ldif component allows you to do updates on an LDAP server from a LDIF body content.
 
-| link:null/src/main/docs/linkedin-component.adoc[Linkedin] (null) +
+| link:camel-linkedin/camel-linkedin-component/src/main/docs/linkedin-component.adoc[Linkedin] (camel-linkedin) +
 `linkedin:apiName/methodName` | 2.14 | The linkedin component is used for retrieving LinkedIn user profiles, connections, companies, groups, posts, etc.
 
-| link:null/src/main/docs/log-component.adoc[Log] (null) +
+| link:../camel-core/src/main/docs/log-component.adoc[Log] (camel-core) +
 `log:loggerName` | 1.1 | The log component logs message exchanges to the underlying logging mechanism.
 
-| link:null/src/main/docs/lucene-component.adoc[Lucene] (null) +
+| link:camel-lucene/src/main/docs/lucene-component.adoc[Lucene] (camel-lucene) +
 `lucene:host:operation` | 2.2 | To insert or query from Apache Lucene databases.
 
-| link:null/src/main/docs/lumberjack-component.adoc[Lumberjack] (null) +
+| link:camel-lumberjack/src/main/docs/lumberjack-component.adoc[Lumberjack] (camel-lumberjack) +
 `lumberjack:host:port` | 2.18 | The lumberjack retrieves logs sent over the network using the Lumberjack protocol.
 
-| link:null/src/main/docs/mail-component.adoc[Mail] (null) +
+| link:camel-mail/src/main/docs/mail-component.adoc[Mail] (camel-mail) +
 `imap:host:port` | 1.0 | To send or receive emails using imap/pop3 or smtp protocols.
 
-| link:null/src/main/docs/master-component.adoc[Master] (null) +
+| link:camel-master/src/main/docs/master-component.adoc[Master] (camel-master) +
 `master:namespace:delegateUri` | 2.20 | Represents an endpoint which only becomes active when the CamelClusterView has the leadership.
 
-| link:null/src/main/docs/metrics-component.adoc[Metrics] (null) +
+| link:camel-metrics/src/main/docs/metrics-component.adoc[Metrics] (camel-metrics) +
 `metrics:metricsType:metricsName` | 2.14 | To collect various metrics directly from Camel routes using the DropWizard metrics library.
 
-| link:null/src/main/docs/micrometer-component.adoc[Micrometer] (null) +
+| link:camel-micrometer/src/main/docs/micrometer-component.adoc[Micrometer] (camel-micrometer) +
 `micrometer:metricsType:metricsName` | 2.22 | To collect various metrics directly from Camel routes using the Micrometer library.
 
-| link:null/src/main/docs/mina2-component.adoc[Mina2] (null) +
+| link:camel-mina2/src/main/docs/mina2-component.adoc[Mina2] (camel-mina2) +
 `mina2:protocol:host:port` | 2.10 | Socket level networking using TCP or UDP with the Apache Mina 2.x library.
 
-| link:null/src/main/docs/mllp-component.adoc[MLLP] (null) +
+| link:camel-mllp/src/main/docs/mllp-component.adoc[MLLP] (camel-mllp) +
 `mllp:hostname:port` | 2.17 | Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
 
-| link:null/src/main/docs/mock-component.adoc[Mock] (null) +
+| link:../camel-core/src/main/docs/mock-component.adoc[Mock] (camel-core) +
 `mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
 
-| link:null/src/main/docs/mongodb3-component.adoc[MongoDB] (null) +
+| link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
 `mongodb3:connectionBean` | 2.19 | Component for working with documents stored in MongoDB database.
 
-| link:null/src/main/docs/mongodb-gridfs-component.adoc[MongoDB GridFS] (null) +
+| link:camel-mongodb-gridfs/src/main/docs/mongodb-gridfs-component.adoc[MongoDB GridFS] (camel-mongodb-gridfs) +
 `mongodb-gridfs:connectionBean` | 2.18 | Component for working with MongoDB GridFS.
 
-| link:null/src/main/docs/mqtt-component.adoc[MQTT] (null) +
+| link:camel-mqtt/src/main/docs/mqtt-component.adoc[MQTT] (camel-mqtt) +
 `mqtt:name` | 2.10 | Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.
 
-| link:null/src/main/docs/msv-component.adoc[MSV] (null) +
+| link:camel-msv/src/main/docs/msv-component.adoc[MSV] (camel-msv) +
 `msv:resourceUri` | 1.1 | Validates the payload of a message using the MSV Library.
 
-| link:null/src/main/docs/mustache-component.adoc[Mustache] (null) +
+| link:camel-mustache/src/main/docs/mustache-component.adoc[Mustache] (camel-mustache) +
 `mustache:resourceUri` | 2.12 | Transforms the message using a Mustache template.
 
-| link:null/src/main/docs/mvel-component.adoc[MVEL] (null) +
+| link:camel-mvel/src/main/docs/mvel-component.adoc[MVEL] (camel-mvel) +
 `mvel:resourceUri` | 2.12 | Transforms the message using a MVEL template.
 
-| link:null/src/main/docs/mybatis-component.adoc[MyBatis] (null) +
+| link:camel-mybatis/src/main/docs/mybatis-component.adoc[MyBatis] (camel-mybatis) +
 `mybatis:statement` | 2.7 | Performs a query, poll, insert, update or delete in a relational database using MyBatis.
 
-| link:null/src/main/docs/mybatis-bean-component.adoc[MyBatis Bean] (null) +
+| link:camel-mybatis/src/main/docs/mybatis-bean-component.adoc[MyBatis Bean] (camel-mybatis) +
 `mybatis-bean:beanName:methodName` | 2.22 | Performs a query, insert, update or delete in a relational database using MyBatis.
 
-| link:null/src/main/docs/nagios-component.adoc[Nagios] (null) +
+| link:camel-nagios/src/main/docs/nagios-component.adoc[Nagios] (camel-nagios) +
 `nagios:host:port` | 2.3 | To send passive checks to Nagios using JSendNSCA.
 
-| link:null/src/main/docs/nats-component.adoc[Nats] (null) +
+| link:camel-nats/src/main/docs/nats-component.adoc[Nats] (camel-nats) +
 `nats:servers` | 2.17 | The nats component allows you produce and consume messages from NATS.
 
-| link:null/src/main/docs/netty4-component.adoc[Netty4] (null) +
+| link:camel-netty4/src/main/docs/netty4-component.adoc[Netty4] (camel-netty4) +
 `netty4:protocol:host:port` | 2.14 | Socket level networking using TCP or UDP with the Netty 4.x library.
 
-| link:null/src/main/docs/netty4-http-component.adoc[Netty4 HTTP] (null) +
+| link:camel-netty4-http/src/main/docs/netty4-http-component.adoc[Netty4 HTTP] (camel-netty4-http) +
 `netty4-http:protocol:host:port/path` | 2.14 | Netty HTTP server and client using the Netty 4.x library.
 
-| link:null/src/main/docs/nsq-component.adoc[NSQ] (null) +
+| link:camel-nsq/src/main/docs/nsq-component.adoc[NSQ] (camel-nsq) +
 `nsq:lookupServer` | 2.23 | Represents a nsq endpoint.
 
-| link:null/src/main/docs/olingo2-component.adoc[Olingo2] (null) +
+| link:camel-olingo2/camel-olingo2-component/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
 `olingo2:apiName/methodName` | 2.14 | Communicates with OData 2.0 services using Apache Olingo.
 
-| link:null/src/main/docs/olingo4-component.adoc[Olingo4] (null) +
+| link:camel-olingo4/camel-olingo4-component/src/main/docs/olingo4-component.adoc[Olingo4] (camel-olingo4) +
 `olingo4:apiName/methodName` | 2.19 | Communicates with OData 4.0 services using Apache Olingo OData API.
 
-| link:null/src/main/docs/milo-client-component.adoc[OPC UA Client] (null) +
+| link:camel-milo/src/main/docs/milo-client-component.adoc[OPC UA Client] (camel-milo) +
 `milo-client:endpointUri` | 2.19 | Connect to OPC UA servers using the binary protocol for acquiring telemetry data
 
-| link:null/src/main/docs/milo-server-component.adoc[OPC UA Server] (null) +
+| link:camel-milo/src/main/docs/milo-server-component.adoc[OPC UA Server] (camel-milo) +
 `milo-server:itemId` | 2.19 | Make telemetry data available as an OPC UA server
 
-| link:null/src/main/docs/openshift-build-configs-component.adoc[Openshift Build Config] (null) +
+| link:camel-kubernetes/src/main/docs/openshift-build-configs-component.adoc[Openshift Build Config] (camel-kubernetes) +
 `openshift-build-configs:masterUrl` | 2.17 | The Kubernetes Build Config component provides a producer to execute kubernetes build config operations.
 
-| link:null/src/main/docs/openshift-builds-component.adoc[Openshift Builds] (null) +
+| link:camel-kubernetes/src/main/docs/openshift-builds-component.adoc[Openshift Builds] (camel-kubernetes) +
 `openshift-builds:masterUrl` | 2.17 | The Openshift Builds component provides a producer to execute openshift build operations.
 
-| link:null/src/main/docs/openstack-cinder-component.adoc[OpenStack Cinder] (null) +
+| link:camel-openstack/src/main/docs/openstack-cinder-component.adoc[OpenStack Cinder] (camel-openstack) +
 `openstack-cinder:host` | 2.19 | The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
 
-| link:null/src/main/docs/openstack-glance-component.adoc[OpenStack Glance] (null) +
+| link:camel-openstack/src/main/docs/openstack-glance-component.adoc[OpenStack Glance] (camel-openstack) +
 `openstack-glance:host` | 2.19 | The openstack-glance component allows messages to be sent to an OpenStack image services.
 
-| link:null/src/main/docs/openstack-keystone-component.adoc[OpenStack Keystone] (null) +
+| link:camel-openstack/src/main/docs/openstack-keystone-component.adoc[OpenStack Keystone] (camel-openstack) +
 `openstack-keystone:host` | 2.19 | The openstack-keystone component allows messages to be sent to an OpenStack identity services.
 
-| link:null/src/main/docs/openstack-neutron-component.adoc[OpenStack Neutron] (null) +
+| link:camel-openstack/src/main/docs/openstack-neutron-component.adoc[OpenStack Neutron] (camel-openstack) +
 `openstack-neutron:host` | 2.19 | The openstack-neutron component allows messages to be sent to an OpenStack network services.
 
-| link:null/src/main/docs/openstack-nova-component.adoc[OpenStack Nova] (null) +
+| link:camel-openstack/src/main/docs/openstack-nova-component.adoc[OpenStack Nova] (camel-openstack) +
 `openstack-nova:host` | 2.19 | The openstack-nova component allows messages to be sent to an OpenStack compute services.
 
-| link:null/src/main/docs/openstack-swift-component.adoc[OpenStack Swift] (null) +
+| link:camel-openstack/src/main/docs/openstack-swift-component.adoc[OpenStack Swift] (camel-openstack) +
 `openstack-swift:host` | 2.19 | The openstack-swift component allows messages to be sent to an OpenStack object storage services.
 
-| link:null/src/main/docs/optaplanner-component.adoc[OptaPlanner] (null) +
+| link:camel-optaplanner/src/main/docs/optaplanner-component.adoc[OptaPlanner] (camel-optaplanner) +
 `optaplanner:configFile` | 2.13 | Solves the planning problem contained in a message with OptaPlanner.
 
-| link:null/src/main/docs/eventadmin-component.adoc[OSGi EventAdmin] (null) +
+| link:camel-eventadmin/src/main/docs/eventadmin-component.adoc[OSGi EventAdmin] (camel-eventadmin) +
 `eventadmin:topic` | 2.6 | The eventadmin component can be used in an OSGi environment to receive OSGi EventAdmin events and process them.
 
-| link:null/src/main/docs/paxlogging-component.adoc[OSGi PAX Logging] (null) +
+| link:camel-paxlogging/src/main/docs/paxlogging-component.adoc[OSGi PAX Logging] (camel-paxlogging) +
 `paxlogging:appender` | 2.6 | The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
 
-| link:null/src/main/docs/paho-component.adoc[Paho] (null) +
+| link:camel-paho/src/main/docs/paho-component.adoc[Paho] (camel-paho) +
 `paho:topic` | 2.16 | Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
 
-| link:null/src/main/docs/pdf-component.adoc[PDF] (null) +
+| link:camel-pdf/src/main/docs/pdf-component.adoc[PDF] (camel-pdf) +
 `pdf:operation` | 2.16 | The pdf components provides the ability to create, modify or extract content from PDF documents.
 
-| link:null/src/main/docs/pgevent-component.adoc[PostgresSQL Event] (null) +
+| link:camel-pgevent/src/main/docs/pgevent-component.adoc[PostgresSQL Event] (camel-pgevent) +
 `pgevent:host:port/database/channel` | 2.15 | The pgevent component allows for producing/consuming PostgreSQL events related to the listen/notify commands.
 
-| link:null/src/main/docs/lpr-component.adoc[Printer] (null) +
+| link:camel-printer/src/main/docs/lpr-component.adoc[Printer] (camel-printer) +
 `lpr:hostname:port/printername` | 2.1 | The printer component is used for sending messages to printers as print jobs.
 
-| link:null/src/main/docs/properties-component.adoc[Properties] (null) +
+| link:../camel-core/src/main/docs/properties-component.adoc[Properties] (camel-core) +
 `properties:key` | 2.3 | The properties component is used for using property placeholders in endpoint uris.
 
-| link:null/src/main/docs/pubnub-component.adoc[PubNub] (null) +
+| link:camel-pubnub/src/main/docs/pubnub-component.adoc[PubNub] (camel-pubnub) +
 `pubnub:channel` | 2.19 | To send and receive messages to PubNub data stream network for connected devices.
 
-| link:null/src/main/docs/quartz2-component.adoc[Quartz2] (null) +
+| link:camel-quartz2/src/main/docs/quartz2-component.adoc[Quartz2] (camel-quartz2) +
 `quartz2:groupName/triggerName` | 2.12 | Provides a scheduled delivery of messages using the Quartz 2.x scheduler.
 
-| link:null/src/main/docs/quickfix-component.adoc[QuickFix] (null) +
+| link:camel-quickfix/src/main/docs/quickfix-component.adoc[QuickFix] (camel-quickfix) +
 `quickfix:configurationName` | 2.1 | The quickfix component allows to send Financial Interchange (FIX) messages to the QuickFix engine.
 
-| link:null/src/main/docs/rabbitmq-component.adoc[RabbitMQ] (null) +
+| link:camel-rabbitmq/src/main/docs/rabbitmq-component.adoc[RabbitMQ] (camel-rabbitmq) +
 `rabbitmq:exchangeName` | 2.12 | The rabbitmq component allows you produce and consume messages from RabbitMQ instances.
 
-| link:null/src/main/docs/reactive-streams-component.adoc[Reactive Streams] (null) +
+| link:camel-reactive-streams/src/main/docs/reactive-streams-component.adoc[Reactive Streams] (camel-reactive-streams) +
 `reactive-streams:stream` | 2.19 | Reactive Camel using reactive streams
 
-| link:null/src/main/docs/ref-component.adoc[Ref] (null) +
+| link:../camel-core/src/main/docs/ref-component.adoc[Ref] (camel-core) +
 `ref:name` | 1.2 | The ref component is used for lookup of existing endpoints bound in the Registry.
 
-| link:null/src/main/docs/rest-component.adoc[REST] (null) +
+| link:../camel-core/src/main/docs/rest-component.adoc[REST] (camel-core) +
 `rest:method:path:uriTemplate` | 2.14 | The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
 
-| link:null/src/main/docs/rest-api-component.adoc[REST API] (null) +
+| link:../camel-core/src/main/docs/rest-api-component.adoc[REST API] (camel-core) +
 `rest-api:path/contextIdPattern` | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
 
-| link:null/src/main/docs/rest-swagger-component.adoc[REST Swagger] (null) +
+| link:camel-rest-swagger/src/main/docs/rest-swagger-component.adoc[REST Swagger] (camel-rest-swagger) +
 `rest-swagger:specificationUri#operationId` | 2.19 | An awesome REST endpoint backed by Swagger specifications.
 
-| link:null/src/main/docs/restlet-component.adoc[Restlet] (null) +
+| link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
 `restlet:protocol:host:port/uriPattern` | 2.0 | Component for consuming and producing Restful resources using Restlet.
 
-| link:null/src/main/docs/rmi-component.adoc[RMI] (null) +
+| link:camel-rmi/src/main/docs/rmi-component.adoc[RMI] (camel-rmi) +
 `rmi:hostname:port/name` | 1.0 | The rmi component is for invoking Java RMI beans from Camel.
 
-| link:null/src/main/docs/rss-component.adoc[RSS] (null) +
+| link:camel-rss/src/main/docs/rss-component.adoc[RSS] (camel-rss) +
 `rss:feedUri` | 2.0 | The rss component is used for consuming RSS feeds.
 
-| link:null/src/main/docs/saga-component.adoc[Saga] (null) +
+| link:../camel-core/src/main/docs/saga-component.adoc[Saga] (camel-core) +
 `saga:action` | 2.21 | The saga component provides access to advanced options for managing the flow in the Saga EIP.
 
-| link:null/src/main/docs/salesforce-component.adoc[Salesforce] (null) +
+| link:camel-salesforce/camel-salesforce-component/src/main/docs/salesforce-component.adoc[Salesforce] (camel-salesforce) +
 `salesforce:operationName:topicName` | 2.12 | The salesforce component is used for integrating Camel with the massive Salesforce API.
 
-| link:null/src/main/docs/sap-netweaver-component.adoc[SAP NetWeaver] (null) +
+| link:camel-sap-netweaver/src/main/docs/sap-netweaver-component.adoc[SAP NetWeaver] (camel-sap-netweaver) +
 `sap-netweaver:url` | 2.12 | The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
 
-| link:null/src/main/docs/scheduler-component.adoc[Scheduler] (null) +
+| link:../camel-core/src/main/docs/scheduler-component.adoc[Scheduler] (camel-core) +
 `scheduler:name` | 2.15 | The scheduler component is used for generating message exchanges when a scheduler fires.
 
-| link:null/src/main/docs/schematron-component.adoc[Schematron] (null) +
+| link:camel-schematron/src/main/docs/schematron-component.adoc[Schematron] (camel-schematron) +
 `schematron:path` | 2.15 | Validates the payload of a message using the Schematron Library.
 
-| link:null/src/main/docs/scp-component.adoc[SCP] (null) +
+| link:camel-jsch/src/main/docs/scp-component.adoc[SCP] (camel-jsch) +
 `scp:host:port/directoryName` | 2.10 | To copy files using the secure copy protocol (SCP).
 
-| link:null/src/main/docs/seda-component.adoc[SEDA] (null) +
+| link:../camel-core/src/main/docs/seda-component.adoc[SEDA] (camel-core) +
 `seda:name` | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
 
-| link:null/src/main/docs/service-component.adoc[Service] (null) +
+| link:camel-service/src/main/docs/service-component.adoc[Service] (camel-service) +
 `service:serviceName:delegateUri` | 2.22 | Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
 
-| link:null/src/main/docs/servicenow-component.adoc[ServiceNow] (null) +
+| link:camel-servicenow/camel-servicenow-component/src/main/docs/servicenow-component.adoc[ServiceNow] (camel-servicenow) +
 `servicenow:instanceName` | 2.18 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
 
-| link:null/src/main/docs/servlet-component.adoc[Servlet] (null) +
+| link:camel-servlet/src/main/docs/servlet-component.adoc[Servlet] (camel-servlet) +
 `servlet:contextPath` | 2.0 | To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
 
-| link:null/src/main/docs/sftp-component.adoc[SFTP] (null) +
+| link:camel-ftp/src/main/docs/sftp-component.adoc[SFTP] (camel-ftp) +
 `sftp:host:port/directoryName` | 1.1 | The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
 
-| link:null/src/main/docs/sjms-component.adoc[Simple JMS] (null) +
+| link:camel-sjms/src/main/docs/sjms-component.adoc[Simple JMS] (camel-sjms) +
 `sjms:destinationType:destinationName` | 2.11 | The sjms component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 1.x API).
 
-| link:null/src/main/docs/sjms-batch-component.adoc[Simple JMS Batch] (null) +
+| link:camel-sjms/src/main/docs/sjms-batch-component.adoc[Simple JMS Batch] (camel-sjms) +
 `sjms-batch:destinationName` | 2.16 | The sjms-batch component is a specialized for highly performant, transactional batch consumption from a JMS queue.
 
-| link:null/src/main/docs/sjms2-component.adoc[Simple JMS2] (null) +
+| link:camel-sjms2/src/main/docs/sjms2-component.adoc[Simple JMS2] (camel-sjms2) +
 `sjms2:destinationType:destinationName` | 2.19 | The sjms2 component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic (uses JMS 2.x API).
 
-| link:null/src/main/docs/sip-component.adoc[SIP] (null) +
+| link:camel-sip/src/main/docs/sip-component.adoc[SIP] (camel-sip) +
 `sip:uri` | 2.5 | To send and receive messages using the SIP protocol (used in telco and mobile).
 
-| link:null/src/main/docs/slack-component.adoc[Slack] (null) +
+| link:camel-slack/src/main/docs/slack-component.adoc[Slack] (camel-slack) +
 `slack:channel` | 2.16 | The slack component allows you to send messages to Slack.
 
-| link:null/src/main/docs/smpp-component.adoc[SMPP] (null) +
+| link:camel-smpp/src/main/docs/smpp-component.adoc[SMPP] (camel-smpp) +
 `smpp:host:port` | 2.2 | To send and receive SMS using a SMSC (Short Message Service Center).
 
-| link:null/src/main/docs/snmp-component.adoc[SNMP] (null) +
+| link:camel-snmp/src/main/docs/snmp-component.adoc[SNMP] (camel-snmp) +
 `snmp:host:port` | 2.1 | The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
 
-| link:null/src/main/docs/solr-component.adoc[Solr] (null) +
+| link:camel-solr/src/main/docs/solr-component.adoc[Solr] (camel-solr) +
 `solr:url` | 2.9 | The solr component allows you to interface with an Apache Lucene Solr server.
 
-| link:null/src/main/docs/spark-rest-component.adoc[Spark Rest] (null) +
+| link:camel-spark-rest/src/main/docs/spark-rest-component.adoc[Spark Rest] (camel-spark-rest) +
 `spark-rest:verb:path` | 2.14 | The spark-rest component is used for hosting REST services which has been defined using Camel rest-dsl.
 
-| link:null/src/main/docs/splunk-component.adoc[Splunk] (null) +
+| link:camel-splunk/src/main/docs/splunk-component.adoc[Splunk] (camel-splunk) +
 `splunk:name` | 2.13 | The splunk component allows to publish or search for events in Splunk.
 
-| link:null/src/main/docs/spring-batch-component.adoc[Spring Batch] (null) +
+| link:camel-spring-batch/src/main/docs/spring-batch-component.adoc[Spring Batch] (camel-spring-batch) +
 `spring-batch:jobName` | 2.10 | The spring-batch component allows to send messages to Spring Batch for further processing.
 
-| link:null/src/main/docs/spring-event-component.adoc[Spring Event] (null) +
+| link:camel-spring/src/main/docs/spring-event-component.adoc[Spring Event] (camel-spring) +
 `spring-event:name` | 1.4 | The spring-event component allows to listen for Spring Application Events.
 
-| link:null/src/main/docs/spring-integration-component.adoc[Spring Integration] (null) +
+| link:camel-spring-integration/src/main/docs/spring-integration-component.adoc[Spring Integration] (camel-spring-integration) +
 `spring-integration:defaultChannel` | 1.4 | Bridges Camel with Spring Integration.
 
-| link:null/src/main/docs/spring-ldap-component.adoc[Spring LDAP] (null) +
+| link:camel-spring-ldap/src/main/docs/spring-ldap-component.adoc[Spring LDAP] (camel-spring-ldap) +
 `spring-ldap:templateName` | 2.11 | The spring-ldap component allows you to perform searches in LDAP servers using filters as the message payload.
 
-| link:null/src/main/docs/spring-redis-component.adoc[Spring Redis] (null) +
+| link:camel-spring-redis/src/main/docs/spring-redis-component.adoc[Spring Redis] (camel-spring-redis) +
 `spring-redis:host:port` | 2.11 | The spring-redis component allows sending and receiving messages from Redis.
 
-| link:null/src/main/docs/spring-ws-component.adoc[Spring WebService] (null) +
+| link:camel-spring-ws/src/main/docs/spring-ws-component.adoc[Spring WebService] (camel-spring-ws) +
 `spring-ws:type:lookupKey:webServiceEndpointUri` | 2.6 | The spring-ws component is used for SOAP WebServices using Spring WebServices.
 
-| link:null/src/main/docs/sql-component.adoc[SQL] (null) +
+| link:camel-sql/src/main/docs/sql-component.adoc[SQL] (camel-sql) +
 `sql:query` | 1.4 | The sql component allows you to work with databases using JDBC SQL queries.
 
-| link:null/src/main/docs/sql-stored-component.adoc[SQL Stored Procedure] (null) +
+| link:camel-sql/src/main/docs/sql-stored-component.adoc[SQL Stored Procedure] (camel-sql) +
 `sql-stored:template` | 2.17 | The sql component allows you to work with databases using JDBC Stored Procedure queries.
 
-| link:null/src/main/docs/ssh-component.adoc[SSH] (null) +
+| link:camel-ssh/src/main/docs/ssh-component.adoc[SSH] (camel-ssh) +
 `ssh:host:port` | 2.10 | The ssh component enables access to SSH servers such that you can send an SSH command, and process the response.
 
-| link:null/src/main/docs/stax-component.adoc[StAX] (null) +
+| link:camel-stax/src/main/docs/stax-component.adoc[StAX] (camel-stax) +
 `stax:contentHandlerClass` | 2.9 | The stax component allows messages to be process through a SAX ContentHandler.
 
-| link:null/src/main/docs/stomp-component.adoc[Stomp] (null) +
+| link:camel-stomp/src/main/docs/stomp-component.adoc[Stomp] (camel-stomp) +
 `stomp:destination` | 2.12 | The stomp component is used for communicating with Stomp compliant message brokers.
 
-| link:null/src/main/docs/stream-component.adoc[Stream] (null) +
+| link:camel-stream/src/main/docs/stream-component.adoc[Stream] (camel-stream) +
 `stream:kind` | 1.3 | The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file and URL.
 
-| link:null/src/main/docs/string-template-component.adoc[String Template] (null) +
+| link:camel-stringtemplate/src/main/docs/string-template-component.adoc[String Template] (camel-stringtemplate) +
 `string-template:resourceUri` | 1.2 | Transforms the message using a String template.
 
-| link:null/src/main/docs/stub-component.adoc[Stub] (null) +
+| link:../camel-core/src/main/docs/stub-component.adoc[Stub] (camel-core) +
 `stub:name` | 2.10 | The stub component provides a simple way to stub out any physical endpoints while in development or testing.
 
-| link:null/src/main/docs/telegram-component.adoc[Telegram] (null) +
+| link:camel-telegram/src/main/docs/telegram-component.adoc[Telegram] (camel-telegram) +
 `telegram:type/authorizationToken` | 2.18 | The telegram component provides access to the Telegram Bot API.
 
-| link:null/src/main/docs/test-component.adoc[Test] (null) +
+| link:../camel-core/src/main/docs/test-component.adoc[Test] (camel-core) +
 `test:name` | 1.3 | The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
 
-| link:null/src/main/docs/thrift-component.adoc[Thrift] (null) +
+| link:camel-thrift/src/main/docs/thrift-component.adoc[Thrift] (camel-thrift) +
 `thrift:host:port/service` | 2.20 | The Thrift component allows to call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism
 
-| link:null/src/main/docs/tika-component.adoc[Tika] (null) +
-`tika:operation` | 2.19 | null
+| link:camel-tika/src/main/docs/tika-component.adoc[Tika] (camel-tika) +
+`tika:operation` | 2.19 | This component integrates with Apache Tika to extract content and metadata from thousands of file types.
 
-| link:null/src/main/docs/timer-component.adoc[Timer] (null) +
+| link:../camel-core/src/main/docs/timer-component.adoc[Timer] (camel-core) +
 `timer:timerName` | 1.0 | The timer component is used for generating message exchanges when a timer fires.
 
-| link:null/src/main/docs/twilio-component.adoc[Twilio] (null) +
+| link:camel-twilio/src/main/docs/twilio-component.adoc[Twilio] (camel-twilio) +
 `twilio:apiName/methodName` | 2.20 | The Twilio component allows you to interact with the Twilio REST APIs using Twilio Java SDK.
 
-| link:null/src/main/docs/twitter-directmessage-component.adoc[Twitter Direct Message] (null) +
+| link:camel-twitter/src/main/docs/twitter-directmessage-component.adoc[Twitter Direct Message] (camel-twitter) +
 `twitter-directmessage:user` | 2.10 | The Twitter Direct Message Component consumes/produces user's direct messages.
 
-| link:null/src/main/docs/twitter-search-component.adoc[Twitter Search] (null) +
+| link:camel-twitter/src/main/docs/twitter-search-component.adoc[Twitter Search] (camel-twitter) +
 `twitter-search:keywords` | 2.10 | The Twitter Search component consumes search results.
 
-| link:null/src/main/docs/twitter-streaming-component.adoc[Twitter Streaming] (null) +
+| link:camel-twitter/src/main/docs/twitter-streaming-component.adoc[Twitter Streaming] (camel-twitter) +
 `twitter-streaming:streamingType` | 2.10 | The Twitter Streaming component consumes twitter statuses using Streaming API.
 
-| link:null/src/main/docs/twitter-timeline-component.adoc[Twitter Timeline] (null) +
+| link:camel-twitter/src/main/docs/twitter-timeline-component.adoc[Twitter Timeline] (camel-twitter) +
 `twitter-timeline:timelineType` | 2.10 | The Twitter Timeline component consumes twitter timeline or update the status of specific user.
 
-| link:null/src/main/docs/undertow-component.adoc[Undertow] (null) +
+| link:camel-undertow/src/main/docs/undertow-component.adoc[Undertow] (camel-undertow) +
 `undertow:httpURI` | 2.16 | The undertow component provides HTTP and WebSocket based endpoints for consuming and producing HTTP/WebSocket requests.
 
-| link:null/src/main/docs/validator-component.adoc[Validator] (null) +
+| link:../camel-core/src/main/docs/validator-component.adoc[Validator] (camel-core) +
 `validator:resourceUri` | 1.1 | Validates the payload of a message using XML Schema and JAXP Validation.
 
-| link:null/src/main/docs/velocity-component.adoc[Velocity] (null) +
+| link:camel-velocity/src/main/docs/velocity-component.adoc[Velocity] (camel-velocity) +
 `velocity:resourceUri` | 1.2 | Transforms the message using a Velocity template.
 
-| link:null/src/main/docs/vertx-component.adoc[Vert.x] (null) +
+| link:camel-vertx/src/main/docs/vertx-component.adoc[Vert.x] (camel-vertx) +
 `vertx:address` | 2.12 | The vertx component is used for sending and receive messages from a vertx event bus.
 
-| link:null/src/main/docs/vm-component.adoc[VM] (null) +
+| link:../camel-core/src/main/docs/vm-component.adoc[VM] (camel-core) +
 `vm:name` | 1.1 | The vm component provides asynchronous call to another endpoint from the same CamelContext.
 
-| link:null/src/main/docs/weather-component.adoc[Weather] (null) +
+| link:camel-weather/src/main/docs/weather-component.adoc[Weather] (camel-weather) +
 `weather:name` | 2.12 | Polls the weather information from Open Weather Map.
 
-| link:null/src/main/docs/web3j-component.adoc[Web3j Ethereum Blockchain] (null) +
+| link:camel-web3j/src/main/docs/web3j-component.adoc[Web3j Ethereum Blockchain] (camel-web3j) +
 `web3j:nodeAddress` | 2.22 | The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
 
-| link:null/src/main/docs/wordpress-component.adoc[Wordpress] (null) +
+| link:camel-wordpress/src/main/docs/wordpress-component.adoc[Wordpress] (camel-wordpress) +
 `wordpress:operationDetail` | 2.21 | Integrates Camel with Wordpress.
 
-| link:null/src/main/docs/xchange-component.adoc[XChange] (null) +
+| link:camel-xchange/src/main/docs/xchange-component.adoc[XChange] (camel-xchange) +
 `xchange:name` | 2.21 | The camel-xchange component provide access to many bitcoin and altcoin exchanges for trading and accessing market data.
 
-| link:null/src/main/docs/xmlsecurity-component.adoc[XML Security] (null) +
+| link:camel-xmlsecurity/src/main/docs/xmlsecurity-component.adoc[XML Security] (camel-xmlsecurity) +
 `xmlsecurity:command:name` | 2.12 | Used to sign and verify exchanges using the XML signature specification.
 
-| link:null/src/main/docs/xmpp-component.adoc[XMPP] (null) +
+| link:camel-xmpp/src/main/docs/xmpp-component.adoc[XMPP] (camel-xmpp) +
 `xmpp:host:port/participant` | 1.0 | To send and receive messages from a XMPP (chat) server.
 
-| link:null/src/main/docs/xquery-component.adoc[XQuery] (null) +
+| link:camel-saxon/src/main/docs/xquery-component.adoc[XQuery] (camel-saxon) +
 `xquery:resourceUri` | 1.0 | Transforms the message using a XQuery template using Saxon.
 
-| link:null/src/main/docs/xslt-component.adoc[XSLT] (null) +
+| link:../camel-core/src/main/docs/xslt-component.adoc[XSLT] (camel-core) +
 `xslt:resourceUri` | 1.3 | Transforms the message using a XSLT template.
 
-| link:null/src/main/docs/yammer-component.adoc[Yammer] (null) +
+| link:camel-yammer/src/main/docs/yammer-component.adoc[Yammer] (camel-yammer) +
 `yammer:function` | 2.12 | The yammer component allows you to interact with the Yammer enterprise social network.
 
-| link:null/src/main/docs/zendesk-component.adoc[Zendesk] (null) +
+| link:camel-zendesk/src/main/docs/zendesk-component.adoc[Zendesk] (camel-zendesk) +
 `zendesk:methodName` | 2.19 | Allows producing messages to manage Zendesk ticket, user, organization, etc.
 
-| link:null/src/main/docs/zookeeper-component.adoc[ZooKeeper] (null) +
+| link:camel-zookeeper/src/main/docs/zookeeper-component.adoc[ZooKeeper] (camel-zookeeper) +
 `zookeeper:serverUrls/path` | 2.9 | The zookeeper component allows interaction with a ZooKeeper cluster.
 
-| link:null/src/main/docs/zookeeper-master-component.adoc[ZooKeeper Master] (null) +
+| link:camel-zookeeper-master/src/main/docs/zookeeper-master-component.adoc[ZooKeeper Master] (camel-zookeeper-master) +
 `zookeeper-master:groupName:consumerEndpointUri` | 2.19 | Represents an endpoint which only becomes active when it obtains the master lock
 
 |===
