@@ -214,6 +214,14 @@ public class PackageComponentMojo extends AbstractMojo {
                 text = text.replace("@@@GROUPID@@@", project.getGroupId());
                 text = text.replace("@@@ARTIFACTID@@@", project.getArtifactId());
                 text = text.replace("@@@VERSIONID@@@", project.getVersion());
+
+                // special for deprecated where you can quickly specify that in the pom.xml name
+                boolean deprecated = project.getName().contains("(deprecated)");
+                if (deprecated) {
+                    // must start with 4 leading spaces as we want to replace the marker in the top of the file
+                    text = text.replaceFirst(" {4}\"deprecated\": false,", "    \"deprecated\": true,");
+                }
+
                 writeText(file, text);
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to update file " + file + ". Reason: " + e, e);
