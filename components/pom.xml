@@ -316,6 +316,7 @@
               <goal>generate-components-list</goal>
               <goal>generate-dataformats-list</goal>
               <goal>generate-languages-list</goal>
+              <goal>generate-others-list</goal>
               <goal>generate-legal</goal>
             </goals>
             <phase>process-classes</phase>
@@ -357,6 +358,9 @@
                 </resource>
                 <resource>
                   <directory>${basedir}/target/generated/camel/languages</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/others</directory>
                 </resource>
                 <resource>
                   <directory>${basedir}/target/generated/camel/legal</directory>
