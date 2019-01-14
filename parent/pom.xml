@@ -2153,11 +2153,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xmlrpc</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-xmlsecurity</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3468,11 +3463,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xchange-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-xmlrpc-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
