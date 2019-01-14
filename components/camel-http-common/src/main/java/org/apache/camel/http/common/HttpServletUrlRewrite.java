@@ -23,9 +23,6 @@ import org.apache.camel.Producer;
 /**
  * Extended {@link UrlRewrite} which leverages {@link HttpServletRequest}
  * during the rewrite process.
- * <p/>
- * For example the camel-urlrewrite component supports
- * {@link HttpServletUrlRewrite} implementations.
  */
 public interface HttpServletUrlRewrite extends UrlRewrite {
 
