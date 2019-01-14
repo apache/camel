@@ -155,7 +155,7 @@ public abstract class HttpsTest extends CamelTestSupport {
     static SSLContextParameters createHttpsParameters(final CamelContext camelContext) throws Exception {
         final TrustManagersParameters trustManagerParameters = new TrustManagersParameters();
         trustManagerParameters.setCamelContext(camelContext);
-        final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance("PKIX");
+        final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         final HttpsSettings httpsSettings = petstore.getOptions().httpsSettings();
         final KeyStore trustStore = CertificateUtils.getKeyStore(Resource.newResource(httpsSettings.keyStorePath()),
             httpsSettings.keyStoreType(), null, httpsSettings.keyStorePassword());

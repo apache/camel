@@ -21,6 +21,7 @@ import java.security.NoSuchProviderException;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.camel.CamelContext;
@@ -100,7 +101,7 @@ public class TrustManagersParametersTest extends AbstractJsseParametersTest {
     @Test
     public void testExplicitProvider() throws Exception {
         TrustManagersParameters tmp = this.createMinimalTrustManagersParameters();
-        tmp.setProvider(KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
+        tmp.setProvider(TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm())
                         .getProvider().getName());
         
         TrustManager[] tms = tmp.createTrustManagers();
