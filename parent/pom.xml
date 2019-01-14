@@ -1858,11 +1858,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-servletlistener</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-sip</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3233,11 +3228,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-servicenow-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-servletlistener-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
