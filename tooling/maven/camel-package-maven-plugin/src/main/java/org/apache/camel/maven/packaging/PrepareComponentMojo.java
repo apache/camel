@@ -88,6 +88,13 @@ public class PrepareComponentMojo extends AbstractMojo {
     protected File schemaOutDir;
 
     /**
+     * The project build directory
+     *
+     */
+    @Parameter(defaultValue="${project.build.directory}")
+    protected File buildDir;
+
+    /**
      * Maven ProjectHelper.
      */
     @Component
@@ -108,7 +115,7 @@ public class PrepareComponentMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareComponent(getLog(), project, projectHelper, componentOutDir, buildContext);
+        prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);
         prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
         prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir, buildContext);
         prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
