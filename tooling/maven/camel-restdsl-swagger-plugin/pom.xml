@@ -32,11 +32,6 @@
   <name>Camel :: Maven Plugins :: Swagger REST DSL Generator Maven plugin</name>
   <description>Maven plugin that generates REST DSL RouteBuilder from Swagger specification</description>
 
-  <properties>
-    <swagger-codegen-maven-plugin-version>2.3.1</swagger-codegen-maven-plugin-version>
-  </properties>
-
-
   <build>
     <plugins>
       <plugin>
@@ -116,6 +111,13 @@
   </dependencies>
 
   <profiles>
+    <profile>
+      <id>fastinstall</id>
+      <properties>
+        <invoker.skip>true</invoker.skip>
+      </properties>
+    </profile>
+
     <profile>
       <id>jigsaw</id>
       <activation>
