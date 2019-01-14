@@ -39,7 +39,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * This component is similar to the scheduler component, but has much less functionality.
  */
 @ManagedResource(description = "Managed TimerEndpoint")
-@UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, consumerClass = TimerConsumer.class, label = "core,scheduling")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "timer", title = "Timer", syntax = "timer:timerName", consumerOnly = true, label = "core,scheduling")
 public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     @UriPath @Metadata(required = true)
     private String timerName;

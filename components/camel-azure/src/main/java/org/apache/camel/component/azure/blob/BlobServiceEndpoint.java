@@ -33,7 +33,6 @@ import org.apache.camel.spi.UriPath;
              scheme = "azure-blob",
              title = "Azure Storage Blob Service", 
              syntax = "azure-blob:containerOrBlobUri", 
-             consumerClass = BlobServiceConsumer.class,
              label = "cloud,database,nosql")
 public class BlobServiceEndpoint extends DefaultEndpoint {
 

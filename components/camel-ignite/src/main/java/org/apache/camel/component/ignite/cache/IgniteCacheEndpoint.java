@@ -41,8 +41,7 @@ import org.apache.ignite.cache.query.Query;
  * This offers both a Producer (to invoke cache operations on an Ignite cache) and
  * a Consumer (to consume changes from a continuous query).
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-cache", title = "Ignite Cache", syntax = "ignite-cache:cacheName", label = "nosql,cache,compute",
-    consumerClass = IgniteCacheContinuousQueryConsumer.class)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-cache", title = "Ignite Cache", syntax = "ignite-cache:cacheName", label = "nosql,cache,compute")
 public class IgniteCacheEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath @Metadata(required = true)

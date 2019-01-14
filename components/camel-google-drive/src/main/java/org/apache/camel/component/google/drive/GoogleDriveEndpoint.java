@@ -36,7 +36,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * The google-drive component provides access to Google Drive file storage service.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "google-drive", title = "Google Drive", syntax = "google-drive:apiName/methodName",
-consumerClass = GoogleDriveConsumer.class, consumerPrefix = "consumer", label = "api,cloud,file")
+             consumerPrefix = "consumer", label = "api,cloud,file")
 public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName, GoogleDriveConfiguration> {
     private Object apiProxy;
 

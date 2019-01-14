@@ -38,7 +38,6 @@ import org.schwering.irc.lib.IRCUser;
     title = "IRC", 
     syntax = "irc:hostname:port", 
     alternativeSyntax = "irc:username:password@hostname:port", 
-    consumerClass = IrcConsumer.class, 
     label = "chat")
 public class IrcEndpoint extends DefaultEndpoint {
 

@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The stream: component provides access to the system-in, system-out and system-err streams as well as allowing streaming of file and URL.
  */
-@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", consumerClass = StreamConsumer.class, label = "file,system")
+@UriEndpoint(firstVersion = "1.3.0", scheme = "stream", title = "Stream", syntax = "stream:kind", label = "file,system")
 public class StreamEndpoint extends DefaultEndpoint {
 
     private transient Charset charset;

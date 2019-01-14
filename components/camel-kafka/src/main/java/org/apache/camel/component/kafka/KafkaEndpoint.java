@@ -42,7 +42,7 @@ import org.apache.kafka.common.serialization.Serializer;
 /**
  * The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic", consumerClass = KafkaConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "kafka", title = "Kafka", syntax = "kafka:topic", label = "messaging")
 public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     @UriParam

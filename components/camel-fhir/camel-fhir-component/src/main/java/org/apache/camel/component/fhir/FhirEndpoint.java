@@ -50,7 +50,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * The fhir component is used for working with the FHIR protocol (health care).
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "fhir", title = "FHIR", syntax = "fhir:apiName/methodName",
-        consumerClass = FhirConsumer.class, label = "hl7,api")
+        label = "hl7,api")
 public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfiguration> {
 
     private static final String EXTRA_PARAMETERS_PROPERTY = "extraParameters";

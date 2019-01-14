@@ -36,7 +36,6 @@ import org.apache.camel.spi.UriParam;
              scheme = "google-calendar-stream",
              title = "Google Calendar Stream",
              syntax = "google-calendar-stream:index",
-             consumerClass = GoogleCalendarStreamConsumer.class,
              consumerOnly = true,
              label = "api,cloud")
 public class GoogleCalendarStreamEndpoint extends ScheduledPollEndpoint {

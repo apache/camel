@@ -38,7 +38,7 @@ import org.apache.camel.spi.UriPath;
  * This requires using PostgreSQL 8.3 or newer.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "pgevent", title = "PostgresSQL Event", syntax = "pgevent:host:port/database/channel",
-    consumerClass = PgEventConsumer.class, label = "database,sql")
+    label = "database,sql")
 public class PgEventEndpoint extends DefaultEndpoint {
 
     private static final String FORMAT1 = "^pgevent://([^:]*):(\\d+)/(\\w+)/(\\w+).*$";

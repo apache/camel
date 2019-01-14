@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * For reading/writing from/to Infinispan distributed key/value store and data grid.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:cacheName", consumerClass = InfinispanConsumer.class, label = "cache,datagrid,clustering")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:cacheName", label = "cache,datagrid,clustering")
 public class InfinispanEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The cache to use")

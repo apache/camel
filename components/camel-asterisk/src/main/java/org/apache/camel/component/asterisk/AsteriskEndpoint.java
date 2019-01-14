@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The asterisk component is used to interact with Asterisk PBX Server.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", consumerClass = AsteriskConsumer.class, label = "voip")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", label = "voip")
 public class AsteriskEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of component")
     @Metadata(required = true)

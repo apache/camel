@@ -42,7 +42,7 @@ import org.apache.commons.net.ftp.FTPSClient;
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "ftps", extendsScheme = "file", title = "FTPS",
         syntax = "ftps:host:port/directoryName", alternativeSyntax = "ftps:username:password@host:port/directoryName",
-        consumerClass = FtpConsumer.class, label = "file")
+        label = "file")
 @ManagedResource(description = "Managed FtpsEndpoint")
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     @UriParam

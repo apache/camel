@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriParam;
  *  The sftp (FTP over SSH) component is used for uploading or downloading files from SFTP servers.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP",
-        syntax = "sftp:host:port/directoryName", consumerClass = SftpConsumer.class, label = "file",
+        syntax = "sftp:host:port/directoryName", label = "file",
         excludeProperties = "binary,passiveMode,receiveBufferSize,siteCommand")
 public class SftpEndpoint extends RemoteFileEndpoint<SftpRemoteFile> {
 

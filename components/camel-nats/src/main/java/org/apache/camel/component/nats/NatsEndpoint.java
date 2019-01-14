@@ -37,7 +37,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * The nats component allows you produce and consume messages from <a href="http://nats.io/">NATS</a>.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:servers", label = "messaging", consumerClass = NatsConsumer.class)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "nats", title = "Nats", syntax = "nats:servers", label = "messaging")
 public class NatsEndpoint extends DefaultEndpoint {
 
     @UriParam

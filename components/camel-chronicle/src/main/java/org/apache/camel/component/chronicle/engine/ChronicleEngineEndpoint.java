@@ -35,7 +35,6 @@ import org.apache.camel.spi.UriPath;
     scheme = "chronicle-engine",
     title = "Chronicle Engine",
     syntax = "chronicle-engine:addresses/path", 
-    consumerClass = ChronicleEngineConsumer.class, 
     label = "datagrid,cache")
 public class ChronicleEngineEndpoint extends DefaultEndpoint {
 

@@ -44,7 +44,6 @@ import org.apache.camel.spi.UriPath;
     firstVersion = "2.22.0",
     scheme = "service",
     syntax = "service:serviceName:delegateUri",
-    consumerClass = ServiceConsumer.class,
     consumerOnly = true,
     title = "Service",
     lenientProperties = true,

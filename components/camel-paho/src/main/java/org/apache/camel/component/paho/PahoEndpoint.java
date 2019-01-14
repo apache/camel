@@ -39,7 +39,7 @@ import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 /**
  * Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging,iot", syntax = "paho:topic")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", label = "messaging,iot", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
 
     // Configuration members

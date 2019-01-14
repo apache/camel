@@ -36,7 +36,7 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 /**
  * The spring-event component allows to listen for Spring Application Events.
  */
-@UriEndpoint(firstVersion = "1.4.0", scheme = "spring-event", title = "Spring Event", syntax = "spring-event:name", consumerClass = EventConsumer.class, label = "spring,eventbus")
+@UriEndpoint(firstVersion = "1.4.0", scheme = "spring-event", title = "Spring Event", syntax = "spring-event:name", label = "spring,eventbus")
 public class EventEndpoint extends DefaultEndpoint implements ApplicationContextAware {
     private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;

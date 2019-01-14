@@ -52,7 +52,7 @@ import org.xnio.Options;
  * The undertow component provides HTTP and WebSocket based endpoints for consuming and producing HTTP/WebSocket requests.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "undertow", title = "Undertow", syntax = "undertow:httpURI",
-        consumerClass = UndertowConsumer.class, label = "http,websocket", lenientProperties = true)
+        label = "http,websocket", lenientProperties = true)
 public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, DiscoverableService {
 
     private UndertowComponent component;

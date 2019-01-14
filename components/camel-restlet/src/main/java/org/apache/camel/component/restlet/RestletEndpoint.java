@@ -41,7 +41,7 @@ import org.restlet.data.Method;
  * Component for consuming and producing Restful resources using Restlet.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern",
-        consumerClass = RestletConsumer.class, label = "rest", lenientProperties = true)
+        label = "rest", lenientProperties = true)
 public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";

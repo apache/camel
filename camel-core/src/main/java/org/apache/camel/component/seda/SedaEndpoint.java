@@ -51,7 +51,7 @@ import org.apache.camel.util.URISupport;
  * The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
  */
 @ManagedResource(description = "Managed SedaEndpoint")
-@UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name", consumerClass = SedaConsumer.class, label = "core,endpoint")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "seda", title = "SEDA", syntax = "seda:name", label = "core,endpoint")
 public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, BrowsableEndpoint, MultipleConsumersSupport {
 
     private final Set<SedaProducer> producers = new CopyOnWriteArraySet<>();

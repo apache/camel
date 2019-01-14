@@ -35,7 +35,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * The ironmq provides integration with <a href="https://www.iron.io/">IronMQ</a> an elastic and durable hosted message queue as a service.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ", consumerClass = IronMQConsumer.class, label = "cloud,messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ", label = "cloud,messaging")
 public class IronMQEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
  * Represents an endpoint which only becomes active when it obtains the master lock
  */
 @ManagedResource(description = "Managed ZooKeeper Master Endpoint")
-@UriEndpoint(firstVersion = "2.19.0", scheme = "zookeeper-master", syntax = "zookeeper-master:groupName:consumerEndpointUri", consumerClass = MasterConsumer.class, consumerOnly = true,
+@UriEndpoint(firstVersion = "2.19.0", scheme = "zookeeper-master", syntax = "zookeeper-master:groupName:consumerEndpointUri", consumerOnly = true,
     title = "ZooKeeper Master", lenientProperties = true, label = "clustering")
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 

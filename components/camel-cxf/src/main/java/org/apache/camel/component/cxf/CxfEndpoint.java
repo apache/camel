@@ -117,7 +117,7 @@ import org.apache.cxf.wsdl.WSDLManager;
 /**
  * The cxf component is used for SOAP WebServices using Apache CXF.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "cxf", title = "CXF", syntax = "cxf:beanId:address", consumerClass = CxfConsumer.class, label = "soap,webservice")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "cxf", title = "CXF", syntax = "cxf:beanId:address", label = "soap,webservice")
 public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, Service, Cloneable {
 
     @UriParam(label = "advanced")

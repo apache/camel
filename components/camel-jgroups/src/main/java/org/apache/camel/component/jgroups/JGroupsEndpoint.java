@@ -35,7 +35,7 @@ import org.jgroups.View;
 /**
  * The jgroups component provides exchange of messages between Camel and JGroups clusters.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName", consumerClass = JGroupsConsumer.class, label = "clustering,messaging")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "jgroups", title = "JGroups", syntax = "jgroups:clusterName", label = "clustering,messaging")
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";

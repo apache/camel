@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * The splunk component allows to publish or search for events in Splunk.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", consumerClass = SplunkConsumer.class, label = "log,monitoring")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", label = "log,monitoring")
 public class SplunkEndpoint extends ScheduledPollEndpoint {
 
     private static final Pattern SPLUNK_SCHEMA_PATTERN = Pattern.compile("splunk:(//)*");

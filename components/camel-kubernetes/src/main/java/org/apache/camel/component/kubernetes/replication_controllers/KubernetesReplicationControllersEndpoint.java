@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * operations and a consumer to consume replication controller events.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-replication-controllers", title = "Kubernetes Replication Controller",
-    syntax = "kubernetes-replication-controllers:masterUrl", consumerClass = KubernetesReplicationControllersConsumer.class, label = "container,cloud,paas")
+    syntax = "kubernetes-replication-controllers:masterUrl", label = "container,cloud,paas")
 public class KubernetesReplicationControllersEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesReplicationControllersEndpoint(String uri, KubernetesReplicationControllersComponent component, KubernetesConfiguration config) {

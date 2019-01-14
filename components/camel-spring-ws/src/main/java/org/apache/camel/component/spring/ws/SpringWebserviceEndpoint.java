@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriParam;
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "spring-ws", title = "Spring WebService",
         syntax = "spring-ws:type:lookupKey:webServiceEndpointUri",
-        consumerClass = SpringWebserviceConsumer.class, label = "soap,webservice")
+        label = "spring,soap,webservice")
 public class SpringWebserviceEndpoint extends DefaultEndpoint {
 
     @UriParam

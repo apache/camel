@@ -39,7 +39,6 @@ import org.apache.camel.spi.UriPath;
     firstVersion = "2.20.0",
     scheme = "master",
     syntax = "master:namespace:delegateUri",
-    consumerClass = MasterConsumer.class,
     consumerOnly = true,
     title = "Master",
     lenientProperties = true,

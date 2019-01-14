@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * and a consumer to consume service events.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-services", title = "Kubernetes Services",
-    syntax = "kubernetes-services:masterUrl", consumerClass = KubernetesServicesConsumer.class, label = "container,cloud,paas")
+    syntax = "kubernetes-services:masterUrl", label = "container,cloud,paas")
 public class KubernetesServicesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesServicesEndpoint(String uri, KubernetesServicesComponent component, KubernetesConfiguration config) {
