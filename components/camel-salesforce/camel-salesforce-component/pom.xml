@@ -277,7 +277,7 @@ https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
           </plugin>
           <plugin>
             <artifactId>maven-resources-plugin</artifactId>
-            <version>3.0.2</version>
+            <version>${maven-resources-plugin-version}</version>
             <executions>
               <execution>
                 <id>copy-test-salesforce-login-properties</id>
