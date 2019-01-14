@@ -51,7 +51,7 @@ import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.
  * It allows producing messages to retrieve, add, and delete posts, likes, comments, photos, albums, videos, photos,
  * checkins, locations, links, etc. It also supports APIs that allow polling for posts, users, checkins, groups, locations, etc.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", consumerClass = FacebookConsumer.class, label = "social")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "facebook", title = "Facebook", syntax = "facebook:methodName", label = "social")
 public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstants {
 
     private FacebookNameStyle nameStyle;

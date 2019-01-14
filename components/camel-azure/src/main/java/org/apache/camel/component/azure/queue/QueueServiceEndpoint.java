@@ -33,7 +33,6 @@ import org.apache.camel.spi.UriPath;
              scheme = "azure-queue",
              title = "Azure Storage Queue Service", 
              syntax = "azure-blob:containerAndQueueUri", 
-             consumerClass = QueueServiceConsumer.class,
              label = "cloud,queue,azure")
 public class QueueServiceEndpoint extends DefaultEndpoint {
 

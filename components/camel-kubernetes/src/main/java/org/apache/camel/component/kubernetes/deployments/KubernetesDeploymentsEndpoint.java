@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * and a consumer to consume node events.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "kubernetes-deployments", title = "Kubernetes Deployments",
-    syntax = "kubernetes-deployments:masterUrl", consumerClass = KubernetesDeploymentsConsumer.class, label = "container,cloud,paas")
+    syntax = "kubernetes-deployments:masterUrl", label = "container,cloud,paas")
 public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesDeploymentsEndpoint(String uri, KubernetesDeploymentsComponent component, KubernetesConfiguration config) {

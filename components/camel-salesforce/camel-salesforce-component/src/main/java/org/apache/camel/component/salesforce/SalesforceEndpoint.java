@@ -31,7 +31,7 @@ import org.eclipse.jetty.client.HttpClient;
 /**
  * The salesforce component is used for integrating Camel with the massive Salesforce API.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm", consumerClass = SalesforceConsumer.class)
+@UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm")
 public class SalesforceEndpoint extends DefaultEndpoint {
 
     @UriPath(label = "producer", description = "The operation to use", enums = "getVersions,getResources,"

@@ -38,7 +38,7 @@ import org.zendesk.client.v2.Zendesk;
  * Allows producing messages to manage Zendesk ticket, user, organization, etc.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "zendesk", title = "Zendesk", syntax = "zendesk:methodName",
-    consumerClass = ZendeskConsumer.class, consumerPrefix = "consumer", label = "api,support,cloud", lenientProperties = true)
+    consumerPrefix = "consumer", label = "api,support,cloud", lenientProperties = true)
 public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, ZendeskConfiguration> {
 
     @UriParam

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * For uploading, downloading and managing files, folders, groups, collaborations, etc on dropbox DOT com.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", consumerClass = DropboxScheduledPollConsumer.class, label = "api,file")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", label = "api,file")
 public class DropboxEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);

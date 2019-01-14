@@ -36,7 +36,7 @@ import org.apache.camel.support.component.ApiMethodPropertiesHelper;
  * The google-sheets component provides access to Google Sheets.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = "google-sheets", title = "Google Sheets", 
-             syntax = "google-sheets:apiName/methodName", consumerClass = GoogleSheetsConsumer.class, consumerPrefix = "consumer", label = "api,cloud,sheets")
+             syntax = "google-sheets:apiName/methodName", consumerPrefix = "consumer", label = "api,cloud,sheets")
 public class GoogleSheetsEndpoint extends AbstractApiEndpoint<GoogleSheetsApiName, GoogleSheetsConfiguration> {
 
     @UriParam

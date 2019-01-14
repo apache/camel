@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The jgroups component provides exchange of messages between Camel and JGroups clusters.
  */
-@UriEndpoint(firstVersion = "2.24.0", scheme = "jgroups-raft", title = "JGroups raft", syntax = "jgroup-raft:clusterName", consumerClass = JGroupsRaftConsumer.class, label = "clustering,messaging")
+@UriEndpoint(firstVersion = "2.24.0", scheme = "jgroups-raft", title = "JGroups raft", syntax = "jgroup-raft:clusterName", label = "clustering,messaging")
 public class JGroupsRaftEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsRaftEndpoint.class);
 

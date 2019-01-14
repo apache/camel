@@ -57,7 +57,7 @@ import org.apache.camel.util.ObjectHelper;
  * The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "aws-sqs", title = "AWS Simple Queue Service", syntax = "aws-sqs:queueNameOrArn",
-    consumerClass = SqsConsumer.class, label = "cloud,messaging")
+    label = "cloud,messaging")
 public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterStrategyAware {
 
     private AmazonSQS client;

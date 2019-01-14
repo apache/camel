@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriEndpoint;
  * such as controlling electric power transmission grids and other geographically widespread control systems.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "iec60870-client", syntax = "iec60870-client:uriPath",
-    title = "IEC 60870 Client", consumerClass = ClientConsumer.class, label = "iot")
+    title = "IEC 60870 Client", label = "iot")
 public class ClientEndpoint extends AbstractIecEndpoint<ClientConnectionMultiplexor> {
 
     public ClientEndpoint(final String uri, final DefaultComponent component, final ClientConnectionMultiplexor connection, final ObjectAddress address) {

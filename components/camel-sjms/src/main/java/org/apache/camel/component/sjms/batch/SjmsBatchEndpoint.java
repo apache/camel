@@ -48,7 +48,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * The sjms-batch component is a specialized for highly performant, transactional batch consumption from a JMS queue.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "sjms-batch", title = "Simple JMS Batch", syntax = "sjms-batch:destinationName",
-        consumerClass = SjmsBatchComponent.class, label = "messaging", consumerOnly = true)
+        label = "messaging", consumerOnly = true)
 public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     public static final int DEFAULT_COMPLETION_SIZE = 200; // the default dispatch queue size in ActiveMQ

@@ -57,7 +57,7 @@ import static org.apache.camel.component.mongodb3.MongoDbOutputType.MongoIterabl
  * Component for working with documents stored in MongoDB database.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "mongodb3", title = "MongoDB", syntax = "mongodb3:connectionBean",
-    consumerClass = MongoDbTailableCursorConsumer.class, label = "database,nosql")
+    label = "database,nosql")
 public class MongoDbEndpoint extends DefaultEndpoint {
 
     private MongoClient mongoConnection;

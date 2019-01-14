@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * and a consumer to consume namespace events.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-namespaces", title = "Kubernetes Namespaces",
-    syntax = "kubernetes-namespaces:masterUrl", consumerClass = KubernetesNamespacesConsumer.class, label = "container,cloud,paas")
+    syntax = "kubernetes-namespaces:masterUrl", label = "container,cloud,paas")
 public class KubernetesNamespacesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesNamespacesEndpoint(String uri, KubernetesNamespacesComponent component, KubernetesConfiguration config) {

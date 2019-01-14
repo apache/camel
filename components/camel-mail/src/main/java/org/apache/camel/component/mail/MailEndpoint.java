@@ -35,7 +35,7 @@ import org.apache.camel.spi.UriParam;
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
         syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
-        consumerClass = MailConsumer.class, label = "mail")
+        label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {
 
     @UriParam(optionalPrefix = "consumer.", defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",

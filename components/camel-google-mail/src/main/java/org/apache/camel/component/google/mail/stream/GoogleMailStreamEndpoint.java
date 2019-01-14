@@ -46,7 +46,6 @@ import org.apache.camel.util.ObjectHelper;
              scheme = "google-mail-stream",
              title = "Google Mail Stream",
              syntax = "google-mail-stream:index",
-             consumerClass = GoogleMailStreamConsumer.class,
              consumerOnly = true,
              label = "api,cloud,mail")
 public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {

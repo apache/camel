@@ -37,7 +37,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "beanstalk", title = "Beanstalk", syntax = "beanstalk:connectionSettings", consumerClass = BeanstalkConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "beanstalk", title = "Beanstalk", syntax = "beanstalk:connectionSettings", label = "messaging")
 public class BeanstalkEndpoint extends ScheduledPollEndpoint implements AsyncEndpoint {
     final ConnectionSettings conn;
 

@@ -32,7 +32,6 @@ import org.apache.camel.spi.UriParam;
     scheme = "atomix-queue",
     title = "Atomix Queue",
     syntax = "atomix-queue:resourceName",
-    consumerClass = AtomixQueueConsumer.class,
     label = "clustering")
 final class AtomixQueueEndpoint extends AbstractAtomixClientEndpoint<AtomixQueueComponent, AtomixQueueConfiguration> {
     @UriParam

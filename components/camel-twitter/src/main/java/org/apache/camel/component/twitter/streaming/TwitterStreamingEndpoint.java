@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
  * The Twitter Streaming component consumes twitter statuses using Streaming API.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-streaming", title = "Twitter Streaming", syntax = "twitter-streaming:streamingType",
-    consumerClass = AbstractStreamingConsumerHandler.class, consumerOnly = true, label = "api,social")
+    consumerOnly = true, label = "api,social")
 public class TwitterStreamingEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The streaming type to consume.")
