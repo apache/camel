@@ -313,10 +313,7 @@
           <execution>
             <id>generate</id>
             <goals>
-              <goal>generate-components-list</goal>
-              <goal>generate-dataformats-list</goal>
-              <goal>generate-languages-list</goal>
-              <goal>generate-others-list</goal>
+              <goal>prepare-components</goal>
               <goal>generate-legal</goal>
             </goals>
             <phase>process-classes</phase>
