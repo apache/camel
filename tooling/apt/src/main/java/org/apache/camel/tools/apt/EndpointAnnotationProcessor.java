@@ -362,11 +362,11 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         model.setDeprecationNote(deprecationNote);
 
         // these information is not available at compile time and we enrich these later during the camel-package-maven-plugin
-        model.setJavaType("REPLACE-ME");
-        model.setDescription("REPLACE-ME");
-        model.setGroupId("REPLACE-ME");
-        model.setArtifactId("REPLACE-ME");
-        model.setVersionId("REPLACE-ME");
+        model.setJavaType("@@@JAVATYPE@@@");
+        model.setDescription("@@@DESCRIPTION@@@");
+        model.setGroupId("@@@GROUPID@@@");
+        model.setArtifactId("@@@ARTIFACTID@@@");
+        model.setVersionId("@@@VERSIONID@@@");
 
         // favor to use endpoint class javadoc as description
         Elements elementUtils = processingEnv.getElementUtils();
