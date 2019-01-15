@@ -84,7 +84,6 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
@@ -138,6 +137,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
@@ -163,6 +163,7 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -2404,7 +2405,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public String getPropertyPrefixToken() {
-        PropertiesComponent pc = getPropertiesComponent();
+        PropertiesComponent pc = getPropertiesComponent(false);
 
         if (pc != null) {
             return pc.getPrefixToken();
@@ -2414,7 +2415,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public String getPropertySuffixToken() {
-        PropertiesComponent pc = getPropertiesComponent();
+        PropertiesComponent pc = getPropertiesComponent(false);
 
         if (pc != null) {
             return pc.getSuffixToken();
@@ -2427,14 +2428,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         // While it is more efficient to only do the lookup if we are sure we need the component,
         // with custom tokens, we cannot know if the URI contains a property or not without having
         // the component.  We also lose fail-fast behavior for the missing component with this change.
-        PropertiesComponent pc = getPropertiesComponent();
+        PropertiesComponent pc = getPropertiesComponent(false);
 
         // Do not parse uris that are designated for the properties component as it will handle that itself
         if (text != null && !text.startsWith("properties:")) {
             // No component, assume default tokens.
             if (pc == null && text.contains(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
                 // lookup existing properties component, or force create a new default component
-                pc = PropertiesComponent.lookupPropertiesComponent(this, true);
+                pc = getPropertiesComponent(true);
             }
 
             if (pc != null && text.contains(pc.getPrefixToken())) {
@@ -3354,7 +3355,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
         // eager lookup any configured properties component to avoid subsequent lookup attempts which may impact performance
         // due we use properties component for property placeholder resolution at runtime
-        PropertiesComponent existing = PropertiesComponent.lookupPropertiesComponent(this, false);
+        PropertiesComponent existing = getPropertiesComponent(false);
         if (existing != null) {
             // store reference to the existing properties component
             propertiesComponent = existing;
@@ -4098,10 +4099,34 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     /**
-     * Gets the properties component in use.
-     * Returns {@code null} if no properties component is in use.
+     * Gets the properties component in use, eventually creating it.
      */
-    protected PropertiesComponent getPropertiesComponent() {
+    public PropertiesComponent getPropertiesComponent() {
+        return getPropertiesComponent(true);
+    }
+
+    public PropertiesComponent getPropertiesComponent(boolean autoCreate) {
+        if (propertiesComponent == null && autoCreate) {
+            Object comp = ResolverHelper.lookupComponentInRegistryWithFallback(this, "properties");
+            if (comp == null) {
+                try {
+                    Class<?> type = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH).findClass("properties");
+                    if (type != null) {
+                        log.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
+                        comp = type.newInstance();
+                        globalOptions.put(PropertiesComponent.DEFAULT_CREATED, "true");
+                    }
+                } catch (Exception e) {
+                    throw new IllegalArgumentException("No Component registered for scheme: " + "properties", e);
+                }
+            }
+            if (comp instanceof PropertiesComponent) {
+                addComponent("properties", (PropertiesComponent) comp);
+            }
+            if (propertiesComponent == null) {
+                throw new IllegalStateException();
+            }
+        }
         return propertiesComponent;
     }
 

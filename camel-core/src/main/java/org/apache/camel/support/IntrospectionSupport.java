@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -622,7 +622,7 @@ public final class IntrospectionSupport {
 
     private static boolean isPropertyPlaceholder(CamelContext context, Object value) {
         if (context != null) {
-            PropertiesComponent pc = PropertiesComponent.lookupPropertiesComponent(context, false);
+            PropertiesComponent pc = context.getPropertiesComponent(false);
             if (pc != null) {
                 return value.toString().contains(pc.getPrefixToken())
                         && value.toString().contains(pc.getSuffixToken());

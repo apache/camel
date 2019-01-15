@@ -51,6 +51,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
@@ -750,6 +751,21 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the suffix token or {@code null}
      */
     String getPropertySuffixToken();
+
+    /**
+     * Returns the configured properties component or create one if none has been configured.
+     *
+     * @return the properties component
+     */
+    PropertiesComponent getPropertiesComponent();
+
+    /**
+     * Returns the configured properties component or create one if none has been configured.
+     *
+     * @param autoCreate whether the component should be created if none is configured
+     * @return the properties component
+     */
+    PropertiesComponent getPropertiesComponent(boolean autoCreate);
 
     /**
      * Gets a readonly list with the names of the languages currently registered.

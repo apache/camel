@@ -17,7 +17,7 @@
 package org.apache.camel.component.amqp;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.spi.PropertiesComponent;
 
 public class AMQPConnectionDetails {
 
