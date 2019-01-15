@@ -25,6 +25,7 @@ import javax.annotation.processing.Filer;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
@@ -43,8 +44,11 @@ public class TypeConverterProcessor extends AbstractCamelAnnotationProcessor {
             if (element instanceof TypeElement) {
                 TypeElement classElement = (TypeElement) element;
 
-                final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
-                converterClasses.put(javaTypeName, element);
+                // we only support top-level classes (not inner classes)
+                if (classElement.getNestingKind() == NestingKind.TOP_LEVEL) {
+                    final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
+                    converterClasses.put(javaTypeName, element);
+                }
             }
         }
         if (!converterClasses.isEmpty()
