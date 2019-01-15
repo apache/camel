@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -95,7 +94,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
     }
 
-    public static void prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir,
+    public static int prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir,
                                          File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
         File camelMetaDir = new File(dataFormatOutDir, "META-INF/services/org/apache/camel/");
@@ -107,7 +106,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         }
 
         if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/dataformat")) {
-            return;
+            return 0;
         }
 
         Map<String, String> javaTypes = new HashMap<>();
@@ -161,7 +160,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 String json = loadText(is);
 
                                 DataFormatModel dataFormatModel = extractDataFormatModel(project, json, modelName, name, javaType);
-                                log.debug("Model " + dataFormatModel);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Model: " + dataFormatModel);
+                                }
 
                                 // build json schema for the data format
                                 String properties = after(json, "  \"properties\": {");
@@ -171,7 +172,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 properties = prepareJsonProperties(name, properties);
 
                                 String schema = createParameterJsonSchema(dataFormatModel, properties);
-                                log.debug("JSon schema\n" + schema);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("JSon schema:\n" + schema);
+                                }
 
                                 // write this to the directory
                                 File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
@@ -181,6 +184,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 OutputStream fos = buildContext.newFileOutputStream(out);
                                 fos.write(schema.getBytes());
                                 fos.close();
+
+                                buildContext.refresh(out);
+
                                 if (log.isDebugEnabled()) {
                                     log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
                                 }
@@ -221,7 +227,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                     // are the content the same?
                     if (existing.equals(properties)) {
                         log.debug("No dataformat changes detected");
-                        return;
+                        return count;
                     }
                 } catch (IOException e) {
                     // ignore
@@ -235,12 +241,16 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
                 log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "dataformats: " : "dataformat: ") + names);
 
+                buildContext.refresh(outFile);
+
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
             }
         } else {
             log.debug("No META-INF/services/org/apache/camel/dataformat directory found. Are you sure you have created a Camel data format?");
         }
+
+        return count;
     }
 
     private static DataFormatModel extractDataFormatModel(MavenProject project, String json, String modelName, String name, String javaType) throws Exception {

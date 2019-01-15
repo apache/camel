@@ -48,7 +48,7 @@ public final class PackageHelper {
             }
             String path = file.getPath() + "/" + suffix;
             if (log.isDebugEnabled()) {
-                log.debug("checking  if " + path + " (" + r.getDirectory() + "/" + suffix + ") has changed.");
+                log.debug("Checking  if " + path + " (" + r.getDirectory() + "/" + suffix + ") has changed.");
             }
             if (buildContext.hasDelta(path)) {
                 log.debug("Indeed " + suffix + " has changed.");

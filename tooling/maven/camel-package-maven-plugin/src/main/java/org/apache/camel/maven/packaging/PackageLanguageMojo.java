@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -95,7 +94,7 @@ public class PackageLanguageMojo extends AbstractMojo {
         prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir, buildContext);
     }
 
-    public static void prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File languageOutDir,
+    public static int prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File languageOutDir,
                                        File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
         File camelMetaDir = new File(languageOutDir, "META-INF/services/org/apache/camel/");
@@ -107,7 +106,7 @@ public class PackageLanguageMojo extends AbstractMojo {
         }
 
         if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
-            return;
+            return 0;
         }
 
         Map<String, String> javaTypes = new HashMap<>();
@@ -201,12 +200,16 @@ public class PackageLanguageMojo extends AbstractMojo {
                                         languageModel.setFirstVersion(row.get("firstVersion"));
                                     }
                                 }
-                                log.debug("Model " + languageModel);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Model: " + languageModel);
+                                }
 
                                 // build json schema for the data format
                                 String properties = after(json, "  \"properties\": {");
                                 String schema = createParameterJsonSchema(languageModel, properties);
-                                log.debug("JSon schema\n" + schema);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("JSon schema\n" + schema);
+                                }
 
                                 // write this to the directory
                                 File dir = new File(schemaOutDir, schemaSubDirectory(languageModel.getJavaType()));
@@ -218,6 +221,7 @@ public class PackageLanguageMojo extends AbstractMojo {
                                 fos.close();
 
                                 buildContext.refresh(out);
+
                                 if (log.isDebugEnabled()) {
                                     log.debug("Generated " + out + " containing JSon schema for " + name + " language");
                                 }
@@ -258,7 +262,7 @@ public class PackageLanguageMojo extends AbstractMojo {
                     // are the content the same?
                     if (existing.equals(properties)) {
                         log.debug("No language changes detected");
-                        return;
+                        return count;
                     }
                 } catch (IOException e) {
                     // ignore
@@ -272,12 +276,16 @@ public class PackageLanguageMojo extends AbstractMojo {
 
                 log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "languages: " : "language: ") + names);
 
+                buildContext.refresh(outFile);
+
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
             }
         } else {
             log.debug("No META-INF/services/org/apache/camel/language directory found. Are you sure you have created a Camel language?");
         }
+
+        return count;
     }
 
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {

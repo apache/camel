@@ -90,7 +90,7 @@ public class PackageComponentMojo extends AbstractMojo {
         prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);
     }
 
-    public static void prepareComponent(Log log, MavenProject project, MavenProjectHelper projectHelper, File buildDir, File componentOutDir, BuildContext buildContext) throws MojoExecutionException {
+    public static int prepareComponent(Log log, MavenProject project, MavenProjectHelper projectHelper, File buildDir, File componentOutDir, BuildContext buildContext) throws MojoExecutionException {
 
         File camelMetaDir = new File(componentOutDir, "META-INF/services/org/apache/camel/");
 
@@ -101,7 +101,7 @@ public class PackageComponentMojo extends AbstractMojo {
         }
 
         if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/component")) {
-            return;
+            return 0;
         }
 
         StringBuilder buffer = new StringBuilder();
@@ -145,8 +145,10 @@ public class PackageComponentMojo extends AbstractMojo {
             }
         }
 
-        // we need to enrich the component json files with data we know have from this plugin
-        enrichComponentJsonFiles(log, project, buildDir, components);
+        if (count > 0) {
+            // we need to enrich the component json files with data we know have from this plugin
+            enrichComponentJsonFiles(log, project, buildDir, components);
+        }
 
         if (count > 0) {
             Properties properties = new Properties();
@@ -176,7 +178,7 @@ public class PackageComponentMojo extends AbstractMojo {
                     // are the content the same?
                     if (existing.equals(properties)) {
                         log.debug("No component changes detected");
-                        return;
+                        return count;
                     }
                 } catch (IOException e) {
                     // ignore
@@ -190,12 +192,16 @@ public class PackageComponentMojo extends AbstractMojo {
 
                 log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "components: " : "component: ") + names);
 
+                buildContext.refresh(outFile);
+
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
             }
         } else {
             log.debug("No META-INF/services/org/apache/camel/component directory found. Are you sure you have created a Camel component?");
         }
+
+        return count;
     }
 
     private static void enrichComponentJsonFiles(Log log, MavenProject project, File buildDir, Map<String, String> components) throws MojoExecutionException {

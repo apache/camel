@@ -83,12 +83,6 @@ public class PackageOtherMojo extends AbstractMojo {
      * @throws MojoFailureException something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
-    }
-
-    public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
-                                     File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
-
         File f = new File(project.getBasedir(), "target/classes");
         File comp = new File(f, "META-INF/services/org/apache/camel/component");
         if (comp.exists() && comp.isDirectory()) {
@@ -103,18 +97,16 @@ public class PackageOtherMojo extends AbstractMojo {
             return;
         }
 
-        // okay none of those then this is a other kind of artifact
+        prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
+    }
+
+    public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
+                                     File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
         // first we need to setup the output directory because the next check
         // can stop the build before the end and eclipse always needs to know about that directory
         if (projectHelper != null) {
             projectHelper.addResource(project, otherOutDir.getPath(), Collections.singletonList("**/other.properties"), Collections.emptyList());
-        }
-
-        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/component")
-            && !PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/dataformat")
-            && !PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
-            return;
         }
 
         String name = project.getArtifactId();
@@ -144,7 +136,9 @@ public class PackageOtherMojo extends AbstractMojo {
             }
             otherModel.setTitle(title);
 
-            log.debug("Model " + otherModel);
+            if (log.isDebugEnabled()) {
+                log.debug("Model: " + otherModel);
+            }
 
             // write this to the directory
             File dir = schemaOutDir;
@@ -158,7 +152,9 @@ public class PackageOtherMojo extends AbstractMojo {
 
             buildContext.refresh(out);
 
-            log.debug("Generated " + out + " containing JSon schema for " + name + " other");
+            if (log.isDebugEnabled()) {
+                log.debug("Generated " + out + " containing JSon schema for " + name + " other");
+            }
         } catch (Exception e) {
             throw new MojoExecutionException("Error loading other model. Reason: " + e, e);
         }
@@ -205,6 +201,8 @@ public class PackageOtherMojo extends AbstractMojo {
             os.close();
 
             log.info("Generated " + outFile);
+
+            buildContext.refresh(outFile);
 
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
