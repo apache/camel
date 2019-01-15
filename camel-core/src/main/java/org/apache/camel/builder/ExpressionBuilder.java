@@ -50,7 +50,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.language.MethodCallExpression;
@@ -2265,21 +2265,17 @@ public final class ExpressionBuilder {
                     if (text2 != null) {
                         // the properties component is optional as we got locations
                         // getComponent will create a new component if none already exists
-                        Component component = exchange.getContext().getComponent("properties");
-                        PropertiesComponent pc = exchange.getContext().getTypeConverter()
-                            .mandatoryConvertTo(PropertiesComponent.class, component);
+                        PropertiesComponent pc = exchange.getContext().getPropertiesComponent(true);
                         // enclose key with {{ }} to force parsing
                         String[] paths = text2.split(",");
                         return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken(), paths);
                     } else {
                         // the properties component is mandatory if no locations provided
-                        Component component = exchange.getContext().hasComponent("properties");
-                        if (component == null) {
+                        PropertiesComponent pc = exchange.getContext().getPropertiesComponent(false);
+                        if (pc == null) {
                             throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
                                 + " in CamelContext to support property placeholders in expressions");
                         }
-                        PropertiesComponent pc = exchange.getContext().getTypeConverter()
-                            .mandatoryConvertTo(PropertiesComponent.class, component);
                         // enclose key with {{ }} to force parsing
                         return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken());
                     }

@@ -31,9 +31,9 @@ import javax.xml.namespace.QName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -683,7 +683,7 @@ public final class ProcessorDefinitionHelper {
                     Object value = other.getOtherAttributes().get(key);
                     if (value instanceof String) {
                         // enforce a properties component to be created if none existed
-                        PropertiesComponent.lookupPropertiesComponent(camelContext, true);
+                        camelContext.getPropertiesComponent(true);
 
                         // value must be enclosed with placeholder tokens
                         String s = (String) value;

@@ -228,7 +228,7 @@ Then with the following route definition:
 
 [source,java]
 ----
-PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+PropertiesComponent pc = context.getComponentComponent();
 pc.setPropertyPrefix("${stage}.");
 // ...
 context.addRoutes(new RouteBuilder() {

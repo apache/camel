@@ -23,10 +23,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -39,6 +37,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -248,13 +247,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         ObjectHelper.notNull(type, "Class type");
 
         // the properties component is mandatory
-        Component component = getContext().hasComponent("properties");
-        if (component == null) {
-            throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                + " in CamelContext to support property placeholders in expressions");
-        }
-        PropertiesComponent pc = getContext().getTypeConverter()
-            .mandatoryConvertTo(PropertiesComponent.class, component);
+        PropertiesComponent pc = getContext().getPropertiesComponent();
         // enclose key with {{ }} to force parsing
         Object value = pc.parseUri(pc.getPrefixToken() + key + pc.getSuffixToken());
 
