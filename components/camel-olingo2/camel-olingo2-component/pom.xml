@@ -146,6 +146,11 @@
       <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-ant</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
