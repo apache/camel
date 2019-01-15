@@ -438,7 +438,6 @@
               <goal>generate-components-list</goal>
               <goal>generate-dataformats-list</goal>
               <goal>generate-languages-list</goal>
-              <goal>generate-legal</goal>
             </goals>
             <phase>process-classes</phase>
           </execution>
@@ -448,6 +447,7 @@
               <goal>validate-components</goal>
               <goal>prepare-spring-boot-starter</goal>
               <goal>prepare-spring-boot-auto-configuration</goal>
+              <goal>generate-legal</goal>
             </goals>
             <phase>prepare-package</phase>
           </execution>
@@ -485,9 +485,6 @@
                 </resource>
                 <resource>
                   <directory>${basedir}/target/generated/camel/jaxb</directory>
-                </resource>
-                <resource>
-                  <directory>${basedir}/target/generated/camel/legal</directory>
                 </resource>
               </resources>
             </configuration>
