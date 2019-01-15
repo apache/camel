@@ -26,14 +26,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.multipart.FilePart;
-import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
-import org.apache.commons.httpclient.methods.multipart.Part;
-import org.apache.commons.httpclient.methods.multipart.StringPart;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -43,7 +35,7 @@ import org.junit.Test;
 
 public class MultiPartFormTest extends BaseUndertowTest {
     private HttpEntity createMultipartRequestEntity() throws Exception {
-        File file = new File("src/main/resources/META-INF/NOTICE.txt");
+        File file = new File("src/test/resources/log4j2.properties");
         return MultipartEntityBuilder.create()
                 .addTextBody("comment", "A binary file of some kind")
                 .addBinaryBody(file.getName(), file)
@@ -80,10 +72,10 @@ public class MultiPartFormTest extends BaseUndertowTest {
                         Message in = exchange.getIn();
                         assertEquals("Get a wrong attachement size", 1, in.getAttachments().size());
                         // The file name is attachment id
-                        DataHandler data = in.getAttachment("NOTICE.txt");
+                        DataHandler data = in.getAttachment("log4j2.properties");
 
-                        assertNotNull("Should get the DataHandler NOTICE.txt", data);
-                        assertEquals("Got the wrong name", "NOTICE.txt", data.getName());
+                        assertNotNull("Should get the DataHandler log4j2.properties", data);
+                        assertEquals("Got the wrong name", "log4j2.properties", data.getName());
 
                         assertTrue("We should get the data from the DataHandler", data.getDataSource()
                             .getInputStream().available() > 0);
@@ -91,7 +83,7 @@ public class MultiPartFormTest extends BaseUndertowTest {
                         // form data should also be available as a body
                         Map body = in.getBody(Map.class);
                         assertEquals("A binary file of some kind", body.get("comment"));
-                        assertEquals(data, body.get("NOTICE.txt"));
+                        assertEquals(data, body.get("log4j2.properties"));
                         exchange.getOut().setBody(in.getHeader("comment"));
                     }
 
