@@ -55,8 +55,7 @@ public abstract class AbstractFutureCallback<T> implements FutureCallback<HttpRe
                 try {
                     final ContentType responseContentType = getContentTypeHeader(response);
 
-                    final String mimeType = responseContentType.getMimeType();
-                    if (ODATA_MIME_TYPE.matcher(mimeType).matches()) {
+                    if (responseContentType != null && ODATA_MIME_TYPE.matcher(responseContentType.getMimeType()).matches()) {
                         final ODataErrorContext errorContext = EntityProvider.readErrorDocument(
                             response.getEntity().getContent(),
                             responseContentType.toString());
