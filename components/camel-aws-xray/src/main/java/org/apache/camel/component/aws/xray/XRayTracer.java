@@ -46,9 +46,9 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.support.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -372,7 +372,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             log.trace("=> RoutePolicy-Begin: Route: {} - RouteId: {}", routeId, route.getId());
 
             Entity entity = getTraceEntityFromExchange(exchange);
-            boolean createSegment = (entity == null || !Objects.equals(entity.getName(), routeId));
+            boolean createSegment = entity == null || !Objects.equals(entity.getName(), routeId);
 
             TraceID traceID;
             if (exchange.getIn().getHeaders().containsKey(XRAY_TRACE_ID)) {
