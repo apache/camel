@@ -25,7 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-@Component("mila-client")
+@Component("milo-client")
 public class MiloClientComponent extends DefaultComponent {
 
     private final Map<String, MiloClientConnection> cache = new HashMap<>();
