@@ -30,8 +30,8 @@
 
   <artifactId>camel-example-sql-blueprint</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: SQL :: Blueprint</name>
-  <description>An example for showing Camel using SQL component with blueprint</description>
+  <name>Camel :: Example :: SQL :: OSGi</name>
+  <description>An example for showing Camel using SQL component with OSGi Blueprint</description>
 
   <properties>
     <category>OSGi</category>

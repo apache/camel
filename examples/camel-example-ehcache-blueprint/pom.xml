@@ -29,13 +29,13 @@
   </parent>
 
   <artifactId>camel-example-ehcache-blueprint</artifactId>
-  <name>Camel :: Example :: Ehcache :: Blueprint</name>
-  <description>An example using Ehcache with OSGi Blueprint</description>
+  <name>Camel :: Example :: EHCache :: OSGi</name>
+  <description>An example using EHCache with OSGi Blueprint</description>
   <packaging>jar</packaging>
 
   <properties>
     <category>OSGi</category>
-    <title>Ehcache Blueprint</title>
+    <title>EHCache OSGi</title>
 
     <camel.osgi.import.pkg>
       *

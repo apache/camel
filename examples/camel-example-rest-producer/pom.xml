@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-example-rest-producer</artifactId>
-  <name>Camel :: Example :: Rest Producer</name>
+  <name>Camel :: Example :: Rest :: Producer</name>
   <description>An example showing how to use Camel Rest to call a REST service</description>
 
   <properties>

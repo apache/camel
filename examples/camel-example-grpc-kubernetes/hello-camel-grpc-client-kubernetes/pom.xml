@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-example-hello-grpc-client-kubernetes</artifactId>
-  <name>Camel :: Example :: gRPC :: Hello Camel Client Kubernetes</name>
+  <name>Camel :: Example :: gRPC :: Kubernetes :: Client</name>
   <description>An example showing the Camel gRPC component with Spring Boot runnning on Kubernetes</description>
 
   <properties>

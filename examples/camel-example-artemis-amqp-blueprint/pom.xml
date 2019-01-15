@@ -30,9 +30,8 @@
 
   <artifactId>camel-example-artemis-amqp-blueprint</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Example :: ActiveMQ Artemis AMQP :: Blueprint</name>
-  <description>Demonstrates ActiveMQ Artemis using Camel's AMQP component. The example includes a JUnit showcasing how
-    to embed for testing an AMQP enabled Artemis broker.
+  <name>Camel :: Example :: ActiveMQ Artemis :: AMQP</name>
+  <description>Demonstrates ActiveMQ Artemis using Camel's AMQP component. 
   </description>
 
   <properties>

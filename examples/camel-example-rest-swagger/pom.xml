@@ -28,8 +28,8 @@
   </parent>
 
   <artifactId>camel-example-rest-swagger</artifactId>
-  <name>Camel :: Example :: REST Swagger</name>
-  <description>This example shows how to call a REST service defined using Swagger specification</description>
+  <name>Camel :: Example :: Rest :: Swagger</name>
+  <description>This example shows how to call a Rest service defined using Swagger specification</description>
 
   <properties>
     <category>Beginner</category>

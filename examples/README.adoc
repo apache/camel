@@ -40,7 +40,7 @@ Number of Examples: 104 (2 deprecated)
 
 | link:camel-example-reload/Readme.md[Reload] (camel-example-reload) | Beginner | An example that live reloads routes when the XML file is updated
 
-| link:camel-example-rest-swagger/README.md[REST Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a REST service defined using Swagger specification
+| link:camel-example-rest-swagger/README.md[REST Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a Rest service defined using Swagger specification
 
 | link:camel-example-servlet-tomcat/README.md[Servlet Tomcat] (camel-example-servlet-tomcat) | Beginner | An example using Camel Servlet with Apache Tomcat
 
@@ -112,15 +112,15 @@ Number of Examples: 104 (2 deprecated)
 
 | link:camel-example-widget-gadget-xml/README.md[Widget Gadget XML] (camel-example-widget-gadget-xml) | EIP | The widget and gadget example from the EIP book
 
-| link:camel-example-fhir/README.md[FHIR] (camel-example-fhir) | Health Care | An example running Camel FHIR using Camel CDI 
+| link:camel-example-fhir/README.md[FHIR] (camel-example-fhir) | Health Care | An example running Camel FHIR using Camel CDI
 
 | link:camel-example-fhir-auth-tx-spring-boot/readme.adoc[Fhir Auth Tx Spring Boot] (camel-example-fhir-auth-tx-spring-boot) | Health Care | An example showing how to work with Camel, FHIR Authorization, FHIR Transaction and Spring Boot
 
-| link:camel-example-fhir-osgi/README.md[Fhir Osgi] (camel-example-fhir-osgi) | Health Care | An example running Camel FHIR in Apache Karaf
+| link:camel-example-fhir-osgi/README.md[Fhir Osgi] (camel-example-fhir-osgi) | Health Care | An example running Camel FHIR using OSGi Blueprint
 
-| link:camel-example-fhir-spring-boot/readme.adoc[Fhir Spring Boot] (camel-example-fhir-spring-boot) | Health Care | An example showing how to work with Camel, Fhir and Spring Boot
+| link:camel-example-fhir-spring-boot/readme.adoc[Fhir Spring Boot] (camel-example-fhir-spring-boot) | Health Care | An example showing how to work with Camel, FHIR and Spring Boot
 
-| link:camel-example-transformer-blueprint/README.md[Transformer OSGi Blueprint] (camel-example-transformer-blueprint) | Input/Output Type Contract | An example demonstrating declarative transformation along data type declaration using OSGi Blueprint XML
+| link:camel-example-transformer-blueprint/README.md[Transformer OSGi Blueprint] (camel-example-transformer-blueprint) | Input/Output Type Contract | An example demonstrating declarative transformation along data type declaration using OSGi Blueprint
 
 | link:camel-example-transformer-cdi/README.md[Transformer CDI] (camel-example-transformer-cdi) | Input/Output Type Contract | An example demonstrating declarative transformation along data type declaration using Java DSL and CDI
   
@@ -147,8 +147,7 @@ Number of Examples: 104 (2 deprecated)
 
 | link:camel-example-activemq-tomcat/README.md[ActiveMQ Tomcat] (camel-example-activemq-tomcat) | Messaging | An example using ActiveMQ Broker and Camel with Apache Tomcat
 
-| link:camel-example-artemis-amqp-blueprint/README.md[Artemis Amqp Blueprint] (camel-example-artemis-amqp-blueprint) | Messaging | Demonstrates ActiveMQ Artemis using Camel's AMQP component. The example includes a JUnit showcasing how
-    to embed for testing an AMQP enabled Artemis broker.
+| link:camel-example-artemis-amqp-blueprint/README.md[Artemis Amqp Blueprint] (camel-example-artemis-amqp-blueprint) | Messaging | Demonstrates ActiveMQ Artemis using Camel's AMQP component. 
   
 
 | link:camel-example-artemis-large-messages/README.md[Artemis Large Messages] (camel-example-artemis-large-messages) | Messaging | Demonstrates sending large messages (handles GBs in size) between Apache Camel and ActiveMQ Artemis in streaming mode
@@ -169,17 +168,17 @@ Number of Examples: 104 (2 deprecated)
 
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
 
-| link:camel-example-ehcache-blueprint/README.md[Ehcache Blueprint] (camel-example-ehcache-blueprint) | OSGi | An example using Ehcache with OSGi Blueprint
+| link:camel-example-ehcache-blueprint/README.md[EHCache OSGi] (camel-example-ehcache-blueprint) | OSGi | An example using EHCache with OSGi Blueprint
 
 | link:camel-example-netty-http/README.md[Netty HTTP] (camel-example-netty-http) | OSGi | An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container
 
-| link:camel-example-olingo4-blueprint/README.md[Olingo4 Blueprint] (camel-example-olingo4-blueprint) | OSGi | An example which use the Olingo4 component in Blueprint
+| link:camel-example-olingo4-blueprint/README.md[Olingo4 OSGi] (camel-example-olingo4-blueprint) | OSGi | An example which use the Olingo4 component in OSGi Blueprint
 
 | link:camel-example-servlet-httpregistry-blueprint/README.md[Servlet HttpRegistry Blueprint] (camel-example-servlet-httpregistry-blueprint) | OSGi | An example using Servlet and HttpRegistry with OSGi Blueprint
 
-| link:camel-example-servlet-rest-blueprint/README.md[Servlet REST Blueprint] (camel-example-servlet-rest-blueprint) | OSGi | An example using Servlet REST with OSGi Blueprint
+| link:camel-example-servlet-rest-blueprint/README.md[Servlet REST Blueprint] (camel-example-servlet-rest-blueprint) | OSGi | An example using Servlet Rest with OSGi Blueprint
 
-| link:camel-example-sql-blueprint/README.md[SQL Blueprint] (camel-example-sql-blueprint) | OSGi | An example for showing Camel using SQL component with blueprint
+| link:camel-example-sql-blueprint/README.md[SQL Blueprint] (camel-example-sql-blueprint) | OSGi | An example for showing Camel using SQL component with OSGi Blueprint
 
 | link:camel-example-ssh/README.md[SSH] (camel-example-ssh) | OSGi | A simple SSH example which creates a bundle that can be dropped into any OSGi container
 
@@ -192,13 +191,13 @@ Number of Examples: 104 (2 deprecated)
 
 | link:camel-example-reactive-streams/readme.adoc[Reactive Streams] (camel-example-reactive-streams) | Reactive | An example that shows how Camel can exchange data using reactive streams with Spring Boot reactor
 
-| link:camel-example-cdi-rest-servlet/README.md[CDI Rest] (camel-example-cdi-rest-servlet) | Rest | REST DSL / Servlet with CDI example
+| link:camel-example-cdi-rest-servlet/README.md[CDI Rest] (camel-example-cdi-rest-servlet) | Rest | Rest DSL using Servlet with CDI example
 
 | link:camel-example-rest-producer/readme.adoc[Rest Producer] (camel-example-rest-producer) | Rest | An example showing how to use Camel Rest to call a REST service
 
 | link:camel-example-restlet-jdbc/README.md[Restlet JDBC] (camel-example-restlet-jdbc) | Rest | An example showing how to create REST API with Camel Restlet and JDBC components
 
-| link:camel-example-spark-rest/README.md[Spark REST] (camel-example-spark-rest) | Rest | An example using Spark REST
+| link:camel-example-spark-rest/README.md[Spark Rest] (camel-example-spark-rest) | Rest | An example using Spark Rest
 
 | link:camel-example-spring-boot-geocoder/README.adoc[Spring Boot Geocoder] (camel-example-spring-boot-geocoder) | Rest | An example showing the Camel Geocoder component via REST DSL with Spring Boot
 

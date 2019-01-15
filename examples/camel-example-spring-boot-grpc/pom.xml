@@ -30,7 +30,7 @@
 
   <artifactId>camel-example-spring-boot-grpc</artifactId>
   <packaging>pom</packaging>
-  <name>Camel :: Example :: Spring Boot with gRPC</name>
+  <name>Camel :: Example :: Spring Boot :: gRPC</name>
   <description>An example showing the Camel gRPC component with Spring Boot</description>
 
   <properties>

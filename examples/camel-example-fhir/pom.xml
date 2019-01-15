@@ -30,7 +30,7 @@
 
   <artifactId>camel-example-fhir</artifactId>
   <name>Camel :: Example :: FHIR</name>
-  <description>An example running Camel FHIR using Camel CDI </description>
+  <description>An example running Camel FHIR using Camel CDI</description>
   <packaging>jar</packaging>
 
   <properties>

@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-example-fhir-auth-tx-spring-boot</artifactId>
-  <name>Camel :: Example :: Fhir :: Spring Boot</name>
+  <name>Camel :: Example :: FHIR :: Spring Boot :: Transaction</name>
   <description>An example showing how to work with Camel, FHIR Authorization, FHIR Transaction and Spring Boot</description>
 
   <properties>

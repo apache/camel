@@ -29,12 +29,12 @@
   </parent>
 
   <artifactId>camel-example-spark-rest</artifactId>
-  <name>Camel :: Example :: Spark REST</name>
-  <description>An example using Spark REST</description>
+  <name>Camel :: Example :: Spark Rest</name>
+  <description>An example using Spark Rest</description>
 
   <properties>
     <category>Rest</category>
-    <title>Spark REST</title>
+    <title>Spark Rest</title>
   </properties>
 
   <dependencies>

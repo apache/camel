@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-example-spring-boot-xml</artifactId>
-  <name>Camel :: Example :: Spring Boot XML</name>
+  <name>Camel :: Example :: Spring Boot :: XML</name>
   <description>An example showing how to work with Camel routes in XML files and Spring Boot</description>
 
   <properties>
