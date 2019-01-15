@@ -16,12 +16,16 @@
  */
 package org.apache.camel.spring.boot.util;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
@@ -32,6 +36,8 @@ public final class CamelPropertiesHelper {
 
     private CamelPropertiesHelper() {
     }
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelContextHelper.class);
 
     /**
      * Sets the properties on the target bean.
@@ -91,5 +97,52 @@ public final class CamelPropertiesHelper {
         }
 
         return rc;
+    }
+
+    /**
+     * Inspects the given object and resolves any property placeholders from its properties.
+     * <p/>
+     * This implementation will check all the getter/setter pairs on this instance and for all the values
+     * (which is a String type) will be property placeholder resolved.
+     *
+     * @param camelContext the Camel context
+     * @param target       the object that should have the properties (eg getter/setter) resolved
+     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
+     * @see CamelContext#resolvePropertyPlaceholders(String)
+     * @see org.apache.camel.component.properties.PropertiesComponent
+     */
+    public static void resolvePropertyPlaceholders(CamelContext camelContext, Object target) throws Exception {
+        LOG.trace("Resolving property placeholders for: {}", target);
+
+        // find all getter/setter which we can use for property placeholders
+        Map<String, Object> properties = new HashMap<>();
+        IntrospectionSupport.getProperties(target, properties, null);
+
+        Map<String, Object> changedProperties = new HashMap<>();
+        if (!properties.isEmpty()) {
+            LOG.trace("There are {} properties on: {}", properties.size(), target);
+            // lookup and resolve properties for String based properties
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                // the name is always a String
+                String name = entry.getKey();
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    // value must be a String, as a String is the key for a property placeholder
+                    String text = (String) value;
+                    text = camelContext.resolvePropertyPlaceholders(text);
+                    if (text != value) {
+                        // invoke setter as the text has changed
+                        boolean changed = IntrospectionSupport.setProperty(camelContext.getTypeConverter(), target, name, text);
+                        if (!changed) {
+                            throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + target);
+                        }
+                        changedProperties.put(name, value);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Changed property [{}] from: {} to: {}", name, value, text);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

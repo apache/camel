@@ -40,7 +40,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -48,8 +47,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.isAssignableFrom;
 
 /**
  * Helper for introspections of beans.
@@ -548,7 +545,7 @@ public final class IntrospectionSupport {
                 } else {
                     // setter method has not the correct type
                     // (must use ObjectHelper.isAssignableFrom which takes primitive types into account)
-                    boolean assignable = isAssignableFrom(parameterType, ref.getClass());
+                    boolean assignable = ObjectHelper.isAssignableFrom(parameterType, ref.getClass());
                     if (!assignable) {
                         continue;
                     }
@@ -558,7 +555,7 @@ public final class IntrospectionSupport {
             try {
                 try {
                     // If the type is null or it matches the needed type, just use the value directly
-                    if (value == null || isAssignableFrom(parameterType, ref.getClass())) {
+                    if (value == null || ObjectHelper.isAssignableFrom(parameterType, ref.getClass())) {
                         // we may want to set options on classes that has package view visibility, so override the accessible
                         setter.setAccessible(true);
                         setter.invoke(target, ref);
@@ -625,17 +622,10 @@ public final class IntrospectionSupport {
 
     private static boolean isPropertyPlaceholder(CamelContext context, Object value) {
         if (context != null) {
-            Component component = context.hasComponent("properties");
-            if (component != null) {
-                PropertiesComponent pc;
-                try {
-                    pc = context.getTypeConverter().mandatoryConvertTo(PropertiesComponent.class, component);
-                } catch (Exception e) {
-                    return false;
-                }
-                if (value.toString().contains(pc.getPrefixToken()) && value.toString().contains(pc.getSuffixToken())) {
-                    return true;
-                }
+            PropertiesComponent pc = PropertiesComponent.lookupPropertiesComponent(context, false);
+            if (pc != null) {
+                return value.toString().contains(pc.getPrefixToken())
+                        && value.toString().contains(pc.getSuffixToken());
             }
         }
         return false;

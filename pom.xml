@@ -147,6 +147,8 @@
     <module>camel-api</module>
     <module>camel-management-api</module>
     <module>camel-management-impl</module>
+    <module>camel-base</module>
+    <module>camel-base-components</module>
     <module>camel-core</module>
     <module>components</module>
     <module>archetypes</module>

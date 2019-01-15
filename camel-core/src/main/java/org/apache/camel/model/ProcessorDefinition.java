@@ -56,7 +56,6 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.AsPredicate;
@@ -799,7 +798,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
-     * Creates a {@link Pipeline} of the list of endpoints so that the message
+     * Creates a {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
      *
@@ -815,7 +814,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
-     * Creates a {@link Pipeline} of the list of endpoints so that the message
+     * Creates a {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
      *
@@ -831,7 +830,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
-     * Creates a {@link Pipeline} of the list of endpoints so that the message
+     * Creates a {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
      *

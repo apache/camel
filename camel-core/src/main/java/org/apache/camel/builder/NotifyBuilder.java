@@ -42,6 +42,7 @@ import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -159,7 +160,7 @@ public class NotifyBuilder {
                 }
 
                 // filter non matching exchanges
-                return EndpointHelper.matchPattern(id, routeId);
+                return PatternHelper.matchPattern(id, routeId);
             }
 
             public boolean matches() {
@@ -194,7 +195,7 @@ public class NotifyBuilder {
                 if (exchange.getFromEndpoint() instanceof DirectEndpoint) {
                     return true;
                 }
-                return EndpointHelper.matchPattern(exchange.getFromRouteId(), "*");
+                return PatternHelper.matchPattern(exchange.getFromRouteId(), "*");
             }
 
             public boolean matches() {

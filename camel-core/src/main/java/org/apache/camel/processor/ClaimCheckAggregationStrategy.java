@@ -22,8 +22,8 @@ import java.util.Set;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *     <li>attachments</li> - to aggregate all the message attachments
  *     <li>headers</li> - to aggregate all the message headers
  *     <li>header:pattern</li> - to aggregate all the message headers that matches the pattern.
- *     The pattern syntax is documented by: {@link EndpointHelper#matchPattern(String, String)}.
+ *     The pattern syntax is documented by: {@link PatternHelper#matchPattern(String, String)}.
  * </ul>
  * You can specify multiple rules separated by comma. For example to include the message body and all headers starting with foo
  * <tt>body,header:foo*</tt>.
@@ -158,7 +158,7 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
                     String pattern = o.toString();
                     for (Map.Entry<String, Object> header : oldExchange.getMessage().getHeaders().entrySet()) {
                         String key = header.getKey();
-                        boolean matched = EndpointHelper.matchPattern(key, pattern);
+                        boolean matched = PatternHelper.matchPattern(key, pattern);
                         if (matched) {
                             toRemoveKeys.add(key);
                         }
@@ -212,7 +212,7 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
             } else if (pattern.startsWith("-header:")) {
                 header = StringHelper.after(pattern, "-header:");
             }
-            if (header != null && EndpointHelper.matchPattern(key, header)) {
+            if (header != null && PatternHelper.matchPattern(key, header)) {
                 return true;
             }
         }
@@ -228,7 +228,7 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
             if (pattern.startsWith("header:") || pattern.startsWith("+header:")) {
                 pattern = StringHelper.after(pattern, "header:");
             }
-            if (EndpointHelper.matchPattern(key, pattern)) {
+            if (PatternHelper.matchPattern(key, pattern)) {
                 return true;
             }
         }
@@ -244,7 +244,7 @@ public class ClaimCheckAggregationStrategy implements AggregationStrategy {
             if (pattern.startsWith("-header:")) {
                 pattern = StringHelper.after(pattern, "-header:");
             }
-            if (EndpointHelper.matchPattern(key, pattern)) {
+            if (PatternHelper.matchPattern(key, pattern)) {
                 return true;
             }
         }

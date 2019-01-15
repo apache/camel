@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
-import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * {@link org.apache.camel.spi.RoutePolicyFactory} which executes for a duration and then triggers an action.
@@ -38,7 +38,7 @@ public class DurationRoutePolicyFactory implements RoutePolicyFactory {
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         DurationRoutePolicy policy = null;
 
-        if (fromRouteId == null || EndpointHelper.matchPattern(routeId, fromRouteId)) {
+        if (fromRouteId == null || PatternHelper.matchPattern(routeId, fromRouteId)) {
             policy = new DurationRoutePolicy(camelContext, routeId);
             policy.setMaxMessages(maxMessages);
             policy.setMaxSeconds(maxSeconds);
@@ -55,7 +55,7 @@ public class DurationRoutePolicyFactory implements RoutePolicyFactory {
     /**
      * Limit the route policy to the route which matches this pattern
      *
-     * @see EndpointHelper#matchPattern(String, String)
+     * @see PatternHelper#matchPattern(String, String)
      */
     public void setFromRouteId(String fromRouteId) {
         this.fromRouteId = fromRouteId;

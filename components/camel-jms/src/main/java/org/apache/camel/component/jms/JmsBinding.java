@@ -57,8 +57,8 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -409,7 +409,7 @@ public class JmsBinding {
                 Iterator it = ObjectHelper.createIterator(endpoint.getConfiguration().getAllowAdditionalHeaders());
                 while (it.hasNext()) {
                     String pattern = (String) it.next();
-                    if (EndpointHelper.matchPattern(headerName, pattern)) {
+                    if (PatternHelper.matchPattern(headerName, pattern)) {
                         LOG.debug("Header {} allowed as additional header despite not being valid according to the JMS specification", headerName);
                         value = headerValue;
                         break;

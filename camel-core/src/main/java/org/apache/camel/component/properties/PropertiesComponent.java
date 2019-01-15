@@ -27,9 +27,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.FilePathResolver;
@@ -121,6 +123,9 @@ public class PropertiesComponent extends DefaultComponent {
     public PropertiesComponent(boolean isDefaultCreated) {
         this();
         this.isDefaultCreated = isDefaultCreated;
+        if (isDefaultCreated) {
+            log.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
+        }
     }
 
     public PropertiesComponent(String location) {
@@ -131,6 +136,34 @@ public class PropertiesComponent extends DefaultComponent {
     public PropertiesComponent(String... locations) {
         this();
         setLocations(locations);
+    }
+
+    /**
+     * Lookup the {@link PropertiesComponent} from the {@link org.apache.camel.CamelContext}.
+     * <p/>
+     * @param camelContext the camel context
+     * @param autoCreate whether to automatic create a new default {@link PropertiesComponent} if no custom component
+     *                   has been configured.
+     * @return the properties component, or <tt>null</tt> if none has been defined, and auto create is <tt>false</tt>.
+     */
+    public static PropertiesComponent lookupPropertiesComponent(CamelContext camelContext, boolean autoCreate) {
+        // no existing properties component so lookup and add as component if possible
+        PropertiesComponent answer = (PropertiesComponent) camelContext.hasComponent("properties");
+        if (answer == null) {
+            // lookup what is stored under properties, as it may not be the Camel properties component
+            Object found = camelContext.getRegistry().lookupByName("properties");
+            if (found instanceof PropertiesComponent) {
+                answer = (PropertiesComponent) found;
+                camelContext.addComponent("properties", answer);
+            }
+        }
+        if (answer == null && autoCreate) {
+            // create a default properties component to be used as there may be default values we can use
+            // do not auto create using getComponent as spring auto-wire by constructor causes a side effect
+            answer = new PropertiesComponent(true);
+            camelContext.addComponent("properties", answer);
+        }
+        return answer;
     }
 
     @Override

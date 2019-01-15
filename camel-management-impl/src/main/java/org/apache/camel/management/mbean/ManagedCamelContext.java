@@ -60,6 +60,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ModelCamelContextHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
@@ -615,7 +616,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                 String description = (String) entry.getValue().get("description");
                 String label = (String) entry.getValue().get("label");
                 String type = (String) entry.getValue().get("class");
-                String status = CamelContextHelper.isEipInUse(context, name) ? "in use" : "on classpath";
+                String status = ModelCamelContextHelper.isEipInUse(context, name) ? "in use" : "on classpath";
                 CompositeType ct = CamelOpenMBeanTypes.listEipsCompositeType();
                 CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "title", "description", "label", "status", "type"},
                         new Object[]{name, title, description, label, status, type});

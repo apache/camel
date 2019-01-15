@@ -17,7 +17,6 @@
 package org.apache.camel.zipkin;
 
 import java.io.Closeable;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -54,6 +53,7 @@ import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.EndpointHelper;
@@ -82,7 +82,7 @@ import static org.apache.camel.builder.ExpressionBuilder.routeIdExpression;
  * <li>endpoint url - A Camel endpoint url</li>
  * </ul>
  * For both kinds you can use wildcards and regular expressions to match, which is using the rules from
- * {@link EndpointHelper#matchPattern(String, String)} and {@link EndpointHelper#matchEndpoint(CamelContext, String, String)}
+ * {@link PatternHelper#matchPattern(String, String)} and {@link EndpointHelper#matchEndpoint(CamelContext, String, String)}
  * <p/>
  * To match all Camel messages you can use <tt>*</tt> in the pattern and configure that to the same service name.
  * <br/>
@@ -470,13 +470,13 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             if (id != null) {
                 // exclude patterns take precedence
                 for (String pattern : excludePatterns) {
-                    if (EndpointHelper.matchPattern(id, pattern)) {
+                    if (PatternHelper.matchPattern(id, pattern)) {
                         return null;
                     }
                 }
                 for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
                     String pattern = entry.getKey();
-                    if (EndpointHelper.matchPattern(id, pattern)) {
+                    if (PatternHelper.matchPattern(id, pattern)) {
                         answer = entry.getValue();
                         break;
                     }
@@ -489,13 +489,13 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             if (id != null) {
                 // exclude patterns take precedence
                 for (String pattern : excludePatterns) {
-                    if (EndpointHelper.matchPattern(id, pattern)) {
+                    if (PatternHelper.matchPattern(id, pattern)) {
                         return null;
                     }
                 }
                 for (Map.Entry<String, String> entry : serviceMappings.entrySet()) {
                     String pattern = entry.getKey();
-                    if (EndpointHelper.matchPattern(id, pattern)) {
+                    if (PatternHelper.matchPattern(id, pattern)) {
                         answer = entry.getValue();
                         break;
                     }
@@ -512,7 +512,7 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             }
             // exclude patterns take precedence
             for (String pattern : excludePatterns) {
-                if (EndpointHelper.matchPattern(key, pattern)) {
+                if (PatternHelper.matchPattern(key, pattern)) {
                     return null;
                 }
             }
