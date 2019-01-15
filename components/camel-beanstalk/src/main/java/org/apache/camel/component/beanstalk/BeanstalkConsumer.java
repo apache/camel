@@ -31,8 +31,8 @@ import org.apache.camel.component.beanstalk.processors.BuryCommand;
 import org.apache.camel.component.beanstalk.processors.Command;
 import org.apache.camel.component.beanstalk.processors.DeleteCommand;
 import org.apache.camel.component.beanstalk.processors.ReleaseCommand;
-import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * PollingConsumer to read Beanstalk jobs.
