@@ -42,7 +42,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 /**
- * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
+ * Analyses the Camel plugins in a project and generates legal files.
  */
 @Mojo(name = "generate-legal", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class PackageLegalMojo extends AbstractMojo {
@@ -85,11 +85,12 @@ public class PackageLegalMojo extends AbstractMojo {
         projectHelper.addResource(project, legalOutDir.getPath(), Collections.singletonList("**/*"), Collections.emptyList());
     }
 
-    public void processLegal(Path legalOutDir) {
+    public void processLegal(Path legalOutDir) throws MojoExecutionException {
         // Only take care about camel legal stuff
         if (!"org.apache.camel".equals(project.getGroupId())) {
             return;
         }
+
         boolean hasLicense = project.getResources().stream()
                 .map(Resource::getDirectory)
                 .map(Paths::get)
@@ -100,7 +101,7 @@ public class PackageLegalMojo extends AbstractMojo {
                 String license = IOUtils.toString(isLicense, StandardCharsets.UTF_8);
                 updateResource(legalOutDir.resolve("META-INF").resolve("LICENSE.txt"), license);
             } catch (IOException e) {
-                throw new IOError(e);
+                throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
             }
         }
         boolean hasNotice = project.getResources().stream()
@@ -113,7 +114,7 @@ public class PackageLegalMojo extends AbstractMojo {
                 String notice = IOUtils.toString(isNotice, StandardCharsets.UTF_8);
                 updateResource(legalOutDir.resolve("META-INF").resolve("NOTICE.txt"), notice);
             } catch (IOException e) {
-                throw new IOError(e);
+                throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
             }
         }
     }
