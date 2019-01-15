@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>camel-example-spring-boot-rest-swagger</artifactId>
-  <name>Camel :: Example :: Spring Boot with REST DSL and Swagger</name>
+  <name>Camel :: Example :: Spring Boot :: REST DSL and Swagger</name>
   <description>An example showing Camel REST DSL and Swagger with Spring Boot</description>
 
   <properties>

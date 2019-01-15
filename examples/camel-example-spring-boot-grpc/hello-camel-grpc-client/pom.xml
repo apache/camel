@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-example-hello-grpc-client</artifactId>
-  <name>Camel :: Example :: gRPC :: Hello Camel Client</name>
+  <name>Camel :: Example :: Spring Boot :: gRPC :: Hello Camel Client</name>
   <description>An example showing the Camel gRPC component with Spring Boot</description>
 
   <properties>

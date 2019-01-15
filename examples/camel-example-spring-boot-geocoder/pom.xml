@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>camel-example-spring-boot-geocoder</artifactId>
-  <name>Camel :: Example :: Spring Boot with Geocoder and REST DSL</name>
+  <name>Camel :: Example :: Spring Boot :: Geocoder and REST DSL</name>
   <description>An example showing the Camel Geocoder component via REST DSL with Spring Boot</description>
 
   <properties>

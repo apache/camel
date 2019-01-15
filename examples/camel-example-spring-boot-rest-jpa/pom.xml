@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-example-spring-boot-rest-jpa</artifactId>
-  <name>Camel :: Example :: Spring Boot REST / JPA</name>
+  <name>Camel :: Example :: Spring Boot :: REST / JPA</name>
   <description>An example demonstrating how to use Camel REST DSL with JPA to expose a RESTful API that performs CRUD operations on a database</description>
 
   <properties>

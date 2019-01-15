@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-example-servlet-tomcat</artifactId>
-  <name>Camel :: Example :: Servlet Tomcat</name>
+  <name>Camel :: Example :: Servlet :: Tomcat</name>
   <description>An example using Camel Servlet with Apache Tomcat</description>
   <packaging>war</packaging>
 

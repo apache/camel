@@ -29,13 +29,13 @@
   </parent>
 
   <artifactId>camel-example-olingo4-blueprint</artifactId>
-  <name>Camel :: Example :: Olingo4 :: Blueprint</name>
-  <description>An example which use the Olingo4 component in Blueprint</description>
+  <name>Camel :: Example :: Olingo4 :: OSGi</name>
+  <description>An example which use the Olingo4 component in OSGi Blueprint</description>
   <packaging>jar</packaging>
 
   <properties>
     <category>OSGi</category>
-    <title>Olingo4 Blueprint</title>
+    <title>Olingo4 OSGi</title>
   </properties>
 
   <dependencies>

@@ -30,7 +30,7 @@
 
   <artifactId>camel-example-fhir-osgi</artifactId>
   <name>Camel :: Example :: FHIR :: OSGi</name>
-  <description>An example running Camel FHIR in Apache Karaf</description>
+  <description>An example running Camel FHIR using OSGi Blueprint</description>
   <packaging>jar</packaging>
 
   <properties>

@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>camel-example-hello-grpc-server-kubernetes</artifactId>
-  <name>Camel :: Example :: gRPC :: Hello Camel Server Kubernetes</name>
+  <name>Camel :: Example :: gRPC :: Kubernetes :: Server</name>
   <description>An example showing a simple gRPC server running on Kubernetes</description>
 
   <properties>

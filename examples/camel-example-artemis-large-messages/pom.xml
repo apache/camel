@@ -29,7 +29,7 @@
 
   <artifactId>camel-example-artemis-large-messages</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: ActiveMQ Artemis Large Messages</name>
+  <name>Camel :: Example :: ActiveMQ Artemis :: Large messages</name>
   <description>Demonstrates sending large messages (handles GBs in size) between Apache Camel and ActiveMQ Artemis in streaming mode</description>
 
   <properties>

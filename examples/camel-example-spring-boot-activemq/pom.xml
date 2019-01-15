@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-example-spring-boot-activemq</artifactId>
-  <name>Camel :: Example :: Spring Boot and ActiveMQ</name>
+  <name>Camel :: Example :: Spring Boot :: ActiveMQ</name>
   <description>An example showing how to work with Camel, ActiveMQ and Spring Boot</description>
 
   <properties>

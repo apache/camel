@@ -29,8 +29,8 @@
   </parent>
 
   <artifactId>camel-example-fhir-spring-boot</artifactId>
-  <name>Camel :: Example :: Fhir :: Spring Boot</name>
-  <description>An example showing how to work with Camel, Fhir and Spring Boot</description>
+  <name>Camel :: Example :: FHIR :: Spring Boot</name>
+  <description>An example showing how to work with Camel, FHIR and Spring Boot</description>
 
   <properties>
     <category>Health Care</category>

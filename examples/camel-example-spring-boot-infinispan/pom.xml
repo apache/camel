@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>camel-example-spring-boot-infinispan</artifactId>
-  <name>Camel :: Example :: Spring Boot with Infinispan</name>
+  <name>Camel :: Example :: Spring Boot :: Infinispan</name>
   <description>An example showing the Camel Infinispan component with Spring Boot</description>
 
   <properties>

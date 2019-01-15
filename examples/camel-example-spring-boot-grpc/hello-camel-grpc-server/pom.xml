@@ -28,7 +28,7 @@
   </parent>
 
   <artifactId>camel-example-hello-grpc-server</artifactId>
-  <name>Camel :: Example :: gRPC :: Hello Camel Server</name>
+  <name>Camel :: Example :: Spring Boog :: gRPC :: Hello Camel Server</name>
   <description>An example showing a simple gRPC server</description>
   
   <properties>
