@@ -34,7 +34,7 @@ import org.junit.Test;
 
 public class MultiPartFormTest extends BaseJettyTest {
     private HttpEntity createMultipartRequestEntity() throws Exception {
-        File file = new File("src/main/resources/META-INF/NOTICE.txt");
+        File file = new File("src/test/resources/log4j2.properties");
         return MultipartEntityBuilder.create()
                 .addTextBody("comment", "A binary file of some kind")
                 .addBinaryBody(file.getName(), file)
@@ -79,9 +79,9 @@ public class MultiPartFormTest extends BaseJettyTest {
                         Message in = exchange.getIn();
                         assertEquals("Get a wrong attachement size", 2, in.getAttachments().size());
                         // The file name is attachment id
-                        DataHandler data = in.getAttachment("NOTICE.txt");
+                        DataHandler data = in.getAttachment("log4j2.properties");
 
-                        assertNotNull("Should get the DataHandle NOTICE.txt", data);
+                        assertNotNull("Should get the DataHandle log4j2.properties", data);
                         // This assert is wrong, but the correct content-type
                         // (application/octet-stream)
                         // will not be returned until Jetty makes it available -
@@ -90,7 +90,7 @@ public class MultiPartFormTest extends BaseJettyTest {
                         // the implentation being used)
                         // assertEquals("Get a wrong content type",
                         // "text/plain", data.getContentType());
-                        assertEquals("Got the wrong name", "NOTICE.txt", data.getName());
+                        assertEquals("Got the wrong name", "log4j2.properties", data.getName());
 
                         assertTrue("We should get the data from the DataHandle", data.getDataSource()
                             .getInputStream().available() > 0);
@@ -99,7 +99,7 @@ public class MultiPartFormTest extends BaseJettyTest {
                         // header
 
                         // For binary attachment, header should also be populated by DataHandler but not payload
-                        Object header = in.getHeader("NOTICE.txt");
+                        Object header = in.getHeader("log4j2.properties");
                         assertEquals(DataHandler.class, header.getClass());
                         assertEquals(data, header);
 
