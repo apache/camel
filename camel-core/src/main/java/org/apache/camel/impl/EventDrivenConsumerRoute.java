@@ -29,7 +29,7 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * A {@link DefaultRoute} which starts with an
@@ -111,7 +111,7 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
                 if (proc instanceof IdAware) {
                     id = ((IdAware) proc).getId();
                 }
-                if (EndpointHelper.matchPattern(id, pattern)) {
+                if (PatternHelper.matchPattern(id, pattern)) {
                     match.add(proc);
                 }
                 if (proc instanceof Navigate) {

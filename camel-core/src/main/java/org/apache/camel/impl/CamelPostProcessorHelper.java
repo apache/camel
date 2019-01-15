@@ -39,6 +39,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.component.bean.ProxyHelper;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.processor.DeferServiceFactory;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.support.CamelContextHelper;
@@ -260,7 +261,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             String injectionPointName, Object bean, String beanName) {
         try {
             // enforce a properties component to be created if none existed
-            CamelContextHelper.lookupPropertiesComponent(getCamelContext(), true);
+            PropertiesComponent.lookupPropertiesComponent(getCamelContext(), true);
 
             String key;
             String prefix = getCamelContext().getPropertyPrefixToken();

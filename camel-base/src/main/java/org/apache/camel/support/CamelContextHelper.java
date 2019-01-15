@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,12 +36,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.ModelCamelContext;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.IOHelper;
@@ -695,107 +687,6 @@ public final class CamelContextHelper {
             }
         }
         return 0;
-    }
-
-    /**
-     * Lookup the {@link org.apache.camel.component.properties.PropertiesComponent} from the {@link org.apache.camel.CamelContext}.
-     * <p/>
-     * @param camelContext the camel context
-     * @param autoCreate whether to automatic create a new default {@link org.apache.camel.component.properties.PropertiesComponent} if no custom component
-     *                   has been configured.
-     * @return the properties component, or <tt>null</tt> if none has been defined, and auto create is <tt>false</tt>.
-     */
-    public static Component lookupPropertiesComponent(CamelContext camelContext, boolean autoCreate) {
-        // no existing properties component so lookup and add as component if possible
-        PropertiesComponent answer = (PropertiesComponent) camelContext.hasComponent("properties");
-        if (answer == null) {
-            // lookup what is stored under properties, as it may not be the Camel properties component
-            Object found = camelContext.getRegistry().lookupByName("properties");
-            if (found instanceof PropertiesComponent) {
-                answer = (PropertiesComponent) found;
-                camelContext.addComponent("properties", answer);
-            }
-        }
-        if (answer == null && autoCreate) {
-            // create a default properties component to be used as there may be default values we can use
-            LOG.info("No existing PropertiesComponent has been configured, creating a new default PropertiesComponent with name: properties");
-            // do not auto create using getComponent as spring auto-wire by constructor causes a side effect
-            answer = new PropertiesComponent(true);
-            camelContext.addComponent("properties", answer);
-        }
-        return answer;
-    }
-
-    /**
-     * Checks if any of the Camel routes is using an EIP with the given name
-     *
-     * @param camelContext  the Camel context
-     * @param name          the name of the EIP
-     * @return <tt>true</tt> if in use, <tt>false</tt> if not
-     */
-    public static boolean isEipInUse(CamelContext camelContext, String name) {
-        for (RouteDefinition route : camelContext.adapt(ModelCamelContext.class).getRouteDefinitions()) {
-            for (FromDefinition from : route.getInputs()) {
-                if (name.equals(from.getShortName())) {
-                    return true;
-                }
-            }
-            Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
-            while (it.hasNext()) {
-                ProcessorDefinition def = it.next();
-                if (name.equals(def.getShortName())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Inspects the given object and resolves any property placeholders from its properties.
-     * <p/>
-     * This implementation will check all the getter/setter pairs on this instance and for all the values
-     * (which is a String type) will be property placeholder resolved.
-     *
-     * @param camelContext the Camel context
-     * @param target       the object that should have the properties (eg getter/setter) resolved
-     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
-     * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
-     * @see org.apache.camel.component.properties.PropertiesComponent
-     */
-    public static void resolvePropertyPlaceholders(CamelContext camelContext, Object target) throws Exception {
-        LOG.trace("Resolving property placeholders for: {}", target);
-
-        // find all getter/setter which we can use for property placeholders
-        Map<String, Object> properties = new HashMap<>();
-        IntrospectionSupport.getProperties(target, properties, null);
-
-        Map<String, Object> changedProperties = new HashMap<>();
-        if (!properties.isEmpty()) {
-            LOG.trace("There are {} properties on: {}", properties.size(), target);
-            // lookup and resolve properties for String based properties
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                // the name is always a String
-                String name = entry.getKey();
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    // value must be a String, as a String is the key for a property placeholder
-                    String text = (String) value;
-                    text = camelContext.resolvePropertyPlaceholders(text);
-                    if (text != value) {
-                        // invoke setter as the text has changed
-                        boolean changed = IntrospectionSupport.setProperty(camelContext.getTypeConverter(), target, name, text);
-                        if (!changed) {
-                            throw new IllegalArgumentException("No setter to set property: " + name + " to: " + text + " on: " + target);
-                        }
-                        changedProperties.put(name, value);
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Changed property [{}] from: {} to: {}", name, value, text);
-                        }
-                    }
-                }
-            }
-        }
     }
 
     /**

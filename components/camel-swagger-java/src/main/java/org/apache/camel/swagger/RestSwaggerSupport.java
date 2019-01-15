@@ -52,7 +52,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.CamelVersionHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -342,7 +342,7 @@ public class RestSwaggerSupport {
                 if ("#name#".equals(contextIdPattern)) {
                     match = name.equals(contextId);
                 } else {
-                    match = EndpointHelper.matchPattern(name, contextIdPattern);
+                    match = PatternHelper.matchPattern(name, contextIdPattern);
                 }
                 if (!match) {
                     it.remove();

@@ -238,8 +238,8 @@ public final class DefaultExchange implements Exchange {
         Set<String> toBeRemoved = new HashSet<>();
         boolean matches = false;
         for (String key : properties.keySet()) {
-            if (EndpointHelper.matchPattern(key, pattern)) {
-                if (excludePatterns != null && isExcludePatternMatch(key, excludePatterns)) {
+            if (PatternHelper.matchPattern(key, pattern)) {
+                if (excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns)) {
                     continue;
                 }
                 matches = true;
@@ -545,12 +545,4 @@ public final class DefaultExchange implements Exchange {
         return new ConcurrentHashMap<>(properties);
     }
 
-    private static boolean isExcludePatternMatch(String key, String... excludePatterns) {
-        for (String pattern : excludePatterns) {
-            if (EndpointHelper.matchPattern(key, pattern)) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

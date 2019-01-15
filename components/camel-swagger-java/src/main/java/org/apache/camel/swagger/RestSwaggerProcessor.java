@@ -24,7 +24,7 @@ import io.swagger.jaxrs.config.BeanConfig;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,7 +106,7 @@ public class RestSwaggerProcessor implements Processor {
                     if ("#name#".equals(contextIdPattern)) {
                         match = name.equals(contextId);
                     } else {
-                        match = EndpointHelper.matchPattern(name, contextIdPattern);
+                        match = PatternHelper.matchPattern(name, contextIdPattern);
                     }
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Match contextId: {} with pattern: {} -> {}", name, contextIdPattern, match);

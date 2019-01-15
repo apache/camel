@@ -21,7 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.URISupport;
 
@@ -51,7 +51,7 @@ public class EndpointExplainCommand extends AbstractContextCommand {
             Iterator<Map<String, String>> it = endpoints.iterator();
             while (it.hasNext()) {
                 Map<String, String> row = it.next();
-                if (!EndpointHelper.matchPattern(row.get("uri"), filter)) {
+                if (!PatternHelper.matchPattern(row.get("uri"), filter)) {
                     // did not match
                     it.remove();
                 }

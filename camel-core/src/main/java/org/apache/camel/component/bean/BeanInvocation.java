@@ -26,6 +26,7 @@ import java.util.Arrays;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.converter.ToStringTypeConverter;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,10 @@ public class BeanInvocation implements Externalizable {
     private Object[] args;
     private MethodBean methodBean;
     private transient Method method;
+
+    static {
+        ToStringTypeConverter.registerMissType(BeanInvocation.class);
+    }
 
     public BeanInvocation() {
     }

@@ -29,92 +29,12 @@
     <relativePath>../parent</relativePath>
   </parent>
 
-  <artifactId>camel-core</artifactId>
+  <artifactId>camel-base</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Core</name>
-  <description>The Core Camel Java DSL based router</description>
+  <name>Camel :: base</name>
+  <description>The Base Camel Framework</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      !org.apache.camel.tools.*,
-      org.apache.camel.*;-noimport:=true
-    </camel.osgi.export.pkg>
-    <camel.osgi.import>
-      org.apache.camel.tools.*;resolution:=optional,
-      !org.apache.camel.*,
-      !com.github.benmanes.caffeine.cache,
-      !org.json.simple,
-      ${camel.osgi.import.defaults},
-      org.springframework.transaction;resolution:=optional,
-      org.apache.camel.spring.spi;resolution:=optional,
-      org.apache.xalan.xsltc.trax;resolution:=optional,
-      javax.activation;resolution:=optional,
-      javax.xml.bind;resolution:=optional,
-      javax.xml.bind.annotation;resolution:=optional,
-      javax.xml.bind.annotation.adapters;resolution:=optional,
-      javax.xml.stream;resolution:=optional,
-      javax.xml.transform.stax;resolution:=optional,
-      net.sf.saxon.event;resolution:=optional,
-      net.sf.saxon.serialize;resolution:=optional,
-      net.sf.saxon.xpath;resolution:=optional,
-      *
-    </camel.osgi.import>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=bean,
-      org.apache.camel.spi.ComponentResolver;component=binding,
-      org.apache.camel.spi.ComponentResolver;component=browse,
-      org.apache.camel.spi.ComponentResolver;component=class,
-      org.apache.camel.spi.ComponentResolver;component=controlbus,
-      org.apache.camel.spi.ComponentResolver;component=dataformat,
-      org.apache.camel.spi.ComponentResolver;component=dataset,
-      org.apache.camel.spi.ComponentResolver;component=direct,
-      org.apache.camel.spi.ComponentResolver;component=direct-vm,
-      org.apache.camel.spi.ComponentResolver;component=file,
-      org.apache.camel.spi.ComponentResolver;component=language,
-      org.apache.camel.spi.ComponentResolver;component=log,
-      org.apache.camel.spi.ComponentResolver;component=mock,
-      org.apache.camel.spi.ComponentResolver;component=properties,
-      org.apache.camel.spi.ComponentResolver;component=ref,
-      org.apache.camel.spi.ComponentResolver;component=rest,
-      org.apache.camel.spi.ComponentResolver;component=rest-api,
-      org.apache.camel.spi.ComponentResolver;component=scheduler,
-      org.apache.camel.spi.ComponentResolver;component=saga,
-      org.apache.camel.spi.ComponentResolver;component=seda,
-      org.apache.camel.spi.ComponentResolver;component=stub,
-      org.apache.camel.spi.ComponentResolver;component=test,
-      org.apache.camel.spi.ComponentResolver;component=timer,
-      org.apache.camel.spi.ComponentResolver;component=validator,
-      org.apache.camel.spi.ComponentResolver;component=vm,
-      org.apache.camel.spi.ComponentResolver;component=xslt,
-      org.apache.camel.spi.DataFormatResolver;dataformat=gzip,
-      org.apache.camel.spi.DataFormatResolver;dataformat=serialization,
-      org.apache.camel.spi.DataFormatResolver;dataformat=string,
-      org.apache.camel.spi.DataFormatResolver;dataformat=zip,
-      org.apache.camel.spi.LanguageResolver;language=bean,
-      org.apache.camel.spi.LanguageResolver;language=constant,
-      org.apache.camel.spi.LanguageResolver;language=exchangeProperty,
-      org.apache.camel.spi.LanguageResolver;language=file,
-      org.apache.camel.spi.LanguageResolver;language=header,
-      org.apache.camel.spi.LanguageResolver;language=ref,
-      org.apache.camel.spi.LanguageResolver;language=simple,
-      org.apache.camel.spi.LanguageResolver;language=tokenize,
-      org.apache.camel.spi.LanguageResolver;language=xpath,
-      org.apache.camel.spi.LanguageResolver;language=xtokenize
-    </camel.osgi.export.service>
-    <camel.osgi.dynamic>
-      org.apache.camel.spring.util;${camel.osgi.import.strict.version},
-      org.apache.camel.spring.pollingconsumer;${camel.osgi.import.strict.version},
-      org.apache.camel.processor.interceptor.jpa;${camel.osgi.import.strict.version},
-      org.apache.camel.pollconsumer.quartz2;${camel.osgi.import.strict.version},
-      net.sf.saxon
-    </camel.osgi.dynamic>
-    <camel.osgi.provide.capability>
-      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.impl.osgi";
-      version:Version="$(version;==;${camel.osgi.version.clean})"
-    </camel.osgi.provide.capability>
-    <camel.osgi.activator>
-      org.apache.camel.impl.osgi.Activator
-    </camel.osgi.activator>
     <!-- do not skip any tests by default -->
     <platform.skip.tests/>
   </properties>
@@ -160,22 +80,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-management-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-base</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-base-components</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -454,6 +358,7 @@
               <goal>generate-components-list</goal>
               <goal>generate-dataformats-list</goal>
               <goal>generate-languages-list</goal>
+              <goal>generate-legal</goal>
             </goals>
             <phase>process-classes</phase>
           </execution>
@@ -463,7 +368,6 @@
               <goal>validate-components</goal>
               <goal>prepare-spring-boot-starter</goal>
               <goal>prepare-spring-boot-auto-configuration</goal>
-              <goal>generate-legal</goal>
             </goals>
             <phase>prepare-package</phase>
           </execution>
@@ -501,6 +405,9 @@
                 </resource>
                 <resource>
                   <directory>${basedir}/target/generated/camel/jaxb</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/legal</directory>
                 </resource>
               </resources>
             </configuration>

@@ -24,15 +24,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 
@@ -119,13 +116,13 @@ public final class BacklogTracer extends ServiceSupport {
             // match either route id, or node id
             String id = definition.getId();
             // use matchPattern method from endpoint helper that has a good matcher we use in Camel
-            if (EndpointHelper.matchPattern(id, pattern)) {
+            if (PatternHelper.matchPattern(id, pattern)) {
                 return true;
             }
             RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
             if (route != null) {
                 id = route.getId();
-                if (EndpointHelper.matchPattern(id, pattern)) {
+                if (PatternHelper.matchPattern(id, pattern)) {
                     return true;
                 }
             }

@@ -190,8 +190,8 @@ public class DefaultMessage extends MessageSupport {
         Set<String> toRemove = new HashSet<>();
         for (Map.Entry<String, Object> entry : headers.entrySet()) {
             String key = entry.getKey();
-            if (EndpointHelper.matchPattern(key, pattern)) {
-                if (excludePatterns != null && isExcludePatternMatch(key, excludePatterns)) {
+            if (PatternHelper.matchPattern(key, pattern)) {
+                if (excludePatterns != null && PatternHelper.isExcludePatternMatch(key, excludePatterns)) {
                     continue;
                 }
                 matches = true;
@@ -385,15 +385,6 @@ public class DefaultMessage extends MessageSupport {
      */
     protected boolean hasPopulatedHeaders() {
         return headers != null;
-    }
-
-    private static boolean isExcludePatternMatch(String key, String... excludePatterns) {
-        for (String pattern : excludePatterns) {
-            if (EndpointHelper.matchPattern(key, pattern)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

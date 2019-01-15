@@ -16,12 +16,13 @@
  */
 package org.apache.camel.impl.converter;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.support.TypeConverterSupport;
 
 /**
@@ -30,27 +31,24 @@ import org.apache.camel.support.TypeConverterSupport;
  */
 public class ToStringTypeConverter extends TypeConverterSupport {
 
+    static Set<Class<?>> MISS_TYPES = new HashSet<>();
+
+    public static void registerMissType(Class clazz) {
+        MISS_TYPES.add(clazz);
+    }
+
+    static {
+        registerMissType(Message.class);
+        registerMissType(Future.class);
+        registerMissType(WrappedFile.class);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> T convertTo(Class<T> toType, Exchange exchange, Object value) {
 
-        // should not try to convert Message
-        if (Message.class.isAssignableFrom(value.getClass())) {
-            return (T) MISS_VALUE;
-        }
-
-        // should not try to convert future
-        if (Future.class.isAssignableFrom(value.getClass())) {
-            return (T) MISS_VALUE;
-        }
-
-        // should not try to convert bean invocations
-        if (BeanInvocation.class.isAssignableFrom(value.getClass())) {
-            return (T) MISS_VALUE;
-        }
-
-        // should not try to convert files
-        if (WrappedFile.class.isAssignableFrom(value.getClass())) {
+        // should not try to convert specific types
+        if (MISS_TYPES.stream().anyMatch(cl -> cl.isAssignableFrom(value.getClass()))) {
             return (T) MISS_VALUE;
         }
 

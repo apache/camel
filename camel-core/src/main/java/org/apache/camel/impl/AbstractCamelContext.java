@@ -45,7 +45,6 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.naming.Context;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
@@ -2435,7 +2434,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             // No component, assume default tokens.
             if (pc == null && text.contains(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
                 // lookup existing properties component, or force create a new default component
-                pc = (PropertiesComponent) CamelContextHelper.lookupPropertiesComponent(this, true);
+                pc = PropertiesComponent.lookupPropertiesComponent(this, true);
             }
 
             if (pc != null && text.contains(pc.getPrefixToken())) {
@@ -3355,15 +3354,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
         // eager lookup any configured properties component to avoid subsequent lookup attempts which may impact performance
         // due we use properties component for property placeholder resolution at runtime
-        Component existing = CamelContextHelper.lookupPropertiesComponent(this, false);
+        PropertiesComponent existing = PropertiesComponent.lookupPropertiesComponent(this, false);
         if (existing != null) {
             // store reference to the existing properties component
-            if (existing instanceof PropertiesComponent) {
-                propertiesComponent = (PropertiesComponent) existing;
-            } else {
-                // properties component must be expected type
-                throw new IllegalArgumentException("Found properties component of type: " + existing.getClass() + " instead of expected: " + PropertiesComponent.class);
-            }
+            propertiesComponent = existing;
         }
 
         // start components

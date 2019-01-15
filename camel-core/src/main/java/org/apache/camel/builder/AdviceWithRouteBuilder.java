@@ -24,6 +24,7 @@ import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -126,11 +127,11 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Weaves by matching id of the nodes in the route (incl onException etc).
      * <p/>
-     * Uses the {@link EndpointHelper#matchPattern(String, String)} matching algorithm.
+     * Uses the {@link PatternHelper#matchPattern(String, String)} matching algorithm.
      *
      * @param pattern the pattern
      * @return the builder
-     * @see EndpointHelper#matchPattern(String, String)
+     * @see PatternHelper#matchPattern(String, String)
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveById(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
@@ -140,11 +141,11 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Weaves by matching the to string representation of the nodes in the route (incl onException etc).
      * <p/>
-     * Uses the {@link EndpointHelper#matchPattern(String, String)} matching algorithm.
+     * Uses the {@link PatternHelper#matchPattern(String, String)} matching algorithm.
      *
      * @param pattern the pattern
      * @return the builder
-     * @see EndpointHelper#matchPattern(String, String)
+     * @see PatternHelper#matchPattern(String, String)
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToString(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
@@ -154,11 +155,11 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     /**
      * Weaves by matching sending to endpoints with the given uri of the nodes in the route (incl onException etc).
      * <p/>
-     * Uses the {@link EndpointHelper#matchPattern(String, String)} matching algorithm.
+     * Uses the {@link PatternHelper#matchPattern(String, String)} matching algorithm.
      *
      * @param pattern the pattern
      * @return the builder
-     * @see EndpointHelper#matchPattern(String, String)
+     * @see PatternHelper#matchPattern(String, String)
      */
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToUri(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
