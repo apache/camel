@@ -174,7 +174,6 @@
                   <apiName />
                   <proxyClass>org.apache.camel.component.olingo2.api.Olingo2App</proxyClass>
                   <fromSignatureFile>src/signatures/olingo-api-signature.txt</fromSignatureFile>
-                  <excludeConfigNames>edm|responseHandler</excludeConfigNames>
                   <extraOptions>
                     <extraOption>
                       <name>keyPredicate</name>
@@ -184,6 +183,8 @@
                   <nullableOptions>
                     <nullableOption>queryParams</nullableOption>
                     <nullableOption>endpointHttpHeaders</nullableOption>
+                    <nullableOption>edm</nullableOption>
+                    <nullableOption>responseHandler</nullableOption>
                   </nullableOptions>
                 </api>
               </apis>
