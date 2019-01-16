@@ -32,8 +32,8 @@ import com.orbitz.consul.model.agent.Registration;
 import com.orbitz.consul.model.health.Service;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.impl.cloud.AbstractServiceRegistry;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
