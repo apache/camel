@@ -282,17 +282,23 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
                 }
 
                 // Check if the iterator is empty
-                // This can only happen the very first time we check the existence
+                // This can happen the very first time we check the existence
                 // of an item before queuing the run.
+                // or some iterators may return true for hasNext() but then null in next()
                 if (!iterator.hasNext()) {
-                    doDone(null, true);
+                    doDone(result.get(), true);
                     return;
                 }
 
                 ProcessorExchangePair pair = iterator.next();
                 boolean hasNext = iterator.hasNext();
-                Exchange exchange = pair.getExchange();
+                // some iterators may return true for hasNext() but then null in next()
+                if (pair == null && !hasNext) {
+                    doDone(result.get(), true);
+                    return;
+                }
 
+                Exchange exchange = pair.getExchange();
                 int index = nbExchangeSent.getAndIncrement();
                 updateNewExchange(exchange, index, pairs, hasNext);
 
