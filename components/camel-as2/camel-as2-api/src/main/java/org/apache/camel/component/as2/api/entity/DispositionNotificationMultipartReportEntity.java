@@ -117,14 +117,14 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
         try {
             Context context = new VelocityContext();
             context.put("request", request);
-            Map<String,Object> requestHeaders = new HashMap<>();
-            for(Header header: request.getAllHeaders()) {
+            Map<String, Object> requestHeaders = new HashMap<>();
+            for (Header header: request.getAllHeaders()) {
                 requestHeaders.put(header.getName(), header.getValue());
             }
             context.put("requestHeaders", requestHeaders);
             
-            Map<String,Object> responseHeaders = new HashMap<>();
-            for(Header header: response.getAllHeaders()) {
+            Map<String, Object> responseHeaders = new HashMap<>();
+            for (Header header: response.getAllHeaders()) {
                 responseHeaders.put(header.getName(), header.getValue());
             }
             context.put("responseHeaders", responseHeaders);
