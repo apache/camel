@@ -24,7 +24,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.junit.Test;
 
 /**

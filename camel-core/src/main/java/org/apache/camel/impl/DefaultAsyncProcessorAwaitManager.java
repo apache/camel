@@ -32,7 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.MessageHelper;

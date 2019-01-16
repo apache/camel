@@ -51,6 +51,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ReactiveHelper;
 import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
