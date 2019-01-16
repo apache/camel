@@ -22,25 +22,6 @@ import org.junit.Test;
 public class HazelcastErrorMessagesTest extends HazelcastCamelTestSupport {
 
     @Test
-    public void testUriPrefix() {
-        RouteBuilder builder = new RouteBuilder() {
-            public void configure() throws Exception {
-                from("direct:prefix").to("hazelcast:error:foo");
-            }
-        };
-
-        try {
-            context.addRoutes(builder);
-            context.start();
-            fail("Should have thrown exception");
-        } catch (Exception e) {
-            assertTrue(e.getMessage().contains(
-                    "Your URI does not provide a correct 'type' prefix. It should be anything like "
-                            + "'hazelcast:[map:|multimap:|atomicvalue:|instance:|queue:|seda:|list:|replicatedmap:|set:|ringbuffer:]name' but is 'hazelcast://error:foo"));
-        }
-    }
-
-    @Test
     public void testAtomicNumberConsumer() {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() throws Exception {
