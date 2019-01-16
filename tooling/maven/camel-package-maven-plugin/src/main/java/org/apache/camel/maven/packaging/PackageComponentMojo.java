@@ -22,8 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -107,8 +106,7 @@ public class PackageComponentMojo extends AbstractMojo {
         StringBuilder buffer = new StringBuilder();
         int count = 0;
 
-        Map<String, String> components = new LinkedHashMap<>();
-
+        Set<String> components = new HashSet<>();
         File f = new File(project.getBasedir(), "target/classes");
         f = new File(f, "META-INF/services/org/apache/camel/component");
         if (f.exists() && f.isDirectory()) {
@@ -126,20 +124,7 @@ public class PackageComponentMojo extends AbstractMojo {
                             buffer.append(" ");
                         }
                         buffer.append(name);
-                    }
-
-                    // grab the java class name for the discovered component
-                    try {
-                        Properties prop = new Properties();
-                        prop.load(new FileInputStream(file));
-
-                        String javaType = prop.getProperty("class");
-
-                        components.put(name, javaType);
-                        log.debug("Discovered component: " + name + " with class: " + javaType);
-
-                    } catch (IOException e) {
-                        throw new MojoExecutionException("Failed to load file " + file + ". Reason: " + e, e);
+                        components.add(file.getName());
                     }
                 }
             }
@@ -204,33 +189,32 @@ public class PackageComponentMojo extends AbstractMojo {
         return count;
     }
 
-    private static void enrichComponentJsonFiles(Log log, MavenProject project, File buildDir, Map<String, String> components) throws MojoExecutionException {
+    private static void enrichComponentJsonFiles(Log log, MavenProject project, File buildDir, Set<String> components) throws MojoExecutionException {
         final Set<File> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json"));
 
         for (File file : files) {
-            // name without .json
-            String shortName = file.getName().substring(0, file.getName().length() - 5);
-            String javaType = components.getOrDefault(shortName, "");
-            log.debug("Enriching file: " + file);
+            // clip the .json suffix
+            String name = file.getName().substring(0, file.getName().length() - 5);
+            if (components.contains(name)) {
+                log.debug("Enriching component: " + name);
+                try {
+                    String text = loadText(new FileInputStream(file));
+                    text = text.replace("@@@DESCRIPTION@@@", project.getDescription());
+                    text = text.replace("@@@GROUPID@@@", project.getGroupId());
+                    text = text.replace("@@@ARTIFACTID@@@", project.getArtifactId());
+                    text = text.replace("@@@VERSIONID@@@", project.getVersion());
 
-            try {
-                String text = loadText(new FileInputStream(file));
-                text = text.replace("@@@JAVATYPE@@@", javaType);
-                text = text.replace("@@@DESCRIPTION@@@", project.getDescription());
-                text = text.replace("@@@GROUPID@@@", project.getGroupId());
-                text = text.replace("@@@ARTIFACTID@@@", project.getArtifactId());
-                text = text.replace("@@@VERSIONID@@@", project.getVersion());
+                    // special for deprecated where you can quickly specify that in the pom.xml name
+                    boolean deprecated = project.getName().contains("(deprecated)");
+                    if (deprecated) {
+                        // must start with 4 leading spaces as we want to replace the marker in the top of the file
+                        text = text.replaceFirst(" {4}\"deprecated\": false,", "    \"deprecated\": true,");
+                    }
 
-                // special for deprecated where you can quickly specify that in the pom.xml name
-                boolean deprecated = project.getName().contains("(deprecated)");
-                if (deprecated) {
-                    // must start with 4 leading spaces as we want to replace the marker in the top of the file
-                    text = text.replaceFirst(" {4}\"deprecated\": false,", "    \"deprecated\": true,");
+                    writeText(file, text);
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Failed to update file " + file + ". Reason: " + e, e);
                 }
-
-                writeText(file, text);
-            } catch (IOException e) {
-                throw new MojoExecutionException("Failed to update file " + file + ". Reason: " + e, e);
             }
         }
     }
