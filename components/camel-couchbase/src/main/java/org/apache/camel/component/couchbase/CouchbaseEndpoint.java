@@ -31,11 +31,11 @@ import com.couchbase.client.CouchbaseConnectionFactoryBuilder;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_PUT;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_URI_ERROR;
