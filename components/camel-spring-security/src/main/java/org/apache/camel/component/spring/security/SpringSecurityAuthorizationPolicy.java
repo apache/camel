@@ -26,7 +26,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.support.processor.DelegateProcessor;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
 import org.slf4j.Logger;

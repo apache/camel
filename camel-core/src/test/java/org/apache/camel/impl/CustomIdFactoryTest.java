@@ -23,7 +23,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.support.processor.DelegateProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.junit.Before;

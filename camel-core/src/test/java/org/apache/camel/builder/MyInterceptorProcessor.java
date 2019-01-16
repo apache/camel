@@ -17,7 +17,7 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.support.processor.DelegateProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

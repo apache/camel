@@ -19,7 +19,7 @@ package org.apache.camel.component.aws.xray;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 
 public class NoopTracingStrategy implements InterceptStrategy {

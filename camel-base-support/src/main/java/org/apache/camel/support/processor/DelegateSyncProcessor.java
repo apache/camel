@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.support.processor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ import org.apache.camel.support.ServiceSupport;
  * synchronous processing during the {@link #process(org.apache.camel.Exchange)} method call.
  * If you are implementing a EIP pattern please use this as the delegate, for simple EIPs.
  * @see DelegateAsyncProcessor
- * @see org.apache.camel.processor.DelegateProcessor
+ * @see DelegateProcessor
  */
 public class DelegateSyncProcessor extends ServiceSupport implements org.apache.camel.DelegateProcessor, AsyncProcessor, Navigate<Processor> {
     protected Processor processor;

@@ -24,7 +24,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RoutingSlipDefinition;
-import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.junit.Test;
 import org.slf4j.Logger;

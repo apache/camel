@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.support.processor.DelegateProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.springframework.beans.factory.BeanNameAware;
 

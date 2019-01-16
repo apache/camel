@@ -44,6 +44,7 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ReactiveHelper;
