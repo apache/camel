@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.Policy;

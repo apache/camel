@@ -175,6 +175,14 @@
     <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-base-support</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- required dependencies by camel-core -->
+    <!-- it will be shade into camel-core by bnd plugin -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-base-components</artifactId>
       <version>${project.version}</version>
     </dependency>
