@@ -51,6 +51,10 @@ public class ElasticsearchConfiguration {
     private boolean disconnect;
     @UriParam(defaultValue = "false")
     private boolean enableSSL;
+    @UriParam(defaultValue = "false")
+    private boolean useScroll;
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS)
+    private int scrollKeepAliveMs = ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS;
 
     private String user;
     private String password;
@@ -242,5 +246,27 @@ public class ElasticsearchConfiguration {
 
     public void setSniffAfterFailureDelay(int sniffAfterFailureDelay) {
         this.sniffAfterFailureDelay = sniffAfterFailureDelay;
+    }
+
+    /**
+     * Enable scroll usage
+     */
+    public boolean getUseScroll() {
+        return useScroll;
+    }
+
+    public void setUseScroll(boolean useScroll) {
+        this.useScroll = useScroll;
+    }
+
+    /**
+     * Time in ms during which elasticsearch will keep search context alive
+     */
+    public int getScrollKeepAliveMs() {
+        return scrollKeepAliveMs;
+    }
+
+    public void setScrollKeepAliveMs(int scrollKeepAliveMs) {
+        this.scrollKeepAliveMs = scrollKeepAliveMs;
     }
 }

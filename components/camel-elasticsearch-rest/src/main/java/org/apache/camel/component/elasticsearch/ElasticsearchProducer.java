@@ -49,6 +49,9 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL;
+import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
+
 
 /**
  * Represents an Elasticsearch producer.
@@ -195,7 +198,15 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
         } else if (operation == ElasticsearchOperation.Search) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
-            message.setBody(restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT).getHits());
+            // is it a scroll request ?
+            boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.getUseScroll(), Boolean.class);
+            if (useScroll) {
+                int scrollKeepAliveMs = message.getHeader(PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(), Integer.class);
+                ElasticsearchScrollRequestIterator scrollRequestIterator = new ElasticsearchScrollRequestIterator(searchRequest, restHighLevelClient, scrollKeepAliveMs, exchange);
+                exchange.getIn().setBody(scrollRequestIterator);
+            } else {
+                message.setBody(restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT).getHits());
+            }
         } else if (operation == ElasticsearchOperation.MultiSearch) {
             MultiSearchRequest searchRequest = message.getBody(MultiSearchRequest.class);
             message.setBody(restHighLevelClient.msearch(searchRequest, RequestOptions.DEFAULT).getResponses());
