@@ -30,8 +30,8 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * Implementation of the Hystrix EIP.

@@ -79,8 +79,8 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
 
         // create setter using the default options
         HystrixCommand.Setter setter = HystrixCommand.Setter.withGroupKey(hcGroupKey)
-                .andCommandKey(hcCommandKey)
-                .andThreadPoolKey(tpKey);
+            .andCommandKey(hcCommandKey)
+            .andThreadPoolKey(tpKey);
 
         HystrixCommandProperties.Setter commandSetter = HystrixCommandProperties.Setter();
         setter.andCommandPropertiesDefaults(commandSetter);
@@ -98,8 +98,8 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
             HystrixThreadPoolKey tpFallbackKey = HystrixThreadPoolKey.Factory.asKey(threadPoolKey + "-fallback");
 
             fallbackSetter = HystrixCommand.Setter.withGroupKey(hcGroupKey)
-                    .andCommandKey(hcFallbackCommandKey)
-                    .andThreadPoolKey(tpFallbackKey);
+                .andCommandKey(hcFallbackCommandKey)
+                .andThreadPoolKey(tpFallbackKey);
 
             HystrixCommandProperties.Setter commandFallbackSetter = HystrixCommandProperties.Setter();
             fallbackSetter.andCommandPropertiesDefaults(commandFallbackSetter);
@@ -215,8 +215,8 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
-                () -> camelContext.adapt(ModelCamelContext.class).getHystrixConfiguration(null),
-                () -> lookup(camelContext, HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class))
+            () -> camelContext.adapt(ModelCamelContext.class).getHystrixConfiguration(null),
+            () -> lookup(camelContext, HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, HystrixConfigurationDefinition.class))
         );
 
         // Extract properties from referenced configuration, the one configured
@@ -225,8 +225,8 @@ public class HystrixReifier extends ProcessorReifier<HystrixDefinition> {
             final String ref = definition.getHystrixConfigurationRef();
 
             loadProperties(properties, Suppliers.firstNotNull(
-                    () -> camelContext.adapt(ModelCamelContext.class).getHystrixConfiguration(ref),
-                    () -> mandatoryLookup(camelContext, ref, HystrixConfigurationDefinition.class))
+                () -> camelContext.adapt(ModelCamelContext.class).getHystrixConfiguration(ref),
+                () -> mandatoryLookup(camelContext, ref, HystrixConfigurationDefinition.class))
             );
         }
 
