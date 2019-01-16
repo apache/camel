@@ -25,7 +25,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.ServiceHelper;
 import org.apache.camel.support.ServiceSupport;
 

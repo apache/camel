@@ -35,7 +35,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.reifier.ErrorHandlerReifier;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;

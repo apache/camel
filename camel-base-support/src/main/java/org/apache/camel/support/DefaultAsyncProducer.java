@@ -21,7 +21,6 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 
 /**
