@@ -197,6 +197,14 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
             final Map.Entry<String, Object> entry = it.next();
             final String paramName = entry.getKey();
+            
+            /**
+             * Avoid swallowing consumer scheduler properties, which
+             * get processed in configureProperties()
+             */
+            if (paramName.startsWith("consumer.")) {
+                continue;
+            }
 
             if (!endpointPropertyNames.contains(paramName)) {
 
