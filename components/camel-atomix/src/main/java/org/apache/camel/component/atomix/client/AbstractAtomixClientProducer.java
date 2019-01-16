@@ -31,9 +31,9 @@ import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.atomix.AtomixAsyncMessageProcessor;
+import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION_HAS_RESULT;
