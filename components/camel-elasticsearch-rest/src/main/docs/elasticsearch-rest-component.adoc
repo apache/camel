@@ -73,7 +73,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+==== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -87,7 +87,9 @@ with the following path and query parameters:
 | *indexType* (producer) | The type of the index to act against |  | String
 | *maxRetryTimeout* (producer) | The time in ms before retry | 30000 | int
 | *operation* (producer) | What operation to perform |  | ElasticsearchOperation
+| *scrollKeepAliveMs* (producer) | Time in ms during which elasticsearch will keep search context alive | 60000 | int
 | *socketTimeout* (producer) | The timeout in ms to wait before the socket will timeout. | 30000 | int
+| *useScroll* (producer) | Enable scroll usage | false | boolean
 | *waitForActiveShards* (producer) | Index creation waits for the write consistency number of shards to be available | 1 | int
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
@@ -260,6 +262,43 @@ Map<String, Object> query = new HashMap<>();
 query.put("query", match);
 SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
 
+----
+
+Search using Elasticsearch scroll api in order to fetch all results.
+
+[source,java]
+----
+from("direct:search")
+  .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet&useScroll=true&scrollKeepAliveMs=30000");
+----
+
+[source,xml]
+----
+<route>
+    <from uri="direct:search" />
+    <to uri="elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet&useScroll=true&scrollKeepAliveMs=30000"/>
+</route>
+----
+
+[source,java]
+----
+String query = "{\"query\":{\"match\":{\"content\":\"new release of ApacheCamel\"}}}";
+try (ElasticsearchScrollRequestIterator response = template.requestBody("direct:search", query, ElasticsearchScrollRequestIterator.class)) {
+    // do something smart with results
+}
+----
+
+link:split-eip.html[Split EIP] can also be used.
+
+[source,java]
+----
+from("direct:search")
+  .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet&useScroll=true&scrollKeepAliveMs=30000")
+  .split()
+  .body()
+  .streaming()
+  .to("mock:output")
+  .end();
 ----
 
 === MultiSearch Example

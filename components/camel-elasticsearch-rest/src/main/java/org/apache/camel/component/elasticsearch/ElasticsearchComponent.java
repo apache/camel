@@ -24,9 +24,9 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.spi.Metadata;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 
