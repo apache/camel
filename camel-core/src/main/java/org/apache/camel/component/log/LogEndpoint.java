@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.model.Constants;
 import org.apache.camel.processor.CamelLogProcessor;
-import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.processor.DefaultMaskingFormatter;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
