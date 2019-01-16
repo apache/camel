@@ -44,6 +44,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.tools.apt.helper.CollectionStringBuffer;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
 import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
@@ -57,7 +58,6 @@ import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findFieldElem
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.implementsInterface;
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.loadResource;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
 import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
@@ -352,6 +352,20 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             model.setFirstVersion(firstVersion);
         }
 
+        // get the java type class name via the @Component annotation from its component class
+        Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(Component.class);
+        if (elements != null) {
+            for (Element e : elements) {
+                Component comp = e.getAnnotation(Component.class);
+                if (scheme.equals(comp.value()) && e.getKind() == ElementKind.CLASS) {
+                    TypeElement te = (TypeElement) e;
+                    String name = te.getQualifiedName().toString();
+                    model.setJavaType(name);
+                    break;
+                }
+            }
+        }
+
         // we can mark a component as deprecated by using the annotation
         boolean deprecated = endpointClassElement.getAnnotation(Deprecated.class) != null;
         model.setDeprecated(deprecated);
@@ -362,7 +376,9 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         model.setDeprecationNote(deprecationNote);
 
         // these information is not available at compile time and we enrich these later during the camel-package-maven-plugin
-        model.setJavaType("@@@JAVATYPE@@@");
+        if (model.getJavaType() == null) {
+            model.setJavaType("@@@JAVATYPE@@@");
+        }
         model.setDescription("@@@DESCRIPTION@@@");
         model.setGroupId("@@@GROUPID@@@");
         model.setArtifactId("@@@ARTIFACTID@@@");
