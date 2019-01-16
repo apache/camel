@@ -41,9 +41,6 @@ public class CamelScriptTest extends AbstractSpringBootTestSupport {
     @Test
     public void componentTests() throws Exception {
         this.runLanguageTest(config, "javaScript");
-        this.runLanguageTest(config, "php");
-        this.runLanguageTest(config, "python");
-        this.runLanguageTest(config, "ruby");
 
         this.runModuleUnitTestsIfEnabled(config);
     }

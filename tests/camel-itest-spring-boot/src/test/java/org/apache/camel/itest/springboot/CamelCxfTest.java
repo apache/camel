@@ -42,7 +42,6 @@ public class CamelCxfTest extends AbstractSpringBootTestSupport {
     public void componentTests() throws Exception {
         this.runComponentTest(config, "cxf");
         this.runComponentTest(config, "cxfrs");
-        this.runComponentTest(config, "cxfbean");
 
         this.runModuleUnitTestsIfEnabled(config);
     }

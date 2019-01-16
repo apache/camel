@@ -348,6 +348,8 @@ public final class ArquillianPackager {
         ignore.add("org.jboss.logging");
         ignore.add("org.jboss.marshalling");
         ignore.add("org.jgroups:jgroups-raft");
+        ignore.add("net.sourceforge.htmlunit:htmlunit");
+
 
         Map<String, Map<String, String>> status = new TreeMap<>();
         Set<String> mismatches = new TreeSet<>();
