@@ -289,7 +289,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
 
         assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
-        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"integer\","
+        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"required\": \"false\", \"type\": \"integer\","
                 + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"5\""));
 
         // and we should also have the javadoc documentation
@@ -323,7 +323,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertTrue(json.contains("\"label\": \"core,monitoring\""));
 
         assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
-        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"integer\","
+        assertTrue(json.contains("\"groupSize\": { \"kind\": \"parameter\", \"group\": \"producer\", \"required\": \"false\", \"type\": \"integer\","
                 + " \"javaType\": \"java.lang.Integer\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"5\""));
         // and we should also have the javadoc documentation
         assertTrue(json.contains("Set the initial delay for stats (in millis)"));
