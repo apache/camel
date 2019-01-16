@@ -21,7 +21,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
 public class HandleFaultInterceptor extends DelegateAsyncProcessor {
 

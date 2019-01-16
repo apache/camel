@@ -268,7 +268,7 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     protected List<Route> buildRouteWithInterceptor() throws Exception {
-        interceptor1 = new org.apache.camel.processor.DelegateProcessor() {
+        interceptor1 = new org.apache.camel.support.processor.DelegateProcessor() {
         };
 
         interceptor2 = new MyInterceptorProcessor();

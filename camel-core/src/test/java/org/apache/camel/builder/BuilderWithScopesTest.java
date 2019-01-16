@@ -19,7 +19,6 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,7 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.TestSupport;
 import org.apache.camel.ValidationException;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.support.processor.DelegateProcessor;
 import org.junit.Test;
 
 public class BuilderWithScopesTest extends TestSupport {

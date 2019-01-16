@@ -30,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.event.AbstractExchangeEvent;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
