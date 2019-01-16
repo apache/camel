@@ -147,7 +147,7 @@ public abstract class ContextTestSupport extends TestSupport {
      * This should only be enabled for tests that uses custom type converters.
      */
     protected boolean isLoadTypeConverters() {
-        return false;
+        return true;
     }
 
     protected void stopCamelContext() throws Exception {
