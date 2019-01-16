@@ -24,7 +24,6 @@ import org.apache.camel.model.Constants;
 import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.processor.DefaultMaskingFormatter;
-import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.MaskingFormatter;
@@ -34,6 +33,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.processor.ThroughputLogger;
 import org.slf4j.Logger;
 
 /**

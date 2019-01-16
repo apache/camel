@@ -143,7 +143,6 @@ import org.apache.camel.processor.StopProcessor;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.Throttler;
-import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.processor.TransformProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
@@ -164,6 +163,7 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.support.processor.ThroughputLogger;
 
 /**
  * Default {@link org.apache.camel.spi.ManagementObjectStrategy}.
