@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.Constants;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.support.jndi.JndiTest;
 import org.junit.Assert;
@@ -55,7 +54,7 @@ public class LogEipMaskTest {
     public void testCustomFormatter() throws Exception {
         CamelContext context = createCamelContext();
         MockMaskingFormatter customFormatter = new MockMaskingFormatter();
-        registry.bind(Constants.CUSTOM_LOG_MASK_REF, customFormatter);
+        registry.bind(MaskingFormatter.CUSTOM_LOG_MASK_REF, customFormatter);
         context.setLogMask(true);
         context.start();
         context.createProducerTemplate().sendBody("direct:foo", "mock password=\"my passw0rd!\"");

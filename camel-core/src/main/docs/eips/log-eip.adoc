@@ -198,6 +198,6 @@ And in XML:
 </route>
 ----
 
-`org.apache.camel.processor.DefaultMaskingFormatter` is used for the masking by default.
+`org.apache.camel.support.processor.DefaultMaskingFormatter` is used for the masking by default.
 If you want to use a custom masking formatter, put it into registry with the name `CamelCustomLogMask`.
 Note that the masking formatter must implement `org.apache.camel.spi.MaskingFormatter`.
