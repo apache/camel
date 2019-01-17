@@ -18,6 +18,8 @@ package org.apache.camel.reifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchLanguageException;
@@ -28,11 +30,11 @@ import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.Pair;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
 
 class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T> {
+
+    private static final Pattern RAW_PATTERN = Pattern.compile("RAW\\([^\\)]+\\)");
 
     ToDynamicReifier(ProcessorDefinition<?> definition) {
         super((T) definition);
@@ -99,6 +101,42 @@ class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T
     // Utilities
     // -------------------------------------------------------------------------
 
+    private static class Pair {
+        int left;
+        int right;
+        Pair(int left, int right) {
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    private static List<Pair> checkRAW(String s) {
+        Matcher matcher = RAW_PATTERN.matcher(s);
+        List<Pair> answer = new ArrayList<>();
+        // Check all occurrences
+        while (matcher.find()) {
+            answer.add(new Pair(matcher.start(), matcher.end() - 1));
+        }
+        return answer;
+    }
+
+    private static boolean isRaw(int index, List<Pair>pairs) {
+        for (Pair pair : pairs) {
+            if (index < pair.left) {
+                return false;
+            } else {
+                if (index >= pair.left) {
+                    if (index <= pair.right) {
+                        return true;
+                    } else {
+                        continue;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     /**
      * We need to split the string safely for each + sign, but avoid splitting within RAW(...).
      */
@@ -110,12 +148,12 @@ class ToDynamicReifier<T extends ToDynamicDefinition> extends ProcessorReifier<T
             list.add(s);
         } else {
             // there is a plus sign so we need to split in a safe manner
-            List<Pair<Integer>> rawPairs = URISupport.scanRaw(s);
+            List<Pair> rawPairs = checkRAW(s);
             StringBuilder sb = new StringBuilder();
             char chars[] = s.toCharArray();
             for (int i = 0; i < chars.length; i++) {
                 char ch = chars[i];
-                if (ch != '+' || URISupport.isRaw(i, rawPairs)) {
+                if (ch != '+' || isRaw(i, rawPairs)) {
                     sb.append(ch);
                 } else {
                     list.add(sb.toString());
