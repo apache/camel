@@ -330,12 +330,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public RouteContext popRouteContext() {
-        try {
-            return routeContextStack.pop();
-        } catch (NoSuchElementException e) {
-            // ignore and return null
-        }
-        return null;
+        return routeContextStack.pollFirst();
     }
 
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
