@@ -17,11 +17,11 @@
 package org.apache.camel.component.etcd;
 
 import mousio.etcd4j.EtcdClient;
-import org.apache.camel.support.DefaultPollingEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultPollingEndpoint;
 
 /**
  * The camel etcd component allows you to work with <a href="https://coreos.com/etcd">Etcd</a>, a distributed reliable key-value store.
