@@ -27,7 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
@@ -164,6 +163,17 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testRawUriParameterOkDynamic() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
+        getMockEndpoint("mock:result").expectedHeaderReceived("password", "foo)+bar");
+
+        template.sendBody("direct:okDynamic", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -189,6 +199,10 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
                 from("direct:ok")
                     .to("mycomponent:foo?password=RAW(foo)+bar)&username=scott")
+                    .to("mock:result");
+
+                from("direct:okDynamic")
+                    .toD("mycomponent:foo?password=RAW{foo)+bar}&username=scott")
                     .to("mock:result");
             }
         };
