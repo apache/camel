@@ -32,8 +32,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
