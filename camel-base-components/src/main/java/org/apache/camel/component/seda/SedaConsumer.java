@@ -31,7 +31,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
-import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
@@ -278,15 +277,13 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
             final List<Synchronization> completions = exchange.handoverCompletions();
 
             // use a multicast processor to process it
-            MulticastProcessor mp = endpoint.getConsumerMulticastProcessor();
+            AsyncProcessor mp = endpoint.getConsumerMulticastProcessor();
             ObjectHelper.notNull(mp, "ConsumerMulticastProcessor", this);
 
             // and use the asynchronous routing engine to support it
-            mp.process(exchange, new AsyncCallback() {
-                public void done(boolean doneSync) {
-                    // done the uow on the completions
-                    UnitOfWorkHelper.doneSynchronizations(exchange, completions, log);
-                }
+            mp.process(exchange, doneSync -> {
+                // done the uow on the completions
+                UnitOfWorkHelper.doneSynchronizations(exchange, completions, log);
             });
         } else {
             // use the regular processor and use the asynchronous routing engine to support it

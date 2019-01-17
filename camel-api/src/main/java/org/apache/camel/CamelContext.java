@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -875,6 +876,16 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws RuntimeCamelException is thrown if error starting the template
      */
     ConsumerTemplate createConsumerTemplate(int maximumCacheSize);
+
+    /**
+     * Creates a new multicast processor which sends an exchange to all the processors.
+     *
+     * @param processors the list of processors to send to
+     * @param executor the executor to use
+     * @return a multicasting processor
+     */
+    AsyncProcessor createMulticast(Collection<Processor> processors,
+                                   ExecutorService executor, boolean shutdownExecutorService);
 
     /**
      * Adds the given interceptor strategy

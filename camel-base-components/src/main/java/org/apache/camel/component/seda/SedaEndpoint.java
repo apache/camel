@@ -25,6 +25,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncEndpoint;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -36,7 +37,6 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -56,7 +56,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
 
     private final Set<SedaProducer> producers = new CopyOnWriteArraySet<>();
     private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<>();
-    private volatile MulticastProcessor consumerMulticastProcessor;
+    private volatile AsyncProcessor consumerMulticastProcessor;
     private volatile boolean multicastStarted;
     private volatile ExecutorService multicastExecutor;
 
@@ -201,7 +201,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
         return ref;
     }
 
-    protected synchronized MulticastProcessor getConsumerMulticastProcessor() throws Exception {
+    protected synchronized AsyncProcessor getConsumerMulticastProcessor() throws Exception {
         if (!multicastStarted && consumerMulticastProcessor != null) {
             // only start it on-demand to avoid starting it during stopping
             ServiceHelper.startService(consumerMulticastProcessor);
@@ -235,9 +235,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             }
             // create multicast processor
             multicastStarted = false;
-            consumerMulticastProcessor = new MulticastProcessor(getCamelContext(), processors, null,
-                                                                true, multicastExecutor, false, false, false, 
-                                                                0, null, false, false);
+            consumerMulticastProcessor = getCamelContext().createMulticast(processors, multicastExecutor, false);
         }
     }
 
