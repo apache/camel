@@ -17,6 +17,7 @@
 package org.apache.camel.component;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,7 +26,6 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedResourceEndpointMBean;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -74,14 +74,15 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
      */
     public InputStream getResourceAsInputStream() throws IOException {
         // try to get the resource input stream
-        InputStream is;
         if (isContentCache()) {
             synchronized (this) {
                 if (buffer == null) {
                     log.debug("Reading resource: {} into the content cache", resourceUri);
-                    is = getResourceAsInputStreamWithoutCache();
-                    buffer = IOConverter.toBytes(is);
-                    IOHelper.close(is, resourceUri, log);
+                    try (InputStream is = getResourceAsInputStreamWithoutCache()) {
+                        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                        IOHelper.copy(IOHelper.buffered(is), bos);
+                        buffer = bos.toByteArray();
+                    }
                 }
             }
             log.debug("Using resource: {} from the content cache", resourceUri);

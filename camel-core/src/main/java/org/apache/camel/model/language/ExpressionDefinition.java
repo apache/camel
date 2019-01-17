@@ -43,7 +43,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
@@ -170,7 +170,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                     exp = exp.trim();
                 }
                 // resolve the expression as it may be an external script from the classpath/file etc
-                exp = ResourceHelper.resolveOptionalExternalScript(camelContext, exp);
+                exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
 
                 predicate = language.createPredicate(exp);
                 configurePredicate(camelContext, predicate);
@@ -205,7 +205,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                     exp = exp.trim();
                 }
                 // resolve the expression as it may be an external script from the classpath/file etc
-                exp = ResourceHelper.resolveOptionalExternalScript(camelContext, exp);
+                exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
 
                 setExpressionValue(language.createExpression(exp));
                 configureExpression(camelContext, getExpressionValue());
