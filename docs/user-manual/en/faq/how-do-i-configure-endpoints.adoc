@@ -124,8 +124,7 @@ pop3://host:port?password=foo
 ----
 
 [[HowdoIconfigureendpoints-ReferringbeansfromEndpointURIs]]
-Referring beans from Endpoint URIs
-++++++++++++++++++++++++++++++++++
+===== Referring beans from Endpoint URIs
 
 *Available as of Camel 2.0*
 
@@ -145,8 +144,7 @@ Will lookup a bean with the id `mySpecialFileSorter` in the
 Registry.
 
 [[HowdoIconfigureendpoints-Configuringparametervaluesusingrawvalues,egsuchaspasswords]]
-Configuring parameter values using raw values, eg such as passwords
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+===== Configuring parameter values using raw values, eg such as passwords
 
 *Available as of Camel 2.11*
 
@@ -170,8 +168,7 @@ In the above example, we have declare the password value as raw, and the
 actual password would be as typed, eg `se+re?t&23`.
 
 [[HowdoIconfigureendpoints-Usingpropertyplaceholders]]
-Using property placeholders
-+++++++++++++++++++++++++++
+===== Using property placeholders
 
 Camel have extensive support for using property placeholders, which you
 can read more about here. For
@@ -225,8 +222,7 @@ To understand more about property placeholders, read the
 documentation.
 
 [[HowdoIconfigureendpoints-Configuringurisusingendpointwithbeanpropertystyle]]
-Configuring URIs using endpoint with bean property style
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+==== Configuring URIs using endpoint with bean property style
 
 *Available as of Camel 2.15*
 

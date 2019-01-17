@@ -1,6 +1,5 @@
 [[BatchConsumer-BatchConsumer]]
-Batch Consumer
-~~~~~~~~~~~~~~
+=== Batch Consumer
 
 *Available as of Camel 2.0*
 
@@ -28,8 +27,7 @@ Consumer] by its consumer:
 * <<aws-s3-component,S3>>
 
 [[BatchConsumer-ConsumerOptions]]
-Consumer Options
-^^^^^^^^^^^^^^^^
+==== Consumer Options
 
 The Batch Consumer supports the following options:
 
@@ -44,8 +42,7 @@ starting up the server that there are thousands of files. Set a value of
 |=======================================================================
 
 [[BatchConsumer-ExchangeProperties]]
-Exchange Properties
-^^^^^^^^^^^^^^^^^^^
+==== Exchange Properties
 
 The following properties is set on the Exchange for
 each Exchange polled in the same batch.
@@ -64,8 +61,7 @@ Is only `true` for the last entry.
 |=======================================================================
 
 [[BatchConsumer-SeeAlso]]
-See Also
-^^^^^^^^
+==== See Also
 
 * Polling Consumer
 

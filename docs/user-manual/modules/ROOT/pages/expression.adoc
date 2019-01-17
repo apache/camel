@@ -1,6 +1,5 @@
 [[Expression-Expressions]]
-Expressions
-~~~~~~~~~~~
+=== Expressions
 
 Expressions and Predicates can then be used to
 create the various link:enterprise-integration-patterns.adoc[Enterprise
@@ -12,8 +11,7 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Expres
 strategies using a variety of different Languages.
 
 [[Expression-API]]
-API
-^^^
+==== API
 
 If you are outside of the DSL and want to create your own
 expressions you can either implement the
@@ -23,8 +21,7 @@ http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/builde
 class].
 
 [[Expression-Expression]]
-Expression
-++++++++++
+===== Expression
 
 The API for a Camel Expression is defined in the
 `org.apache.camel.Expression` interface as shown:
@@ -45,8 +42,7 @@ public interface Expression {
 -------------------------------------------------------------------------------
 
 [[Expression-Predicate]]
-Predicate
-+++++++++
+===== Predicate
 
 The API for a Camel Predicate is defined in the
 `org.apache.camel.Predicate` interface as shown:
@@ -68,8 +64,7 @@ public interface Predicate {
 -------------------------------------------------------------------------------
 
 [[Expression-ExpressionLanguages]]
-Expression Languages
-^^^^^^^^^^^^^^^^^^^^
+==== Expression Languages
 
 The following languages are supported out of the box
 
@@ -105,8 +100,7 @@ link:annotation-based-expression-language.html[Annotation Based
 Expression Language].
 
 [[Expression-UsingExpressionsinyourIDE]]
-Using Expressions in your IDE
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+==== Using Expressions in your IDE
 
 To use different expression and predicates in your IDE you need to
 perform a static import of the builder class for the language(s) you
@@ -129,8 +123,7 @@ and <<ruby-language,Ruby>> |http://camel.apache.org/maven/current/camel-script/a
 |=======================================================================
 
 [[Expression-SeeAlso]]
-See Also
-++++++++
+===== See Also
 
 * Predicate
 
