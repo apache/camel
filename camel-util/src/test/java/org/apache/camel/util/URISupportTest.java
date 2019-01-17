@@ -18,14 +18,17 @@ package org.apache.camel.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
@@ -258,16 +261,20 @@ public class URISupportTest {
 
     @Test
     public void testSanitizeUriWithRawPassword() {
-        String uri = "http://foo?username=me&password=RAW(me#@123)&foo=bar";
+        String uri1 = "http://foo?username=me&password=RAW(me#@123)&foo=bar";
+        String uri2 = "http://foo?username=me&password=RAW{me#@123}&foo=bar";
         String expected = "http://foo?username=me&password=xxxxxx&foo=bar";
-        assertEquals(expected, URISupport.sanitizeUri(uri));
+        assertEquals(expected, URISupport.sanitizeUri(uri1));
+        assertEquals(expected, URISupport.sanitizeUri(uri2));
     }
 
     @Test
     public void testSanitizeUriRawUnsafePassword() {
-        String uri = "sftp://localhost/target?password=RAW(beforeAmp&afterAmp)&username=jrandom";
+        String uri1 = "sftp://localhost/target?password=RAW(beforeAmp&afterAmp)&username=jrandom";
+        String uri2 = "sftp://localhost/target?password=RAW{beforeAmp&afterAmp}&username=jrandom";
         String expected = "sftp://localhost/target?password=xxxxxx&username=jrandom";
-        assertEquals(expected, URISupport.sanitizeUri(uri));
+        assertEquals(expected, URISupport.sanitizeUri(uri1));
+        assertEquals(expected, URISupport.sanitizeUri(uri2));
     }
 
     @Test
@@ -302,6 +309,16 @@ public class URISupportTest {
     }
 
     @Test
+    public void testRawParameterCurly() throws Exception {
+        String out = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some chat");
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{++?w0rd}&serviceName=some+chat", out);
+
+        String out2 = URISupport.normalizeUri("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %% bar}&serviceName=some chat");
+        // Just make sure the RAW parameter can be resolved rightly, we need to replace the % into %25
+        assertEquals("xmpp://camel-user@localhost:123/test-user@localhost?password=RAW{foo %25%25 bar}&serviceName=some+chat", out2);
+    }
+
+    @Test
     public void testParseQuery() throws Exception {
         Map<String, Object> map = URISupport.parseQuery("password=secret&serviceName=somechat");
         assertEquals(2, map.size());
@@ -325,6 +342,24 @@ public class URISupportTest {
     }
 
     @Test
+    public void testParseQueryCurly() throws Exception {
+        Map<String, Object> map = URISupport.parseQuery("password=RAW{++?w0rd}&serviceName=somechat");
+        assertEquals(2, map.size());
+        assertEquals("RAW{++?w0rd}", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+
+        map = URISupport.parseQuery("password=RAW{++?)w&rd}&serviceName=somechat");
+        assertEquals(2, map.size());
+        assertEquals("RAW{++?)w&rd}", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+
+        map = URISupport.parseQuery("password=RAW{%2520w&rd}&serviceName=somechat");
+        assertEquals(2, map.size());
+        assertEquals("RAW{%2520w&rd}", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+    }
+
+    @Test
     public void testParseQueryLenient() throws Exception {
         try {
             URISupport.parseQuery("password=secret&serviceName=somechat&", false, false);
@@ -337,6 +372,48 @@ public class URISupportTest {
         assertEquals(2, map.size());
         assertEquals("secret", map.get("password"));
         assertEquals("somechat", map.get("serviceName"));
+    }
+
+    @Test
+    public void testScanRaw() {
+        List<Pair<Integer>> pairs1 = URISupport.scanRaw("password=RAW(++?5w0rd)&serviceName=somechat");
+        assertEquals(1, pairs1.size());
+        assertEquals(new Pair(9, 21), pairs1.get(0));
+
+        List<Pair<Integer>> pairs2 = URISupport.scanRaw("password=RAW{++?5w0rd}&serviceName=somechat");
+        assertEquals(1, pairs2.size());
+        assertEquals(new Pair(9, 21), pairs2.get(0));
+
+        List<Pair<Integer>> pairs3 = URISupport.scanRaw("password=RAW{++?)&0rd}&serviceName=somechat");
+        assertEquals(1, pairs3.size());
+        assertEquals(new Pair(9, 21), pairs3.get(0));
+
+        List<Pair<Integer>> pairs4 = URISupport.scanRaw("password1=RAW(++?}&0rd)&password2=RAW{++?)&0rd}&serviceName=somechat");
+        assertEquals(2, pairs4.size());
+        assertEquals(new Pair(10, 22), pairs4.get(0));
+        assertEquals(new Pair(34, 46), pairs4.get(1));
+    }
+
+    @Test
+    public void testIsRaw() {
+        List<Pair<Integer>> pairs = Arrays.asList(
+                new Pair(3, 5),
+                new Pair(8, 10));
+        for (int i = 0; i < 3; i++) {
+            assertFalse(URISupport.isRaw(i, pairs));
+        }
+        for (int i = 3; i < 6; i++) {
+            assertTrue(URISupport.isRaw(i, pairs));
+        }
+        for (int i = 6; i < 8; i++) {
+            assertFalse(URISupport.isRaw(i, pairs));
+        }
+        for (int i = 8; i < 11; i++) {
+            assertTrue(URISupport.isRaw(i, pairs));
+        }
+        for (int i = 11; i < 15; i++) {
+            assertFalse(URISupport.isRaw(i, pairs));
+        }
     }
 
     @Test
@@ -354,6 +431,21 @@ public class URISupportTest {
         assertEquals("somechat", map.get("serviceName"));
 
         map = URISupport.parseQuery("password=RAW(++?)w&rd)&serviceName=somechat");
+        URISupport.resolveRawParameterValues(map);
+        assertEquals(2, map.size());
+        assertEquals("++?)w&rd", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+    }
+
+    @Test
+    public void testResolveRawParameterValuesCurly() throws Exception {
+        Map<String, Object> map = URISupport.parseQuery("password=RAW{++?w0rd}&serviceName=somechat");
+        URISupport.resolveRawParameterValues(map);
+        assertEquals(2, map.size());
+        assertEquals("++?w0rd", map.get("password"));
+        assertEquals("somechat", map.get("serviceName"));
+
+        map = URISupport.parseQuery("password=RAW{++?)w&rd}&serviceName=somechat");
         URISupport.resolveRawParameterValues(map);
         assertEquals(2, map.size());
         assertEquals("++?)w&rd", map.get("password"));
