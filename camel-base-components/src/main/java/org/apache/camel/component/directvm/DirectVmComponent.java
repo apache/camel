@@ -26,12 +26,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
 /**
  * The <a href="http://camel.apache.org/direct-vm.html">Direct VM Component</a> manages {@link DirectVmEndpoint} and holds the list of named direct-vm endpoints.
  */
-@org.apache.camel.spi.annotations.Component("direct-vm")
+@Component("direct-vm")
 public class DirectVmComponent extends DefaultComponent {
 
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
