@@ -41,7 +41,11 @@ public class CamelTwitterTest extends AbstractSpringBootTestSupport {
 
     @Test
     public void componentTests() throws Exception {
-        this.runComponentTest(config);
+        this.runComponentTest(config, "twitter-directmessage");
+        this.runComponentTest(config, "twitter-search");
+        this.runComponentTest(config, "twitter-timeline");
+        this.runComponentTest(config, "twitter-streaming");
+
         this.runModuleUnitTestsIfEnabled(config);
     }
 

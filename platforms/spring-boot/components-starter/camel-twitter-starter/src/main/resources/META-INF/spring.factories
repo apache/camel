@@ -15,7 +15,6 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.twitter.springboot.TwitterComponentAutoConfiguration,\
 org.apache.camel.component.twitter.timeline.springboot.TwitterTimelineComponentAutoConfiguration,\
 org.apache.camel.component.twitter.search.springboot.TwitterSearchComponentAutoConfiguration,\
 org.apache.camel.component.twitter.directmessage.springboot.TwitterDirectMessageComponentAutoConfiguration,\
