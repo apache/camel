@@ -552,6 +552,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             if (endpoint.getIdempotentKey() != null) {
                 Exchange dummy = endpoint.createExchange(file);
                 key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
+                log.trace("Evaluated idempotentKey: {} for file: {}", key, file);
             }
             if (key != null && endpoint.getIdempotentRepository().contains(key)) {
                 log.trace("This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}", key, file);
