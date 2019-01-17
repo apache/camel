@@ -22,10 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
-import org.apache.camel.model.Constants;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.DefaultMaskingFormatter;
+import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.MaskingFormatter;
@@ -93,7 +92,7 @@ class LogReifier extends ProcessorReifier<LogDefinition> {
 
     private MaskingFormatter getMaskingFormatter(RouteContext routeContext) {
         if (routeContext.isLogMask()) {
-            MaskingFormatter formatter = routeContext.getCamelContext().getRegistry().lookupByNameAndType(Constants.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            MaskingFormatter formatter = routeContext.getCamelContext().getRegistry().lookupByNameAndType(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
             if (formatter == null) {
                 formatter = new DefaultMaskingFormatter();
             }

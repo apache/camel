@@ -20,10 +20,9 @@ import org.apache.camel.Component;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.model.Constants;
-import org.apache.camel.processor.CamelLogProcessor;
+import org.apache.camel.support.processor.CamelLogProcessor;
 import org.apache.camel.support.processor.DefaultExchangeFormatter;
-import org.apache.camel.processor.DefaultMaskingFormatter;
+import org.apache.camel.support.processor.DefaultMaskingFormatter;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.MaskingFormatter;
@@ -150,7 +149,7 @@ public class LogEndpoint extends ProcessorEndpoint {
 
     private MaskingFormatter getMaskingFormatter() {
         if (logMask != null ? logMask : getCamelContext().isLogMask()) {
-            MaskingFormatter formatter = getCamelContext().getRegistry().lookupByNameAndType(Constants.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
+            MaskingFormatter formatter = getCamelContext().getRegistry().lookupByNameAndType(MaskingFormatter.CUSTOM_LOG_MASK_REF, MaskingFormatter.class);
             if (formatter == null) {
                 formatter = new DefaultMaskingFormatter();
             }

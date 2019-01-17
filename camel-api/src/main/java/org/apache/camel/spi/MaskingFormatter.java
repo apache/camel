@@ -22,6 +22,8 @@ package org.apache.camel.spi;
  */
 public interface MaskingFormatter {
 
+    String CUSTOM_LOG_MASK_REF = "CamelCustomLogMask";
+
     /**
      * Format a given string.
      *

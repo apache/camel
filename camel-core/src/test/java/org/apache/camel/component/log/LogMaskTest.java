@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.Constants;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.support.jndi.JndiTest;
 import org.junit.Assert;
@@ -62,7 +61,7 @@ public class LogMaskTest {
     public void testCustomFormatter() throws Exception {
         CamelContext context = createCamelContext();
         MockMaskingFormatter customFormatter = new MockMaskingFormatter();
-        registry.bind(Constants.CUSTOM_LOG_MASK_REF, customFormatter);
+        registry.bind(MaskingFormatter.CUSTOM_LOG_MASK_REF, customFormatter);
         context.start();
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBody("log:mock?logMask=true", "password=passw0rd@");
