@@ -1,5 +1,4 @@
-Components
-^^^^^^^^^^
+==== Components
 
 // components: START
 Number of Components: 289 in 191 JAR artifacts (0 deprecated)
@@ -879,8 +878,7 @@ Number of Components: 289 in 191 JAR artifacts (0 deprecated)
 // components: END
 
 
-Data Formats
-^^^^^^^^^^^^
+==== Data Formats
 
 // dataformats: START
 Number of Data Formats: 45 in 35 JAR artifacts (0 deprecated)
@@ -982,8 +980,7 @@ Number of Data Formats: 45 in 35 JAR artifacts (0 deprecated)
 // dataformats: END
 
 
-Expression Languages
-^^^^^^^^^^^^^^^^^^^^
+==== Expression Languages
 
 // languages: START
 Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
@@ -1031,8 +1028,7 @@ Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
 // languages: END
 
 
-Miscellaneous Components
-^^^^^^^^^^^^^^^^^^^^^^^^
+==== Miscellaneous Components
 
 // others: START
 Number of Miscellaneous Components: 31 in 31 JAR artifacts (0 deprecated)

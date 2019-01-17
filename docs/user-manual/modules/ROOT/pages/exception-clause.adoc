@@ -684,8 +684,7 @@ errorHandler(defaultErrorHandler()
 ----
 
 [[ExceptionClause-UsingonRedeliveryinSpringDSL.1]]
-Using `onRedelivery` in Spring DSL
-++++++++++++++++++++++++++++++++++
+===== Using `onRedelivery` in Spring DSL
 
 In Spring DSL you need to use the *`onExceptionOccurredRef`* attribute
 to refer to a spring bean id that is your custom processor:

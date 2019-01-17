@@ -104,8 +104,7 @@ format.
 You would need to enable this using the JMX API.
 
 [[BacklogTracer-SeeAlso]]
-See Also
-^^^^^^^^
+==== See Also
 
 * link:tracer.html[Tracer]
 * link:tracer-example.html[Tracer Example]
