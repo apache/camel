@@ -29,10 +29,10 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.support.LoggingExceptionHandler;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LoggingExceptionHandler;
+import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
