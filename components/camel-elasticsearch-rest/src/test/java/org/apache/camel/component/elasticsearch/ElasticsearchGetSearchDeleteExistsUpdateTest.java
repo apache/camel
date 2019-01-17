@@ -49,7 +49,6 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         GetResponse response = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
-        System.err.println(response.getSource());
     }
 
     @Test
