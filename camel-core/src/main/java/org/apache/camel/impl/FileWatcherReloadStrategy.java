@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Locale;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -99,8 +98,9 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
         if (dir.exists() && dir.isDirectory()) {
             log.info("Starting ReloadStrategy to watch directory: {}", dir);
 
+            // only include xml files
             endpoint = getCamelContext().getEndpoint("file:" + dir + "?delay=" + delay + "&recursive=" + isRecursive
-                + "&readLock=none&noop=true&idempotentKey=${file:name}-${file:modified}");
+                + "&include=.*xml$&readLock=none&noop=true&idempotentKey=${file:name}-${file:modified}");
             // must wrap in unit of work
             task = new UnitOfWorkProducer(new UpdatedFileProcessor(endpoint));
             consumer = endpoint.createConsumer(task);
@@ -124,27 +124,23 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
         }
     }
 
-    protected class UpdatedFileProcessor extends DefaultProducer {
+    private class UpdatedFileProcessor extends DefaultProducer {
 
-        public UpdatedFileProcessor(Endpoint endpoint) {
+        private UpdatedFileProcessor(Endpoint endpoint) {
             super(endpoint);
         }
 
         @Override
         public void process(Exchange exchange) throws Exception {
             String name = exchange.getMessage().getHeader(Exchange.FILE_NAME, String.class);
-            log.trace("Modified/Created file: {}", name);
+            log.debug("Modified/Created file: {}", name);
 
-            // must be an .xml file
-            if (name.toLowerCase(Locale.US).endsWith(".xml")) {
-                log.debug("Modified/Created XML file: {}", name);
-                try {
-                    InputStream is = exchange.getMessage().getMandatoryBody(InputStream.class);
-                    onReloadXml(getCamelContext(), name, is);
-                    IOHelper.close(is);
-                } catch (Exception e) {
-                    log.warn("Error reloading routes from file: " + name + " due " + e.getMessage() + ". This exception is ignored.", e);
-                }
+            try {
+                InputStream is = exchange.getMessage().getMandatoryBody(InputStream.class);
+                onReloadXml(getCamelContext(), name, is);
+                IOHelper.close(is);
+            } catch (Exception e) {
+                log.warn("Error reloading routes from file: " + name + " due " + e.getMessage() + ". This exception is ignored.", e);
             }
         }
     }
