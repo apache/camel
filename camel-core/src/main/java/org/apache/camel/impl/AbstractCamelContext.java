@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -47,6 +48,7 @@ import java.util.function.Supplier;
 import javax.naming.Context;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
@@ -102,6 +104,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.interceptor.Debug;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.reifier.RouteReifier;
@@ -2863,6 +2866,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return answer;
+    }
+
+    @Override
+    public AsyncProcessor createMulticast(Collection<Processor> processors, ExecutorService executor, boolean shutdownExecutorService) {
+        return new MulticastProcessor(this, processors, null, true, executor,
+                shutdownExecutorService, false, false, 0,
+                null, false, false);
     }
 
     public ErrorHandlerBuilder getErrorHandlerFactory() {

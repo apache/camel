@@ -162,7 +162,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
                               ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
                               boolean shareUnitOfWork, boolean parallelAggregate) {
         this(camelContext, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
-             shareUnitOfWork, false, false);
+             shareUnitOfWork, parallelAggregate, false);
     }
     
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
