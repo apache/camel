@@ -156,6 +156,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 
         // create an xml file with some routes
         log.info("Copying file to target/dummy");
+        Thread.sleep(100);
         FileUtil.copyFile(new File("src/test/resources/org/apache/camel/model/barRoute.xml"), new File("target/dummy/barRoute.xml"));
 
         // wait for that file to be processed
