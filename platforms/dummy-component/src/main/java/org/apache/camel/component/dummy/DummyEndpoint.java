@@ -20,11 +20,11 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 @UriEndpoint(scheme = "dummy", syntax = "dummy:drink", title = "Dummy", label = "bar", producerOnly = true)
 public class DummyEndpoint extends DefaultEndpoint {
