@@ -1,5 +1,4 @@
-Scala DSL - EIP
-===============
+= Scala DSL - EIP
 
 [TIP]
 ====
@@ -33,12 +32,10 @@ test source code] for the Scala Component to find more examples.
 ** 4.1 link:#ScalaDSL-EIP-Contentenricher[Content enricher]
 
 [[ScalaDSL-EIP-Messagingsystems]]
-Messaging systems
------------------
+== Messaging systems
 
 [[ScalaDSL-EIP-Pipelinepipeline]]
-Pipeline
-~~~~~~~~
+=== Pipeline
 
 There is a simple syntax available for specifying pipeline, by simple
 putting `to` or `→` between the different steps in the pipeline.
@@ -66,8 +63,7 @@ where every step in the pipeline starts with either `to` or `→`.
 ----------------------------------------------------------
 
 [[ScalaDSL-EIP-Filterfilter]]
-Filter
-~~~~~~
+=== Filter
 
 For a message filter, use the `when()` method with a parameter of type
 The `Exchange ⇒ Boolean`. In the example below, we use a Scala
@@ -97,12 +93,10 @@ the more elaborate syntax.
 ----------------------------------------------------------
 
 [[ScalaDSL-EIP-Messagingchannels]]
-Messaging channels
-^^^^^^^^^^^^^^^^^^
+==== Messaging channels
 
 [[ScalaDSL-EIP-Deadletterchannel]]
-Dead letter channel
-+++++++++++++++++++
+===== Dead letter channel
 
 The http://www.eaipatterns.com/DeadLetterChannel.html[dead letter
 channel] can be created with the syntax similar to the one used in
@@ -130,12 +124,10 @@ http://camel.apache.org/error-handler.html#ErrorHandler-LoggingErrorHandler[Logg
 ----------------------------------------------------------------------------------------------------------------
 
 [[ScalaDSL-EIP-Messagerouting]]
-Message routing
-^^^^^^^^^^^^^^^
+==== Message routing
 
 [[ScalaDSL-EIP-Aggregator]]
-Aggregator
-++++++++++
+===== Aggregator
 
 The aggregator EIP aggregates messages based on some message correlation
 criteria. In the Scala DSL, the `aggregate` method takes a function
@@ -144,8 +136,7 @@ the sample below, message are being aggregated if the first 7 letters in
 the message body are the same.
 
 [[ScalaDSL-EIP-Contentbasedrouter]]
-Content based router
-++++++++++++++++++++
+===== Content based router
 
 Similar to the Filter, the content based router
 uses `when` methods with `Exchange ⇒ Boolean` function literals and an
@@ -170,8 +161,7 @@ language of the message body.
 ----------------------------------------------------------------------------------------------------------------
 
 [[ScalaDSL-EIP-Delayer]]
-Delayer
-+++++++
+===== Delayer
 
 Unlike a throttler, which only slows down messages if the rate exceeds a
 threshold, a delayer delays every messages with a fixed amount of time.
@@ -197,8 +187,7 @@ without doing anything to `mock:b`
 ----------------------------------------------------------------------------------------------------------------
 
 [[ScalaDSL-EIP-Loadbalancer]]
-Load balancer
-+++++++++++++
+===== Load balancer
 
 To distribute the message handling load over multiple endpoints, we add
 a `loadbalance` to our route definition. You can optionally specify a
@@ -216,8 +205,7 @@ load balancer strategy, like `roundrobin`
 ----------------------------------------------------------------------------------------------------------------
 
 [[ScalaDSL-EIP-Multicast]]
-Multicast
-+++++++++
+===== Multicast
 
 Multicast allows you to send a message to multiple endpoints at the same
 time. In a simple route, you can specify multiple targets in the `to` or
@@ -230,8 +218,7 @@ time. In a simple route, you can specify multiple targets in the `to` or
 ----------------------------------------------------------------------------------------------------------------
 
 [[ScalaDSL-EIP-Recipientlist]]
-Recipient list
-++++++++++++++
+===== Recipient list
 
 You can handle a static recipient list with a multicast or
 pipeline, but this EIP is usually applied when
@@ -273,8 +260,7 @@ the target.
 ----------------------------------------------------------------------------------------------------------------
 
 [[ScalaDSL-EIP-Resequencer]]
-Resequencer
-+++++++++++
+===== Resequencer
 
 Use the `resequence` method to add a resequencer to the RouteBuilder.
 The method takes a function (`Exchange ⇒ Unit`) that determines the
@@ -312,8 +298,7 @@ will be send to `mock:e` whenever a batch of 5 messages is available.
 ----------------------------------------------------------------------------------------------------------------
 
 [[ScalaDSL-EIP-Splitter]]
-Splitter
-++++++++
+===== Splitter
 
 To handle large message in smaller chunks, you can write a Scala
 `Exchange ⇒ Any*` method and add it to your route with the `splitter`
@@ -341,8 +326,7 @@ other languages like XPath can
 be within the Scala DSL.
 
 [[ScalaDSL-EIP-Throttler]]
-Throttler
-+++++++++
+===== Throttler
 
 The throttler allows you to slow down messages before sending them
 along. The `throttle` methods allows you to specify the maximum
@@ -369,12 +353,10 @@ seconds will arrive at the `mock:c` endpoint.
 ----------------------------------------------------------------------------------------------------------------
 
 [[ScalaDSL-EIP-Messagetransformation]]
-Message transformation
-^^^^^^^^^^^^^^^^^^^^^^
+==== Message transformation
 
 [[ScalaDSL-EIP-Contentenricher]]
-Content enricher
-++++++++++++++++
+===== Content enricher
 
 Using a processor function (`Exchange → Unit`), you can alter/enrich the
 message content. This example uses a simple function literal to append

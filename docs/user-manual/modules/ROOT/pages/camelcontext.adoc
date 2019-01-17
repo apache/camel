@@ -1,6 +1,5 @@
 [[CamelContext-CamelContext]]
-CamelContext
-~~~~~~~~~~~~
+=== CamelContext
 
 The
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext]
@@ -12,8 +11,7 @@ See link:lifecycle.adoc[Lifecycle] to understand the overall lifecycle
 of the CamelContext.
 
 [[CamelContext-SeeAlso]]
-See Also
-^^^^^^^^
+==== See Also
 
 * link:route-builder.adoc[RouteBuilder]
 * link:routes.adoc[Routes]

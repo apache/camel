@@ -62,8 +62,7 @@ sort it in alphabetical order.
 |=================================================
 
 [[Team-Contributors]]
-Contributors
-^^^^^^^^^^^^
+==== Contributors
 
 [NOTE]
 ====

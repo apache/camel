@@ -95,8 +95,7 @@ using a finally, then the `end()` should be at the end of the `doCatch`
 to indicate the end there.
 
 [[TryCatchFinally-Usingtry..catch..finallyinSpringDSL]]
-Using try .. catch .. finally in Spring DSL
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+==== Using try .. catch .. finally in Spring DSL
 
 We show the three sample samples using Spring DSL instead.
 
