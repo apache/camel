@@ -37,7 +37,7 @@ import org.apache.camel.support.DefaultProducer;
 /**
  * The browse component is used for viewing the messages received on endpoints that supports {@link BrowsableEndpoint}.
  *
- * This can be useful for testing, visualisation tools or debugging. he exchanges sent to the endpoint are all available to be browsed.
+ * This can be useful for testing, visualisation tools or debugging. The exchanges sent to the endpoint are all available to be browsed.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "browse", title = "Browse", syntax = "browse:name", label = "core,monitoring")
 public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
