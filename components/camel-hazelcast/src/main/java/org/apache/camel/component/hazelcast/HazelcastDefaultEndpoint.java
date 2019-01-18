@@ -24,10 +24,10 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.queue.HazelcastQueueConfiguration;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicConfiguration;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The hazelcast component allows you to work with the Hazelcast distributed data grid / cache.
