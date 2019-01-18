@@ -66,7 +66,7 @@ public class LuceneConfiguration {
         if (!isValidAuthority()) {
             throw new URISyntaxException(uri.toASCIIString(), 
                     "Incorrect URI syntax and/or Operation specified for the Lucene endpoint."
-                    + "Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\""); 
+                    + " Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\"");
         }
         setHost(retrieveTokenFromAuthority("hostname"));
 

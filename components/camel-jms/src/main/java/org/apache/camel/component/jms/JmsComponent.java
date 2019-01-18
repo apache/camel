@@ -229,7 +229,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
      */
     @Metadata(label = "consumer",
             description = "The JMS acknowledgement mode defined as an Integer. Allows you to set vendor-specific extensions to the acknowledgment mode."
-                    + "For the regular modes, it is preferable to use the acknowledgementModeName instead.")
+                    + " For the regular modes, it is preferable to use the acknowledgementModeName instead.")
     public void setAcknowledgementMode(int consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementMode(consumerAcknowledgementMode);
     }
@@ -384,7 +384,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     }
 
     /**
-     * Specifies the delivery mode to be used. Possible values are
+     * Specifies the delivery mode to be used.
      * Possibles values are those defined by javax.jms.DeliveryMode.
      * NON_PERSISTENT = 1 and PERSISTENT = 2.
      */
@@ -565,23 +565,25 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
 
     /**
      * When sending, specifies whether message IDs should be added. This is just an hint to the JMS Broker.
-     * If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, the message ID must be set to its normal unique value
+     * If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, the message ID must be set to its normal unique value.
      */
     @Metadata(defaultValue = "true", label = "advanced",
             description = "When sending, specifies whether message IDs should be added. This is just an hint to the JMS broker."
-                    + "If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, "
-                    + "the message ID must be set to its normal unique value")
+                    + " If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, "
+                    + "the message ID must be set to its normal unique value.")
     public void setMessageIdEnabled(boolean messageIdEnabled) {
         getConfiguration().setMessageIdEnabled(messageIdEnabled);
     }
 
     /**
-     * Specifies whether timestamps should be enabled by default on sending messages.
+     * Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS broker.
+     * If the JMS provider accepts this hint, these messages must have the timestamp set to zero;
+     * if the provider ignores the hint the timestamp must be set to its normal value.
      */
     @Metadata(defaultValue = "true", label = "advanced",
             description = "Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS broker."
-                    + "If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint "
-                    + "the timestamp must be set to its normal value")
+                    + " If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint "
+                    + "the timestamp must be set to its normal value.")
     public void setMessageTimestampEnabled(boolean messageTimestampEnabled) {
         getConfiguration().setMessageTimestampEnabled(messageTimestampEnabled);
     }
@@ -589,12 +591,12 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     /**
      * If true, Camel will always make a JMS message copy of the message when it is passed to the producer for sending.
      * Copying the message is needed in some situations, such as when a replyToDestinationSelectorName is set
-     * (incidentally, Camel will set the alwaysCopyMessage option to true, if a replyToDestinationSelectorName is set)
+     * (incidentally, Camel will set the alwaysCopyMessage option to true, if a replyToDestinationSelectorName is set).
      */
     @Metadata(label = "producer,advanced",
             description = "If true, Camel will always make a JMS message copy of the message when it is passed to the producer for sending."
                     + " Copying the message is needed in some situations, such as when a replyToDestinationSelectorName is set"
-                    + " (incidentally, Camel will set the alwaysCopyMessage option to true, if a replyToDestinationSelectorName is set)")
+                    + " (incidentally, Camel will set the alwaysCopyMessage option to true, if a replyToDestinationSelectorName is set).")
     public void setAlwaysCopyMessage(boolean alwaysCopyMessage) {
         getConfiguration().setAlwaysCopyMessage(alwaysCopyMessage);
     }

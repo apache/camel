@@ -135,8 +135,8 @@ public class KinesisComponentConfiguration
         private String sequenceNumber;
         /**
          * Define what will be the behavior in case of shard closed. Possible
-         * value are ignore, silent and fail.In case of ignore a message will be
-         * logged and the consumer will restart from the beginning,in case of
+         * value are ignore, silent and fail. In case of ignore a message will
+         * be logged and the consumer will restart from the beginning,in case of
          * silent there will be no logging and the consumer will start from the
          * beginning,in case of fail a ReachedClosedStateException will be
          * raised

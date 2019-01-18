@@ -162,7 +162,7 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
                 throw new IncorrectCredentialsException("Authentication Failed. Password for account " + token.getPrincipal() + " was incorrect!", ice.getCause());
             } catch (LockedAccountException lae) {
                 throw new LockedAccountException("Authentication Failed. The account for username " + token.getPrincipal() + " is locked."
-                        + "Please contact your administrator to unlock it.", lae.getCause());
+                        + " Please contact your administrator to unlock it.", lae.getCause());
             } catch (AuthenticationException ae) {
                 throw new AuthenticationException("Authentication Failed.", ae.getCause());
             }

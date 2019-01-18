@@ -157,7 +157,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     private MessageCreatedStrategy messageCreatedStrategy;
     @UriParam(label = "advanced",
             description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
-                + "Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -)."
+                + " Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -)."
                 + " The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters."
                 + " You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;

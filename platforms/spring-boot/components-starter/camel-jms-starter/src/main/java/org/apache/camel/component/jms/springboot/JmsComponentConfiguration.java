@@ -167,9 +167,8 @@ public class JmsComponentConfiguration
      */
     private Boolean deliveryPersistent = true;
     /**
-     * Specifies the delivery mode to be used. Possible values are Possibles
-     * values are those defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1
-     * and PERSISTENT = 2.
+     * Specifies the delivery mode to be used. Possibles values are those
+     * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT = 2.
      */
     private Integer deliveryMode;
     /**
@@ -275,12 +274,15 @@ public class JmsComponentConfiguration
      * When sending, specifies whether message IDs should be added. This is just
      * an hint to the JMS Broker. If the JMS provider accepts this hint, these
      * messages must have the message ID set to null; if the provider ignores
-     * the hint, the message ID must be set to its normal unique value
+     * the hint, the message ID must be set to its normal unique value.
      */
     private Boolean messageIdEnabled = true;
     /**
      * Specifies whether timestamps should be enabled by default on sending
-     * messages.
+     * messages. This is just an hint to the JMS broker. If the JMS provider
+     * accepts this hint, these messages must have the timestamp set to zero; if
+     * the provider ignores the hint the timestamp must be set to its normal
+     * value.
      */
     private Boolean messageTimestampEnabled = true;
     /**
@@ -288,7 +290,7 @@ public class JmsComponentConfiguration
      * is passed to the producer for sending. Copying the message is needed in
      * some situations, such as when a replyToDestinationSelectorName is set
      * (incidentally, Camel will set the alwaysCopyMessage option to true, if a
-     * replyToDestinationSelectorName is set)
+     * replyToDestinationSelectorName is set).
      */
     private Boolean alwaysCopyMessage = false;
     /**
@@ -1551,7 +1553,7 @@ public class JmsComponentConfiguration
          * messages. This is just an hint to the JMS Broker. If the JMS provider
          * accepts this hint, these messages must have the timestamp set to
          * zero; if the provider ignores the hint, the timestamp must be set to
-         * its normal value
+         * its normal value.
          */
         private Boolean messageTimestampEnabled = true;
         /**

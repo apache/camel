@@ -26,7 +26,7 @@ import org.junit.Test;
 
 @Ignore("As the refelection can't tell the paramenter name from SEI without annonation, "
     + "CXF cannot send a meaningful request for unwrapped message."
-    + "We need to use the annontated SEI for testing")
+    + " We need to use the annontated SEI for testing")
 public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {    
    
     private String routerEndpointURI = "cxf://" + getRouterAddress() + "?" + SERVICE_CLASS + "&wrappedStyle=false";
