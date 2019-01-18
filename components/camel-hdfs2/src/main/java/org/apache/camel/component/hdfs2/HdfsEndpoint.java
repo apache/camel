@@ -22,9 +22,9 @@ import java.net.URISyntaxException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
