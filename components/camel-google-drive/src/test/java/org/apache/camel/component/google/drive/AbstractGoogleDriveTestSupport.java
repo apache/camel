@@ -29,8 +29,8 @@ import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.model.File;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 
 public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
 
