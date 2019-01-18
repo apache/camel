@@ -41,9 +41,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
