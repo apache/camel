@@ -45,7 +45,10 @@ import org.apache.camel.util.function.Suppliers;
  */
 public abstract class DefaultComponent extends ServiceSupport implements Component {
 
-    private static final Pattern RAW_PATTERN = Pattern.compile("RAW(.*&&.*)");
+    /**
+     * Simple RAW() pattern used only for validating URI in this class
+     */
+    private static final Pattern RAW_PATTERN = Pattern.compile("RAW[({].*&&.*[)}]");
 
     private final List<Supplier<ComponentExtension>> extensions = new ArrayList<>();
 
