@@ -24,9 +24,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.BatchGoogleMailClientFactory;
 import org.apache.camel.component.google.mail.GoogleMailClientFactory;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.spi.Metadata;
 
 /**
  * Represents the component that manages {@link GoogleMailStreamEndpoint}.
