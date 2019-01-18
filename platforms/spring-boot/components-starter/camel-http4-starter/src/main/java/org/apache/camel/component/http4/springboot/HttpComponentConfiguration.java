@@ -68,8 +68,8 @@ public class HttpComponentConfiguration
     private Boolean useGlobalSslContextParameters = false;
     /**
      * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or
-     * org.apache.http.conn.ssl.NoopHostnameVerifier. The option is a
-     * javax.net.ssl.HostnameVerifier type.
+     * NoopHostnameVerifier. The option is a javax.net.ssl.HostnameVerifier
+     * type.
      */
     private String x509HostnameVerifier;
     /**
@@ -98,15 +98,14 @@ public class HttpComponentConfiguration
      * The timeout in milliseconds used when requesting a connection from the
      * connection manager. A timeout value of zero is interpreted as an infinite
      * timeout. A timeout value of zero is interpreted as an infinite timeout. A
-     * negative value is interpreted as undefined (system default). Default:
-     * code -1
+     * negative value is interpreted as undefined (system default). Default: -1
      */
     private Integer connectionRequestTimeout = -1;
     /**
      * Determines the timeout in milliseconds until a connection is established.
      * A timeout value of zero is interpreted as an infinite timeout. A timeout
      * value of zero is interpreted as an infinite timeout. A negative value is
-     * interpreted as undefined (system default). Default: code -1
+     * interpreted as undefined (system default). Default: -1
      */
     private Integer connectTimeout = -1;
     /**
@@ -114,7 +113,7 @@ public class HttpComponentConfiguration
      * timeout for waiting for data or, put differently, a maximum period
      * inactivity between two consecutive data packets). A timeout value of zero
      * is interpreted as an infinite timeout. A negative value is interpreted as
-     * undefined (system default). Default: code -1
+     * undefined (system default). Default: -1
      */
     private Integer socketTimeout = -1;
     /**

@@ -85,10 +85,10 @@ public class DigitalSignatureComponentConfiguration
          */
         private String algorithm = "SHA1WithDSA";
         /**
-         * Sets the alias used to query the KeyStore for keys and link
-         * java.security.cert.Certificate Certificates to be used in signing and
-         * verifying exchanges. This value can be provided at runtime via the
-         * message header
+         * Sets the alias used to query the KeyStore for keys and {link
+         * java.security.cert.Certificate Certificates} to be used in signing
+         * and verifying exchanges. This value can be provided at runtime via
+         * the message header
          * org.apache.camel.component.crypto.DigitalSignatureConstants
          * #KEYSTORE_ALIAS
          */

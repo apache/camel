@@ -64,8 +64,8 @@ public class FhirJsonDataFormatConfiguration
      */
     private Boolean omitResourceId = false;
     /**
-     * If provided, tells the parse which resource types to apply link
-     * #setEncodeElements(Set) encode elements to. Any resource types not
+     * If provided, tells the parse which resource types to apply {link
+     * #setEncodeElements(Set) encode elements} to. Any resource types not
      * specified here will be encoded completely, with no elements excluded. The
      * option is a java.util.Set<java.lang.String> type.
      */

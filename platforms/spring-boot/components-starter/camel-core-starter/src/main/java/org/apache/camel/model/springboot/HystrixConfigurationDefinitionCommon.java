@@ -179,8 +179,8 @@ public class HystrixConfigurationDefinitionCommon {
      */
     private Integer maximumSize = 10;
     /**
-     * Keep-alive time in minutes that gets passed to link
-     * ThreadPoolExecutor#setKeepAliveTime(long, TimeUnit)
+     * Keep-alive time in minutes that gets passed to {link
+     * ThreadPoolExecutor#setKeepAliveTime(long, TimeUnit)}
      */
     private Integer keepAliveTime = 1;
     /**

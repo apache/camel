@@ -106,8 +106,15 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
      *     <li>attachments</li> - to aggregate all the message attachments
      *     <li>headers</li> - to aggregate all the message headers
      *     <li>header:pattern</li> - to aggregate all the message headers that matches the pattern.
-     *     The pattern syntax is documented by: {@link EndpointHelper#matchPattern(String, String)}.
      * </ul>
+     * The pattern uses the following rules are applied in this order:
+     * <ul>
+     * <li>exact match, returns true</li>
+     * <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     * <li>regular expression match, returns true</li>
+     * <li>otherwise returns false</li>
+     * </ul>
+     * <p>
      * You can specify multiple rules separated by comma. For example to include the message body and all headers starting with foo
      * <tt>body,header:foo*</tt>.
      * The syntax supports the following prefixes which can be used to specify include,exclude, or remove

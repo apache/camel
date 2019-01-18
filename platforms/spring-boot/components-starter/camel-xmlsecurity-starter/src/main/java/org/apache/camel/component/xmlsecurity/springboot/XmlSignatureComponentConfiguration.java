@@ -256,9 +256,9 @@ public class XmlSignatureComponentConfiguration
          */
         private String baseUri;
         /**
-         * Sets the crypto context properties. See link
-         * XMLCryptoContext#setProperty(String, Object). Possible properties are
-         * defined in XMLSignContext an XMLValidateContext (see Supported
+         * Sets the crypto context properties. See {link
+         * XMLCryptoContext#setProperty(String, Object)}. Possible properties
+         * are defined in XMLSignContext an XMLValidateContext (see Supported
          * Properties). The following properties are set by default to the value
          * Boolean#TRUE for the XML validation. If you want to switch these
          * features off you must set the property value to Boolean#FALSE.
@@ -638,9 +638,9 @@ public class XmlSignatureComponentConfiguration
          */
         private String baseUri;
         /**
-         * Sets the crypto context properties. See link
-         * XMLCryptoContext#setProperty(String, Object). Possible properties are
-         * defined in XMLSignContext an XMLValidateContext (see Supported
+         * Sets the crypto context properties. See {link
+         * XMLCryptoContext#setProperty(String, Object)}. Possible properties
+         * are defined in XMLSignContext an XMLValidateContext (see Supported
          * Properties). The following properties are set by default to the value
          * Boolean#TRUE for the XML validation. If you want to switch these
          * features off you must set the property value to Boolean#FALSE.
