@@ -143,7 +143,7 @@ public class AsyncCompletionServiceTest extends Assert {
         final CountDownLatch latch = new CountDownLatch(1);
 
         service.submit(result("A"));
-        service.submit(result("B", latch, 5 ,TimeUnit.SECONDS));
+        service.submit(result("B", latch, 5, TimeUnit.SECONDS));
 
         // take a
         Object a = service.take();
