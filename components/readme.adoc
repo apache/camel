@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 289 in 191 JAR artifacts (0 deprecated)
+Number of Components: 289 in 200 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -205,10 +205,10 @@ Number of Components: 289 in 191 JAR artifacts (0 deprecated)
 | link:camel-digitalocean/src/main/docs/digitalocean-component.adoc[DigitalOcean] (camel-digitalocean) +
 `digitalocean:operation` | 2.19 | The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.
 
-| link:../camel-core/src/main/docs/direct-component.adoc[Direct] (camel-core) +
+| link:camel-direct/src/main/docs/direct-component.adoc[Direct] (camel-direct) +
 `direct:name` | 1.0 | The direct component provides direct, synchronous call to another endpoint from the same CamelContext.
 
-| link:../camel-core/src/main/docs/direct-vm-component.adoc[Direct VM] (camel-core) +
+| link:camel-directvm/src/main/docs/direct-vm-component.adoc[Direct VM] (camel-directvm) +
 `direct-vm:name` | 2.10 | The direct-vm component provides direct, synchronous call to another endpoint from any CamelContext in the same JVM.
 
 | link:camel-disruptor/src/main/docs/disruptor-component.adoc[Disruptor] (camel-disruptor) +
@@ -511,7 +511,7 @@ Number of Components: 289 in 191 JAR artifacts (0 deprecated)
 | link:camel-kubernetes/src/main/docs/kubernetes-services-component.adoc[Kubernetes Services] (camel-kubernetes) +
 `kubernetes-services:masterUrl` | 2.17 | The Kubernetes Service Accounts component provides a producer to execute service operations and a consumer to consume service events.
 
-| link:../camel-core/src/main/docs/language-component.adoc[Language] (camel-core) +
+| link:camel-language/src/main/docs/language-component.adoc[Language] (camel-language) +
 `language:languageName:resourceUri` | 2.5 | The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
 
 | link:camel-ldap/src/main/docs/ldap-component.adoc[LDAP] (camel-ldap) +
@@ -523,7 +523,7 @@ Number of Components: 289 in 191 JAR artifacts (0 deprecated)
 | link:camel-linkedin/camel-linkedin-component/src/main/docs/linkedin-component.adoc[Linkedin] (camel-linkedin) +
 `linkedin:apiName/methodName` | 2.14 | The linkedin component is used for retrieving LinkedIn user profiles, connections, companies, groups, posts, etc.
 
-| link:../camel-core/src/main/docs/log-component.adoc[Log] (camel-core) +
+| link:camel-log/src/main/docs/log-component.adoc[Log] (camel-log) +
 `log:loggerName` | 1.1 | The log component logs message exchanges to the underlying logging mechanism.
 
 | link:camel-lucene/src/main/docs/lucene-component.adoc[Lucene] (camel-lucene) +
@@ -667,7 +667,7 @@ Number of Components: 289 in 191 JAR artifacts (0 deprecated)
 | link:camel-reactive-streams/src/main/docs/reactive-streams-component.adoc[Reactive Streams] (camel-reactive-streams) +
 `reactive-streams:stream` | 2.19 | Reactive Camel using reactive streams
 
-| link:../camel-core/src/main/docs/ref-component.adoc[Ref] (camel-core) +
+| link:camel-ref/src/main/docs/ref-component.adoc[Ref] (camel-ref) +
 `ref:name` | 1.2 | The ref component is used for lookup of existing endpoints bound in the Registry.
 
 | link:../camel-core/src/main/docs/rest-component.adoc[REST] (camel-core) +
@@ -706,7 +706,7 @@ Number of Components: 289 in 191 JAR artifacts (0 deprecated)
 | link:camel-jsch/src/main/docs/scp-component.adoc[SCP] (camel-jsch) +
 `scp:host:port/directoryName` | 2.10 | To copy files using the secure copy protocol (SCP).
 
-| link:../camel-core/src/main/docs/seda-component.adoc[SEDA] (camel-core) +
+| link:camel-seda/src/main/docs/seda-component.adoc[SEDA] (camel-seda) +
 `seda:name` | 1.1 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
 
 | link:camel-service/src/main/docs/service-component.adoc[Service] (camel-service) +
@@ -790,7 +790,7 @@ Number of Components: 289 in 191 JAR artifacts (0 deprecated)
 | link:camel-stringtemplate/src/main/docs/string-template-component.adoc[String Template] (camel-stringtemplate) +
 `string-template:resourceUri` | 1.2 | Transforms the message using a String template.
 
-| link:../camel-core/src/main/docs/stub-component.adoc[Stub] (camel-core) +
+| link:camel-stub/src/main/docs/stub-component.adoc[Stub] (camel-stub) +
 `stub:name` | 2.10 | The stub component provides a simple way to stub out any physical endpoints while in development or testing.
 
 | link:camel-telegram/src/main/docs/telegram-component.adoc[Telegram] (camel-telegram) +
@@ -805,7 +805,7 @@ Number of Components: 289 in 191 JAR artifacts (0 deprecated)
 | link:camel-tika/src/main/docs/tika-component.adoc[Tika] (camel-tika) +
 `tika:operation` | 2.19 | This component integrates with Apache Tika to extract content and metadata from thousands of file types.
 
-| link:../camel-core/src/main/docs/timer-component.adoc[Timer] (camel-core) +
+| link:camel-timer/src/main/docs/timer-component.adoc[Timer] (camel-timer) +
 `timer:timerName` | 1.0 | The timer component is used for generating message exchanges when a timer fires.
 
 | link:camel-twilio/src/main/docs/twilio-component.adoc[Twilio] (camel-twilio) +
@@ -835,7 +835,7 @@ Number of Components: 289 in 191 JAR artifacts (0 deprecated)
 | link:camel-vertx/src/main/docs/vertx-component.adoc[Vert.x] (camel-vertx) +
 `vertx:address` | 2.12 | The vertx component is used for sending and receive messages from a vertx event bus.
 
-| link:../camel-core/src/main/docs/vm-component.adoc[VM] (camel-core) +
+| link:camel-vm/src/main/docs/vm-component.adoc[VM] (camel-vm) +
 `vm:name` | 1.1 | The vm component provides asynchronous call to another endpoint from the same CamelContext.
 
 | link:camel-weather/src/main/docs/weather-component.adoc[Weather] (camel-weather) +

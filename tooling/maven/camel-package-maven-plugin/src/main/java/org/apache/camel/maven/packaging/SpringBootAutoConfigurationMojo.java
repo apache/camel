@@ -59,6 +59,7 @@ import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -101,7 +102,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 /**
  * Generate Spring Boot auto configuration files for Camel components and data formats.
  */
-@Mojo(name = "prepare-spring-boot-auto-configuration", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+@Mojo(name = "prepare-spring-boot-auto-configuration", threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     /**
@@ -556,7 +557,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private void executeComponent() throws MojoExecutionException, MojoFailureException {
         // find the component names
-        List<String> componentNames = findComponentNames();
+        Set<String> componentNames = new TreeSet<>();
+        findComponentNames(buildDir, componentNames);
 
         final Set<File> jsonFiles = new TreeSet<>();
         PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
@@ -2104,11 +2106,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         return model;
     }
 
-    private List<String> findComponentNames() {
-        List<String> componentNames = new ArrayList<>();
+    private void findComponentNames(File dir, Set<String> componentNames) {
+        File f = new File(dir, "classes/META-INF/services/org/apache/camel/component");
 
-        File f = new File(project.getBasedir(), "target/classes");
-        f = new File(f, "META-INF/services/org/apache/camel/component");
         if (f.exists() && f.isDirectory()) {
             File[] files = f.listFiles();
             if (files != null) {
@@ -2124,7 +2124,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 }
             }
         }
-        return componentNames;
     }
 
     private List<String> findDataFormatNames() {
