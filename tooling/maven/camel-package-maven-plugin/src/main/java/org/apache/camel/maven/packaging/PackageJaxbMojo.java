@@ -167,11 +167,12 @@ public class PackageJaxbMojo extends AbstractMojo {
 
     private Path asFolder(String p) {
         if (p.endsWith(".jar")) {
+            File fp = new File(p);
             try {
                 Map<String, String> env = new HashMap<>();
-                return FileSystems.newFileSystem(URI.create("jar:file:" + p + "!/"), env).getPath("/");
+                return FileSystems.newFileSystem(URI.create("jar:" + fp.toURI().toString()), env).getPath("/");
             } catch (FileSystemAlreadyExistsException e) {
-                return FileSystems.getFileSystem(URI.create("jar:file:" + p + "!/")).getPath("/");
+                return FileSystems.getFileSystem(URI.create("jar:" + fp.toURI().toString())).getPath("/");
             } catch (IOException e) {
                 throw new IOError(e);
             }
