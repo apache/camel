@@ -44,8 +44,12 @@ public class CamelCloudConsulAutoConfigurationTest {
                 "--spring.cloud.consul.enabled=true",
                 "--spring.cloud.consul.config.enabled=false",
                 "--spring.cloud.consul.discovery.enabled=true",
-                "--spring.cloud.service-registry.auto-registration.enabled=false"
+                "--spring.cloud.service-registry.auto-registration.enabled=false",
+                "--spring.main.allow-bean-definition-overriding=true"
             );
+
+        // TODO: Remove --spring.main.allow-bean-definition-overriding=true when new version of spring-cloud
+        //  is released that supports Spring Boot 2.1 more properly
 
         try {
             Map<String, Converter> converters = context.getBeansOfType(Converter.class);
@@ -71,8 +75,12 @@ public class CamelCloudConsulAutoConfigurationTest {
                 "--spring.cloud.consul.enabled=true",
                 "--spring.cloud.consul.config.enabled=false",
                 "--spring.cloud.consul.discovery.enabled=true",
-                "--spring.cloud.service-registry.auto-registration.enabled=false"
+                "--spring.cloud.service-registry.auto-registration.enabled=false",
+                "--spring.main.allow-bean-definition-overriding=true"
             );
+
+        // TODO: Remove --spring.main.allow-bean-definition-overriding=true when new version of spring-cloud
+        //  is released that supports Spring Boot 2.1 more properly
 
         try {
             Map<String, Converter> converters = context.getBeansOfType(Converter.class);
