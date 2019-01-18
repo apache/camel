@@ -62,6 +62,8 @@ public class Olingo2Configuration {
     private HttpAsyncClientBuilder httpAsyncClientBuilder;
     @UriParam
     private HttpClientBuilder httpClientBuilder;
+    @UriParam
+    private boolean filterAlreadySeen;
 
     public Olingo2ApiName getApiName() {
         return apiName;
@@ -184,6 +186,21 @@ public class Olingo2Configuration {
      */
     public void setHttpClientBuilder(HttpClientBuilder httpClientBuilder) {
         this.httpClientBuilder = httpClientBuilder;
+    }
+
+    /**
+     * Filter flag for filtering out already seen results
+     */
+    public boolean getFilterAlreadySeen() {
+        return filterAlreadySeen;
+    }
+
+    /**
+     * Set this to true to filter out results that have already been communicated by this component.
+     * @param filterAlreadySeen
+     */
+    public void setFilterAlreadySeen(boolean filterAlreadySeen) {
+        this.filterAlreadySeen = filterAlreadySeen;
     }
 
     @Override

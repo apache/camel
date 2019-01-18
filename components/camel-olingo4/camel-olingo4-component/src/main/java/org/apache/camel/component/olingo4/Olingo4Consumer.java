@@ -19,7 +19,7 @@ package org.apache.camel.component.olingo4;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.olingo4.api.Olingo4ResponseHandler;
@@ -33,6 +33,8 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
  * The Olingo4 consumer.
  */
 public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4Configuration> {
+
+    private Olingo4Index resultIndex;
 
     public Olingo4Consumer(Olingo4Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -57,6 +59,10 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
             args.put(Olingo4Endpoint.RESPONSE_HANDLER_PROPERTY, new Olingo4ResponseHandler<Object>() {
                 @Override
                 public void onResponse(Object response, Map<String, String> responseHeaders) {
+                    if (resultIndex != null) {
+                        response = resultIndex.filterResponse(response);
+                    }
+
                     result[0] = response;
                     latch.countDown();
                 }
@@ -97,5 +103,32 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
         } catch (Throwable t) {
             throw ObjectHelper.wrapRuntimeCamelException(t);
         }
+    }
+
+    @Override
+    public void interceptProperties(Map<String, Object> properties) {
+        //
+        // If we have a filterAlreadySeen property then initialise the filter index
+        //
+        Object value = properties.get(Olingo4Endpoint.FILTER_ALREADY_SEEN);
+        if (value == null) {
+            return;
+        }
+
+        //
+        // Initialise the index if not already and if filterAlreadySeen has been set
+        //
+        if (Boolean.parseBoolean(value.toString()) && resultIndex == null) {
+            resultIndex = new Olingo4Index();
+        }
+    }
+
+    @Override
+    public void interceptResult(Object result, Exchange resultExchange) {
+        if (resultIndex == null) {
+            return;
+        }
+
+        resultIndex.index(result);
     }
 }

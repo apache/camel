@@ -43,6 +43,8 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";
     protected static final String RESPONSE_HANDLER_PROPERTY = "responseHandler";
+    protected static final String SERVICE_URI_PROPERTY = "serviceUri";
+    protected static final String FILTER_ALREADY_SEEN = "filterAlreadySeen";
 
     private static final String KEY_PREDICATE_PROPERTY = "keyPredicate";
     private static final String QUERY_PARAMS_PROPERTY = "queryParams";
@@ -74,6 +76,8 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         // avoid adding edm as queryParam
         endpointPropertyNames.add(EDM_PROPERTY);
         endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
+        endpointPropertyNames.add(SERVICE_URI_PROPERTY);
+        endpointPropertyNames.add(FILTER_ALREADY_SEEN);
     }
 
     public Producer createProducer() throws Exception {
@@ -163,6 +167,9 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
         // read Edm if not set yet
         properties.put(EDM_PROPERTY, apiProxy.getEdm());
+
+        // handle filterAlreadySeen property
+        properties.put(FILTER_ALREADY_SEEN, configuration.getFilterAlreadySeen());
 
         // handle keyPredicate
         final String keyPredicate = (String) properties.get(KEY_PREDICATE_PROPERTY);

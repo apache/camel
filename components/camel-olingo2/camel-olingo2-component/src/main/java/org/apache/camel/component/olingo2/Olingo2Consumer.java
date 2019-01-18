@@ -19,7 +19,7 @@ package org.apache.camel.component.olingo2;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
@@ -34,6 +34,8 @@ import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
  * The Olingo2 consumer.
  */
 public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2Configuration> {
+
+    private Olingo2Index resultIndex;
 
     public Olingo2Consumer(Olingo2Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -58,6 +60,10 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
             args.put(Olingo2Endpoint.RESPONSE_HANDLER_PROPERTY, new Olingo2ResponseHandler<Object>() {
                 @Override
                 public void onResponse(Object response, Map<String, String> responseHeaders) {
+                    if (resultIndex != null) {
+                        response = resultIndex.filterResponse(response);
+                    }
+
                     result[0] = response;
                     latch.countDown();
                 }
@@ -99,4 +105,30 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
         }
     }
 
+    @Override
+    public void interceptProperties(Map<String, Object> properties) {
+        //
+        // If we have a filterAlreadySeen property then initialise the filter index
+        //
+        Object value = properties.get(Olingo2Endpoint.FILTER_ALREADY_SEEN);
+        if (value == null) {
+            return;
+        }
+
+        //
+        // Initialise the index if not already and if filterAlreadySeen has been set
+        //
+        if (Boolean.parseBoolean(value.toString()) && resultIndex == null) {
+            resultIndex = new Olingo2Index();
+        }
+    }
+
+    @Override
+    public void interceptResult(Object result, Exchange resultExchange) {
+        if (resultIndex == null) {
+            return;
+        }
+
+        resultIndex.index(result);
+    }
 }

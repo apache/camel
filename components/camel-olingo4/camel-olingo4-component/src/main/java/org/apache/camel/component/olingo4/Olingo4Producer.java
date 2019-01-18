@@ -18,7 +18,6 @@ package org.apache.camel.component.olingo4;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -39,6 +38,8 @@ public class Olingo4Producer extends AbstractApiProducer<Olingo4ApiName, Olingo4
 
     private static final Logger LOG = LoggerFactory.getLogger(Olingo4Producer.class);
 
+    private Olingo4Index resultIndex;
+
     public Olingo4Producer(Olingo4Endpoint endpoint) {
         super(endpoint, Olingo4PropertiesHelper.getHelper());
     }
@@ -58,6 +59,10 @@ public class Olingo4Producer extends AbstractApiProducer<Olingo4ApiName, Olingo4
         properties.put(Olingo4Endpoint.RESPONSE_HANDLER_PROPERTY, new Olingo4ResponseHandler<Object>() {
             @Override
             public void onResponse(Object response, Map<String, String> responseHeaders) {
+                if (resultIndex != null) {
+                    response = resultIndex.filterResponse(response);
+                }
+
                 // producer returns a single response, even for methods with
                 // List return types
                 exchange.getOut().setBody(response);
@@ -106,5 +111,32 @@ public class Olingo4Producer extends AbstractApiProducer<Olingo4ApiName, Olingo4
         }
         return false;
 
+    }
+
+    @Override
+    public void interceptProperties(Map<String, Object> properties) {
+        //
+        // If we have a filterAlreadySeen property then initialise the filter index
+        //
+        Object value = properties.get(Olingo4Endpoint.FILTER_ALREADY_SEEN);
+        if (value == null) {
+            return;
+        }
+
+        //
+        // Initialise the index if not already and if filterAlreadySeen has been set
+        //
+        if (Boolean.parseBoolean(value.toString()) && resultIndex == null) {
+            resultIndex = new Olingo4Index();
+        }
+    }
+
+    @Override
+    public void interceptResult(Object result, Exchange resultExchange) {
+        if (resultIndex == null) {
+            return;
+        }
+
+        resultIndex.index(result);
     }
 }

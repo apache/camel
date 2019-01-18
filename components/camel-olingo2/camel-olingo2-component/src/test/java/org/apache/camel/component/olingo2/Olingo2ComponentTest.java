@@ -20,8 +20,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchQueryRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchRequest;
@@ -247,6 +247,130 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         LOG.info("Read deleted entry exception: {}", exception);
     }
 
+    /**
+     * Read entity set of the People object
+     * and filter already seen items on subsequent exchanges
+     * Use a delay since the mock endpoint does not always get
+     * the correct number of exchanges before being satisfied.
+     */
+    @Test
+    public void testConsumerReadFilterAlreadySeen() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo2://read/Manufacturers?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true";
+        final ODataFeed manufacturers = (ODataFeed)requestBodyAndHeaders(endpoint, null, headers);
+        assertNotNull(manufacturers);
+        int expectedManufacturers = manufacturers.getEntries().size();
+
+        int expectedMsgCount = 3;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-alreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+        mockEndpoint.setResultWaitTime(60000);
+        mockEndpoint.assertIsSatisfied();
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+
+            if (i == 0) {
+                //
+                // First polled messages contained all the manufacturers
+                //
+                assertTrue(body instanceof ODataFeed);
+                ODataFeed set = (ODataFeed) body;
+                assertEquals(expectedManufacturers, set.getEntries().size());
+            }
+            else {
+                //
+                // Subsequent polling messages should be empty
+                // since the filterAlreadySeen property is true
+                //
+                assertNull(body);
+            }
+        }
+    }
+
+    /**
+     *
+     * Read entity set of the People object
+     * and with no filter already seen, all items
+     * should be present in each message
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testProducerReadNoFilterAlreadySeen() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "direct:read-people-nofilterseen";
+        int expectedMsgCount = 3;
+
+        int expectedEntities = -1;
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            final ODataFeed manufacturers = (ODataFeed)requestBodyAndHeaders(endpoint, null, headers);
+            assertNotNull(manufacturers);
+            if (i == 0) {
+                expectedEntities = manufacturers.getEntries().size();
+            }
+        }
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:producer-noalreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+        mockEndpoint.assertIsSatisfied();
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+            assertTrue(body instanceof ODataFeed);
+            ODataFeed set = (ODataFeed) body;
+
+            //
+            // All messages contained all the manufacturers
+            //
+            assertEquals(expectedEntities, set.getEntries().size());
+        }
+    }
+
+    /**
+     * Read entity set of the People object
+     * and filter already seen items on subsequent exchanges
+     */
+    @Test
+    public void testProducerReadFilterAlreadySeen() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "direct:read-people-filterseen";
+        int expectedMsgCount = 3;
+
+        int expectedEntities = -1;
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            final ODataFeed manufacturers = (ODataFeed)requestBodyAndHeaders(endpoint, null, headers);
+            assertNotNull(manufacturers);
+            if (i == 0) {
+                expectedEntities = manufacturers.getEntries().size();
+            }
+        }
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:producer-alreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+        mockEndpoint.assertIsSatisfied();
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+            assertTrue(body instanceof ODataFeed);
+            ODataFeed set = (ODataFeed) body;
+
+            if (i == 0) {
+                //
+                // First polled messages contained all the manufacturers
+                //
+                assertEquals(expectedEntities, set.getEntries().size());
+            }
+            else {
+                //
+                // Subsequent messages should be empty
+                // since the filterAlreadySeen property is true
+                //
+                assertEquals(0, set.getEntries().size());
+            }
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -287,6 +411,19 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
                 from("direct://BATCH")
                     .to("olingo2://batch");
 
+                from("direct:read-people-nofilterseen")
+                    .to("olingo2://read/Manufacturers")
+                    .to("mock:producer-noalreadyseen");
+
+                from("direct:read-people-filterseen")
+                    .to("olingo2://read/Manufacturers?filterAlreadySeen=true")
+                    .to("mock:producer-alreadyseen");
+
+                //
+                // Consumer endpoint
+                //
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true")
+                    .to("mock:consumer-alreadyseen");
             }
         };
     }
