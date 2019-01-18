@@ -26,14 +26,18 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+
+import org.apache.camel.runtimecatalog.Pair;
 
 /**
  * Copied from org.apache.camel.util.URISupport
  */
 public final class URISupport {
 
-    public static final String RAW_TOKEN_START = "RAW(";
-    public static final String RAW_TOKEN_END = ")";
+    public static final String RAW_TOKEN_PREFIX = "RAW";
+    public static final char[] RAW_TOKEN_START = { '(', '{' };
+    public static final char[] RAW_TOKEN_END = { ')', '}' };
 
     private static final String CHARSET = "UTF-8";
 
@@ -155,15 +159,15 @@ public final class URISupport {
      * @see #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri, boolean useRaw) throws URISyntaxException {
-        // must check for trailing & as the uri.split("&") will ignore those
-        if (uri != null && uri.endsWith("&")) {
-            throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
-                    + "Check the uri and remove the trailing & marker.");
-        }
-
         if (isEmpty(uri)) {
             // return an empty map
             return new LinkedHashMap<>(0);
+        }
+
+        // must check for trailing & as the uri.split("&") will ignore those
+        if (uri.endsWith("&")) {
+            throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
+                    + "Check the uri and remove the trailing & marker.");
         }
 
         // need to parse the uri query parameters manually as we cannot rely on splitting by &,
@@ -192,7 +196,15 @@ public final class URISupport {
                 }
 
                 // are we a raw value
-                isRaw = value.toString().startsWith(RAW_TOKEN_START);
+                char rawTokenEnd = 0;
+                for (int j = 0; j < RAW_TOKEN_START.length; j++) {
+                    String rawTokenStart = RAW_TOKEN_PREFIX + RAW_TOKEN_START[j];
+                    isRaw = value.toString().startsWith(rawTokenStart);
+                    if (isRaw) {
+                        rawTokenEnd = RAW_TOKEN_END[j];
+                        break;
+                    }
+                }
 
                 // if we are in raw mode, then we keep adding until we hit the end marker
                 if (isRaw) {
@@ -202,9 +214,9 @@ public final class URISupport {
                         value.append(ch);
                     }
 
-                    // we only end the raw marker if its )& or at the end of the value
+                    // we only end the raw marker if it's ")&", "}&", or at the end of the value
 
-                    boolean end = ch == RAW_TOKEN_END.charAt(0) && (next == '&' || next == '\u0000');
+                    boolean end = ch == rawTokenEnd && (next == '&' || next == '\u0000');
                     if (end) {
                         // raw value end, so add that as a parameter, and reset flags
                         addParameter(key.toString(), value.toString(), rc, useRaw || isRaw);
@@ -302,6 +314,71 @@ public final class URISupport {
         }
     }
 
+    public static List<Pair<Integer>> scanRaw(String str) {
+        List<Pair<Integer>> answer = new ArrayList<>();
+        if (str == null || isEmpty(str)) {
+            return answer;
+        }
+
+        int offset = 0;
+        int start = str.indexOf(RAW_TOKEN_PREFIX);
+        while (start >= 0 && offset < str.length()) {
+            offset = start + RAW_TOKEN_PREFIX.length();
+            for (int i = 0; i < RAW_TOKEN_START.length; i++) {
+                String tokenStart = RAW_TOKEN_PREFIX + RAW_TOKEN_START[i];
+                char tokenEnd = RAW_TOKEN_END[i];
+                if (str.startsWith(tokenStart, start)) {
+                    offset = scanRawToEnd(str, start, tokenStart, tokenEnd, answer);
+                    continue;
+                }
+            }
+            start = str.indexOf(RAW_TOKEN_PREFIX, offset);
+        }
+        return answer;
+    }
+
+    private static int scanRawToEnd(String str, int start, String tokenStart, char tokenEnd,
+                                    List<Pair<Integer>> answer) {
+        // we search the first end bracket to close the RAW token
+        // as opposed to parsing query, this doesn't allow the occurrences of end brackets
+        // inbetween because this may be used on the host/path parts of URI
+        // and thus we cannot rely on '&' for detecting the end of a RAW token
+        int end = str.indexOf(tokenEnd, start + tokenStart.length());
+        if (end < 0) {
+            // still return a pair even if RAW token is not closed
+            answer.add(new Pair<>(start, str.length()));
+            return str.length();
+        }
+        answer.add(new Pair<>(start, end));
+        return end + 1;
+    }
+
+    public static boolean isRaw(int index, List<Pair<Integer>> pairs) {
+        for (Pair<Integer> pair : pairs) {
+            if (index < pair.getLeft()) {
+                return false;
+            }
+            if (index <= pair.getRight()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean resolveRaw(String str, BiConsumer<String, String> consumer) {
+        for (int i = 0; i < RAW_TOKEN_START.length; i++) {
+            String tokenStart = RAW_TOKEN_PREFIX + RAW_TOKEN_START[i];
+            String tokenEnd = String.valueOf(RAW_TOKEN_END[i]);
+            if (str.startsWith(tokenStart) && str.endsWith(tokenEnd)) {
+                String raw = str.substring(tokenStart.length(), str.length() - 1);
+                consumer.accept(str, raw);
+                return true;
+            }
+        }
+        // not RAW value
+        return false;
+    }
+
     /**
      * Assembles a query from the given map.
      *
@@ -346,18 +423,20 @@ public final class URISupport {
         } else {
             rc.append(key);
         }
+        if (value == null) {
+            return;
+        }
         // only append if value is not null
-        if (value != null) {
-            rc.append("=");
-            if (value.startsWith(RAW_TOKEN_START) && value.endsWith(RAW_TOKEN_END)) {
-                // do not encode RAW parameters
-                rc.append(value);
+        rc.append("=");
+        boolean isRaw = resolveRaw(value, (str, raw) -> {
+            // do not encode RAW parameters
+            rc.append(str);
+        });
+        if (!isRaw) {
+            if (encode) {
+                rc.append(URLEncoder.encode(value, CHARSET));
             } else {
-                if (encode) {
-                    rc.append(URLEncoder.encode(value, CHARSET));
-                } else {
-                    rc.append(value);
-                }
+                rc.append(value);
             }
         }
     }
