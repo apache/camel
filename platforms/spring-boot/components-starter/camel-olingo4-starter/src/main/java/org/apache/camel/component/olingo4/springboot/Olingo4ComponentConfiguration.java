@@ -140,6 +140,11 @@ public class Olingo4ComponentConfiguration
          * builder, otherwise OData requests could block indefinitely
          */
         private HttpClientBuilder httpClientBuilder;
+        /**
+         * Set this to true to filter out results that have already been
+         * communicated by this component.
+         */
+        private Boolean filterAlreadySeen = false;
 
         public Olingo4ApiName getApiName() {
             return apiName;
@@ -229,6 +234,14 @@ public class Olingo4ComponentConfiguration
 
         public void setHttpClientBuilder(HttpClientBuilder httpClientBuilder) {
             this.httpClientBuilder = httpClientBuilder;
+        }
+
+        public Boolean getFilterAlreadySeen() {
+            return filterAlreadySeen;
+        }
+
+        public void setFilterAlreadySeen(Boolean filterAlreadySeen) {
+            this.filterAlreadySeen = filterAlreadySeen;
         }
     }
 }

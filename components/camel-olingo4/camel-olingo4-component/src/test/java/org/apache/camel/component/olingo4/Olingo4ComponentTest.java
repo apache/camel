@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -297,6 +296,124 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         }
     }
 
+    /**
+     * Read entity set of the People object
+     * and filter already seen items on subsequent exchanges
+     * Use a delay since the mock endpoint does not always get
+     * the correct number of exchanges before being satisfied.
+     */
+    @Test
+    public void testConsumerReadFilterAlreadySeen() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true";
+        int expectedEntities = 20;
+        final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders(endpoint, null, headers);
+        assertNotNull(entities);
+        assertEquals(expectedEntities, entities.getEntities().size());
+
+        int expectedMsgCount = 3;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-alreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+        mockEndpoint.assertIsSatisfied();
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+
+            if (i == 0) {
+                //
+                // First polled messages contained all the entities
+                //
+                assertTrue(body instanceof ClientEntitySet);
+                ClientEntitySet set = (ClientEntitySet) body;
+                assertEquals(expectedEntities, set.getEntities().size());
+            }
+            else {
+                //
+                // Subsequent polling messages should be empty
+                // since the filterAlreadySeen property is true
+                //
+                assertNull(body);
+            }
+        }
+    }
+
+    /**
+     *
+     * Read entity set of the People object
+     * and with no filter already seen, all items
+     * should be present in each message
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testProducerReadNoFilterAlreadySeen() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "direct:read-people-nofilterseen";
+        int expectedEntities = 20;
+        int expectedMsgCount = 3;
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders(endpoint, null, headers);
+            assertNotNull(entities);
+        }
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:producer-noalreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+        mockEndpoint.assertIsSatisfied();
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+            assertTrue(body instanceof ClientEntitySet);
+            ClientEntitySet set = (ClientEntitySet) body;
+
+            //
+            // All messages contained all the entities
+            //
+            assertEquals(expectedEntities, set.getEntities().size());
+        }
+    }
+
+    /**
+     * Read entity set of the People object
+     * and filter already seen items on subsequent exchanges
+     */
+    @Test
+    public void testProducerReadFilterAlreadySeen() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "direct:read-people-filterseen";
+        int expectedEntities = 20;
+        int expectedMsgCount = 3;
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders(endpoint, null, headers);
+            assertNotNull(entities);
+        }
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:producer-alreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+        mockEndpoint.assertIsSatisfied();
+
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+            assertTrue(body instanceof ClientEntitySet);
+            ClientEntitySet set = (ClientEntitySet) body;
+
+            if (i == 0) {
+                //
+                // First polled messages contained all the entities
+                //
+                assertEquals(expectedEntities, set.getEntities().size());
+            }
+            else {
+                //
+                // Subsequent messages should be empty
+                // since the filterAlreadySeen property is true
+                //
+                assertEquals(0, set.getEntities().size());
+            }
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -340,6 +457,20 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
                 from("direct:read-etag").to("olingo4://read/Airlines('AA')").to("mock:check-etag-header");
                 
                 from("direct:delete-with-etag").to("olingo4://delete/Airlines('AA')");
+
+                from("direct:read-people-nofilterseen")
+                .to("olingo4://read/People")
+                .to("mock:producer-noalreadyseen");
+
+                from("direct:read-people-filterseen")
+                .to("olingo4://read/People?filterAlreadySeen=true")
+                .to("mock:producer-alreadyseen");
+
+                //
+                // Consumer endpoint
+                //
+                from("olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true")
+                .to("mock:consumer-alreadyseen");
             }
         };
     }
