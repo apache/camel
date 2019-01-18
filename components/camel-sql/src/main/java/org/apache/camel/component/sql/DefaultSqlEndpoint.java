@@ -87,15 +87,15 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     private boolean alwaysPopulateStatement;
     @UriParam(defaultValue = ",",
             description = "The separator to use when parameter values is taken from message body (if the body is a String type), to be inserted at # placeholders."
-            + "Notice if you use named parameters, then a Map type is used instead. The default value is comma")
+            + " Notice if you use named parameters, then a Map type is used instead. The default value is comma")
     private char separator = ',';
     @UriParam(defaultValue = "SelectList", description = "Make the output of consumer or producer to SelectList as List of Map, or SelectOne as single Java object in the following way:"
-            + "a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long object."
-            + "b) If the query has more than one column, then it will return a Map of that result."
-            + "c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names."
-            + "It will assume your class has a default constructor to create instance with."
-            + "d) If the query resulted in more than one rows, it throws an non-unique result exception."
-            + "StreamList streams the result of the query using an Iterator. This can be used with the Splitter EIP in streaming mode to process the ResultSet in streaming fashion.")
+            + " a) If the query has only single column, then that JDBC Column object is returned. (such as SELECT COUNT( * ) FROM PROJECT will return a Long object."
+            + " b) If the query has more than one column, then it will return a Map of that result."
+            + " c) If the outputClass is set, then it will convert the query result into an Java bean object by calling all the setters that match the column names."
+            + " It will assume your class has a default constructor to create instance with."
+            + " d) If the query resulted in more than one rows, it throws an non-unique result exception."
+            + " StreamList streams the result of the query using an Iterator. This can be used with the Splitter EIP in streaming mode to process the ResultSet in streaming fashion.")
     private SqlOutputType outputType = SqlOutputType.SelectList;
     @UriParam(description = "Specify the full package and class name to use as conversion when outputType=SelectOne.")
     private String outputClass;
