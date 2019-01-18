@@ -168,7 +168,7 @@ public class XsltComponentConfiguration
     }
 
     public static class XmlConverterNestedConfiguration {
-        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.converter.jaxp.XmlConverter.class;
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.xslt.XmlConverter.class;
         private DocumentBuilderFactory documentBuilderFactory;
         private TransformerFactory transformerFactory;
 
