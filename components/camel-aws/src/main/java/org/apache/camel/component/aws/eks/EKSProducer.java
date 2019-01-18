@@ -120,8 +120,8 @@ public class EKSProducer extends DefaultProducer {
             String roleArn = exchange.getIn().getHeader(EKSConstants.ROLE_ARN, String.class);
             request.withRoleArn(roleArn);
         }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EKSConstants.ROLE_ARN))) {
-            VpcConfigRequest vpcConfig = exchange.getIn().getHeader(EKSConstants.ROLE_ARN, VpcConfigRequest.class);
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(EKSConstants.VPC_CONFIG))) {
+            VpcConfigRequest vpcConfig = exchange.getIn().getHeader(EKSConstants.VPC_CONFIG, VpcConfigRequest.class);
             request.withResourcesVpcConfig(vpcConfig);
         }
         CreateClusterResult result;
