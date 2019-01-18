@@ -58,7 +58,7 @@ public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
         Message in = exchange.getIn();
         in.setBody("Hello World");
         in.addAttachment("logo.jpeg", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
-        in.addAttachment("license.txt", new DataHandler(new FileDataSource("src/main/resources/META-INF/LICENSE.txt")));
+        in.addAttachment("log4j2.properties", new DataHandler(new FileDataSource("src/test/resources/log4j2.properties")));
     }
 
     @Test
@@ -82,10 +82,10 @@ public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
         String file2 = second.getAttachments().keySet().iterator().next();
 
         boolean logo = file1.equals("logo.jpeg") || file2.equals("logo.jpeg");
-        boolean license = file1.equals("license.txt") || file2.equals("license.txt");
+        boolean license = file1.equals("log4j2.properties") || file2.equals("log4j2.properties");
 
         assertTrue("Should have logo.jpeg file attachment", logo);
-        assertTrue("Should have license.txt file attachment", license);
+        assertTrue("Should have log4j2.properties file attachment", license);
     }
 
     @Test
@@ -111,10 +111,10 @@ public class SpringMailSplitAttachmentsTest extends CamelSpringTestSupport {
         assertEquals(0, second.getAttachments().size());
 
         assertEquals("logo.jpeg", first.getHeader("CamelSplitAttachmentId"));
-        assertEquals("license.txt", second.getHeader("CamelSplitAttachmentId"));
+        assertEquals("log4j2.properties", second.getHeader("CamelSplitAttachmentId"));
 
         byte[] expected1 = IOUtils.toByteArray(new FileDataSource("src/test/data/logo.jpeg").getInputStream());
-        byte[] expected2 = IOUtils.toByteArray(new FileDataSource("src/main/resources/META-INF/LICENSE.txt").getInputStream());
+        byte[] expected2 = IOUtils.toByteArray(new FileDataSource("src/test/resources/log4j2.properties").getInputStream());
 
         assertArrayEquals(expected1, first.getBody(byte[].class));
         assertArrayEquals(expected2, second.getBody(byte[].class));
