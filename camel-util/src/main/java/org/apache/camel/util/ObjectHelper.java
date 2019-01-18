@@ -49,7 +49,11 @@ import org.slf4j.LoggerFactory;
  * A number of useful helper methods for working with Objects
  */
 public final class ObjectHelper {
+
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
+
+    private static final Float FLOAT_NAN = Float.NaN;
+    private static final Double DOUBLE_NAN = Double.NaN;
 
     /**
      * Utility classes should not have a public constructor.
@@ -63,7 +67,7 @@ public final class ObjectHelper {
     public static boolean equal(Object a, Object b) {
         return equal(a, b, false);
     }
-    
+
     /**
      * A helper method for comparing objects for equality while handling case insensitivity
      */
@@ -120,13 +124,13 @@ public final class ObjectHelper {
 
     public static Boolean toBoolean(Object value) {
         if (value instanceof Boolean) {
-            return (Boolean)value;
+            return (Boolean) value;
         }
         if (value instanceof String) {
-            return Boolean.valueOf((String)value);
+            return Boolean.valueOf((String) value);
         }
         if (value instanceof Integer) {
-            return (Integer)value > 0 ? Boolean.TRUE : Boolean.FALSE;
+            return (Integer) value > 0 ? Boolean.TRUE : Boolean.FALSE;
         }
         return null;
     }
@@ -189,9 +193,9 @@ public final class ObjectHelper {
             String text = (String) value;
             return text.trim().length() > 0;
         } else if (value instanceof Collection) {
-            return !((Collection<?>)value).isEmpty();
+            return !((Collection<?>) value).isEmpty();
         } else if (value instanceof Map) {
-            return !((Map<?, ?>)value).isEmpty();
+            return !((Map<?, ?>) value).isEmpty();
         } else {
             return true;
         }
@@ -253,7 +257,7 @@ public final class ObjectHelper {
         if (!list.isEmpty()) {
             Object value = list.get(0);
             if (value instanceof Boolean) {
-                return (Boolean)value;
+                return (Boolean) value;
             } else {
                 // lets assume non-empty results are true
                 return true;
@@ -334,7 +338,7 @@ public final class ObjectHelper {
     public static Class<?> loadClass(String name) {
         return loadClass(name, ObjectHelper.class.getClassLoader());
     }
-    
+
     /**
      * Attempts to load the given class name using the thread context class
      * loader or the given class loader
@@ -407,7 +411,7 @@ public final class ObjectHelper {
             return Object[].class;
         } else if ("java.lang.String[]".equals(name) || "String[]".equals(name)) {
             return String[].class;
-        // and these is common as well
+            // and these is common as well
         } else if ("java.lang.String".equals(name) || "String".equals(name)) {
             return String.class;
         } else if ("java.lang.Boolean".equals(name) || "Boolean".equals(name)) {
@@ -494,12 +498,12 @@ public final class ObjectHelper {
      * @return the stream or null if it could not be loaded
      */
     public static InputStream loadResourceAsStream(String name, ClassLoader loader) {
-    	try {
-        	URL res = loadResourceAsURL(name);
-			return res != null ? res.openStream() : null;
-		} catch (IOException e) {
-			return null;
-		}
+        try {
+            URL res = loadResourceAsURL(name);
+            return res != null ? res.openStream() : null;
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     /**
@@ -522,44 +526,52 @@ public final class ObjectHelper {
      * @return the stream or null if it could not be loaded
      */
     public static URL loadResourceAsURL(String name, ClassLoader loader) {
-    	
+
         URL url = null;
         String resolvedName = resolveUriPath(name);
-        
+
         // #1 First, try the given class loader
-        
+
         if (loader != null) {
-        	url = loader.getResource(resolvedName);
-        	if (url != null) return url;
+            url = loader.getResource(resolvedName);
+            if (url != null) {
+                return url;
+            }
         }
-        
+
         // #2 Next, is the TCCL
-        
+
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         if (tccl != null) {
-        	
-        	url = tccl.getResource(resolvedName);
-        	if (url != null) return url;
-        	
-        	// #3 The TCCL may be able to see camel-core, but not META-INF resources
-        	
-        	try {
-        		
-				Class<?> clazz = tccl.loadClass("org.apache.camel.impl.DefaultCamelContext");
-	        	url = clazz.getClassLoader().getResource(resolvedName);
-	        	if (url != null) return url;
-	        	
-			} catch (ClassNotFoundException e) {
-				// ignore
-			}
+
+            url = tccl.getResource(resolvedName);
+            if (url != null) {
+                return url;
+            }
+
+            // #3 The TCCL may be able to see camel-core, but not META-INF resources
+
+            try {
+
+                Class<?> clazz = tccl.loadClass("org.apache.camel.impl.DefaultCamelContext");
+                url = clazz.getClassLoader().getResource(resolvedName);
+                if (url != null) {
+                    return url;
+                }
+
+            } catch (ClassNotFoundException e) {
+                // ignore
+            }
         }
-        
-    	// #4 Last, for the unlikely case that stuff can be loaded from camel-util
-    	
+
+        // #4 Last, for the unlikely case that stuff can be loaded from camel-util
+
         url = ObjectHelper.class.getClassLoader().getResource(resolvedName);
-    	if (url != null) return url;
-        
-    	url = ObjectHelper.class.getResource(resolvedName);
+        if (url != null) {
+            return url;
+        }
+
+        url = ObjectHelper.class.getResource(resolvedName);
         return url;
     }
 
@@ -583,53 +595,59 @@ public final class ObjectHelper {
      * @return the URLs for the resources or null if it could not be loaded
      */
     public static Enumeration<URL> loadResourcesAsURL(String uri, ClassLoader loader) {
-    	
+
         Enumeration<URL> res = null;
 
         // #1 First, try the given class loader
-        
+
         if (loader != null) {
-        	try {
-				res = loader.getResources(uri);
-				if (res != null) return res;
-			} catch (IOException e) {
-				// ignore
-			}
+            try {
+                res = loader.getResources(uri);
+                if (res != null) {
+                    return res;
+                }
+            } catch (IOException e) {
+                // ignore
+            }
         }
-        
+
         // #2 Next, is the TCCL
-        
+
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         if (tccl != null) {
-        	
-        	try {
-				res = tccl.getResources(uri);
-	        	if (res != null) return res;
-			} catch (IOException e1) {
-				// ignore
-			}
-        	
-        	// #3 The TCCL may be able to see camel-core, but not META-INF resources
-        	
-        	try {
-        		
-				Class<?> clazz = tccl.loadClass("org.apache.camel.impl.DefaultCamelContext");
-	        	res = clazz.getClassLoader().getResources(uri);
-	        	if (res != null) return res;
-	        	
-			} catch (ClassNotFoundException | IOException e) {
-				// ignore
-			}
+
+            try {
+                res = tccl.getResources(uri);
+                if (res != null) {
+                    return res;
+                }
+            } catch (IOException e1) {
+                // ignore
+            }
+
+            // #3 The TCCL may be able to see camel-core, but not META-INF resources
+
+            try {
+
+                Class<?> clazz = tccl.loadClass("org.apache.camel.impl.DefaultCamelContext");
+                res = clazz.getClassLoader().getResources(uri);
+                if (res != null) {
+                    return res;
+                }
+
+            } catch (ClassNotFoundException | IOException e) {
+                // ignore
+            }
         }
-        
-    	// #4 Last, for the unlikely case that stuff can be loaded from camel-util
-        
+
+        // #4 Last, for the unlikely case that stuff can be loaded from camel-util
+
         try {
-			res = ObjectHelper.class.getClassLoader().getResources(uri);
-		} catch (IOException e) {
-			// ignore
-		}
-        
+            res = ObjectHelper.class.getClassLoader().getResources(uri);
+        } catch (IOException e) {
+            // ignore
+        }
+
         return res;
     }
 
@@ -637,7 +655,7 @@ public final class ObjectHelper {
      * Helper operation used to remove relative path notation from 
      * resources.  Most critical for resources on the Classpath
      * as resource loaders will not resolve the relative paths correctly.
-     * 
+     *
      * @param name the name of the resource to load
      * @return the modified or unmodified string if there were no changes
      */
@@ -844,7 +862,7 @@ public final class ObjectHelper {
 
     /**
      * Returns if the given {@code clazz} type is a Java primitive array type.
-     * 
+     *
      * @param clazz the Java type to be checked
      * @return {@code true} if the given type is a Java primitive array type
      */
@@ -936,17 +954,17 @@ public final class ObjectHelper {
     @SuppressWarnings("unchecked")
     public static <T> T cast(Class<T> toType, Object value) {
         if (toType == boolean.class) {
-            return (T)cast(Boolean.class, value);
+            return (T) cast(Boolean.class, value);
         } else if (toType.isPrimitive()) {
             Class<?> newType = convertPrimitiveTypeToWrapperType(toType);
             if (newType != toType) {
-                return (T)cast(newType, value);
+                return (T) cast(newType, value);
             }
         }
         try {
             return toType.cast(value);
         } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Failed to convert: " 
+            throw new IllegalArgumentException("Failed to convert: "
                 + value + " to type: " + toType.getName() + " due to: " + e, e);
         }
     }
@@ -977,16 +995,16 @@ public final class ObjectHelper {
      */
     public static boolean evaluateValuePredicate(Object value) {
         if (value instanceof Boolean) {
-            return (Boolean)value;
+            return (Boolean) value;
         } else if (value instanceof String) {
-            if ("true".equalsIgnoreCase((String)value)) {
+            if ("true".equalsIgnoreCase((String) value)) {
                 return true;
-            } else if ("false".equalsIgnoreCase((String)value)) {
+            } else if ("false".equalsIgnoreCase((String) value)) {
                 return false;
             }
         } else if (value instanceof NodeList) {
             // is it an empty dom with empty attributes
-            if (value instanceof Node && ((Node)value).hasAttributes()) {
+            if (value instanceof Node && ((Node) value).hasAttributes()) {
                 return true;
             }
             NodeList list = (NodeList) value;
@@ -1050,7 +1068,7 @@ public final class ObjectHelper {
         if (exception == null) {
             return null;
         }
-        
+
         //check the suppressed exception first
         for (Throwable throwable : exception.getSuppressed()) {
             if (type.isInstance(throwable)) {
@@ -1105,18 +1123,15 @@ public final class ObjectHelper {
         return null;
     }
 
-    private static final Float FLOAT_NAN = Float.NaN;
-    private static final Double DOUBLE_NAN = Double.NaN;
-
     /**
      * Is the given value a numeric NaN type
-     * 
+     *
      * @param value the value
      * @return <tt>true</tt> if its a {@link Float#NaN} or {@link Double#NaN}.
      */
     public static boolean isNaN(Object value) {
         return (value instanceof Number)
-                && (FLOAT_NAN.equals(value) || DOUBLE_NAN.equals(value));
+            && (FLOAT_NAN.equals(value) || DOUBLE_NAN.equals(value));
     }
 
 }
