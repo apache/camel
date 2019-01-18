@@ -19,7 +19,6 @@ package org.apache.camel.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,23 +32,25 @@ import java.util.regex.Pattern;
  */
 public final class URISupport {
 
-    public static final String RAW_TOKEN_START = "RAW(";
-    public static final String RAW_TOKEN_END = ")";
+    public static final String RAW_TOKEN_PREFIX = "RAW";
+    public static final char[] RAW_TOKEN_START = { '(', '{' };
+    public static final char[] RAW_TOKEN_END = { ')', '}' };
 
     // Match any key-value pair in the URI query string whose key contains
     // "passphrase" or "password" or secret key (case-insensitive).
     // First capture group is the key, second is the value.
-    private static final Pattern SECRETS = Pattern.compile("([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=(RAW\\(.*\\)|[^&]*)",
+    private static final Pattern SECRETS = Pattern.compile(
+            "([?&][^=]*(?:passphrase|password|secretKey)[^=]*)=(RAW[({].*[)}]|[^&]*)",
             Pattern.CASE_INSENSITIVE);
-    
+
     // Match the user password in the URI as second capture group
     // (applies to URI with authority component and userinfo token in the form "user:password").
     private static final Pattern USERINFO_PASSWORD = Pattern.compile("(.*://.*:)(.*)(@)");
-    
+
     // Match the user password in the URI path as second capture group
     // (applies to URI path with authority component and userinfo token in the form "user:password").
     private static final Pattern PATH_USERINFO_PASSWORD = Pattern.compile("(.*:)(.*)(@)");
-    
+
     private static final String CHARSET = "UTF-8";
 
     private URISupport() {
@@ -73,12 +74,12 @@ public final class URISupport {
         }
         return sanitized;
     }
-    
+
     /**
      * Removes detected sensitive information (such as passwords) from the
      * <em>path part</em> of an URI (that is, the part without the query
      * parameters or component prefix) and returns the result.
-     * 
+     *
      * @param path the URI path to sanitize
      * @return null if the path is null, otherwise the sanitized path
      */
@@ -122,6 +123,7 @@ public final class URISupport {
      * @param uri the uri
      * @return the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
+     * @see #RAW_TOKEN_PREFIX
      * @see #RAW_TOKEN_START
      * @see #RAW_TOKEN_END
      */
@@ -140,6 +142,7 @@ public final class URISupport {
      * @param useRaw whether to force using raw values
      * @return the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
+     * @see #RAW_TOKEN_PREFIX
      * @see #RAW_TOKEN_START
      * @see #RAW_TOKEN_END
      */
@@ -159,147 +162,61 @@ public final class URISupport {
      * @param lenient whether to parse lenient and ignore trailing & markers which has no key or value which can happen when using HTTP components
      * @return the parameters, or an empty map if no parameters (eg never null)
      * @throws URISyntaxException is thrown if uri has invalid syntax.
+     * @see #RAW_TOKEN_PREFIX
      * @see #RAW_TOKEN_START
      * @see #RAW_TOKEN_END
      */
     public static Map<String, Object> parseQuery(String uri, boolean useRaw, boolean lenient) throws URISyntaxException {
-        // must check for trailing & as the uri.split("&") will ignore those
-        if (!lenient) {
-            if (uri != null && uri.endsWith("&")) {
-                throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
-                        + "Check the uri and remove the trailing & marker.");
-            }
-        }
-
         if (uri == null || ObjectHelper.isEmpty(uri)) {
             // return an empty map
             return new LinkedHashMap<>(0);
         }
 
-        // need to parse the uri query parameters manually as we cannot rely on splitting by &,
-        // as & can be used in a parameter value as well.
-
-        try {
-            // use a linked map so the parameters is in the same order
-            Map<String, Object> rc = new LinkedHashMap<>();
-
-            boolean isKey = true;
-            boolean isValue = false;
-            boolean isRaw = false;
-            StringBuilder key = new StringBuilder();
-            StringBuilder value = new StringBuilder();
-
-            // parse the uri parameters char by char
-            for (int i = 0; i < uri.length(); i++) {
-                // current char
-                char ch = uri.charAt(i);
-                // look ahead of the next char
-                char next;
-                if (i <= uri.length() - 2) {
-                    next = uri.charAt(i + 1);
-                } else {
-                    next = '\u0000';
-                }
-
-                // are we a raw value
-                isRaw = value.toString().startsWith(RAW_TOKEN_START);
-
-                // if we are in raw mode, then we keep adding until we hit the end marker
-                if (isRaw) {
-                    if (isKey) {
-                        key.append(ch);
-                    } else if (isValue) {
-                        value.append(ch);
-                    }
-
-                    // we only end the raw marker if its )& or at the end of the value
-
-                    boolean end = ch == RAW_TOKEN_END.charAt(0) && (next == '&' || next == '\u0000');
-                    if (end) {
-                        // raw value end, so add that as a parameter, and reset flags
-                        addParameter(key.toString(), value.toString(), rc, useRaw || isRaw);
-                        key.setLength(0);
-                        value.setLength(0);
-                        isKey = true;
-                        isValue = false;
-                        isRaw = false;
-                        // skip to next as we are in raw mode and have already added the value
-                        i++;
-                    }
-                    continue;
-                }
-
-                // if its a key and there is a = sign then the key ends and we are in value mode
-                if (isKey && ch == '=') {
-                    isKey = false;
-                    isValue = true;
-                    isRaw = false;
-                    continue;
-                }
-
-                // the & denote parameter is ended
-                if (ch == '&') {
-                    // parameter is ended, as we hit & separator
-                    addParameter(key.toString(), value.toString(), rc, useRaw || isRaw);
-                    key.setLength(0);
-                    value.setLength(0);
-                    isKey = true;
-                    isValue = false;
-                    isRaw = false;
-                    continue;
-                }
-
-                // regular char so add it to the key or value
-                if (isKey) {
-                    key.append(ch);
-                } else if (isValue) {
-                    value.append(ch);
-                }
-            }
-
-            // any left over parameters, then add that
-            if (key.length() > 0) {
-                addParameter(key.toString(), value.toString(), rc, useRaw || isRaw);
-            }
-
-            return rc;
-
-        } catch (UnsupportedEncodingException e) {
-            URISyntaxException se = new URISyntaxException(e.toString(), "Invalid encoding");
-            se.initCause(e);
-            throw se;
+        // must check for trailing & as the uri.split("&") will ignore those
+        if (!lenient && uri.endsWith("&")) {
+            throw new URISyntaxException(uri, "Invalid uri syntax: Trailing & marker found. "
+                    + "Check the uri and remove the trailing & marker.");
         }
+
+        URIScanner scanner = new URIScanner(CHARSET);
+        return scanner.parseQuery(uri, useRaw);
     }
 
-    private static void addParameter(String name, String value, Map<String, Object> map, boolean isRaw) throws UnsupportedEncodingException {
-        name = URLDecoder.decode(name, CHARSET);
-        if (!isRaw) {
-            // need to replace % with %25
-            String s = StringHelper.replaceAll(value, "%", "%25");
-            value = URLDecoder.decode(s, CHARSET);
-        }
+    /**
+     * Scans RAW tokens in the string and returns the list of pair indexes which tell where
+     * a RAW token starts and ends in the string.
+     * <p/>
+     * This is a companion method with {@link #isRaw(int, List)} and the returned value is
+     * supposed to be used as the parameter of that method.
+     *
+     * @param str the string to scan RAW tokens
+     * @return the list of pair indexes which represent the start and end positions of a RAW token
+     * @see #isRaw(int, List)
+     * @see #RAW_TOKEN_PREFIX
+     * @see #RAW_TOKEN_START
+     * @see #RAW_TOKEN_END
+     */
+    public static List<Pair<Integer>> scanRaw(String str) {
+        return URIScanner.scanRaw(str);
+    }
 
-        // does the key already exist?
-        if (map.containsKey(name)) {
-            // yes it does, so make sure we can support multiple values, but using a list
-            // to hold the multiple values
-            Object existing = map.get(name);
-            List<String> list;
-            if (existing instanceof List) {
-                list = CastUtils.cast((List<?>) existing);
-            } else {
-                // create a new list to hold the multiple values
-                list = new ArrayList<>();
-                String s = existing != null ? existing.toString() : null;
-                if (s != null) {
-                    list.add(s);
-                }
-            }
-            list.add(value);
-            map.put(name, list);
-        } else {
-            map.put(name, value);
-        }
+    /**
+     * Tests if the index is within any pair of the start and end indexes which represent
+     * the start and end positions of a RAW token.
+     * <p/>
+     * This is a companion method with {@link #scanRaw(String)} and is supposed to consume
+     * the returned value of that method as the second parameter <tt>pairs</tt>.
+     *
+     * @param index the index to be tested
+     * @param pairs the list of pair indexes which represent the start and end positions of a RAW token
+     * @return <tt>true</tt> if the index is within any pair of the indexes, <tt>false</tt> otherwise
+     * @see #scanRaw(String)
+     * @see #RAW_TOKEN_PREFIX
+     * @see #RAW_TOKEN_START
+     * @see #RAW_TOKEN_END
+     */
+    public static boolean isRaw(int index, List<Pair<Integer>> pairs) {
+        return URIScanner.isRaw(index, pairs);
     }
 
     /**
@@ -333,35 +250,35 @@ public final class URISupport {
      *
      * @param parameters the uri parameters
      * @see #parseQuery(String)
+     * @see #RAW_TOKEN_PREFIX
      * @see #RAW_TOKEN_START
      * @see #RAW_TOKEN_END
      */
     @SuppressWarnings("unchecked")
     public static void resolveRawParameterValues(Map<String, Object> parameters) {
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            if (entry.getValue() != null) {
-                // if the value is a list then we need to iterate
-                Object value = entry.getValue();
-                if (value instanceof List) {
-                    List list = (List) value;
-                    for (int i = 0; i < list.size(); i++) {
-                        Object obj = list.get(i);
-                        if (obj != null) {
-                            String str = obj.toString();
-                            if (str.startsWith(RAW_TOKEN_START) && str.endsWith(RAW_TOKEN_END)) {
-                                str = str.substring(4, str.length() - 1);
-                                // update the string in the list
-                                list.set(i, str);
-                            }
-                        }
+            if (entry.getValue() == null) {
+                continue;
+            }
+            // if the value is a list then we need to iterate
+            Object value = entry.getValue();
+            if (value instanceof List) {
+                List list = (List) value;
+                for (int i = 0; i < list.size(); i++) {
+                    Object obj = list.get(i);
+                    if (obj == null) {
+                        continue;
                     }
-                } else {
-                    String str = entry.getValue().toString();
-                    if (str.startsWith(RAW_TOKEN_START) && str.endsWith(RAW_TOKEN_END)) {
-                        str = str.substring(4, str.length() - 1);
-                        entry.setValue(str);
-                    }
+                    String str = obj.toString();
+                    final int index = i;
+                    URIScanner.resolveRaw(str, (s, raw) -> {
+                        // update the string in the list
+                        list.set(index, raw);
+                    });
                 }
+            } else {
+                String str = entry.getValue().toString();
+                URIScanner.resolveRaw(str, (s, raw) -> entry.setValue(raw));
             }
         }
     }
@@ -491,17 +408,19 @@ public final class URISupport {
 
     private static void appendQueryStringParameter(String key, String value, StringBuilder rc) throws UnsupportedEncodingException {
         rc.append(URLEncoder.encode(key, CHARSET));
+        if (value == null) {
+            return;
+        }
         // only append if value is not null
-        if (value != null) {
-            rc.append("=");
-            if (value.startsWith(RAW_TOKEN_START) && value.endsWith(RAW_TOKEN_END)) {
-                // do not encode RAW parameters unless it has %
-                // need to replace % with %25 to avoid losing "%" when decoding
-                String s = StringHelper.replaceAll(value, "%", "%25");
-                rc.append(s);
-            } else {
-                rc.append(URLEncoder.encode(value, CHARSET));
-            }
+        rc.append("=");
+        boolean isRaw = URIScanner.resolveRaw(value, (str, raw) -> {
+            // do not encode RAW parameters unless it has %
+            // need to replace % with %25 to avoid losing "%" when decoding
+            String s = StringHelper.replaceAll(str, "%", "%25");
+            rc.append(s);
+        });
+        if (!isRaw) {
+            rc.append(URLEncoder.encode(value, CHARSET));
         }
     }
 
@@ -549,6 +468,7 @@ public final class URISupport {
      * @return the normalized uri
      * @throws URISyntaxException in thrown if the uri syntax is invalid
      * @throws UnsupportedEncodingException is thrown if encoding error
+     * @see #RAW_TOKEN_PREFIX
      * @see #RAW_TOKEN_START
      * @see #RAW_TOKEN_END
      */

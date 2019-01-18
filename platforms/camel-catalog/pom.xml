@@ -138,6 +138,7 @@
                     <include>CamelContextJsonSchemaResolver.java</include>
                     <include>CatalogHelper.java</include>
                     <include>JSonSchemaHelper.java</include>
+                    <include>Pair.java</include>
                     <include>SuggestionStrategy.java</include>
                     <include>TimePatternConverter.java</include>
                     <include>UnsafeUriCharactersEncoder.java</include>
