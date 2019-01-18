@@ -18,6 +18,7 @@ package org.apache.camel.tools.apt;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -38,6 +39,8 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.tools.FileObject;
+import javax.tools.StandardLocation;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -53,6 +56,8 @@ import org.apache.camel.tools.apt.model.ComponentModel;
 import org.apache.camel.tools.apt.model.ComponentOption;
 import org.apache.camel.tools.apt.model.EndpointOption;
 import org.apache.camel.tools.apt.model.EndpointPath;
+import org.json.simple.JsonObject;
+import org.json.simple.Jsoner;
 
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findFieldElement;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
@@ -128,19 +133,43 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         Set<EndpointOption> endpointOptions = new LinkedHashSet<>();
         Set<ComponentOption> componentOptions = new LinkedHashSet<>();
 
-        TypeElement componentClassElement = findTypeElement(processingEnv, roundEnv, componentModel.getJavaType());
-        if (componentClassElement != null) {
-            findComponentClassProperties(writer, roundEnv, componentModel, componentOptions, componentClassElement, "");
+        JsonObject parentData = null;
+        TypeMirror superclass = classElement.getSuperclass();
+        if (superclass != null) {
+            String superClassName = canonicalClassName(superclass.toString());
+            TypeElement baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
+            if (baseTypeElement != null && !roundEnv.getRootElements().contains(baseTypeElement)) {
+                UriEndpoint parentUriEndpoint = baseTypeElement.getAnnotation(UriEndpoint.class);
+                if (parentUriEndpoint != null) {
+                    String parentScheme = parentUriEndpoint.scheme().split(",")[0];
+                    String packageName = superClassName.substring(0, superClassName.lastIndexOf("."));
+                    String fileName = parentScheme + ".json";
+                    try {
+                        FileObject res = processingEnv.getFiler().getResource(StandardLocation.CLASS_PATH, packageName, fileName);
+                        String json = res.getCharContent(false).toString();
+                        parentData = Jsoner.deserialize(json, (JsonObject) null);
+                    } catch (Exception e) {
+                        // ignore
+                        throw new RuntimeException("Error: " + e.toString(), e);
+                    }
+                }
+            }
         }
 
-        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "", uriEndpoint.excludeProperties());
+        TypeElement componentClassElement = findTypeElement(processingEnv, roundEnv, componentModel.getJavaType());
+        if (componentClassElement != null) {
+            findComponentClassProperties(writer, roundEnv, componentModel, componentOptions, componentClassElement, "", parentData);
+        }
 
-        String json = createParameterJsonSchema(componentModel, componentOptions, endpointPaths, endpointOptions, schemes);
+        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "", uriEndpoint.excludeProperties(), parentData);
+
+        String json = createParameterJsonSchema(componentModel, componentOptions, endpointPaths, endpointOptions, schemes, parentData);
         writer.println(json);
     }
 
     public String createParameterJsonSchema(ComponentModel componentModel, Set<ComponentOption> componentOptions,
-                                            Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions, String[] schemes) {
+                                            Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions, String[] schemes,
+                                            Map<String, Object> parentData) {
         StringBuilder buffer = new StringBuilder("{");
         // component model
         buffer.append("\n \"component\": {");
@@ -184,6 +213,12 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         buffer.append("\n  },");
 
         // and component properties
+        Map<String, Object> parentComponentProperties;
+        if (parentData != null && parentData.get("componentProperties") != null) {
+            parentComponentProperties = (Map<String, Object>) parentData.get("componentProperties");
+        } else {
+            parentComponentProperties = new HashMap<>();
+        }
         buffer.append("\n  \"componentProperties\": {");
         boolean first = true;
         for (ComponentOption entry : componentOptions) {
@@ -216,8 +251,30 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "property", required, entry.getType(), defaultValue, doc,
                 entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue));
+
+            parentComponentProperties.remove(entry.getName());
         }
+
+        for (Map.Entry<String, Object> prop : parentComponentProperties.entrySet()) {
+            if (first) {
+                first = false;
+            } else {
+                buffer.append(",");
+            }
+            buffer.append("\n    ");
+            buffer.append(Strings.doubleQuote(prop.getKey()));
+            buffer.append(": ");
+            buffer.append(Jsoner.serialize(prop.getValue()));
+        }
+
         buffer.append("\n  },");
+
+        Map<String, Object> parentProperties;
+        if (parentData != null && parentData.get("properties") != null) {
+            parentProperties = (Map<String, Object>) parentData.get("properties");
+        } else {
+            parentProperties = new HashMap<>();
+        }
 
         buffer.append("\n  \"properties\": {");
         first = true;
@@ -268,6 +325,8 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "path", required, entry.getType(), defaultValue, doc,
                 entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue));
+
+            parentProperties.remove(entry.getName());
         }
 
         // sort the endpoint options in the standard order we prefer
@@ -314,7 +373,22 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "parameter", required, entry.getType(), defaultValue,
                 doc, entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue));
+
+            parentProperties.remove(entry.getName());
         }
+
+        for (Map.Entry<String, Object> prop : parentProperties.entrySet()) {
+            if (first) {
+                first = false;
+            } else {
+                buffer.append(",");
+            }
+            buffer.append("\n    ");
+            buffer.append(Strings.doubleQuote(prop.getKey()));
+            buffer.append(": ");
+            buffer.append(Jsoner.serialize(prop.getValue()));
+        }
+
         buffer.append("\n  }");
 
         buffer.append("\n}\n");
@@ -356,18 +430,13 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(Component.class);
         if (elements != null) {
             for (Element e : elements) {
-                if (e.getKind() == ElementKind.CLASS) {
-                    Component comp = e.getAnnotation(Component.class);
-                    // there may be multiple schemes separated by comma
-                    String[] schemes = comp.value().split(",");
-                    for (String aScheme : schemes) {
-                        if (scheme.equals(aScheme)) {
-                            TypeElement te = (TypeElement) e;
-                            String name = te.getQualifiedName().toString();
-                            model.setJavaType(name);
-                            break;
-                        }
-                    }
+                Component comp = e.getAnnotation(Component.class);
+                String[] schemes = comp.value().split(",");
+                if (Arrays.asList(schemes).contains(scheme) && e.getKind() == ElementKind.CLASS) {
+                    TypeElement te = (TypeElement) e;
+                    String name = te.getQualifiedName().toString();
+                    model.setJavaType(name);
+                    break;
                 }
             }
         }
@@ -409,7 +478,8 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
     }
 
     protected void findComponentClassProperties(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
-                                                Set<ComponentOption> componentOptions, TypeElement classElement, String prefix) {
+                                                Set<ComponentOption> componentOptions, TypeElement classElement, String prefix,
+                                                Map<String, Object> parentData) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             Metadata componentAnnotation = classElement.getAnnotation(Metadata.class);
@@ -523,10 +593,12 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
             // check super classes which may also have fields
             TypeElement baseTypeElement = null;
-            TypeMirror superclass = classElement.getSuperclass();
-            if (superclass != null) {
-                String superClassName = canonicalClassName(superclass.toString());
-                baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
+            if (parentData == null) {
+                TypeMirror superclass = classElement.getSuperclass();
+                if (superclass != null) {
+                    String superClassName = canonicalClassName(superclass.toString());
+                    baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
+                }
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;
@@ -538,7 +610,8 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
     protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
                                        Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions,
-                                       TypeElement classElement, String prefix, String excludeProperties) {
+                                       TypeElement classElement, String prefix, String excludeProperties,
+                                       Map<String, Object> parentData) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
@@ -674,7 +747,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                         if (!isNullOrEmpty(extraPrefix)) {
                             nestedPrefix += extraPrefix;
                         }
-                        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix, excludeProperties);
+                        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix, excludeProperties, null);
                     } else {
                         String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
                         if (isNullOrEmpty(docComment)) {
@@ -727,10 +800,12 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
             // check super classes which may also have @UriParam fields
             TypeElement baseTypeElement = null;
-            TypeMirror superclass = classElement.getSuperclass();
-            if (superclass != null) {
-                String superClassName = canonicalClassName(superclass.toString());
-                baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
+            if (parentData == null) {
+                TypeMirror superclass = classElement.getSuperclass();
+                if (superclass != null) {
+                    String superClassName = canonicalClassName(superclass.toString());
+                    baseTypeElement = findTypeElement(processingEnv, roundEnv, superClassName);
+                }
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;

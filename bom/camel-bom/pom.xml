@@ -208,16 +208,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-base-components</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-base-support</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-base64</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2402,6 +2392,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-stringtemplate-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-support</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
