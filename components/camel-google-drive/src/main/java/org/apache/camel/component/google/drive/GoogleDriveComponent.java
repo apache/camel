@@ -23,8 +23,8 @@ import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.support.component.AbstractApiComponent;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents the component that manages {@link GoogleDriveEndpoint}.
