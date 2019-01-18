@@ -27,10 +27,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
-import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * The ironmq provides integration with <a href="https://www.iron.io/">IronMQ</a> an elastic and durable hosted message queue as a service.
