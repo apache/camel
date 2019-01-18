@@ -40,9 +40,6 @@ public class ManagedFileWatcherReloadStrategyTest extends ManagementTestSupport 
         String folder = (String) mbeanServer.getAttribute(on, "Folder");
         assertEquals("target/dummy", folder);
 
-        Boolean running = (Boolean) mbeanServer.getAttribute(on, "Running");
-        assertTrue(running);
-
         Integer reload = (Integer) mbeanServer.getAttribute(on, "ReloadCounter");
         assertEquals(0, reload.intValue());
 
