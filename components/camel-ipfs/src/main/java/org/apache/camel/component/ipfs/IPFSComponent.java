@@ -23,8 +23,8 @@ import io.nessus.ipfs.IPFSClient;
 import io.nessus.ipfs.impl.DefaultIPFSClient;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 @Component("ipfs")
 public class IPFSComponent extends DefaultComponent {
