@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.annotations.Dataformat;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKey;
@@ -36,6 +37,7 @@ import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
  * <p>
  * See also {@link PGPKeyAccessDataFormat}.
  */
+@Dataformat("pgp")
 public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKeyAccessor, PGPSecretKeyAccessor {
     
     public static final String KEY_FILE_NAME = "CamelPGPDataFormatKeyFileName";

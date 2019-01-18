@@ -78,7 +78,6 @@ import org.slf4j.LoggerFactory;
  * If you want to provide the key access via keyrings in the format of a byte
  * array or file, then you should use the class {@link PGPDataFormat}.
  */
-@Dataformat("pgp")
 public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     public static final String KEY_USERID = "CamelPGPDataFormatKeyUserid";
