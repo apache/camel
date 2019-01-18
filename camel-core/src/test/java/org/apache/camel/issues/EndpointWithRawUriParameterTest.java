@@ -163,6 +163,17 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testRawUriParameterOkDynamic() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
+        getMockEndpoint("mock:result").expectedHeaderReceived("password", "foo)+bar");
+
+        template.sendBody("direct:okDynamic", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -188,6 +199,10 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
                 from("direct:ok")
                     .to("mycomponent:foo?password=RAW(foo)+bar)&username=scott")
+                    .to("mock:result");
+
+                from("direct:okDynamic")
+                    .toD("mycomponent:foo?password=RAW{foo)+bar}&username=scott")
                     .to("mock:result");
             }
         };

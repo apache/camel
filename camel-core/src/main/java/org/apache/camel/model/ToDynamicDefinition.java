@@ -18,9 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -35,7 +32,9 @@ import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.Pair;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Sends the message to a dynamic endpoint
@@ -50,8 +49,6 @@ import org.apache.camel.util.StringHelper;
 @XmlRootElement(name = "toD")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition> {
-
-    private static final Pattern RAW_PATTERN = Pattern.compile("RAW\\([^\\)]+\\)");
 
     @XmlAttribute @Metadata(required = "true")
     private String uri;
@@ -230,42 +227,6 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     // Utilities
     // -------------------------------------------------------------------------
 
-    private static class Pair {
-        int left;
-        int right;
-        Pair(int left, int right) {
-            this.left = left;
-            this.right = right;
-        }
-    }
-
-    private static List<Pair> checkRAW(String s) {
-        Matcher matcher = RAW_PATTERN.matcher(s);
-        List<Pair> answer = new ArrayList<>();
-        // Check all occurrences
-        while (matcher.find()) {
-            answer.add(new Pair(matcher.start(), matcher.end() - 1));
-        }
-        return answer;
-    }
-
-    private static boolean isRaw(int index, List<Pair>pairs) {
-        for (Pair pair : pairs) {
-            if (index < pair.left) {
-                return false;
-            } else {
-                if (index >= pair.left) {
-                    if (index <= pair.right) {
-                        return true;
-                    } else {
-                        continue;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     /**
      * We need to split the string safely for each + sign, but avoid splitting within RAW(...).
      */
@@ -277,12 +238,12 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
             list.add(s);
         } else {
             // there is a plus sign so we need to split in a safe manner
-            List<Pair> rawPairs = checkRAW(s);
+            List<Pair<Integer>> rawPairs = URISupport.scanRaw(s);
             StringBuilder sb = new StringBuilder();
             char chars[] = s.toCharArray();
             for (int i = 0; i < chars.length; i++) {
                 char ch = chars[i];
-                if (ch != '+' || isRaw(i, rawPairs)) {
+                if (ch != '+' || URISupport.isRaw(i, rawPairs)) {
                     sb.append(ch);
                 } else {
                     list.add(sb.toString());

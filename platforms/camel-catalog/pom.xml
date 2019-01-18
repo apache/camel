@@ -132,6 +132,7 @@
                     <include>JSonSchemaHelper.java</include>
                     <include>JSonSchemaResolver.java</include>
                     <include>LanguageValidationResult.java</include>
+                    <include>Pair.java</include>
                     <include>SimpleValidationResult.java</include>
                     <include>SuggestionStrategy.java</include>
                     <include>TimePatternConverter.java</include>
@@ -166,6 +167,7 @@
             <include>${basedir}/src/main/java/org/apache/camel/catalog/JSonSchemaHelper.java</include>
             <include>${basedir}/src/main/java/org/apache/camel/catalog/JSonSchemaResolver.java</include>
             <include>${basedir}/src/main/java/org/apache/camel/catalog/LanguageValidationResult.java</include>
+            <include>${basedir}/src/main/java/org/apache/camel/catalog/Pair.java</include>
             <include>${basedir}/src/main/java/org/apache/camel/catalog/SimpleValidationResult.java</include>
             <include>${basedir}/src/main/java/org/apache/camel/catalog/SuggestionStrategy.java</include>
             <include>${basedir}/src/main/java/org/apache/camel/catalog/TimePatternConverter.java</include>
