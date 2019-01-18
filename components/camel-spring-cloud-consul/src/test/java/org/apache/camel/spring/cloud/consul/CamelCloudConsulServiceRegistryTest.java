@@ -48,7 +48,7 @@ public class CamelCloudConsulServiceRegistryTest {
     private static final int SERVICE_PORT = SocketUtils.findAvailableTcpPort();
 
     @Rule
-    public GenericContainer container =  new GenericContainer("consul:1.0.7")
+    public GenericContainer container =  new GenericContainer("consul:1.4.0")
         .withExposedPorts(8500)
         .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
         .withLogConsumer(new Slf4jLogConsumer(LOGGER).withPrefix("consul"))
@@ -80,8 +80,11 @@ public class CamelCloudConsulServiceRegistryTest {
                 "--spring.cloud.consul.config.enabled=false",
                 "--spring.cloud.consul.discovery.enabled=true",
                 "--spring.cloud.service-registry.auto-registration.enabled=false",
-                "--camel.cloud.service-registry.service-host=localhost"
+                "--camel.cloud.service-registry.service-host=localhost",
+                "--spring.main.allow-bean-definition-overriding=true"
             );
+        // TODO: Remove --spring.main.allow-bean-definition-overriding=true when new version of spring-cloud
+        //  is released that supports Spring Boot 2.1 more properly
 
         try {
             final ConsulClient client = context.getBean(ConsulClient.class);
