@@ -24,10 +24,10 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.geocoder.http.AuthenticationMethod;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The geocoder component is used for looking up geocodes (latitude and longitude) for a given address, or reverse lookup.
