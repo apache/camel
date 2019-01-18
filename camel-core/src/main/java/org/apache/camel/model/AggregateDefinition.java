@@ -498,8 +498,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     //-------------------------------------------------------------------------
 
     /**
-     * Use eager completion checking which means that the {{completionPredicate}} will use the incoming Exchange.
-     * As opposed to without eager completion checking the {{completionPredicate}} will use the aggregated Exchange.
+     * Use eager completion checking which means that the completionPredicate will use the incoming Exchange.
+     * As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange.
      *
      * @return builder
      */
@@ -509,7 +509,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * If a correlation key cannot be successfully evaluated it will be ignored by logging a {{DEBUG}} and then just
+     * If a correlation key cannot be successfully evaluated it will be ignored by logging a DEBUG and then just
      * ignore the incoming Exchange.
      *
      * @return builder
@@ -521,7 +521,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * Closes a correlation key when its complete. Any <i>late</i> received exchanges which has a correlation key
-     * that has been closed, it will be defined and a {@link ClosedCorrelationKeyException}
+     * that has been closed, it will be defined and a ClosedCorrelationKeyException
      * is thrown.
      *
      * @param capacity the maximum capacity of the closed correlation key cache.

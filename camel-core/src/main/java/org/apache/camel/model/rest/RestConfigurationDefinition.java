@@ -590,7 +590,13 @@ public class RestConfigurationDefinition {
     /**
      * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
      * <p/>
-     * The pattern uses the rules from {@link EndpointHelper#matchPattern(String, String)}
+     * The pattern uses the following rules are applied in this order:
+     * <ul>
+     * <li>exact match, returns true</li>
+     * <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     * <li>regular expression match, returns true</li>
+     * <li>otherwise returns false</li>
+     * </ul>
      */
     public RestConfigurationDefinition apiContextIdPattern(String pattern) {
         setApiContextIdPattern(pattern);

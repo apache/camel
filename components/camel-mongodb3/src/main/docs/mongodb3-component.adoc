@@ -88,7 +88,7 @@ with the following path and query parameters:
 |===
 | Name | Description | Default | Type
 | *collection* (common) | Sets the name of the MongoDB collection to bind to this endpoint |  | String
-| *collectionIndex* (common) | Sets the collection index (JSON FORMAT : field1 : order1, field2 : order2) |  | String
+| *collectionIndex* (common) | Sets the collection index (JSON FORMAT : { field1 : order1, field2 : order2}) |  | String
 | *createCollection* (common) | Create collection during initialisation if it doesn't exist. Default is true. | true | boolean
 | *database* (common) | Sets the name of the MongoDB database to target |  | String
 | *operation* (common) | Sets the operation this endpoint will execute against MongoDB. For possible values, see MongoDbOperation. |  | MongoDbOperation

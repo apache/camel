@@ -2106,25 +2106,20 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private List<String> findComponentNames() {
         List<String> componentNames = new ArrayList<>();
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/component");
 
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory
-                        if (file.isDirectory()) {
-                            continue;
-                        }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
-                            componentNames.add(name);
-                        }
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/component");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // skip directories as there may be a sub .resolver directory
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    String name = file.getName();
+                    if (name.charAt(0) != '.') {
+                        componentNames.add(name);
                     }
                 }
             }
@@ -2134,25 +2129,19 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private List<String> findDataFormatNames() {
         List<String> dataFormatNames = new ArrayList<>();
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/dataformat");
-
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory
-                        if (file.isDirectory()) {
-                            continue;
-                        }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
-                            dataFormatNames.add(name);
-                        }
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/dataformat");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // skip directories as there may be a sub .resolver directory
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    String name = file.getName();
+                    if (name.charAt(0) != '.') {
+                        dataFormatNames.add(name);
                     }
                 }
             }
@@ -2162,25 +2151,19 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private List<String> findLanguageNames() {
         List<String> languageNames = new ArrayList<>();
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/language");
-
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory
-                        if (file.isDirectory()) {
-                            continue;
-                        }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
-                            languageNames.add(name);
-                        }
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/language");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // skip directories as there may be a sub .resolver directory
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    String name = file.getName();
+                    if (name.charAt(0) != '.') {
+                        languageNames.add(name);
                     }
                 }
             }

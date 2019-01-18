@@ -356,12 +356,18 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(Component.class);
         if (elements != null) {
             for (Element e : elements) {
-                Component comp = e.getAnnotation(Component.class);
-                if (scheme.equals(comp.value()) && e.getKind() == ElementKind.CLASS) {
-                    TypeElement te = (TypeElement) e;
-                    String name = te.getQualifiedName().toString();
-                    model.setJavaType(name);
-                    break;
+                if (e.getKind() == ElementKind.CLASS) {
+                    Component comp = e.getAnnotation(Component.class);
+                    // there may be multiple schemes separated by comma
+                    String[] schemes = comp.value().split(",");
+                    for (String aScheme : schemes) {
+                        if (scheme.equals(aScheme)) {
+                            TypeElement te = (TypeElement) e;
+                            String name = te.getQualifiedName().toString();
+                            model.setJavaType(name);
+                            break;
+                        }
+                    }
                 }
             }
         }

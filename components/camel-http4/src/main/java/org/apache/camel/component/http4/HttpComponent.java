@@ -539,8 +539,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To use a custom X509HostnameVerifier such as {@link DefaultHostnameVerifier}
-     * or {@link org.apache.http.conn.ssl.NoopHostnameVerifier}.
+     * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.
      */
     public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
@@ -606,7 +605,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * A negative value is interpreted as undefined (system default).
      * </p>
      * <p>
-     * Default: {@code -1}
+     * Default: -1
      * </p>
      */
     public void setConnectionRequestTimeout(int connectionRequestTimeout) {
@@ -625,7 +624,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * A negative value is interpreted as undefined (system default).
      * </p>
      * <p>
-     * Default: {@code -1}
+     * Default: -1
      * </p>
      */
     public void setConnectTimeout(int connectTimeout) {
@@ -637,7 +636,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * Defines the socket timeout ({@code SO_TIMEOUT}) in milliseconds,
+     * Defines the socket timeout (SO_TIMEOUT) in milliseconds,
      * which is the timeout for waiting for data  or, put differently,
      * a maximum period inactivity between two consecutive data packets).
      * <p>
@@ -645,7 +644,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * A negative value is interpreted as undefined (system default).
      * </p>
      * <p>
-     * Default: {@code -1}
+     * Default: -1
      * </p>
      */
     public void setSocketTimeout(int socketTimeout) {

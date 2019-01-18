@@ -365,8 +365,8 @@ public class KafkaComponentConfiguration
          * (typically operating system usernames). The rules are evaluated in
          * order and the first rule that matches a principal name is used to map
          * it to a short name. Any later rules in the list are ignored. By
-         * default, principal names of the form username/hostnameREALM are
-         * mapped to username. For more details on the format please see
+         * default, principal names of the form {username}/{hostname}{REALM} are
+         * mapped to {username}. For more details on the format please see
          * security authorization and acls. Multiple values can be separated by
          * comma
          */

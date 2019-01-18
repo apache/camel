@@ -682,7 +682,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     /**
      * To use a custom idempotent key. By default the absolute path of the file is used.
      * You can use the File Language, for example to use the file name and file size, you can do:
-     * <tt>idempotentKey=${file:name}-${file:size}</tt>
+     * idempotentKey=${file:name}-${file:size}
      */
     public void setIdempotentKey(Expression idempotentKey) {
         this.idempotentKey = idempotentKey;
