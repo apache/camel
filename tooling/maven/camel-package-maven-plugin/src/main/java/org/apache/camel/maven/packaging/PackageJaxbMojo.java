@@ -134,6 +134,7 @@ public class PackageJaxbMojo extends AbstractMojo {
 
         Path jaxbIndexDir = jaxbIndexOutDir.toPath();
         try {
+            int count = 0;
             for (Map.Entry<String, Set<String>> entry : byPackage.entrySet()) {
                 Path file = jaxbIndexDir.resolve(entry.getKey().replace('.', '/')).resolve("jaxb.index");
                 Files.createDirectories(file.getParent());
@@ -142,9 +143,13 @@ public class PackageJaxbMojo extends AbstractMojo {
                     for (String s : entry.getValue()) {
                         writer.write(s);
                         writer.write("\n");
+                        count++;
                     }
                 }
             }
+
+            getLog().info("Generated " + jaxbIndexOutDir + " containing " + count + " jaxb.index elements");
+
         } catch (IOException e) {
             throw new IOError(e);
         }
