@@ -41,7 +41,8 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     private List<String> exceptions = new ArrayList<>();
     @XmlElement(name = "onWhen") @AsPredicate
     private WhenDefinition onWhen;
-    @XmlElement(name = "handled") @AsPredicate
+    @XmlElement(name = "handled") @AsPredicate @Metadata(deprecationNote = "not in use")
+    @Deprecated
     private ExpressionSubElementDefinition handled;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
@@ -183,6 +184,12 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         return handled;
     }
 
+    /**
+     * Expression to be used for evaluate whether the doCatch should catch the exception or not.
+     *
+     * @deprecated not in use
+     */
+    @Deprecated
     public void setHandled(ExpressionSubElementDefinition handled) {
         this.handled = handled;
     }
