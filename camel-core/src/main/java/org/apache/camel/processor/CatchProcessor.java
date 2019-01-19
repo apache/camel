@@ -37,13 +37,11 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
     private String id;
     private final List<Class<? extends Throwable>> exceptions;
     private final Predicate onWhen;
-    private final Predicate handled;
 
     public CatchProcessor(List<Class<? extends Throwable>> exceptions, Processor processor, Predicate onWhen, Predicate handled) {
         super(processor);
         this.exceptions = exceptions;
         this.onWhen = onWhen;
-        this.handled = handled;
     }
 
     @Override
@@ -87,29 +85,19 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         // and we should not be regarded as exhausted as we are in a try .. catch block
         exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
-        // is the exception handled by the catch clause
-        final boolean handled = handles(exchange);
-
         if (log.isDebugEnabled()) {
-            log.debug("The exception is handled: {} for the exception: {} caused by: {}",
-                    new Object[]{handled, e.getClass().getName(), e.getMessage()});
+            log.debug("The exception is handled for the exception: {} caused by: {}",
+                    new Object[]{e.getClass().getName(), e.getMessage()});
         }
 
-        if (handled) {
-            // emit event that the failure is being handled
-            EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, false, null);
-        }
+        // emit event that the failure is being handled
+        EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, false, null);
 
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                if (handled) {
-                    // emit event that the failure was handled
-                    EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
-                } else {
-                    if (exchange.getException() == null) {
-                        exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
-                    }
-                }
+                // emit event that the failure was handled
+                EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
+
                 // always clear redelivery exhausted in a catch clause
                 exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
@@ -149,21 +137,6 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
 
         // not found
         return null;
-    }
-
-    /**
-     * Whether this catch processor handles the exception it have caught
-     *
-     * @param exchange  the current exchange
-     * @return <tt>true</tt> if this processor handles it, <tt>false</tt> otherwise.
-     */
-    protected boolean handles(Exchange exchange) {
-        if (handled == null) {
-            // handle by default
-            return true;
-        }
-
-        return handled.matches(exchange);
     }
 
     public List<Class<? extends Throwable>> getExceptions() {

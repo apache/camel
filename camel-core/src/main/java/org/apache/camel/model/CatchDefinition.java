@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -41,15 +42,10 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     private List<String> exceptions = new ArrayList<>();
     @XmlElement(name = "onWhen") @AsPredicate
     private WhenDefinition onWhen;
-    @XmlElement(name = "handled") @AsPredicate @Metadata(deprecationNote = "not in use")
-    @Deprecated
-    private ExpressionSubElementDefinition handled;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private List<Class<? extends Throwable>> exceptionClasses;
-    @XmlTransient
-    private Predicate handledPolicy;
 
     public CatchDefinition() {
     }
@@ -123,9 +119,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
             exceptionClasses = new ArrayList<>();
         }
         if (exceptions != null) {
-            for (Class<? extends Throwable> exception : exceptions) {
-                exceptionClasses.add(exception);
-            }
+            exceptionClasses.addAll(Arrays.asList(exceptions));
         }
         return this;
     }
@@ -170,28 +164,6 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
 
     public void setOnWhen(WhenDefinition onWhen) {
         this.onWhen = onWhen;
-    }
-
-    public Predicate getHandledPolicy() {
-        return handledPolicy;
-    }
-
-    public void setHandledPolicy(Predicate handledPolicy) {
-        this.handledPolicy = handledPolicy;
-    }
-
-    public ExpressionSubElementDefinition getHandled() {
-        return handled;
-    }
-
-    /**
-     * Expression to be used for evaluate whether the doCatch should catch the exception or not.
-     *
-     * @deprecated not in use
-     */
-    @Deprecated
-    public void setHandled(ExpressionSubElementDefinition handled) {
-        this.handled = handled;
     }
 
 }
