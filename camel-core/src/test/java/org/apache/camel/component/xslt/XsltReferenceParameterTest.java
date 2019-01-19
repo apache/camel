@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xslt;
+
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XsltBuilder;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.ProcessorEndpoint;
