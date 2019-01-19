@@ -34,6 +34,8 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -1141,7 +1143,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         findLanguage(((AggregateDefinition) def).getCompletionSizeExpression(), languages);
                     }
                     if (def instanceof CatchDefinition) {
-                        findLanguage(((CatchDefinition) def).getHandled(), languages);
+                        CatchDefinition doCatch = (CatchDefinition) def;
+                        if (doCatch.getOnWhen() != null) {
+                            findLanguage(doCatch.getOnWhen().getExpression(), languages);
+                        }
                     }
                     if (def instanceof OnExceptionDefinition) {
                         findLanguage(((OnExceptionDefinition) def).getRetryWhile(), languages);

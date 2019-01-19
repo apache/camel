@@ -59,12 +59,7 @@ class CatchReifier extends ProcessorReifier<CatchDefinition> {
             when = definition.getOnWhen().getExpression().createPredicate(routeContext);
         }
 
-        Predicate handle = definition.getHandledPolicy();
-        if (definition.getHandled() != null) {
-            handle = definition.getHandled().createPredicate(routeContext);
-        }
-
-        return new CatchProcessor(definition.getExceptionClasses(), childProcessor, when, handle);
+        return new CatchProcessor(definition.getExceptionClasses(), childProcessor, when, null);
     }
 
     protected List<Class<? extends Throwable>> createExceptionClasses(CamelContext context) throws ClassNotFoundException {
