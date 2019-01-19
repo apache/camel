@@ -445,7 +445,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
                             pom = builder.parse(contentIn);
                         }
 
-                        getLog().info("Reusing the existing pom.xml for the starter");
+                        getLog().debug("Reusing the existing pom.xml for the starter");
                         return pom;
                     }
                 }
