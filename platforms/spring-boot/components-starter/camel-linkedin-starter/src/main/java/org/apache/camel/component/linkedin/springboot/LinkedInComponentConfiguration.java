@@ -97,7 +97,24 @@ public class LinkedInComponentConfiguration
          */
         private OAuthSecureStorage secureStorage;
         /**
-         * LinkedIn access token to avoid username and password login.
+         * LinkedIn access token to avoid username and password login procedure.
+         * LinkedIn responds to login forms by using a CAPTCHA. This makes it
+         * impossible for a standalone, headless process to log in to LinkedIn
+         * by specifying a username and password. To work around this, obtain a
+         * LinkedIn access token and provide the token as the setting of the
+         * accessToken parameter. Obtaining a LinkedIn access token is a
+         * multi-step procedure. You must configure your LinkedIn application,
+         * obtain a LinkedIn authorization code, and exchange that code for the
+         * LinkedIn access token. For details, see:
+         * https://developer.linkedin.com/docs/oauth2 The default behavior is
+         * that the access token expires after 60 days. To change this, specify
+         * a value for the expiryTime paramter. If the access token expires, the
+         * LinkedIn component tries to log in to LinkedIn by providing a
+         * username and password, which results in a CAPTCHA so the login fails.
+         * The LinkedIn component cannot refresh the access token. You must
+         * manually obtain a new access token each time an access token expires.
+         * When you update the access token you must restart the application so
+         * that it uses the new token.
          */
         private String accessToken;
         /**
