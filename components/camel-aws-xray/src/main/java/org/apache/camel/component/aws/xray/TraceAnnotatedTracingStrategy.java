@@ -27,9 +27,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.ProcessDefinition;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.processor.DelegateSyncProcessor;
-import org.apache.camel.spi.InterceptStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
