@@ -240,7 +240,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNotNull(prop);
         assertEquals("seda", prop.get("name"));
         assertEquals("org.apache.camel", prop.get("groupId"));
-        assertEquals("camel-core", prop.get("artifactId"));
+        assertEquals("camel-seda", prop.get("artifactId"));
     }
 
     @Test
