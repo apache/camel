@@ -140,7 +140,6 @@
     </dependency>
 
     <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-util</artifactId>
@@ -148,7 +147,6 @@
     </dependency>
 
     <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-api</artifactId>
@@ -156,7 +154,6 @@
     </dependency>
 
     <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-management-api</artifactId>
@@ -164,7 +161,6 @@
     </dependency>
 
     <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-base</artifactId>
@@ -172,15 +168,13 @@
     </dependency>
 
     <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-support</artifactId>
       <version>${project.version}</version>
     </dependency>
 
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
+    <!-- core components -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-direct</artifactId>
