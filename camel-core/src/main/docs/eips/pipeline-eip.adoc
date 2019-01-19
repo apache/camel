@@ -1,5 +1,5 @@
-[[pipesandFilters-eip]]
-== Pipes and Filters
+[[pipeline-eip]]
+== Pipeline EIP
 
 Camel supports the link:http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the link:https://github.com/apache/camel/blob/master/docs/user-manual/en/enterprise-integration-patterns.adoc[EIP patterns] in various ways.
 
@@ -9,8 +9,14 @@ With Camel you can split your processing across multiple independent
 link:https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] instances which can then be chained
 together.
 
-[[pipesandFilters-Samples]]
-=== Samples
+=== Options
+
+// eip options: START
+The Pipeline EIP has no options.
+// eip options: END
+
+[[pipeline-Examples]]
+=== Examples
 
 You can create pipelines of logic using multiple
 link:https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] or link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message
@@ -26,9 +32,9 @@ In Java you do:
 ----
 from("activemq:SomeQueue")
     .pipeline()
-    .bean("foo")
-    .bean("bar")
-    .to("acitvemq:OutputQueueu");
+      .bean("foo")
+      .bean("bar")
+      .to("acitvemq:OutputQueueu");
 ----
 
 The pipeline is the default mode, which can be omitted, and therefore you almost often write as:
@@ -88,4 +94,3 @@ then the `<pipeline>` element comes into its own.
   </multicast>
 </route>
 ----
-
