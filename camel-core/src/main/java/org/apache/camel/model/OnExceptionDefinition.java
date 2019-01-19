@@ -907,6 +907,9 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         return redeliveryPolicyType;
     }
 
+    /**
+     * Used for configuring redelivery options
+     */
     public void setRedeliveryPolicyType(RedeliveryPolicyDefinition redeliveryPolicyType) {
         this.redeliveryPolicyType = redeliveryPolicyType;
     }
