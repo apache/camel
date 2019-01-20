@@ -130,16 +130,6 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         return this;
     }
 
-    /**
-     * Rethrow the exception that has been caught by Camel.
-     *
-     * @return the builder
-     */
-    public TryDefinition rethrow() {
-        addOutput(new RethrowDefinition());
-        return this;
-    }
-
     // Properties
     // -------------------------------------------------------------------------
 

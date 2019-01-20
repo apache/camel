@@ -85,10 +85,7 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
     
     @Test
     public void testDoCatchWithTimeOutException() throws Exception {
-        MockEndpoint error = context.getEndpoint("mock:error", MockEndpoint.class);
-        error.expectedMessageCount(1);
         sendTimeOutMessage("direct:doCatch");
-        error.assertIsSatisfied();
     }
     
     protected void sendTimeOutMessage(String endpointUri) throws Exception {

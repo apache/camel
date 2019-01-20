@@ -53,7 +53,7 @@ public class SpringRouteTopLevelMisconfiguredTest extends ContextTestSupport {
 
 
         // return a working context instead, to let this test pass
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryProcessorHandledTest.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/convertBody.xml");
     }
 
     @Test
