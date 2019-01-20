@@ -68,7 +68,6 @@ import org.apache.camel.model.RemoveHeadersDefinition;
 import org.apache.camel.model.RemovePropertiesDefinition;
 import org.apache.camel.model.RemovePropertyDefinition;
 import org.apache.camel.model.ResequenceDefinition;
-import org.apache.camel.model.RethrowDefinition;
 import org.apache.camel.model.RollbackDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
@@ -151,7 +150,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> {
         map.put(RemovePropertiesDefinition.class, RemovePropertiesReifier::new);
         map.put(RemovePropertyDefinition.class, RemovePropertyReifier::new);
         map.put(ResequenceDefinition.class, ResequenceReifier::new);
-        map.put(RethrowDefinition.class, RethrowReifier::new);
         map.put(RollbackDefinition.class, RollbackReifier::new);
         map.put(RouteDefinition.class, RouteReifier::new);
         map.put(RoutingSlipDefinition.class, RoutingSlipReifier::new);
