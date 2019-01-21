@@ -35,9 +35,9 @@ import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.support.ObjectHelper;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
