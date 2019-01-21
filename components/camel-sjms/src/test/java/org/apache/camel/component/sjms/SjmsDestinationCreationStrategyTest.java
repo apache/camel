@@ -40,6 +40,7 @@ public class SjmsDestinationCreationStrategyTest extends JmsTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUri);
+        setupFactoryExternal(connectionFactory);
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
         component.setDestinationCreationStrategy(new TestDestinationCreationStrategyTest());
