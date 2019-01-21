@@ -50,12 +50,12 @@ public abstract class AbstractWordpressProducer<T> extends DefaultProducer {
     @Override
     public final void process(Exchange exchange) throws Exception {
         if (this.getConfiguration().getId() == null) {
-            exchange.getOut().setBody(this.processInsert(exchange));
+            exchange.getMessage().setBody(this.processInsert(exchange));
         } else {
             if (this.getEndpoint().getOperationDetail() == null) {
-                exchange.getOut().setBody(this.processUpdate(exchange));
+                exchange.getMessage().setBody(this.processUpdate(exchange));
             } else {
-                exchange.getOut().setBody(this.processDelete(exchange));
+                exchange.getMessage().setBody(this.processDelete(exchange));
             }
         }
     }

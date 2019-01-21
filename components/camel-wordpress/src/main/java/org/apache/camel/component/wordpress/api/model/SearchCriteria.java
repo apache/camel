@@ -21,6 +21,9 @@ import java.util.List;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
+/**
+ * Search criterias.
+ */
 public class SearchCriteria implements Serializable {
 
     private static final long serialVersionUID = 1002576245120313648L;
@@ -31,10 +34,6 @@ public class SearchCriteria implements Serializable {
     private Order order;
     private List<Integer> exclude;
     private List<Integer> include;
-
-    public SearchCriteria() {
-
-    }
 
     public Integer getPage() {
         return page;
