@@ -21,7 +21,10 @@ import java.util.Map;
 /**
  * Bridge class for ActiveMQ component
  */
-public class IntrospectionSupport {
+public final class IntrospectionSupport {
+
+    private IntrospectionSupport() {
+    }
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
         return org.apache.camel.support.IntrospectionSupport.extractProperties(properties, optionPrefix);
