@@ -45,8 +45,8 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which

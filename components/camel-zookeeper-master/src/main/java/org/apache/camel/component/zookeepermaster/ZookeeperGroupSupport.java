@@ -24,7 +24,7 @@ import org.apache.camel.component.zookeepermaster.group.Group;
 import org.apache.camel.component.zookeepermaster.group.internal.ManagedGroupFactory;
 import org.apache.camel.component.zookeepermaster.group.internal.ManagedGroupFactoryBuilder;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;

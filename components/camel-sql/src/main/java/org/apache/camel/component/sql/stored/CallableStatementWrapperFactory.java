@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 import org.apache.camel.component.sql.stored.template.TemplateParser;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.LRUCacheFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 

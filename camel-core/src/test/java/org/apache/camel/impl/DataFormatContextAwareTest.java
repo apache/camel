@@ -24,6 +24,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.Test;
 
 /**
@@ -49,7 +50,7 @@ public class DataFormatContextAwareTest extends ContextTestSupport {
         assertNotNull(me.getCamelContext());
     }
 
-    private static class MyDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat, CamelContextAware {
+    private static class MyDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
         private CamelContext camelContext;
 

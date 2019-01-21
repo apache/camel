@@ -29,7 +29,7 @@ import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.SendDynamicProcessor;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 

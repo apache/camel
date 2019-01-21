@@ -20,7 +20,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Ensures a {@link Producer} is executed within an {@link org.apache.camel.spi.UnitOfWork}.

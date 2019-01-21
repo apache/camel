@@ -30,6 +30,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.

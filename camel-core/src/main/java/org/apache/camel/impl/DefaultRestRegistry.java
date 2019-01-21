@@ -38,7 +38,7 @@ import org.apache.camel.component.rest.RestEndpoint;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 public class DefaultRestRegistry extends ServiceSupport implements StaticService, RestRegistry, CamelContextAware {

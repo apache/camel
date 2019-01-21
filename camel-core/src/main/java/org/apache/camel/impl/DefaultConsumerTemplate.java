@@ -25,8 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.UnitOfWorkHelper;
 
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;

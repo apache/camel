@@ -20,7 +20,7 @@ import java.lang.reflect.Proxy;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Create a dynamic proxy for a given interface and endpoint that sends the parameter object to the endpoint and optionally

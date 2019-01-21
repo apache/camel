@@ -25,7 +25,7 @@ import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.spring.util.CamelContextResolverHelper;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;

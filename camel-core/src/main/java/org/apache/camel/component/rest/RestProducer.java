@@ -40,7 +40,7 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;

@@ -28,7 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.StaticService;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Base implementation for {@link org.apache.camel.spi.TransformerRegistry}, {@link org.apache.camel.spi.ValidatorRegistry}

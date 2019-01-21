@@ -36,7 +36,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.CamelInternalProcessorAdvice;
-import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
@@ -44,7 +43,7 @@ import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.OrderedComparator;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * DefaultChannel is the default {@link Channel}.

@@ -34,8 +34,8 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EventHelper;
-import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
 
 /**

@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.StateRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * This {@link MemoryStateRepository} class is a memory-based implementation of a {@link StateRepository}.

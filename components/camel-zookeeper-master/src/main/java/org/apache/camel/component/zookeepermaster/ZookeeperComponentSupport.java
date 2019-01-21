@@ -19,7 +19,7 @@ package org.apache.camel.component.zookeepermaster;
 import org.apache.camel.component.zookeepermaster.group.Group;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.curator.framework.CuratorFramework;
 
 public abstract class ZookeeperComponentSupport extends DefaultComponent {

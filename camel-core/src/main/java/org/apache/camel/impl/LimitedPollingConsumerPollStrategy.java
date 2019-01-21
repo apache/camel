@@ -23,7 +23,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Service;
 import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A {@link org.apache.camel.spi.PollingConsumerPollStrategy} which supports suspending consumers if they

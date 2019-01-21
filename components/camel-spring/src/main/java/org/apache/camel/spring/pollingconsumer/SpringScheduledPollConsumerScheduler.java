@@ -24,7 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spring.util.CamelThreadPoolTaskScheduler;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

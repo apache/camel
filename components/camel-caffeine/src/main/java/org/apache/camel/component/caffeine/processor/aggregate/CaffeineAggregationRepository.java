@@ -27,7 +27,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 public class CaffeineAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 

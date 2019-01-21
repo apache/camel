@@ -28,7 +28,7 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Service;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -47,7 +47,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;

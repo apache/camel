@@ -53,7 +53,7 @@ import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
 public class FallbackTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterAware, CamelContextAware {

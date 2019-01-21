@@ -33,7 +33,7 @@ import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.maven.plugin.AbstractMojo;

@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A default implementation of an event driven {@link org.apache.camel.Consumer} which uses the

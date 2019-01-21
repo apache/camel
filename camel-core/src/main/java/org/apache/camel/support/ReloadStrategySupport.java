@@ -35,6 +35,7 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;

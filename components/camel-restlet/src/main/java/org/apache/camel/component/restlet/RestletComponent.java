@@ -41,7 +41,7 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.RestProducerFactoryHelper;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;

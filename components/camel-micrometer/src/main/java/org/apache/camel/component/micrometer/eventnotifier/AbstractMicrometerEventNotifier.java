@@ -26,7 +26,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.micrometer.MicrometerUtils;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.component.micrometer.MicrometerConstants.METRICS_REGISTRY_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.SERVICE_NAME;

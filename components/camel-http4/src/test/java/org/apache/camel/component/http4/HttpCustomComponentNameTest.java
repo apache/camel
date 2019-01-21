@@ -18,7 +18,7 @@ package org.apache.camel.component.http4;
 
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;

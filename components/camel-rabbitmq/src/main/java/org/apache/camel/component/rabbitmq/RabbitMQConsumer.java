@@ -28,7 +28,7 @@ import com.rabbitmq.client.Connection;
 import org.apache.camel.Processor;
 import org.apache.camel.Suspendable;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
     private ExecutorService executor;

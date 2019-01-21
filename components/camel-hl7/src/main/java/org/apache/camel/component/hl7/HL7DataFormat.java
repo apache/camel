@@ -36,7 +36,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 import static org.apache.camel.component.hl7.HL7Constants.HL7_CHARSET;
 import static org.apache.camel.component.hl7.HL7Constants.HL7_CONTEXT;

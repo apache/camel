@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Processor;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A processor which ensures wrapping processors is having lifecycle handled.

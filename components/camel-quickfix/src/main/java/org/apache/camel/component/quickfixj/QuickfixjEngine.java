@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.management.JMException;
 import javax.management.ObjectName;
 
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.quickfixj.jmx.JmxExporter;
 import quickfix.Acceptor;

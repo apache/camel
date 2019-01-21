@@ -43,7 +43,7 @@ import org.apache.camel.processor.DeferServiceFactory;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

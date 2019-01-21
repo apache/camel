@@ -28,7 +28,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A Camel saga service based on LRA (https://github.com/eclipse/microprofile-sandbox/tree/master/proposals/0009-LRA).
