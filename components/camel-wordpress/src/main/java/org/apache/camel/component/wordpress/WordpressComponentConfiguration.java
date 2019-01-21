@@ -18,8 +18,6 @@ package org.apache.camel.component.wordpress;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.component.wordpress.api.WordpressConstants;
@@ -27,11 +25,12 @@ import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.StringHelper;
 
 @UriParams
 public class WordpressComponentConfiguration {
+
+    private URI uri;
 
     @UriParam(description = "The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/")
     @Metadata(required = true)
@@ -48,17 +47,8 @@ public class WordpressComponentConfiguration {
     private Map<String, Object> criteria;
     @UriParam(description = "Whether to bypass trash and force deletion.", defaultValue = "false", javaType = "java.lang.Boolean")
     private Boolean force = false;
-
+    @UriParam(description = "Search criteria")
     private SearchCriteria searchCriteria;
-
-    /**
-     * Wordpress URL in {@link URI} format
-     */
-    private URI uri;
-
-    public WordpressComponentConfiguration() {
-
-    }
 
     public String getUrl() {
         return url;
@@ -96,9 +86,6 @@ public class WordpressComponentConfiguration {
         this.user = user;
     }
 
-    /**
-     * The entity id
-     */
     public Integer getId() {
         return id;
     }
@@ -115,39 +102,12 @@ public class WordpressComponentConfiguration {
         this.force = force;
     }
 
-    /**
-     * The search criteria
-     * 
-     * @return
-     */
     public SearchCriteria getSearchCriteria() {
         return searchCriteria;
     }
 
     public void setSearchCriteria(SearchCriteria searchCriteria) {
         this.searchCriteria = searchCriteria;
-    }
-
-    public Map<String, Object> getCriteriaProperties() {
-        if (criteria != null) {
-            return Collections.unmodifiableMap(criteria);
-        }
-        return null;
-    }
-
-    public void setCriteriaProperties(Map<String, Object> criteriaProperties) {
-        this.criteria = Collections.unmodifiableMap(criteriaProperties);
-    }
-
-    /**
-     * Return all configuration properties on a map.
-     * 
-     * @return
-     */
-    public Map<String, Object> asMap() {
-        final Map<String, Object> map = new HashMap<>();
-        IntrospectionSupport.getProperties(this, map, null);
-        return map;
     }
 
     public void validate() {

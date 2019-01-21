@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.wordpress.springboot;
 
-import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.component.wordpress.api.model.SearchCriteria;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
@@ -86,15 +85,18 @@ public class WordpressComponentConfiguration
          */
         private String user;
         /**
-         * The entity id
+         * The entity ID. Should be passed when the operation performed requires
+         * a specific entity, e.g. deleting a post
          */
         private Integer id;
         /**
          * Whether to bypass trash and force deletion.
          */
         private Boolean force = false;
+        /**
+         * Search criteria
+         */
         private SearchCriteria searchCriteria;
-        private Map criteriaProperties;
 
         public String getUrl() {
             return url;
@@ -150,14 +152,6 @@ public class WordpressComponentConfiguration
 
         public void setSearchCriteria(SearchCriteria searchCriteria) {
             this.searchCriteria = searchCriteria;
-        }
-
-        public Map getCriteriaProperties() {
-            return criteriaProperties;
-        }
-
-        public void setCriteriaProperties(Map criteriaProperties) {
-            this.criteriaProperties = criteriaProperties;
         }
     }
 }
