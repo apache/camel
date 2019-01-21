@@ -392,13 +392,11 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
         if (agent != null) {
             MBeanServer mBeanServer = agent.getMBeanServer();
-            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + routeId + "\",*"), null);
-            Iterator<ObjectName> iterator = set.iterator();
-            if (iterator.hasNext()) {
-                ObjectName routeMBean = iterator.next();
-
-                // the route must be part of the camel context
-                String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + routeId + "\",*"), null);            
+            for (ObjectName routeMBean : set) {
+            	
+            	// the route must be part of the camel context
+            	String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
                 if (camelId != null && camelId.equals(camelContextName)) {
                     String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{fullStats, includeProcessors}, new String[]{"boolean", "boolean"});
                     return xml;
