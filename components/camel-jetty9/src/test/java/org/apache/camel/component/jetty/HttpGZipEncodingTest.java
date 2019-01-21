@@ -30,9 +30,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("TODO: investigate for Camel 3.0.  The test actally works fine, but the " +
-        "test needs to be verified as http4 supports gzip by default, so some tests may " +
-        "have to be changed to stay meaningful.")
+@Ignore("TODO: investigate for Camel 3.0.  The test actally works fine, but the " 
+        + "test needs to be verified as http4 supports gzip by default, so some tests may "
+        + "have to be changed to stay meaningful.")
 public class HttpGZipEncodingTest extends BaseJettyTest {
     
     private int port1;
