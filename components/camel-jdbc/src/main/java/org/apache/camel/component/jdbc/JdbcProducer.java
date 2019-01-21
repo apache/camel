@@ -32,8 +32,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.IntrospectionSupport;
 
 public class JdbcProducer extends DefaultProducer {
