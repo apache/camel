@@ -145,6 +145,7 @@
     <!-- as having org.apache.camel as prefix is not needed and makes the name very long -->
     <camel.osgi.symbolic.name>${project.artifactId}</camel.osgi.symbolic.name>
     <skip.starting.camel.context>false</skip.starting.camel.context>
+    <javax.servlet.api.version>4.0.1</javax.servlet.api.version>
     <camel.osgi.export.pkg/>
   </properties>
 
