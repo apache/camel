@@ -36,7 +36,7 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.netty4.util.SubnetUtils;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;

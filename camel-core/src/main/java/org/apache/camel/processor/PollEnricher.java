@@ -36,7 +36,7 @@ import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 

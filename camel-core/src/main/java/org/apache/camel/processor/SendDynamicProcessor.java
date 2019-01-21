@@ -34,7 +34,7 @@ import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 
 /**

@@ -29,7 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.DefaultCxfMessageMapper;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;

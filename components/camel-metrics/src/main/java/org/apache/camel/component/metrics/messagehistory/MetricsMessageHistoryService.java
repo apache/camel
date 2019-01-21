@@ -35,7 +35,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.metrics.MetricsComponent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Service holding the {@link MetricsMessageHistory} which registers all message history metrics.

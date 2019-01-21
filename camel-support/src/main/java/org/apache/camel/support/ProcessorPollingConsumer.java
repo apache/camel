@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A simple implementation of {@link org.apache.camel.PollingConsumer} which just uses

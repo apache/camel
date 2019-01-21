@@ -46,7 +46,7 @@ import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.MessageHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.util.ObjectHelper;
 

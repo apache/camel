@@ -30,6 +30,7 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A default implementation of the {@link org.apache.camel.PollingConsumer} which uses the normal

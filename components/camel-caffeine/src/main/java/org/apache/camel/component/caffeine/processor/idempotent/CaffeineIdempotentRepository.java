@@ -22,7 +22,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 @ManagedResource(description = "Caffeine based message id repository")
 public class CaffeineIdempotentRepository extends ServiceSupport implements IdempotentRepository {

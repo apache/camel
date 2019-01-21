@@ -24,7 +24,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A {@link Producer} that defers being started, until {@link org.apache.camel.CamelContext} has been started, this
@@ -32,7 +33,7 @@ import org.apache.camel.support.ServiceHelper;
  * CamelContext. If we do not defer starting the producer it may not adapt to those changes, and
  * send messages to wrong endpoints.
  */
-public class DeferProducer extends org.apache.camel.support.ServiceSupport implements Producer, AsyncProcessor {
+public class DeferProducer extends ServiceSupport implements Producer, AsyncProcessor {
 
     private Producer delegate;
     private final Endpoint endpoint;

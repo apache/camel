@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**

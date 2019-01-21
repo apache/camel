@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * <a href="http://camel.apache.org/validator.html">Validator</a>

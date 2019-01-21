@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A base class for developing custom {@link RoutePolicy} implementations.

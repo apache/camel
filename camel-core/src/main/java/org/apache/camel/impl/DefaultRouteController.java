@@ -25,7 +25,7 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.meta.Experimental;
 import org.apache.camel.spi.RouteController;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 @Experimental
 public class DefaultRouteController extends ServiceSupport implements RouteController  {

@@ -21,8 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 public abstract class AsyncProcessorSupport extends ServiceSupport implements AsyncProcessor {
 

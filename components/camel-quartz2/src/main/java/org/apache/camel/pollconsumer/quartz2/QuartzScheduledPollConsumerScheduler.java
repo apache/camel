@@ -27,7 +27,7 @@ import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.component.quartz2.QuartzConstants;
 import org.apache.camel.component.quartz2.QuartzHelper;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;

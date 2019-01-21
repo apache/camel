@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.

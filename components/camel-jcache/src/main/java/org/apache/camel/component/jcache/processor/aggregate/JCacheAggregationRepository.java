@@ -30,7 +30,7 @@ import org.apache.camel.component.jcache.JCacheManager;
 import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 public class JCacheAggregationRepository extends ServiceSupport implements  OptimisticLockingAggregationRepository {

@@ -24,8 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
-import org.apache.camel.support.ServiceHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A bridge to have regular interceptors implemented as {@link org.apache.camel.Processor}

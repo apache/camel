@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 
 /**

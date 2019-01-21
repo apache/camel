@@ -20,6 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A useful base class for implementations of {@link PollingConsumer}

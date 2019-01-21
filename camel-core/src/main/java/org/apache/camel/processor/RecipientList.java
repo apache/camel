@@ -34,7 +34,7 @@ import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;

@@ -27,6 +27,7 @@ import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -34,7 +35,7 @@ import org.apache.camel.util.IOHelper;
  * See {@link org.apache.camel.model.dataformat.ZipFileDataFormat} for Zip file compression.
  */
 @Dataformat("zip")
-public class ZipDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat, DataFormatName {
+public class ZipDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private int compressionLevel;
 

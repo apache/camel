@@ -31,7 +31,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;

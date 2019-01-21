@@ -33,7 +33,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * An implementation of the <a

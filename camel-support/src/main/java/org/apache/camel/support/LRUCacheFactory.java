@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;

@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Base class to extend for custom {@link EventNotifier} implementations.

@@ -26,7 +26,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.hystrix.metrics.servlet.HystrixEventStreamServlet;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * To gather hystrix metrics and offer the metrics over JMX and Java APIs.

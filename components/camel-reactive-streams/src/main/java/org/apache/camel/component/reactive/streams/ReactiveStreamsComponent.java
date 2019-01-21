@@ -25,7 +25,7 @@ import org.apache.camel.component.reactive.streams.engine.ReactiveStreamsEngineC
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * The Camel reactive-streams component.

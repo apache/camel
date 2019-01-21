@@ -26,7 +26,7 @@ import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 

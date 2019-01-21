@@ -30,7 +30,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.EventDrivenPollingConsumer;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.Before;
 import org.junit.Test;
 

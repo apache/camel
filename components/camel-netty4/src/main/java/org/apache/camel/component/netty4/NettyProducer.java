@@ -46,7 +46,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.pool.ObjectPool;

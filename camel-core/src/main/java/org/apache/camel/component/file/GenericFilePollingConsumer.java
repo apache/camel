@@ -22,7 +22,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 
 public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {

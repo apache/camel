@@ -35,7 +35,7 @@ import org.apache.camel.component.infinispan.InfinispanManager;
 import org.apache.camel.component.infinispan.InfinispanUtil;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.RoutePolicySupport;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReferenceCount;
 import org.apache.camel.util.StringHelper;

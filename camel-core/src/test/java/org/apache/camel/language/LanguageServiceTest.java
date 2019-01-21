@@ -24,7 +24,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Language;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.Test;
 
 public class LanguageServiceTest extends ContextTestSupport {

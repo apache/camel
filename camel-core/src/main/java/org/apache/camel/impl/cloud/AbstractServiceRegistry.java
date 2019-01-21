@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.cloud.ServiceRegistry;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 public abstract class AbstractServiceRegistry extends ServiceSupport implements ServiceRegistry {
     private final Map<String, Object> attributes;

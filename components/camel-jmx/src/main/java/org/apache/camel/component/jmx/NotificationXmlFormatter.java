@@ -38,7 +38,7 @@ import javax.xml.datatype.DatatypeFactory;
 import org.apache.camel.component.jmx.jaxb.NotificationEventType;
 import org.apache.camel.component.jmx.jaxb.ObjectFactory;
 import org.apache.camel.component.jmx.jaxb.ObjectNamesType;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

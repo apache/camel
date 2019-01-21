@@ -23,7 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A {@link Processor} which converts the inbound exchange to a method

@@ -24,7 +24,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

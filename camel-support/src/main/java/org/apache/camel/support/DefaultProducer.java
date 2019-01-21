@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.URISupport;
 
 /**
