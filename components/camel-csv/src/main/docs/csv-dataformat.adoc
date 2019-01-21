@@ -12,7 +12,7 @@ exported/imported by Excel.
 ### Options
 
 // dataformat options: START
-The CSV dataformat supports 28 options, which are listed below.
+The CSV dataformat supports 29 options, which are listed below.
 
 
 
@@ -42,6 +42,7 @@ The CSV dataformat supports 28 options, which are listed below.
 | ignoreHeaderCase | false | Boolean | Sets whether or not to ignore case when accessing header names.
 | trim | false | Boolean | Sets whether or not to trim leading and trailing blanks.
 | trailingDelimiter | false | Boolean | Sets whether or not to add a trailing delimiter.
+| marshallerFactoryRef |  | String | Sets the `CsvMarshallerFactory` reference.
 | lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
 | useMaps | false | Boolean | Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to have header (either defined or collected).
 | useOrderedMaps | false | Boolean | Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected).
@@ -89,6 +90,7 @@ The component supports 29 options, which are listed below.
 | *camel.dataformat.csv.trim* | Sets whether or not to trim leading and trailing blanks. | false | Boolean
 | *camel.dataformat.csv.use-maps* | Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to have header (either defined or collected). | false | Boolean
 | *camel.dataformat.csv.use-ordered-maps* | Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected). | false | Boolean
+| *camel.dataformat.csv.marshaller-factory-ref* | Refers to a custom `CsvMarshallerFactory` to lookup from the registry to use. |  | String
 |===
 // spring-boot-auto-configure options: END
 ND
