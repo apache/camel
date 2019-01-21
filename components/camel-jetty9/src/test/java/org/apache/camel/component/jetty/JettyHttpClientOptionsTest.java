@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.HttpProducer;
 import org.apache.camel.http.common.HttpCommonEndpoint;
@@ -30,8 +33,6 @@ import org.apache.http.protocol.HttpCoreContext;
 import org.eclipse.jetty.client.HttpClient;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Unit test for http client options.
