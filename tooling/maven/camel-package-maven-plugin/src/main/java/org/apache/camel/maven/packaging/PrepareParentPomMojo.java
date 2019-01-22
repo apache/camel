@@ -154,12 +154,13 @@ public class PrepareParentPomMojo extends AbstractMojo {
             if (existing != null) {
                 // remove leading line breaks etc
                 existing = existing.trim();
+                changed = changed.trim();
                 if (existing.equals(changed)) {
                     return false;
                 } else {
                     String before = StringHelper.before(text, start);
                     String after = StringHelper.after(text, end);
-                    text = before + start + "\n" + changed + "\n" + end + after;
+                    text = before + start + "\n      " + changed + "\n      " + end + after;
                     writeText(file, text);
                     return true;
                 }
