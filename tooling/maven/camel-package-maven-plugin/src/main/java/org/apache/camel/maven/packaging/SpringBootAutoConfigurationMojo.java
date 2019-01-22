@@ -55,7 +55,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.commons.io.FileUtils;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -152,8 +151,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
      * The output directory for generated component schema file
      *
      */
-     @Parameter(defaultValue="${project.build.directory}/classes")
-     protected File classesDir;
+    @Parameter(defaultValue = "${project.build.directory}/classes")
+    protected File classesDir;
 
     /**
      * The maven project.
@@ -165,15 +164,15 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
      * The project build directory
      *
      */
-     @Parameter(defaultValue="${project.build.directory}")
-     protected File buildDir;
+    @Parameter(defaultValue = "${project.build.directory}")
+    protected File buildDir;
 
     /**
      * The base directory
      *
      */
-     @Parameter(defaultValue="${basedir}")
-     protected File baseDir;
+    @Parameter(defaultValue = "${basedir}")
+    protected File baseDir;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -739,7 +738,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             type = getSimpleJavaType(type);
             JavaClassSource javaClassSource = readJavaType(type);
             boolean isNestedProperty = isNestedProperty(nestedTypes, javaClassSource)
-                    || "org.apache.camel.converter.jaxp.XmlConverter".equals(type);
+                || "org.apache.camel.converter.jaxp.XmlConverter".equals(type);
             if (isNestedProperty) {
                 type = option.getShortJavaType() + INNER_TYPE_SUFFIX;
             }
@@ -1398,7 +1397,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             .setName("customizers")
             .setType("List<ComponentCustomizer<" + model.getShortJavaType() + ">>")
             .addAnnotation(Autowired.class)
-                .setLiteralValue("required", "false");
+            .setLiteralValue("required", "false");
 
         javaClass.addNestedType(
             Roaster.create(JavaClassSource.class)
@@ -1407,11 +1406,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 .setPackagePrivate()
                 .extendSuperType(Roaster.create(JavaClassSource.class).setName("GroupCondition"))
                 .addMethod()
-                    .setName("GroupConditions")
-                    .setConstructor(true)
-                    .setPublic()
-                    .setBody("super(\"camel.component\", \"camel.component." + componentName + "\");")
-                    .getOrigin()
+                .setName("GroupConditions")
+                .setConstructor(true)
+                .setPublic()
+                .setBody("super(\"camel.component\", \"camel.component." + componentName + "\");")
+                .getOrigin()
         );
 
         // add method for auto configure
@@ -1510,7 +1509,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             .setName("customizers")
             .setType("List<DataFormatCustomizer<" + model.getShortJavaType() + ">>")
             .addAnnotation(Autowired.class)
-                .setLiteralValue("required", "false");
+            .setLiteralValue("required", "false");
 
         javaClass.addNestedType(
             Roaster.create(JavaClassSource.class)
@@ -1519,11 +1518,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 .setPackagePrivate()
                 .extendSuperType(Roaster.create(JavaClassSource.class).setName("GroupCondition"))
                 .addMethod()
-                    .setName("GroupConditions")
-                    .setConstructor(true)
-                    .setPublic()
-                    .setBody("super(\"camel.dataformat\", \"camel.dataformat." + dataformatName + "\");")
-                    .getOrigin()
+                .setName("GroupConditions")
+                .setConstructor(true)
+                .setPublic()
+                .setBody("super(\"camel.dataformat\", \"camel.dataformat." + dataformatName + "\");")
+                .getOrigin()
         );
 
 
@@ -1620,7 +1619,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             .setName("customizers")
             .setType("List<LanguageCustomizer<" + model.getShortJavaType() + ">>")
             .addAnnotation(Autowired.class)
-                .setLiteralValue("required", "false");
+            .setLiteralValue("required", "false");
 
         javaClass.addNestedType(
             Roaster.create(JavaClassSource.class)
@@ -1629,11 +1628,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 .setPackagePrivate()
                 .extendSuperType(Roaster.create(JavaClassSource.class).setName("GroupCondition"))
                 .addMethod()
-                    .setName("GroupConditions")
-                    .setConstructor(true)
-                    .setPublic()
-                    .setBody("super(\"camel.component\", \"camel.component." + languageName + "\");")
-                    .getOrigin()
+                .setName("GroupConditions")
+                .setConstructor(true)
+                .setPublic()
+                .setBody("super(\"camel.component\", \"camel.component." + languageName + "\");")
+                .getOrigin()
         );
 
         String body = createLanguageBody(model.getShortJavaType(), languageName);

@@ -37,7 +37,6 @@ import org.apache.camel.maven.packaging.model.EipOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.camel.maven.packaging.model.LanguageOptionModel;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

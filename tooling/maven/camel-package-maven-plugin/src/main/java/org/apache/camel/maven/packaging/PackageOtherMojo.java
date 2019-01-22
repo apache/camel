@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
