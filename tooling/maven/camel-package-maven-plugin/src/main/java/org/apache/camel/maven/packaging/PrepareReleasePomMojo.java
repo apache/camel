@@ -39,7 +39,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 import static org.apache.camel.maven.packaging.StringHelper.between;
 
 /**
- * Prepares the apache-camel/pom.xml to keep the Camel artifacts up-to-date.
+ * Prepares the apache-camel/pom.xml and common-bin to keep the Camel artifacts up-to-date.
  */
 @Mojo(name = "prepare-release-pom", threadSafe = true)
 public class PrepareReleasePomMojo extends AbstractMojo {
@@ -55,6 +55,12 @@ public class PrepareReleasePomMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/../../../apache-camel/pom.xml")
     protected File releasePom;
+
+    /**
+     * The apache-camel/descriptors/common-bin.xml
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../apache-camel/src/main/descriptors/common-bin.xml")
+    protected File commonBinXml;
 
     /**
      * The directory for components
@@ -82,11 +88,11 @@ public class PrepareReleasePomMojo extends AbstractMojo {
      * @throws MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        updatePom(componentsDir, "camel components");
-        updatePom(startersDir, "camel starters");
+        updatePomAndCommonBin(componentsDir, "camel components");
+        updatePomAndCommonBin(startersDir, "camel starters");
     }
 
-    protected void updatePom(File dir, String token) throws MojoExecutionException, MojoFailureException {
+    protected void updatePomAndCommonBin(File dir, String token) throws MojoExecutionException, MojoFailureException {
         SortedSet<String> artifactIds = new TreeSet<>();
 
         try {
@@ -104,6 +110,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
 
         getLog().debug("ArtifactIds: " + artifactIds);
 
+        // update pom.xml
         StringBuilder sb = new StringBuilder();
         for (String aid : artifactIds) {
             sb.append("    <dependency>\n");
@@ -113,7 +120,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
             sb.append("    </dependency>\n");
         }
         String changed = sb.toString();
-        boolean updated = updateParentPom(releasePom, token, changed);
+        boolean updated = updateXmlFile(releasePom, token, changed, "    ");
 
         if (updated) {
             getLog().info("Updated apache-camel/pom.xml file");
@@ -121,6 +128,21 @@ public class PrepareReleasePomMojo extends AbstractMojo {
             getLog().debug("No changes to apache-camel/pom.xml file");
         }
         getLog().info("apache-camel/pom.xml contains " + artifactIds.size() + " " + token + " dependencies");
+
+        // update common-bin.xml
+        sb = new StringBuilder();
+        for (String aid : artifactIds) {
+            sb.append("        <include>org.apache.camel:" + aid + "</include>\n");
+        }
+        changed = sb.toString();
+        updated = updateXmlFile(commonBinXml, token, changed, "        ");
+
+        if (updated) {
+            getLog().info("Updated apache-camel/src/main/descriptors/common-bin.xml file");
+        } else {
+            getLog().debug("No changes to apache-camel/src/main/descriptors/common-bin.xml file");
+        }
+        getLog().info("apache-camel/src/main/descriptors/common-bin.xml contains " + artifactIds.size() + " " + token + " dependencies");
     }
 
     private void findComponentPoms(File parentDir, Set<File> components) {
@@ -149,7 +171,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
         return aid != null && !aid.endsWith("-maven-plugin") && !aid.endsWith("-parent");
     }
 
-    private boolean updateParentPom(File file, String token, String changed) throws MojoExecutionException {
+    private boolean updateXmlFile(File file, String token, String changed, String spaces) throws MojoExecutionException {
         String start = "<!-- " + token + ": START -->";
         String end = "<!-- " + token + ": END -->";
 
@@ -170,7 +192,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
                 } else {
                     String before = StringHelper.before(text, start);
                     String after = StringHelper.after(text, end);
-                    text = before + start + "\n    " + changed + "\n    " + end + after;
+                    text = before + start + "\n" + spaces + changed + "\n" + spaces + end + after;
                     writeText(file, text);
                     return true;
                 }
