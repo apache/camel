@@ -467,7 +467,7 @@
     <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
     <maven-assembly-plugin-version>3.0.0</maven-assembly-plugin-version>
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
-    <maven-bundle-plugin-version>3.5.1</maven-bundle-plugin-version>
+    <maven-bundle-plugin-version>4.1.0</maven-bundle-plugin-version>
     <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
     <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
     <maven-owasp-plugin-version>4.0.2</maven-owasp-plugin-version>
@@ -769,16 +769,12 @@
     <camel.osgi.import.before.defaults/>
     <camel.osgi.import.additional/>
     <camel.osgi.import.pkg>
-      !${camel.osgi.export.pkg},
-      org.apache.camel.*;${camel.osgi.import.camel.version},
-      ${camel.osgi.import.before.defaults},
-      ${camel.osgi.import.defaults},
-      ${camel.osgi.import.additional},
       *
     </camel.osgi.import.pkg>
     <camel.osgi.activator/>
     <camel.osgi.failok>false</camel.osgi.failok>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
+    <camel.osgi.export.pkg>{local-packages}</camel.osgi.export.pkg>
     <camel.osgi.export>${camel.osgi.export.pkg};${camel.osgi.version}</camel.osgi.export>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
     <camel.osgi.split.pkg>-split-package:=first</camel.osgi.split.pkg>
@@ -5269,8 +5265,8 @@
             <Bundle-Name>${project.artifactId}</Bundle-Name>
             <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
             <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
-            <Export-Package>${camel.osgi.export}</Export-Package>
             <Import-Package>${camel.osgi.import}</Import-Package>
+            <Export-Package>${camel.osgi.export}</Export-Package>
             <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
             <Private-Package>${camel.osgi.private.pkg}</Private-Package>
             <Import-Service>${camel.osgi.import.service}</Import-Service>

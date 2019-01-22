@@ -36,29 +36,26 @@
 
   <properties>
     <camel.osgi.export.pkg>
-      !org.apache.camel.tools.*,
-      org.apache.camel.*;-noimport:=true
+      org.apache.camel.builder.*;
+      org.apache.camel.component.*;
+      org.apache.camel.impl;
+      org.apache.camel.impl.cloud;
+      org.apache.camel.impl.cluster;
+      org.apache.camel.impl.transformer;
+      org.apache.camel.impl.osgi;
+      org.apache.camel.impl.osgi.tracker;
+      org.apache.camel.language.*;
+      org.apache.camel.main;
+      org.apache.camel.model.*;
+      org.apache.camel.processor.*;
+      org.apache.camel.reifier.*;
+        -noimport:=true
     </camel.osgi.export.pkg>
-    <camel.osgi.import>
-      org.apache.camel.tools.*;resolution:=optional,
-      !org.apache.camel.*,
-      !com.github.benmanes.caffeine.cache,
-      !org.json.simple,
-      ${camel.osgi.import.defaults},
-      org.springframework.transaction;resolution:=optional,
-      org.apache.camel.spring.spi;resolution:=optional,
-      org.apache.xalan.xsltc.trax;resolution:=optional,
-      javax.activation;resolution:=optional,
-      javax.xml.bind;resolution:=optional,
-      javax.xml.bind.annotation;resolution:=optional,
-      javax.xml.bind.annotation.adapters;resolution:=optional,
-      javax.xml.stream;resolution:=optional,
-      javax.xml.transform.stax;resolution:=optional,
-      net.sf.saxon.event;resolution:=optional,
-      net.sf.saxon.serialize;resolution:=optional,
-      net.sf.saxon.xpath;resolution:=optional,
+    <camel.osgi.import.pkg>
+      =org.apache.camel,
+      =org.apache.camel.util.concurrent,
       *
-    </camel.osgi.import>
+    </camel.osgi.import.pkg>
     <camel.osgi.export.service>
       org.apache.camel.spi.ComponentResolver;component=bean,
       org.apache.camel.spi.ComponentResolver;component=binding,
@@ -398,6 +395,7 @@
 
       <!-- shade caffeine cache for faster Camel and spi-annotations as needed by everybody -->
       <!-- shade json-simple for parsing Camel component JSon schema files -->
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -425,7 +423,6 @@
                 </relocation>
                 <relocation>
                   <pattern>org.json.simple</pattern>
-                  <!-- scala compiler do not like org.apache.camel.org so its just json.simple instead of org.json.simple -->
                   <shadedPattern>org.apache.camel.json.simple</shadedPattern>
                 </relocation>
               </relocations>
@@ -442,6 +439,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
 
       <!-- generate the attached tests jar -->
       <plugin>

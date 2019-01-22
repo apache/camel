@@ -36,6 +36,12 @@
 
   <!-- TODO: this is only needed until https://github.com/cliftonlabs/json-simple/issues/17 is fixed and released -->
 
+  <properties>
+    <camel.osgi.export.pkg>
+      org.json.simple
+    </camel.osgi.export.pkg>
+  </properties>
+
   <dependencies>
 
     <!-- json parser -->

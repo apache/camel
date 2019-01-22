@@ -34,6 +34,23 @@
     <name>Camel :: Support</name>
     <description>The Camel Support</description>
 
+    <properties>
+        <camel.osgi.export.pkg>
+            org.apache.camel.component;
+            org.apache.camel.component.extension.metadata;
+            org.apache.camel.component.extension.verifier;
+            org.apache.camel.support;
+            org.apache.camel.support.cluster;
+            org.apache.camel.support.component;
+            org.apache.camel.support.jndi;
+            org.apache.camel.support.processor;
+                -noimport:=true
+        </camel.osgi.export.pkg>
+        <camel.osgi.import.pkg>
+            *
+        </camel.osgi.import.pkg>
+    </properties>
+
     <dependencies>
         <!-- required dependencies by camel-core -->
         <!-- it will be shade into camel-core by bnd plugin -->
