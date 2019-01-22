@@ -18,7 +18,7 @@
 package org.apache.camel.test.blueprint.cloud;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.cloud.ServiceCallConstants;
+import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Assert;
 import org.junit.Test;

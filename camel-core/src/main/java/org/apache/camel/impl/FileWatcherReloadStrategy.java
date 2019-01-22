@@ -27,7 +27,6 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.camel.support.ReloadStrategySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
 

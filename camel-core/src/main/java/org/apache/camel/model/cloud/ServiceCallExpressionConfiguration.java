@@ -36,7 +36,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.cloud.ServiceExpressionFactory;
 import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
-import org.apache.camel.impl.cloud.ServiceCallConstants;
+import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;

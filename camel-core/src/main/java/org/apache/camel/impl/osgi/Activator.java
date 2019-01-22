@@ -119,6 +119,11 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             String ourPkgName = (String) ourExport.getAttributes().get(PACKAGE_NAMESPACE);
             packageCapabilities.put(ourPkgName, ourExport);
         }
+        for (BundleWire w : ourWiring.getRequiredWires(PACKAGE_NAMESPACE)) {
+            BundleCapability cap = w.getCapability();
+            String ourPkgName = (String) cap.getAttributes().get(PACKAGE_NAMESPACE);
+            packageCapabilities.put(ourPkgName, cap);
+        }
     }
 
     public Object addingBundle(Bundle bundle, BundleEvent event) {

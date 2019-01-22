@@ -59,8 +59,6 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.ModelCamelContextHelper;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;

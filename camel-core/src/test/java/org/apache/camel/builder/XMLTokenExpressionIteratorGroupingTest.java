@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.support;
+package org.apache.camel.builder;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.InputStream;
@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.builder.XMLTokenExpressionIterator;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

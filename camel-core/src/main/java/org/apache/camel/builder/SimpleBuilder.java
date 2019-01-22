@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.simple.SimpleLanguage;
-import org.apache.camel.support.ScriptHelper;
 
 /**
  * Creates an {@link org.apache.camel.language.Simple} language builder.
