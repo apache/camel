@@ -20,7 +20,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.MarshalProcessor;
+import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 
