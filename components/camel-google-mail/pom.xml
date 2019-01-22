@@ -38,7 +38,7 @@
     <componentPackage>org.apache.camel.component.google.mail</componentPackage>
     <outPackage>org.apache.camel.component.google.mail.internal</outPackage>
     <camel.osgi.private.pkg>org.apache.camel.component.google.mail.internal</camel.osgi.private.pkg>
-    <camel.osgi.export.pkg>org.apache.camel.component.google.mail</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.google.mail,org.apache.camel.component.google.mail.stream</camel.osgi.export.pkg>
     <camel.osgi.export.service>
           org.apache.camel.spi.ComponentResolver;component=google-mail
     </camel.osgi.export.service>
