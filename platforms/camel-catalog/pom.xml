@@ -235,11 +235,12 @@
         <version>${project.version}</version>
         <executions>
           <execution>
-            <!-- prepare the catalog before the user guide / readme -->
+            <!-- prepare the catalog, readme files, etc. -->
             <goals>
-              <goal>prepare-catalog</goal>
-              <goal>prepare-user-guide</goal>
-              <goal>prepare-readme</goal>
+              <!--<goal>prepare-catalog</goal>-->
+              <!--<goal>prepare-user-guide</goal>-->
+              <!--<goal>prepare-readme</goal>-->
+              <goal>prepare-parent-pom</goal>
             </goals>
             <phase>process-resources</phase>
           </execution>
