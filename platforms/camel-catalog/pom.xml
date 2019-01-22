@@ -237,9 +237,9 @@
           <execution>
             <!-- prepare the catalog, readme files, etc. -->
             <goals>
-              <!--<goal>prepare-catalog</goal>-->
-              <!--<goal>prepare-user-guide</goal>-->
-              <!--<goal>prepare-readme</goal>-->
+              <goal>prepare-catalog</goal>
+              <goal>prepare-user-guide</goal>
+              <goal>prepare-readme</goal>
               <goal>prepare-parent-pom</goal>
             </goals>
             <phase>process-resources</phase>
