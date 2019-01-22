@@ -24,13 +24,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
-import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 
@@ -46,7 +44,7 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     private String name;
 
     private List<Exchange> exchanges;
-    private final LoadBalancer loadBalancer = new TopicLoadBalancer();
+    private volatile Processor onExchangeProcessor;
 
     public BrowseEndpoint() {
     }
@@ -75,7 +73,9 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer answer = new LoadBalancerConsumer(this, processor, loadBalancer);
+        this.onExchangeProcessor = processor;
+
+        Consumer answer = new DefaultConsumer(this, processor);
         configureConsumer(answer);
         return answer;
     }
@@ -101,8 +101,10 @@ public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint
     protected void onExchange(Exchange exchange) throws Exception {
         getExchanges().add(exchange);
 
-        // now fire any consumers
-        loadBalancer.process(exchange);
+        // now fire the consumer
+        if (onExchangeProcessor != null) {
+            onExchangeProcessor.process(exchange);
+        }
     }
 
     @Override
