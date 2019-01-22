@@ -62,7 +62,10 @@ public class TelegramProducer extends DefaultProducer {
         log.debug("Message being sent is: {}", message);
         log.debug("Headers of message being sent are: {}", exchange.getIn().getHeaders());
 
-        service.sendMessage(config.getAuthorizationToken(), message);
+        Object receivedMessage = service.sendMessage(config.getAuthorizationToken(), message);
+        log.debug("Message being received is: {}", receivedMessage);
+
+        exchange.getOut().setBody(receivedMessage);
     }
 
     private String resolveChatId(TelegramConfiguration config, OutgoingMessage message, Exchange exchange) {

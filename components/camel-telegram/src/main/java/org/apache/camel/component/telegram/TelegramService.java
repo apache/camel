@@ -24,9 +24,7 @@ import org.apache.camel.component.telegram.model.UpdateResult;
  */
 public interface TelegramService {
 
-
     UpdateResult getUpdates(String authorizationToken, Long offset, Integer limit, Integer timeoutSeconds);
 
-    void sendMessage(String authorizationToken, OutgoingMessage message);
-
+    Object sendMessage(String authorizationToken, OutgoingMessage message);
 }

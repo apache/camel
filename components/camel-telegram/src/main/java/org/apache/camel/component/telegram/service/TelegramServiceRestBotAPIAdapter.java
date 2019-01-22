@@ -27,14 +27,16 @@ import javax.ws.rs.core.MultivaluedMap;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
 import org.apache.camel.component.telegram.TelegramService;
+import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
+import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
+import org.apache.camel.component.telegram.model.SendLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -53,35 +55,45 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         WebClient.getConfig(this.api).getHttpConduit().getClient().setAllowChunking(false);
     }
 
+    public TelegramServiceRestBotAPIAdapter(RestBotAPI api) {
+        this.api = api;
+    }
+
     @Override
     public UpdateResult getUpdates(String authorizationToken, Long offset, Integer limit, Integer timeoutSeconds) {
         return api.getUpdates(authorizationToken, offset, limit, timeoutSeconds);
     }
 
     @Override
-    public void sendMessage(String authorizationToken, OutgoingMessage message) {
+    public Object sendMessage(String authorizationToken, OutgoingMessage message) {
+        Object resultMessage;
+
         if (message instanceof OutgoingTextMessage) {
-            this.sendMessage(authorizationToken, (OutgoingTextMessage) message);
+            resultMessage = this.sendMessage(authorizationToken, (OutgoingTextMessage) message);
         } else if (message instanceof OutgoingPhotoMessage) {
-            this.sendMessage(authorizationToken, (OutgoingPhotoMessage) message);
+            resultMessage = this.sendMessage(authorizationToken, (OutgoingPhotoMessage) message);
         } else if (message instanceof OutgoingAudioMessage) {
-            this.sendMessage(authorizationToken, (OutgoingAudioMessage) message);
+            resultMessage = this.sendMessage(authorizationToken, (OutgoingAudioMessage) message);
         } else if (message instanceof OutgoingVideoMessage) {
-            this.sendMessage(authorizationToken, (OutgoingVideoMessage) message);
+            resultMessage = this.sendMessage(authorizationToken, (OutgoingVideoMessage) message);
         } else if (message instanceof OutgoingDocumentMessage) {
-            this.sendMessage(authorizationToken, (OutgoingDocumentMessage) message);
+            resultMessage = this.sendMessage(authorizationToken, (OutgoingDocumentMessage) message);
+        } else if (message instanceof SendLocationMessage) {
+            resultMessage = api.sendLocation(authorizationToken, (SendLocationMessage) message);
+        } else if (message instanceof EditMessageLiveLocationMessage) {
+            resultMessage = api.editMessageLiveLocation(authorizationToken, (EditMessageLiveLocationMessage) message);
         } else {
             throw new IllegalArgumentException("Unsupported message type " + (message != null ? message.getClass().getName() : null));
         }
+
+        return resultMessage;
     }
 
-
-    private void sendMessage(String authorizationToken, OutgoingTextMessage message) {
-        api.sendMessage(authorizationToken, message);
+    private MessageResult sendMessage(String authorizationToken, OutgoingTextMessage message) {
+        return api.sendMessage(authorizationToken, message);
     }
 
-
-    private void sendMessage(String authorizationToken, OutgoingPhotoMessage message) {
+    private MessageResult sendMessage(String authorizationToken, OutgoingPhotoMessage message) {
         List<Attachment> parts = new LinkedList<>();
 
         fillCommonMediaParts(parts, message);
@@ -91,10 +103,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             parts.add(buildTextPart("caption", message.getCaption()));
         }
 
-        api.sendPhoto(authorizationToken, parts);
+        return api.sendPhoto(authorizationToken, parts);
     }
 
-    private void sendMessage(String authorizationToken, OutgoingAudioMessage message) {
+    private MessageResult sendMessage(String authorizationToken, OutgoingAudioMessage message) {
         List<Attachment> parts = new LinkedList<>();
 
         fillCommonMediaParts(parts, message);
@@ -110,10 +122,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             parts.add(buildTextPart("performer", message.getPerformer()));
         }
 
-        api.sendAudio(authorizationToken, parts);
+        return api.sendAudio(authorizationToken, parts);
     }
 
-    private void sendMessage(String authorizationToken, OutgoingVideoMessage message) {
+    private MessageResult sendMessage(String authorizationToken, OutgoingVideoMessage message) {
         List<Attachment> parts = new LinkedList<>();
 
         fillCommonMediaParts(parts, message);
@@ -132,10 +144,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             parts.add(buildTextPart("height", String.valueOf(message.getHeight())));
         }
 
-        api.sendVideo(authorizationToken, parts);
+        return api.sendVideo(authorizationToken, parts);
     }
 
-    private void sendMessage(String authorizationToken, OutgoingDocumentMessage message) {
+    private MessageResult sendMessage(String authorizationToken, OutgoingDocumentMessage message) {
         List<Attachment> parts = new LinkedList<>();
 
         fillCommonMediaParts(parts, message);
@@ -145,7 +157,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             parts.add(buildTextPart("caption", message.getCaption()));
         }
 
-        api.sendDocument(authorizationToken, parts);
+        return api.sendDocument(authorizationToken, parts);
     }
 
     private void fillCommonMediaParts(List<Attachment> parts, OutgoingMessage message) {

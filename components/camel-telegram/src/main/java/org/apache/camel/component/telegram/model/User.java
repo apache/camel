@@ -39,6 +39,9 @@ public class User implements Serializable {
 
     private String username;
 
+    @JsonProperty("is_bot")
+    private boolean isBot;
+
     public User() {
     }
 
@@ -74,10 +77,19 @@ public class User implements Serializable {
         this.username = username;
     }
 
+    public boolean isBot() {
+        return isBot;
+    }
+
+    public void setBot(boolean bot) {
+        isBot = bot;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("User{");
         sb.append("id=").append(id);
+        sb.append(", is_bot='").append(isBot).append('\'');
         sb.append(", firstName='").append(firstName).append('\'');
         sb.append(", lastName='").append(lastName).append('\'');
         sb.append(", username='").append(username).append('\'');

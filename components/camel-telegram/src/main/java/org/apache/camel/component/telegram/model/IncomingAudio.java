@@ -20,7 +20,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * ontains information about an audio file.
+ * Contains information about an audio file.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IncomingAudio {

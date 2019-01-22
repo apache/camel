@@ -52,6 +52,9 @@ public class IncomingMessage implements Serializable {
 
     private IncomingDocument document;
 
+    @JsonProperty("location")
+    private Location location;
+
     public IncomingMessage() {
     }
 
@@ -127,6 +130,13 @@ public class IncomingMessage implements Serializable {
         this.document = document;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
 
     @Override
     public String toString() {
@@ -140,6 +150,7 @@ public class IncomingMessage implements Serializable {
         sb.append(", video=").append(video);
         sb.append(", audio=").append(audio);
         sb.append(", document=").append(document);
+        sb.append(", location=").append(location);
         sb.append('}');
         return sb.toString();
     }
