@@ -94,7 +94,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
             findComponentPoms(dir, poms);
             for (File pom : poms) {
                 String aid = asArtifactId(pom);
-                if (aid != null) {
+                if (isValidArtifactId(aid)) {
                     artifactIds.add(aid);
                 }
             }
@@ -106,10 +106,11 @@ public class PrepareReleasePomMojo extends AbstractMojo {
 
         StringBuilder sb = new StringBuilder();
         for (String aid : artifactIds) {
-            sb.append("      <dependency>\n");
-            sb.append("        <groupId>org.apache.camel</groupId>\n");
-            sb.append("        <artifactId>" + aid + "</artifactId>\n");
-            sb.append("      </dependency>\n");
+            sb.append("    <dependency>\n");
+            sb.append("      <groupId>org.apache.camel</groupId>\n");
+            sb.append("      <artifactId>" + aid + "</artifactId>\n");
+            sb.append("      <version>${project.version}</version>\n");
+            sb.append("    </dependency>\n");
         }
         String changed = sb.toString();
         boolean updated = updateParentPom(releasePom, token, changed);
@@ -139,10 +140,13 @@ public class PrepareReleasePomMojo extends AbstractMojo {
         String text = loadText(new FileInputStream(pom));
         text = after(text, "</parent>");
         if (text != null) {
-            text = between(text, "<artifactId>", "</artifactId>");
-            return text;
+            return between(text, "<artifactId>", "</artifactId>");
         }
         return null;
+    }
+
+    private boolean isValidArtifactId(String aid) {
+        return aid != null && !aid.endsWith("-maven-plugin") && !aid.endsWith("-parent");
     }
 
     private boolean updateParentPom(File file, String token, String changed) throws MojoExecutionException {
@@ -166,7 +170,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
                 } else {
                     String before = StringHelper.before(text, start);
                     String after = StringHelper.after(text, end);
-                    text = before + start + "\n      " + changed + "\n      " + end + after;
+                    text = before + start + "\n    " + changed + "\n    " + end + after;
                     writeText(file, text);
                     return true;
                 }
