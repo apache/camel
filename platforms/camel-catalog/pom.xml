@@ -237,10 +237,11 @@
           <execution>
             <!-- prepare the catalog, readme files, etc. -->
             <goals>
-              <goal>prepare-catalog</goal>
-              <goal>prepare-user-guide</goal>
-              <goal>prepare-readme</goal>
-              <goal>prepare-parent-pom</goal>
+              <!--<goal>prepare-catalog</goal>-->
+              <!--<goal>prepare-user-guide</goal>-->
+              <!--<goal>prepare-readme</goal>-->
+              <!--<goal>prepare-parent-pom</goal>-->
+              <goal>prepare-release-pom</goal>
             </goals>
             <phase>process-resources</phase>
           </execution>
