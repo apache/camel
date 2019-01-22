@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 289 in 201 JAR artifacts (0 deprecated)
+Number of Components: 289 in 202 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -196,7 +196,7 @@ Number of Components: 289 in 201 JAR artifacts (0 deprecated)
 | link:camel-cxf/src/main/docs/cxfrs-component.adoc[CXF-RS] (camel-cxf) +
 `cxfrs:beanId:address` | 2.0 | The cxfrs component is used for JAX-RS REST services using Apache CXF.
 
-| link:../camel-core/src/main/docs/dataformat-component.adoc[Data Format] (camel-core) +
+| link:camel-dataformat/src/main/docs/dataformat-component.adoc[Data Format] (camel-dataformat) +
 `dataformat:name:operation` | 2.12 | The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
 
 | link:../camel-core/src/main/docs/dataset-component.adoc[Dataset] (camel-core) +
