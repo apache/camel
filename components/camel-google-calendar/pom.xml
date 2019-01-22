@@ -38,7 +38,7 @@
     <componentPackage>org.apache.camel.component.google.calendar</componentPackage>
     <outPackage>org.apache.camel.component.google.calendar.internal</outPackage>
     <camel.osgi.private.pkg>org.apache.camel.component.google.calendar.internal</camel.osgi.private.pkg>
-    <camel.osgi.export.pkg>org.apache.camel.component.google.calendar</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.component.google.calendar,org.apache.camel.component.google.calendar.stream</camel.osgi.export.pkg>
     <camel.osgi.export.service>
           org.apache.camel.spi.ComponentResolver;component=google-calendar
     </camel.osgi.export.service>
