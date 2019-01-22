@@ -14,23 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.builder;
 
-import java.io.CharArrayWriter;
-import java.io.FilterReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * This class is used by the tokenizer to extract data while reading from the stream.
  * TODO it is used package internally but may be moved to some common package.
  */
-class RecordableReader extends FilterReader {
-    private TrimmableCharArrayWriter buf;
+class RecordableInputStream extends FilterInputStream {
+    private TrimmableByteArrayOutputStream buf;
+    private String charset;
     private boolean recording;
-    protected RecordableReader(Reader in) {
+    protected RecordableInputStream(InputStream in, String charset) {
         super(in);
-        this.buf = new TrimmableCharArrayWriter();
+        this.buf = new TrimmableByteArrayOutputStream();
+        this.charset = charset;
         this.recording = true;
     }
 
@@ -44,24 +47,35 @@ class RecordableReader extends FilterReader {
     }
 
     @Override
-    public int read(char[] cbuf, int off, int len) throws IOException {
-        int n = super.read(cbuf, off, len);
+    public int read(byte[] b, int off, int len) throws IOException {
+        int n = super.read(b, off, len);
         if (n > 0 && recording) {
-            buf.write(cbuf, off, n);
+            buf.write(b, off, n);
         }
         return n;
     }
 
     public String getText(int pos) {
+        String t = null;
         recording = false;
-        String t = new String(buf.getCharArray(), 0, pos);
-        buf.trim(pos, 0);
+        try {        
+            if (charset == null) {
+                t = new String(buf.getByteArray(), 0, pos);
+            } else {
+                t = new String(buf.getByteArray(), 0, pos, charset);
+            }
+        } catch (UnsupportedEncodingException e) {
+            // ignore it as this encoding exception should have been caught earlier while scanning.
+        } finally {
+            buf.trim(pos, 0);
+        }
+
         return t;
     }
     
-    public char[] getChars(int pos) {
+    public byte[] getBytes(int pos) {
         recording = false;
-        char[] b = buf.toCharArray(pos);
+        byte[] b = buf.toByteArray(pos);
         buf.trim(pos, 0);
         return b;
     }
@@ -74,19 +88,19 @@ class RecordableReader extends FilterReader {
         return buf.size();
     }
 
-    private static class TrimmableCharArrayWriter extends CharArrayWriter {
+    private static class TrimmableByteArrayOutputStream extends ByteArrayOutputStream {
         public void trim(int head, int tail) {
             System.arraycopy(buf, head, buf, 0, count - head - tail);
             count -= head + tail;
         }
         
-        public char[] toCharArray(int len) {
-            char[] b = new char[len];
+        public byte[] toByteArray(int len) {
+            byte[] b = new byte[len];
             System.arraycopy(buf, 0, b, 0, len);
             return b;
         }
 
-        char[] getCharArray() {
+        byte[] getByteArray() {
             return buf;
         }
     }

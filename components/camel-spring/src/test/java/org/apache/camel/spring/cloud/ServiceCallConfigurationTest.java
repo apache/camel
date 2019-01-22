@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.cloud;
 
-import org.apache.camel.impl.cloud.ServiceCallConstants;
+import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.CombinedServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.CombinedServiceCallServiceFilterConfiguration;

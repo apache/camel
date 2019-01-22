@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.builder;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -24,6 +24,8 @@ import java.util.Iterator;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.Scanner;
@@ -36,7 +38,7 @@ import org.apache.camel.util.StringHelper;
  * The message body must be able to convert to {@link InputStream} type which is used as stream
  * to access the message body.
  * <p/>
- * For splitting XML files use {@link org.apache.camel.support.TokenXMLExpressionIterator} instead.
+ * For splitting XML files use {@link TokenXMLExpressionIterator} instead.
  */
 public class TokenPairExpressionIterator extends ExpressionAdapter {
 

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.builder;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.camel.builder.XMLTokenExpressionIterator;
 import org.junit.Assert;
 import org.junit.Test;
 

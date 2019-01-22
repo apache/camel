@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.builder;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;

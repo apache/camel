@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.apache.camel.support;
+package org.apache.camel.builder;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.support.XMLTokenExpressionIterator.AttributedQName;
+import org.apache.camel.builder.XMLTokenExpressionIterator.AttributedQName;
 import org.junit.Assert;
 import org.junit.Test;
 

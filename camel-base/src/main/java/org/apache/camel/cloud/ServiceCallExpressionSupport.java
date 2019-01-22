@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.cloud;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.cloud.ServiceCallConstants;
+import org.apache.camel.cloud.ServiceCallConstants;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ExpressionAdapter;
 
 public abstract class ServiceCallExpressionSupport extends ExpressionAdapter {
     private String hostHeader;

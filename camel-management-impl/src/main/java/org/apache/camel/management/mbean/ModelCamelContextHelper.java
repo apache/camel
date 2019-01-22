@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.management.mbean;
 
 import java.util.Iterator;
 
@@ -24,8 +24,6 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * A number of helper methods
