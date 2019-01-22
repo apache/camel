@@ -31,7 +31,7 @@
 
   <artifactId>camel-base</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: base</name>
+  <name>Camel :: Base</name>
   <description>The Base Camel Framework</description>
 
   <properties>
