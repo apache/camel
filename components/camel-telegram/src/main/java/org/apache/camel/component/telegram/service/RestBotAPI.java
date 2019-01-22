@@ -27,7 +27,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
+import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
+import org.apache.camel.component.telegram.model.SendLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 
@@ -48,38 +51,47 @@ public interface RestBotAPI {
             @QueryParam("limit") Integer limit,
             @QueryParam("timeout") Integer timeoutSeconds);
 
-
     @POST
     @Path("/bot{authorizationToken}/sendMessage")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    void sendMessage(
+    MessageResult sendMessage(
             @PathParam("authorizationToken") String authorizationToken,
             OutgoingTextMessage message);
-
 
     @POST
     @Path("/bot{authorizationToken}/sendPhoto")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    void sendPhoto(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
-
+    MessageResult sendPhoto(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
 
     @POST
     @Path("/bot{authorizationToken}/sendAudio")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    void sendAudio(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
+    MessageResult sendAudio(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
 
     @POST
     @Path("/bot{authorizationToken}/sendVideo")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    void sendVideo(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
+    MessageResult sendVideo(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
 
     @POST
     @Path("/bot{authorizationToken}/sendDocument")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    void sendDocument(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
+    MessageResult sendDocument(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
+
+    @POST
+    @Path("/bot{authorizationToken}/sendLocation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    MessageResult sendLocation(@PathParam("authorizationToken") String authorizationToken, SendLocationMessage location);
+
+    @POST
+    @Path("/bot{authorizationToken}/editMessageLiveLocation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    MessageResult editMessageLiveLocation(@PathParam("authorizationToken") String authorizationToken, EditMessageLiveLocationMessage location);
 }

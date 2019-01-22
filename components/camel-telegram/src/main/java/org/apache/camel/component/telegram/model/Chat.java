@@ -19,6 +19,7 @@ package org.apache.camel.component.telegram.model;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Contains information about a telegram chat.
@@ -33,6 +34,9 @@ public class Chat implements Serializable {
     private String title;
 
     private String type;
+
+    @JsonProperty("all_members_are_administrators")
+    private boolean allMembersAreAdministrators;
 
     public Chat() {
     }
@@ -61,12 +65,21 @@ public class Chat implements Serializable {
         this.type = type;
     }
 
+    public boolean isAllMembersAreAdministrators() {
+        return allMembersAreAdministrators;
+    }
+
+    public void setAllMembersAreAdministrators(boolean allMembersAreAdministrators) {
+        this.allMembersAreAdministrators = allMembersAreAdministrators;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Chat{");
         sb.append("id='").append(id).append('\'');
         sb.append(", title='").append(title).append('\'');
         sb.append(", type='").append(type).append('\'');
+        sb.append(", all_members_are_administrators='").append(allMembersAreAdministrators).append('\'');
         sb.append('}');
         return sb.toString();
     }
