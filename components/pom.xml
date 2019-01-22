@@ -35,6 +35,7 @@
 
   <modules>
     <!-- components used by camel-core -->
+    <module>camel-browse</module>
     <module>camel-direct</module>
     <module>camel-directvm</module>
     <module>camel-language</module>
