@@ -43,7 +43,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -508,8 +507,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedHeaderReceived(final String name, final Object value) {
-        if (expectedCount == -1) {
-            expectedMessageCount(1);
+        if (expectedMinimumCount == -1) {
+            expectedMinimumMessageCount(1);
         }
         if (expectedHeaderValues == null) {
             expectedHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
@@ -717,7 +716,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
 
         if (actualValue instanceof Expression) {
-            Class clazz = Object.class;
+            Class<?> clazz = Object.class;
             if (expectedValue != null) {
                 clazz = expectedValue.getClass();
             }
