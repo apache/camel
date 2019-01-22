@@ -126,6 +126,7 @@
     <module>camel-boon-starter</module>
     <module>camel-box-starter</module>
     <module>camel-braintree-starter</module>
+    <module>camel-browse-starter</module>
     <module>camel-caffeine-starter</module>
     <module>camel-cassandraql-starter</module>
     <module>camel-chronicle-starter</module>
