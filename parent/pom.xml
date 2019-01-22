@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
@@ -732,8 +733,12 @@
     <zxing-bundle-version>3.3.3_1</zxing-bundle-version>
 
     <!-- OSGi bundles properties -->
-    <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
-    <camel.osgi.import.strict.version>version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"</camel.osgi.import.strict.version>
+    <camel.osgi.import.camel.version>
+      version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"
+    </camel.osgi.import.camel.version>
+    <camel.osgi.import.strict.version>
+      version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"
+    </camel.osgi.import.strict.version>
     <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
     <camel.osgi.import.defaults>
       !org.springframework.boot.*,
@@ -761,8 +766,8 @@
       org.apache.lucene.*;version="${lucene-version-range}",
       org.apache.solr.*;version="${solr-version-range}",
     </camel.osgi.import.defaults>
-    <camel.osgi.import.before.defaults />
-    <camel.osgi.import.additional />
+    <camel.osgi.import.before.defaults/>
+    <camel.osgi.import.additional/>
     <camel.osgi.import.pkg>
       !${camel.osgi.export.pkg},
       org.apache.camel.*;${camel.osgi.import.camel.version},
@@ -771,18 +776,18 @@
       ${camel.osgi.import.additional},
       *
     </camel.osgi.import.pkg>
-    <camel.osgi.activator />
+    <camel.osgi.activator/>
     <camel.osgi.failok>false</camel.osgi.failok>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
     <camel.osgi.export>${camel.osgi.export.pkg};${camel.osgi.version}</camel.osgi.export>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
     <camel.osgi.split.pkg>-split-package:=first</camel.osgi.split.pkg>
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
-    <camel.osgi.dynamic />
+    <camel.osgi.dynamic/>
     <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
-    <camel.osgi.require.capability />
-    <camel.osgi.provide.capability />
+    <camel.osgi.require.capability/>
+    <camel.osgi.provide.capability/>
   </properties>
 
   <dependencyManagement>
@@ -981,12 +986,12 @@
         <artifactId>camel-cdi</artifactId>
         <version>${project.version}</version>
       </dependency>
-       <dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-chronicle</artifactId>
         <version>${project.version}</version>
       </dependency>
-       <dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-chunk</artifactId>
         <version>${project.version}</version>
@@ -1015,25 +1020,6 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-consul</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>net.corda</groupId>
-        <artifactId>corda-rpc</artifactId>
-        <version>${corda-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>co.paralleluniverse</groupId>
-            <artifactId>quasar-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.1-api</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
@@ -1106,7 +1092,7 @@
         <artifactId>camel-dns</artifactId>
         <version>${project.version}</version>
       </dependency>
-       <dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-docker</artifactId>
         <version>${project.version}</version>
@@ -1667,19 +1653,19 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>org.apache.camel</groupId>
-         <artifactId>camel-netty4</artifactId>
-         <version>${project.version}</version>
-     </dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-netty4</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty-http</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>org.apache.camel</groupId>
-         <artifactId>camel-netty4-http</artifactId>
-         <version>${project.version}</version>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-netty4-http</artifactId>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
@@ -1836,7 +1822,7 @@
         <artifactId>camel-schematron</artifactId>
         <version>${project.version}</version>
       </dependency>
-       <dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-script</artifactId>
         <version>${project.version}</version>
@@ -2181,12 +2167,12 @@
         <artifactId>camel-zipkin</artifactId>
         <version>${project.version}</version>
       </dependency>
-       <dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-zookeeper</artifactId>
         <version>${project.version}</version>
       </dependency>
-       <dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-zookeeper-master</artifactId>
         <version>${project.version}</version>
@@ -2600,13 +2586,6 @@
         <version>1.4.5</version>
       </dependency>
 
-      <!-- beanshell -->
-      <dependency>
-        <groupId>org.apache-extras.beanshell</groupId>
-        <artifactId>bsh</artifactId>
-        <version>${bsh-version}</version>
-      </dependency>
-
       <!-- logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -2914,18 +2893,6 @@
         <version>${google-guava-version}</version>
       </dependency>
 
-      <!-- optional castor dependencies -->
-      <dependency>
-        <groupId>org.codehaus.castor</groupId>
-        <artifactId>castor-xml</artifactId>
-        <version>${castor-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.servicemix.bundles</groupId>
-        <artifactId>org.apache.servicemix.bundles.castor</artifactId>
-        <version>${castor-bundle-version}</version>
-      </dependency>
-
       <!-- optional hapi dependencies -->
       <dependency>
         <groupId>ca.uhn.hapi</groupId>
@@ -2933,39 +2900,39 @@
         <version>${hapi-version}</version>
       </dependency>
       <dependency>
-          <groupId>ca.uhn.hapi</groupId>
-          <artifactId>hapi-structures-v22</artifactId>
-          <version>${hapi-version}</version>
+        <groupId>ca.uhn.hapi</groupId>
+        <artifactId>hapi-structures-v22</artifactId>
+        <version>${hapi-version}</version>
       </dependency>
       <dependency>
-          <groupId>ca.uhn.hapi</groupId>
-          <artifactId>hapi-structures-v23</artifactId>
-          <version>${hapi-version}</version>
+        <groupId>ca.uhn.hapi</groupId>
+        <artifactId>hapi-structures-v23</artifactId>
+        <version>${hapi-version}</version>
       </dependency>
       <dependency>
-          <groupId>ca.uhn.hapi</groupId>
-          <artifactId>hapi-structures-v231</artifactId>
-          <version>${hapi-version}</version>
+        <groupId>ca.uhn.hapi</groupId>
+        <artifactId>hapi-structures-v231</artifactId>
+        <version>${hapi-version}</version>
       </dependency>
       <dependency>
-          <groupId>ca.uhn.hapi</groupId>
-          <artifactId>hapi-structures-v24</artifactId>
-          <version>${hapi-version}</version>
+        <groupId>ca.uhn.hapi</groupId>
+        <artifactId>hapi-structures-v24</artifactId>
+        <version>${hapi-version}</version>
       </dependency>
       <dependency>
-          <groupId>ca.uhn.hapi</groupId>
-          <artifactId>hapi-structures-v25</artifactId>
-          <version>${hapi-version}</version>
+        <groupId>ca.uhn.hapi</groupId>
+        <artifactId>hapi-structures-v25</artifactId>
+        <version>${hapi-version}</version>
       </dependency>
       <dependency>
-          <groupId>ca.uhn.hapi</groupId>
-          <artifactId>hapi-structures-v251</artifactId>
-          <version>${hapi-version}</version>
+        <groupId>ca.uhn.hapi</groupId>
+        <artifactId>hapi-structures-v251</artifactId>
+        <version>${hapi-version}</version>
       </dependency>
       <dependency>
-          <groupId>ca.uhn.hapi</groupId>
-          <artifactId>hapi-structures-v26</artifactId>
-          <version>${hapi-version}</version>
+        <groupId>ca.uhn.hapi</groupId>
+        <artifactId>hapi-structures-v26</artifactId>
+        <version>${hapi-version}</version>
       </dependency>
 
       <!-- optional disruptor dependencies -->
@@ -3054,7 +3021,7 @@
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-xml</artifactId>
         <version>${groovy-version}</version>
-     </dependency>
+      </dependency>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-ant</artifactId>
@@ -3080,9 +3047,9 @@
 
       <!-- optional Pax support -->
       <dependency>
-          <groupId>org.ops4j.pax.exam</groupId>
-          <artifactId>pax-exam</artifactId>
-          <version>${pax-exam-version}</version>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam</artifactId>
+        <version>${pax-exam-version}</version>
       </dependency>
       <dependency>
         <groupId>org.ops4j.pax.exam</groupId>
@@ -3090,14 +3057,14 @@
         <version>${pax-exam-version}</version>
       </dependency>
       <dependency>
-          <groupId>org.ops4j.pax.exam</groupId>
-          <artifactId>pax-exam-container-karaf</artifactId>
-          <version>${pax-exam-version}</version>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-container-karaf</artifactId>
+        <version>${pax-exam-version}</version>
       </dependency>
       <dependency>
-          <groupId>org.ops4j.pax.exam</groupId>
-          <artifactId>pax-exam-link-mvn</artifactId>
-          <version>${pax-exam-version}</version>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-link-mvn</artifactId>
+        <version>${pax-exam-version}</version>
       </dependency>
       <dependency>
         <groupId>org.ops4j.pax.swissbox</groupId>
@@ -3105,9 +3072,9 @@
         <version>${pax-tiny-bundle-version}</version>
       </dependency>
       <dependency>
-          <groupId>org.ops4j.pax.exam</groupId>
-          <artifactId>pax-exam-invoker-junit</artifactId>
-          <version>${pax-exam-version}</version>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-invoker-junit</artifactId>
+        <version>${pax-exam-version}</version>
       </dependency>
 
       <!-- optional Saxon support -->
@@ -3191,7 +3158,7 @@
         <artifactId>de.flapdoodle.embed.mongo</artifactId>
         <version>${embedmongo-version}</version>
         <scope>test</scope>
-    </dependency>
+      </dependency>
 
       <!-- optional SNMP4J -->
       <dependency>
@@ -3611,7 +3578,9 @@
                 </sourceDirectories>
                 <headerLocation>header-java.txt</headerLocation>
                 <includes>**/*.java,**/*.groovy,**/*.scala,**/*.properties,**/*.xml,**/*.xsd</includes>
-                <excludes>**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java</excludes>
+                <excludes>
+                  **/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java
+                </excludes>
               </configuration>
               <goals>
                 <goal>checkstyle</goal>
@@ -3637,14 +3606,14 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${maven-compiler-plugin-version}</version>
           <configuration>
-              <source>${jdk.version}</source>
-              <target>${jdk.version}</target>
-              <maxmem>512M</maxmem>
-              <fork>${compiler.fork}</fork>
-              <compilerArgs>
-                <!-- SB2 actuator endpoint requires MethodParameter metadata -->
-                <arg>-parameters</arg>
-              </compilerArgs>
+            <source>${jdk.version}</source>
+            <target>${jdk.version}</target>
+            <maxmem>512M</maxmem>
+            <fork>${compiler.fork}</fork>
+            <compilerArgs>
+              <!-- SB2 actuator endpoint requires MethodParameter metadata -->
+              <arg>-parameters</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
         <plugin>
@@ -3701,7 +3670,8 @@
               <manifestEntries>
                 <Bundle-SymbolicName>${project.groupId}.${project.artifactId}.source</Bundle-SymbolicName>
                 <Bundle-Version>${camel.osgi.version.clean}</Bundle-Version>
-                <Eclipse-SourceBundle>${project.groupId}.${project.artifactId};version="${camel.osgi.version.clean}"</Eclipse-SourceBundle>
+                <Eclipse-SourceBundle>${project.groupId}.${project.artifactId};version="${camel.osgi.version.clean}"
+                </Eclipse-SourceBundle>
               </manifestEntries>
             </archive>
           </configuration>
@@ -3743,7 +3713,7 @@
           <configuration>
             <path>/</path>
             <useSeparateTomcatClassLoader>true</useSeparateTomcatClassLoader>
-           </configuration>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -3827,11 +3797,11 @@
             </plugins>
           </configuration>
           <dependencies>
-              <dependency>
-                  <groupId>xerces</groupId>
-                  <artifactId>xercesImpl</artifactId>
-                  <version>${xerces-version}</version>
-              </dependency>
+            <dependency>
+              <groupId>xerces</groupId>
+              <artifactId>xercesImpl</artifactId>
+              <version>${xerces-version}</version>
+            </dependency>
           </dependencies>
         </plugin>
         <plugin>
@@ -3861,43 +3831,43 @@
         </plugin>
         <!-- Eclipse m2e Lifecycle Management -->
         <plugin>
-         <artifactId>lifecycle-mapping</artifactId>
-         <groupId>org.eclipse.m2e</groupId>
-         <version>${lifecycle-mapping-version}</version>
-         <configuration>
-           <lifecycleMappingMetadata>
-             <pluginExecutions>
-               <pluginExecution>
-                 <pluginExecutionFilter>
-                   <groupId>org.apache.felix</groupId>
-                   <artifactId>maven-bundle-plugin</artifactId>
-                   <versionRange>${maven-bundle-plugin-version}</versionRange>
-                   <goals>
-                     <goal>cleanVersions</goal>
-                     <goal>package</goal>
-                     <goal>manifest</goal>
-                   </goals>
-                 </pluginExecutionFilter>
-                 <action>
-                   <ignore />
-                 </action>
-               </pluginExecution>
-               <pluginExecution>
-                 <pluginExecutionFilter>
-                   <groupId>org.apache.maven.plugins</groupId>
-                   <artifactId>maven-remote-resources-plugin</artifactId>
-                   <versionRange>${maven-remote-resources-plugin-version}</versionRange>
-                   <goals>
-                     <goal>process</goal>
-                   </goals>
-                 </pluginExecutionFilter>
-                 <action>
-                   <ignore />
-                 </action>
-               </pluginExecution>
-             </pluginExecutions>
-           </lifecycleMappingMetadata>
-         </configuration>
+          <artifactId>lifecycle-mapping</artifactId>
+          <groupId>org.eclipse.m2e</groupId>
+          <version>${lifecycle-mapping-version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <versionRange>${maven-bundle-plugin-version}</versionRange>
+                    <goals>
+                      <goal>cleanVersions</goal>
+                      <goal>package</goal>
+                      <goal>manifest</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-remote-resources-plugin</artifactId>
+                    <versionRange>${maven-remote-resources-plugin-version}</versionRange>
+                    <goals>
+                      <goal>process</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore/>
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -3917,7 +3887,7 @@
           <execution>
             <id>attach-descriptor</id>
             <phase/>
-         </execution>
+          </execution>
         </executions>
       </plugin>
       <!-- skip enforcer-plugin to speedup building (inherited from Apache BOM) -->
@@ -3928,7 +3898,7 @@
           <execution>
             <id>enforce-maven-version</id>
             <phase/>
-         </execution>
+          </execution>
         </executions>
       </plugin>
 
@@ -3950,7 +3920,8 @@
             <javax.xml.accessExternalDTD>file,http</javax.xml.accessExternalDTD>
             <derby.stream.error.file>target/derby.log</derby.stream.error.file>
             <java.awt.headless>${java.awt.headless}</java.awt.headless>
-            <java.util.logging.config.file>${basedir}/target/test-classes/logging.properties</java.util.logging.config.file>
+            <java.util.logging.config.file>${basedir}/target/test-classes/logging.properties
+            </java.util.logging.config.file>
             <org.apache.activemq.default.directory.prefix>target/</org.apache.activemq.default.directory.prefix>
           </systemPropertyVariables>
           <includes>
@@ -4121,7 +4092,9 @@
             </configuration>
             <executions>
               <execution>
-                <goals><goal>check</goal></goals>
+                <goals>
+                  <goal>check</goal>
+                </goals>
               </execution>
             </executions>
           </plugin>
@@ -4186,11 +4159,11 @@
             <artifactId>maven-eclipse-plugin</artifactId>
             <inherited>true</inherited>
             <dependencies>
-                <dependency>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-buildtools</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
+              <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-buildtools</artifactId>
+                <version>${project.version}</version>
+              </dependency>
             </dependencies>
             <executions>
               <execution>
@@ -4339,10 +4312,38 @@
         <jdk>[9,)</jdk>
       </activation>
       <properties>
-        <cxf.codegen.jvmArgs>--add-modules java.activation,java.xml.bind,java.xml.ws --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=java.xml/com.sun.org.apache.xerces.internal.impl.xs=ALL-UNNAMED --add-exports=java.xml.bind/com.sun.xml.internal.bind.marshaller=ALL-UNNAMED --add-opens java.xml.ws/javax.xml.ws.wsaddressing=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</cxf.codegen.jvmArgs>
-        <cxf.xjc.jvmArgs>--add-modules java.activation,java.xml.bind,java.xml.ws --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=java.xml/com.sun.org.apache.xerces.internal.impl.xs=ALL-UNNAMED --add-exports=java.xml.bind/com.sun.xml.internal.bind.marshaller=ALL-UNNAMED --add-opens java.xml.ws/javax.xml.ws.wsaddressing=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</cxf.xjc.jvmArgs>
+        <cxf.codegen.jvmArgs>--add-modules java.activation,java.xml.bind,java.xml.ws
+          --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED
+          --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED
+          --add-exports=java.xml/com.sun.org.apache.xerces.internal.impl.xs=ALL-UNNAMED
+          --add-exports=java.xml.bind/com.sun.xml.internal.bind.marshaller=ALL-UNNAMED --add-opens
+          java.xml.ws/javax.xml.ws.wsaddressing=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens
+          java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens
+          java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED
+        </cxf.codegen.jvmArgs>
+        <cxf.xjc.jvmArgs>--add-modules java.activation,java.xml.bind,java.xml.ws
+          --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED
+          --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED
+          --add-exports=java.xml/com.sun.org.apache.xerces.internal.impl.xs=ALL-UNNAMED
+          --add-exports=java.xml.bind/com.sun.xml.internal.bind.marshaller=ALL-UNNAMED --add-opens
+          java.xml.ws/javax.xml.ws.wsaddressing=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens
+          java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens
+          java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED
+        </cxf.xjc.jvmArgs>
         <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
-        <camel.surefire.fork.vmargs>--add-modules java.xml.bind,java.xml.ws,java.xml.ws.annotation,java.sql --add-opens java.base/javax.net=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens java.base/java.util.regex=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED --add-exports=java.xml.bind/com.sun.xml.internal.bind=ALL-UNNAMED --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2=ALL-UNNAMED --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime.reflect=ALL-UNNAMED --add-exports=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED --add-exports=java.base/sun.net.util=ALL-UNNAMED --add-exports=java.base/sun.net.spi=ALL-UNNAMED</camel.surefire.fork.vmargs>
+        <camel.surefire.fork.vmargs>--add-modules java.xml.bind,java.xml.ws,java.xml.ws.annotation,java.sql --add-opens
+          java.base/javax.net=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens
+          java.base/java.net=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens
+          java.base/java.util.regex=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED --add-opens
+          java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens
+          java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens
+          java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
+          --add-exports=java.xml.bind/com.sun.xml.internal.bind=ALL-UNNAMED
+          --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2=ALL-UNNAMED
+          --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime.reflect=ALL-UNNAMED
+          --add-exports=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED
+          --add-exports=java.base/sun.net.util=ALL-UNNAMED --add-exports=java.base/sun.net.spi=ALL-UNNAMED
+        </camel.surefire.fork.vmargs>
       </properties>
       <build>
         <pluginManagement>
