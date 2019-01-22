@@ -106,7 +106,6 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
-import org.apache.camel.model.ThreadsDefinition;
 import org.apache.camel.model.loadbalancer.CustomLoadBalancerDefinition;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.ClaimCheckProcessor;
@@ -119,7 +118,6 @@ import org.apache.camel.processor.ExchangePatternProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.processor.LoopProcessor;
-import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.PollEnricher;
@@ -145,7 +143,6 @@ import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.Throttler;
 import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.processor.TransformProcessor;
-import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
@@ -163,7 +160,9 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ScheduledPollConsumer;
+import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.ThroughputLogger;
+import org.apache.camel.support.processor.UnmarshalProcessor;
 
 /**
  * Default {@link org.apache.camel.spi.ManagementObjectStrategy}.
