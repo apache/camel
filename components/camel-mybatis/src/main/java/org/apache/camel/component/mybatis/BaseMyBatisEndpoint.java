@@ -19,8 +19,8 @@ package org.apache.camel.component.mybatis;
 import java.io.IOException;
 
 import org.apache.camel.Component;
-import org.apache.camel.support.DefaultPollingEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultPollingEndpoint;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
 
