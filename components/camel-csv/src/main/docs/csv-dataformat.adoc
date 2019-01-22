@@ -54,7 +54,7 @@ The CSV dataformat supports 29 options, which are listed below.
 === Spring Boot Auto-Configuration
 
 
-The component supports 29 options, which are listed below.
+The component supports 30 options, which are listed below.
 
 
 
@@ -77,6 +77,7 @@ The component supports 29 options, which are listed below.
 | *camel.dataformat.csv.ignore-header-case* | Sets whether or not to ignore case when accessing header names. | false | Boolean
 | *camel.dataformat.csv.ignore-surrounding-spaces* | Whether to ignore surrounding spaces | false | Boolean
 | *camel.dataformat.csv.lazy-load* | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one. | false | Boolean
+| *camel.dataformat.csv.marshaller-factory-ref* | Sets the implementation of the CsvMarshallerFactory interface which is able to customize marshalling/unmarshalling behavior by extending CsvMarshaller or creating it from scratch. |  | String
 | *camel.dataformat.csv.null-string* | Sets the null string |  | String
 | *camel.dataformat.csv.null-string-disabled* | Used to disable null strings | false | Boolean
 | *camel.dataformat.csv.quote* | Sets the quote which by default is |  | String
@@ -90,7 +91,6 @@ The component supports 29 options, which are listed below.
 | *camel.dataformat.csv.trim* | Sets whether or not to trim leading and trailing blanks. | false | Boolean
 | *camel.dataformat.csv.use-maps* | Whether the unmarshalling should produce maps (HashMap)for the lines values instead of lists. It requires to have header (either defined or collected). | false | Boolean
 | *camel.dataformat.csv.use-ordered-maps* | Whether the unmarshalling should produce ordered maps (LinkedHashMap) for the lines values instead of lists. It requires to have header (either defined or collected). | false | Boolean
-| *camel.dataformat.csv.marshaller-factory-ref* | Refers to a custom `CsvMarshallerFactory` to lookup from the registry to use. |  | String
 |===
 // spring-boot-auto-configure options: END
 ND
