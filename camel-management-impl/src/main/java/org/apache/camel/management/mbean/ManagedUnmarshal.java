@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedUnmarshalMBean;
 import org.apache.camel.model.UnmarshalDefinition;
-import org.apache.camel.processor.UnmarshalProcessor;
+import org.apache.camel.support.processor.UnmarshalProcessor;
 
 @ManagedResource(description = "Managed Unmarshal")
 public class ManagedUnmarshal extends ManagedProcessor implements ManagedUnmarshalMBean {
