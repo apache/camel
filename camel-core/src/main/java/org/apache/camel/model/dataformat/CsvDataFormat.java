@@ -85,7 +85,7 @@ public class CsvDataFormat extends DataFormatDefinition {
     private Boolean trim;
     @XmlAttribute
     private Boolean trailingDelimiter;
-    @XmlAttribute
+    @XmlAttribute @Metadata(label = "advanced")
     private String marshallerFactoryRef;
 
     // Unmarshall options
@@ -213,9 +213,10 @@ public class CsvDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * Sets the <code>CsvMarshallerFactory</code> reference.
+     * Sets the implementation of the CsvMarshallerFactory interface which is able to customize marshalling/unmarshalling 
+     * behavior by extending CsvMarshaller or creating it from scratch.
      *
-     * @param marshallerFactoryRef the <code>CsvMarshallerFactory</code> reference. Could be <code>null</code>.
+     * @param marshallerFactoryRef the <code>CsvMarshallerFactory</code> reference.
      */
     public void setMarshallerFactoryRef(String marshallerFactoryRef) {
         this.marshallerFactoryRef = marshallerFactoryRef;

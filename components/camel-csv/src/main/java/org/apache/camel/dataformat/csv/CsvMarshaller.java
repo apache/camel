@@ -74,6 +74,7 @@ public abstract class CsvMarshaller {
      * @throws NoTypeConversionAvailableException if the body cannot be converted
      * @throws IOException                        if we cannot write into the given stream
      */
+    @SuppressWarnings("rawtypes")
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws NoTypeConversionAvailableException, IOException {
         CSVPrinter printer = createPrinter(exchange, outputStream);
         try {
