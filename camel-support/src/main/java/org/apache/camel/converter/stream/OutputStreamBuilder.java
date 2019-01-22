@@ -23,6 +23,8 @@ import java.io.OutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
 
+// TODO: We can move this under org.apache.camel.support to have them all under the same package name
+
 /**
  * Utility to hide the complexity of choosing which OutputStream
  * implementation to choose.
