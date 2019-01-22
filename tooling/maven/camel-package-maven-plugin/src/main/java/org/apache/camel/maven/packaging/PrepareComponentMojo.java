@@ -91,7 +91,7 @@ public class PrepareComponentMojo extends AbstractMojo {
      * The project build directory
      *
      */
-    @Parameter(defaultValue="${project.build.directory}")
+    @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
 
     /**
