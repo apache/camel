@@ -26,9 +26,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -37,7 +38,6 @@ import org.apache.camel.util.ObjectHelper;
  * The control bus producer.
  */
 public class ControlBusProducer extends DefaultAsyncProducer {
-    private static final Expression ROUTE_ID_EXPRESSION = ExpressionBuilder.routeIdExpression();
 
     private final CamelLogger logger;
 
@@ -87,6 +87,20 @@ public class ControlBusProducer extends DefaultAsyncProducer {
         } else {
             task.run();
         }
+    }
+
+    private static String getRouteId(Exchange exchange) {
+        String answer = null;
+        UnitOfWork uow = exchange.getUnitOfWork();
+        RouteContext rc = uow != null ? uow.getRouteContext() : null;
+        if (rc != null) {
+            answer = rc.getRoute().getId();
+        }
+        if (answer == null) {
+            // fallback and get from route id on the exchange
+            answer = exchange.getFromRouteId();
+        }
+        return answer;
     }
 
     /**
@@ -148,7 +162,7 @@ public class ControlBusProducer extends DefaultAsyncProducer {
             String id = getEndpoint().getRouteId();
 
             if (ObjectHelper.equal("current", id)) {
-                id = ROUTE_ID_EXPRESSION.evaluate(exchange, String.class);
+                id = getRouteId(exchange);
             }
 
             Object result = null;
@@ -224,6 +238,7 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                 logger.log("Error executing ControlBus task [" + task + "]. This exception will be ignored.", e);
             }
         }
+
     }
 
 }
