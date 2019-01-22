@@ -86,6 +86,7 @@
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-cxf-transport</include>
+        <include>org.apache.camel:camel-dataformat</include>
         <include>org.apache.camel:camel-digitalocean</include>
         <include>org.apache.camel:camel-direct</include>
         <include>org.apache.camel:camel-directvm</include>
@@ -347,7 +348,7 @@
       <includes>
         <!-- NOTE: auto-generated list of components when building platforms/camel-catalog -->
         <!-- camel starters: START -->
-    <include>org.apache.camel:camel-ahc-starter</include>
+        <include>org.apache.camel:camel-ahc-starter</include>
         <include>org.apache.camel:camel-ahc-ws-starter</include>
         <include>org.apache.camel:camel-amqp-starter</include>
         <include>org.apache.camel:camel-apns-starter</include>
@@ -391,6 +392,7 @@
         <include>org.apache.camel:camel-csv-starter</include>
         <include>org.apache.camel:camel-cxf-starter</include>
         <include>org.apache.camel:camel-cxf-transport-starter</include>
+        <include>org.apache.camel:camel-dataformat-starter</include>
         <include>org.apache.camel:camel-digitalocean-starter</include>
         <include>org.apache.camel:camel-direct-starter</include>
         <include>org.apache.camel:camel-directvm-starter</include>
@@ -599,7 +601,7 @@
         <include>org.apache.camel:camel-zipkin-starter</include>
         <include>org.apache.camel:camel-zookeeper-master-starter</include>
         <include>org.apache.camel:camel-zookeeper-starter</include>
-    <!-- camel starters: END -->
+        <!-- camel starters: END -->
       </includes>
     </dependencySet>
   </dependencySets>
