@@ -63,6 +63,12 @@ public class PrepareParentPomMojo extends AbstractMojo {
     protected File componentsDir;
 
     /**
+     * The directory for spring boot starters
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../spring-boot/components-starter")
+    protected File startersDir;
+
+    /**
      * Maven ProjectHelper.
      */
     @Component
@@ -77,6 +83,7 @@ public class PrepareParentPomMojo extends AbstractMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         updateParentPom(componentsDir, "camel components");
+        updateParentPom(startersDir, "camel starters");
     }
 
     protected void updateParentPom(File dir, String token) throws MojoExecutionException, MojoFailureException {
