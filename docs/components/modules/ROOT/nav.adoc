@@ -47,6 +47,7 @@
 * xref:bonita-component.adoc[Bonita Component]
 * xref:boon-dataformat.adoc[Boon DataFormat]
 * xref:braintree-component.adoc[Braintree Component]
+* xref:browse-component.adoc[Browse Component]
 * xref:caffeine-cache-component.adoc[Caffeine Cache Component]
 * xref:caffeine-loadcache-component.adoc[Caffeine LoadCache Component]
 * xref:cql-component.adoc[Cassandra CQL Component]
