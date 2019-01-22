@@ -132,7 +132,9 @@ public class CsvDataFormatConfiguration
      */
     private Boolean trailingDelimiter = false;
     /**
-     * Sets the CsvMarshallerFactory reference.
+     * Sets the implementation of the CsvMarshallerFactory interface which is
+     * able to customize marshalling/unmarshalling behavior by extending
+     * CsvMarshaller or creating it from scratch.
      */
     private String marshallerFactoryRef;
     /**
