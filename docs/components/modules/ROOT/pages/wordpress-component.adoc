@@ -42,7 +42,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (11 parameters):
+==== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -51,8 +51,9 @@ with the following path and query parameters:
 | *apiVersion* (common) | The Wordpress REST API version | 2 | String
 | *criteria* (common) | The criteria to use with complex searches. |  | Map
 | *force* (common) | Whether to bypass trash and force deletion. | false | Boolean
-| *id* (common) | The entity id |  | Integer
+| *id* (common) | The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post |  | Integer
 | *password* (common) | Password from authorized user |  | String
+| *searchCriteria* (common) | Search criteria |  | SearchCriteria
 | *url* (common) | *Required* The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
 | *user* (common) | Authorized user to perform writing operations |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -65,7 +66,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 10 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -73,11 +74,10 @@ The component supports 10 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.wordpress.configuration.api-version* | The Wordpress REST API version | 2 | String
-| *camel.component.wordpress.configuration.criteria-properties* |  |  | Map
 | *camel.component.wordpress.configuration.force* | Whether to bypass trash and force deletion. | false | Boolean
-| *camel.component.wordpress.configuration.id* | The entity id |  | Integer
+| *camel.component.wordpress.configuration.id* | The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post |  | Integer
 | *camel.component.wordpress.configuration.password* | Password from authorized user |  | String
-| *camel.component.wordpress.configuration.search-criteria* |  |  | SearchCriteria
+| *camel.component.wordpress.configuration.search-criteria* | Search criteria |  | SearchCriteria
 | *camel.component.wordpress.configuration.url* | The Wordpress API URL from your site, e.g. http://myblog.com/wp-json/ |  | String
 | *camel.component.wordpress.configuration.user* | Authorized user to perform writing operations |  | String
 | *camel.component.wordpress.enabled* | Whether to enable auto configuration of the wordpress component. This is enabled by default. |  | Boolean
