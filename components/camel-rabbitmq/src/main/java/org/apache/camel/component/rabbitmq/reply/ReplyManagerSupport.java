@@ -29,10 +29,10 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQMessageConverter;
-import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

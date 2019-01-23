@@ -33,8 +33,8 @@ import org.apache.camel.component.rabbitmq.pool.PoolableChannelFactory;
 import org.apache.camel.component.rabbitmq.reply.ReplyManager;
 import org.apache.camel.component.rabbitmq.reply.TemporaryQueueReplyManager;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
