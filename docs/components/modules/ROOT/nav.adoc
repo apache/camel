@@ -245,6 +245,7 @@
 * xref:pdf-component.adoc[PDF Component]
 * xref:pgevent-component.adoc[PostgresSQL Event Component]
 * xref:lpr-component.adoc[Printer Component]
+* xref:properties-component.adoc[Properties Component]
 * xref:protobuf-dataformat.adoc[Protobuf DataFormat]
 * xref:pubnub-component.adoc[PubNub Component]
 * xref:quartz2-component.adoc[Quartz2 Component]
