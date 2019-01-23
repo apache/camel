@@ -39,7 +39,6 @@
       *
     </camel.osgi.import>
     <camel.osgi.export.pkg>org.apache.camel.component.file.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=file</camel.osgi.export.service>
     <!-- do not skip any tests by default -->
     <platform.skip.tests/>
   </properties>
