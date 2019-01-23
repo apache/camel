@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.component.kubernetes.cluster.lock.KubernetesLockConfiguration;
-import org.apache.camel.impl.cluster.AbstractCamelClusterService;
+import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 
 /**

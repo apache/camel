@@ -24,7 +24,7 @@ import io.atomix.catalyst.transport.Transport;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.atomix.client.AtomixClientConfiguration;
 import org.apache.camel.component.atomix.client.AtomixClientHelper;
-import org.apache.camel.impl.cluster.AbstractCamelClusterService;
+import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

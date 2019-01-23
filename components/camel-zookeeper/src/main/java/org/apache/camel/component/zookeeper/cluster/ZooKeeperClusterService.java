@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorHelper;
-import org.apache.camel.impl.cluster.AbstractCamelClusterService;
+import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.AuthInfo;
