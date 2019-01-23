@@ -87,7 +87,7 @@ public final class DocumentationHelper {
         // so load these resources using the file system
 
         if ("file".equals(extendsScheme)) {
-            return new File("../../camel-core/target/classes/org/apache/camel/component/file/file.json");
+            return new File("../camel-file/target/classes/org/apache/camel/component/file/file.json");
         } else if ("ahc".equals(extendsScheme)) {
             return new File("../camel-ahc/target/classes/org/apache/camel/component/ahc/ahc.json");
         } else if ("atom".equals(extendsScheme)) {
