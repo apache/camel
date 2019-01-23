@@ -25,8 +25,8 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
 
 public final class SSLEngineFactory {
 

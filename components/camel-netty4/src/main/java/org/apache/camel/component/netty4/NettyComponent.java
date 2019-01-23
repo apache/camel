@@ -30,8 +30,8 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.util.concurrent.CamelThreadFactory;
 
 @Component("netty,netty4")
 public class NettyComponent extends DefaultComponent implements SSLContextParametersAware {
