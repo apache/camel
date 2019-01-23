@@ -192,7 +192,7 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public Predicate createPredicate(CamelContext camelContext) {
-        return (BeanExpression) createExpression(camelContext);
+        return (Predicate) createExpression(camelContext);
     }
 
     /**
