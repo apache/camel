@@ -21,6 +21,7 @@ import com.googlecode.jsendnsca.MessagePayload;
 import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.NagiosSettings;
 import com.googlecode.jsendnsca.PassiveCheckSender;
+import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartupFailureEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStopFailureEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
@@ -28,7 +29,6 @@ import org.apache.camel.spi.CamelEvent.ExchangeFailureHandledEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeRedeliveryEvent;
 import org.apache.camel.spi.CamelEvent.ServiceStartupFailureEvent;
 import org.apache.camel.spi.CamelEvent.ServiceStopFailureEvent;
-import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
 /**
