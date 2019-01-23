@@ -23,7 +23,9 @@ import org.apache.camel.AsyncProducer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.thrift.TException;
@@ -154,7 +156,7 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
         }
     }
     
-    protected void initializeSslTransport() throws TTransportException {
+    protected void initializeSslTransport() throws TTransportException, IOException {
         if (!ObjectHelper.isEmpty(configuration.getHost()) && !ObjectHelper.isEmpty(configuration.getPort())) {
             SSLContextParameters sslParameters = configuration.getSslParameters();
             if (sslParameters == null) {
@@ -168,13 +170,17 @@ public class ThriftProducer extends DefaultAsyncProducer implements AsyncProduce
             log.info("Creating secured transport to the remote Thrift server {}:{}", configuration.getHost(), configuration.getPort());
             
             TSSLTransportFactory.TSSLTransportParameters sslParams;
+            ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
+            
             sslParams = new TSSLTransportFactory.TSSLTransportParameters(sslParameters.getSecureSocketProtocol(),
                                                                          sslParameters.getCipherSuites() == null ? null
                                                                          : sslParameters.getCipherSuites().getCipherSuite().stream().toArray(String[]::new));
             
             if (ObjectHelper.isNotEmpty(sslParameters.getTrustManagers().getProvider()) && ObjectHelper.isNotEmpty(sslParameters.getTrustManagers().getKeyStore().getType())) {
-                sslParams.setTrustStore(sslParameters.getTrustManagers().getKeyStore().getResource(), sslParameters.getTrustManagers().getKeyStore().getPassword(),
-                                        sslParameters.getTrustManagers().getProvider(), sslParameters.getTrustManagers().getKeyStore().getType());
+                sslParams.setTrustStore(ResourceHelper.resolveResourceAsInputStream(classResolver, sslParameters.getTrustManagers().getKeyStore().getResource()),
+                                        sslParameters.getTrustManagers().getKeyStore().getPassword(),
+                                        sslParameters.getTrustManagers().getProvider(),
+                                        sslParameters.getTrustManagers().getKeyStore().getType());
             } else {
                 sslParams.setTrustStore(sslParameters.getTrustManagers().getKeyStore().getResource(), sslParameters.getTrustManagers().getKeyStore().getPassword());
             }
