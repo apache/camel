@@ -48,6 +48,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     private boolean lowerCase;
     private boolean allowNullValues;
     private boolean caseInsensitive;
+    private boolean actionOnMatch = true; // defaults to the previous behaviour
     
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
         return doFiltering(Direction.OUT, headerName, headerValue, exchange);
@@ -210,10 +211,28 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     
     public void setAllowNullValues(boolean value) {
         allowNullValues = value;
-    }   
-
+    }
+    
+	public boolean isActionOnMatch() {
+        return actionOnMatch;
+    }
+    
+    /**
+     * Sets the actionOnMatch property which is a boolean to determine
+     * what to do when a pattern or filter set is matched.
+     * 
+     * When set to true, a match will filter out the header. This is the default value for backwards compatibility.
+     * 
+     * When set to false, the pattern or filter will indicate that the header must be kept - and anything else rejected.
+     *
+     * @param actionOnMatch <tt>true</tt> if a match filters out the header.
+     */
+    public void setActionOnMatch(boolean actionOnMatch) {
+        this.actionOnMatch = actionOnMatch;
+    }
+    
     protected boolean extendedFilter(Direction direction, String key, Object value, Exchange exchange) {
-        return false;
+        return !actionOnMatch;
     }
 
     private boolean doFiltering(Direction direction, String headerName, Object headerValue, Exchange exchange) {
@@ -244,16 +263,16 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             if (isCaseInsensitive()) {
                 for (String filterString : filter) {
                     if (filterString.equalsIgnoreCase(headerName)) {
-                        return true;
+                        return actionOnMatch;
                     }
                 }
             } else if (isLowerCase()) {
                 if (filter.contains(headerName.toLowerCase(Locale.ENGLISH))) {
-                    return true;
+                    return actionOnMatch;
                 }
             } else {
                 if (filter.contains(headerName)) {
-                    return true;
+                    return actionOnMatch;
                 }
             }
         }
