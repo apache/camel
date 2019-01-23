@@ -34,6 +34,12 @@
   <description>Camel Controlbus component</description>
 
   <properties>
+    <camel.osgi.import>
+      ${camel.osgi.import.defaults},
+      *
+    </camel.osgi.import>
+    <camel.osgi.export.pkg>org.apache.camel.component.controlbus.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=controlbus</camel.osgi.export.service>
     <!-- do not skip any tests by default -->
     <platform.skip.tests/>
   </properties>
