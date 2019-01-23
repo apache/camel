@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class KafkaHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 

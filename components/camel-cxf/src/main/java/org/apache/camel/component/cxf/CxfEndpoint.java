@@ -62,7 +62,7 @@ import org.apache.camel.component.cxf.feature.CXFMessageDataFormatFeature;
 import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
 import org.apache.camel.component.cxf.feature.RAWDataFormatFeature;
 import org.apache.camel.http.common.cookie.CookieHandler;;
-import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;

@@ -17,7 +17,7 @@
 package org.apache.camel.component.mina2;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchangeHolder;
+import org.apache.camel.support.DefaultExchangeHolder;
 
 /**
  * Helper to get and set the correct payload when transferring data using camel-mina2.

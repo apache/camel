@@ -25,7 +25,7 @@ import net.openhft.chronicle.engine.api.tree.AssetTree;
 import net.openhft.chronicle.engine.tree.QueueView;
 import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
-import org.apache.camel.impl.HeaderSelectorProducer;
+import org.apache.camel.support.HeaderSelectorProducer;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.chronicle.engine.ChronicleEngineHelper.WeakRef;

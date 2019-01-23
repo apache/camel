@@ -21,7 +21,7 @@ import java.net.InetSocketAddress;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.AddressedEnvelope;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchangeHolder;
+import org.apache.camel.support.DefaultExchangeHolder;
 
 /**
  * Helper to get and set the correct payload when transferring data using camel-netty.

@@ -31,7 +31,7 @@ import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.node.services.vault.Sort;
 import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
-import org.apache.camel.impl.HeaderSelectorProducer;
+import org.apache.camel.support.HeaderSelectorProducer;
 
 import static org.apache.camel.component.corda.CordaConstants.ARGUMENTS;
 import static org.apache.camel.component.corda.CordaConstants.ATTACHMENT_QUERY_CRITERIA;

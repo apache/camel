@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.undertow;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class UndertowHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     

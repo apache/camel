@@ -26,7 +26,7 @@ import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.component.caffeine.CaffeineConfiguration;
 import org.apache.camel.component.caffeine.CaffeineConstants;
-import org.apache.camel.impl.HeaderSelectorProducer;
+import org.apache.camel.support.HeaderSelectorProducer;
 
 public class CaffeineCacheProducer extends HeaderSelectorProducer {
     private final CaffeineConfiguration configuration;

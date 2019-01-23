@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.servicenow;
 
-import org.apache.camel.impl.HeaderSelectorProducer;
+import org.apache.camel.support.HeaderSelectorProducer;
 
 public abstract class AbstractServiceNowProducer extends HeaderSelectorProducer implements ServiceNowProducer {
     private final ServiceNowRelease release;
