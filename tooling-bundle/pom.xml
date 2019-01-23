@@ -17,26 +17,28 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>maven-plugins</artifactId>
+    <artifactId>camel-parent</artifactId>
     <version>3.0.0-SNAPSHOT</version>
+    <relativePath>../parent</relativePath>
   </parent>
 
-  <artifactId>camel-bundle-plugin</artifactId>
-  <name>Camel :: Maven Plugins :: Camel Bundle Plugin</name>
-  <description>Plugin for the maven-bundle-plugin</description>
+  <artifactId>tooling-bundle</artifactId>
+  <name>Camel :: Tooling OSGi Bundle</name>
+  <description>Camel OSGi Tooling</description>
+  <packaging>pom</packaging>
 
-  <dependencies>
+  <properties>
+    <camel.osgi.export.pkg />
+  </properties>
 
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>maven-bundle-plugin</artifactId>
-      <version>${maven-bundle-plugin-version}</version>
-    </dependency>
-  </dependencies>
+  <modules>
+    <module>camel-bundle-plugin</module>
+  </modules>
 
 </project>
