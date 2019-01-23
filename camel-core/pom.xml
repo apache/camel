@@ -67,7 +67,6 @@
       org.apache.camel.spi.ComponentResolver;component=properties,
       org.apache.camel.spi.ComponentResolver;component=rest,
       org.apache.camel.spi.ComponentResolver;component=rest-api,
-      org.apache.camel.spi.ComponentResolver;component=saga,
       org.apache.camel.spi.ComponentResolver;component=seda,
       org.apache.camel.spi.ComponentResolver;component=test,
       org.apache.camel.spi.ComponentResolver;component=validator,
@@ -199,6 +198,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ref</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-saga</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
