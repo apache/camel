@@ -24,7 +24,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="myRepo" class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository"/>
+    <bean id="myRepo" class="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
