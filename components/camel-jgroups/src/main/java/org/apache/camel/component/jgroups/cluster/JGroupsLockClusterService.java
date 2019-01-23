@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jgroups.cluster;
 
-import org.apache.camel.impl.cluster.AbstractCamelClusterService;
+import org.apache.camel.support.cluster.AbstractCamelClusterService;
 
 public class JGroupsLockClusterService extends AbstractCamelClusterService<JGroupsLockClusterView> {
 

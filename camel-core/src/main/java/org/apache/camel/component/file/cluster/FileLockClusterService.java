@@ -20,7 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.cluster.AbstractCamelClusterService;
+import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
 
 public class FileLockClusterService extends AbstractCamelClusterService<FileLockClusterView> {

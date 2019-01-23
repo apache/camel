@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jgroups.raft.cluster;
 
-import org.apache.camel.impl.cluster.AbstractCamelClusterService;
+import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.jgroups.raft.RaftHandle;
 
 public class JGroupsRaftClusterService extends AbstractCamelClusterService<JGroupsRaftClusterView> {
