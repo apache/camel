@@ -33,7 +33,6 @@
   <description>Camel Async Http Client support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.ahc.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

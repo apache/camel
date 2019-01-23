@@ -36,7 +36,6 @@
     <!-- used by camel-catalog -->
     <firstVersion>2.21.0</firstVersion>
 
-    <camel.osgi.export.pkg>org.apache.camel.service.lra.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

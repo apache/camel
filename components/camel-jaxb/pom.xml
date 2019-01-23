@@ -35,7 +35,6 @@
 		<camel.osgi.import.before.defaults>
 			com.sun.xml.bind.marshaller;resolution:=optional;version="[2.2,3)"
 		</camel.osgi.import.before.defaults>
-		<camel.osgi.export.pkg>org.apache.camel.converter.jaxb.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

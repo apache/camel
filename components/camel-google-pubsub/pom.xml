@@ -37,7 +37,6 @@
         <schemeName>google-pubsub</schemeName>
         <componentName>GooglePubSub</componentName>
         <componentPackage>org.apache.camel.component.google.pubsub</componentPackage>
-        <camel.osgi.export.pkg>org.apache.camel.component.google.pubsub</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

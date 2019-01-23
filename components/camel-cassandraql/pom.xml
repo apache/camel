@@ -35,12 +35,6 @@
   <description>Cassandra CQL3 support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.cassandra.*,
-      org.apache.camel.processor.aggregate.cassandra,
-      org.apache.camel.processor.idempotent.cassandra,
-      org.apache.camel.utils.cassandra
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

@@ -33,9 +33,6 @@
     <description>Camel Atmosphere WebSocket Servlet</description>
 
     <properties>
-        <camel.osgi.export.pkg>
-            org.apache.camel.component.atmosphere.websocket.*;${camel.osgi.version}
-        </camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             !org.apache.camel.component.atmosphere.websocket.*,
             javax.servlet.*;version="${servlet-version-range}",

@@ -33,7 +33,6 @@
     <description>Camel Reactive Streams Component</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.reactive.streams.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

@@ -32,7 +32,6 @@
     <name>Camel :: NSQ</name>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.nsq.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

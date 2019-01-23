@@ -38,7 +38,6 @@
       org.springframework.beans.*;version="${spring-version-range}",
       org.springframework.util.*;version="${spring-version-range}"
     </camel.osgi.import.before.defaults>
-    <camel.osgi.export.pkg>org.apache.camel.component.spring.ws.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

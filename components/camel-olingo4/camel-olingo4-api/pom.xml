@@ -34,7 +34,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.olingo4.api*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

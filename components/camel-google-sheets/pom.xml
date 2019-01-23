@@ -38,7 +38,6 @@
     <componentPackage>org.apache.camel.component.google.sheets</componentPackage>
     <outPackage>org.apache.camel.component.google.sheets.internal</outPackage>
     <camel.osgi.private.pkg>org.apache.camel.component.google.sheets.internal</camel.osgi.private.pkg>
-    <camel.osgi.export.pkg>org.apache.camel.component.google.sheets</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

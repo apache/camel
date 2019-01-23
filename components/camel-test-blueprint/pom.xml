@@ -36,7 +36,6 @@
         <firstVersion>2.10.0</firstVersion>
         <label>testing,java,osgi</label>
 
-        <camel.osgi.export.pkg>org.apache.camel.test.blueprint*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

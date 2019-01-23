@@ -35,7 +35,6 @@
     <camel.osgi.import.before.defaults>
         com.jcraft.jsch.*;version="[0.1.40,0.2)"
     </camel.osgi.import.before.defaults>
-    <camel.osgi.export.pkg>org.apache.camel.component.file.remote.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

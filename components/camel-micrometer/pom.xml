@@ -33,9 +33,6 @@
     <description>Camel Micrometer based monitoring component</description>
 
     <properties>
-        <camel.osgi.export.pkg>
-            org.apache.camel.component.micrometer.*
-        </camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

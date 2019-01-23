@@ -35,7 +35,6 @@
       <firstVersion>2.20.0</firstVersion>
       <label>reactive,streams</label>
 
-      <camel.osgi.export.pkg>org.apache.camel.component.reactor.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

@@ -35,7 +35,6 @@
     <camel.osgi.import.before.defaults>
       com.fasterxml.jackson.*;version="[2.3,3)"
     </camel.osgi.import.before.defaults>
-    <camel.osgi.export.pkg>org.apache.camel.component.jacksonxml.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

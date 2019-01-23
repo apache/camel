@@ -32,9 +32,6 @@
   <description>Camel Nagios support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.nagios.*
-    </camel.osgi.export.pkg>
   </properties>
 
   <repositories>

@@ -34,7 +34,6 @@
   <description>Camel component for gRPC (Remote Procedure Call) support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.grpc.*;${camel.osgi.version}</camel.osgi.export.pkg>
     <!-- gRPC requires strong own of the Google Guava version -->
     <google-guava-version>${grpc-guava-version}</google-guava-version>
   </properties>

@@ -33,7 +33,6 @@
   <description>Camel Zookeeper Support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.zookeeper.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

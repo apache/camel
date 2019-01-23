@@ -32,11 +32,6 @@
   <description>Camel SQL support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.sql.*;${camel.osgi.version},
-      org.apache.camel.processor.aggregate.jdbc.*;${camel.osgi.version},
-      org.apache.camel.processor.idempotent.jdbc.*;${camel.osgi.version}
-    </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
       !org.apache.camel.component.sql.*,
       !org.apache.camel.processor.aggregate.jdbc.*,

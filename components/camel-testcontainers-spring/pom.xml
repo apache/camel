@@ -36,7 +36,6 @@
         <firstVersion>2.22.0</firstVersion>
         <label>testing,java,docker</label>
 
-        <camel.osgi.export.pkg>org.apache.camel.test.testcontainers.spring.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

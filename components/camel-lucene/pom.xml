@@ -33,10 +33,6 @@
   <description>Camel Lucene based search component</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.lucene.*;${camel.osgi.version},
-      org.apache.camel.processor.lucene.*
-    </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
       !org.apache.camel.component.lucene.*,
       !org.apache.camel.processor.lucene.*,

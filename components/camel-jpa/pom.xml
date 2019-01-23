@@ -32,11 +32,6 @@
   <description>Camel JPA support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.jpa.*;${camel.osgi.version},
-      org.apache.camel.processor.idempotent.jpa.*;${camel.osgi.version},
-      org.apache.camel.processor.interceptor.jpa.*
-    </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
       !org.apache.camel.component.jpa.*,
       !org.apache.camel.processor.idempotent.jpa.*,

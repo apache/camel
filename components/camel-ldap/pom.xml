@@ -32,7 +32,6 @@
     <description>Camel LDAP support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.ldap.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

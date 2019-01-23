@@ -32,10 +32,6 @@
     <description>Camel Mail support</description>
 
     <properties>
-        <camel.osgi.export.pkg>
-          org.apache.camel.component.mail.*,
-          org.apache.camel.dataformat.mime.multipart.*
-        </camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

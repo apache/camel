@@ -36,7 +36,6 @@
     <firstVersion>2.20.0</firstVersion>
     <label>tooling</label>
 
-    <camel.osgi.export.pkg>org.apache.camel.component.headersmap.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

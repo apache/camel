@@ -32,9 +32,6 @@
   <description>Camel Base64 data format support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.dataformat.base64.*
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

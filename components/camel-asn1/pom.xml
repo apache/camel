@@ -32,14 +32,6 @@
   <description>Camel ASN.1 support</description>
 
   <properties>
-    <camel.osgi.import>
-    	!org.apache.camel.dataformat.asn1,
-    	*
-    </camel.osgi.import>
-    <camel.osgi.export>
-    	org.apache.camel.dataformat.asn1;${camel.osgi.version}
-    </camel.osgi.export>
-    
   </properties>
 
   <dependencies>

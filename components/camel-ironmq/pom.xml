@@ -33,7 +33,6 @@
   <description>Camel IronMQ component</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.ironmq.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

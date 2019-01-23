@@ -33,9 +33,6 @@
   <description>Camel Caffeine support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.caffeine.*,
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

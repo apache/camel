@@ -34,7 +34,6 @@
   <description>Camel Etcd support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.etcd.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

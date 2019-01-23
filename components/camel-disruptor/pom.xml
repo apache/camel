@@ -32,7 +32,6 @@
     <packaging>jar</packaging>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.disruptor.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

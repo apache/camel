@@ -36,7 +36,6 @@
       com.google.common.*;version="${jclouds-google-guava-version-range}",
     </camel.osgi.import.before.defaults>
 
-    <camel.osgi.export.pkg>org.apache.camel.component.jclouds.*</camel.osgi.export.pkg>
 
     <!-- jclouds requires guice 3 -->
     <google-guava-version>${jclouds-google-guava-version}</google-guava-version>

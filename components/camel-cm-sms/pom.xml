@@ -34,7 +34,6 @@
   <description>Camel CM SMS Gateway Component</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.cm.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

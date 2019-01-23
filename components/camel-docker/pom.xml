@@ -34,7 +34,6 @@
 
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.docker.*</camel.osgi.export.pkg>
   	<jffi.version>1.2.7</jffi.version>
   	<jnr-x86asm.version>1.0.2</jnr-x86asm.version>
   </properties>

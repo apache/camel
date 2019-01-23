@@ -38,10 +38,6 @@
       !org.apache.camel.component.zookeepermaster.group,
       *
     </camel.osgi.import>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.zookeepermaster,
-      org.apache.camel.component.zookeepermaster.group
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

@@ -33,7 +33,6 @@
   <description>Component for sending/receiving notifications in PostgreSQL</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.pgevent.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

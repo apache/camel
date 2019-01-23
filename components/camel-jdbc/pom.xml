@@ -32,7 +32,6 @@
   <description>Camel JDBC support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.jdbc.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

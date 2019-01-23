@@ -33,7 +33,6 @@
   <description>Camel StringTemplate support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.stringtemplate.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

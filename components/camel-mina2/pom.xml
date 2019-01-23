@@ -32,7 +32,6 @@
     <description>Camel MINA 2.x support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.mina2.*</camel.osgi.export.pkg>
         <camel.osgi.import.before.defaults>org.apache.mina.*;version="[2.0,3.0)"</camel.osgi.import.before.defaults>
     </properties>
 

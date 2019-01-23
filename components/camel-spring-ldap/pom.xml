@@ -35,7 +35,6 @@
             org.springframework.ldap.*;version="[2,3)",
             org.springframework.transaction.compensating.*;version="[2,3)"
         </camel.osgi.import.before.defaults>
-        <camel.osgi.export.pkg>org.apache.camel.component.springldap.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

@@ -33,7 +33,6 @@
   <description>Camel CoAP support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.coap.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

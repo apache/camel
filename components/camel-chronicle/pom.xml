@@ -33,9 +33,6 @@
   <description>Camel Chronicle support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.chronicle.*
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

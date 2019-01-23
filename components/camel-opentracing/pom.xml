@@ -39,7 +39,6 @@
     <label>monitoring,microservice</label>
     <title>OpenTracing</title>
 
-    <camel.osgi.export.pkg>org.apache.camel.opentracing.*</camel.osgi.export.pkg>
 
     <opentracing-agent.lib>${project.build.directory}/lib</opentracing-agent.lib>
   </properties>

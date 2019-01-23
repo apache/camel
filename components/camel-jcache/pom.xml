@@ -33,10 +33,6 @@
   <description>Camel JCache support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.jcache.*,
-      org.apache.camel.component.jcache.processor.idempotent.*,
-    </camel.osgi.export.pkg>
   </properties>
 
 

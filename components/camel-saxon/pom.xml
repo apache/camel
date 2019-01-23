@@ -32,11 +32,6 @@
   <description>Camel Saxon (XQuery/XPath) support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.xquery.*,
-      org.apache.camel.language.xquery.*,
-      org.apache.camel.converter.saxon.*
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

@@ -32,7 +32,6 @@
   <name>Camel :: Kubernetes</name>
 
    <properties>
-      <camel.osgi.export.pkg>org.apache.camel.component.kubernetes.*</camel.osgi.export.pkg>
    </properties>
 
   <dependencies>

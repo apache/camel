@@ -33,7 +33,6 @@
   <description>Camel Eclipse Paho support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.paho.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

@@ -33,7 +33,6 @@
     <description>Camel Stream (System.in, System.out, System.err) support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.stream.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

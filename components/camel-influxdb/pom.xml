@@ -25,7 +25,6 @@
 	<description>Camel InfluxDB component</description>
 
 	<properties>
-		<camel.osgi.export.pkg>org.apache.camel.component.influxdb.*</camel.osgi.export.pkg>
 	</properties>
 
 	<dependencies>

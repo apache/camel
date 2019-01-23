@@ -32,7 +32,6 @@
   <description>Camel Beanstalk component</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.beanstalk.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

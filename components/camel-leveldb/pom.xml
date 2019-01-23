@@ -37,7 +37,6 @@
         <label>database</label>
         <title>LevelDB</title>
 
-        <camel.osgi.export.pkg>org.apache.camel.component.leveldb.*</camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             org.apache.camel*,
             org.fusesource.hawtbuf*,

@@ -32,7 +32,6 @@
  <description>Camel Yammer Component</description>
 
  <properties>
-  <camel.osgi.export.pkg>org.apache.camel.component.yammer.*</camel.osgi.export.pkg>
  </properties>
 
  <dependencies>

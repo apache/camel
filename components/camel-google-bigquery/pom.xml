@@ -34,7 +34,6 @@
   <description>Camel Component for Google Cloud Platform BigQuery</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.google.bigquery</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

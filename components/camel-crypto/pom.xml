@@ -32,10 +32,6 @@
 	<description>Camel Cryptographic Support</description>
 
 	<properties>
-		<camel.osgi.export.pkg>
-			org.apache.camel.component.crypto.*;${camel.osgi.version},
-			org.apache.camel.converter.crypto.*
-		</camel.osgi.export.pkg>
 		<camel.osgi.import.pkg>
 			!org.apache.camel.component.crypto.*,
 			!org.apache.camel.converter.crypto.*,

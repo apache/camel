@@ -33,7 +33,6 @@
     <description>A Camel Amazon Web Services Components</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.aws.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

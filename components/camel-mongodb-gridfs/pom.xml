@@ -33,7 +33,6 @@
     <description>Camel MongoDB GridFS component</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.gridfs.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

@@ -32,9 +32,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.dns*
-    </camel.osgi.export.pkg>
 
     <camel.osgi.import.pkg>
       !org.apache.camel.component.dns*,

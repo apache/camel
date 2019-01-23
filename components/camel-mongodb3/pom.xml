@@ -32,7 +32,6 @@
   <description>Camel MongoDB (Java Driver 3) component</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.mongodb3.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

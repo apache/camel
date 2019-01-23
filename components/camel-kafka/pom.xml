@@ -33,10 +33,6 @@
   <description>Camel Kafka support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.kafka.*,
-      org.apache.camel.processor.idempotent.kafka
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

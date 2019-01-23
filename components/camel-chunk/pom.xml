@@ -32,7 +32,6 @@
   <description>Camel Chunk support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.chunk.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

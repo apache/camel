@@ -38,7 +38,6 @@
     <componentPackage>org.apache.camel.component.linkedin</componentPackage>
     <outPackage>org.apache.camel.component.linkedin.internal</outPackage>
 
-    <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
   </properties>
 

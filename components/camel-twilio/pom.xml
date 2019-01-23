@@ -38,7 +38,6 @@
     <componentPackage>org.apache.camel.component.twilio</componentPackage>
     <outPackage>org.apache.camel.component.twilio.internal</outPackage>
 
-    <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
   </properties>
 

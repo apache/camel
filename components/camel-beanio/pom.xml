@@ -34,9 +34,6 @@
   <url>http://www.beanio.org</url>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.dataformat.beanio.*;
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
