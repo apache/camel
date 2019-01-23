@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.aws.sns;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class SnsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     public SnsHeaderFilterStrategy() {

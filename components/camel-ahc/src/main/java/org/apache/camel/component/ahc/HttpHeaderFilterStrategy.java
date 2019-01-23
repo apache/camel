@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.ahc;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 /**
  *

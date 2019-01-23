@@ -687,7 +687,7 @@ caused Exception is not stored in the JMS message. You can, however, use
 the `transferExchange` option on the JMS dead letter queue to instruct
 Camel to store the entire Exchange in the queue as a
 `javax.jms.ObjectMessage` that holds a
-`org.apache.camel.impl.DefaultExchangeHolder`. This allows you to
+`org.apache.camel.support.DefaultExchangeHolder`. This allows you to
 consume from the Dead Letter Queue and retrieve the caused exception
 from the Exchange property with the key `Exchange.EXCEPTION_CAUGHT`. The
 demo below illustrates this:

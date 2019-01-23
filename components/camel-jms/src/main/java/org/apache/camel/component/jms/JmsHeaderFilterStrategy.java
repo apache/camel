@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 

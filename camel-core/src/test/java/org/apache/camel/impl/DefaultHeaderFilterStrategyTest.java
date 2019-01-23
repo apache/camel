@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.junit.Test;
 
 public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {

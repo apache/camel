@@ -31,7 +31,7 @@
   </ehcache:cache>
   <ehcache:cache alias="aggregate" uses-template="default-template">
     <ehcache:key-type>java.lang.String</ehcache:key-type>
-    <ehcache:value-type>org.apache.camel.impl.DefaultExchangeHolder</ehcache:value-type>
+    <ehcache:value-type>org.apache.camel.support.DefaultExchangeHolder</ehcache:value-type>
   </ehcache:cache>
 
   <ehcache:cache-template name="default-template">
