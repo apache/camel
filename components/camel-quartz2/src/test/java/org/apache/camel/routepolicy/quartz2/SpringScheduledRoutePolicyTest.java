@@ -27,8 +27,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.test.junit4.TestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
