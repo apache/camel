@@ -245,6 +245,7 @@
     <module>camel-rmi</module>
     <module>camel-rss</module>
     <module>camel-rxjava2</module>
+    <module>camel-saga</module>
     <module>camel-sap-netweaver</module>
     <module>camel-saxon</module>
     <module>camel-scheduler</module>
