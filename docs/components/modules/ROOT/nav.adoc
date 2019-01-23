@@ -259,6 +259,7 @@
 * xref:rss-component.adoc[RSS Component]
 * xref:rss-dataformat.adoc[RSS DataFormat]
 * xref:rxjava2.adoc[RxJava2 Component]
+* xref:saga-component.adoc[Saga Component]
 * xref:sap-netweaver-component.adoc[SAP NetWeaver Component]
 * xref:xquery-component.adoc[XQuery Component]
 * xref:xquery-language.adoc[XQuery Language]
