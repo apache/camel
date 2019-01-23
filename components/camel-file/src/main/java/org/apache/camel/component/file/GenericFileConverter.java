@@ -28,7 +28,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +101,7 @@ public final class GenericFileConverter {
     }
 
     @Converter
-    public static InputStream genericFileToInputStream(GenericFile<?> file, Exchange exchange) throws IOException, NoTypeConversionAvailableException {
+    public static InputStream genericFileToInputStream(GenericFile<?> file, Exchange exchange) throws IOException {
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
             File f = (File) file.getFile();
@@ -112,10 +111,11 @@ public final class GenericFileConverter {
                 String charset = file.getCharset();
                 if (charset != null) {
                     LOG.debug("Read file {} with charset {}", f, file.getCharset());
+                    exchange.setProperty(Exchange.CHARSET_NAME, charset);
                 } else {
                     LOG.debug("Read file {} (no charset)", f);
                 }
-                return IOConverter.toInputStream(f, charset);
+                return exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, f);
             }
         }
         if (exchange != null) {
@@ -133,7 +133,7 @@ public final class GenericFileConverter {
         // use reader first as it supports the file charset
         BufferedReader reader = genericFileToReader(file, exchange);
         if (reader != null) {
-            return IOConverter.toString(reader);
+            return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, reader);
         }
         if (exchange != null) {
             // otherwise ensure the body is loaded as we want the content of the body
@@ -146,7 +146,7 @@ public final class GenericFileConverter {
     }
 
     @Converter
-    public static Serializable genericFileToSerializable(GenericFile<?> file, Exchange exchange) throws IOException, NoTypeConversionAvailableException {
+    public static Serializable genericFileToSerializable(GenericFile<?> file, Exchange exchange) throws IOException {
         if (exchange != null) {
             // load the file using input stream
             InputStream is = genericFileToInputStream(file, exchange);
@@ -162,7 +162,7 @@ public final class GenericFileConverter {
         return null;
     }
 
-    private static BufferedReader genericFileToReader(GenericFile<?> file, Exchange exchange) throws IOException, NoTypeConversionAvailableException {
+    private static BufferedReader genericFileToReader(GenericFile<?> file, Exchange exchange) {
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
             File f = (File) file.getFile();
@@ -174,11 +174,11 @@ public final class GenericFileConverter {
             String charset = file.getCharset();
             if (charset != null) {
                 LOG.debug("Read file {} with charset {}", f, file.getCharset());
-                return IOConverter.toReader(f, charset);
+                exchange.setProperty(Exchange.CHARSET_NAME, charset);
             } else {
                 LOG.debug("Read file {} (no charset)", f);
-                return IOConverter.toReader(f, exchange);
             }
+            return exchange.getContext().getTypeConverter().convertTo(BufferedReader.class, exchange, f);
         }
         return null;
     }
