@@ -996,6 +996,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-servicenow-component/src/main/docs");
                         } else if ("camel-fhir".equals(dir.getName())) {
                             target = new File(dir, "camel-fhir-component/src/main/docs");
+                        } else {
+                            // this module must be active with a source folder
+                            File src = new File(dir, "src");
+                            boolean active = src.isDirectory() && src.exists();
+                            if (!active) {
+                                continue;
+                            }
                         }
 
                         int before = adocFiles.size();
