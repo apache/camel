@@ -44,6 +44,7 @@
             org.apache.camel.support.component;
             org.apache.camel.support.jndi;
             org.apache.camel.support.processor;
+            org.apache.camel.support.processor.idempotent;
                 -noimport:=true
         </camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
