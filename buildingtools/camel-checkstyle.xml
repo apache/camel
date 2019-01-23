@@ -112,6 +112,7 @@ lengths, if/try depths, etc...
         <module name="ImportOrder">
             <property name="groups" value="java,javax,org.w3c,org.xml,junit"/>
             <property name="ordered" value="true"/>
+            <property name="separated" value="true"/>
         </module>
         <!--
         <module name="ImportControl">
