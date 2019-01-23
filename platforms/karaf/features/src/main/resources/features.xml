@@ -55,6 +55,7 @@
     <bundle>mvn:org.apache.camel/camel-language/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-log/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-file/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-properties/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ref/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-scheduler/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-stub/${project.version}</bundle>

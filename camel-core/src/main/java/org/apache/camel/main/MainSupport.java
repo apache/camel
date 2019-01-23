@@ -36,6 +36,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -69,6 +70,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected boolean hangupInterceptorEnabled = true;
     protected int durationHitExitCode = DEFAULT_EXIT_CODE;
     protected ReloadStrategy reloadStrategy;
+    protected String propertyPlaceholderLocations;
 
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
@@ -444,6 +446,18 @@ public abstract class MainSupport extends ServiceSupport {
         this.reloadStrategy = reloadStrategy;
     }
 
+    public String getPropertyPlaceholderLocations() {
+        return propertyPlaceholderLocations;
+    }
+
+    /**
+     * A list of locations to load properties. You can use comma to separate multiple locations.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    public void setPropertyPlaceholderLocations(String location) {
+        this.propertyPlaceholderLocations = location;
+    }
+
     public boolean isTrace() {
         return trace;
     }
@@ -564,6 +578,10 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        if (propertyPlaceholderLocations != null) {
+            PropertiesComponent pc = camelContext.getPropertiesComponent();
+            pc.setLocation(propertyPlaceholderLocations);
+        }
         if (trace) {
             camelContext.setTracing(true);
         }

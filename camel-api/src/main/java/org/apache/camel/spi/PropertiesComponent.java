@@ -43,4 +43,10 @@ public interface PropertiesComponent extends Component {
 
     String parseUri(String uri, String... uris) throws Exception;
 
+    /**
+     * A list of locations to load properties. You can use comma to separate multiple locations.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    void setLocation(String location);
+
 }
