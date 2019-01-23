@@ -5,9 +5,7 @@
 
 
 // components: START
-
-=======
-Number of Components: 12 in 1 JAR artifacts (0 deprecated)
+Number of Components: 11 in 1 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -37,9 +35,6 @@ Number of Components: 12 in 1 JAR artifacts (0 deprecated)
 | link:src/main/docs/rest-api-component.adoc[REST API] (camel-core) +
 `rest-api:path/contextIdPattern` | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
 
-| link:src/main/docs/saga-component.adoc[Saga] (camel-core) +
-`saga:action` | 2.21 | The saga component provides access to advanced options for managing the flow in the Saga EIP.
-
 | link:src/main/docs/test-component.adoc[Test] (camel-core) +
 `test:name` | 1.3 | The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
 
@@ -64,7 +59,20 @@ Number of Components: 12 in 1 JAR artifacts (0 deprecated)
 
 
 // dataformats: START
+Number of Data Formats: 4 in 35 JAR artifacts (0 deprecated)
 
+[width="100%",cols="4,1,5",options="header"]
+|===
+| Data Format | Available From | Description
+
+| link:src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
+
+| link:src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Serialization is a data format which uses the standard Java Serialization mechanism to unmarshal a binary payload into Java objects or to marshal Java objects into a binary blob.
+
+| link:src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String data format is a textual based format that supports character encoding.
+
+| link:src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip Deflate Compression data format is a message compression and de-compression format (not zip files).
+|===
 // dataformats: END
 
 
@@ -80,7 +88,32 @@ Number of Components: 12 in 1 JAR artifacts (0 deprecated)
 
 
 // languages: START
+Number of Languages: 10 in 1 JAR artifacts (0 deprecated)
 
+[width="100%",cols="4,1,5",options="header"]
+|===
+| Language | Available From | Description
+
+| link:src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
+
+| link:src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | To use a constant value in Camel expressions or predicates.
+
+| link:src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | To use a Camel Exchange property in expressions or predicates.
+
+| link:src/main/docs/file-language.adoc[File] (camel-core) | 1.1 | For expressions and predicates using the file/simple language
+
+| link:src/main/docs/header-language.adoc[Header] (camel-core) | 1.5 | To use a Camel Message header in expressions or predicates.
+
+| link:src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
+
+| link:src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
+
+| link:src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
+
+| link:src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+
+| link:src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
+|===
 // languages: END
 
 
