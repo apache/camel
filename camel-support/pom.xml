@@ -35,21 +35,6 @@
     <description>The Camel Support</description>
 
     <properties>
-        <camel.osgi.export.pkg>
-            org.apache.camel.component;
-            org.apache.camel.component.extension.metadata;
-            org.apache.camel.component.extension.verifier;
-            org.apache.camel.support;
-            org.apache.camel.support.cluster;
-            org.apache.camel.support.component;
-            org.apache.camel.support.jndi;
-            org.apache.camel.support.processor;
-            org.apache.camel.support.processor.idempotent;
-                -noimport:=true
-        </camel.osgi.export.pkg>
-        <camel.osgi.import.pkg>
-            *
-        </camel.osgi.import.pkg>
     </properties>
 
     <dependencies>

@@ -39,7 +39,6 @@
       org.apache.camel.cloud;
       org.apache.camel.converter;
       org.apache.camel.converter.jaxp;
-      org.apache.camel.converter.stream;
       org.apache.camel.impl.converter;
       org.apache.camel.impl.event;
       org.apache.camel.impl.health;
@@ -47,7 +46,6 @@
       org.apache.camel.impl.scan;
       org.apache.camel.impl.validator;
       org.apache.camel.runtimecatalog.impl;
-      org.apache.camel.saga;
       org.apache.camel.support.dump;
       org.apache.camel.throttling;
         -noimport:=true
