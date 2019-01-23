@@ -1065,6 +1065,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-scheduler</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-schematron</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -2370,6 +2375,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-saxon-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-scheduler-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

@@ -234,6 +234,7 @@
         <include>org.apache.camel:camel-salesforce</include>
         <include>org.apache.camel:camel-sap-netweaver</include>
         <include>org.apache.camel:camel-saxon</include>
+        <include>org.apache.camel:camel-scheduler</include>
         <include>org.apache.camel:camel-schematron</include>
         <include>org.apache.camel:camel-script</include>
         <include>org.apache.camel:camel-seda</include>
@@ -533,6 +534,7 @@
         <include>org.apache.camel:camel-salesforce-starter</include>
         <include>org.apache.camel:camel-sap-netweaver-starter</include>
         <include>org.apache.camel:camel-saxon-starter</include>
+        <include>org.apache.camel:camel-scheduler-starter</include>
         <include>org.apache.camel:camel-schematron-starter</include>
         <include>org.apache.camel:camel-script-starter</include>
         <include>org.apache.camel:camel-seda-starter</include>
