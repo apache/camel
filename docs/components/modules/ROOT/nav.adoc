@@ -90,6 +90,7 @@
 * xref:exec-component.adoc[Exec Component]
 * xref:facebook-component.adoc[Facebook Component]
 * xref:json-fastjson-dataformat.adoc[JSon Fastjson DataFormat]
+* xref:file-component.adoc[File Component]
 * xref:flatpack-component.adoc[Flatpack Component]
 * xref:flatpack-dataformat.adoc[Flatpack DataFormat]
 * xref:flink-component.adoc[Apache Flink Component]

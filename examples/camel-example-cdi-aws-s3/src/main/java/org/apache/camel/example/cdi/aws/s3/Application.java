@@ -32,7 +32,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
-import org.apache.camel.processor.idempotent.FileIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 
 public class Application {
 
