@@ -2031,14 +2031,17 @@ public final class ExpressionBuilder {
         };
     }
 
+    @Deprecated
     public static Expression beanExpression(final Class<?> beanType, final String methodName) {
         return BeanLanguage.bean(beanType, methodName);
     }
 
+    @Deprecated
     public static Expression beanExpression(final Object bean, final String methodName) {
         return BeanLanguage.bean(bean, methodName);
     }
 
+    @Deprecated
     public static Expression beanExpression(final String beanRef, final String methodName) {
         String expression = methodName != null ? beanRef + "." + methodName : beanRef;
         return beanExpression(expression);
