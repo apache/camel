@@ -5,7 +5,7 @@
 
 
 // components: START
-Number of Components: 10 in 1 JAR artifacts (0 deprecated)
+Number of Components: 6 in 1 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -17,23 +17,11 @@ Number of Components: 10 in 1 JAR artifacts (0 deprecated)
 | link:src/main/docs/class-component.adoc[Class] (camel-core) +
 `class:beanName` | 2.4 | The Class Component is for invoking Java Classes (Java beans) from Camel.
 
-| link:src/main/docs/dataset-component.adoc[Dataset] (camel-core) +
-`dataset:name` | 1.3 | The dataset component provides a mechanism to easily perform load & soak testing of your system.
-
-| link:src/main/docs/mock-component.adoc[Mock] (camel-core) +
-`mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
-
-| link:src/main/docs/properties-component.adoc[Properties] (camel-core) +
-`properties:key` | 2.3 | The properties component is used for using property placeholders in endpoint uris.
-
 | link:src/main/docs/rest-component.adoc[REST] (camel-core) +
 `rest:method:path:uriTemplate` | 2.14 | The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
 
 | link:src/main/docs/rest-api-component.adoc[REST API] (camel-core) +
 `rest-api:path/contextIdPattern` | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
-
-| link:src/main/docs/test-component.adoc[Test] (camel-core) +
-`test:name` | 1.3 | The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
 
 | link:src/main/docs/validator-component.adoc[Validator] (camel-core) +
 `validator:resourceUri` | 1.1 | Validates the payload of a message using XML Schema and JAXP Validation.

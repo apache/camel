@@ -1775,6 +1775,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-properties</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-protobuf</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3120,6 +3125,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-printer-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-properties-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
