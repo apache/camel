@@ -96,10 +96,27 @@ public class AhcProducerSessionTest extends BaseAhcTest {
                         @Override
                         public void process(Exchange exchange) throws Exception {
                             HttpMessage message = exchange.getIn(HttpMessage.class);
+                            Object cookiesObj = message.getHeader("Cookie");
                             HttpSession session = message.getRequest().getSession();
                             String body = message.getBody(String.class);
                             if ("bar".equals(session.getAttribute("foo"))) {
                                 message.setBody("Old " + body);
+                                /*
+                                 * If we are in a session we should also have a cookie header with two
+                                 * cookies. This test checks that the cookies are in one line.
+                                 * We can also get the cookies with request.getCookies() but this will
+                                 * always give us two cookies even if there are two cookie headers instead
+                                 * of one multi-value cookie header.
+                                 */
+                                if (cookiesObj instanceof String && ((String) cookiesObj).contains("othercookie=value")) {
+                                    if (!((String) cookiesObj).contains("JSESSIONID=")) {
+                                        log.error("JSESSIONID missing");
+                                        throw new IllegalStateException("JSESSIONID missing");
+                                    }
+                                } else {
+                                    log.error("othercookie=value is missing in cookie");
+                                    throw new IllegalStateException("othercookie=value is missing in cookie");
+                                }
                             } else {
                                 session.setAttribute("foo", "bar");
                                 message.setBody("New " + body);

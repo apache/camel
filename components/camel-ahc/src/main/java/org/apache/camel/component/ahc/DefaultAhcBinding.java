@@ -28,6 +28,7 @@ import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 
 import io.netty.handler.codec.http.HttpHeaders;
@@ -126,12 +127,14 @@ public class DefaultAhcBinding implements AhcBinding {
                 Map<String, List<String>> cookieHeaders = endpoint.getCookieHandler().loadCookies(exchange, uri);
                 for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
                     String key = entry.getKey();
+                    StringJoiner joiner = new StringJoiner("; ");
                     for (String value : entry.getValue()) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Adding header {} = {}", key, value);
-                        }
-                        builder.addHeader(key, value);                        
+                        joiner.add(value);
                     }
+                    if (log.isTraceEnabled()) {
+                        log.trace("Adding header {} = {}", key, joiner.toString());
+                    }
+                    builder.addHeader(key, joiner.toString());
                 }
             } catch (IOException e) {
                 throw new CamelExchangeException("Error loading cookies", exchange, e);
