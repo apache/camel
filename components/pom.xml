@@ -246,6 +246,7 @@
     <module>camel-rxjava2</module>
     <module>camel-sap-netweaver</module>
     <module>camel-saxon</module>
+    <module>camel-scheduler</module>
     <module>camel-salesforce</module>
     <module>camel-schematron</module>
     <module>camel-script</module>
