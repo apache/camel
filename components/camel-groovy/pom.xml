@@ -40,7 +40,6 @@
       *
     </camel.osgi.import.pkg>
     <camel.osgi.export.pkg>org.apache.camel.language.groovy.*,org.apache.camel.groovy.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=groovy</camel.osgi.export.service>
   </properties>
 
   <dependencies>

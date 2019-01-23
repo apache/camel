@@ -37,9 +37,6 @@
       org.apache.camel.component.jcache.*,
       org.apache.camel.component.jcache.processor.idempotent.*,
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=jcache
-    </camel.osgi.export.service>
   </properties>
 
 

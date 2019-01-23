@@ -33,10 +33,6 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.disruptor.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>
-          org.apache.camel.spi.ComponentResolver;component=disruptor,
-          org.apache.camel.spi.ComponentResolver;component=disruptor-vm
-        </camel.osgi.export.service>
     </properties>
 
     <dependencies>

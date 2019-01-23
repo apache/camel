@@ -41,11 +41,6 @@
     <camel.osgi.dynamic>
       org.hl7.fhir.*
     </camel.osgi.dynamic>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.DataFormatResolver;dataformat=fhirJson,
-      org.apache.camel.spi.DataFormatResolver;dataformat=fhirXml,
-      org.apache.camel.spi.ComponentResolver;component=${schemeName}
-    </camel.osgi.export.service>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
   </properties>
 

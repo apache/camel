@@ -33,7 +33,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.hdfs2.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=hdfs2</camel.osgi.export.service>
     <camel.osgi.import.additional>
       org.apache.hadoop.hdfs,
       org.apache.hadoop.hdfs.client,

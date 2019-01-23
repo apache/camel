@@ -39,7 +39,6 @@
     <camel.osgi.export>
     	org.apache.camel.dataformat.asn1;${camel.osgi.version}
     </camel.osgi.export>
-    <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=asn1</camel.osgi.export.service>
     
   </properties>
 

@@ -33,7 +33,6 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.sap.netweaver.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=sap-netweaver</camel.osgi.export.service>
     </properties>
 
     <dependencies>

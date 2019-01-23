@@ -41,7 +41,6 @@
       org.apache.camel.processor.idempotent.cassandra,
       org.apache.camel.utils.cassandra
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=cql</camel.osgi.export.service>
   </properties>
 
   <dependencies>

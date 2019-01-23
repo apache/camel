@@ -33,7 +33,6 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.snakeyaml.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=yaml-snakeyaml</camel.osgi.export.service>
     </properties>
 
     <dependencies>

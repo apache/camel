@@ -34,7 +34,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.elasticsearch.*;${camel.osgi.version}</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=elasticsearch-rest</camel.osgi.export.service>
   </properties>
 
   <dependencies>

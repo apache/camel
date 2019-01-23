@@ -36,7 +36,6 @@
       javax.servlet.*;version="${servlet-version-range}"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.servlet.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=servlet</camel.osgi.export.service>
 
     <!-- used for testing -->
     <tomcat.version>8.5.0</tomcat.version>

@@ -40,7 +40,6 @@
       org.apache.camel.processor.idempotent.hazelcast.*,
       org.apache.camel.processor.aggregate.hazelcast.*
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=hazelcast</camel.osgi.export.service>
   </properties>
 
   <dependencies>

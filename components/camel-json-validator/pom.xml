@@ -31,9 +31,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.jsonvalidator.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=json-validator
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

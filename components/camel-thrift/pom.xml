@@ -38,10 +38,6 @@
       org.apache.camel.dataformat.thrift.*;${camel.osgi.version},
       org.apache.camel.component.thrift.*;${camel.osgi.version}
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.DataFormatResolver;dataformat=thrift,
-      org.apache.camel.spi.ComponentResolver;component=thrift
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

@@ -37,10 +37,6 @@
              org.apache.camel.component.xmlsecurity.*;${camel.osgi.version},
              org.apache.camel.dataformat.xmlsecurity.*
         </camel.osgi.export.pkg>
-        <camel.osgi.export.service>
-            org.apache.camel.spi.ComponentResolver;component=xmlsecurity,
-            org.apache.camel.spi.DataFormatResolver;dataformat=secureXML
-        </camel.osgi.export.service>
     </properties>
 
     <dependencies>

@@ -61,10 +61,6 @@
       org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
       org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
     </camel.osgi.export>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=spring-event,
-      org.apache.camel.spi.LanguageResolver;language=spel
-    </camel.osgi.export.service>
     <!-- do not skip any tests by default -->
     <platform.skip.tests/>
   </properties>

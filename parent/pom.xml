@@ -5319,8 +5319,6 @@
             <Export-Package>${camel.osgi.export}</Export-Package>
             <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
             <Private-Package>${camel.osgi.private.pkg}</Private-Package>
-            <Import-Service>${camel.osgi.import.service}</Import-Service>
-            <Export-Service>${camel.osgi.export.service}</Export-Service>
             <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
             <Provide-Capability>${camel.osgi.provide.capability}</Provide-Capability>
             <Implementation-Title>Apache Camel</Implementation-Title>

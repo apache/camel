@@ -38,6 +38,7 @@
     <module>camel-api-component-maven-plugin</module>
     <module>bom-generator-maven-plugin</module>
     <module>camel-restdsl-swagger-plugin</module>
+    <module>camel-bundle-plugin</module>
   </modules>
 
   <!-- Apply to children. -->

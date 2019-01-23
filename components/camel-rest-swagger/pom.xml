@@ -37,7 +37,6 @@
     <firstVersion>2.19.0</firstVersion>
     <label>rest,api,http</label>
     <camel.osgi.export.pkg>org.apache.camel.component.rest.swagger.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=rest-swagger</camel.osgi.export.service>
   </properties>
 
   <dependencies>

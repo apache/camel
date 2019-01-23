@@ -381,6 +381,27 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <_plugin>
+              org.apache.felix.bundleplugin.BlueprintPlugin,
+              aQute.lib.spring.SpringXMLType,
+              org.apache.felix.bundleplugin.JpaPlugin,
+              org.apache.camel.maven.bundle.CamelPlugin
+            </_plugin>
+          </instructions>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-bundle-plugin</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
     </plugins>
   </build>
 

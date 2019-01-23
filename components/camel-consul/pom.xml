@@ -37,9 +37,6 @@
     <camel.osgi.export.pkg>
       org.apache.camel.component.consul.*,
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=consul
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

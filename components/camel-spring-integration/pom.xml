@@ -37,7 +37,6 @@
             org.springframework.integration.*;version="[4.2,5)",
             org.springframework.messaging.*;version="[4.2,5)"
         </camel.osgi.import.before.defaults>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=spring-integration</camel.osgi.export.service>
     </properties>
 
     <dependencies>

@@ -56,36 +56,6 @@
       =org.apache.camel.util.concurrent,
       *
     </camel.osgi.import.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=bean,
-      org.apache.camel.spi.ComponentResolver;component=binding,
-      org.apache.camel.spi.ComponentResolver;component=class,
-      org.apache.camel.spi.ComponentResolver;component=controlbus,
-      org.apache.camel.spi.ComponentResolver;component=dataset,
-      org.apache.camel.spi.ComponentResolver;component=file,
-      org.apache.camel.spi.ComponentResolver;component=mock,
-      org.apache.camel.spi.ComponentResolver;component=properties,
-      org.apache.camel.spi.ComponentResolver;component=rest,
-      org.apache.camel.spi.ComponentResolver;component=rest-api,
-      org.apache.camel.spi.ComponentResolver;component=seda,
-      org.apache.camel.spi.ComponentResolver;component=test,
-      org.apache.camel.spi.ComponentResolver;component=validator,
-      org.apache.camel.spi.ComponentResolver;component=xslt,
-      org.apache.camel.spi.DataFormatResolver;dataformat=gzip,
-      org.apache.camel.spi.DataFormatResolver;dataformat=serialization,
-      org.apache.camel.spi.DataFormatResolver;dataformat=string,
-      org.apache.camel.spi.DataFormatResolver;dataformat=zip,
-      org.apache.camel.spi.LanguageResolver;language=bean,
-      org.apache.camel.spi.LanguageResolver;language=constant,
-      org.apache.camel.spi.LanguageResolver;language=exchangeProperty,
-      org.apache.camel.spi.LanguageResolver;language=file,
-      org.apache.camel.spi.LanguageResolver;language=header,
-      org.apache.camel.spi.LanguageResolver;language=ref,
-      org.apache.camel.spi.LanguageResolver;language=simple,
-      org.apache.camel.spi.LanguageResolver;language=tokenize,
-      org.apache.camel.spi.LanguageResolver;language=xpath,
-      org.apache.camel.spi.LanguageResolver;language=xtokenize
-    </camel.osgi.export.service>
     <camel.osgi.dynamic>
       org.apache.camel.spring.util;${camel.osgi.import.strict.version},
       org.apache.camel.spring.pollingconsumer;${camel.osgi.import.strict.version},
@@ -559,6 +529,27 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <_plugin>
+              org.apache.felix.bundleplugin.BlueprintPlugin,
+              aQute.lib.spring.SpringXMLType,
+              org.apache.felix.bundleplugin.JpaPlugin,
+              org.apache.camel.maven.bundle.CamelPlugin
+            </_plugin>
+          </instructions>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-bundle-plugin</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>

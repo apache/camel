@@ -40,7 +40,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <camel.osgi.export.pkg>org.apache.camel.component.box</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=box</camel.osgi.export.service>
   </properties>
 
   <dependencies>
