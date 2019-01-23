@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,7 +33,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 
 /**
  * File consumer.
