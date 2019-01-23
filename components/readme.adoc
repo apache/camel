@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 289 in 205 JAR artifacts (0 deprecated)
+Number of Components: 289 in 206 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -253,7 +253,7 @@ Number of Components: 289 in 205 JAR artifacts (0 deprecated)
 | link:camel-fhir/camel-fhir-component/src/main/docs/fhir-component.adoc[FHIR] (camel-fhir) +
 `fhir:apiName/methodName` | 2.23 | The fhir component is used for working with the FHIR protocol (health care).
 
-| link:../camel-core/src/main/docs/file-component.adoc[File] (camel-core) +
+| link:camel-file/src/main/docs/file-component.adoc[File] (camel-file) +
 `file:directoryName` | 1.0 | The file component is used for reading or writing files.
 
 | link:camel-flatpack/src/main/docs/flatpack-component.adoc[Flatpack] (camel-flatpack) +

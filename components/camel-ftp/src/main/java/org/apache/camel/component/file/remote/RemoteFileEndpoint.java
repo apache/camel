@@ -26,8 +26,8 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFilePollingConsumer;
 import org.apache.camel.component.file.GenericFileProducer;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.util.StringHelper;
 
 /**
