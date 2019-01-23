@@ -32,7 +32,6 @@
   <description>Camel Facebook Support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.facebook.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

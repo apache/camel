@@ -32,9 +32,6 @@
   <description>Camel RabbitMQ Component</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.rabbitmq.*
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

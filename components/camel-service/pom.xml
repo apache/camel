@@ -34,7 +34,6 @@
   <description>Camel service Support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.service</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

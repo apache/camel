@@ -35,10 +35,6 @@
   <description>Camel MLLP Component</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.mllp.*,
-      org.apache.camel.processor.mllp.*
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

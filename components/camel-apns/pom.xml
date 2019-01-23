@@ -33,7 +33,6 @@
   <description>A Camel Apple Push Notification Server Component</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.apns.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

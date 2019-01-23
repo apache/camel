@@ -32,7 +32,6 @@
     <description>Camel EJB support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.ejb.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

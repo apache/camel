@@ -36,7 +36,6 @@
     <firstVersion>2.5.0</firstVersion>
     <label>security</label>
 
-		<camel.osgi.export.pkg>org.apache.camel.component.shiro.*</camel.osgi.export.pkg>
 	</properties>
 
 	<dependencies>

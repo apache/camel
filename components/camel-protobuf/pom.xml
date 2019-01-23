@@ -34,7 +34,6 @@
   <description>Camel Google Protobuf data format support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.dataformat.protobuf.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

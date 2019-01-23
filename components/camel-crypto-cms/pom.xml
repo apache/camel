@@ -33,9 +33,6 @@
   <description>Camel Cryptographic Message Syntax Support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.crypto.cms.*;${camel.osgi.version},
-    </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
       !org.apache.camel.component.crypto.cms.*,
       ${camel.osgi.import.defaults},

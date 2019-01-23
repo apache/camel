@@ -34,7 +34,6 @@
   <description>Camel Hipchat Component</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.hipchat.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

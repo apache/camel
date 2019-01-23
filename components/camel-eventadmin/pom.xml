@@ -32,7 +32,6 @@
     <description>Camel OSGi Event Admin support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.eventadmin</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

@@ -34,7 +34,6 @@
   <description>Camel Lumberjack log streaming component</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.lumberjack.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

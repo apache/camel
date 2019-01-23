@@ -32,7 +32,6 @@
   <name>Camel :: Undertow</name>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.undertow.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

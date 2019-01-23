@@ -32,13 +32,6 @@
   <description>Camel LZF support</description>
 
   <properties>
-    <camel.osgi.import>
-    	!org.apache.camel.dataformat.lzf,
-    	*
-    </camel.osgi.import>
-    <camel.osgi.export>
-    	org.apache.camel.dataformat.lzf;${camel.osgi.version},
-    </camel.osgi.export>
   </properties>
 
   <dependencies>

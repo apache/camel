@@ -31,9 +31,6 @@
   <description>Camel Solr Support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.solr.*;${camel.osgi.version}
-    </camel.osgi.export.pkg>
     <java.awt.headless>true</java.awt.headless>
     <solr-test-framework-jetty-version>9.4.11.v20180605</solr-test-framework-jetty-version>
   </properties>

@@ -33,7 +33,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.olingo2.api*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

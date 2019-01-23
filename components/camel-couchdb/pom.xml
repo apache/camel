@@ -33,7 +33,6 @@
 	<description>Camel CouchDB component</description>
 
 	<properties>
-		<camel.osgi.export.pkg>org.apache.camel.component.couchdb.*</camel.osgi.export.pkg>
 	</properties>
 
 	<dependencies>

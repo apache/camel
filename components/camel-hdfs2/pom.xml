@@ -32,7 +32,6 @@
   <description>Camel HDFS support with Hadoop 2.x libraries</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.hdfs2.*</camel.osgi.export.pkg>
     <camel.osgi.import.additional>
       org.apache.hadoop.hdfs,
       org.apache.hadoop.hdfs.client,

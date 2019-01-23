@@ -33,7 +33,6 @@
     <description>Camel Barcode (e.g. QRcode, PDF417, DataMatrix) support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.dataformat.barcode.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

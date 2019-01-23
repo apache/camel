@@ -33,9 +33,6 @@
   <description>Camel Ehcache support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.ehcache.*,
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

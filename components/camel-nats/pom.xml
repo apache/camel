@@ -32,7 +32,6 @@
   <name>Camel :: Nats</name>
 
    <properties>
-      <camel.osgi.export.pkg>org.apache.camel.component.nats.*</camel.osgi.export.pkg>
    </properties>
 
   <dependencies>

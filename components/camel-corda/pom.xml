@@ -33,7 +33,6 @@
       <description>Camel Corda which is based on corda-rpc support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.corda.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

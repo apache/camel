@@ -34,7 +34,6 @@
   <description>Camel Master Support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.master</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

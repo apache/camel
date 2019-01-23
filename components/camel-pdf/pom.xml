@@ -32,7 +32,6 @@
   <description>Camel PDF support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.pdf.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

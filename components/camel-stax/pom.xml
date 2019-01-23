@@ -32,7 +32,6 @@
   <description>Camel StAX support</description>
 
   <properties>
-      <camel.osgi.export.pkg>org.apache.camel.component.stax.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

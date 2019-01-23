@@ -32,7 +32,6 @@
   <description>Camel Couchbase component</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.couchbase</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

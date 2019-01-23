@@ -32,9 +32,6 @@
 	<description>Camel Netty NIO based socket communication component</description>
 
 	<properties>
-		<camel.osgi.export.pkg>
-			org.apache.camel.component.netty4.*
-		</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

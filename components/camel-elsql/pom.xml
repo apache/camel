@@ -32,9 +32,6 @@
   <description>Camel ElSql support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.elsql.*;${camel.osgi.version}
-    </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
       org.apache.camel.component.sql.*,
       !org.apache.camel.component.elsql.*,

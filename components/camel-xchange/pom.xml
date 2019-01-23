@@ -32,7 +32,6 @@
   <description>Camel XChange support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.xchange.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

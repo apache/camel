@@ -37,7 +37,6 @@
         <firstVersion>2.5.0</firstVersion>
         <label>security</label>
 
-        <camel.osgi.export.pkg>org.apache.camel.component.jasypt.*</camel.osgi.export.pkg>
         <camel.osgi.import.before.defaults>org.jasypt.encryption.*;version="[1.9,2)"</camel.osgi.import.before.defaults>
     </properties>
 

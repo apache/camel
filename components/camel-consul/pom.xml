@@ -34,9 +34,6 @@
   <description>Camel Consul support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.consul.*,
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

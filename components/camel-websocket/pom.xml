@@ -34,9 +34,6 @@
   <description>Camel WebSocket using Jetty</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.websocket.*;${camel.osgi.version}
-    </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
       !org.apache.camel.component.websocket.*,
       org.eclipse.jetty.util.ssl;version="[9.2,10)";resolution:=optional,

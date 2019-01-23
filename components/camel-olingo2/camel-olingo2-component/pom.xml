@@ -38,7 +38,6 @@
     <componentPackage>org.apache.camel.component.olingo2</componentPackage>
     <outPackage>org.apache.camel.component.olingo2.internal</outPackage>
 
-    <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
     <maven.exe.file.extension />
   </properties>

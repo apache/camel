@@ -32,7 +32,6 @@
     <description>Camel SnakeYAML support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.snakeyaml.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

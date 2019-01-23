@@ -32,9 +32,6 @@
   <description>Camel Atom support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-        org.apache.camel.component.atom.*;${camel.osgi.version},
-        org.apache.camel.component.feed.*</camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
         !org.apache.camel.component.atom.*,
         !org.apache.camel.component.feed.*,

@@ -32,7 +32,6 @@
   <description>Camel Websocket Client support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.ahc.ws.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

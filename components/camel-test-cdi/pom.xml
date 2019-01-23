@@ -38,7 +38,6 @@
     <label>testing,java</label>
     <title>Test CDI</title>
 
-    <camel.osgi.export.pkg>org.apache.camel.test.cdi.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

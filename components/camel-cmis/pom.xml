@@ -32,7 +32,6 @@
     <description>Camel CMIS which is based on Apache Chemistry support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.cmis.*</camel.osgi.export.pkg>
         <camel.osgi.activator>
            org.apache.camel.component.cmis.osgi.Activator
         </camel.osgi.activator>

@@ -32,10 +32,6 @@
   <description>Camel FlatPack support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.flatpack.*,
-      org.apache.camel.dataformat.flatpack.*
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

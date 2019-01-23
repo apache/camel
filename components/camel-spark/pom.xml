@@ -34,7 +34,6 @@
   <description>Camel Apache Spark Support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.spark.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

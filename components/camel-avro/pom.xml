@@ -32,7 +32,6 @@
     <description>Camel Avro data format</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.dataformat.avro*,org.apache.camel.component.avro*</camel.osgi.export.pkg>
     </properties>
 
     <build>

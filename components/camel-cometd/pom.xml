@@ -32,7 +32,6 @@
     <description>Camel Cometd support based on Jetty </description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.cometd.*</camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             !org.apache.camel.component.cometd.*,
             org.eclipse.jetty.util.ssl;version="[9.2,10)";resolution:=optional,

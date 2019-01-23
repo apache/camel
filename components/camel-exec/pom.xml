@@ -32,7 +32,6 @@
   <description>Camel support for system command execution</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.exec.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

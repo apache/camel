@@ -32,7 +32,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.fhir.api*</camel.osgi.export.pkg>
 
   </properties>
 

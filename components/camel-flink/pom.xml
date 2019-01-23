@@ -34,7 +34,6 @@
   <description>Camel Apache Flink support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.flink.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

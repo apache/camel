@@ -32,7 +32,6 @@
     <description>Camel RSS support</description>
   
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.rss.*;${camel.osgi.version},org.apache.camel.dataformat.rss.*</camel.osgi.export.pkg>
     </properties>
  
     <dependencies>

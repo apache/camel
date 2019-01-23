@@ -33,7 +33,6 @@
   <description>Camel Twitter support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.twitter.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

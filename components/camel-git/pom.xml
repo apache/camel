@@ -32,7 +32,6 @@
   <name>Camel :: Git</name>
 
    <properties>
-      <camel.osgi.export.pkg>org.apache.camel.component.git.*</camel.osgi.export.pkg>
    </properties>
 
   <dependencies>

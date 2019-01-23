@@ -35,11 +35,6 @@
     <camel.osgi.import.before.defaults>
       com.hazelcast.*;version="[3.2,4)"
     </camel.osgi.import.before.defaults>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.hazelcast.*;${camel.osgi.version},
-      org.apache.camel.processor.idempotent.hazelcast.*,
-      org.apache.camel.processor.aggregate.hazelcast.*
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

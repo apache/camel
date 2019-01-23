@@ -32,11 +32,6 @@
   <description>A pure Java JMS Camel Component</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.sjms,
-      org.apache.camel.component.sjms.jms,
-      org.apache.camel.component.sjms.batch
-    </camel.osgi.export.pkg>
     <camel.osgi.private.pkg>
       org.apache.camel.component.sjms.consumer,
       org.apache.camel.component.sjms.producer,

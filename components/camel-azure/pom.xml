@@ -34,7 +34,6 @@
   <description>Camel Microsoft Azure Components</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.azure.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

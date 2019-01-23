@@ -32,7 +32,6 @@
     <description>Camel JGroups support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.jgroups</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>

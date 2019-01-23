@@ -33,10 +33,6 @@
   <description>Camel OPC UA support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      !*.internal.*,
-      org.apache.camel.component.milo.*
-    </camel.osgi.export.pkg>
     <camel.osgi.import.before.defaults>
       com.google.common.*;version="19.0.0"
     </camel.osgi.import.before.defaults>

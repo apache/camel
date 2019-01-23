@@ -34,15 +34,11 @@
   <description>Gora Component for Apache Camel.</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.gora.*
-    </camel.osgi.export.pkg>
     <camel.osgi.import.before.defaults>
       org.apache.camel.*
       com.google.common.base;version="[11,14)",
       org.apache.hadoop.conf;version="[1,2)"
     </camel.osgi.import.before.defaults>
-    <camel.osgi.export.pkg>org.apache.camel.component.gora.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

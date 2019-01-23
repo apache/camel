@@ -34,11 +34,6 @@
   <description>Camel Timer component</description>
 
   <properties>
-    <camel.osgi.import>
-      ${camel.osgi.import.defaults},
-      *
-    </camel.osgi.import>
-    <camel.osgi.export.pkg>org.apache.camel.component.timer.*</camel.osgi.export.pkg>
     <!-- do not skip any tests by default -->
     <platform.skip.tests/>
   </properties>

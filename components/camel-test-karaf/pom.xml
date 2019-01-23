@@ -39,7 +39,6 @@
     <label>testing,java,osgi</label>
 
     <karf-test-version>${karaf4-version}</karf-test-version>
-    <camel.osgi.export.pkg>org.apache.camel.test.karaf</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -170,23 +169,15 @@
       <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <extensions>true</extensions>
           <configuration>
               <instructions>
                   <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                  <!-- Export-Package>org.apache.camel.test.karaf</Export-Package -->>
+                  <!-- Export-Package>org.apache.camel.test.karaf</Export-Package -->
                   <DynamicImport-Package>*</DynamicImport-Package>
                   <Import-Package/>
                   <_removeheaders>Import-Package, Private-Package, Include-Resource, Karaf-Info, Require-Capability</_removeheaders>
               </instructions>
           </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-bundle-plugin</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-        </dependencies>
       </plugin>
 
     </plugins>

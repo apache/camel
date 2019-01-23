@@ -38,7 +38,6 @@
     <componentPackage>org.apache.camel.component.google.drive</componentPackage>
     <outPackage>org.apache.camel.component.google.drive.internal</outPackage>
     <camel.osgi.private.pkg>org.apache.camel.component.google.drive.internal</camel.osgi.private.pkg>
-    <camel.osgi.export.pkg>org.apache.camel.component.google.drive</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

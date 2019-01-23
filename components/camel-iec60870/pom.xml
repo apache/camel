@@ -33,9 +33,6 @@
   <description>Camel IEC 60870-5-104 support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.iec60870.*
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

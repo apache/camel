@@ -34,10 +34,6 @@
   <description>Camel Salesforce support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.salesforce,
-      org.apache.camel.component.salesforce.api.*
-    </camel.osgi.export.pkg>
     <camel.osgi.private.pkg>org.apache.camel.component.salesforce.internal.*</camel.osgi.private.pkg>
     <salesforce.component.root>..</salesforce.component.root>
   </properties>

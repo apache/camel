@@ -33,7 +33,6 @@
   <description>Camel Atmos support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.atmos.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

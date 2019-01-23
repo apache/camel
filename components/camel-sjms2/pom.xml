@@ -33,10 +33,6 @@
   <description>A pure Java JMS 2.0 Camel Component</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.sjms2,
-      org.apache.camel.component.sjms2.jms
-    </camel.osgi.export.pkg>
     <camel.osgi.import.additional>javax.jms;version="[2,3)"</camel.osgi.import.additional>
   </properties>
 

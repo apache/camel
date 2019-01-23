@@ -35,9 +35,6 @@
     <camel.osgi.import.before.defaults>
       org.asteriskjava.*;version="[1.0,4)"
     </camel.osgi.import.before.defaults>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.asterisk.*;${camel.osgi.version},
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

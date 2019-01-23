@@ -32,7 +32,6 @@
   <description>Camel CSV data format support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.dataformat.csv.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

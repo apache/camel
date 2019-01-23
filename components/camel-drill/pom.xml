@@ -32,9 +32,6 @@
     <description>Camel Apache Drill support</description>
 
     <properties>
-		<camel.osgi.export.pkg>
-			org.apache.camel.component.drill.*;${camel.osgi.version}
-		</camel.osgi.export.pkg>
 		<camel.osgi.import.pkg>
 			!org.apache.camel.component.drill.*,
 			${camel.osgi.import.defaults},

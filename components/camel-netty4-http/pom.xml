@@ -32,9 +32,6 @@
   <description>Camel Netty4 HTTP support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.netty4.http.*
-    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

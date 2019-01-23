@@ -32,9 +32,6 @@
   <description>Using Camel with OSGi</description>
   
   <properties>
-      <camel.osgi.export.pkg>
-            org.apache.camel.core.osgi.*
-      </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

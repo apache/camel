@@ -32,10 +32,6 @@
     <description>Camel Script support</description>
 
     <properties>
-        <camel.osgi.export.pkg>
-        	org.apache.camel.builder.script.*;${camel.osgi.version},
-        	org.apache.camel.script.osgi.*
-        </camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             !org.apache.camel.builder.script.*,
             !org.apache.camel.script.osgi.*,
