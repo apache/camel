@@ -58,6 +58,7 @@
     <bundle>mvn:org.apache.camel/camel-scheduler/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-stub/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-timer/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-seda/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-vm/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-management-impl/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-base/${project.version}</bundle>
