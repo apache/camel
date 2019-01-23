@@ -76,6 +76,7 @@
         <include>org.apache.camel:camel-coap</include>
         <include>org.apache.camel:camel-cometd</include>
         <include>org.apache.camel:camel-consul</include>
+        <include>org.apache.camel:camel-controlbus</include>
         <include>org.apache.camel:camel-corda</include>
         <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-core-xml</include>
@@ -384,6 +385,7 @@
         <include>org.apache.camel:camel-coap-starter</include>
         <include>org.apache.camel:camel-cometd-starter</include>
         <include>org.apache.camel:camel-consul-starter</include>
+        <include>org.apache.camel:camel-controlbus-starter</include>
         <include>org.apache.camel:camel-corda-starter</include>
         <include>org.apache.camel:camel-core-starter</include>
         <include>org.apache.camel:camel-couchbase-starter</include>
