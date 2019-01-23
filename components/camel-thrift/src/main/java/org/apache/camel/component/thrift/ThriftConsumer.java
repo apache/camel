@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.thrift;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -40,8 +41,6 @@ import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportException;
 import org.apache.thrift.transport.TZlibTransport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents Thrift server consumer implementation
@@ -96,7 +95,7 @@ public class ThriftConsumer extends DefaultConsumer {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void initializeServer() throws TTransportException {
+    protected void initializeServer() throws TTransportException, IOException {
         Class serverImplementationClass;
         Object serverImplementationInstance;
         Object serverProcessor;
@@ -117,7 +116,9 @@ public class ThriftConsumer extends DefaultConsumer {
         }
 
         if (configuration.getNegotiationType() == ThriftNegotiationType.SSL && endpoint.isSynchronous()) {
+            ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
             SSLContextParameters sslParameters = configuration.getSslParameters();
+            
             if (sslParameters == null) {
                 throw new IllegalArgumentException("SSL parameters must be initialized if negotiation type is set to " + configuration.getNegotiationType());
             }
@@ -132,10 +133,13 @@ public class ThriftConsumer extends DefaultConsumer {
                                                      : sslParameters.getCipherSuites().getCipherSuite().stream().toArray(String[]::new));
             
             if (ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getProvider()) && ObjectHelper.isNotEmpty(sslParameters.getKeyManagers().getKeyStore().getType())) {
-                sslParams.setKeyStore(sslParameters.getKeyManagers().getKeyStore().getResource(), sslParameters.getKeyManagers().getKeyStore().getPassword(),
-                                      sslParameters.getKeyManagers().getKeyStore().getProvider(), sslParameters.getKeyManagers().getKeyStore().getType());
+                sslParams.setKeyStore(ResourceHelper.resolveResourceAsInputStream(classResolver, sslParameters.getKeyManagers().getKeyStore().getResource()),
+                                      sslParameters.getKeyManagers().getKeyStore().getPassword(),
+                                      sslParameters.getKeyManagers().getKeyStore().getProvider(),
+                                      sslParameters.getKeyManagers().getKeyStore().getType());
             } else {
-                sslParams.setKeyStore(sslParameters.getKeyManagers().getKeyStore().getResource(), sslParameters.getKeyManagers().getKeyStore().getPassword());
+                sslParams.setKeyStore(ResourceHelper.resolveResourceAsInputStream(classResolver, sslParameters.getKeyManagers().getKeyStore().getResource()),
+                                      sslParameters.getKeyManagers().getKeyStore().getPassword());
             }
 
             try {
