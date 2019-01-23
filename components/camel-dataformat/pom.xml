@@ -34,10 +34,15 @@
   <description>Camel DataFormat component</description>
 
   <properties>
+    <camel.osgi.import>
+      ${camel.osgi.import.defaults},
+      *
+    </camel.osgi.import>
+    <camel.osgi.export.pkg>org.apache.camel.component.dataformat.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=dataformat</camel.osgi.export.service>
     <!-- do not skip any tests by default -->
     <platform.skip.tests/>
   </properties>
-
   <dependencies>
 
     <!-- required dependencies by camel-core -->
