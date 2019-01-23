@@ -26,7 +26,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.apache.camel.processor.idempotent.FileIdempotentRepository.fileIdempotentRepository;
+import static org.apache.camel.support.processor.idempotent.FileIdempotentRepository.fileIdempotentRepository;
 
 public class FileIdempotentConsumerCreateRepoTest extends Assert {
 

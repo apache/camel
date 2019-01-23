@@ -42,7 +42,7 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.junit.Test;
 
 public class RouteBuilderTest extends TestSupport {
