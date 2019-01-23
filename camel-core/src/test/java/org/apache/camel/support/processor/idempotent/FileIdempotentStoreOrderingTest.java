@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.idempotent;
+package org.apache.camel.support.processor.idempotent;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Assert;
 import org.junit.Before;
