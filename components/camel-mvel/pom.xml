@@ -36,10 +36,6 @@
       org.apache.camel.component.mvel.*,
       org.apache.camel.language.mvel.*
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=mvel,
-      org.apache.camel.spi.LanguageResolver;language=mvel
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

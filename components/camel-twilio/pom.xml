@@ -40,7 +40,6 @@
 
     <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=twilio</camel.osgi.export.service>
   </properties>
 
   <dependencies>

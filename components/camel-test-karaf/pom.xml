@@ -180,6 +180,13 @@
                   <_removeheaders>Import-Package, Private-Package, Include-Resource, Karaf-Info, Require-Capability</_removeheaders>
               </instructions>
           </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-bundle-plugin</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
 
     </plugins>

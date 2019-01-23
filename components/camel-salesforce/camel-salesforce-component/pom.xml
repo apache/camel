@@ -38,7 +38,6 @@
       org.apache.camel.component.salesforce,
       org.apache.camel.component.salesforce.api.*
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=salesforce</camel.osgi.export.service>
     <camel.osgi.private.pkg>org.apache.camel.component.salesforce.internal.*</camel.osgi.private.pkg>
     <salesforce.component.root>..</salesforce.component.root>
   </properties>

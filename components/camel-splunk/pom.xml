@@ -36,7 +36,6 @@
       org.joda.time.*;version="[1.6,3)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.splunk.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=splunk</camel.osgi.export.service>
   </properties>
 
   <dependencies>

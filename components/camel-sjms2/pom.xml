@@ -37,9 +37,6 @@
       org.apache.camel.component.sjms2,
       org.apache.camel.component.sjms2.jms
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=sjms2
-    </camel.osgi.export.service>
     <camel.osgi.import.additional>javax.jms;version="[2,3)"</camel.osgi.import.additional>
   </properties>
 

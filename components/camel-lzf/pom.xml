@@ -39,7 +39,6 @@
     <camel.osgi.export>
     	org.apache.camel.dataformat.lzf;${camel.osgi.version},
     </camel.osgi.export>
-    <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=lzf</camel.osgi.export.service>
   </properties>
 
   <dependencies>

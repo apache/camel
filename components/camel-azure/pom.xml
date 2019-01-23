@@ -35,10 +35,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.azure.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=azure-blob,
-      org.apache.camel.spi.ComponentResolver;component=azure-queue
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

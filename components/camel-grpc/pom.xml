@@ -35,7 +35,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.grpc.*;${camel.osgi.version}</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=grpc</camel.osgi.export.service>
     <!-- gRPC requires strong own of the Google Guava version -->
     <google-guava-version>${grpc-guava-version}</google-guava-version>
   </properties>

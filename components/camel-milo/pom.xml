@@ -40,10 +40,6 @@
     <camel.osgi.import.before.defaults>
       com.google.common.*;version="19.0.0"
     </camel.osgi.import.before.defaults>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=milo-client,
-      org.apache.camel.spi.ComponentResolver;component=milo-server
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

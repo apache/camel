@@ -43,7 +43,6 @@
       org.apache.hadoop.conf;version="[1,2)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.gora.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=gora</camel.osgi.export.service>
   </properties>
 
   <dependencies>

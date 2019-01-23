@@ -37,10 +37,6 @@
       org.apache.camel.language.xquery.*,
       org.apache.camel.converter.saxon.*
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=xquery,
-      org.apache.camel.spi.LanguageResolver;language=xquery
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

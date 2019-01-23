@@ -33,7 +33,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.xchange.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=xchange</camel.osgi.export.service>
   </properties>
 
   <dependencies>

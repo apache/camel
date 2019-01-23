@@ -37,9 +37,6 @@
       org.apache.camel.component.kafka.*,
       org.apache.camel.processor.idempotent.kafka
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=kafka,
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

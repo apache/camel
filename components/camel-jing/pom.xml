@@ -33,10 +33,6 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.validator.jing.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>
-          org.apache.camel.spi.ComponentResolver;component=rnc,
-          org.apache.camel.spi.ComponentResolver;component=rng
-        </camel.osgi.export.service>
     </properties>
 
     <dependencies>

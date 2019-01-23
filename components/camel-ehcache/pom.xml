@@ -36,9 +36,6 @@
     <camel.osgi.export.pkg>
       org.apache.camel.component.ehcache.*,
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=ehcache
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

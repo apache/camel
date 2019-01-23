@@ -45,14 +45,6 @@
       org.apache.camel.component.atomix.client.messaging.*,
       org.apache.camel.component.atomix.cluster.*
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=atomix-map,
-      org.apache.camel.spi.ComponentResolver;component=atomix-multimap,
-      org.apache.camel.spi.ComponentResolver;component=atomix-set,
-      org.apache.camel.spi.ComponentResolver;component=atomix-queue,
-      org.apache.camel.spi.ComponentResolver;component=atomix-value,
-      org.apache.camel.spi.ComponentResolver;component=atomix-messaging
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

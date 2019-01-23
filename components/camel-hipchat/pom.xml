@@ -35,7 +35,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.hipchat.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=hipchat</camel.osgi.export.service>
   </properties>
 
   <dependencies>

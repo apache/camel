@@ -38,7 +38,6 @@
     <label>eip,microservice</label>
 
     <camel.osgi.export.pkg>org.apache.camel.component.hystrix.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=hystrix</camel.osgi.export.service>
   </properties>
 
   <dependencies>

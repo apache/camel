@@ -36,10 +36,6 @@
     <camel.osgi.export.pkg>
       org.apache.camel.component.iec60870.*
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=iec60870-client,
-      org.apache.camel.spi.ComponentResolver;component=iec60870-server
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

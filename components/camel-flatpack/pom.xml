@@ -36,10 +36,6 @@
       org.apache.camel.component.flatpack.*,
       org.apache.camel.dataformat.flatpack.*
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=flatpack,
-      org.apache.camel.spi.DataFormatResolver;dataformat=flatpack
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

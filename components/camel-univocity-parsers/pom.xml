@@ -33,11 +33,6 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.dataformat.univocity.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>
-            org.apache.camel.spi.DataFormatResolver;dataformat=univocity-csv,
-            org.apache.camel.spi.DataFormatResolver;dataformat=univocity-fixed,
-            org.apache.camel.spi.DataFormatResolver;dataformat=univocity-tsv
-        </camel.osgi.export.service>
     </properties>
 
     <dependencies>

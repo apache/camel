@@ -36,8 +36,6 @@
     <camel.osgi.export.pkg>
       org.apache.camel.component.telegram.*,org.apache.camel.component.telegram.model.*
     </camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=telegram
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>
