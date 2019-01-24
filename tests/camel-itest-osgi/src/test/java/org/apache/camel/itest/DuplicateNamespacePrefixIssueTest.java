@@ -22,6 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.test.karaf.AbstractFeatureTest;
@@ -57,7 +58,7 @@ public class DuplicateNamespacePrefixIssueTest extends AbstractFeatureTest {
         });
 
         // Dump the model XML
-        String originalModelXML = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("foo"));
+        String originalModelXML = ModelHelper.dumpModelAsXml(context, context.adapt(ModelCamelContext.class).getRouteDefinition("foo"));
 
         // Reload routes from dumped XML
         InputStream stream = new ByteArrayInputStream(originalModelXML.getBytes("UTF-8"));

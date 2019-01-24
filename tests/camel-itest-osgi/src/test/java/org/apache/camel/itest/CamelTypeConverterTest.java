@@ -20,8 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.net.URL;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.itest.typeconverter.MyConverter;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.apache.camel.test.karaf.CamelKarafTestSupport;
 import org.apache.camel.util.ObjectHelper;
