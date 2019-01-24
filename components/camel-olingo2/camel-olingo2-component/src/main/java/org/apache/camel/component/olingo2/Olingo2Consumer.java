@@ -27,6 +27,7 @@ import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiConsumer;
 import org.apache.camel.util.component.ApiConsumerHelper;
+import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 
 /**
  * The Olingo2 consumer.
@@ -82,7 +83,15 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
                 throw error[0];
             }
 
-            return ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
+            //
+            // Allow consumer idle properties to properly handle an empty polling response
+            //
+            if (result[0] instanceof ODataFeed && (((ODataFeed) result[0]).getEntries().isEmpty())) {
+                return 0;
+            } else {
+                int processed = ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
+                return processed;
+            }
 
         } catch (Throwable t) {
             throw ObjectHelper.wrapRuntimeCamelException(t);
