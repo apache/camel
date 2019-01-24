@@ -45,6 +45,7 @@ import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.processor.validation.helper.XMLConverterHelper;
 import org.apache.camel.util.IOHelper;
 import org.w3c.dom.Node;
 import org.w3c.dom.ls.LSResourceResolver;
