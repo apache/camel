@@ -338,6 +338,7 @@
 * xref:univocity-csv-dataformat.adoc[uniVocity CSV DataFormat]
 * xref:univocity-fixed-dataformat.adoc[uniVocity Fixed Length DataFormat]
 * xref:univocity-tsv-dataformat.adoc[uniVocity TSV DataFormat]
+* xref:validator-component.adoc[Validator Component]
 * xref:velocity-component.adoc[Velocity Component]
 * xref:vertx-component.adoc[Vert.x Component]
 * xref:vm-component.adoc[VM Component]

@@ -5,7 +5,7 @@
 
 
 // components: START
-Number of Components: 9 in 1 JAR artifacts (0 deprecated)
+Number of Components: 8 in 1 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -32,9 +32,6 @@ Number of Components: 9 in 1 JAR artifacts (0 deprecated)
 | link:src/main/docs/test-component.adoc[Test] (camel-core) +
 `test:name` | 1.3 | The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
 
-| link:src/main/docs/validator-component.adoc[Validator] (camel-core) +
-`validator:resourceUri` | 1.1 | Validates the payload of a message using XML Schema and JAXP Validation.
-
 | link:src/main/docs/xslt-component.adoc[XSLT] (camel-core) +
 `xslt:resourceUri` | 1.3 | Transforms the message using a XSLT template.
 
@@ -53,7 +50,7 @@ Number of Components: 9 in 1 JAR artifacts (0 deprecated)
 
 
 // dataformats: START
-Number of Data Formats: 4 in 35 JAR artifacts (0 deprecated)
+Number of Data Formats: 4 in 7 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
