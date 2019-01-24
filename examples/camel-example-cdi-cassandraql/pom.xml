@@ -61,6 +61,10 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cassandraql</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+    </dependency>
 
     <!-- DeltaSpike -->
     <dependency>
