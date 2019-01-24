@@ -195,19 +195,18 @@ result = body * 2 + 1
 
 ### Dependencies
 
-To use scripting languages in your camel routes you need to add the a
-dependency on *camel-script* which integrates the JSR-223 scripting
-engine.
+To use scripting languages in your camel routes you need to add a
+dependency on *camel-groovy*.
 
-If you use maven you could just add the following to your pom.xml,
-substituting the version number for the latest & greatest release (see
+If you use Maven you could just add the following to your `pom.xml`,
+substituting the version number for the latest and greatest release (see
 the download page for the latest versions).
 
 [source,xml]
 ---------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-script</artifactId>
+  <artifactId>camel-groovy</artifactId>
   <version>x.x.x</version>
 </dependency>
 ---------------------------------------
