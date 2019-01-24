@@ -78,7 +78,7 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
 
     <!-- DeltaSpike is only used to provide Main support thus optional -->
