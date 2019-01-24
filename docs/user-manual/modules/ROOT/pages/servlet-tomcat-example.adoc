@@ -1,0 +1,121 @@
+[[ServletTomcatExample-ServletTomcatExample]]
+=== Servlet Tomcat Example
+
+*Available as of Camel 2.7*
+
+This example is located in the
+link:https://github.com/apache/camel/blob/master/examples/camel-example-servlet-tomcat[examples/camel-example-servlet-tomcat]
+directory of the Camel distribution.
+There is a `README.txt` file with instructions how to run it.
+
+If you use Maven then you can easily package the example from the command line:
+
+----
+mvn package
+----
+
+[[ServletTomcatExample-About]]
+==== About
+
+This example demonstrates how you can use <<servlet-component,Servlet>> to expose
+a http service in a Camel route.
+
+[[ServletTomcatExample-Implementation]]
+==== Implementation
+
+In the `web.xml` file in the `src/main/webapp/WEB-INF` folder the `CamelServlet`
+is defined. This is mandatory to do when using the <<servlet-component,Servlet>>
+component.
+
+[source,xml]
+----
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+  <display-name>My Web Application</display-name>
+
+  <!-- location of spring xml files -->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:camel-config.xml</param-value>
+  </context-param>
+
+  <!-- the listener that kick-starts Spring -->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+
+  <!-- Camel servlet -->
+  <servlet>
+    <servlet-name>CamelServlet</servlet-name>
+    <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <!-- Camel servlet mapping -->
+  <servlet-mapping>
+    <servlet-name>CamelServlet</servlet-name>
+    <url-pattern>/camel/*</url-pattern>
+  </servlet-mapping>
+
+</web-app>
+----
+
+The route is a simple <<contentBasedRouter-eip,Content Based Router>> defined
+in the DSL XML as shown:
+
+[source,xml]
+----
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+    <route id="helloRoute">
+      <!-- incoming requests from the servlet is routed -->
+      <from uri="servlet:hello"/>
+      <choice>
+        <when>
+          <!-- is there a header with the key name? -->
+          <header>name</header>
+          <!-- yes so return back a message to the user -->
+          <transform>
+            <simple>Hi I am ${sysenv.HOSTNAME}. Hello ${header.name} how are you today?</simple>
+          </transform>
+        </when>
+        <otherwise>
+          <!-- if no name parameter then output a syntax to the user -->
+          <transform>
+            <constant>Add a name parameter to uri, eg ?name=foo</constant>
+          </transform>
+        </otherwise>
+      </choice>
+    </route>
+
+  </camelContext>
+
+</beans>
+----
+
+[[ServletTomcatExample-Runningtheexample]]
+==== Running the example
+
+This example runs in Apache Tomcat, so you will have to package the .war file and copy
+it to the webapp folder of Tomcat, which is the hot deploy folder.
+
+There is a main page at
+http://localhost:8080/camel-example-servlet-tomcat which has more instructions.
+You can then use a web browser and send a request to the
+http://localhost:8080/camel-example-servlet-tomcat/camel/hello URL.
+
+[[ServletTomcatExample-SeeAlso]]
+==== See Also
+
+* link:examples.adoc[Examples]
+*  <<servlet-component,Servlet>>
+*  <<http-component,HTTP>>
