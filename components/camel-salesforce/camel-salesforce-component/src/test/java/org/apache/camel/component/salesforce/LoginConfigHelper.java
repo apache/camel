@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
