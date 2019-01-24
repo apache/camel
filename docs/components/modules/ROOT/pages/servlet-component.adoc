@@ -222,8 +222,8 @@ side-effects.
 === Sample
 
 NOTE: From Camel 2.7 onwards it's easier to use <<servlet-component,Servlet>> in
-Spring web applications. See link:servlet-tomcat-example.html[Servlet
-Tomcat Example] for details.
+Spring web applications. See
+<<ServletTomcatExample-ServletTomcatExample,Servlet Tomcat Example>> for details.
 
 In this sample, we define a route that exposes a HTTP service at
 http://localhost:8080/camel/services/hello.
@@ -289,7 +289,7 @@ address: `("http://localhost:8080/camel/services") + RELATIVE_PATH("/hello")`
 
 ==== Sample when using Spring 3.x
 
-See link:servlet-tomcat-example.html[Servlet Tomcat Example].
+See <<ServletTomcatExample-ServletTomcatExample,,Servlet Tomcat Example>>.
 
 ==== Sample when using Spring 2.x
 
@@ -493,7 +493,7 @@ The automatic mapping of the Camel servlet can also be disabled.
 * Endpoint
 * Getting Started
 
-* Servlet Tomcat Example
+* <<ServletTomcatExample-ServletTomcatExample,Servlet Tomcat Example>>
 * link:servlet-tomcat-no-spring-example.html[Servlet Tomcat No Spring
 Example]
 * <<http-component,HTTP>>
