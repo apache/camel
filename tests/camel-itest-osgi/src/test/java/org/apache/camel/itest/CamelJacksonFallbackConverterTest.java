@@ -20,7 +20,7 @@ import java.net.URL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.jackson.JacksonConstants;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.apache.camel.test.karaf.CamelKarafTestSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -44,9 +44,9 @@ public class CamelJacksonFallbackConverterTest extends AbstractFeatureTest {
         CamelContext camel = getOsgiService(bundleContext, CamelContext.class);
 
         // enable Jackson json type converter
-        camel.getProperties().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+        camel.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
         // allow Jackson json to convert to pojo types also (by default jackson only converts to String and other simple types)
-        camel.getProperties().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
+        camel.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
 
         final Pojo pojo = new Pojo(1337, "Constantine");
 
