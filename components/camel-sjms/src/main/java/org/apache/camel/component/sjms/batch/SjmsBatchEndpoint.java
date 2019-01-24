@@ -35,7 +35,6 @@ import org.apache.camel.component.sjms.jms.DestinationNameParser;
 import org.apache.camel.component.sjms.jms.JmsBinding;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
-import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -247,7 +246,7 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
 
     public void setCompletionPredicate(String predicate) {
         // uses simple language
-        this.completionPredicate = SimpleLanguage.predicate(predicate);
+        this.completionPredicate = getCamelContext().resolveLanguage("simple").createPredicate(predicate);
     }
 
     public boolean isEagerCheckCompletion() {
