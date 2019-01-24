@@ -64,7 +64,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private String resourceUri;
     @UriParam(defaultValue = "true")
     private boolean contentCache = true;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced") @Deprecated
     private XmlConverter converter;
     @UriParam(label = "advanced")
     private String transformerFactoryClass;

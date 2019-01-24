@@ -17,8 +17,6 @@
 package org.apache.camel.component.xslt.springboot;
 
 import javax.annotation.Generated;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -40,9 +38,10 @@ public class XsltComponentConfiguration
     private Boolean enabled;
     /**
      * To use a custom implementation of
-     * org.apache.camel.converter.jaxp.XmlConverter
+     * org.apache.camel.converter.jaxp.XmlConverter. The option is a
+     * org.apache.camel.component.xslt.XmlConverter type.
      */
-    private XmlConverterNestedConfiguration xmlConverter;
+    private String xmlConverter;
     /**
      * To use a custom UriResolver which depends on a dynamic endpoint resource
      * URI. Should not be used together with the option 'uriResolver'. The
@@ -93,11 +92,11 @@ public class XsltComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public XmlConverterNestedConfiguration getXmlConverter() {
+    public String getXmlConverter() {
         return xmlConverter;
     }
 
-    public void setXmlConverter(XmlConverterNestedConfiguration xmlConverter) {
+    public void setXmlConverter(String xmlConverter) {
         this.xmlConverter = xmlConverter;
     }
 
@@ -165,28 +164,5 @@ public class XsltComponentConfiguration
     public void setResolvePropertyPlaceholders(
             Boolean resolvePropertyPlaceholders) {
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
-    }
-
-    public static class XmlConverterNestedConfiguration {
-        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.xslt.XmlConverter.class;
-        private DocumentBuilderFactory documentBuilderFactory;
-        private TransformerFactory transformerFactory;
-
-        public DocumentBuilderFactory getDocumentBuilderFactory() {
-            return documentBuilderFactory;
-        }
-
-        public void setDocumentBuilderFactory(
-                DocumentBuilderFactory documentBuilderFactory) {
-            this.documentBuilderFactory = documentBuilderFactory;
-        }
-
-        public TransformerFactory getTransformerFactory() {
-            return transformerFactory;
-        }
-
-        public void setTransformerFactory(TransformerFactory transformerFactory) {
-            this.transformerFactory = transformerFactory;
-        }
     }
 }

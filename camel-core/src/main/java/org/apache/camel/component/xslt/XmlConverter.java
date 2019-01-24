@@ -16,28 +16,9 @@
  */
 package org.apache.camel.component.xslt;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.TransformerFactory;
-
+@Deprecated
 public class XmlConverter extends org.apache.camel.converter.jaxp.XmlConverter {
 
-    @Override
-    public DocumentBuilderFactory getDocumentBuilderFactory() {
-        return super.getDocumentBuilderFactory();
-    }
+    // noop
 
-    @Override
-    public void setDocumentBuilderFactory(DocumentBuilderFactory documentBuilderFactory) {
-        super.setDocumentBuilderFactory(documentBuilderFactory);
-    }
-
-    @Override
-    public TransformerFactory getTransformerFactory() {
-        return super.getTransformerFactory();
-    }
-
-    @Override
-    public void setTransformerFactory(TransformerFactory transformerFactory) {
-        super.setTransformerFactory(transformerFactory);
-    }
 }
