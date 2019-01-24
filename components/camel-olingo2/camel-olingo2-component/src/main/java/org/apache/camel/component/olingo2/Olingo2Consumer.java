@@ -19,13 +19,13 @@ package org.apache.camel.component.olingo2;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.support.component.AbstractApiConsumer;
 import org.apache.camel.support.component.ApiConsumerHelper;
+import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 
 /**
  * The Olingo2 consumer.
@@ -81,7 +81,15 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
                 throw error[0];
             }
 
-            return ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
+            //
+            // Allow consumer idle properties to properly handle an empty polling response
+            //
+            if (result[0] instanceof ODataFeed && (((ODataFeed) result[0]).getEntries().isEmpty())) {
+                return 0;
+            } else {
+                int processed = ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
+                return processed;
+            }
 
         } catch (Throwable t) {
             throw RuntimeCamelException.wrapRuntimeCamelException(t);
