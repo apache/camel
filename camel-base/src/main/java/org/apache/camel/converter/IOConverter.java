@@ -207,24 +207,12 @@ public final class IOConverter {
 
     @Converter
     public static String toString(Reader reader) throws IOException {
-        return toString(IOHelper.buffered(reader));
+        return IOHelper.toString(reader);
     }
 
     @Converter
     public static String toString(BufferedReader reader) throws IOException {
-        StringBuilder sb = new StringBuilder(1024);
-        char[] buf = new char[1024];
-        try {
-            int len;
-            // read until we reach then end which is the -1 marker
-            while ((len = reader.read(buf)) != -1) {
-                sb.append(buf, 0, len);
-            }
-        } finally {
-            IOHelper.close(reader, "reader", LOG);
-        }
-
-        return sb.toString();
+        return IOHelper.toString(reader);
     }
 
     @Converter

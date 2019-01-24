@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -38,8 +39,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * JavaMail specific converters.
@@ -117,7 +118,7 @@ public final class MailConverters {
         if (s == null) {
             return null;
         }
-        return IOConverter.toInputStream(s, exchange);
+        return new ByteArrayInputStream(s.getBytes(ExchangeHelper.getCharsetName(exchange)));
     }
 
     /**

@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.lucene;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
+import org.apache.camel.util.IOHelper;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -127,9 +130,15 @@ public class LuceneIndexer {
             } else {
                 LOG.trace("Adding {}", file);
 
+                String contents;
+                try (InputStream is = new FileInputStream(file)) {
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    IOHelper.copy(IOHelper.buffered(is), bos);
+                    contents = new String(bos.toByteArray());
+                }
                 openIndexWriter();
                 add("path", file.getPath(), false);
-                add("contents", new String(IOConverter.toByteArray(file)), true);
+                add("contents", contents, true);
                 closeIndexWriter();
 
                 LOG.trace("Added {} successfully", file);

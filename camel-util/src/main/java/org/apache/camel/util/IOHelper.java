@@ -139,6 +139,26 @@ public final class IOHelper {
         return (writer instanceof BufferedWriter) ? (BufferedWriter)writer : new BufferedWriter(writer);
     }
 
+    public static String toString(Reader reader) throws IOException {
+        return toString(buffered(reader));
+    }
+
+    public static String toString(BufferedReader reader) throws IOException {
+        StringBuilder sb = new StringBuilder(1024);
+        char[] buf = new char[1024];
+        try {
+            int len;
+            // read until we reach then end which is the -1 marker
+            while ((len = reader.read(buf)) != -1) {
+                sb.append(buf, 0, len);
+            }
+        } finally {
+            IOHelper.close(reader, "reader", LOG);
+        }
+
+        return sb.toString();
+    }
+
     public static int copy(InputStream input, OutputStream output) throws IOException {
         return copy(input, output, DEFAULT_BUFFER_SIZE);
     }
