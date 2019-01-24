@@ -19,17 +19,15 @@ package org.apache.camel.component.stax;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
-public class StAXComponent extends UriEndpointComponent {
-
-    public StAXComponent() {
-        super(StAXEndpoint.class);
-    }
+@Component("stax")
+public class StAXComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        StAXEndpoint answer = new StAXEndpoint(uri, getCamelContext());
+        StAXEndpoint answer = new StAXEndpoint(uri, this);
         answer.setContentHandlerClass(remaining);
         setProperties(answer, parameters);
         return answer;

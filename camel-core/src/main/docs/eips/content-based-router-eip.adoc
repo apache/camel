@@ -1,0 +1,79 @@
+[[contentBasedRouter-eip]]
+== Content Based Router
+
+The
+http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
+Based Router] from the link:enterprise-integration-patterns.html[EIP
+patterns] allows you to route messages to the correct destination based
+on the contents of the message exchanges.
+
+image:http://www.enterpriseintegrationpatterns.com/img/ContentBasedRouter.gif[image]
+
+The following example shows how to route a request from an input
+*seda:a* endpoint to either *seda:b*, *seda:c* or *seda:d* depending on
+the evaluation of various link:predicate.html[Predicate] expressions
+
+=== Using the <<FluentBuilders-FluentBuilders,Fluent Builders>>
+
+[source,java]
+----
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        errorHandler(deadLetterChannel("mock:error"));
+ 
+        from("direct:a")
+            .choice()
+                .when(header("foo").isEqualTo("bar"))
+                    .to("direct:b")
+                .when(header("foo").isEqualTo("cheese"))
+                    .to("direct:c")
+                .otherwise()
+                    .to("direct:d");
+    }
+};
+----
+
+[TIP]
+====
+See
+link:why-can-i-not-use-when-or-otherwise-in-a-java-camel-route.html[Why
+can I not use when or otherwise in a Java Camel route] if you have
+problems with the Java DSL, accepting using `when` or `otherwise`.
+====
+
+=== Using the <<SpringXMLExtensions-SpringXMLExtensions,Spring XML Extensions>>
+
+[source,java]
+----
+<camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <choice>
+            <when>
+                <xpath>$foo = 'bar'</xpath>
+                <to uri="direct:b"/>
+            </when>
+            <when>
+                <xpath>$foo = 'cheese'</xpath>
+                <to uri="direct:c"/>
+            </when>
+            <otherwise>
+                <to uri="direct:d"/>
+            </otherwise>
+        </choice>
+    </route>
+</camelContext>
+----
+
+For further examples of this pattern in use you could look at the
+https://github.com/apache/camel/blob/master/camel-core/src/test/java/org/apache/camel/processor/ChoiceTest.java[junit test case].
+
+[[ContentBasedRouter-UsingThisPattern]]
+=== Using This Pattern
+
+If you would like to use this EIP Pattern then please read the
+<<GettingStarted-GettingStarted,Getting Started>>. You may also find the
+<<Architecture-Architecture,Architecture>> useful particularly the description
+of <<Endpoint-Endpoints,Endpoint>> and link:uris.html[URIs]. Then you could
+try out some of the <<Examples-Examples,Examples>> first before trying
+this pattern out.

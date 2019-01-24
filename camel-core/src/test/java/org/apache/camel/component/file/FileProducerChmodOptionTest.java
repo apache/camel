@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -29,12 +28,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FileProducerChmodOptionTest extends ContextTestSupport {
     public static final String TEST_DIRECTORY = "target/fileProducerChmodOptionTest/";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(TEST_DIRECTORY);
         super.setUp();
     }
@@ -44,6 +46,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         return !isPlatform("windows");
     }
 
+    @Test
     public void testWriteValidChmod0755() throws Exception {
         if (!canTest()) {
             return;
@@ -52,6 +55,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         runChmodCheck("0755", "rwxr-xr-x");
     }
 
+    @Test
     public void testWriteValidChmod666() throws Exception {
         if (!canTest()) {
             return;
@@ -78,6 +82,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInvalidChmod() throws Exception {
         if (!canTest()) {
             return;
@@ -104,6 +109,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
      * Write a file without chmod set, should work normally and not throw an exception for invalid chmod value
      * @throws Exception
      */
+    @Test
     public void testWriteNoChmod() throws Exception {
         if (!canTest()) {
             return;

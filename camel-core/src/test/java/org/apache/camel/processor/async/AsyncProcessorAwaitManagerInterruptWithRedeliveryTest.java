@@ -15,18 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.async;
-
 import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+
 import javax.naming.Context;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.spy;
@@ -37,12 +39,14 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
     private MyBean bean;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         latch = new CountDownLatch(2);
         bean = spy(new MyBean(latch));
         super.setUp();
     }
 
+    @Test
     public void testAsyncAwaitInterrupt() throws Exception {
         context.getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
 

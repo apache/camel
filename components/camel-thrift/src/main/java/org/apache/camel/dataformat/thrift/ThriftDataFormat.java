@@ -25,7 +25,8 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.IOUtils;
@@ -36,6 +37,7 @@ import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TJSONProtocol;
 import org.apache.thrift.protocol.TSimpleJSONProtocol;
 
+@Dataformat("thrift")
 public class ThriftDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
     public static final String CONTENT_TYPE_FORMAT_BINARY = "binary";

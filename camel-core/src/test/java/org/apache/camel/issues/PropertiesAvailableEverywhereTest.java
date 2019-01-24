@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesResolver;
+import org.junit.Test;
 
 public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
 
@@ -46,6 +47,7 @@ public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
         return camelContext;
     }
 
+    @Test
     public void testPropertiesInPredicates() throws Exception {
         getMockEndpoint("mock:header-ok").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:choice-ok").expectedBodiesReceived("Hello Camel");

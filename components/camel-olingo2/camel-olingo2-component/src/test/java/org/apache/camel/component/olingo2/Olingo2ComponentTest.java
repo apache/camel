@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.olingo2;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,7 +94,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         final Map<String, Object> headers = new HashMap<>();
 
         // read ServiceDocument
-        final ServiceDocument document = requestBodyAndHeaders("direct://READSERVICEDOC", null, headers);
+        final ServiceDocument document = requestBodyAndHeaders("direct:READSERVICEDOC", null, headers);
         assertNotNull(document);
         assertFalse("ServiceDocument entity sets", document.getEntitySetsInfo().isEmpty());
         LOG.info("Service document has {} entity sets", document.getEntitySetsInfo().size());
@@ -106,7 +105,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         headers.put("CamelOlingo2.queryParams", queryParams);
 
         // read ODataFeed
-        final ODataFeed manufacturers = requestBodyAndHeaders("direct://READFEED", null, headers);
+        final ODataFeed manufacturers = requestBodyAndHeaders("direct:READFEED", null, headers);
         assertNotNull(manufacturers);
         final List<ODataEntry> manufacturersEntries = manufacturers.getEntries();
         assertFalse("Manufacturers empty entries", manufacturersEntries.isEmpty());
@@ -115,11 +114,11 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         // read ODataEntry
         headers.clear();
         headers.put(Olingo2Constants.PROPERTY_PREFIX + "keyPredicate", "'1'");
-        final ODataEntry manufacturer = requestBodyAndHeaders("direct://READENTRY", null, headers);
+        final ODataEntry manufacturer = requestBodyAndHeaders("direct:READENTRY", null, headers);
         assertNotNull(manufacturer);
         final Map<String, Object> properties = manufacturer.getProperties();
         assertEquals("Manufacturer Id", "1", properties.get(ID_PROPERTY));
-        LOG.info("Manufacturer: {}", properties.toString());
+        LOG.info("Manufacturer: {}", properties);
     }
 
     @Test
@@ -127,7 +126,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         final Map<String, Object> data = getEntityData();
         Map<String, Object> address;
 
-        final ODataEntry manufacturer = requestBody("direct://CREATE", data);
+        final ODataEntry manufacturer = requestBody("direct:CREATE", data);
         assertNotNull("Created Manufacturer", manufacturer);
         final Map<String, Object> properties = manufacturer.getProperties();
         assertEquals("Created Manufacturer Id", "123", properties.get(ID_PROPERTY));
@@ -138,13 +137,13 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         address = (Map<String, Object>)data.get("Address");
         address.put("Street", "Main Street");
 
-        HttpStatusCodes status = requestBody("direct://UPDATE", data);
+        HttpStatusCodes status = requestBody("direct:UPDATE", data);
         assertNotNull("Update status", status);
         assertEquals("Update status", HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode());
         LOG.info("Update status: {}", status);
 
         // delete
-        status = requestBody("direct://DELETE", null);
+        status = requestBody("direct:DELETE", null);
         assertNotNull("Delete status", status);
         assertEquals("Delete status", HttpStatusCodes.NO_CONTENT.getStatusCode(), status.getStatusCode());
         LOG.info("Delete status: {}", status);
@@ -206,7 +205,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         batchParts.add(Olingo2BatchQueryRequest.resourcePath(TEST_CREATE_MANUFACTURER).build());
 
         // execute batch request
-        final List<Olingo2BatchResponse> responseParts = requestBody("direct://BATCH", batchParts);
+        final List<Olingo2BatchResponse> responseParts = requestBody("direct:BATCH", batchParts);
         assertNotNull("Batch response", responseParts);
         assertEquals("Batch responses expected", 9, responseParts.size());
 
@@ -253,39 +252,39 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test routes for read
-                from("direct://READSERVICEDOC")
+                from("direct:READSERVICEDOC")
                     .to("olingo2://read/");
 
-                from("direct://READFEED")
+                from("direct:READFEED")
                     .to("olingo2://read/Manufacturers?$orderBy=Name%20asc");
 
-                from("direct://READENTRY")
+                from("direct:READENTRY")
                     .to("olingo2://read/DefaultContainer.Manufacturers");
 
                 // test route for create
-                from("direct://CREATE")
+                from("direct:CREATE")
                     .to("olingo2://create/Manufacturers");
 
                 // test route for update
-                from("direct://UPDATE")
+                from("direct:UPDATE")
                     .to("olingo2://update/Manufacturers('123')");
 
                 // test route for delete
-                from("direct://DELETE")
+                from("direct:DELETE")
                     .to("olingo2://delete/Manufacturers('123')");
 
 /*
                 // test route for merge
-                from("direct://MERGE")
+                from("direct:MERGE")
                     .to("olingo2://merge");
 
                 // test route for patch
-                from("direct://PATCH")
+                from("direct:PATCH")
                     .to("olingo2://patch");
 */
 
                 // test route for batch
-                from("direct://BATCH")
+                from("direct:BATCH")
                     .to("olingo2://batch");
 
             }

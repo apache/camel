@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.command.ActiveMQQueue;
@@ -94,7 +95,7 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         // END SNIPPET: example
 
-        // prevent java.io.NotSerializableException: org.apache.camel.impl.DefaultMessageHistory
+        // prevent java.io.NotSerializableException: org.apache.camel.support.DefaultMessageHistory
         camelContext.setMessageHistory(false);
 
         return camelContext;

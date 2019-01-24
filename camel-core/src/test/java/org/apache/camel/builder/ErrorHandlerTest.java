@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
-
 import java.util.List;
 
 import org.apache.camel.Channel;
@@ -26,34 +25,32 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ErrorHandlerTest extends TestSupport {
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // make SEDA testing faster
         System.setProperty("CamelSedaPollTimeout", "10");
-        super.setUp();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         System.clearProperty("CamelSedaPollTimeout");
-        super.tearDown();
     }
 
+    @Test
     public void testOverloadingTheDefaultErrorHandler() throws Exception {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 // use logging error handler
-                errorHandler(loggingErrorHandler("com.mycompany.foo"));
+                errorHandler(deadLetterChannel("log:com.mycompany.foo"));
 
                 // here is our regular route
                 from("seda:a").to("seda:b");
@@ -70,13 +67,14 @@ public class ErrorHandlerTest extends TestSupport {
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
-            assertIsInstanceOf(LoggingErrorHandler.class, channel.getErrorHandler());
+            assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
 
             Processor processor = unwrap(channel.getNextProcessor());
             assertIsInstanceOf(SendProcessor.class, processor);
         }
     }
 
+    @Test
     public void testOverloadingTheHandlerOnASingleRoute() throws Exception {
 
         // START SNIPPET: e2
@@ -85,7 +83,7 @@ public class ErrorHandlerTest extends TestSupport {
                 // this route is using a nested logging error handler
                 from("seda:a")
                     // here we configure the logging error handler
-                    .errorHandler(loggingErrorHandler("com.mycompany.foo"))
+                    .errorHandler(deadLetterChannel("log:com.mycompany.foo"))
                     // and we continue with the routing here
                     .to("seda:b");
 
@@ -99,6 +97,7 @@ public class ErrorHandlerTest extends TestSupport {
         assertEquals("Number routes created" + list, 2, list.size());
     }
 
+    @Test
     public void testConfigureDeadLetterChannel() throws Exception {
         // START SNIPPET: e3
         RouteBuilder builder = new RouteBuilder() {
@@ -126,6 +125,7 @@ public class ErrorHandlerTest extends TestSupport {
     }
 
 
+    @Test
     public void testConfigureDeadLetterChannelWithCustomRedeliveryPolicy() throws Exception {
         // START SNIPPET: e4
         RouteBuilder builder = new RouteBuilder() {
@@ -158,12 +158,13 @@ public class ErrorHandlerTest extends TestSupport {
         }
     }
 
+    @Test
     public void testLoggingErrorHandler() throws Exception {
 
         // START SNIPPET: e5
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).filter(body().isInstanceOf(String.class)).to("seda:b");
+                from("seda:a").errorHandler(deadLetterChannel("log:FOO.BAR")).filter(body().isInstanceOf(String.class)).to("seda:b");
             }
         };
         // END SNIPPET: e5
@@ -176,7 +177,7 @@ public class ErrorHandlerTest extends TestSupport {
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
-            assertIsInstanceOf(LoggingErrorHandler.class, channel.getErrorHandler());
+            assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
         }
     }

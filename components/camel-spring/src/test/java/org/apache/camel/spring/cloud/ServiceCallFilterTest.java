@@ -19,7 +19,7 @@ package org.apache.camel.spring.cloud;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.cloud.ServiceCallConstants;
+import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Assert;
 import org.junit.Test;

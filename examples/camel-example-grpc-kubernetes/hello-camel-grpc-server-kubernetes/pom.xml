@@ -24,11 +24,11 @@
   <parent>
     <groupId>org.apache.camel.example</groupId>
     <artifactId>camel-example-grpc-kubernetes</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-example-hello-grpc-server-kubernetes</artifactId>
-  <name>Camel :: Example :: gRPC :: Hello Camel Server Kubernetes</name>
+  <name>Camel :: Example :: gRPC :: Kubernetes :: Server</name>
   <description>An example showing a simple gRPC server running on Kubernetes</description>
 
   <properties>

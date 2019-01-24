@@ -23,19 +23,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.ignite.IgniteEvents;
 import org.apache.ignite.events.Event;
 import org.apache.ignite.lang.IgnitePredicate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Ignite Events consumer.
  */
 public class IgniteEventsConsumer extends DefaultConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(IgniteEventsConsumer.class);
 
     private IgniteEventsEndpoint endpoint;
     private IgniteEvents events;
@@ -50,8 +46,8 @@ public class IgniteEventsConsumer extends DefaultConsumer {
             Message in = exchange.getIn();
             in.setBody(event);
             try {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Processing Ignite Event: {}.", event);
+                if (log.isTraceEnabled()) {
+                    log.trace("Processing Ignite Event: {}.", event);
                 }
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     @Override
@@ -60,7 +56,7 @@ public class IgniteEventsConsumer extends DefaultConsumer {
                     }
                 });
             } catch (Exception e) {
-                LOG.error(String.format("Exception while processing Ignite Event: %s.", event), e);
+                log.error(String.format("Exception while processing Ignite Event: %s.", event), e);
             }
             return true;
         }
@@ -86,7 +82,7 @@ public class IgniteEventsConsumer extends DefaultConsumer {
 
         events.localListen(predicate, eventTypes);
         
-        LOG.info("Started local Ignite Events consumer for events: {}.", Arrays.asList(eventTypes));
+        log.info("Started local Ignite Events consumer for events: {}.", Arrays.asList(eventTypes));
     }
 
     @Override
@@ -95,7 +91,7 @@ public class IgniteEventsConsumer extends DefaultConsumer {
 
         events.stopLocalListen(predicate, eventTypes);
         
-        LOG.info("Stopped local Ignite Events consumer for events: {}.", Arrays.asList(eventTypes));
+        log.info("Stopped local Ignite Events consumer for events: {}.", Arrays.asList(eventTypes));
     }
 
 }

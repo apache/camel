@@ -36,10 +36,10 @@
             <to uri="direct:bar"/>
             <delay>
                 <constant>300</constant>
-                <to uri="log:baz"/>
-                <throwException ref="forced"/>
-                <to uri="mock:result"/>
             </delay>
+            <to uri="log:baz"/>
+            <throwException ref="forced"/>
+            <to uri="mock:result"/>
         </route>
 
         <route>
@@ -47,8 +47,8 @@
             <to uri="log:bar"/>
             <delay>
                 <constant>100</constant>
-                <to uri="mock:bar"/>
             </delay>
+            <to uri="mock:bar"/>
         </route>
     </camelContext>
 

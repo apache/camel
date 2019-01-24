@@ -20,9 +20,12 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@Ignore
 public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
 
     @Override
@@ -30,6 +33,7 @@ public class SpringManagedThreadsThreadPoolTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringManagedThreadsThreadPoolTest.xml");
     }
 
+    @Test
     public void testManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
 

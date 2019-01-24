@@ -21,20 +21,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.validator.ProcessorValidator;
 import org.apache.camel.model.ExpressionNodeHelper;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Validator;
 
 /**
  * Represents a predicate {@link Validator} which leverages expression or predicates to
- * perform content validation. A {@link ProcessorValidator} will be created internally
- * with a {@link PredicateValidatingProcessor} which validates the message according to specified expression/predicates.
+ * perform content validation. A {@link org.apache.camel.impl.validator.ProcessorValidator}
+ * will be created internally with a {@link org.apache.camel.processor.validation.PredicateValidatingProcessor}
+ * which validates the message according to specified expression/predicates.
  * 
  * {@see ValidatorDefinition}
  * {@see Validator}
@@ -46,15 +44,6 @@ public class PredicateValidatorDefinition extends ValidatorDefinition {
 
     @XmlElementRef
     private ExpressionDefinition expression;
-
-    @Override
-    protected Validator doCreateValidator(CamelContext context) throws Exception {
-        Predicate pred = getExpression().createPredicate(context);
-        PredicateValidatingProcessor processor = new PredicateValidatingProcessor(pred);
-        return new ProcessorValidator(context)
-            .setProcessor(processor)
-            .setType(getType());
-    }
 
     public ExpressionDefinition getExpression() {
         return expression;

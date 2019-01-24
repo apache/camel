@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.example.camel.transport;
-
 import java.net.MalformedURLException;
 
 import org.apache.camel.test.AvailablePortFinder;

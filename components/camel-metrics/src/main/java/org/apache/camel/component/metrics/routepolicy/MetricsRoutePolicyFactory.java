@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.NamedNode;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 
@@ -105,7 +105,7 @@ public class MetricsRoutePolicyFactory implements RoutePolicyFactory {
     }
 
     @Override
-    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition routeDefinition) {
+    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode routeDefinition) {
         MetricsRoutePolicy answer = new MetricsRoutePolicy();
         answer.setMetricsRegistry(getMetricsRegistry());
         answer.setUseJmx(isUseJmx());

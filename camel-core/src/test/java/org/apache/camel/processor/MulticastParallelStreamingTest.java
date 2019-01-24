@@ -16,18 +16,17 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MulticastParallelStreamingTest extends ContextTestSupport {
 
+    @Test
     public void testMulticastParallelStreaming() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("BA");
@@ -37,6 +36,7 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastParallel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(10);
@@ -76,7 +76,7 @@ public class MulticastParallelStreamingTest extends ContextTestSupport {
                     .end()
                     .to("mock:result");
 
-                from("direct:a").delay(250).setBody(constant("A"));
+                from("direct:a").delay(250).asyncDelayed().setBody(constant("A"));
 
                 from("direct:b").setBody(constant("B"));
             }

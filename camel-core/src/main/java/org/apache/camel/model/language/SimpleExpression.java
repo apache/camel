@@ -25,14 +25,12 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * To use Camels built-in Simple language in Camel expressions or predicates.
- *
- * @version 
  */
 @Metadata(firstVersion = "1.1.0", label = "language,core,java", title = "Simple")
 @XmlRootElement(name = "simple")
@@ -86,7 +84,7 @@ public class SimpleExpression extends ExpressionDefinition {
             try {
                 resultType = camelContext.getClassResolver().resolveMandatoryClass(resultTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

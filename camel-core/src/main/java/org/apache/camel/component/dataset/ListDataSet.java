@@ -22,8 +22,6 @@ import java.util.List;
 /**
  * A DataSet that allows a list of static payloads to be used to create each message exchange
  * along with using a pluggable transformer to customize the messages.
- *
- * @version
  */
 public class ListDataSet extends DataSetSupport {
     private List<Object> defaultBodies;

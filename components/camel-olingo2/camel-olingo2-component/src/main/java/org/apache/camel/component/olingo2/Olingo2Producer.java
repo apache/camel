@@ -26,9 +26,8 @@ import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.component.olingo2.internal.Olingo2Constants;
 import org.apache.camel.component.olingo2.internal.Olingo2PropertiesHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.component.AbstractApiProducer;
-import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.support.component.AbstractApiProducer;
+import org.apache.camel.support.component.ApiMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,7 +100,7 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
         try {
             doInvokeMethod(method, properties);
         } catch (Throwable t) {
-            exchange.setException(ObjectHelper.wrapRuntimeCamelException(t));
+            exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
             callback.done(true);
             return true;
         }

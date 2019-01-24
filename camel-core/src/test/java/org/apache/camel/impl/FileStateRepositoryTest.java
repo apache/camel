@@ -23,7 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.camel.impl.FileStateRepository.fileStateRepository;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class FileStateRepositoryTest {
     private final File repositoryStore = new File("target/file-state-repository.dat");

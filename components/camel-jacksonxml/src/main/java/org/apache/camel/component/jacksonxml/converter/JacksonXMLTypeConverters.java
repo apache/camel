@@ -21,12 +21,14 @@ import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.component.jacksonxml.JacksonXMLConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
 
+@Converter
 public final class JacksonXMLTypeConverters {
 
     private final XmlMapper defaultMapper = new XmlMapper();
@@ -42,7 +44,7 @@ public final class JacksonXMLTypeConverters {
         // only do this if enabled
         if (!init && exchange != null) {
             // init to see if this is enabled
-            String text = exchange.getContext().getProperties().get(JacksonXMLConstants.ENABLE_XML_TYPE_CONVERTER);
+            String text = exchange.getContext().getGlobalOptions().get(JacksonXMLConstants.ENABLE_XML_TYPE_CONVERTER);
             enabled = "true".equalsIgnoreCase(text);
             init = true;
         }

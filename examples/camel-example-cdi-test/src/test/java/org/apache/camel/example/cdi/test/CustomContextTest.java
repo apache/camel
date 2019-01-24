@@ -23,7 +23,7 @@ import javax.enterprise.inject.Default;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.DefaultManagementStrategy;
+import org.apache.camel.impl.DefaultManagementStrategy;
 import org.apache.camel.test.cdi.CamelCdiRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;

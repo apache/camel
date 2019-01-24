@@ -23,9 +23,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class QuartzOneCamelContextSuspendResumeTest {
 
     private DefaultCamelContext camel1;

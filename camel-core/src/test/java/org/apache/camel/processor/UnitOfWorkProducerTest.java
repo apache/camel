@@ -17,52 +17,45 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.After;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class UnitOfWorkProducerTest extends ContextTestSupport {
 
-    private static List<EventObject> events = new ArrayList<>();
+    private static List<CamelEvent> events = new ArrayList<>();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 events.add(event);
             }
 
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 return event instanceof ExchangeCompletedEvent;
-            }
-
-            @Override
-            protected void doStart() throws Exception {
-            }
-
-            @Override
-            protected void doStop() throws Exception {
             }
         });
         return context;
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         events.clear();
         super.tearDown();
     }
 
+    @Test
     public void testSedaBasedUnitOfWorkProducer() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -78,6 +71,7 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
         assertEquals(2, events.size());
     }
 
+    @Test
     public void testDirectBasedUnitOfWorkProducer() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

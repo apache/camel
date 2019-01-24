@@ -18,14 +18,13 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringCustomExpressionTest extends SpringTestSupport {
 
+    @Test
     public void testTransformMyExpression() throws InterruptedException {
         getMockEndpoint("mock:result").expectedBodiesReceived("Yes Camel rocks", "Hello World");
 
@@ -40,8 +39,7 @@ public class SpringCustomExpressionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringCustomExpressionTest.xml");
     }
 
-    @SuppressWarnings("deprecation")
-    public static class MyExpression extends org.apache.camel.impl.ExpressionAdapter {
+    public static class MyExpression extends org.apache.camel.support.ExpressionAdapter {
 
         @Override
         public Object evaluate(Exchange exchange) {

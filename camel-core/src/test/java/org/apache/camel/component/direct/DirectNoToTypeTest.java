@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Simple unit test based on user forum question.
  */
 public class DirectNoToTypeTest extends ContextTestSupport {
 
+    @Test
     public void testNoToType() throws Exception {
         Object response = template.requestBody("direct:in", "Hello");
         assertEquals("Hello World", response);

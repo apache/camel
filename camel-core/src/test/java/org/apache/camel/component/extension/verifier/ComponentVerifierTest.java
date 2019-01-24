@@ -15,13 +15,16 @@
  * limitations under the License.
  */
 package org.apache.camel.component.extension.verifier;
-import junit.framework.TestCase;
-import org.apache.camel.ComponentVerifier;
+
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
 import org.junit.Assert;
+import org.junit.Test;
 
-public class ComponentVerifierTest extends TestCase {
 
+public class ComponentVerifierTest extends Assert {
+
+    @Test
     public void testGetErrorDetails() {
         VerificationError error = ResultErrorBuilder.withCodeAndDescription(VerificationError.asCode("test_code"), "test error desc")
             .detail(VerificationError.asAttribute("test_attr_1"), "test_detail_1")
@@ -36,6 +39,7 @@ public class ComponentVerifierTest extends TestCase {
         Assert.assertNull(error.getDetail(VerificationError.asAttribute("test_attr_non_existant")));
     }
 
+    @Test
     public void testNullCode() {
         try {
             VerificationError.asCode(null);
@@ -45,6 +49,7 @@ public class ComponentVerifierTest extends TestCase {
         }
     }
 
+    @Test
     public void testNullAttribute() {
         try {
             VerificationError.asAttribute(null);
@@ -54,11 +59,12 @@ public class ComponentVerifierTest extends TestCase {
         }
     }
 
+    @Test
     public void testScopeFromString() {
-        Assert.assertEquals(ComponentVerifier.Scope.PARAMETERS, ComponentVerifier.Scope.fromString("PaRaMeTeRS"));
+        Assert.assertEquals(ComponentVerifierExtension.Scope.PARAMETERS, ComponentVerifierExtension.Scope.fromString("PaRaMeTeRS"));
 
         try {
-            ComponentVerifier.Scope.fromString("unknown");
+            ComponentVerifierExtension.Scope.fromString("unknown");
             fail();
         } catch (IllegalArgumentException exp) {
         }

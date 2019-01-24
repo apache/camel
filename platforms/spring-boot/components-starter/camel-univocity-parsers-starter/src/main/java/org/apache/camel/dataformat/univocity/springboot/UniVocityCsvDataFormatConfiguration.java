@@ -33,6 +33,11 @@ public class UniVocityCsvDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the univocity-csv data format.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether or not all values must be quoted when writing them.
      */
     private Boolean quoteAllFields = false;
@@ -96,7 +101,7 @@ public class UniVocityCsvDataFormatConfiguration
      */
     private String normalizedLineSeparator;
     /**
-     * The comment symbol. The default value is
+     * The comment symbol. The default value is #
      */
     private String comment = "#";
     /**

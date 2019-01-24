@@ -23,15 +23,18 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -55,7 +58,8 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class WebsocketComponent extends UriEndpointComponent implements SSLContextParametersAware {
+@Component("websocket")
+public class WebsocketComponent extends DefaultComponent implements SSLContextParametersAware {
 
     protected static final Logger LOG = LoggerFactory.getLogger(WebsocketComponent.class);
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<>();
@@ -123,7 +127,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
     }
 
     public WebsocketComponent() {
-        super(WebsocketEndpoint.class);
+        super();
 
         if (this.socketFactory == null) {
             this.socketFactory = new HashMap<>();
@@ -774,10 +778,10 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
 
         if (staticResources != null) {
             // host and port must be configured
-            ObjectHelper.notEmpty(host, "host", this);
+            StringHelper.notEmpty(host, "host", this);
             ObjectHelper.notNull(port, "port", this);
 
-            LOG.info("Starting static resources server {}:{} with static resource: {}", new Object[]{host, port, staticResources});
+            LOG.info("Starting static resources server {}:{} with static resource: {}", host, port, staticResources);
             ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
             staticResourcesServer = createStaticResourcesServer(context, host, port, staticResources);
             staticResourcesServer.start();
@@ -811,7 +815,7 @@ public class WebsocketComponent extends UriEndpointComponent implements SSLConte
         CONNECTORS.clear();
 
         if (staticResourcesServer != null) {
-            LOG.info("Stopping static resources server {}:{} with static resource: {}", new Object[]{host, port, staticResources});
+            LOG.info("Stopping static resources server {}:{} with static resource: {}", host, port, staticResources);
             staticResourcesServer.stop();
             staticResourcesServer.destroy();
             staticResourcesServer = null;

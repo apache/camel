@@ -17,7 +17,7 @@
 package org.apache.camel.component.linkedin.internal;
 
 import org.apache.camel.component.linkedin.LinkedInConfiguration;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 
 /**

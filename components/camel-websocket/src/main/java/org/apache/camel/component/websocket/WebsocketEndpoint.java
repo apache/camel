@@ -24,13 +24,13 @@ import java.util.Map;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.server.Handler;
 
 /**
@@ -38,7 +38,7 @@ import org.eclipse.jetty.server.Handler;
  *
  * This component uses Jetty as the websocket implementation.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "websocket")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", label = "websocket")
 public class WebsocketEndpoint extends DefaultEndpoint {
 
     private WebsocketComponent component;
@@ -49,7 +49,7 @@ public class WebsocketEndpoint extends DefaultEndpoint {
     private String host;
     @UriPath(defaultValue = "9292")
     private Integer port;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String resourceUri;
 
     @UriParam(label = "producer")

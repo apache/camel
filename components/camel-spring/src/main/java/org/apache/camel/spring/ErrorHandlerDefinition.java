@@ -29,14 +29,12 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Error handler settings
- *
- * @version 
  */
 @Metadata(label = "spring,configuration,error")
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ErrorHandlerDefinition extends IdentifiedType {
-    @XmlAttribute @Metadata(defaultValue = "DefaultErrorHandler", required = "true")
+    @XmlAttribute @Metadata(defaultValue = "DefaultErrorHandler", required = true)
     private ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
     @XmlAttribute
     private String deadLetterUri;

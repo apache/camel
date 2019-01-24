@@ -16,7 +16,6 @@
  */
 package org.apache.camel.opentracing;
 
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -30,44 +29,43 @@ import io.opentracing.contrib.tracerresolver.TracerResolver;
 import io.opentracing.noop.NoopTracerFactory;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.opentracing.propagation.CamelHeadersExtractAdapter;
-import org.apache.camel.opentracing.propagation.CamelHeadersInjectAdapter;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * To use OpenTracing with Camel then setup this {@link OpenTracingTracer} in your Camel application.
+ * To use OpenTracing with Camel then setup this {@link OpenTracingTracer} in
+ * your Camel application.
  * <p/>
- * This class is implemented as both an {@link org.apache.camel.spi.EventNotifier} and {@link RoutePolicy} that allows
- * to trap when Camel starts/ends an {@link Exchange} being routed using the {@link RoutePolicy} and during the routing
- * if the {@link Exchange} sends messages, then we track them using the {@link org.apache.camel.spi.EventNotifier}.
+ * This class is implemented as both an
+ * {@link org.apache.camel.spi.EventNotifier} and {@link RoutePolicy} that
+ * allows to trap when Camel starts/ends an {@link Exchange} being routed using
+ * the {@link RoutePolicy} and during the routing if the {@link Exchange} sends
+ * messages, then we track them using the
+ * {@link org.apache.camel.spi.EventNotifier}.
  */
 @ManagedResource(description = "OpenTracingTracer")
 public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OpenTracingTracer.class);
 
     private static Map<String, SpanDecorator> decorators = new HashMap<>();
 
@@ -76,6 +74,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     private Tracer tracer;
     private CamelContext camelContext;
     private Set<String> excludePatterns = new HashSet<>();
+    private boolean encoding;
 
     static {
         ServiceLoader.load(SpanDecorator.class).forEach(d -> {
@@ -94,23 +93,25 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     }
 
     @Override
-    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         // ensure this opentracing tracer gets initialized when Camel starts
         init(camelContext);
         return new OpenTracingRoutePolicy(routeId);
     }
 
     /**
-     * Registers this {@link OpenTracingTracer} on the {@link CamelContext} if not already registered.
+     * Registers this {@link OpenTracingTracer} on the {@link CamelContext} if
+     * not already registered.
      */
     public void init(CamelContext camelContext) {
         if (!camelContext.hasService(this)) {
             try {
-                // start this service eager so we init before Camel is starting up
+                // start this service eager so we init before Camel is starting
+                // up
                 camelContext.addService(this, true, true);
 
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }
@@ -133,10 +134,19 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         this.excludePatterns = excludePatterns;
     }
 
+    public boolean isEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(boolean encoding) {
+        this.encoding = encoding;
+    }
+
     /**
-     * Adds an exclude pattern that will disable tracing for Camel messages that matches the pattern.
+     * Adds an exclude pattern that will disable tracing for Camel messages that
+     * matches the pattern.
      *
-     * @param pattern  the pattern such as route id, endpoint url
+     * @param pattern the pattern such as route id, endpoint url
      */
     public void addExcludePattern(String pattern) {
         excludePatterns.add(pattern);
@@ -176,7 +186,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
             tracer = NoopTracerFactory.create();
         }
 
-        ServiceHelper.startServices(eventNotifier);
+        ServiceHelper.startService(eventNotifier);
     }
 
     @Override
@@ -217,58 +227,57 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     private final class OpenTracingEventNotifier extends EventNotifierSupport {
 
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             try {
                 if (event instanceof ExchangeSendingEvent) {
-                    ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
+                    ExchangeSendingEvent ese = (ExchangeSendingEvent)event;
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
                     if (!sd.newSpan() || isExcluded(ese.getExchange(), ese.getEndpoint())) {
                         return;
                     }
                     Span parent = ActiveSpanManager.getSpan(ese.getExchange());
-                    SpanBuilder spanBuilder = tracer.buildSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint()))
-                        .withTag(Tags.SPAN_KIND.getKey(), sd.getInitiatorSpanKind());
-                    // Temporary workaround to avoid adding 'null' span as a parent
+                    SpanBuilder spanBuilder = tracer.buildSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint())).withTag(Tags.SPAN_KIND.getKey(),
+                                                                                                                                  sd.getInitiatorSpanKind());
+                    // Temporary workaround to avoid adding 'null' span as a
+                    // parent
                     if (parent != null) {
                         spanBuilder.asChildOf(parent);
                     }
                     Span span = spanBuilder.start();
                     sd.pre(span, ese.getExchange(), ese.getEndpoint());
-                    tracer.inject(span.context(), Format.Builtin.TEXT_MAP,
-                        new CamelHeadersInjectAdapter(ese.getExchange().getIn().getHeaders()));
+                    tracer.inject(span.context(), Format.Builtin.TEXT_MAP, sd.getInjectAdapter(ese.getExchange().getIn().getHeaders(), encoding));
                     ActiveSpanManager.activate(ese.getExchange(), span);
 
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("OpenTracing: start client span=" + span);
+                    if (log.isTraceEnabled()) {
+                        log.trace("OpenTracing: start client span={}", span);
                     }
                 } else if (event instanceof ExchangeSentEvent) {
-                    ExchangeSentEvent ese = (ExchangeSentEvent) event;
+                    ExchangeSentEvent ese = (ExchangeSentEvent)event;
                     SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
                     if (!sd.newSpan() || isExcluded(ese.getExchange(), ese.getEndpoint())) {
                         return;
                     }
                     Span span = ActiveSpanManager.getSpan(ese.getExchange());
                     if (span != null) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("OpenTracing: start client span=" + span);
+                        if (log.isTraceEnabled()) {
+                            log.trace("OpenTracing: start client span={}", span);
                         }
                         sd.post(span, ese.getExchange(), ese.getEndpoint());
                         span.finish();
                         ActiveSpanManager.deactivate(ese.getExchange());
                     } else {
-                        LOG.warn("OpenTracing: could not find managed span for exchange=" + ese.getExchange());
+                        log.warn("OpenTracing: could not find managed span for exchange={}", ese.getExchange());
                     }
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                log.warn("OpenTracing: Failed to capture tracing data", t);
             }
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
-            return event instanceof ExchangeSendingEvent
-                || event instanceof ExchangeSentEvent;
+        public boolean isEnabled(CamelEvent event) {
+            return event instanceof ExchangeSendingEvent || event instanceof ExchangeSentEvent;
         }
 
         @Override
@@ -290,18 +299,16 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 }
                 SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                 Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
-                    .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP,
-                        new CamelHeadersExtractAdapter(exchange.getIn().getHeaders())))
-                    .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind())
-                    .start();
+                    .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP, sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding)))
+                    .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind()).start();
                 sd.pre(span, exchange, route.getEndpoint());
                 ActiveSpanManager.activate(exchange, span);
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("OpenTracing: start server span=" + span);
+                if (log.isTraceEnabled()) {
+                    log.trace("OpenTracing: start server span={}", span);
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                log.warn("OpenTracing: Failed to capture tracing data", t);
             }
         }
 
@@ -313,19 +320,19 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 }
                 Span span = ActiveSpanManager.getSpan(exchange);
                 if (span != null) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("OpenTracing: finish server span=" + span);
+                    if (log.isTraceEnabled()) {
+                        log.trace("OpenTracing: finish server span={}", span);
                     }
                     SpanDecorator sd = getSpanDecorator(route.getEndpoint());
                     sd.post(span, exchange, route.getEndpoint());
                     span.finish();
                     ActiveSpanManager.deactivate(exchange);
                 } else {
-                    LOG.warn("OpenTracing: could not find managed span for exchange=" + exchange);
+                    log.warn("OpenTracing: could not find managed span for exchange={}", exchange);
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                log.warn("OpenTracing: Failed to capture tracing data", t);
             }
         }
     }
@@ -343,7 +350,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 }
             } catch (Throwable t) {
                 // This exception is ignored
-                LOG.warn("OpenTracing: Failed to capture tracing data", t);
+                log.warn("OpenTracing: Failed to capture tracing data", t);
             }
             return message;
         }

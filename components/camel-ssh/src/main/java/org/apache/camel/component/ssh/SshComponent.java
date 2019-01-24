@@ -20,19 +20,20 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 
 /**
  * Represents the component that manages {@link SshEndpoint}.
  */
-public class SshComponent extends UriEndpointComponent {
+@Component("ssh")
+public class SshComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private SshConfiguration configuration = new SshConfiguration();
 
     public SshComponent() {
-        super(SshEndpoint.class);
     }
 
     @Override
@@ -207,5 +208,43 @@ public class SshComponent extends UriEndpointComponent {
     @Metadata(label = "security")
     public void setCertResource(String certResource) {
         getConfiguration().setCertResource(certResource);
+    }
+    
+    /**
+     * Sets the channel type to pass to the Channel as part of command execution.
+     * Defaults to "exec".
+     *
+     * @param channelType
+     *            String defining the type of Channel to use for command execution.
+     *
+     * @see org.apache.sshd.common.channel.Channel
+     */
+    @Metadata(label = "advanced")
+    public void setChannelType(String channelType) {
+        getConfiguration().setChannelType(channelType);
+    }
+    
+    /**
+     * Sets the shellPrompt to be dropped when response is read after command execution
+     *
+     * @param shellPrompt
+     *            String defining ending string of command line which has to be dropped when response is 
+     *            read after command execution.
+     */
+    @Metadata(label = "advanced")
+    public void setShellPrompt(String shellPrompt) {
+        getConfiguration().setShellPrompt(shellPrompt);
+    }
+    
+    /**
+     * Sets the sleep period in milliseconds to wait reading response from shell prompt.
+     * Defaults to 100 milliseconds.
+     *
+     * @param sleepForShellPrompt
+     *            long milliseconds to wait.
+     */
+    @Metadata(label = "advanced")
+    public void setSleepForShellPrompt(long sleepForShellPrompt) {
+        getConfiguration().setSleepForShellPrompt(sleepForShellPrompt);
     }
 }

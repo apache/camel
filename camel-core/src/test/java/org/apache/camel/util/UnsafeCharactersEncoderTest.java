@@ -16,61 +16,71 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class UnsafeCharactersEncoderTest extends TestCase {
+public class UnsafeCharactersEncoderTest extends Assert {
 
     private void testEncoding(String before, String after) {
         String result = UnsafeUriCharactersEncoder.encode(before);
         assertEquals("Get the wrong encoding result", after, result);
     }
     
+    @Test
     public void testQnameEncoder() {
         String afterEncoding = "%7Bhttp://www.example.com/test%7DServiceName";
         String beforeEncoding = "{http://www.example.com/test}ServiceName";
         testEncoding(beforeEncoding, afterEncoding);
     }
 
+    @Test
     public void testNoEncoding() {
         String noEncoding = "http://www.example.com";
         testEncoding(noEncoding, noEncoding);
     }
     
+    @Test
     public void testUnicodes() {
         String noEncoding = "http://test.com/\uFD04";
         testEncoding(noEncoding, noEncoding);
     }
 
+    @Test
     public void testPercentEncode() {
         String beforeEncoding = "sql:select * from foo where bar like '%A'";
         String afterEncoding = "sql:select%20*%20from%20foo%20where%20bar%20like%20'%25A'";
         testEncoding(beforeEncoding, afterEncoding);
     }
 
+    @Test
     public void testPercentEncodeAlready() {
         String beforeEncoding = "sql:select * from foo where bar like '%25A'";
         String afterEncoding = "sql:select%20*%20from%20foo%20where%20bar%20like%20'%25A'";
         testEncoding(beforeEncoding, afterEncoding);
     }
 
+    @Test
     public void testPercentEncodeDanishChar() {
         String beforeEncoding = "http://localhost:{{port}}/myapp/mytest?columns=claus,s\u00F8ren&username=apiuser";
         String afterEncoding = "http://localhost:%7B%7Bport%7D%7D/myapp/mytest?columns=claus,s\u00F8ren&username=apiuser";
         testEncoding(beforeEncoding, afterEncoding);
     }
 
+    @Test
     public void testPercentEncodeDanishCharEncoded() {
         String beforeEncoding = "http://localhost:{{port}}/myapp/mytest?columns=claus,s%C3%B8ren&username=apiuser";
         String afterEncoding = "http://localhost:%7B%7Bport%7D%7D/myapp/mytest?columns=claus,s%C3%B8ren&username=apiuser";
         testEncoding(beforeEncoding, afterEncoding);
     }
 
+    @Test
     public void testAlreadyEncoded() {
         String beforeEncoding = "http://www.example.com?query=foo%20bar";
         String afterEncoding = "http://www.example.com?query=foo%20bar";
         testEncoding(beforeEncoding, afterEncoding);
     }
 
+    @Test
     public void testPercentEncodedLast() {
         String beforeEncoding = "http://www.example.com?like=foo%25";
         String afterEncoding = "http://www.example.com?like=foo%25";

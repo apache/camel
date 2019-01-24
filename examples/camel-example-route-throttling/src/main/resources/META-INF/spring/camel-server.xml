@@ -42,7 +42,7 @@
   </bean>
 
   <!-- START SNIPPET: e1 -->
-  <bean id="myPolicy" class="org.apache.camel.impl.ThrottlingInflightRoutePolicy">
+  <bean id="myPolicy" class="org.apache.camel.throttling.ThrottlingInflightRoutePolicy">
     <!-- define the scope to be context scoped so we measure against total inflight exchanges
          that means for both route1, route2 and route3 all together -->
     <property name="scope" value="Context"/>
@@ -64,17 +64,17 @@
       <from uri="jms:queue:inbox?concurrentConsumers=100"/>
       <transacted/>
       <to uri="log:+++JMS +++?groupSize=100"/>
-      <to ref="foo"/>
+      <to uri="ref:foo"/>
     </route>
 
     <route routePolicyRef="myPolicy">
       <from uri="file://target/inbox?delete=true&amp;maxMessagesPerPoll=50"/>
       <to uri="log:+++FILE+++?groupSize=100"/>
-      <to ref="foo"/>
+      <to uri="ref:foo"/>
     </route>
 
     <route>
-      <from ref="foo"/>
+      <from uri="ref:foo"/>
       <delay>
         <constant>100</constant>
       </delay>

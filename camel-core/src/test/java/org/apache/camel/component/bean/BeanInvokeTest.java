@@ -19,12 +19,11 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanInvokeTest extends ContextTestSupport {
 
+    @Test
     public void testA() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:a");
 
@@ -44,6 +43,7 @@ public class BeanInvokeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testB() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:b");
 
@@ -64,6 +64,7 @@ public class BeanInvokeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:c");
 

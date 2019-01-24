@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
  * Represents an endpoint which only becomes active when it obtains the master lock
  */
 @ManagedResource(description = "Managed ZooKeeper Master Endpoint")
-@UriEndpoint(firstVersion = "2.19.0", scheme = "zookeeper-master", syntax = "zookeeper-master:groupName:consumerEndpointUri", consumerClass = MasterConsumer.class, consumerOnly = true,
+@UriEndpoint(firstVersion = "2.19.0", scheme = "zookeeper-master", syntax = "zookeeper-master:groupName:consumerEndpointUri", consumerOnly = true,
     title = "ZooKeeper Master", lenientProperties = true, label = "clustering")
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
@@ -40,11 +40,11 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
     private final Endpoint consumerEndpoint;
 
     @UriPath(description = "The name of the cluster group to use")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String groupName;
 
     @UriPath(description = "The consumer endpoint to use in master/slave mode")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String consumerEndpointUri;
 
     public MasterEndpoint(String uri, MasterComponent component, String groupName, String consumerEndpointUri) {

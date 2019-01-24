@@ -27,12 +27,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
 import org.apache.camel.component.hazelcast.listener.CamelItemListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HazelcastQueueConsumer.class);
     private final Processor processor;
     private ExecutorService executor;
     private QueueConsumerTask queueConsumerTask;
@@ -95,8 +92,8 @@ public class HazelcastQueueConsumer extends HazelcastDefaultConsumer {
                             getExceptionHandler().handleException("Error during processing", exchange, e);
                         }
                     } catch (InterruptedException e) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Hazelcast Queue Consumer Interrupted: " + e, e);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Hazelcast Queue Consumer Interrupted: {}", e, e);
                             continue;
                         }
                     }

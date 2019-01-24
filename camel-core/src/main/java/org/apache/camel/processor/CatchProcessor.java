@@ -24,30 +24,24 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A processor which catches exceptions.
- *
- * @version 
  */
 public class CatchProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
-    private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
 
     private String id;
     private final List<Class<? extends Throwable>> exceptions;
     private final Predicate onWhen;
-    private final Predicate handled;
 
     public CatchProcessor(List<Class<? extends Throwable>> exceptions, Processor processor, Predicate onWhen, Predicate handled) {
         super(processor);
         this.exceptions = exceptions;
         this.onWhen = onWhen;
-        this.handled = handled;
     }
 
     @Override
@@ -76,8 +70,8 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
             callback.done(true);
             return true;
         }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
+        if (log.isTraceEnabled()) {
+            log.trace("This CatchProcessor catches the exception: {} caused by: {}", caught.getClass().getName(), e.getMessage());
         }
 
         // store the last to endpoint as the failure endpoint
@@ -91,29 +85,19 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         // and we should not be regarded as exhausted as we are in a try .. catch block
         exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
-        // is the exception handled by the catch clause
-        final boolean handled = handles(exchange);
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("The exception is handled: {} for the exception: {} caused by: {}",
-                    new Object[]{handled, e.getClass().getName(), e.getMessage()});
+        if (log.isDebugEnabled()) {
+            log.debug("The exception is handled for the exception: {} caused by: {}",
+                    new Object[]{e.getClass().getName(), e.getMessage()});
         }
 
-        if (handled) {
-            // emit event that the failure is being handled
-            EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, false, null);
-        }
+        // emit event that the failure is being handled
+        EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, false, null);
 
         boolean sync = processor.process(exchange, new AsyncCallback() {
             public void done(boolean doneSync) {
-                if (handled) {
-                    // emit event that the failure was handled
-                    EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
-                } else {
-                    if (exchange.getException() == null) {
-                        exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
-                    }
-                }
+                // emit event that the failure was handled
+                EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
+
                 // always clear redelivery exhausted in a catch clause
                 exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
 
@@ -153,21 +137,6 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
 
         // not found
         return null;
-    }
-
-    /**
-     * Whether this catch processor handles the exception it have caught
-     *
-     * @param exchange  the current exchange
-     * @return <tt>true</tt> if this processor handles it, <tt>false</tt> otherwise.
-     */
-    protected boolean handles(Exchange exchange) {
-        if (handled == null) {
-            // handle by default
-            return true;
-        }
-
-        return handled.matches(exchange);
     }
 
     public List<Class<? extends Throwable>> getExceptions() {

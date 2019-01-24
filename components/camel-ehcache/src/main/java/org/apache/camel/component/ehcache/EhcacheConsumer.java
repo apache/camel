@@ -19,7 +19,7 @@ package org.apache.camel.component.ehcache;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.ehcache.Cache;
 import org.ehcache.event.CacheEvent;
 import org.ehcache.event.CacheEventListener;
@@ -57,7 +57,7 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     }
 
     @Override
-    public void onEvent(CacheEvent<? extends Object, ? extends Object> event) {
+    public void onEvent(CacheEvent<?, ?> event) {
         if (isRunAllowed()) {
             final Exchange exchange = getEndpoint().createExchange();
             final Message message = exchange.getIn();

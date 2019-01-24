@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 public class KinesisConfiguration implements Cloneable {
     
     @UriPath(description = "Name of the stream")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String streamName;
     @UriParam(label = "security", secret = true, description = "Amazon AWS Access Key")
     private String accessKey;
@@ -48,7 +48,7 @@ public class KinesisConfiguration implements Cloneable {
     @UriParam(label = "consumer", description = "The sequence number to start polling from. Required if iteratorType is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER")
     private String sequenceNumber = "";
     @UriParam(label = "consumer", defaultValue = "ignore", description = "Define what will be the behavior in case of shard closed. Possible value are ignore, silent and fail."
-                                                                         + "In case of ignore a message will be logged and the consumer will restart from the beginning,"
+                                                                         + " In case of ignore a message will be logged and the consumer will restart from the beginning,"
                                                                          + "in case of silent there will be no logging and the consumer will start from the beginning,"
                                                                          + "in case of fail a ReachedClosedStateException will be raised")
     private KinesisShardClosedStrategyEnum shardClosed;

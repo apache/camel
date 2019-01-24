@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.lumberjack;
-
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;

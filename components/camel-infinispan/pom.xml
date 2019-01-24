@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.23.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-infinispan</artifactId>
@@ -33,8 +33,6 @@
     <description>Camel Infinispan support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.infinispan.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=infinispan</camel.osgi.export.service>
     </properties>
 
     <dependencies>
@@ -196,41 +194,35 @@
                 <server.dir.name>infinispan-server-${infinispan-version}</server.dir.name>
                 <server.dir>${server.dir.parent}/${server.dir.name}</server.dir>
             </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.infinispan.server</groupId>
-                    <artifactId>infinispan-server</artifactId>
-                    <version>${infinispan-version}</version>
-                    <type>zip</type>
-                    <classifier>bin</classifier>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
             <build>
-                <plugins>
+                 <plugins>
+                     <plugin>
+                         <groupId>org.apache.maven.plugins</groupId>
+                         <artifactId>maven-antrun-plugin</artifactId>
+                         <executions>
+                             <execution>
+                                <id>install-binary-distribution</id>
+                                <phase>generate-test-resources</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <get
+                                         src="https://downloads.jboss.org/infinispan/${infinispan-version}/infinispan-server-${infinispan-version}.zip"
+                                         dest="${project.build.directory}/infinispan-server-${infinispan-version}.zip"/>
+                                        <unzip
+                                         src="${project.build.directory}/infinispan-server-${infinispan-version}.zip"
+                                         dest="${server.dir.parent}"/>
+                                   </target>
+                               </configuration>
+                           </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
                         <executions>
-                            <execution>
-                                <id>unpack-server</id>
-                                <phase>generate-test-resources</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>org.infinispan.server</groupId>
-                                            <artifactId>infinispan-server</artifactId>
-                                            <version>${infinispan-version}</version>
-                                            <classifier>bin</classifier>
-                                            <type>zip</type>
-                                            <outputDirectory>${server.dir.parent}</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
                             <execution>
                                 <id>deploy-converter-factory</id>
                                 <phase>generate-test-resources</phase>
@@ -254,7 +246,7 @@
                     <plugin>
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
-                        <version>1.1.0.Alpha6</version>
+                        <version>1.2.2.Final</version>
                         <executions>
                             <execution>
                                 <id>start-server</id>

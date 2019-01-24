@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.net.ftp.FTPClient;
+import org.junit.Before;
 import org.junit.Test;
 
 public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
@@ -27,6 +27,7 @@ public class FtpConsumerDisconnectTest extends FtpServerTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 

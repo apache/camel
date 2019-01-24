@@ -23,6 +23,7 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -38,7 +39,8 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
@@ -52,8 +54,8 @@ import org.slf4j.LoggerFactory;
  * be XHTML) This dataformat is intended to convert bad HTML from a site (or
  * file) into a well formed HTML document which can then be sent to XSLT or
  * xpath'ed on.
- * 
  */
+@Dataformat("tidyMarkup")
 public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     /*
@@ -177,7 +179,9 @@ public class TidyMarkupDataFormat extends ServiceSupport implements DataFormat, 
         parser.setContentHandler(createContentHandler(w));
 
         try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            Transformer transformer = transformerFactory.newTransformer();
             DOMResult result = new DOMResult();
             transformer.transform(new SAXSource(parser, new InputSource(inputStream)), result);
             return result.getNode();

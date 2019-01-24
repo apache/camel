@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.cxf;
 import org.w3c.dom.Document;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,8 +27,6 @@ import org.junit.Test;
 
 /**
  * A unit test for java only CXF in payload mode
- * 
- * @version 
  */
 public class CxfJavaOnlyPayloadModeTest extends CamelTestSupport {
     private static int port1 = CXFTestSupport.getPort1(); 

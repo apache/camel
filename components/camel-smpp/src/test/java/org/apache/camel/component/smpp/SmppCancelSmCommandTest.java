@@ -19,7 +19,7 @@ package org.apache.camel.component.smpp;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.SMPPSession;
@@ -52,7 +52,7 @@ public class SmppCancelSmCommandTest {
         
         command.execute(exchange);
         
-        verify(session).cancelShortMessage("CMT", "1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717");
+        verify(session).cancelShortMessage("", "1", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1616", TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717");
         
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
     }

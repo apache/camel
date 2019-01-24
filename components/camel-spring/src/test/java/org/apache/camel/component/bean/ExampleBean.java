@@ -19,8 +19,6 @@ package org.apache.camel.component.bean;
 /**
  * An example POJO with no annotations or interfaces to test out the POJO
  * Camel binding
- *
- * @version 
  */
 public class ExampleBean {
 

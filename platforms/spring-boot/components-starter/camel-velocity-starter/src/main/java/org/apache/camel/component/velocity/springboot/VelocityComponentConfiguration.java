@@ -18,9 +18,7 @@ package org.apache.camel.component.velocity.springboot;
 
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.velocity.app.VelocityEngine;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Transforms the message using a Velocity template.
@@ -34,10 +32,15 @@ public class VelocityComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use the VelocityEngine otherwise a new engine is created
+     * Whether to enable auto configuration of the velocity component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private VelocityEngine velocityEngine;
+    private Boolean enabled;
+    /**
+     * To use the VelocityEngine otherwise a new engine is created. The option
+     * is a org.apache.velocity.app.VelocityEngine type.
+     */
+    private String velocityEngine;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -45,11 +48,11 @@ public class VelocityComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public VelocityEngine getVelocityEngine() {
+    public String getVelocityEngine() {
         return velocityEngine;
     }
 
-    public void setVelocityEngine(VelocityEngine velocityEngine) {
+    public void setVelocityEngine(String velocityEngine) {
         this.velocityEngine = velocityEngine;
     }
 

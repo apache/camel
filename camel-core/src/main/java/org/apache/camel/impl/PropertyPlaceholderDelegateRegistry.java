@@ -20,15 +20,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link Registry} which delegates to the real registry.
  * <p/>
  * This is used to ensure that Camel performs property placeholder resolution on every lookup.
- *
- * @version 
  */
 public class PropertyPlaceholderDelegateRegistry implements Registry {
 
@@ -49,7 +47,7 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
             }
             return delegate.lookupByName(name);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -62,7 +60,7 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
             }
             return delegate.lookupByNameAndType(name, type);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -72,18 +70,6 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
 
     public <T> Set<T> findByType(Class<T> type) {
         return delegate.findByType(type);
-    }
-
-    public Object lookup(String name) {
-        return lookupByName(name);
-    }
-
-    public <T> T lookup(String name, Class<T> type) {
-        return lookupByNameAndType(name, type);
-    }
-
-    public <T> Map<String, T> lookupByType(Class<T> type) {
-        return findByTypeWithName(type);
     }
 
     public Registry getRegistry() {

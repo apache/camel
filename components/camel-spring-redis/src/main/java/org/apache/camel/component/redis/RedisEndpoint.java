@@ -19,14 +19,14 @@ package org.apache.camel.component.redis;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The spring-redis component allows sending and receiving messages from Redis.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port", consumerClass = RedisConsumer.class, label = "spring,nosql")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "spring-redis", title = "Spring Redis", syntax = "spring-redist:host:port", label = "spring,nosql")
 public class RedisEndpoint extends DefaultEndpoint {
 
     @UriParam

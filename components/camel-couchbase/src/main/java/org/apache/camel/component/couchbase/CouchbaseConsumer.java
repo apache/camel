@@ -24,7 +24,7 @@ import com.couchbase.client.protocol.views.ViewRow;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultScheduledPollConsumer;
+import org.apache.camel.support.DefaultScheduledPollConsumer;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_DESIGN_DOCUMENT_NAME;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.HEADER_ID;
@@ -46,10 +46,9 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer {
         this.view = client.getView(endpoint.getDesignDocumentName(), endpoint.getViewName());
         this.query = new Query();
         init();
-
     }
 
-    private void init() {
+    protected void doInit() {
 
         query.setIncludeDocs(true);
 

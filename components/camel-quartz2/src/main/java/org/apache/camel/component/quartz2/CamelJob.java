@@ -134,7 +134,7 @@ public class CamelJob implements Job {
             result = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
         } else if ((result = searchForEndpointMatch(camelContext, endpointUri)) != null) { 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found match for endpoint URI = " + endpointUri + " by searching endpoint list.");
+                LOG.debug("Found match for endpoint URI = {} by searching endpoint list.", endpointUri);
             }        
         } else {
             LOG.warn("Cannot find existing QuartzEndpoint with uri: {}. Creating new endpoint instance.", endpointUri);

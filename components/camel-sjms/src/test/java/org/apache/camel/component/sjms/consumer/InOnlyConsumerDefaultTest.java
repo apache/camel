@@ -21,9 +21,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class InOnlyConsumerDefaultTest extends JmsTestSupport {
 
     private static final String SJMS_QUEUE_NAME = "sjms:in.only.consumer";

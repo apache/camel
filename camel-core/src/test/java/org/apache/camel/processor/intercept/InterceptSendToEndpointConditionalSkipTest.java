@@ -18,17 +18,17 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit tests on the conditional skip support on InterceptSendToEndpoint.
- * 
- * @version
  */
 public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSupport {
 
     /**
      * Verify that the endpoint is only skipped if the adjacent 'when' condition is satisfied
      */
+    @Test
     public void testInterceptSendToEndpointSkipConditionSatisfied() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:skippable").expectedMessageCount(0);
@@ -43,6 +43,7 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
     /**
      * Verify that the endpoint is not skipped if the adjacent 'when' condition evaluates to false
      */
+    @Test
     public void testInterceptSendToEndpointSkipConditionNotSatisfied() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:skippable").expectedMessageCount(1);
@@ -59,6 +60,7 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
      * interceptSendToEndpoint().choice()..., as the choice keyword is not directly associated with the interception behaviour and it belongs to the
      * interception body (initiating a new routing block)
      */
+    @Test
     public void testInterceptSendToEndpointSkipConditionNoEffectChoice() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(2);
         getMockEndpoint("mock:skippableNoEffect").expectedMessageCount(0);
@@ -76,6 +78,7 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
     /**
      * Test that when multiple conditions are chained together in Java DSL, only the first one will determine whether the endpoint is skipped or not
      */
+    @Test
     public void testInterceptSendToEndpointSkipMultipleConditions() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:skippableMultipleConditions").expectedMessageCount(0);

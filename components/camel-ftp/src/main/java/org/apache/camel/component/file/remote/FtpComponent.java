@@ -20,22 +20,25 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.component.file.remote.strategy.FtpProcessStrategyFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
  * FTP Component
  */
+@Component("ftp")
+@FileProcessStrategy(FtpProcessStrategyFactory.class)
 public class FtpComponent extends RemoteFileComponent<FTPFile> {
 
     public FtpComponent() {
-        setEndpointClass(FtpEndpoint.class);
     }
 
     public FtpComponent(CamelContext context) {
         super(context);
-        setEndpointClass(FtpEndpoint.class);
     }
 
     @Override

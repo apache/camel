@@ -40,39 +40,39 @@
 
         <route>
             <from uri="direct:in"/>
-            <marshal ref="jack"/>
+            <marshal><custom ref="jack"/></marshal>
         </route>
 
         <route>
             <from uri="direct:inPretty"/>
-            <marshal ref="pretty"/>
+            <marshal><custom ref="pretty"/></marshal>
         </route>
 
         <route>
             <from uri="direct:back"/>
-            <unmarshal ref="jack"/>
+            <unmarshal><custom ref="jack"/></unmarshal>
             <to uri="mock:reverse"/>
         </route>
 
         <route>
             <from uri="direct:inPojo"/>
-            <marshal ref="pojo"/>
+            <marshal><custom ref="pojo"/></marshal>
         </route>
 
         <route>
             <from uri="direct:backPojo"/>
-            <unmarshal ref="pojo"/>
+            <unmarshal><custom ref="pojo"/></unmarshal>
             <to uri="mock:reversePojo"/>
         </route>
 
         <route>
             <from uri="direct:inAgeView"/>
-            <marshal ref="view"/>
+            <marshal><custom ref="view"/></marshal>
         </route>
 
         <route>
             <from uri="direct:backAgeView"/>
-            <unmarshal ref="view"/>
+            <unmarshal><custom ref="view"/></unmarshal>
             <to uri="mock:reverseAgeView"/>
         </route>
 

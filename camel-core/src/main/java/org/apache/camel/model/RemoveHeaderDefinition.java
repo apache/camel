@@ -21,11 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Processor;
-import org.apache.camel.processor.RemoveHeaderProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Removes a named header from the message
@@ -50,14 +46,13 @@ public class RemoveHeaderDefinition extends NoOutputDefinition<RemoveHeaderDefin
     }
 
     @Override
-    public String getLabel() {
-        return "removeHeader[" + getHeaderName() + "]";
+    public String getShortName() {
+        return "removeHeader";
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        ObjectHelper.notNull(getHeaderName(), "headerName", this);
-        return new RemoveHeaderProcessor(getHeaderName());
+    public String getLabel() {
+        return "removeHeader[" + getHeaderName() + "]";
     }
 
     /**

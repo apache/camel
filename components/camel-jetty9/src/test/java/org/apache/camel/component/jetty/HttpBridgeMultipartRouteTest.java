@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.component.http4.HttpEndpoint;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
@@ -44,6 +44,7 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
 
         protected void initialize() {
             setLowerCase(true);
+            getOutFilter().add("content-length");
             setOutFilterPattern("(?i)(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");
         }
     }

@@ -31,9 +31,9 @@ import org.apache.camel.component.digitalocean.producer.DigitalOceanRegionsProdu
 import org.apache.camel.component.digitalocean.producer.DigitalOceanSizesProducer;
 import org.apache.camel.component.digitalocean.producer.DigitalOceanSnapshotsProducer;
 import org.apache.camel.component.digitalocean.producer.DigitalOceanTagsProducer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -62,7 +62,7 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        LOG.trace("Resolve producer digitalocean endpoint {" + configuration.getResource() + "}");
+        LOG.trace("Resolve producer digitalocean endpoint {{}}", configuration.getResource());
 
         switch (configuration.getResource()) {
         case account:

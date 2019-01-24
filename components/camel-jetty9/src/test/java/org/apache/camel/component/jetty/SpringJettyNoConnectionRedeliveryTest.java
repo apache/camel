@@ -26,9 +26,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version
- */
 @Ignore("Fails with Address already in use")
 public class SpringJettyNoConnectionRedeliveryTest extends CamelSpringTestSupport {
 
@@ -46,7 +43,7 @@ public class SpringJettyNoConnectionRedeliveryTest extends CamelSpringTestSuppor
     @Test
     public void testConnectionNotOk() throws Exception {
         // stop Jetty route so there should not be a connection
-        context.stopRoute("jetty");
+        context.getRouteController().stopRoute("jetty");
 
         Exchange exchange = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {

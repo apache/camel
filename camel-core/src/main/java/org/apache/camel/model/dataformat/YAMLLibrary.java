@@ -21,8 +21,6 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * Represents the concrete Yaml libraries Camel supports.
- *
- * @version 
  */
 @XmlType
 @XmlEnum

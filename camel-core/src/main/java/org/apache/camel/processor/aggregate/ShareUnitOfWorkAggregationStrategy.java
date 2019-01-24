@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import org.apache.camel.AggregationStrategy;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
-import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
+import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
 
 /**
  * An {@link AggregationStrategy} which are used when the option <tt>shareUnitOfWork</tt> is enabled
@@ -30,16 +33,55 @@ import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErro
  * <p/>
  * This strategy is <b>not</b> intended for end users to use.
  */
-public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport implements AggregationStrategy, DelegateAggregationStrategy {
+public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
 
     private final AggregationStrategy strategy;
+    private CamelContext camelContext;
 
     public ShareUnitOfWorkAggregationStrategy(AggregationStrategy strategy) {
         this.strategy = strategy;
     }
 
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+        if (strategy instanceof CamelContextAware) {
+            ((CamelContextAware) strategy).setCamelContext(camelContext);
+        }
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
     public AggregationStrategy getDelegate() {
         return strategy;
+    }
+
+    @Override
+    public boolean canPreComplete() {
+        return strategy.canPreComplete();
+    }
+
+    @Override
+    public boolean preComplete(Exchange oldExchange, Exchange newExchange) {
+        return strategy.preComplete(oldExchange, newExchange);
+    }
+
+    @Override
+    public void onCompletion(Exchange exchange) {
+        strategy.onCompletion(exchange);
+    }
+
+    @Override
+    public void timeout(Exchange exchange, int index, int total, long timeout) {
+        strategy.timeout(exchange, index, total, timeout);
+    }
+
+    @Override
+    public void onOptimisticLockFailure(Exchange oldExchange, Exchange newExchange) {
+        strategy.onOptimisticLockFailure(oldExchange, newExchange);
     }
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

@@ -17,46 +17,40 @@
 package org.apache.camel.processor;
 
 import java.net.URISyntaxException;
-import java.util.HashMap;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
-import org.apache.camel.AsyncProducerCallback;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Producer;
-import org.apache.camel.ServicePoolAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
+import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.impl.InterceptSendToEndpoint;
-import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.EventHelper;
+import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Processor for forwarding exchanges to a static endpoint destination.
  *
  * @see SendDynamicProcessor
  */
-public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable, EndpointAware, IdAware {
-    protected static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
+public class SendProcessor extends AsyncProcessorSupport implements Traceable, EndpointAware, IdAware {
+
     protected transient String traceLabelToString;
     protected final CamelContext camelContext;
     protected final ExchangePattern pattern;
     protected ProducerCache producerCache;
-    protected AsyncProcessor producer;
+    protected AsyncProducer producer;
     protected Endpoint destination;
     protected ExchangePattern destinationExchangePattern;
     protected String id;
@@ -75,7 +69,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             this.destinationExchangePattern = null;
             this.destinationExchangePattern = EndpointHelper.resolveExchangePatternFromUrl(destination.getEndpointUri());
         } catch (URISyntaxException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         ObjectHelper.notNull(this.camelContext, "camelContext");
     }
@@ -93,13 +87,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         this.id = id;
     }
 
-    /**
-     * @deprecated not longer supported.
-     */
-    @Deprecated
-    public void setDestination(Endpoint destination) {
-    }
-
     public String getTraceLabel() {
         if (traceLabelToString == null) {
             traceLabelToString = URISupport.sanitizeUri(destination.getEndpointUri());
@@ -110,10 +97,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     @Override
     public Endpoint getEndpoint() {
         return destination;
-    }
-
-    public void process(final Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
@@ -135,16 +118,16 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             final Exchange target = configureExchange(exchange, pattern);
 
             final boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
-            StopWatch sw = null;
+            // record timing for sending the exchange using the producer
+            StopWatch watch;
             if (sending) {
-                sw = new StopWatch();
+                watch = new StopWatch();
+            } else {
+                watch = null;
             }
 
-            // record timing for sending the exchange using the producer
-            final StopWatch watch = sw;
-
             try {
-                LOG.debug(">>>> {} {}", destination, exchange);
+                log.debug(">>>> {} {}", destination, exchange);
                 return producer.process(exchange, new AsyncCallback() {
                     @Override
                     public void done(boolean doneSync) {
@@ -169,22 +152,16 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             return true;
         }
 
+        configureExchange(exchange, pattern);
+        log.debug(">>>> {} {}", destination, exchange);
+
         // send the exchange to the destination using the producer cache for the non optimized producers
-        return producerCache.doInAsyncProducer(destination, exchange, pattern, callback, new AsyncProducerCallback() {
-            public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, final Exchange exchange,
-                                             ExchangePattern pattern, final AsyncCallback callback) {
-                final Exchange target = configureExchange(exchange, pattern);
-                LOG.debug(">>>> {} {}", destination, exchange);
-                return asyncProducer.process(target, new AsyncCallback() {
-                    public void done(boolean doneSync) {
-                        // restore previous MEP
-                        target.setPattern(existingPattern);
-                        // signal we are done
-                        callback.done(doneSync);
-                    }
-                });
-            }
-        });
+        return producerCache.doInAsyncProducer(destination, exchange, callback, (producer, ex, cb) -> producer.process(ex, doneSync -> {
+            // restore previous MEP
+            exchange.setPattern(existingPattern);
+            // signal we are done
+            cb.done(doneSync);
+        }));
     }
     
     public Endpoint getDestination() {
@@ -221,7 +198,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
             // and use a regular HashMap as we do not want a soft reference store that may get re-claimed when low on memory
             // as we want to ensure the producer is kept around, to ensure its lifecycle is fully managed,
             // eg stopping the producer when we stop etc.
-            producerCache = new ProducerCache(this, camelContext, new HashMap<String, Producer>(1));
+            producerCache = new DefaultProducerCache(this, camelContext, 1);
             // do not add as service as we do not want to manage the producer cache
         }
         ServiceHelper.startService(producerCache);
@@ -230,8 +207,8 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // lookup this before we can use the destination
         Endpoint lookup = camelContext.hasEndpoint(destination.getEndpointKey());
         if (lookup instanceof InterceptSendToEndpoint) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Intercepted sending to {} -> {}",
+            if (log.isDebugEnabled()) {
+                log.debug("Intercepted sending to {} -> {}",
                         URISupport.sanitizeUri(destination.getEndpointUri()), URISupport.sanitizeUri(lookup.getEndpointUri()));
             }
             destination = lookup;
@@ -245,19 +222,19 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // Only for pooled and non-singleton producers we have to use the ProducerCache as it supports these
         // kind of producer better (though these kind of producer should be rare)
 
-        Producer producer = producerCache.acquireProducer(destination);
-        if (producer instanceof ServicePoolAware || !producer.isSingleton()) {
+        AsyncProducer producer = producerCache.acquireProducer(destination);
+        if (!producer.isSingleton()) {
             // no we cannot optimize it - so release the producer back to the producer cache
             // and use the producer cache for sending
             producerCache.releaseProducer(destination, producer);
         } else {
             // yes we can optimize and use the producer directly for sending
-            this.producer = AsyncProcessorConverterHelper.convert(producer);
+            this.producer = producer;
         }
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(producerCache, producer);
+        ServiceHelper.stopService(producerCache, producer);
     }
 
     protected void doShutdown() throws Exception {

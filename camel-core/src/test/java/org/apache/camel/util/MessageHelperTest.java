@@ -19,47 +19,52 @@ package org.apache.camel.util;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.dump.MessageDump;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test cases for {@link MessageHelper}
  */
-public class MessageHelperTest extends TestCase {
+public class MessageHelperTest extends Assert {
     
     private Message message;
     private CamelContext camelContext = new DefaultCamelContext();
     
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         message = new DefaultMessage(camelContext);
     }
 
     /*
      * Tests the {@link MessageHelper#resetStreamCache(Message)} method
      */
+    @Test
     public void testResetStreamCache() throws Exception {
         // should not throw exceptions when Message or message body is null
         MessageHelper.resetStreamCache(null);
         MessageHelper.resetStreamCache(message);
         
         // handle StreamCache
-        final ValueHolder<Boolean> reset = new ValueHolder<>(Boolean.FALSE);
+        final AtomicBoolean reset = new AtomicBoolean();
         message.setBody(new StreamCache() {
-            @SuppressWarnings("deprecation")
             public void reset() {
-                reset.set(Boolean.TRUE);
+                reset.set(true);
             }
 
             public void writeTo(OutputStream os) throws IOException {
@@ -83,16 +88,19 @@ public class MessageHelperTest extends TestCase {
         assertTrue("Should have reset the stream cache", reset.get());
     }
 
+    @Test
     public void testGetContentType() throws Exception {
         message.setHeader(Exchange.CONTENT_TYPE, "text/xml");
         assertEquals("text/xml", MessageHelper.getContentType(message));
     }
 
+    @Test
     public void testGetContentEncpding() throws Exception {
         message.setHeader(Exchange.CONTENT_ENCODING, "iso-8859-1");
         assertEquals("iso-8859-1", MessageHelper.getContentEncoding(message));
     }
 
+    @Test
     public void testCopyHeaders() throws Exception {
         Message source = message;
         Message target = new DefaultMessage(camelContext);
@@ -107,6 +115,7 @@ public class MessageHelperTest extends TestCase {
         assertEquals("yes", target.getHeader("bar"));
     }
 
+    @Test
     public void testCopyHeadersOverride() throws Exception {
         Message source = message;
         Message target = new DefaultMessage(camelContext);
@@ -121,6 +130,7 @@ public class MessageHelperTest extends TestCase {
         assertEquals(456, target.getHeader("bar"));
     }
     
+    @Test
     public void testCopyHeadersWithHeaderFilterStrategy() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -144,6 +154,7 @@ public class MessageHelperTest extends TestCase {
         context.stop();
     }
 
+    @Test
     public void testDumpAsXmlPlainBody() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -160,6 +171,7 @@ public class MessageHelperTest extends TestCase {
         context.stop();
     }
 
+    @Test
     public void testDumpAsXmlBody() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -177,6 +189,7 @@ public class MessageHelperTest extends TestCase {
         context.stop();
     }
 
+    @Test
     public void testDumpAsXmlNoBody() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -195,6 +208,7 @@ public class MessageHelperTest extends TestCase {
         context.stop();
     }
 
+    @Test
     public void testDumpAsXmlNoBodyIndent() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
@@ -213,6 +227,7 @@ public class MessageHelperTest extends TestCase {
         context.stop();
     }
 
+    @Test
     public void testMessageDump() throws Exception {
         JAXBContext jaxb = JAXBContext.newInstance(MessageDump.class);
         Unmarshaller unmarshaller = jaxb.createUnmarshaller();

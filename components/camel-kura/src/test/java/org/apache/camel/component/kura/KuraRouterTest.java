@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -122,7 +123,7 @@ public class KuraRouterTest extends Assert {
         router.start(router.bundleContext);
 
         // Then
-        assertNotNull(router.camelContext.getRouteDefinition("loaded"));
+        assertNotNull(router.camelContext.adapt(ModelCamelContext.class).getRouteDefinition("loaded"));
     }
 
     static class TestKuraRouter extends KuraRouter {

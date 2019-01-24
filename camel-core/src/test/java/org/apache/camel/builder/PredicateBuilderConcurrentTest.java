@@ -28,11 +28,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class PredicateBuilderConcurrentTest extends ContextTestSupport {
 
     @Override
@@ -40,6 +38,7 @@ public class PredicateBuilderConcurrentTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPredicateBuilderConcurrent() throws Exception {
         context.start();
 

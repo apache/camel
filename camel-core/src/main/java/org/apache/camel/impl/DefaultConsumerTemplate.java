@@ -22,26 +22,22 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.util.UnitOfWorkHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.UnitOfWorkHelper;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * Template (named like Spring's TransactionTemplate & JmsTemplate
  * et al) for working with Camel and consuming {@link org.apache.camel.Message} instances in an
  * {@link Exchange} from an {@link Endpoint}.
- *
- * @version 
  */
 public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerTemplate {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumerTemplate.class);
     private final CamelContext camelContext;
     private ConsumerCache consumerCache;
     private int maximumCacheSize;
@@ -69,14 +65,6 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         if (consumerCache != null) {
             consumerCache.cleanUp();
         }
-    }
-
-    /**
-     * @deprecated use {@link #getCamelContext()}
-     */
-    @Deprecated
-    public CamelContext getContext() {
-        return getCamelContext();
     }
 
     public CamelContext getCamelContext() {
@@ -215,13 +203,13 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
             if (exchange.getUnitOfWork() == null) {
                 // handover completions and done them manually to ensure they are being executed
                 List<Synchronization> synchronizations = exchange.handoverCompletions();
-                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, LOG);
+                UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, log);
             } else {
                 // done the unit of work
                 exchange.getUnitOfWork().done(exchange);
             }
         } catch (Throwable e) {
-            LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
+            log.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
                     + ". This exception will be ignored.", e);
         }
     }
@@ -259,7 +247,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
         return answer;
     }
 
-    private ConsumerCache getConsumerCache() {
+    private org.apache.camel.spi.ConsumerCache getConsumerCache() {
         if (!isStarted()) {
             throw new IllegalStateException("ConsumerTemplate has not been started");
         }
@@ -268,11 +256,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     protected void doStart() throws Exception {
         if (consumerCache == null) {
-            if (maximumCacheSize > 0) {
-                consumerCache = new ConsumerCache(this, camelContext, maximumCacheSize);
-            } else {
-                consumerCache = new ConsumerCache(this, camelContext);
-            }
+            consumerCache = new DefaultConsumerCache(this, camelContext, maximumCacheSize);
         }
         ServiceHelper.startService(consumerCache);
     }

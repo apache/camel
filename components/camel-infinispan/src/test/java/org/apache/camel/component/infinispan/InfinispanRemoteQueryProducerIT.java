@@ -41,7 +41,6 @@ import org.infinispan.query.remote.client.ProtobufMetadataManagerConstants;
 import org.junit.Test;
 
 import static org.apache.camel.component.infinispan.InfinispanConstants.OPERATION;
-import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY;
 import static org.apache.camel.component.infinispan.InfinispanConstants.QUERY_BUILDER;
 import static org.apache.camel.component.infinispan.util.UserUtils.USERS;
 import static org.apache.camel.component.infinispan.util.UserUtils.createKey;
@@ -139,7 +138,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         Exchange request = template.request("direct:start", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(OPERATION, QUERY);
+                exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY);
             }
         });
         assertNull(request.getException());
@@ -193,7 +192,7 @@ public class InfinispanRemoteQueryProducerIT extends CamelTestSupport {
         return new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(OPERATION, QUERY);
+                exchange.getIn().setHeader(OPERATION, InfinispanOperation.QUERY);
                 if (builder != null) {
                     exchange.getIn().setHeader(QUERY_BUILDER, builder);
                 }

@@ -40,10 +40,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.cdi.AnyLiteral.ANY;
+import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
 import static org.apache.camel.cdi.CdiSpiHelper.getRawType;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 final class CamelContextProducer<T extends CamelContext> extends DelegateProducer<T> {
 
@@ -64,7 +65,7 @@ final class CamelContextProducer<T extends CamelContext> extends DelegateProduce
 
     @Override
     public T produce(CreationalContext<T> ctx) {
-        T context = super.produce(ctx);
+        T context = createCamelContextWithTCCL(() -> super.produce(ctx), annotated);
 
         // Do not override the name if it's been already set (in the bean constructor for example)
         if (context.getNameStrategy() instanceof DefaultCamelContextNameStrategy) {

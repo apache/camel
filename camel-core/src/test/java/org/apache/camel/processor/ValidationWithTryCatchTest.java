@@ -21,9 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class ValidationWithTryCatchTest extends ValidationTest {
 
     protected RouteBuilder createRouteBuilder() {

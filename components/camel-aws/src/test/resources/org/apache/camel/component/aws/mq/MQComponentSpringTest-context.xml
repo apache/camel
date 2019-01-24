@@ -49,6 +49,11 @@
             <to uri="aws-mq://Test?amazonMqClient=#amazonMqClient&amp;operation=updateBroker"/>
             <to uri="mock:result"/>
         </route>
+        <route>
+            <from uri="direct:describeBroker"/>
+            <to uri="aws-mq://Test?amazonMqClient=#amazonMqClient&amp;operation=describeBroker"/>
+            <to uri="mock:result"/>
+        </route>
     </camelContext>
 
     <bean id="amazonMqClient" class="org.apache.camel.component.aws.mq.AmazonMQClientMock"/>

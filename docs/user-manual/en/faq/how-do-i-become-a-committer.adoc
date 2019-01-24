@@ -1,0 +1,61 @@
+[[HowdoIbecomeacommitter-HowcanIbecomeacommitter]]
+=== How can I become a committer
+
+First of all you need to get involved and
+link:../../../../CONTRIBUTING.md[Contribute] via the mail list, forums, edit the
+documentation, work on the issue tracker and submit patches.
+
+Once you're contributing and your work is good, one of our
+link:../team.adoc[Team] may invite you to be a committer (after we've
+called a vote). When that happens, if you accept, the following process
+kicks into place...
+
+Note that becoming a committer is not just about submitting some
+patches; its also about helping out on the development and user
+link:../mailing-lists.adoc[Discussion Forums],
+helping with documentation and the issue tracker.
+
+[[HowdoIbecomeacommitter-Becomingacommittersteps]]
+==== Becoming a committer steps
+
+* Download and print the Apache Contributor License Agreement from
+http://www.apache.org/dev/new-committers-guide.html[here]. You need to
+sign it and fax it to Apache. In the past I've found its often faster to
+also post it via snail mail :smile:
+* wait for your name to appear on the list of
+http://people.apache.org/~jim/committers.html#unlistedclas[received
+CLAs]
+* once thats done let us know and we can apply to Apache Infrastructure
+to have your account created; we'll also need to know
+** your full name
+** your preferred email address
+** your preferred unix account name
+
+[[HowdoIbecomeacommitter-GettingstartedatApache]]
+==== Getting started at Apache
+
+Firstly add yourself to the link:../team.adoc[Team] page
+
+Now go read the instructions on the
+http://www.apache.org/dev/new-committers-guide.html[new committers guide].
+Its also worth viewing http://www.apache.org/dev.
+
+[[HowdoIbecomeacommitter-Moreinformation]]
+==== More information
+
+You can find more information about being a
+http://www.apache.org/dev/committers.html[committer at Apache here].
+
+[[HowdoIbecomeacommitter-GettingKarmainJIRAandConfluence]]
+==== Getting Karma in JIRA and Confluence
+
+Mail the dev list and ask for karma for JIRA / Confluence giving them
+details of your username you used to register with them both. We can
+then grant the necessary karma so you can start grabbing JIRA issues or
+editing the wiki
+
+[[HowdoIbecomeacommitter-GettingKarmainJenkinsHudson]]
+==== Getting Karma in Jenkins / Hudson
+
+Mail the PMC chair and ask for karma for Jenkins / Hudson as described
+http://wiki.apache.org/general/Hudson[here].

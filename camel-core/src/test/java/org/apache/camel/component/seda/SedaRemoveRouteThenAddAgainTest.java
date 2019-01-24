@@ -19,12 +19,11 @@ package org.apache.camel.component.seda;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version
- */
 public class SedaRemoveRouteThenAddAgainTest extends ContextTestSupport {
 
+    @Test
     public void testRemoveRouteAndThenAddAgain() throws Exception {
         MockEndpoint out = getMockEndpoint("mock:out");
         out.expectedMessageCount(1);
@@ -35,7 +34,7 @@ public class SedaRemoveRouteThenAddAgainTest extends ContextTestSupport {
         out.assertIsSatisfied();
 
         // now stop & remove the route
-        context.stopRoute("sedaToMock");
+        context.getRouteController().stopRoute("sedaToMock");
         context.removeRoute("sedaToMock");
 
         // and then add it back again

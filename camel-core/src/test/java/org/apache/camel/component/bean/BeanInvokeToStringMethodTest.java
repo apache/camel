@@ -18,12 +18,14 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class BeanInvokeToStringMethodTest extends ContextTestSupport {
 
+    @Test
     public void testInvokeToString() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("MyFooBean");
 

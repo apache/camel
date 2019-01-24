@@ -34,13 +34,13 @@
         </interceptFrom>
 
         <route>
-            <from ref="start"/>
+            <from uri="ref:start"/>
             <to uri="mock:first"/>
-            <to ref="bar"/>
+            <to uri="ref:bar"/>
         </route>
 
         <route>
-            <from ref="bar"/>
+            <from uri="ref:bar"/>
             <to uri="mock:result"/>
         </route>
 

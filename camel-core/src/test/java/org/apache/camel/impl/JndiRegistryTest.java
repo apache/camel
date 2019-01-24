@@ -19,23 +19,25 @@ package org.apache.camel.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.jndi.JndiTest;
+import org.apache.camel.support.jndi.JndiTest;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class JndiRegistryTest extends TestCase {
+public class JndiRegistryTest extends Assert {
 
+    @Test
     public void testLookupByType() throws Exception {
         JndiRegistry jndi = new JndiRegistry(JndiTest.createInitialContext());
         jndi.bind("foo", new SimpleLanguage());
         jndi.bind("bar", "Hello bar");
 
-        assertEquals("Hello bar", jndi.lookup("bar"));
+        assertEquals("Hello bar", jndi.lookupByName("bar"));
         assertEquals("Hello bar", jndi.lookupByName("bar"));
         assertEquals("Hello bar", jndi.lookupByNameAndType("bar", String.class));
-        assertNull(jndi.lookup("unknown"));
+        assertNull(jndi.lookupByName("unknown"));
         assertNull(jndi.lookupByName("unknown"));
 
         try {
@@ -49,7 +51,7 @@ public class JndiRegistryTest extends TestCase {
         assertNotNull(jndi.lookupByNameAndType("foo", SimpleLanguage.class));
         assertSame(jndi.lookupByNameAndType("foo", Language.class), jndi.lookupByNameAndType("foo", SimpleLanguage.class));
 
-        Map<String, ?> set = jndi.lookupByType(Language.class);
+        Map<String, ?> set = jndi.findByTypeWithName(Language.class);
         assertNotNull(set);
         assertEquals(1, set.size());
 
@@ -58,19 +60,21 @@ public class JndiRegistryTest extends TestCase {
         assertSame(jndi.lookupByName("foo"), set.values().iterator().next());
     }
 
+    @Test
     public void testStandalone() throws Exception {
         JndiRegistry jndi = new JndiRegistry(true);
         jndi.bind("bar", "Hello bar");
-        assertEquals("Hello bar", jndi.lookup("bar"));
+        assertEquals("Hello bar", jndi.lookupByName("bar"));
     }
 
+    @Test
     public void testCamelContextFactory() throws Exception {
         Map<Object, Object> env = new HashMap<>();
-        env.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
+        env.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
 
         JndiRegistry jndi = new JndiRegistry(env);
         jndi.bind("bar", "Hello bar");
-        assertEquals("Hello bar", jndi.lookup("bar"));
+        assertEquals("Hello bar", jndi.lookupByName("bar"));
     }
 
 }

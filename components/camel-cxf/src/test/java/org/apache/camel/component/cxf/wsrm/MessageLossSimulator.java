@@ -31,7 +31,6 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptor;
 import org.apache.cxf.ws.rm.RMContextUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

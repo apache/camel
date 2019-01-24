@@ -26,24 +26,25 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * The jcr component allows you to add/read nodes to/from a JCR compliant content repository.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "jcr", title = "JCR", syntax = "jcr:host/base", alternativeSyntax = "jcr:username:password@host/base",
-        consumerClass = JcrConsumer.class, label = "cms,database")
+        label = "cms,database")
 public class JcrEndpoint extends DefaultEndpoint {
 
     private Credentials credentials;
     private Repository repository;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
     @UriPath
     private String base;
@@ -101,7 +102,7 @@ public class JcrEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ObjectHelper.notEmpty(host, "host", this);
+        StringHelper.notEmpty(host, "host", this);
 
         this.repository = getCamelContext().getRegistry().lookupByNameAndType(host, Repository.class);
         if (repository == null) {
@@ -296,7 +297,7 @@ public class JcrEndpoint extends DefaultEndpoint {
      * @return the destination name resolved from the endpoint uri
      */
     public String getEndpointConfiguredDestinationName() {
-        String remainder = ObjectHelper.after(getEndpointKey(), "//");
+        String remainder = StringHelper.after(getEndpointKey(), "//");
 
         if (remainder != null && remainder.contains("@")) {
             remainder = remainder.substring(remainder.indexOf('@'));
@@ -304,7 +305,7 @@ public class JcrEndpoint extends DefaultEndpoint {
 
         if (remainder != null && remainder.contains("?")) {
             // remove parameters
-            remainder = ObjectHelper.before(remainder, "?");
+            remainder = StringHelper.before(remainder, "?");
         }
 
         if (ObjectHelper.isEmpty(remainder)) {

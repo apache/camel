@@ -26,9 +26,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class XmlConfigTestSupport extends TestSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBeanTest.class);
 

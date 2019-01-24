@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.component.bean.ParameterInfo;
@@ -40,10 +39,6 @@ public class AggregationStrategyBeanInfo {
     private final Class<?> type;
     private final Method method;
 
-    @Deprecated
-    public AggregationStrategyBeanInfo(CamelContext camelContext, Class<?> type, Method method) {
-        this(type, method);
-    }        
     public AggregationStrategyBeanInfo(Class<?> type, Method method) {
         this.type = type;
         this.method = method;
@@ -54,7 +49,7 @@ public class AggregationStrategyBeanInfo {
 
         int size = parameterTypes.length;
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Creating MethodInfo for class: {} method: {} having {} parameters", new Object[]{type, method, size});
+            LOG.trace("Creating MethodInfo for class: {} method: {} having {} parameters", type, method, size);
         }
 
         // must have equal number of parameters

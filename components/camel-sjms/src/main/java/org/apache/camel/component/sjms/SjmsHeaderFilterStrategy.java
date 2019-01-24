@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.sjms;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
-/**
- * @version
- */
 public class SjmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public SjmsHeaderFilterStrategy() {

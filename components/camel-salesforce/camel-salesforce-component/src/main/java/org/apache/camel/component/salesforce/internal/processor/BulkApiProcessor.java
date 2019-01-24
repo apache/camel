@@ -36,7 +36,7 @@ import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.internal.client.BulkApiClient;
 import org.apache.camel.component.salesforce.internal.client.DefaultBulkApiClient;
 import org.apache.camel.converter.stream.StreamCacheConverter;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.BATCH_ID;
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.CONTENT_TYPE;

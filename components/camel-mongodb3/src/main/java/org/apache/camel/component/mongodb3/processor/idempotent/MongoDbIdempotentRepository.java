@@ -20,11 +20,10 @@ import com.mongodb.ErrorCategory;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
-
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -33,7 +32,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
 
 @ManagedResource(description = "Mongo db based message id repository")
-public class MongoDbIdempotentRepository<E> extends ServiceSupport implements IdempotentRepository<E> {
+public class MongoDbIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     private MongoClient mongoClient;
     private String collectionName;
     private String dbName;
@@ -51,7 +50,7 @@ public class MongoDbIdempotentRepository<E> extends ServiceSupport implements Id
 
     @ManagedOperation(description = "Adds the key to the store")
     @Override
-    public boolean add(E key) {
+    public boolean add(String key) {
         Document document = new Document(MONGO_ID, key);
         try {
             collection.insertOne(document);
@@ -66,7 +65,7 @@ public class MongoDbIdempotentRepository<E> extends ServiceSupport implements Id
 
     @ManagedOperation(description = "Does the store contain the given key")
     @Override
-    public boolean contains(E key) {
+    public boolean contains(String key) {
         Bson document = eq(MONGO_ID, key);
         long count = collection.count(document);
         return count > 0;
@@ -74,14 +73,14 @@ public class MongoDbIdempotentRepository<E> extends ServiceSupport implements Id
 
     @ManagedOperation(description = "Remove the key from the store")
     @Override
-    public boolean remove(E key) {
+    public boolean remove(String key) {
         Bson document = eq(MONGO_ID, key);
         DeleteResult res = collection.deleteOne(document);
         return res.getDeletedCount() > 0;
     }
 
     @Override
-    public boolean confirm(E key) {
+    public boolean confirm(String key) {
         return true;
     }
 

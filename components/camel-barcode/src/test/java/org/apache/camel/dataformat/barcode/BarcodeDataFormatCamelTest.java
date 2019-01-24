@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This class tests all Camel dependend cases for {@link BarcodeDataFormat}. 
- * 
  */
 public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
     

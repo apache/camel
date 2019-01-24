@@ -21,10 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class WireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
 
     @Override
@@ -32,19 +30,17 @@ public class WireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testFireAndForgetUsingProcessor() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            @SuppressWarnings("deprecation")
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    .wireTap("direct:foo", true, new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            exchange.getIn().setBody("Bye " + body);
-                            exchange.getIn().setHeader("foo", "bar");
-                        }
+                    .wireTap("direct:foo").copy().newExchange(exchange -> {
+                        String body = exchange.getIn().getBody(String.class);
+                        exchange.getIn().setBody("Bye " + body);
+                        exchange.getIn().setHeader("foo", "bar");
                     }).to("mock:result");
 
 
@@ -75,17 +71,16 @@ public class WireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
         assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testFireAndForgetUsingProcessor2() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .wireTap("direct:foo", true, new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            exchange.getIn().setBody("Bye " + body);
-                            exchange.getIn().setHeader("foo", "bar");
-                        }
+                    .wireTap("direct:foo").copy().newExchange(exchange -> {
+                        String body = exchange.getIn().getBody(String.class);
+                        exchange.getIn().setBody("Bye " + body);
+                        exchange.getIn().setHeader("foo", "bar");
                     }).to("mock:result");
 
 
@@ -115,14 +110,14 @@ public class WireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
         assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testFireAndForgetUsingExpression() throws Exception {
         context.addRoutes(new RouteBuilder() {
-            @SuppressWarnings("deprecation")
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e2
                 from("direct:start")
-                    .wireTap("direct:foo", true, simple("Bye ${body}"))
+                    .wireTap("direct:foo").copy(true).newExchangeBody(simple("Bye ${body}"))
                     .to("mock:result");
 
                 from("direct:foo").to("mock:foo");
@@ -151,12 +146,13 @@ public class WireTapUsingFireAndForgetCopyTest extends ContextTestSupport {
         assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testFireAndForgetUsingExpression2() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .wireTap("direct:foo", true, simple("Bye ${body}"))
+                    .wireTap("direct:foo").copy(true).newExchangeBody(simple("Bye ${body}"))
                     .to("mock:result");
 
                 from("direct:foo").to("mock:foo");

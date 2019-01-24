@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for try .. handle routing where it should handle wrapped exceptions as well.
@@ -29,6 +30,7 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
 
     private boolean handled;
 
+    @Test
     public void testTryCatchFinally() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.net.SocketException;
 
 import org.apache.camel.CamelExecutionException;
@@ -24,6 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FailOverAllFailedExceptionTest extends ContextTestSupport {
 
@@ -32,7 +33,8 @@ public class FailOverAllFailedExceptionTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");
@@ -68,6 +70,7 @@ public class FailOverAllFailedExceptionTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testAllFailed() throws Exception {
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);

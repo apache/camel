@@ -63,7 +63,7 @@
 
     <route>
       <!-- CXF consumer using MESSAGE format -->
-      <from uri="cxf:bean:reportIncident?dataFormat=MESSAGE"/>
+      <from uri="cxf:bean:reportIncident?dataFormat=RAW"/>
       <!-- log input received -->
       <to uri="log:input"/>
       <!-- enrich the input by ensure the incidentId parameter is set -->
@@ -71,7 +71,7 @@
       <!-- Need to remove the http headers which could confuse the http endpoint -->
       <removeHeaders pattern="CamelHttp*"/>
       <!-- send proxied request to real web service -->
-      <to ref="callRealWebService"/>
+      <to uri="ref:callRealWebService"/>
       <!-- log answer from real web service -->
       <to uri="log:output"/>
     </route>

@@ -27,6 +27,7 @@ import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.junit.Test;
 
 import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper.determineReplayIdFor;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -103,5 +104,12 @@ public class SubscriptionHelperTest {
                      Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-2"));
         assertEquals("Expecting replayId for `my-topic-3` to be 6, as it is endpoint configured explicitly on the endpoint",
                      Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-3"));
+    }
+
+    @Test
+    public void shouldDetermineChannelNames() {
+        assertThat(SubscriptionHelper.getChannelName("topic1")).isEqualTo("/topic/topic1");
+        assertThat(SubscriptionHelper.getChannelName("event/Test")).isEqualTo("/event/Test__e");
+        assertThat(SubscriptionHelper.getChannelName("event/Test__e")).isEqualTo("/event/Test__e");
     }
 }

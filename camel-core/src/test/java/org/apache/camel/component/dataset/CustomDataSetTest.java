@@ -26,11 +26,9 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
-import org.apache.camel.util.PredicateAssertHelper;
+import org.apache.camel.support.PredicateAssertHelper;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class CustomDataSetTest extends ContextTestSupport {
     protected DataSet dataSet = new DataSetSupport() {
         Expression expression = new XPathBuilder("/message/@index").resultType(Long.class);
@@ -48,6 +46,7 @@ public class CustomDataSetTest extends ContextTestSupport {
         }
     };
 
+    @Test
     public void testUsingCustomDataSet() throws Exception {
         // data set will itself set its assertions so we should just
         // assert that all mocks is ok

@@ -19,6 +19,7 @@ package org.apache.camel.component.wordpress;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -31,13 +32,13 @@ import org.apache.camel.component.wordpress.consumer.WordpressUserConsumer;
 import org.apache.camel.component.wordpress.producer.WordpressPostProducer;
 import org.apache.camel.component.wordpress.producer.WordpressUserProducer;
 import org.apache.camel.component.wordpress.proxy.WordpressOperationType;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -49,7 +50,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
     public static final String ENDPOINT_SERVICE_POST = "post, user";
 
     @UriPath(description = "The endpoint operation.", enums = ENDPOINT_SERVICE_POST)
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String operation;
 
     @UriPath(description = "The second part of an endpoint operation. Needed only when endpoint semantic is not enough, like wordpress:post:delete", enums = "delete")

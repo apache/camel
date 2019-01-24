@@ -19,23 +19,21 @@ package org.apache.camel.component.xslt;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.transform.URIResolver;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ResourceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ResourceHelper;
 
 /**
  * The <a href="http://camel.apache.org/xslt.html">XSLT Component</a> is for performing XSLT transformations of messages
  */
-public class XsltComponent extends UriEndpointComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
+@Component("xslt")
+public class XsltComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private XmlConverter xmlConverter;
@@ -54,7 +52,6 @@ public class XsltComponent extends UriEndpointComponent {
     private boolean saxon;
 
     public XsltComponent() {
-        super(XsltEndpoint.class);
     }
 
     public XmlConverter getXmlConverter() {
@@ -202,7 +199,7 @@ public class XsltComponent extends UriEndpointComponent {
             // if its a http uri, then append additional parameters as they are part of the uri
             resourceUri = ResourceHelper.appendParameters(resourceUri, parameters);
         }
-        LOG.debug("{} using schema resource: {}", this, resourceUri);
+        log.debug("{} using schema resource: {}", this, resourceUri);
         endpoint.setResourceUri(resourceUri);
 
         if (!parameters.isEmpty()) {

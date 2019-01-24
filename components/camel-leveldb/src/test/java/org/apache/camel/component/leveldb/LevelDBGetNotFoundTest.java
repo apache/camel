@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
-
 import java.io.File;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class LevelDBGetNotFoundTest extends CamelTestSupport {
@@ -28,6 +29,7 @@ public class LevelDBGetNotFoundTest extends CamelTestSupport {
     private LevelDBFile levelDBFile;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/data");
@@ -38,6 +40,7 @@ public class LevelDBGetNotFoundTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         levelDBFile.stop();
         super.tearDown();

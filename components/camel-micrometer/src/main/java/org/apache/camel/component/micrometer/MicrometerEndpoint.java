@@ -24,25 +24,25 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * To collect various metrics directly from Camel routes using the Micrometer library.
  */
-@UriEndpoint(firstVersion = "2.22.0", scheme = "micrometer", title = "Micrometer", syntax = "micrometer:metricsType:meterName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.22.0", scheme = "micrometer", title = "Micrometer", syntax = "micrometer:metricsType:metricsName", producerOnly = true, label = "monitoring")
 public class MicrometerEndpoint extends DefaultEndpoint {
 
     protected MeterRegistry registry;
 
     @UriPath(description = "Type of metrics")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     protected final Meter.Type metricsType;
     @UriPath(description = "Name of metrics")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     protected final String metricsName;
     @UriPath(description = "Tags of metrics")
     protected final Iterable<Tag> tags;

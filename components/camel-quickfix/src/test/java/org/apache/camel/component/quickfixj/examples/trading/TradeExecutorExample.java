@@ -33,7 +33,6 @@ import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecremen
 import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.field.ClOrdID;
 import quickfix.field.HandlInst;
 import quickfix.field.MsgType;
@@ -107,7 +106,7 @@ public class TradeExecutorExample {
         LOG.info("Sending order");
         
         NewOrderSingle order = createNewOrderMessage();
-        Exchange exchange = producer.createExchange(ExchangePattern.InOnly);
+        Exchange exchange = producer.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(order);
         producer.process(exchange);            
 

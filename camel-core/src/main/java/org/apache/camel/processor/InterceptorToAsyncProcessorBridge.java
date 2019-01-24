@@ -16,19 +16,20 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A bridge to have regular interceptors implemented as {@link org.apache.camel.Processor}
  * work with the asynchronous routing engine without causing side effects.
- *
- * @version 
  */
 public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements AsyncProcessor {
 
@@ -43,18 +44,8 @@ public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements
      * @param interceptor the interceptor to bridge
      */
     public InterceptorToAsyncProcessorBridge(Processor interceptor) {
-        this(interceptor, null);
-    }
-
-    /**
-     * Constructs the bridge
-     *
-     * @param interceptor the interceptor to bridge
-     * @param target the target
-     */
-    public InterceptorToAsyncProcessorBridge(Processor interceptor, AsyncProcessor target) {
         this.interceptor = AsyncProcessorConverterHelper.convert(interceptor);
-        this.target = target;
+        this.target = AsyncProcessorConverterHelper.convert(target);
     }
 
     /**
@@ -88,6 +79,13 @@ public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements
         }
     }
 
+    @Override
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        process(exchange, callback);
+        return callback.getFuture();
+    }
+
     public void setTarget(Processor target) {
         this.target = AsyncProcessorConverterHelper.convert(target);
     }
@@ -99,13 +97,13 @@ public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(target, interceptor);
+        ServiceHelper.startService(target, interceptor);
     }
 
     @Override
     protected void doStop() throws Exception {
         callback.remove();
         interceptorDone.remove();
-        ServiceHelper.stopServices(interceptor, target);
+        ServiceHelper.stopService(interceptor, target);
     }
 }

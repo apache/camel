@@ -17,6 +17,7 @@
 package org.apache.camel.spring.remoting;
 
 import static junit.framework.TestCase.assertEquals;
+
 import org.apache.camel.Consume;
 
 public class MyMultiArgumentService implements MyMultiArgumentServiceInterface {

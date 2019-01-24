@@ -19,14 +19,13 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringMethodCallTest extends ContextTestSupport {
 
+    @Test
     public void testMethodCallType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Camel");
@@ -37,6 +36,7 @@ public class SpringMethodCallTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMethodCallRef() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:ref");
         mock.expectedBodiesReceived("Camel");
@@ -47,6 +47,7 @@ public class SpringMethodCallTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToBeanType() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hi Camel", "Hi World");

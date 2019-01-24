@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ignite.messaging;
 
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -24,7 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.ClusterGroupExpression;
-import org.apache.camel.component.ignite.IgniteComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,12 +35,11 @@ import org.apache.ignite.IgniteMessaging;
  * consume messages from an <a href="https://apacheignite.readme.io/docs/messaging">Ignite topic</a>.
  * This endpoint supports producers (to send messages) and consumers (to receive messages).
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-messaging", title = "Ignite Messaging", syntax = "ignite-messaging:topic", label = "nosql,cache,messaging",
-    consumerClass = IgniteMessagingConsumer.class)
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-messaging", title = "Ignite Messaging", syntax = "ignite-messaging:topic", label = "nosql,cache,messaging")
 public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topic;
 
     @UriParam(label = "consumer,producer")
@@ -53,12 +50,6 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     @UriParam(label = "producer")
     private Long timeout;
-
-    @Deprecated
-    public IgniteMessagingEndpoint(String endpointUri, URI remainingUri, Map<String, Object> parameters, IgniteComponent igniteComponent) {
-        super(endpointUri, igniteComponent);
-        topic = remainingUri.getHost();
-    }
 
     public IgniteMessagingEndpoint(String endpointUri, String remaining, Map<String, Object> parameters, IgniteMessagingComponent igniteComponent) {
         super(endpointUri, igniteComponent);

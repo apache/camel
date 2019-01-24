@@ -27,11 +27,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory;
 import org.apache.camel.component.hbase.model.HBaseCell;
 import org.apache.camel.component.hbase.model.HBaseRow;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
@@ -43,14 +43,14 @@ import org.apache.hadoop.security.UserGroupInformation;
 /**
  * For reading/writing from/to an HBase store (Hadoop database).
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "hbase", title = "HBase", syntax = "hbase:tableName", consumerClass = HBaseConsumer.class, label = "hadoop")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "hbase", title = "HBase", syntax = "hbase:tableName", label = "hadoop")
 public class HBaseEndpoint extends DefaultEndpoint {
 
     private Configuration configuration;
     private final Connection connection;
     private HBaseAdmin admin;
 
-    @UriPath(description = "The name of the table") @Metadata(required = "true")
+    @UriPath(description = "The name of the table") @Metadata(required = true)
     private final String tableName;
     @UriParam(label = "producer", defaultValue = "100")
     private int maxResults = 100;

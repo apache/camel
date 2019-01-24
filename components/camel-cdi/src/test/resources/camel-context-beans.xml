@@ -28,8 +28,8 @@
 
     <camel:camelContext>
         <camel:route>
-            <camel:from ref="inbound"/>
-            <camel:to ref="outbound"/>
+            <camel:from uri="ref:inbound"/>
+            <camel:to uri="ref:outbound"/>
         </camel:route>
     </camel:camelContext>
 

@@ -16,25 +16,22 @@
  */
 package org.apache.camel.impl;
 
-import java.util.EventObject;
-
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.Condition;
 
 /**
  * A support class for {@link org.apache.camel.spi.Condition} implementations to use as base class.
- *
- * @version 
  */
 public class ConditionSupport implements Condition {
 
-    public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+    public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
         return false;
     }
 
-    public boolean matchEvent(Exchange exchange, EventObject event) {
+    public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
         return false;
     }
 }

@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.web3j.Web3jConstants;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.web3j.protocol.core.methods.response.EthBlock;
@@ -343,6 +344,9 @@ public class Web3jProducerGanacheTest extends Web3jIntegrationTestSupport {
         exchange.getIn().setHeader(GAS_PRICE, BigInteger.valueOf(10000000000000L));
         exchange.getIn().setHeader(GAS_LIMIT, BigInteger.valueOf(30400L));
         exchange.getIn().setHeader(VALUE, BigInteger.valueOf(50000000000000L));
+
+//        String data = message.getHeader(Web3jConstants.DATA, configuration::getData, String.class);
+//
         template.send(exchange);
         String body = exchange.getIn().getBody(String.class);
         assertTrue(body != null);

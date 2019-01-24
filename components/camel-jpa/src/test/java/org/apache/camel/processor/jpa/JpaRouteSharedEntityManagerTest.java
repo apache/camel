@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.jpa;
-
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +27,7 @@ import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.Expression;
@@ -37,14 +37,12 @@ import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
-/**
- * @version 
- */
 public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
     private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
+    @Before
     public void setUp() throws Exception {
         // Don't run on Hibernate
         Assume.assumeTrue(ObjectHelper.loadClass("org.hibernate.Hibernate") == null);
@@ -61,7 +59,7 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
 
         template.sendBody("direct:startShared", new SendEmail("one@somewhere.org"));
         // start route
-        context.startRoute("jpaShared");
+        context.getRouteController().startRoute("jpaShared");
 
         // not the cleanest way to check the number of open connections
         int countEnd = getBrokerCount();
@@ -96,7 +94,7 @@ public class JpaRouteSharedEntityManagerTest extends AbstractJpaTest {
         assertThat("brokerCount", countStart, equalTo(1));
 
         // start route
-        context.startRoute("jpaOwn");
+        context.getRouteController().startRoute("jpaOwn");
 
         // not the cleanest way to check the number of open connections
         int countEnd = getBrokerCount();

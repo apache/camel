@@ -27,7 +27,7 @@ import org.apache.camel.model.cloud.springboot.ConsulServiceCallServiceDiscovery
 import org.apache.camel.model.cloud.springboot.ConsulServiceCallServiceDiscoveryConfigurationProperties;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

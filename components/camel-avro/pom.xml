@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.23.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-avro</artifactId>
@@ -32,11 +32,6 @@
     <description>Camel Avro data format</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.dataformat.avro*,org.apache.camel.component.avro*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>
-          org.apache.camel.spi.ComponentResolver;component=avro,
-          org.apache.camel.spi.DataFormatResolver;dataformat=avro
-      </camel.osgi.export.service>
     </properties>
 
     <build>
@@ -67,7 +62,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.avro</groupId>
@@ -124,11 +119,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-juel</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

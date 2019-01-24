@@ -15,20 +15,19 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.issues;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/xmldata");
         super.setUp();
 
@@ -37,6 +36,7 @@ public class FileWireTapWithXMLPayloadIssueTest extends SpringTestSupport {
                 + "<sample>\n<test>Helloooo</test>\n</sample>", Exchange.FILE_NAME, "hello.xml");
     }
 
+    @Test
     public void testWireTapXpathExpression() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

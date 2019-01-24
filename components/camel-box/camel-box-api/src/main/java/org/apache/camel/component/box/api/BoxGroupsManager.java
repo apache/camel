@@ -100,7 +100,7 @@ public class BoxGroupsManager {
         String invitabilityLevel, String memberViewabilityLevel) {
 
         try {
-            LOG.debug("Creating group name=" + name);
+            LOG.debug("Creating group name={}", name);
             if (name == null) {
                 throw new IllegalArgumentException("Parameter 'name' can not be null");
             }
@@ -121,7 +121,7 @@ public class BoxGroupsManager {
      */
     public void deleteGroup(String groupId) {
         try {
-            LOG.debug("Deleting group(" + groupId + ")");
+            LOG.debug("Deleting group({})", groupId);
             if (groupId == null) {
                 throw new IllegalArgumentException("Parameter 'groupId' can not be null");
             }
@@ -143,7 +143,7 @@ public class BoxGroupsManager {
      */
     public BoxGroup.Info getGroupInfo(String groupId) {
         try {
-            LOG.debug("Getting info for group(id=" + groupId + ")");
+            LOG.debug("Getting info for group(id={})", groupId);
             if (groupId == null) {
                 throw new IllegalArgumentException("Parameter 'groupId' can not be null");
             }
@@ -168,7 +168,7 @@ public class BoxGroupsManager {
      */
     public BoxGroup updateGroupInfo(String groupId, BoxGroup.Info groupInfo) {
         try {
-            LOG.debug("Updating info for group(id=" + groupId + ")");
+            LOG.debug("Updating info for group(id={})", groupId);
             if (groupId == null) {
                 throw new IllegalArgumentException("Parameter 'groupId' can not be null");
             }
@@ -194,7 +194,7 @@ public class BoxGroupsManager {
      */
     public Collection<BoxGroupMembership.Info> getGroupMemberships(String groupId) {
         try {
-            LOG.debug("Getting information about all memberships for group(id=" + groupId + ")");
+            LOG.debug("Getting information about all memberships for group(id={})", groupId);
             if (groupId == null) {
                 throw new IllegalArgumentException("Parameter 'groupId' can not be null");
             }
@@ -249,7 +249,7 @@ public class BoxGroupsManager {
      */
     public void deleteGroupMembership(String groupMembershipId) {
         try {
-            LOG.debug("Deleting groupMembership(id=" + groupMembershipId + ")");
+            LOG.debug("Deleting groupMembership(id={})", groupMembershipId);
             if (groupMembershipId == null) {
                 throw new IllegalArgumentException("Parameter 'groupMemebershipId' can not be null");
             }
@@ -272,7 +272,7 @@ public class BoxGroupsManager {
      */
     public BoxGroupMembership.Info getGroupMembershipInfo(String groupMemebershipId) {
         try {
-            LOG.debug("Getting info for groupMemebership(id=" + groupMemebershipId + ")");
+            LOG.debug("Getting info for groupMemebership(id={})", groupMemebershipId);
             if (groupMemebershipId == null) {
                 throw new IllegalArgumentException("Parameter 'groupMemebershipId' can not be null");
             }
@@ -297,7 +297,7 @@ public class BoxGroupsManager {
      */
     public BoxGroupMembership updateGroupMembershipInfo(String groupMembershipId, BoxGroupMembership.Info info) {
         try {
-            LOG.debug("Updating info for groupMembership(id=" + groupMembershipId + ")");
+            LOG.debug("Updating info for groupMembership(id={})", groupMembershipId);
             if (groupMembershipId == null) {
                 throw new IllegalArgumentException("Parameter 'groupMembershipId' can not be null");
             }

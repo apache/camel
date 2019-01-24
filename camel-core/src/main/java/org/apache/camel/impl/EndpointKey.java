@@ -16,27 +16,25 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ValueHolder;
+import org.apache.camel.ValueHolder;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Key used in {@link DefaultEndpointRegistry} in {@link DefaultCamelContext},
  * to ensure a consistent lookup.
  */
-final class EndpointKey extends ValueHolder<String> {
+public final class EndpointKey extends ValueHolder<String> {
 
-    EndpointKey(String uri) {
-        // must normalize key
-        super(DefaultCamelContext.normalizeEndpointUri(uri));
-        ObjectHelper.notEmpty(uri, "uri");
+    public EndpointKey(String uri) {
+        this(uri, false);
     }
 
     /**
      * Optimized when the uri is already normalized.
      */
-    EndpointKey(String uri, boolean normalized) {
-        super(uri);
-        ObjectHelper.notEmpty(uri, "uri");
+    public EndpointKey(String uri, boolean normalized) {
+        super(normalized ? uri : DefaultCamelContext.normalizeEndpointUri(uri));
+        StringHelper.notEmpty(uri, "uri");
     }
 
     @Override

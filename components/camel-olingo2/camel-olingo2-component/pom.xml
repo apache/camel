@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-olingo2-parent</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-olingo2</artifactId>
@@ -38,7 +38,6 @@
     <componentPackage>org.apache.camel.component.olingo2</componentPackage>
     <outPackage>org.apache.camel.component.olingo2.internal</outPackage>
 
-    <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
     <maven.exe.file.extension />
   </properties>
@@ -46,7 +45,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -146,6 +145,11 @@
       <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-ant</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -169,7 +173,6 @@
                   <apiName />
                   <proxyClass>org.apache.camel.component.olingo2.api.Olingo2App</proxyClass>
                   <fromSignatureFile>src/signatures/olingo-api-signature.txt</fromSignatureFile>
-                  <excludeConfigNames>edm|responseHandler</excludeConfigNames>
                   <extraOptions>
                     <extraOption>
                       <name>keyPredicate</name>
@@ -179,6 +182,8 @@
                   <nullableOptions>
                     <nullableOption>queryParams</nullableOption>
                     <nullableOption>endpointHttpHeaders</nullableOption>
+                    <nullableOption>edm</nullableOption>
+                    <nullableOption>responseHandler</nullableOption>
                   </nullableOptions>
                 </api>
               </apis>
@@ -333,7 +338,7 @@
             <dependencies>
                 <dependency>
                     <groupId>org.codehaus.groovy</groupId>
-                    <artifactId>groovy-all</artifactId>
+                    <artifactId>groovy</artifactId>
                     <version>${groovy-version}</version>
                     <scope>runtime</scope>
                 </dependency>

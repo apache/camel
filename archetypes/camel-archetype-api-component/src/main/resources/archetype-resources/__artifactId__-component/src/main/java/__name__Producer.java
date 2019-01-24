@@ -16,7 +16,7 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
-import org.apache.camel.util.component.AbstractApiProducer;
+import org.apache.camel.support.component.AbstractApiProducer;
 
 import ${package}.internal.${name}ApiName;
 import ${package}.internal.${name}PropertiesHelper;

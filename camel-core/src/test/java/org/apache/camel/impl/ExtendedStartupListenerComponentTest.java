@@ -21,19 +21,18 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedStartupListener;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ExtendedStartupListenerComponentTest extends ContextTestSupport {
 
     private MyComponent my;
 
+    @Test
     public void testExtendedStartupListenerComponent() throws Exception {
         // and now the routes are started
-        assertTrue(context.getRouteStatus("foo").isStarted());
-        assertTrue(context.getRouteStatus("bar").isStarted());
-        assertTrue(context.getRouteStatus("late").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("bar").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("late").isStarted());
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:late").expectedMessageCount(1);
@@ -57,8 +56,8 @@ public class ExtendedStartupListenerComponentTest extends ContextTestSupport {
 
             // the routes should not have been started as they start afterwards
             if (!alreadyStarted) {
-                assertTrue(context.getRouteStatus("foo").isStopped());
-                assertTrue(context.getRouteStatus("bar").isStopped());
+                assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
+                assertTrue(context.getRouteController().getRouteStatus("bar").isStopped());
             }
         }
 
@@ -71,8 +70,8 @@ public class ExtendedStartupListenerComponentTest extends ContextTestSupport {
             invoked++;
 
             // the original routes are now started
-            assertTrue(context.getRouteStatus("foo").isStarted());
-            assertTrue(context.getRouteStatus("bar").isStarted());
+            assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
+            assertTrue(context.getRouteController().getRouteStatus("bar").isStarted());
 
             // we can add new routes
             context.addRoutes(new RouteBuilder() {

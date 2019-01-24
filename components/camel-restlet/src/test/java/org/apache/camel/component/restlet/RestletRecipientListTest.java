@@ -19,9 +19,6 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestletRecipientListTest extends RestletTestSupport {
 
     @Test

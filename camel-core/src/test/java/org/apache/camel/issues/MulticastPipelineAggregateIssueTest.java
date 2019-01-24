@@ -16,16 +16,15 @@
  */
 package org.apache.camel.issues;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MulticastPipelineAggregateIssueTest extends ContextTestSupport {
 
+    @Test
     public void testMulticastPipelineAggregateIssue() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived(8);
         getMockEndpoint("mock:b").expectedBodiesReceived(8);

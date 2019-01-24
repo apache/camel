@@ -21,9 +21,11 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class SplitterSkipTest extends ContextTestSupport {
 
+    @Test
     public void testSplitterSkip() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived("C", "D", "E");
 
@@ -38,6 +40,7 @@ public class SplitterSkipTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitterEmpty() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(0);
 
@@ -49,6 +52,7 @@ public class SplitterSkipTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitterEmptyAgain() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(0);
 

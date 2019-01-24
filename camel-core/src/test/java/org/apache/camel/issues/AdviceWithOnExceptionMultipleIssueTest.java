@@ -21,6 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
 /**
  *
@@ -45,10 +47,11 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testSimpleMultipleAdvice() throws Exception {
         context.addRoutes(createRouteBuilder());
 
-        context.getRouteDefinition("RouteA").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:resultA").process(new Processor() {
@@ -59,7 +62,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
             }
         });
 
-        context.getRouteDefinition("RouteB").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("RouteB"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
             }
@@ -72,10 +75,11 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultipleAdviceWithExceptionThrown() throws Exception {
         context.addRoutes(createRouteBuilder());
 
-        context.getRouteDefinition("RouteA").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:resultA").process(new Processor() {
@@ -94,10 +98,11 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultipleAdvice() throws Exception {
         context.addRoutes(createRouteBuilder());
 
-        context.getRouteDefinition("RouteA").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("RouteA"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:resultA").process(new Processor() {
@@ -109,7 +114,7 @@ public class AdviceWithOnExceptionMultipleIssueTest extends ContextTestSupport {
             }
         });
 
-        context.getRouteDefinition("RouteB").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("RouteB"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
             }

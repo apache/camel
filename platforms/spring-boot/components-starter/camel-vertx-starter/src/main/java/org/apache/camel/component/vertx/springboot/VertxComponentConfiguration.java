@@ -17,12 +17,8 @@
 package org.apache.camel.component.vertx.springboot;
 
 import javax.annotation.Generated;
-import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
-import io.vertx.core.spi.VertxFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The vertx component is used for sending and receive messages from a vertx
@@ -37,10 +33,15 @@ public class VertxComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use a custom VertxFactory implementation
+     * Whether to enable auto configuration of the vertx component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private VertxFactory vertxFactory;
+    private Boolean enabled;
+    /**
+     * To use a custom VertxFactory implementation. The option is a
+     * io.vertx.core.spi.VertxFactory type.
+     */
+    private String vertxFactory;
     /**
      * Hostname for creating an embedded clustered EventBus
      */
@@ -50,16 +51,15 @@ public class VertxComponentConfiguration
      */
     private Integer port;
     /**
-     * Options to use for creating vertx
+     * Options to use for creating vertx. The option is a
+     * io.vertx.core.VertxOptions type.
      */
-    @NestedConfigurationProperty
-    private VertxOptions vertxOptions;
+    private String vertxOptions;
     /**
      * To use the given vertx EventBus instead of creating a new embedded
-     * EventBus
+     * EventBus. The option is a io.vertx.core.Vertx type.
      */
-    @NestedConfigurationProperty
-    private Vertx vertx;
+    private String vertx;
     /**
      * Timeout in seconds to wait for clustered Vertx EventBus to be ready. The
      * default value is 60.
@@ -72,11 +72,11 @@ public class VertxComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public VertxFactory getVertxFactory() {
+    public String getVertxFactory() {
         return vertxFactory;
     }
 
-    public void setVertxFactory(VertxFactory vertxFactory) {
+    public void setVertxFactory(String vertxFactory) {
         this.vertxFactory = vertxFactory;
     }
 
@@ -96,19 +96,19 @@ public class VertxComponentConfiguration
         this.port = port;
     }
 
-    public VertxOptions getVertxOptions() {
+    public String getVertxOptions() {
         return vertxOptions;
     }
 
-    public void setVertxOptions(VertxOptions vertxOptions) {
+    public void setVertxOptions(String vertxOptions) {
         this.vertxOptions = vertxOptions;
     }
 
-    public Vertx getVertx() {
+    public String getVertx() {
         return vertx;
     }
 
-    public void setVertx(Vertx vertx) {
+    public void setVertx(String vertx) {
         this.vertx = vertx;
     }
 

@@ -23,27 +23,24 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages Micrometer endpoints.
  */
-public class MicrometerComponent extends UriEndpointComponent {
+@Component("micrometer")
+public class MicrometerComponent extends DefaultComponent {
 
     public static final Meter.Type DEFAULT_METER_TYPE = Meter.Type.COUNTER;
-
-    private static final Logger LOG = LoggerFactory.getLogger(MicrometerComponent.class);
 
     @Metadata(label = "advanced")
     private MeterRegistry metricsRegistry;
 
     public MicrometerComponent() {
-        super(MicrometerEndpoint.class);
     }
 
     @Override
@@ -56,7 +53,7 @@ public class MicrometerComponent extends UriEndpointComponent {
         Meter.Type metricsType = getMetricsType(remaining);
         Iterable<Tag> tags = getMetricsTag(parameters);
 
-        LOG.debug("Metrics type: {}; name: {}; tags: {}", metricsType, metricsName, tags);
+        log.debug("Metrics type: {}; name: {}; tags: {}", metricsType, metricsName, tags);
         Endpoint endpoint = new MicrometerEndpoint(uri, this, metricsRegistry, metricsType, metricsName, tags);
         setProperties(endpoint, parameters);
         return endpoint;

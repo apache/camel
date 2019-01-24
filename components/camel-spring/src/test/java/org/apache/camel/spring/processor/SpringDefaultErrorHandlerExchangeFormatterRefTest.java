@@ -21,9 +21,6 @@ import org.apache.camel.processor.onexception.DefaultErrorHandlerExchangeFormatt
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringDefaultErrorHandlerExchangeFormatterRefTest extends DefaultErrorHandlerExchangeFormatterRefTest {
 
     protected CamelContext createCamelContext() throws Exception {

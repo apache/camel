@@ -20,8 +20,8 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.quartz2.QuartzComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
@@ -39,7 +39,7 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
         try {
             doOnInit(route);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -60,7 +60,7 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
 
         // validate time options has been configured
         if ((getRouteStartTime() == null) && (getRouteStopTime() == null) && (getRouteSuspendTime() == null) && (getRouteResumeTime() == null)) {
-            throw new IllegalArgumentException("Scheduled Route Policy for route {} has no start/stop/suspend/resume times specified");
+            throw new IllegalArgumentException("Scheduled Route Policy for route " + route.getId() + " has no start/stop/suspend/resume times specified");
         }
 
         registerRouteToScheduledRouteDetails(route);

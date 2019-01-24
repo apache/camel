@@ -16,17 +16,15 @@
  */
 package org.apache.camel.component.jetty;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.junit.Test;
 
 /**
  * Based on end user on forum how to get the 404 error code in his enrich aggregator
- *
- * @version 
  */
 public class JettySimplifiedHandle404Test extends BaseJettyTest {
 

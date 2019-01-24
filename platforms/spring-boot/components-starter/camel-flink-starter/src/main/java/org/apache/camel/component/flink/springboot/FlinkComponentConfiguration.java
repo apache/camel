@@ -17,13 +17,8 @@
 package org.apache.camel.component.flink.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.flink.DataSetCallback;
-import org.apache.camel.component.flink.DataStreamCallback;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.flink.api.java.DataSet;
-import org.apache.flink.streaming.api.datastream.DataStream;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The flink component can be used to send DataSet jobs to Apache Flink cluster.
@@ -37,25 +32,30 @@ public class FlinkComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * DataSet to compute against.
+     * Whether to enable auto configuration of the flink component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private DataSet dataSet;
+    private Boolean enabled;
     /**
-     * DataStream to compute against.
+     * DataSet to compute against. The option is a
+     * org.apache.flink.api.java.DataSet type.
      */
-    @NestedConfigurationProperty
-    private DataStream dataStream;
+    private String dataSet;
     /**
-     * Function performing action against a DataSet.
+     * DataStream to compute against. The option is a
+     * org.apache.flink.streaming.api.datastream.DataStream type.
      */
-    @NestedConfigurationProperty
-    private DataSetCallback dataSetCallback;
+    private String dataStream;
     /**
-     * Function performing action against a DataStream.
+     * Function performing action against a DataSet. The option is a
+     * org.apache.camel.component.flink.DataSetCallback type.
      */
-    @NestedConfigurationProperty
-    private DataStreamCallback dataStreamCallback;
+    private String dataSetCallback;
+    /**
+     * Function performing action against a DataStream. The option is a
+     * org.apache.camel.component.flink.DataStreamCallback type.
+     */
+    private String dataStreamCallback;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -63,35 +63,35 @@ public class FlinkComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public DataSet getDataSet() {
+    public String getDataSet() {
         return dataSet;
     }
 
-    public void setDataSet(DataSet dataSet) {
+    public void setDataSet(String dataSet) {
         this.dataSet = dataSet;
     }
 
-    public DataStream getDataStream() {
+    public String getDataStream() {
         return dataStream;
     }
 
-    public void setDataStream(DataStream dataStream) {
+    public void setDataStream(String dataStream) {
         this.dataStream = dataStream;
     }
 
-    public DataSetCallback getDataSetCallback() {
+    public String getDataSetCallback() {
         return dataSetCallback;
     }
 
-    public void setDataSetCallback(DataSetCallback dataSetCallback) {
+    public void setDataSetCallback(String dataSetCallback) {
         this.dataSetCallback = dataSetCallback;
     }
 
-    public DataStreamCallback getDataStreamCallback() {
+    public String getDataStreamCallback() {
         return dataStreamCallback;
     }
 
-    public void setDataStreamCallback(DataStreamCallback dataStreamCallback) {
+    public void setDataStreamCallback(String dataStreamCallback) {
         this.dataStreamCallback = dataStreamCallback;
     }
 

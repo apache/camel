@@ -23,12 +23,11 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Unit test for resolving reference parameters.
- *
- * @version 
  */
 public class HttpReferenceParameterTest extends CamelTestSupport {
 
@@ -43,6 +42,7 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
     private HttpContext testHttpContext;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         this.testBinding = new TestHttpBinding();
         this.testConfigurer = new TestClientConfigurer();

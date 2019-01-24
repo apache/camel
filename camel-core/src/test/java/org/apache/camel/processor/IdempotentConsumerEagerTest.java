@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -23,12 +22,11 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class IdempotentConsumerEagerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
@@ -38,6 +36,7 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -61,6 +60,7 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAddedDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -95,6 +95,7 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAdded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -125,11 +126,12 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotEager() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final IdempotentRepository<String> repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+                final IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 from("direct:start").idempotentConsumer(header("messageId"), repo).eager(false).
                         process(new Processor() {
@@ -152,11 +154,12 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEager() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final IdempotentRepository<String> repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+                final IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 from("direct:start").idempotentConsumer(header("messageId"), repo).eager(true).
                         process(new Processor() {
@@ -191,7 +194,8 @@ public class IdempotentConsumerEagerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:start");

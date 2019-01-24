@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Locale;
 import javax.activation.DataSource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -28,7 +29,10 @@ import org.apache.camel.Attachment;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpMessage;
-import org.apache.camel.impl.DefaultAttachment;
+import org.apache.camel.support.DefaultAttachment;
+import org.apache.camel.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * To handle attachments with Servlet.
@@ -36,6 +40,8 @@ import org.apache.camel.impl.DefaultAttachment;
  * This implementation is needed to deal with attachments when using Servlet.
  */
 public final class AttachmentHttpBinding extends DefaultHttpBinding {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AttachmentHttpBinding.class);
 
     AttachmentHttpBinding() {
     }
@@ -45,14 +51,32 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
         try {
             Collection<Part> parts = request.getParts();
             for (Part part : parts) {
-                DataSource ds = new PartDataSource(part);
-                Attachment attachment = new DefaultAttachment(ds);
-                for (String headerName : part.getHeaderNames()) {
-                    for (String headerValue : part.getHeaders(headerName)) {
-                        attachment.addHeader(headerName, headerValue);
+                String fileName = part.getName();
+                // is the file name accepted
+                boolean accepted = true;
+                if (getFileNameExtWhitelist() != null) {
+                    String ext = FileUtil.onlyExt(fileName);
+                    if (ext != null) {
+                        ext = ext.toLowerCase(Locale.US);
+                        String whiteList = getFileNameExtWhitelist().toLowerCase(Locale.US);
+                        if (!whiteList.equals("*") && !whiteList.contains(ext)) {
+                            accepted = false;
+                        }
                     }
                 }
-                message.addAttachmentObject(part.getName(), attachment);
+
+                if (accepted) {
+                    DataSource ds = new PartDataSource(part);
+                    Attachment attachment = new DefaultAttachment(ds);
+                    for (String headerName : part.getHeaderNames()) {
+                        for (String headerValue : part.getHeaders(headerName)) {
+                            attachment.addHeader(headerName, headerValue);
+                        }
+                    }
+                    message.addAttachmentObject(part.getName(), attachment);
+                } else {
+                    LOG.debug("Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}", fileName, getFileNameExtWhitelist());
+                }
             }
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot populate attachments", e);

@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.StaticService;
-import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -41,14 +40,17 @@ import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.DefaultThreadPoolFactory;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 import org.apache.camel.util.concurrent.ThreadHelper;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +99,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
     @Override
     public void registerThreadPoolProfile(ThreadPoolProfile profile) {
         ObjectHelper.notNull(profile, "profile");
-        ObjectHelper.notEmpty(profile.getId(), "id", profile);
+        StringHelper.notEmpty(profile.getId(), "id", profile);
         threadPoolProfiles.put(profile.getId(), profile);
     }
 
@@ -517,7 +519,7 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         }
 
         // id is mandatory
-        ObjectHelper.notEmpty(id, "id for thread pool " + executorService);
+        StringHelper.notEmpty(id, "id for thread pool " + executorService);
 
         // extract route id if possible
         if (source instanceof ProcessorDefinition) {

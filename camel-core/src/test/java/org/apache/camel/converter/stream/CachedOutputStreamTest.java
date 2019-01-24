@@ -28,11 +28,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 public class CachedOutputStreamTest extends ContextTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough" 
@@ -49,7 +51,8 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         return context;
     }
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         deleteDirectory("target/cachedir");
@@ -77,6 +80,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         }
     }
     
+    @Test
     public void testCachedStreamAccessStreamWhenExchangeOnCompletion() throws Exception {
         context.start();
         CachedOutputStream cos = new CachedOutputStream(exchange, false);
@@ -98,6 +102,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
 
+    @Test
     public void testCacheStreamToFileAndCloseStream() throws Exception {
         context.start();
 
@@ -134,6 +139,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
     
+    @Test
     public void testCacheStreamToFileAndCloseStreamEncrypted() throws Exception {
         // set some stream or 8-bit block cipher transformation name
         context.getStreamCachingStrategy().setSpoolChiper("RC4");
@@ -178,6 +184,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
 
+    @Test
     public void testCacheStreamToFileCloseStreamBeforeDone() throws Exception {
         context.start();
 
@@ -207,6 +214,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
     
+    @Test
     public void testCacheStreamToMemory() throws Exception {
         context.getStreamCachingStrategy().setSpoolThreshold(1024);
 
@@ -227,6 +235,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
 
+    @Test
     public void testCacheStreamToMemoryAsDiskIsDisabled() throws Exception {
         // -1 disables disk based cache
         context.getStreamCachingStrategy().setSpoolThreshold(-1);
@@ -250,6 +259,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
     
+    @Test
     public void testCachedOutputStreamCustomBufferSize() throws Exception {
         // double the default buffer size
         context.getStreamCachingStrategy().setBufferSize(8192);
@@ -286,6 +296,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
 
+    @Test
     public void testCachedOutputStreamEmptyInput() throws Exception {
         context.start();
 

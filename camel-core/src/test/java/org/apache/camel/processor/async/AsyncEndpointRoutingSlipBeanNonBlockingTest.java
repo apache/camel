@@ -22,7 +22,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -31,13 +30,11 @@ import org.apache.camel.RoutingSlip;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupport {
     private AsyncCallback innerCallback;
     private Exchange innerExchange;
@@ -49,6 +46,7 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
         return jndi;
     }
 
+    @Test
     public void testAsyncEndpointDontBlock() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
         Endpoint startEndpoint = context.getEndpoint("direct:start");
@@ -114,7 +112,7 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
         }
     }
 
-    private class MyAsyncProcessor implements AsyncProcessor {
+    private class MyAsyncProcessor extends AsyncProcessorSupport {
 
         @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -122,11 +120,6 @@ public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupp
             innerExchange = exchange;
 
             return false;
-        }
-
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            AsyncProcessorHelper.process(this, exchange);
         }
     }
 }

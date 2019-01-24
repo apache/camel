@@ -44,7 +44,6 @@ import io.undertow.websockets.core.BufferedTextMessage;
 import io.undertow.websockets.core.WebSocketChannel;
 import io.undertow.websockets.core.WebSockets;
 import io.undertow.websockets.spi.WebSocketHttpExchange;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -61,7 +60,7 @@ import org.xnio.Pooled;
 
 /**
  * An {@link HttpHandler} that delegates to {@link WebSocketProtocolHandshakeHandler} and provides some wiring to
- * connect {@link UndertowComsumer} with {@link UndertowProducer}.
+ * connect {@link UndertowConsumer} with {@link UndertowProducer}.
  */
 public class CamelWebSocketHandler implements HttpHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CamelWebSocketHandler.class);

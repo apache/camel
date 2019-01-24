@@ -41,7 +41,7 @@ public class UnixTimestampDeserializer extends JsonDeserializer<Instant> {
 
             return Instant.ofEpochSecond(unixTimestamp);
         } catch (Exception e) {
-            log.warn("Unable to deserialize the unix timestamp " + jsonParser.getText(), e);
+            log.warn("Unable to deserialize the unix timestamp {}", jsonParser.getText(), e);
             return null;
         }
     }

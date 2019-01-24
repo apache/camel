@@ -26,11 +26,11 @@ import oadd.org.apache.commons.lang.StringUtils;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultPollingEndpoint;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
@@ -43,10 +43,10 @@ import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 public class DrillEndpoint extends DefaultPollingEndpoint {
 
     @UriPath(description = "Host name or IP address")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host;
     @UriParam(description = "Port number")
-    @Metadata(required = "false", defaultValue = "2181")
+    @Metadata(required = false, defaultValue = "2181")
     private Integer port = 2181;
     @UriParam(description = "Drill directory", defaultValue = "")
     private String directory = "";

@@ -26,6 +26,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.function.ThrowingHelper;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.Configuration;
@@ -52,9 +53,9 @@ public class EhcacheConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     private Map<String, CacheConfiguration<?, ?>> configurations;
     @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> keyType = Object.class;
+    private Class<?> keyType;
     @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> valueType = Object.class;
+    private Class<?> valueType;
     @UriParam(label = "consumer", defaultValue = "ORDERED")
     private EventOrdering eventOrdering = EventOrdering.ORDERED;
     @UriParam(label = "consumer", defaultValue = "ASYNCHRONOUS")
@@ -235,7 +236,7 @@ public class EhcacheConfiguration implements Cloneable {
     }
 
     public boolean hasConfiguration(String name) {
-        return ObjectHelper.applyIfNotEmpty(configurations, c -> c.containsKey(name), () -> false);
+        return ThrowingHelper.applyIfNotEmpty(configurations, c -> c.containsKey(name), () -> false);
     }
 
     /**

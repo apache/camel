@@ -16,18 +16,17 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MulticastParallelTest extends ContextTestSupport {
 
+    @Test
     public void testSingleMulticastParallel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("AB");
@@ -37,6 +36,7 @@ public class MulticastParallelTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastParallel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(20);

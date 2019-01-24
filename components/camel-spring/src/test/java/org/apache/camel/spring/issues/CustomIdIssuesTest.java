@@ -22,12 +22,10 @@ import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class CustomIdIssuesTest extends SpringTestSupport {
 
     @Override
@@ -35,6 +33,7 @@ public class CustomIdIssuesTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/CustomIdIssueTest.xml");
     }
 
+    @Test
     public void testCustomId() {
         RouteDefinition route = context.getRouteDefinition("myRoute");
         assertNotNull(route);

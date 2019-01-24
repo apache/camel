@@ -22,12 +22,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.saga.InMemorySagaService;
 import org.apache.camel.model.SagaCompletionMode;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
  */
 public class SagaComponentTest extends ContextTestSupport {
 
+    @Test
     public void testManualCompletion() throws InterruptedException {
         MockEndpoint completed = getMockEndpoint("mock:completed");
         completed.expectedMessageCount(1);
@@ -37,6 +39,7 @@ public class SagaComponentTest extends ContextTestSupport {
         completed.assertIsSatisfied();
     }
 
+    @Test
     public void testManualCompletionIsNotTriggeredAutomatically() throws InterruptedException {
         MockEndpoint completed = getMockEndpoint("mock:completed");
         completed.expectedMessageCount(1);
@@ -47,6 +50,7 @@ public class SagaComponentTest extends ContextTestSupport {
         completed.assertIsNotSatisfied();
     }
 
+    @Test
     public void testManualCompensationIsTriggeredOnly() throws InterruptedException {
         MockEndpoint completed = getMockEndpoint("mock:completed");
         completed.expectedMessageCount(1);
@@ -61,6 +65,7 @@ public class SagaComponentTest extends ContextTestSupport {
         compensated.assertIsSatisfied();
     }
 
+    @Test
     public void testAutoCompletion() throws InterruptedException {
         MockEndpoint completed = getMockEndpoint("mock:completed");
         completed.expectedMessageCount(1);
@@ -70,6 +75,7 @@ public class SagaComponentTest extends ContextTestSupport {
         completed.assertIsSatisfied();
     }
 
+    @Test
     public void testAutoCompensationIsTriggeredOnly() throws InterruptedException {
         MockEndpoint completed = getMockEndpoint("mock:completed");
         completed.expectedMessageCount(1);

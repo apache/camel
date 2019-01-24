@@ -22,9 +22,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 public class VmMultipleConsumersMultipleContextTest extends ContextTestSupport {
 
+    @Test
     public void testMultipleVMConsumersSameContext() throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
         ProducerTemplate producerTemplate = camelContext.createProducerTemplate();
@@ -62,6 +64,7 @@ public class VmMultipleConsumersMultipleContextTest extends ContextTestSupport {
         camelContext.stop();
     }
 
+    @Test
     public void testVmMultipleConsumersMultipleContext() throws Exception {
 
         // start context 1
@@ -112,6 +115,7 @@ public class VmMultipleConsumersMultipleContextTest extends ContextTestSupport {
         return rc;
     }
 
+    @Test
     public void testVmMultipleConsumersDifferentEndpoints() throws Exception {
         // start context 1
         CamelContext consumerContext1 = new DefaultCamelContext();

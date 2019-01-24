@@ -20,15 +20,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AdviceWithCBRTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceCBR() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveById("foo").after().to("mock:foo2");
@@ -49,9 +49,10 @@ public class AdviceWithCBRTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceToStringCBR() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString("To[mock:foo]").after().to("mock:foo2");

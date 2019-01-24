@@ -19,15 +19,11 @@ package org.apache.camel.processor;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Ensures a {@link Producer} is executed within an {@link org.apache.camel.spi.UnitOfWork}.
- *
- * @version 
  */
 public final class UnitOfWorkProducer implements Producer {
 
@@ -51,21 +47,8 @@ public final class UnitOfWorkProducer implements Producer {
         return producer.getEndpoint();
     }
 
-    public Exchange createExchange() {
-        return producer.createExchange();
-    }
-
-    public Exchange createExchange(ExchangePattern pattern) {
-        return producer.createExchange(pattern);
-    }
-
-    @Deprecated
-    public Exchange createExchange(Exchange exchange) {
-        return producer.createExchange(exchange);
-    }
-
     public void process(final Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(processor, exchange);
+        processor.process(exchange);
     }
 
     public void start() throws Exception {

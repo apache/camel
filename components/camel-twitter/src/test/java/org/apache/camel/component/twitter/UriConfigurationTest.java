@@ -33,13 +33,6 @@ public class UriConfigurationTest extends Assert {
     private CamelContext context = new DefaultCamelContext();
     private CamelTwitterTestSupport support = new CamelTwitterTestSupport();
 
-    @Deprecated
-    @Test
-    public void testDeprecatedUri() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter:search?" + support.getUriTokens());
-        assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
-    }
-
     @Test
     public void testBasicAuthentication() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-search:foo?" + support.getUriTokens());

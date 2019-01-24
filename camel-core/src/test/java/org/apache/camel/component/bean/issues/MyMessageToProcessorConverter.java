@@ -20,9 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.TypeConverterSupport;
 
-/**
- * @version 
- */
 public class MyMessageToProcessorConverter extends TypeConverterSupport {
 
     @SuppressWarnings("unchecked")

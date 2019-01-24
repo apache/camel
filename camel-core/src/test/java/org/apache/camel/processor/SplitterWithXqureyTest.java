@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class SplitterWithXqureyTest extends ContextTestSupport {
     private static String xmlData = "<workflow id=\"12345\" xmlns=\"http://camel.apache.org/schema/one\" "
@@ -42,6 +43,7 @@ public class SplitterWithXqureyTest extends ContextTestSupport {
         };
     }
     
+    @Test
     public void testSenderXmlData() throws Exception {        
         MockEndpoint result = getMockEndpoint("mock:result");
         result.reset();

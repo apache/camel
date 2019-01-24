@@ -21,12 +21,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class SedaDiscardIfNoConsumerTest extends ContextTestSupport {
 
+    @Test
     public void testDiscard() throws Exception {
         SedaEndpoint bar = getMandatoryEndpoint("seda:bar", SedaEndpoint.class);
         assertEquals(0, bar.getCurrentQueueSize());
@@ -40,6 +39,7 @@ public class SedaDiscardIfNoConsumerTest extends ContextTestSupport {
         assertEquals(0, bar.getCurrentQueueSize());
     }
 
+    @Test
     public void testDiscardUoW() throws Exception {
         SedaEndpoint bar = getMandatoryEndpoint("seda:bar", SedaEndpoint.class);
         assertEquals(0, bar.getCurrentQueueSize());

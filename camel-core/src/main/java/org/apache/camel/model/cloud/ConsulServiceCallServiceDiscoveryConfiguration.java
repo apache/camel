@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "consulServiceDiscovery")
@@ -71,24 +71,6 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    /**
-     * @deprecated replaced by {@link #getDatacenter()} ()}
-     */
-    @Deprecated
-    public String getDc() {
-        return datacenter;
-    }
-
-    /**
-     * The data center
-     *
-     * @deprecated replaced by {@link #setDatacenter(String)} ()}
-     */
-    @Deprecated
-    public void setDc(String dc) {
-        this.datacenter = dc;
     }
 
     public String getDatacenter() {
@@ -205,8 +187,8 @@ public class ConsulServiceCallServiceDiscoveryConfiguration extends ServiceCallS
     /**
      * The data center
      */
-    public ConsulServiceCallServiceDiscoveryConfiguration dc(String dc) {
-        setDc(dc);
+    public ConsulServiceCallServiceDiscoveryConfiguration dataCenter(String dc) {
+        setDatacenter(dc);
         return this;
     }
 

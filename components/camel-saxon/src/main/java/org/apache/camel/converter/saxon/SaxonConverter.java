@@ -18,6 +18,7 @@ package org.apache.camel.converter.saxon;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.xml.transform.dom.DOMSource;
 
 import org.w3c.dom.Document;
@@ -31,7 +32,6 @@ import net.sf.saxon.om.DocumentInfo;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;

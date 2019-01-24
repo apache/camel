@@ -23,9 +23,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorInOutChainedTimeoutTest extends CamelTestSupport {
     @Test
     public void testDisruptorInOutChainedTimeout() throws Exception {
@@ -39,7 +36,7 @@ public class DisruptorInOutChainedTimeoutTest extends CamelTestSupport {
                     e.getCause());
             assertEquals(2000, cause.getTimeout());
         }
-        final long delta = watch.stop();
+        final long delta = watch.taken();
 
         assertTrue("Should be faster than 4000 millis, was: " + delta, delta < 4000);
     }

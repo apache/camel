@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-saxon</artifactId>
@@ -32,15 +32,6 @@
   <description>Camel Saxon (XQuery/XPath) support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.xquery.*,
-      org.apache.camel.language.xquery.*,
-      org.apache.camel.converter.saxon.*
-    </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=xquery,
-      org.apache.camel.spi.LanguageResolver;language=xquery
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

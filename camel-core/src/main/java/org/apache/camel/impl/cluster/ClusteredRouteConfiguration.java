@@ -18,7 +18,7 @@ package org.apache.camel.impl.cluster;
 
 import java.time.Duration;
 
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.RuntimeCamelException;
 
 public class ClusteredRouteConfiguration implements Cloneable {
     private String namespace;
@@ -48,7 +48,7 @@ public class ClusteredRouteConfiguration implements Cloneable {
         try {
             return (ClusteredRouteConfiguration) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 }

@@ -38,7 +38,7 @@
 
         <route>
             <from uri="direct:start"/>
-            <to ref="myFile"/>
+            <to uri="ref:myFile"/>
             <to uri="mock:result"/>
         </route>
 

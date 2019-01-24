@@ -32,10 +32,8 @@ import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.PollingConsumerSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.PollingConsumerSupport;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -44,7 +42,6 @@ import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
 public class JpaPollingConsumer extends PollingConsumerSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
     private transient ExecutorService executorService;
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
@@ -142,7 +139,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
                     query.setLockMode(getLockModeType());
                 }
 
-                LOG.trace("Created query {}", query);
+                log.trace("Created query {}", query);
 
                 Object answer;
 
@@ -158,14 +155,14 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
                     }
 
                     // commit
-                    LOG.debug("Flushing EntityManager");
+                    log.debug("Flushing EntityManager");
                     entityManager.flush();
 
                     // must clear after flush
                     entityManager.clear();
 
                 } catch (PersistenceException e) {
-                    LOG.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
+                    log.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
 
                     entityManager.close();
 
@@ -200,7 +197,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
         try {
             return future.get(timeout, TimeUnit.MILLISECONDS);
         } catch (ExecutionException | InterruptedException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } catch (TimeoutException e) {
             // ignore as we hit timeout then return null
         }

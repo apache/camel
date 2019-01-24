@@ -26,13 +26,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.processor.ThroughputLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -45,11 +45,11 @@ import org.slf4j.LoggerFactory;
  * Camel will use the throughput logger when sending dataset's.
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "dataset", title = "Dataset", syntax = "dataset:name",
-    consumerClass = DataSetConsumer.class, label = "core,testing", lenientProperties = true)
+    label = "core,testing", lenientProperties = true)
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();
-    @UriPath(name = "name", description = "Name of DataSet to lookup in the registry") @Metadata(required = "true")
+    @UriPath(name = "name", description = "Name of DataSet to lookup in the registry") @Metadata(required = true)
     private volatile DataSet dataSet;
     @UriParam(label = "consumer", defaultValue = "0")
     private int minRate;
@@ -63,13 +63,6 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long initialDelay = 1000;
     @UriParam(enums = "strict,lenient,off", defaultValue = "lenient")
     private String dataSetIndex = "lenient";
-
-    @Deprecated
-    public DataSetEndpoint() {
-        this.log = LoggerFactory.getLogger(DataSetEndpoint.class);
-        // optimize as we dont need to copy the exchange
-        setCopyOnExchange(false);
-    }
 
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
         super(endpointUri, component);

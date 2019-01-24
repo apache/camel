@@ -26,9 +26,6 @@ import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class XMLSecurityConcurrencyTest extends CamelTestSupport {
     private static final boolean HAS_3DES;
     static {

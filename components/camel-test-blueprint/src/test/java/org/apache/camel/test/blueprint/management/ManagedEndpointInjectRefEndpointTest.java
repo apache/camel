@@ -16,7 +16,8 @@
  */
 package org.apache.camel.test.blueprint.management;
 
-import java.util.Iterator;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -62,16 +63,14 @@ public class ManagedEndpointInjectRefEndpointTest extends CamelBlueprintTestSupp
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=producers,*"), null);
         assertEquals(2, set.size());
-        Iterator<ObjectName> it = set.iterator();
 
-        for (int i = 0; i < 2; i++) {
-            ObjectName on = it.next();
-
+        Set<String> uris = new HashSet<>(Arrays.asList("mock://foo", "mock://result"));
+        for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals("Should be registered", true, registered);
+            assertTrue("Should be registered", registered);
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri, uri.equals("mock://foo") || uri.equals("mock://result"));
+            assertTrue(uri, uris.contains(uri));
 
             // should be started
             String state = (String) mbeanServer.getAttribute(on, "State");
@@ -80,16 +79,14 @@ public class ManagedEndpointInjectRefEndpointTest extends CamelBlueprintTestSupp
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
         assertEquals(3, set.size());
-        it = set.iterator();
 
-        for (int i = 0; i < 3; i++) {
-            ObjectName on = it.next();
-
+        uris = new HashSet<>(Arrays.asList("direct://start", "mock://foo", "mock://result"));
+        for (ObjectName on : set) {
             boolean registered = mbeanServer.isRegistered(on);
-            assertEquals("Should be registered", true, registered);
+            assertTrue("Should be registered", registered);
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri, uri.equals("direct://start") || uri.equals("mock://foo") || uri.equals("mock://result"));
+            assertTrue(uri, uris.contains(uri));
         }
     }
 

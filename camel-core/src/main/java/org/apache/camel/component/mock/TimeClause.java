@@ -23,15 +23,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.BinaryPredicateSupport;
-import org.apache.camel.util.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents time based clauses for setting expectations on the mocks.
  * Such as time constrains for the received messages.
- *
- * @version 
  */
 public class TimeClause extends BinaryPredicateSupport {
 
@@ -165,7 +162,7 @@ public class TimeClause extends BinaryPredicateSupport {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Evaluated time clause [{}] with current: {}, other: {} -> {}", new Object[]{toString(), currentDate, otherDate, answer});
+            LOG.debug("Evaluated time clause [{}] with current: {}, other: {} -> {}", toString(), currentDate, otherDate, answer);
         }
 
         return answer;

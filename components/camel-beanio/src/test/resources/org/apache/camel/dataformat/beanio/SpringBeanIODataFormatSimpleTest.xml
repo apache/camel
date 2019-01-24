@@ -34,16 +34,16 @@
 
     <route>
       <from uri="direct:unmarshal"/>
-      <unmarshal ref="myBeanio"/>
+      <unmarshal><custom ref="myBeanio"/></unmarshal>
       <split>
-        <simple>body</simple>
+        <simple>${body}</simple>
         <to uri="mock:beanio-unmarshal"/>
       </split>
     </route>
     
     <route>
       <from uri="direct:marshal"/>
-      <marshal ref="myBeanio"/>
+      <marshal><custom ref="myBeanio"/></marshal>
       <to uri="mock:beanio-marshal"/>
     </route>
   </camelContext>

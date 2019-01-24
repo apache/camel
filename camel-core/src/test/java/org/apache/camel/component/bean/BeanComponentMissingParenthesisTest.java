@@ -20,6 +20,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
 
@@ -35,6 +36,7 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testCorrect() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -51,6 +53,7 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMissing() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -71,6 +74,7 @@ public class BeanComponentMissingParenthesisTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInvalidName() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

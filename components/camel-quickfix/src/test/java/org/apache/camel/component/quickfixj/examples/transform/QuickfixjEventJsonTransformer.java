@@ -18,7 +18,6 @@ package org.apache.camel.component.quickfixj.examples.transform;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.quickfixj.QuickfixjEndpoint;
-
 import quickfix.ConfigError;
 import quickfix.DataDictionary;
 import quickfix.Message;

@@ -21,33 +21,35 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.DefaultDebugger;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
+
 public class DebugSingleStepTest extends ContextTestSupport {
 
     private List<String> logs = new ArrayList<>();
     private Breakpoint breakpoint;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
-            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+            public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
                 String body = exchange.getIn().getBody(String.class);
                 logs.add("Single stepping at " + definition.getLabel() + " with body: " + body);
             }
         };
     }
 
+    @Test
     public void testDebug() throws Exception {
         context.getDebugger().addSingleStepBreakpoint(breakpoint);
 

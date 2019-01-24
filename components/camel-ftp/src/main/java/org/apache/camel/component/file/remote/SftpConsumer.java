@@ -30,6 +30,7 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -160,7 +161,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         for (SftpRemoteFile file : files) {
 
             if (log.isTraceEnabled()) {
-                log.trace("SftpFile[fileName={}, longName={}, dir={}]", new Object[]{file.getFilename(), file.getLongname(), file.isDirectory()});
+                log.trace("SftpFile[fileName={}, longName={}, dir={}]", file.getFilename(), file.getLongname(), file.isDirectory());
             }
 
             // check if we can continue polling in files
@@ -244,7 +245,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         answer.setAbsoluteFilePath(absoluteFileName);
 
         // the relative filename, skip the leading endpoint configured path
-        String relativePath = ObjectHelper.after(absoluteFileName, endpointPath);
+        String relativePath = StringHelper.after(absoluteFileName, endpointPath);
         // skip trailing /
         relativePath = FileUtil.stripLeadingSeparator(relativePath);
         answer.setRelativeFilePath(relativePath);

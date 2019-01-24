@@ -20,6 +20,7 @@ import java.io.File;
 import java.nio.file.Path;
 
 import org.apache.camel.LanguageTestSupport;
+import org.junit.Test;
 
 public class SimpleOverrideMethodTest extends LanguageTestSupport {
 
@@ -28,6 +29,7 @@ public class SimpleOverrideMethodTest extends LanguageTestSupport {
         return "simple";
     }
 
+    @Test
     public void testOverrideMethod() throws Exception {
         Path path = new File("target").toPath();
         exchange.getIn().setBody(path);

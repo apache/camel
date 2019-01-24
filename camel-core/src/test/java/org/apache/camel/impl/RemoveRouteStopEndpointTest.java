@@ -19,10 +19,12 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
+import org.junit.Test;
 
 public class RemoveRouteStopEndpointTest extends ContextTestSupport {
 
+    @Test
     public void testEndpointRegistryStopRouteEndpoints() throws Exception {
         Endpoint seda = context.hasEndpoint("seda://foo");
         assertNotNull(seda);
@@ -40,7 +42,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(context.hasEndpoint("mock://stop") != null);
 
         // stop and remove bar route
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
         assertTrue(context.hasEndpoint("seda://foo") != null);
@@ -55,7 +57,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue("Should be stopped", ((ServiceSupport) log).isStopped());
 
         // stop and remove baz route
-        context.stopRoute("baz");
+        context.getRouteController().stopRoute("baz");
         context.removeRoute("baz");
 
         assertTrue(context.hasEndpoint("seda://foo") != null);
@@ -66,7 +68,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertFalse(context.hasEndpoint("seda://stop") != null);
         assertFalse(context.hasEndpoint("mock://stop") != null);
         // stop and remove foo route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         context.removeRoute("foo");
 
         assertFalse(context.hasEndpoint("seda://foo") != null);
@@ -81,6 +83,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertFalse("Should not be started", ((ServiceSupport) log).isStarted());
     }
 
+    @Test
     public void testEndpointRegistryStopRouteEndpointsContextStop() throws Exception {
         Endpoint seda = context.hasEndpoint("seda://foo");
         assertNotNull(seda);
@@ -98,7 +101,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(context.hasEndpoint("mock://stop") != null);
 
         // stop and remove bar route
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
         assertTrue("Should be started", ((ServiceSupport) seda).isStarted());
@@ -113,7 +116,7 @@ public class RemoveRouteStopEndpointTest extends ContextTestSupport {
         assertTrue(context.hasEndpoint("mock://stop") != null);
 
         // stop and remove baz route
-        context.stopRoute("baz");
+        context.getRouteController().stopRoute("baz");
         context.removeRoute("baz");
 
         assertTrue(context.hasEndpoint("seda://foo") != null);

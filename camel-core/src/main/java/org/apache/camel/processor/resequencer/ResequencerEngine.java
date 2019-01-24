@@ -55,8 +55,6 @@ import org.apache.camel.util.concurrent.ThreadHelper;
  * element needs <code>timeout</code> milliseconds in any case for becoming
  * <i>ready-for-delivery</i>.
  * <p>
- *
- * @version 
  */
 public class ResequencerEngine<E> {
 

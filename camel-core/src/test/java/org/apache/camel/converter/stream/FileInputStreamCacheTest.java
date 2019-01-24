@@ -21,14 +21,13 @@ import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileInputStreamCacheTest extends ContextTestSupport {
 
     private static final String TEST_FILE = "src/test/resources/org/apache/camel/converter/stream/test.xml";
 
+    @Test
     public void testFileInputStreamCache() throws Exception {
        
         File file = new File(TEST_FILE);

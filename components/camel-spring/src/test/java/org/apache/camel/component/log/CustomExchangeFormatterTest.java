@@ -18,14 +18,13 @@ package org.apache.camel.component.log;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class CustomExchangeFormatterTest extends SpringTestSupport {
 
+    @Test
     public void testExchangeFormattersConfiguredProperly() throws Exception {
         TestExchangeFormatter aaa = null;
         TestExchangeFormatter bbb = null;

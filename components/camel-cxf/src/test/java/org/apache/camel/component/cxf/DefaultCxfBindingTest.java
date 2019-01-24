@@ -39,10 +39,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
 import org.apache.cxf.binding.Binding;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
@@ -58,9 +58,6 @@ import org.junit.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * 
- */
 public class DefaultCxfBindingTest extends Assert {
     
     private static final String SOAP_MESSAGE_1 = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
@@ -139,12 +136,12 @@ public class DefaultCxfBindingTest extends Assert {
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml;charset=ISO-8859-1");
         cxfBinding.setCharsetWithContentType(exchange);
         
-        String charset = IOHelper.getCharsetName(exchange);
+        String charset = ExchangeHelper.getCharsetName(exchange);
         assertEquals("Get a wrong charset", "ISO-8859-1", charset);
         
         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/xml");
         cxfBinding.setCharsetWithContentType(exchange);
-        charset = IOHelper.getCharsetName(exchange);
+        charset = ExchangeHelper.getCharsetName(exchange);
         assertEquals("Get a worng charset name", "UTF-8", charset);
     }
     

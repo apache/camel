@@ -15,16 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4.http;
-
 import javax.annotation.Resource;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"/org/apache/camel/component/netty4/http/SpringNettyHttpBasicAuthTest.xml"})
-public class SpringNettyHttpBasicAuthTest extends TestCase {
+public class SpringNettyHttpBasicAuthTest extends Assert {
 
     @Produce
     private ProducerTemplate template;

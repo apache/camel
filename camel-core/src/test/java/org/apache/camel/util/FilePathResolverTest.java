@@ -16,10 +16,12 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class FilePathResolverTest extends TestCase {
+public class FilePathResolverTest extends Assert {
 
+    @Test
     public void testFilePathResolver() throws Exception {
         assertEquals("/foo/bar", FilePathResolver.resolvePath("/foo/bar"));
 

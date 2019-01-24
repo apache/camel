@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Testing http://camel.apache.org/dsl.html
  */
 public class InterceptFromSimplePredicateTest extends ContextTestSupport {
 
+    @Test
     public void testNoIntercept() throws Exception {
         getMockEndpoint("mock:intercepted").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
@@ -35,6 +37,7 @@ public class InterceptFromSimplePredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIntercepted() throws Exception {
         getMockEndpoint("mock:intercepted").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedBodiesReceived("This is a test body");

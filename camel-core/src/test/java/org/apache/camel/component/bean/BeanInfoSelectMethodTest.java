@@ -23,10 +23,8 @@ import org.apache.camel.ExchangeException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanInfoSelectMethodTest extends ContextTestSupport {
 
     @Override
@@ -36,12 +34,14 @@ public class BeanInfoSelectMethodTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testOrder() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Order");
         template.sendBody("direct:a", "Hello");
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailure() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Failure");
         template.send("direct:b", new Processor() {

@@ -35,13 +35,16 @@ import com.google.gson.LongSerializationPolicy;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://code.google.com/p/google-gson/">Gson</a> to marshal to and from JSON.
  */
+@Dataformat("json-gson")
 public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private Gson gson;
@@ -123,7 +126,7 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
-        try (final OutputStreamWriter osw = new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange));
+        try (final OutputStreamWriter osw = new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange));
              final BufferedWriter writer = IOHelper.buffered(osw)) {
             gson.toJson(graph, writer);
         }
@@ -139,7 +142,7 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
-        try (final InputStreamReader isr = new InputStreamReader(stream, IOHelper.getCharsetName(exchange));
+        try (final InputStreamReader isr = new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange));
              final BufferedReader reader = IOHelper.buffered(isr)) {
             if (unmarshalGenericType == null) {
                 return gson.fromJson(reader, unmarshalType);

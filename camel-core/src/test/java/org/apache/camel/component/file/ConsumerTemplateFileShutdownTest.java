@@ -18,12 +18,14 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.junit.Test;
 
 /**
  *
  */
 public class ConsumerTemplateFileShutdownTest extends ContextTestSupport {
     
+    @Test
     public void testConsumerTemplateFile() throws Exception {
         deleteDirectory("target/consumertemplate");
         

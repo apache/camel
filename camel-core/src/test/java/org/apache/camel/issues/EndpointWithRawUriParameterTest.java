@@ -27,9 +27,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
+import org.junit.Test;
 
 public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
@@ -100,6 +101,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRawUriParameter() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
@@ -110,6 +112,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUriParameterLines() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -123,6 +126,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         assertEquals("def", lines.get(1));
     }
 
+    @Test
     public void testRawUriParameterLines() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -134,6 +138,40 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         assertEquals(2, lines.size());
         assertEquals("++abc++", lines.get(0));
         assertEquals("++def++", lines.get(1));
+    }
+
+    @Test
+    public void testRawUriParameterFail() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
+        getMockEndpoint("mock:result").expectedHeaderReceived("password", "foo)+bar");
+
+        template.sendBody("direct:fail", "Hello World");
+
+        // should fail as the password has + sign which gets escaped
+        getMockEndpoint("mock:result").assertIsNotSatisfied();
+    }
+
+    @Test
+    public void testRawUriParameterOk() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
+        getMockEndpoint("mock:result").expectedHeaderReceived("password", "foo)+bar");
+
+        template.sendBody("direct:ok", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testRawUriParameterOkDynamic() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
+        getMockEndpoint("mock:result").expectedHeaderReceived("password", "foo)+bar");
+
+        template.sendBody("direct:okDynamic", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -153,6 +191,18 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
                 from("direct:rawlines")
                     .to("mycomponent:foo?lines=RAW(++abc++)&lines=RAW(++def++)")
+                    .to("mock:result");
+
+                from("direct:fail")
+                    .to("mycomponent:foo?password=foo)+bar&username=scott")
+                    .to("mock:result");
+
+                from("direct:ok")
+                    .to("mycomponent:foo?password=RAW(foo)+bar)&username=scott")
+                    .to("mock:result");
+
+                from("direct:okDynamic")
+                    .toD("mycomponent:foo?password=RAW{foo)+bar}&username=scott")
                     .to("mock:result");
             }
         };

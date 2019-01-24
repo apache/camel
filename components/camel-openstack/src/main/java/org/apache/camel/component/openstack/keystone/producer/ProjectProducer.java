@@ -24,7 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneEndpoint;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -70,7 +70,7 @@ public class ProjectProducer extends AbstractKeystoneProducer {
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, String.class);
-        ObjectHelper.notEmpty(id, "Project ID");
+        StringHelper.notEmpty(id, "Project ID");
         final Project result = osV3Client.identity().projects().get(id);
         msg.setBody(result);
     }
@@ -90,7 +90,7 @@ public class ProjectProducer extends AbstractKeystoneProducer {
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, String.class);
-        ObjectHelper.notEmpty(id, "Project ID");
+        StringHelper.notEmpty(id, "Project ID");
         final ActionResponse response = osV3Client.identity().projects().delete(id);
         checkFailure(response, msg, "Delete project with ID " + id);
     }
@@ -102,7 +102,7 @@ public class ProjectProducer extends AbstractKeystoneProducer {
             Map headers = message.getHeaders();
             ProjectBuilder builder = Builders.project();
 
-            ObjectHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
+            StringHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
             builder.name(message.getHeader(OpenstackConstants.NAME, String.class));
 
             if (headers.containsKey(KeystoneConstants.DOMAIN_ID)) {

@@ -19,7 +19,7 @@ package org.apache.camel.language.spel;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Service;
-import org.apache.camel.spi.Language;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.util.RegistryBeanResolver;
 import org.apache.camel.support.LanguageSupport;
@@ -29,8 +29,9 @@ import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.expression.BeanResolver;
 
 /**
- * A Spring Expression {@link Language} plugin
+ * A Spring Expression {@link org.apache.camel.spi.Language} plugin
  */
+@Language("spel")
 public class SpelLanguage extends LanguageSupport implements Service {
 
     private BeanResolver beanResolver;

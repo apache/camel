@@ -23,9 +23,9 @@ import java.util.concurrent.ThreadFactory;
 import com.codahale.metrics.InstrumentedExecutorService;
 import com.codahale.metrics.InstrumentedScheduledExecutorService;
 import com.codahale.metrics.MetricRegistry;
-import org.apache.camel.impl.DefaultThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.apache.camel.util.ObjectHelper;
 
 /**

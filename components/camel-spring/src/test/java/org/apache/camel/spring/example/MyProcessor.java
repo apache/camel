@@ -22,9 +22,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-/**
- * @version 
- */
 public class MyProcessor implements Processor {
     private List<Exchange> exchanges = new CopyOnWriteArrayList<>();
     private String name = "James";

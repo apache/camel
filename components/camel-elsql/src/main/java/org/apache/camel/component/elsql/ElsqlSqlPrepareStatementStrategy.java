@@ -20,8 +20,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Iterator;
 
+import com.opengamma.elsql.SpringSqlParams;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 public class ElsqlSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
 

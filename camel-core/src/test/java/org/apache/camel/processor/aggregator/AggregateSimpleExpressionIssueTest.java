@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregator;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.Writer;
@@ -23,20 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
 @Ignore("Manual unit test")
 public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
 
@@ -47,11 +45,13 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
     private AggStrategy aggStrategy = new AggStrategy();
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/files");
         super.setUp();
     }
 
+    @Test
     public void testDummy() throws Exception {
         // noop
     }
@@ -78,7 +78,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
 
         // start the route
         StopWatch watch = new StopWatch();
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         LOG.info("Waiting to process all the files");
         boolean matches = notify.matches(3, TimeUnit.MINUTES);

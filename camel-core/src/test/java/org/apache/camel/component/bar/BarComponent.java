@@ -19,7 +19,7 @@ package org.apache.camel.component.bar;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 
 public class BarComponent extends DefaultComponent {
 

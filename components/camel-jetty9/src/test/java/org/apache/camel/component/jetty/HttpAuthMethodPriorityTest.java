@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
@@ -34,11 +35,10 @@ import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.util.security.Constraint;
+import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
+@Ignore
 public class HttpAuthMethodPriorityTest extends BaseJettyTest {
 
     @Override
@@ -87,7 +87,7 @@ public class HttpAuthMethodPriorityTest extends BaseJettyTest {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause().getCause());
             //JAXB 2.2 uses a slightly different message
             boolean b = cause.getMessage().contains("No enum const")
-                && cause.getMessage().contains("org.apache.camel.component.http.AuthMethod.foo");
+                && cause.getMessage().contains("org.apache.camel.component.http4.AuthMethod.foo");
             assertTrue("Bad fault message: " + cause.getMessage(), b);
         }
     }

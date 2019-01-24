@@ -35,15 +35,16 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ProxyInstantiationException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.processor.DeferServiceFactory;
 import org.apache.camel.processor.UnitOfWorkProducer;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +53,6 @@ import org.slf4j.LoggerFactory;
  * reused by both the <a href="http://camel.apache.org/spring.html">Spring</a>,
  * <a href="http://camel.apache.org/guice.html">Guice</a> and
  * <a href="http://camel.apache.org/blueprint.html">Blueprint</a> support.
- *
- * @version
  */
 public class CamelPostProcessorHelper implements CamelContextAware {
 
@@ -127,7 +126,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     LOG.debug("Subscribed method: {} to consume from endpoint: {}", method, endpoint);
                 }
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }
@@ -261,7 +260,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             String injectionPointName, Object bean, String beanName) {
         try {
             // enforce a properties component to be created if none existed
-            CamelContextHelper.lookupPropertiesComponent(getCamelContext(), true);
+            getCamelContext().getPropertiesComponent(true);
 
             String key;
             String prefix = getCamelContext().getPropertyPrefixToken();
@@ -284,10 +283,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                 try {
                     return getCamelContext().getTypeConverter().mandatoryConvertTo(type, propertyDefaultValue);
                 } catch (Exception e2) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e2);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e2);
                 }
             }
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -322,7 +321,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             // no need to defer the template as it can adjust to the endpoint at runtime
             startService(answer, context, bean, null);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return answer;
     }
@@ -344,7 +343,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             // no need to defer the template as it can adjust to the endpoint at runtime
             startService(answer, context, bean, null);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return answer;
     }
@@ -360,7 +359,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         try {
             startService(answer, null, null, null);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return answer;
     }
@@ -375,7 +374,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             startService(consumer, endpoint.getCamelContext(), bean, beanName);
             return consumer;
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -388,7 +387,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             Producer producer = DeferServiceFactory.createProducer(endpoint);
             return new UnitOfWorkProducer(producer);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

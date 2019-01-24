@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-atom</artifactId>
@@ -32,22 +32,18 @@
   <description>Camel Atom support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-        org.apache.camel.component.atom.*;${camel.osgi.version},
-        org.apache.camel.component.feed.*</camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
         !org.apache.camel.component.atom.*,
         !org.apache.camel.component.feed.*,
         ${camel.osgi.import.defaults},
         *
     </camel.osgi.import.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=atom</camel.osgi.export.service>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>

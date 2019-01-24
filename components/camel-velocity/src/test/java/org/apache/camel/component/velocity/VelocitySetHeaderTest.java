@@ -25,9 +25,6 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class VelocitySetHeaderTest extends CamelSpringTestSupport {
     @Test
     public void testSendingApple() throws Exception {

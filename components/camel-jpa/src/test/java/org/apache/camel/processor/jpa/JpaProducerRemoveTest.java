@@ -27,17 +27,14 @@ import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JpaProducerRemoveTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
     @Test
     public void testRouteJpa() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        context.startRoute("foo");
-        context.startRoute("foo1");
+        context.getRouteController().startRoute("foo");
+        context.getRouteController().startRoute("foo1");
         JpaEndpoint jpa = context.getEndpoint("jpa://" + SendEmail.class.getName(), JpaEndpoint.class);
         EntityManagerFactory emf = jpa.getEntityManagerFactory();
 

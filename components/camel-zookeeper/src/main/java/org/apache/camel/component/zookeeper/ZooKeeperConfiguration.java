@@ -36,10 +36,10 @@ import org.apache.camel.util.CollectionStringBuffer;
 @UriParams
 public class ZooKeeperConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String serverUrls;
     private List<String> servers;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String path;
     @UriParam(defaultValue = "5000")
     private int timeout = 5000;

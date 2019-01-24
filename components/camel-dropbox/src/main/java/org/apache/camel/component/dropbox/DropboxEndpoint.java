@@ -30,16 +30,16 @@ import org.apache.camel.component.dropbox.integration.producer.DropboxSearchProd
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * For uploading, downloading and managing files, folders, groups, collaborations, etc on dropbox DOT com.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", consumerClass = DropboxScheduledPollConsumer.class, label = "api,file")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "dropbox", title = "Dropbox", syntax = "dropbox:operation", label = "api,file")
 public class DropboxEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxEndpoint.class);
@@ -55,18 +55,14 @@ public class DropboxEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public DropboxEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     /**
      * Create one of the camel producer available based on the configuration
      * @return the camel producer
      * @throws Exception
      */
     public Producer createProducer() throws Exception {
-        LOG.trace("Resolve producer dropbox endpoint {" + configuration.getOperation().toString() + "}");
-        LOG.trace("Resolve producer dropbox attached client: " + configuration.getClient());
+        LOG.trace("Resolve producer dropbox endpoint {{}}", configuration.getOperation());
+        LOG.trace("Resolve producer dropbox attached client: {}", configuration.getClient());
         if (configuration.getOperation() == DropboxOperation.put) {
             return new DropboxPutProducer(this, configuration);
         } else if (this.configuration.getOperation() == DropboxOperation.search) {
@@ -89,8 +85,8 @@ public class DropboxEndpoint extends DefaultEndpoint {
      * @throws Exception
      */
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.trace("Resolve consumer dropbox endpoint {" + configuration.getOperation().toString() + "}");
-        LOG.trace("Resolve consumer dropbox attached client:" + configuration.getClient());
+        LOG.trace("Resolve consumer dropbox endpoint {{}}", configuration.getOperation());
+        LOG.trace("Resolve consumer dropbox attached client: {}", configuration.getClient());
         DropboxScheduledPollConsumer consumer;
         if (this.configuration.getOperation() == DropboxOperation.search) {
             consumer = new DropboxScheduledPollSearchConsumer(this, processor, configuration);

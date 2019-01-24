@@ -18,12 +18,10 @@ package org.apache.camel.spring.issues;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringSingletonScopedBeanIssueTest extends SpringTestSupport {
 
     @Override
@@ -31,6 +29,7 @@ public class SpringSingletonScopedBeanIssueTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringSingletonScopedBeanIssueTest.xml");
     }
 
+    @Test
     public void testSpringSingletonScopedBeanIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A", "AB", "ABC");

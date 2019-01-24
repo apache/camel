@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.smpp;
-
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -25,7 +24,7 @@ import java.util.TimeZone;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.jsmpp.bean.Address;
 import org.jsmpp.bean.Alphabet;
 import org.jsmpp.bean.DataCodings;
@@ -79,6 +78,7 @@ public class SmppSubmitMultiCommandTest {
     public void setUp() {
         session = mock(SMPPSession.class);
         config = new SmppConfiguration();
+        config.setServiceType("CMT");
         
         command = new SmppSubmitMultiCommand(session, config);
     }

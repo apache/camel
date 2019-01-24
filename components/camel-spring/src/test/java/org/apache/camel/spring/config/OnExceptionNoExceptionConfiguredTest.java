@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
-
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown an exception");
@@ -40,6 +39,7 @@ public class OnExceptionNoExceptionConfiguredTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/OnExceptionNoExceptionConfiguredTest.xml");
     }
     
+    @Test
     public void testDummy() {
         // noop
     }

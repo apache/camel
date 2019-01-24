@@ -27,9 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpAsyncCallbackTest extends HttpAsyncTestSupport {
 
     private static final CountDownLatch LATCH = new CountDownLatch(3);

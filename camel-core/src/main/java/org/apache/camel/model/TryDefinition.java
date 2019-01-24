@@ -20,25 +20,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * Marks the beginning of a try, catch, finally block
- *
- * @version 
  */
 @Metadata(label = "error")
 @XmlRootElement(name = "doTry")
@@ -62,37 +55,13 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     @Override
-    public String getLabel() {
+    public String getShortName() {
         return "doTry";
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor tryProcessor = createOutputsProcessor(routeContext, getOutputsWithoutCatches());
-        if (tryProcessor == null) {
-            throw new IllegalArgumentException("Definition has no children on " + this);
-        }
-
-        List<Processor> catchProcessors = new ArrayList<>();
-        if (catchClauses != null) {
-            for (CatchDefinition catchClause : catchClauses) {
-                catchProcessors.add(createProcessor(routeContext, catchClause));
-            }
-        }
-
-        FinallyDefinition finallyDefinition = finallyClause;
-        if (finallyDefinition == null) {
-            finallyDefinition = new FinallyDefinition();
-            finallyDefinition.setParent(this);
-        }
-        Processor finallyProcessor = createProcessor(routeContext, finallyDefinition);
-
-        // must have either a catch or finally
-        if (finallyClause == null && catchClauses == null) {
-            throw new IllegalArgumentException("doTry must have one or more catch or finally blocks on " + this);
-        }
-
-        return new TryProcessor(tryProcessor, catchProcessors, finallyProcessor);
+    public String getLabel() {
+        return "doTry";
     }
 
     // Fluent API
@@ -161,54 +130,6 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         return this;
     }
 
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  handled or not
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public TryDefinition handled(boolean handled) {
-        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
-        return handled(expression);
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  predicate that determines true or false
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public TryDefinition handled(@AsPredicate Predicate handled) {
-        // we must use a delegate so we can use the fluent builder based on TryDefinition
-        // to configure all with try .. catch .. finally
-        // set the handled on all the catch definitions
-        Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
-        while (it.hasNext()) {
-            CatchDefinition doCatch = it.next();
-            doCatch.setHandledPolicy(handled);
-        }
-        return this;
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  expression that determines true or false
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public TryDefinition handled(@AsPredicate Expression handled) {
-        return handled(ExpressionToPredicateAdapter.toPredicate(handled));
-    }
-
     // Properties
     // -------------------------------------------------------------------------
 
@@ -245,7 +166,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     }
 
     @Override
-    protected void preCreateProcessor() {
+    public void preCreateProcessor() {
         // force re-creating initialization to ensure its up-to-date
         initialized = false;
         checkInitialized();

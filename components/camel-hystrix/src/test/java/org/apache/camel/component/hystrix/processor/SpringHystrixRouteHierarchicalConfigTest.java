@@ -40,8 +40,8 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
 
         Assert.assertNotNull(hystrixDefinition);
 
-        HystrixProcessorFactory factory = new HystrixProcessorFactory();
-        HystrixConfigurationDefinition config = factory.buildHystrixConfiguration(context, hystrixDefinition);
+        HystrixReifier reifier = new HystrixReifier(hystrixDefinition);
+        HystrixConfigurationDefinition config = reifier.buildHystrixConfiguration(context);
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());

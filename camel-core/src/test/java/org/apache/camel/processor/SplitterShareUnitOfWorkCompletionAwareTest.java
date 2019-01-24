@@ -16,16 +16,15 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class SplitterShareUnitOfWorkCompletionAwareTest extends ContextTestSupport {
 
+    @Test
     public void testCompletionAware() throws Exception {
         getMockEndpoint("mock:line").expectedBodiesReceived("A", "B", "C");
         getMockEndpoint("mock:result").expectedBodiesReceived("A+B+C");
@@ -48,7 +47,7 @@ public class SplitterShareUnitOfWorkCompletionAwareTest extends ContextTestSuppo
         };
     }
 
-    private class MyStrategy implements CompletionAwareAggregationStrategy {
+    private class MyStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

@@ -23,6 +23,7 @@ import java.util.UUID;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class ErrorHandlerBuilderRefTest extends ContextTestSupport {
     ErrorHandlerBuilderRef errorHandlerBuilderRef = new ErrorHandlerBuilderRef("ref");
@@ -42,15 +43,16 @@ public class ErrorHandlerBuilderRefTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.setErrorHandlerBuilder(errorHandlerBuilderRef);
+        context.setErrorHandlerFactory(errorHandlerBuilderRef);
         return context;
     }
     
+    @Test
     public void testErrorHandlerBuilderRef() throws Exception {
         String uuid = UUID.randomUUID().toString();
         context.addRoutes(new TempRouteBuilder(uuid));
         checkObjectSize(2);
-        context.stopRoute(uuid);
+        context.getRouteController().stopRoute(uuid);
         context.removeRoute(uuid);
         checkObjectSize(1);
     }

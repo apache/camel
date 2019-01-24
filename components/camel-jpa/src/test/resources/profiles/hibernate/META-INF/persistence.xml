@@ -67,19 +67,6 @@
     </properties>
   </persistence-unit>
 
-  <persistence-unit name="trace" transaction-type="RESOURCE_LOCAL">
-    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-
-    <class>org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage</class>
-
-    <properties>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyTenSevenDialect"/>
-      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
-      <property name="hibernate.connection.url" value="jdbc:derby:target/trace;create=true"/>
-      <property name="hibernate.hbm2ddl.auto" value="create"/>
-    </properties>
-  </persistence-unit>
-
   <persistence-unit name="skipLockedEntiy" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 

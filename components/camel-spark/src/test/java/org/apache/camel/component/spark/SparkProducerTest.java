@@ -30,9 +30,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaRDDLike;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.hive.HiveContext;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -77,7 +78,7 @@ public class SparkProducerTest extends CamelTestSupport {
 
         if (shouldRunHive) {
             registry.bind("hiveContext", hiveContext);
-            DataFrame jsonCars = hiveContext.read().json("src/test/resources/cars.json");
+            Dataset<Row> jsonCars = hiveContext.read().json("src/test/resources/cars.json");
             jsonCars.registerTempTable("cars");
             registry.bind("jsonCars", jsonCars);
         }
@@ -109,7 +110,7 @@ public class SparkProducerTest extends CamelTestSupport {
         long linesCount = template.requestBodyAndHeader(sparkUri, 10, SPARK_RDD_CALLBACK_HEADER, new org.apache.camel.component.spark.RddCallback() {
             @Override
             public Long onRdd(JavaRDDLike rdd, Object... payloads) {
-                return rdd.count() * (int) payloads[0];
+                return rdd.count() * (int)payloads[0];
             }
         }, Long.class);
         Truth.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile * 10);
@@ -120,7 +121,7 @@ public class SparkProducerTest extends CamelTestSupport {
         long linesCount = template.requestBodyAndHeader(sparkUri, asList(10, 10), SPARK_RDD_CALLBACK_HEADER, new org.apache.camel.component.spark.RddCallback() {
             @Override
             public Long onRdd(JavaRDDLike rdd, Object... payloads) {
-                return rdd.count() * (int) payloads[0] * (int) payloads[1];
+                return rdd.count() * (int)payloads[0] * (int)payloads[1];
             }
         }, Long.class);
         Truth.assertThat(linesCount).isEqualTo(numberOfLinesInTestFile * 10 * 10);
@@ -131,7 +132,7 @@ public class SparkProducerTest extends CamelTestSupport {
         ConvertingRddCallback rddCallback = new ConvertingRddCallback<Long>(context, int.class, int.class) {
             @Override
             public Long doOnRdd(JavaRDDLike rdd, Object... payloads) {
-                return rdd.count() * (int) payloads[0] * (int) payloads[1];
+                return rdd.count() * (int)payloads[0] * (int)payloads[1];
             }
         };
         long linesCount = template.requestBodyAndHeader(sparkUri, asList("10", "10"), SPARK_RDD_CALLBACK_HEADER, rddCallback, Long.class);
@@ -189,8 +190,7 @@ public class SparkProducerTest extends CamelTestSupport {
         // When
         template.sendBodyAndHeader(sparkUri, null, SPARK_RDD_CALLBACK_HEADER, rddCallback);
 
-
-            // Then
+        // Then
         Truth.assertThat(output.length()).isGreaterThan(0L);
     }
 
@@ -241,7 +241,7 @@ public class SparkProducerTest extends CamelTestSupport {
         assumeTrue(shouldRunHive);
         DataFrameCallback callback = new DataFrameCallback<Long>() {
             @Override
-            public Long onDataFrame(DataFrame dataFrame, Object... payloads) {
+            public Long onDataFrame(Dataset<Row> dataFrame, Object... payloads) {
                 return dataFrame.count();
             }
         };
@@ -254,8 +254,8 @@ public class SparkProducerTest extends CamelTestSupport {
         assumeTrue(shouldRunHive);
         DataFrameCallback callback = new DataFrameCallback<Long>() {
             @Override
-            public Long onDataFrame(DataFrame dataFrame, Object... payloads) {
-                String model = (String) payloads[0];
+            public Long onDataFrame(Dataset<Row> dataFrame, Object... payloads) {
+                String model = (String)payloads[0];
                 return dataFrame.where(dataFrame.col("model").eqNullSafe(model)).count();
             }
         };

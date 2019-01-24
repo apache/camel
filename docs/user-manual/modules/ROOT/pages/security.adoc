@@ -1,0 +1,89 @@
+[[Security-Security]]
+=== Security
+
+Camel offers several forms & levels of security capabilities that can be
+utilized on camel routes. These various forms of security may be used in
+conjunction with each other or separately.
+
+The broad categories offered are
+
+* Route Security - Authentication and Authorization services to proceed
+on a route or route segment
+* Payload Security - Data Formats that offer encryption/decryption
+services at the payload level
+* Endpoint Security - Security offered by components that can be
+utilized by endpointUri associated with the component
+* Configuration Security - Security offered by encrypting sensitive
+information from configuration files
+
+[[Security-RouteSecurity-AuthenticationandAuthorizationServices]]
+==== Route Security - Authentication and Authorization Services
+
+Camel offers Policy driven security capabilities that may be wired into
+routes or route segments. A Policy in Camel utilizes a strategy pattern
+for applying interceptors on Camel Processors. It offering the ability
+to apply cross-cutting concerns (for example. security, transactions
+etc) on sections/segments of a camel route.
+
+The components offering authentication and authorization Services
+utilizing Route Policies are
+
+* link:../../../components/camel-shiro/src/main/docs/shiro.adoc[Shiro Security]
+* link:../../../components/camel-spring-security/src/main/docs/spring-security.adoc[Spring Security]
+
+[[Security-PayloadSecurity-DataFormatsandProducers/Consumersofferingencryption/decryptionservices]]
+==== Payload Security - Data Formats and Producers/Consumers offering encryption/decryption services
+
+Camel offers encryption/decryption services to secure payloads or
+selectively apply encryption/decryption capabilities on
+portions/sections of a payload.
+
+These capabilites are offered by the following components
+
+* link:../../../components/camel-xmlsecurity/src/main/docs/secureXML-dataformat.adoc[XMLSecurity DataFormat] (XML
+Encryption support)
+* link:../../../components/camel-xmlsecurity/src/main/docs/xmlsecurity-component.adoc[XML Security component] (XML
+Signature support)
+* link:../../../components/camel-crypto/src/main/docs/crypto-dataformat.adoc[Crypto DataFormat] (Encryption + PGP support)
+* link:../../../components/camel-crypto/src/main/docs/crypto-component.adoc[Crypto component] (Signature
+support)
+
+[[Security-EndpointSecurity]]
+==== Endpoint Security
+
+Some components in camel offer an ability to secure their endpoints
+(using interceptors etc) and therefore ensure that they offer the
+ability to secure payloads as well as provide
+authentication/authorization capabilities at endpoints created using the
+components.
+
+Some such components are
+
+* link:../../../components/camel-jetty9/src/main/docs/jetty-component.adoc[Jetty] - HTTP Basic Authentication support * SSL
+support
+* link:../../../components/camel-cxf/src/main/docs/cxf-component.adoc[CXF] - HTTP Basic Authentication & WS-Security support
+using the CXF Bus driven interceptor chain
+* link:../../../components/camel-spring-ws/src/main/docs/spring-ws-component.adoc[Spring Web Services] - HTTP Basic
+Authentication & WS-Security support
+* link:../../../components/camel-netty4/src/main/docs/netty4-component.adoc[Netty] - SSL support
+* link:../../../components/camel-mina2/src/main/docs/mina2-component.adoc[MINA] - SSL support
+* link:../../../components/camel-cometd/src/main/docs/cometd-component.adoc[Cometd] - SSL support
+* link:../../../components/camel-jms/src/main/docs/jms-component.adoc[JMS] - JAAS and SSL based security for client <-->
+broker communication
+
+[[Security-ConfigurationSecurity]]
+==== Configuration Security
+
+*Available as of Camel 2.5*
+
+Camel offers the link:../../../camel-core/src/main/docs/properties-component.adoc[Properties] component to
+externalize configuration values to properties files. Those values could
+contain sensitive information such as usernames and passwords. Those
+values can be encrypted and automatic decrypted by Camel.
+
+* link:../../../components/camel-jasypt/src/main/docs/jasypt.adoc[Jasypt]
+
+*Available as of Camel 2.8*
+
+Camel offers the link:camel-configuration-utilities.adoc[JSSE Utility]
+for configuring SSL/TLS related aspects of a number of Camel components.

@@ -20,20 +20,21 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Represents the component that manages {@link ChronicleEngineEndpoint}.
  */
-public class ChronicleEngineComponent extends UriEndpointComponent {
+@Component("chronicle-engine")
+public class ChronicleEngineComponent extends DefaultComponent {
     
     public ChronicleEngineComponent() {
-        super(ChronicleEngineEndpoint.class);
     }
 
     public ChronicleEngineComponent(CamelContext context) {
-        super(context, ChronicleEngineEndpoint.class);
+        super(context);
     }
 
     @Override
@@ -42,8 +43,8 @@ public class ChronicleEngineComponent extends UriEndpointComponent {
         setProperties(configuration, parameters);
 
         ChronicleEngineEndpoint answer = new ChronicleEngineEndpoint(uri, this, configuration);
-        answer.setAddresses(ObjectHelper.before(remaining, "/"));
-        answer.setPath(ObjectHelper.after(remaining, "/"));
+        answer.setAddresses(StringHelper.before(remaining, "/"));
+        answer.setPath(StringHelper.after(remaining, "/"));
         return answer;
     }
 }

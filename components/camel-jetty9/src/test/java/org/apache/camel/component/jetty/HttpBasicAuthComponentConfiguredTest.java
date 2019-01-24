@@ -19,12 +19,13 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpComponent;
+import org.apache.camel.component.http4.HttpComponent;
 import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.impl.JndiRegistry;
 import org.eclipse.jetty.security.ConstraintMapping;
@@ -35,9 +36,6 @@ import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.util.security.Constraint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
 
     @Override

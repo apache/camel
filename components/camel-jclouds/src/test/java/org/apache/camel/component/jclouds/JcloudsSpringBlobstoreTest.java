@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jclouds;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

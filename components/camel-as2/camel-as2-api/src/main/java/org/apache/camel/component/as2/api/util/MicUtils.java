@@ -19,20 +19,17 @@ package org.apache.camel.component.as2.api.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.security.PrivateKey;
 
 import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MicAlgorithm;
-import org.apache.camel.component.as2.api.AS2MimeType;
-import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
 import org.apache.camel.component.as2.api.entity.EntityParser;
-import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
-import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,12 +74,12 @@ public final class MicUtils {
             MessageDigest messageDigest = MessageDigest.getInstance(algorithmId, "BC");
             return messageDigest.digest(content);
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            LOG.debug("failed to get message digets '" + algorithmId + "'");
+            LOG.debug("failed to get message digets '{}'", algorithmId);
             return null;
         }
     }
 
-    public static ReceivedContentMic createReceivedContentMic(HttpEntityEnclosingRequest request) throws HttpException {
+    public static ReceivedContentMic createReceivedContentMic(HttpEntityEnclosingRequest request, PrivateKey decryptingPrivateKey) throws HttpException {
 
         String dispositionNotificationOptionsString =  HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_OPTIONS);
         if (dispositionNotificationOptionsString == null) {
@@ -96,34 +93,7 @@ public final class MicUtils {
             return null;
         }
 
-        String contentTypeString = HttpMessageUtils.getHeaderValue(request, AS2Header.CONTENT_TYPE);
-        if (contentTypeString == null) {
-            LOG.debug("can not create MIC: content type missing from request");
-            return null;
-        }
-        ContentType contentType = ContentType.parse(contentTypeString);
-
-        HttpEntity entity = null;
-        switch (contentType.getMimeType().toLowerCase()) {
-        case AS2MimeType.APPLICATION_EDIFACT:
-        case AS2MimeType.APPLICATION_EDI_X12:
-        case AS2MimeType.APPLICATION_EDI_CONSENT: {
-            EntityParser.parseAS2MessageEntity(request);
-            entity = HttpMessageUtils.getEntity(request, ApplicationEDIEntity.class);
-            break;
-        }
-        case AS2MimeType.MULTIPART_SIGNED: {
-            EntityParser.parseAS2MessageEntity(request);
-            MultipartSignedEntity multipartSignedEntity = HttpMessageUtils.getEntity(request,
-                    MultipartSignedEntity.class);
-            entity = multipartSignedEntity.getSignedDataEntity();
-            break;
-        }
-        default:
-            LOG.debug("can not create MIC: invalid content type '" + contentType.getMimeType()
-                    + "' for message integrity check");
-            return null;
-        }
+        HttpEntity entity = EntityParser.extractEdiPayload(request, decryptingPrivateKey);
 
         byte[] content = EntityUtils.getContent(entity);
 
@@ -132,7 +102,7 @@ public final class MicUtils {
         try {
             return new ReceivedContentMic(micAS2AlgorithmName, mic);
         } catch (Exception e) {
-            throw new HttpException("failed to encode MIC", e);
+            throw new HttpException("Failed to encode MIC", e);
         }
     }
 

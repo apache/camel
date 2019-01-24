@@ -22,11 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Processor;
-import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Throws an exception
@@ -59,30 +55,15 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
     }
 
     @Override
+    public String getShortName() {
+        return "throwException";
+    }
+
+    @Override
     public String getLabel() {
         return "throwException[" + description() + "]";
     }
     
-    @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        if (ref != null && exception == null) {
-            this.exception = routeContext.getCamelContext().getRegistry().lookupByNameAndType(ref, Exception.class);
-        }
-
-        if (exceptionType != null && exceptionClass == null) {
-            try {
-                this.exceptionClass = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(exceptionType, Exception.class);
-            } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
-            }
-        }
-
-        if (exception == null && exceptionClass == null) {
-            throw new IllegalArgumentException("exception or exceptionClass/exceptionType must be configured on: " + this);
-        }
-        return new ThrowExceptionProcessor(exception, exceptionClass, message);
-    }
-
     public String getRef() {
         return ref;
     }

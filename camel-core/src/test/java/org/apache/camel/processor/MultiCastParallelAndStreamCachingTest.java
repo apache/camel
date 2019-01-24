@@ -32,6 +32,7 @@ import org.apache.camel.StringSource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
+import org.junit.Test;
 
 /**
  * Tests the processing of a stream-cache in the multi-cast processor in the
@@ -121,6 +122,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testByteArrayInputStreamCache() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resulta");
         mock.expectedBodiesReceived("<start></start>");
@@ -140,6 +142,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testFileInputStreamCache() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resulta");
         mock.expectedBodiesReceived("James,Guillaume,Hiram,Rob,Roman");
@@ -161,6 +164,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testInputStreamCache() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:resulta");
         mock.expectedBodiesReceived("A");
@@ -184,6 +188,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testReaderCache() throws Exception {
         String abcScharpS = "ABC\u00DF"; // sharp-s
 
@@ -198,6 +203,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testStreamSourceCacheWithInputStream() throws Exception {
         String input = "<A>a</A>";
 
@@ -212,6 +218,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testStreamSourceCacheWithReader() throws Exception {
         String input = "ABC\u00DF"; // sharp-s
 
@@ -227,6 +234,7 @@ public class MultiCastParallelAndStreamCachingTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSourceCache() throws Exception {
         String input = "<A>a</A>";
 

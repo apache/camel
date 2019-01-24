@@ -20,13 +20,11 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
@@ -35,14 +33,11 @@ import org.slf4j.LoggerFactory;
              scheme = "azure-blob",
              title = "Azure Storage Blob Service", 
              syntax = "azure-blob:containerOrBlobUri", 
-             consumerClass = BlobServiceConsumer.class,
              label = "cloud,database,nosql")
 public class BlobServiceEndpoint extends DefaultEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BlobServiceEndpoint.class);
-    
     @UriPath(description = "Container or Blob compact Uri")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String containerOrBlobUri; // to support component docs
     @UriParam
     private BlobServiceConfiguration configuration;
@@ -53,7 +48,7 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.trace("Creating a consumer");
+        log.trace("Creating a consumer");
         if (getConfiguration().getBlobName() == null) {
             throw new IllegalArgumentException("Blob name must be specified.");
         }
@@ -63,7 +58,7 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        LOG.trace("Creating a producer");
+        log.trace("Creating a producer");
         if (getConfiguration().getBlobName() == null
             && getConfiguration().getOperation() != null 
             && BlobServiceOperations.listBlobs != configuration.getOperation()) {

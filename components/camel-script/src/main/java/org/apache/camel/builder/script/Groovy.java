@@ -27,8 +27,6 @@ import org.apache.camel.language.LanguageAnnotation;
 /**
  * An annotation for injection of <a href="http://groovy.codehaus.org/">Groovy</a> expressions
  *  into method parameters, fields or properties
- *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

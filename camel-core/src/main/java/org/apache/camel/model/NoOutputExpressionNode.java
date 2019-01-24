@@ -18,8 +18,10 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -30,11 +32,10 @@ import org.apache.camel.model.language.ExpressionDefinition;
  * <p/>
  * This node is to be extended by definitions which need to support an expression but the definition should not
  * contain any outputs, such as {@link org.apache.camel.model.TransformDefinition}.
- *
- * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class NoOutputExpressionNode extends ExpressionNode {
+@XmlTransient
+public abstract class NoOutputExpressionNode extends ExpressionNode {
 
     public NoOutputExpressionNode() {
     }
@@ -59,12 +60,6 @@ public class NoOutputExpressionNode extends ExpressionNode {
     @Override
     public boolean isOutputSupported() {
         return false;
-    }
-
-    @Override
-    public void addOutput(ProcessorDefinition<?> output) {
-        // add it to the parent as we do not support outputs
-        getParent().addOutput(output);
     }
 
     @Override

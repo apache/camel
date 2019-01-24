@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for the idempotentKey option.
@@ -35,6 +36,7 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
         };
     }
 
+    @Test
     public void testIdempotentDiffSize() throws Exception {
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");

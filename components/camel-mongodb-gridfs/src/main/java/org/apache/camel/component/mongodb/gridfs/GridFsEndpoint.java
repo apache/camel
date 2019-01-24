@@ -26,14 +26,12 @@ import com.mongodb.gridfs.GridFS;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CamelContextHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * Component for working with MongoDB GridFS.
@@ -46,11 +44,9 @@ public class GridFsEndpoint extends DefaultEndpoint {
     public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
     public static final String GRIDFS_FILE_ID_PRODUCED = "gridfs.fileid";
 
-    private static final Logger LOG = LoggerFactory.getLogger(GridFsEndpoint.class);
-
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String connectionBean;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String database;
     @UriParam(defaultValue = GridFS.DEFAULT_BUCKET)
     private String bucket;
@@ -106,9 +102,8 @@ public class GridFsEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
     public void initializeConnection() throws Exception {
-        LOG.info("Initialize GridFS endpoint: {}", this.toString());
+        log.info("Initialize GridFS endpoint: {}", this);
         if (database == null) {
             throw new IllegalStateException("Missing required endpoint configuration: database");
         }
@@ -132,7 +127,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(msg);
         }
         mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
-        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
+        log.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
         setWriteReadOptionsOnConnection();
         super.doStart();
     }
@@ -141,7 +136,7 @@ public class GridFsEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         super.doStop();
         if (mongoConnection != null) {
-            LOG.debug("Closing connection");
+            log.debug("Closing connection");
             mongoConnection.close();
         }
     }

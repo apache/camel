@@ -23,8 +23,6 @@ import org.apache.camel.Message;
 
 /**
  * Uses DOM to handle results of the transformation
- *
- * @version 
  */
 public class DomResultHandler implements ResultHandler {
     private DOMResult result = new DOMResult();

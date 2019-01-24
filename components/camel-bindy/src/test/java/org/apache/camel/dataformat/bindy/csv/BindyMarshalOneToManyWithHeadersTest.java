@@ -20,14 +20,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.linkonetomany.Order;
 import org.apache.camel.dataformat.bindy.model.simple.linkonetomany.OrderItem;
-import org.apache.camel.processor.interceptor.Tracer;
+
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -87,12 +86,6 @@ public class BindyMarshalOneToManyWithHeadersTest extends AbstractJUnit4SpringCo
     public static class ContextConfig extends RouteBuilder {
 
         public void configure() {
-
-            Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.INFO);
-            tracer.setLogName("org.apache.camel.bindy");
-
-            getContext().addInterceptStrategy(tracer);
 
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(Order.class);
             camelDataFormat.setLocale("en");

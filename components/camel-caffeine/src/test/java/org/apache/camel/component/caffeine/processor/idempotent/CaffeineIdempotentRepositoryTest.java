@@ -19,7 +19,6 @@ package org.apache.camel.component.caffeine.processor.idempotent;
 import java.util.UUID;
 
 import com.github.benmanes.caffeine.cache.Cache;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;

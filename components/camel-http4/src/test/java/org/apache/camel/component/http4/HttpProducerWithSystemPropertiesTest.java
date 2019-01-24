@@ -30,10 +30,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
 
     private static Object defaultSystemHttpAgent;

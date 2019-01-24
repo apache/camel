@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
@@ -180,6 +181,6 @@ public class TransformerBuilder {
             transformer.setToType(to);
         }
         
-        camelContext.getTransformers().add(transformer);
+        camelContext.adapt(ModelCamelContext.class).getTransformers().add(transformer);
     }
 }

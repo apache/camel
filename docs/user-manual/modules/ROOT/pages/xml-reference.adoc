@@ -1,0 +1,1436 @@
+[[XMLReference-CamelXMLReference]]
+=== Camel XML Reference
+
+This page contains a link to the XML schema documents for
+link:xml-configuration.adoc[XML Configuration] with Camel releases. You
+can refer to http://camel.apache.org/schema/ to see the individual XSDs
+available.
+
+[[XMLReference-ReleasedSchemas-Spring]]
+==== Released Schemas - Spring
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Version |XML Schema
+|2.20.2 |http://camel.apache.org/schema/spring/camel-spring-2.20.2.xsd
+
+|2.20.1 |http://camel.apache.org/schema/spring/camel-spring-2.20.1.xsd
+
+|2.20.0 |http://camel.apache.org/schema/spring/camel-spring-2.20.0.xsd
+
+|2.19.4 |http://camel.apache.org/schema/spring/camel-spring-2.19.4.xsd
+
+|2.19.3 |http://camel.apache.org/schema/spring/camel-spring-2.19.3.xsd
+
+|2.19.2 |http://camel.apache.org/schema/spring/camel-spring-2.19.2.xsd
+
+|2.19.1 |http://camel.apache.org/schema/spring/camel-spring-2.19.1.xsd
+
+|2.19.0 |http://camel.apache.org/schema/spring/camel-spring-2.19.0.xsd
+
+|2.18.5 |http://camel.apache.org/schema/spring/camel-spring-2.18.5.xsd
+
+|2.18.4 |http://camel.apache.org/schema/spring/camel-spring-2.18.4.xsd
+
+|2.18.3 |http://camel.apache.org/schema/spring/camel-spring-2.18.3.xsd
+
+|2.18.2 |http://camel.apache.org/schema/spring/camel-spring-2.18.2.xsd
+
+|2.18.1 |http://camel.apache.org/schema/spring/camel-spring-2.18.1.xsd
+
+|2.18.0 |http://camel.apache.org/schema/spring/camel-spring-2.18.0.xsd
+
+|2.17.7 |http://camel.apache.org/schema/spring/camel-spring-2.17.7.xsd
+
+|2.17.6 |http://camel.apache.org/schema/spring/camel-spring-2.17.6.xsd
+
+|2.17.5 |http://camel.apache.org/schema/spring/camel-spring-2.17.5.xsd
+
+|2.17.4 |http://camel.apache.org/schema/spring/camel-spring-2.17.4.xsd
+
+|2.17.3 |http://camel.apache.org/schema/spring/camel-spring-2.17.3.xsd
+
+|2.17.2 |http://camel.apache.org/schema/spring/camel-spring-2.17.2.xsd
+
+|2.17.1 |http://camel.apache.org/schema/spring/camel-spring-2.17.1.xsd
+
+|2.17.0 |http://camel.apache.org/schema/spring/camel-spring-2.17.0.xsd
+
+|2.16.4 |http://camel.apache.org/schema/spring/camel-spring-2.16.4.xsd
+
+|2.16.3 |http://camel.apache.org/schema/spring/camel-spring-2.16.3.xsd
+
+|2.16.2 |http://camel.apache.org/schema/spring/camel-spring-2.16.2.xsd
+
+|2.16.1 |http://camel.apache.org/schema/spring/camel-spring-2.16.1.xsd
+
+|2.16.0 |http://camel.apache.org/schema/spring/camel-spring-2.16.0.xsd
+
+|2.15.6 |http://camel.apache.org/schema/spring/camel-spring-2.15.6.xsd
+
+|2.15.5 |http://camel.apache.org/schema/spring/camel-spring-2.15.5.xsd
+
+|2.15.4 |http://camel.apache.org/schema/spring/camel-spring-2.15.4.xsd
+
+|2.15.3 |http://camel.apache.org/schema/spring/camel-spring-2.15.3.xsd
+
+|2.15.2 |http://camel.apache.org/schema/spring/camel-spring-2.15.2.xsd
+
+|2.15.1 |http://camel.apache.org/schema/spring/camel-spring-2.15.1.xsd
+
+|2.15.0 |http://camel.apache.org/schema/spring/camel-spring-2.15.0.xsd
+
+|2.14.4 |http://camel.apache.org/schema/spring/camel-spring-2.14.4.xsd
+
+|2.14.3 |http://camel.apache.org/schema/spring/camel-spring-2.14.3.xsd
+
+|2.14.2 |http://camel.apache.org/schema/spring/camel-spring-2.14.2.xsd
+
+|2.14.1 |http://camel.apache.org/schema/spring/camel-spring-2.14.1.xsd
+
+|2.14.0 |http://camel.apache.org/schema/spring/camel-spring-2.14.0.xsd
+
+|2.13.4 |http://camel.apache.org/schema/spring/camel-spring-2.13.4.xsd
+
+|2.13.3 |http://camel.apache.org/schema/spring/camel-spring-2.13.3.xsd
+
+|2.13.2 |http://camel.apache.org/schema/spring/camel-spring-2.13.2.xsd
+
+|2.13.1 |http://camel.apache.org/schema/spring/camel-spring-2.13.1.xsd
+
+|2.13.0 |http://camel.apache.org/schema/spring/camel-spring-2.12.3.xsd
+
+|2.12.5 |http://camel.apache.org/schema/spring/camel-spring-2.12.5.xsd
+
+|2.12.4 |http://camel.apache.org/schema/spring/camel-spring-2.12.4.xsd
+
+|2.12.3  |http://camel.apache.org/schema/spring/camel-spring-2.12.3.xsd
+
+|2.12.2 |http://camel.apache.org/schema/spring/camel-spring-2.12.2.xsd
+
+|2.12.1 |http://camel.apache.org/schema/spring/camel-spring-2.12.1.xsd
+
+|2.12.0 |http://camel.apache.org/schema/spring/camel-spring-2.12.0.xsd
+
+|2.11.4 |http://camel.apache.org/schema/spring/camel-spring-2.11.4.xsd
+
+|2.11.3 |http://camel.apache.org/schema/spring/camel-spring-2.11.3.xsd
+
+|2.11.2 |http://camel.apache.org/schema/spring/camel-spring-2.11.2.xsd
+
+|2.11.1 |http://camel.apache.org/schema/spring/camel-spring-2.11.1.xsd
+
+|2.11.0 |http://camel.apache.org/schema/spring/camel-spring-2.11.0.xsd
+
+|2.10.7 |http://camel.apache.org/schema/spring/camel-spring-2.10.7.xsd
+
+|2.10.6 |http://camel.apache.org/schema/spring/camel-spring-2.10.6.xsd
+
+|2.10.5 |http://camel.apache.org/schema/spring/camel-spring-2.10.5.xsd
+
+|2.10.4 |http://camel.apache.org/schema/spring/camel-spring-2.10.4.xsd
+
+|2.10.3 |http://camel.apache.org/schema/spring/camel-spring-2.10.3.xsd
+
+|2.10.2 |http://camel.apache.org/schema/spring/camel-spring-2.10.2.xsd
+
+|2.10.1 |http://camel.apache.org/schema/spring/camel-spring-2.10.1.xsd
+
+|2.10.0 |http://camel.apache.org/schema/spring/camel-spring-2.10.0.xsd
+
+|2.9.8 |http://camel.apache.org/schema/spring/camel-spring-2.9.8.xsd
+
+|2.9.7 |http://camel.apache.org/schema/spring/camel-spring-2.9.7.xsd
+
+|2.9.6 |http://camel.apache.org/schema/spring/camel-spring-2.9.6.xsd
+
+|2.9.5 |http://camel.apache.org/schema/spring/camel-spring-2.9.5.xsd
+
+|2.9.4 |http://camel.apache.org/schema/spring/camel-spring-2.9.4.xsd
+
+|2.9.3 |http://camel.apache.org/schema/spring/camel-spring-2.9.3.xsd
+
+|2.9.2 |http://camel.apache.org/schema/spring/camel-spring-2.9.2.xsd
+
+|2.9.1 |http://camel.apache.org/schema/spring/camel-spring-2.9.1.xsd
+
+|2.9.0 |http://camel.apache.org/schema/spring/camel-spring-2.9.0.xsd
+
+|2.8.6 |http://camel.apache.org/schema/spring/camel-spring-2.8.6.xsd
+
+|2.8.5 |http://camel.apache.org/schema/spring/camel-spring-2.8.5.xsd
+
+|2.8.4 |http://camel.apache.org/schema/spring/camel-spring-2.8.4.xsd
+
+|2.8.3 |http://camel.apache.org/schema/spring/camel-spring-2.8.3.xsd
+
+|2.8.2 |http://camel.apache.org/schema/spring/camel-spring-2.8.2.xsd
+
+|2.8.1 |http://camel.apache.org/schema/spring/camel-spring-2.8.1.xsd
+
+|2.8.0 |http://camel.apache.org/schema/spring/camel-spring-2.8.0.xsd
+
+|2.7.5 |http://camel.apache.org/schema/spring/camel-spring-2.7.5.xsd
+
+|2.7.4 |http://camel.apache.org/schema/spring/camel-spring-2.7.4.xsd
+
+|2.7.3 |http://camel.apache.org/schema/spring/camel-spring-2.7.3.xsd
+
+|2.7.2 |http://camel.apache.org/schema/spring/camel-spring-2.7.2.xsd
+
+|2.7.1 |http://camel.apache.org/schema/spring/camel-spring-2.7.1.xsd
+
+|2.7.0 |http://camel.apache.org/schema/spring/camel-spring-2.7.0.xsd
+
+|2.6.0 |http://camel.apache.org/schema/spring/camel-spring-2.6.0.xsd
+
+|2.5.0 |http://camel.apache.org/schema/spring/camel-spring-2.5.0.xsd
+
+|2.4.0 |http://camel.apache.org/schema/spring/camel-spring-2.4.0.xsd
+
+|2.3.0 |http://camel.apache.org/schema/spring/camel-spring-2.3.0.xsd
+
+|2.2.0 |http://camel.apache.org/schema/spring/camel-spring-2.2.0.xsd
+
+|2.1.0 |http://camel.apache.org/schema/spring/camel-spring-2.1.0.xsd
+
+|2.0.0 |http://camel.apache.org/schema/spring/camel-spring-2.0.0.xsd
+
+|1.6.4 |http://camel.apache.org/schema/spring/camel-spring-1.6.4.xsd
+
+|1.6.3 |http://camel.apache.org/schema/spring/camel-spring-1.6.3.xsd
+
+|1.6.2 |http://camel.apache.org/schema/spring/camel-spring-1.6.2.xsd
+
+|1.6.1 |http://camel.apache.org/schema/spring/camel-spring-1.6.1.xsd
+
+|1.6.0 |http://camel.apache.org/schema/spring/camel-spring-1.6.0.xsd
+
+|1.5.0
+|http://activemq.apache.org/camel/schema/spring/camel-spring-1.5.0.xsd
+
+|1.4.0
+|http://activemq.apache.org/camel/schema/spring/camel-spring-1.4.0.xsd
+
+|1.3.0
+|http://activemq.apache.org/camel/schema/spring/camel-spring-1.3.0.xsd
+
+|1.2.0
+|http://activemq.apache.org/camel/schema/spring/camel-spring-1.2.0.xsd
+
+|1.1.0
+|http://activemq.apache.org/camel/schema/spring/camel-spring-1.1.0.xsd
+
+|1.0.0
+|http://activemq.apache.org/camel/schema/spring/camel-spring-1.0.0.xsd
+|=======================================================================
+
+[[XMLReference-ReleasedSchemas-Blueprint]]
+==== Released Schemas - Blueprint
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Version |XML Schema
+|2.20.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.20.2.xsd
+
+|2.20.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.20.1.xsd
+
+|2.20.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.20.0.xsd
+
+|2.19.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.19.4.xsd
+
+|2.19.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.19.3.xsd
+
+|2.19.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.19.2.xsd
+
+|2.19.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.19.1.xsd
+
+|2.19.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.19.0.xsd
+
+|2.18.5
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.18.5.xsd
+
+|2.18.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.18.4.xsd
+
+|2.18.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.18.3.xsd
+
+|2.18.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.18.2.xsd
+
+|2.18.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.18.1.xsd
+
+|2.18.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.18.0.xsd
+
+|2.17.7
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.17.7.xsd
+
+|2.17.6
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.17.6.xsd
+
+|2.17.5
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.17.5.xsd
+
+|2.17.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.17.4.xsd
+
+|2.17.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.17.3.xsd
+
+|2.17.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.17.2.xsd
+
+|2.17.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.17.1.xsd
+
+|2.17.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.17.0.xsd
+
+|2.16.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.16.4.xsd
+
+|2.16.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.16.3.xsd
+
+|2.16.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.16.2.xsd
+
+|2.16.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.16.1.xsd
+
+|2.16.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.16.0.xsd
+
+|2.15.6
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.15.6.xsd
+
+|2.15.5
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.15.5.xsd
+
+|2.15.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.15.4.xsd
+
+|2.15.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.15.3.xsd
+
+|2.15.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.15.2.xsd
+
+|2.15.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.15.1.xsd
+
+|2.15.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.15.0.xsd
+
+|2.14.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.14.4.xsd
+
+|2.14.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.14.3.xsd
+
+|2.14.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.14.2.xsd
+
+|2.14.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.14.1.xsd
+
+|2.14.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.14.0.xsd
+
+|2.13.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.13.4.xsd
+
+|2.13.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.13.3.xsd
+
+|2.13.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.13.3.xsd
+
+|2.13.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.13.1.xsd
+
+|2.13.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.13.0.xsd
+
+|2.12.5
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.12.5.xsd
+
+|2.12.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.12.4.xsd
+
+|2.12.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.12.3.xsd
+
+|2.12.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.12.2.xsd
+
+|2.12.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.12.1.xsd
+
+|2.12.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.12.0.xsd
+
+|2.11.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.11.4.xsd
+
+|2.11.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.11.3.xsd
+
+|2.11.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.11.2.xsd
+
+|2.11.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.11.1.xsd
+
+|2.11.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.11.0.xsd
+
+|2.10.7
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.10.7.xsd
+
+|2.10.6
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.10.6.xsd
+
+|2.10.5
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.10.5.xsd
+
+|2.10.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.10.4.xsd
+
+|2.10.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.10.3.xsd
+
+|2.10.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.10.2.xsd
+
+|2.10.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.10.1.xsd
+
+|2.10.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.10.0.xsd
+
+|2.9.8
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.9.8.xsd
+
+|2.9.7
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.9.7.xsd
+
+|2.9.6
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.9.6.xsd
+
+|2.9.5
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.9.5.xsd
+
+|2.9.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.9.4.xsd
+
+|2.9.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.9.3.xsd
+
+|2.9.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.9.2.xsd
+
+|2.9.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.9.1.xsd
+
+|2.9.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.9.0.xsd
+
+|2.8.6
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.8.6.xsd
+
+|2.8.5
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.8.5.xsd
+
+|2.8.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.8.4.xsd
+
+|2.8.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.8.3.xsd
+
+|2.8.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.8.2.xsd
+
+|2.8.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.8.1.xsd
+
+|2.8.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.8.0.xsd
+
+|2.7.5
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.7.5.xsd
+
+|2.7.4
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.7.4.xsd
+
+|2.7.3
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.7.3.xsd
+
+|2.7.2
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.7.2.xsd
+
+|2.7.1
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.7.1.xsd
+
+|2.7.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.7.0.xsd
+
+|2.6.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.6.0.xsd
+
+|2.5.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.5.0.xsd
+
+|2.4.0
+|http://camel.apache.org/schema/blueprint/camel-blueprint-2.4.0.xsd
+|=======================================================================
+
+[[XMLReference-ReleasedSchemas-CXFSpring]]
+==== Released Schemas - CXF Spring
+
+[width="100%",cols="50%,50%",options="header",]
+|======================================================================
+|Version |XML Schema
+|2.20.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.20.1-spring.xsd
+|2.20.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.20.0-spring.xsd
+|2.19.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.19.4-spring.xsd
+|2.19.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.19.3-spring.xsd
+|2.19.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.19.2-spring.xsd
+|2.19.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.19.1-spring.xsd
+|2.19.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.19.0-spring.xsd
+|2.18.5 |http://camel.apache.org/schema/cxf/camel-cxf-2.18.5-spring.xsd
+|2.18.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.18.4-spring.xsd
+|2.18.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.18.3-spring.xsd
+|2.18.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.18.2-spring.xsd
+|2.18.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.18.1-spring.xsd
+|2.18.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.18.0-spring.xsd
+|2.17.7 |http://camel.apache.org/schema/cxf/camel-cxf-2.17.7-spring.xsd
+|2.17.6 |http://camel.apache.org/schema/cxf/camel-cxf-2.17.6-spring.xsd
+|2.17.5 |http://camel.apache.org/schema/cxf/camel-cxf-2.17.5-spring.xsd
+|2.17.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.17.4-spring.xsd
+|2.17.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.17.3-spring.xsd
+|2.17.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.17.2-spring.xsd
+|2.17.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.17.1-spring.xsd
+|2.17.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.17.0-spring.xsd
+|2.16.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.16.4-spring.xsd
+|2.16.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.16.3-spring.xsd
+|2.16.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.16.2-spring.xsd
+|2.16.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.16.1-spring.xsd
+|2.16.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.16.0-spring.xsd
+|2.15.6 |http://camel.apache.org/schema/cxf/camel-cxf-2.15.6-spring.xsd
+|2.15.5 |http://camel.apache.org/schema/cxf/camel-cxf-2.15.5-spring.xsd
+|2.15.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.15.4-spring.xsd
+|2.15.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.15.3-spring.xsd
+|2.15.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.15.2-spring.xsd
+|2.15.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.15.1-spring.xsd
+|2.15.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.15.0-spring.xsd
+|2.14.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.14.4-spring.xsd
+|2.14.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.14.3-spring.xsd
+|2.14.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.14.2-spring.xsd
+|2.14.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.14.1-spring.xsd
+|2.14.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.14.0-spring.xsd
+|2.13.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.13.4-spring.xsd
+|2.13.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.13.3-spring.xsd
+|2.13.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.13.2-spring.xsd
+|2.13.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.13.1-spring.xsd
+|2.13.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.13.0-spring.xsd
+|2.12.5 |http://camel.apache.org/schema/cxf/camel-cxf-2.12.5-spring.xsd
+|2.12.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.12.4-spring.xsd
+|2.12.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.12.3-spring.xsd
+|2.12.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.12.2-spring.xsd
+|2.12.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.12.1-spring.xsd
+|2.12.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.12.0-spring.xsd
+|2.11.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.11.4-spring.xsd
+|2.11.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.11.3-spring.xsd
+|2.11.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.11.2-spring.xsd
+|2.11.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.11.1-spring.xsd
+|2.11.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.11.0-spring.xsd
+|2.10.7 |http://camel.apache.org/schema/cxf/camel-cxf-2.10.7-spring.xsd
+|2.10.6 |http://camel.apache.org/schema/cxf/camel-cxf-2.10.6-spring.xsd
+|2.10.5 |http://camel.apache.org/schema/cxf/camel-cxf-2.10.5-spring.xsd
+|2.10.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.10.4-spring.xsd
+|2.10.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.10.3-spring.xsd
+|2.10.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.10.2-spring.xsd
+|2.10.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.10.1-spring.xsd
+|2.10.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.10.0-spring.xsd
+|2.9.8 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.8-spring.xsd
+|2.9.7 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.7-spring.xsd
+|2.9.6 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.6-spring.xsd
+|2.9.5 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.5-spring.xsd
+|2.9.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.4-spring.xsd
+|2.9.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.3-spring.xsd
+|2.9.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.2-spring.xsd
+|2.9.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.1-spring.xsd
+|2.9.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.0.xsd
+|2.8.6 |http://camel.apache.org/schema/cxf/camel-cxf-2.8.6-spring.xsd
+|2.8.5 |http://camel.apache.org/schema/cxf/camel-cxf-2.8.5-spring.xsd
+|2.8.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.8.4-spring.xsd
+|2.8.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.8.3.xsd
+|2.8.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.8.2.xsd
+|2.8.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.8.1.xsd
+|2.8.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.8.0.xsd
+|2.7.5 |http://camel.apache.org/schema/cxf/camel-cxf-2.7.5.xsd
+|2.7.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.7.4.xsd
+|2.7.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.7.3.xsd
+|2.7.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.7.2.xsd
+|2.7.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.7.1.xsd
+|2.7.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.7.0.xsd
+|2.6.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.6.0.xsd
+|2.5.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.5.0.xsd
+|2.4.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.4.0.xsd
+|2.3.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.3.0.xsd
+|2.2.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.2.0.xsd
+|2.1.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.1.0.xsd
+|2.0.0 |http://camel.apache.org/schema/cxf/camel-cxf-2.0.0.xsd
+|1.6.4 |http://camel.apache.org/schema/cxf/camel-cxf-1.6.4.xsd
+|1.6.3 |http://camel.apache.org/schema/cxf/camel-cxf-1.6.3.xsd
+|1.6.2 |http://camel.apache.org/schema/cxf/camel-cxf-1.6.2.xsd
+|1.6.1 |http://camel.apache.org/schema/cxf/camel-cxf-1.6.1.xsd
+|1.6.0 |http://camel.apache.org/schema/cxf/camel-cxf-1.6.0.xsd
+|1.5.0 |http://activemq.apache.org/camel/schema/cxf/camel-cxf-1.5.0.xsd
+|1.4.0 |http://activemq.apache.org/camel/schema/cxf/camel-cxf-1.4.0.xsd
+|1.3.0 |http://activemq.apache.org/camel/schema/cxf/camel-cxf-1.3.0.xsd
+|======================================================================
+
+[[XMLReference-ReleasedSchemas-CXFblueprint]]
+==== Released Schemas - CXF blueprint
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Version |XML Schema
+|2.20.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.20.2-blueprint.xsd
+
+|2.20.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.20.1-blueprint.xsd
+
+|2.20.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.20.0-blueprint.xsd
+
+|2.19.4
+|http://camel.apache.org/schema/cxf/camel-cxf-2.19.4-blueprint.xsd
+
+|2.19.3
+|http://camel.apache.org/schema/cxf/camel-cxf-2.19.3-blueprint.xsd
+
+|2.19.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.19.2-blueprint.xsd
+
+|2.19.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.19.1-blueprint.xsd
+
+|2.19.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.19.0-blueprint.xsd
+
+|2.18.5
+|http://camel.apache.org/schema/cxf/camel-cxf-2.18.5-blueprint.xsd
+
+|2.18.4
+|http://camel.apache.org/schema/cxf/camel-cxf-2.18.4-blueprint.xsd
+
+|2.18.3
+|http://camel.apache.org/schema/cxf/camel-cxf-2.18.3-blueprint.xsd
+
+|2.18.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.18.2-blueprint.xsd
+
+|2.18.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.18.1-blueprint.xsd
+
+|2.18.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.18.0-blueprint.xsd
+
+|2.17.7
+|http://camel.apache.org/schema/cxf/camel-cxf-2.17.7-blueprint.xsd
+
+|2.17.6
+|http://camel.apache.org/schema/cxf/camel-cxf-2.17.6-blueprint.xsd
+
+|2.17.5
+|http://camel.apache.org/schema/cxf/camel-cxf-2.17.5-blueprint.xsd
+
+|2.17.4
+|http://camel.apache.org/schema/cxf/camel-cxf-2.17.4-blueprint.xsd
+
+|2.17.3
+|http://camel.apache.org/schema/cxf/camel-cxf-2.17.3-blueprint.xsd
+
+|2.17.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.17.2-blueprint.xsd
+
+|2.17.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.17.1-blueprint.xsd
+
+|2.17.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.17.0-blueprint.xsd
+
+|2.16.4
+|http://camel.apache.org/schema/cxf/camel-cxf-2.16.4-blueprint.xsd
+
+|2.16.3
+|http://camel.apache.org/schema/cxf/camel-cxf-2.16.3-blueprint.xsd
+
+|2.16.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.16.2-blueprint.xsd
+
+|2.16.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.16.1-blueprint.xsd
+
+|2.16.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.16.0-blueprint.xsd
+
+|2.15.6
+|http://camel.apache.org/schema/cxf/camel-cxf-2.15.6-blueprint.xsd
+
+|2.15.5
+|http://camel.apache.org/schema/cxf/camel-cxf-2.15.5-blueprint.xsd
+
+|2.15.4
+|http://camel.apache.org/schema/cxf/camel-cxf-2.15.4-blueprint.xsd
+
+|2.15.3
+|http://camel.apache.org/schema/cxf/camel-cxf-2.15.3-blueprint.xsd
+
+|2.15.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.15.2-blueprint.xsd
+
+|2.15.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.15.1-blueprint.xsd
+
+|2.15.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.15.0-blueprint.xsd
+
+|2.14.4
+|http://camel.apache.org/schema/cxf/camel-cxf-2.14.4-blueprint.xsd
+
+|2.14.3
+|http://camel.apache.org/schema/cxf/camel-cxf-2.14.3-blueprint.xsd
+
+|2.14.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.14.2-blueprint.xsd
+
+|2.14.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.14.1-blueprint.xsd
+
+|2.14.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.14.0-blueprint.xsd
+
+|2.13.4
+|http://camel.apache.org/schema/cxf/camel-cxf-2.13.4-blueprint.xsd
+
+|2.13.3
+|http://camel.apache.org/schema/cxf/camel-cxf-2.13.3-blueprint.xsd
+
+|2.13.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.13.2-blueprint.xsd
+
+|2.13.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.13.1-blueprint.xsd
+
+|2.13.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.13.0-blueprint.xsd
+
+|2.12.5
+|http://camel.apache.org/schema/cxf/camel-cxf-2.12.5-blueprint.xsd
+
+|2.12.4
+|http://camel.apache.org/schema/cxf/camel-cxf-2.12.4-blueprint.xsd
+
+|2.12.3
+|http://camel.apache.org/schema/cxf/camel-cxf-2.12.3-blueprint.xsd
+
+|2.12.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.12.2-blueprint.xsd
+
+|2.12.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.12.1-blueprint.xsd
+
+|2.12.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.12.0-blueprint.xsd
+
+|2.11.4
+|http://camel.apache.org/schema/cxf/camel-cxf-2.11.4-blueprint.xsd
+
+|2.11.3
+|http://camel.apache.org/schema/cxf/camel-cxf-2.11.3-blueprint.xsd
+
+|2.11.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.11.2-blueprint.xsd
+
+|2.11.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.11.1-blueprint.xsd
+
+|2.11.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.11.0-blueprint.xsd
+
+|2.10.7
+|http://camel.apache.org/schema/cxf/camel-cxf-2.10.7-blueprint.xsd
+
+|2.10.6
+|http://camel.apache.org/schema/cxf/camel-cxf-2.10.6-blueprint.xsd
+
+|2.10.5
+|http://camel.apache.org/schema/cxf/camel-cxf-2.10.5-blueprint.xsd
+
+|2.10.4
+|http://camel.apache.org/schema/cxf/camel-cxf-2.10.4-blueprint.xsd
+
+|2.10.3
+|http://camel.apache.org/schema/cxf/camel-cxf-2.10.3-blueprint.xsd
+
+|2.10.2
+|http://camel.apache.org/schema/cxf/camel-cxf-2.10.2-blueprint.xsd
+
+|2.10.1
+|http://camel.apache.org/schema/cxf/camel-cxf-2.10.1-blueprint.xsd
+
+|2.10.0
+|http://camel.apache.org/schema/cxf/camel-cxf-2.10.0-blueprint.xsd
+
+|2.9.8 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.8-blueprint.xsd
+
+|2.9.7 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.7-blueprint.xsd
+
+|2.9.6 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.6-blueprint.xsd
+
+|2.9.5 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.5-blueprint.xsd
+
+|2.9.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.4-blueprint.xsd
+
+|2.9.3 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.3-blueprint.xsd
+
+|2.9.2 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.2-blueprint.xsd
+
+|2.9.1 |http://camel.apache.org/schema/cxf/camel-cxf-2.9.1-blueprint.xsd
+
+|2.8.6 |http://camel.apache.org/schema/cxf/camel-cxf-2.8.6-blueprint.xsd
+
+|2.8.5 |http://camel.apache.org/schema/cxf/camel-cxf-2.8.5-blueprint.xsd
+
+|2.8.4 |http://camel.apache.org/schema/cxf/camel-cxf-2.8.4-blueprint.xsd
+|=======================================================================
+
+[[XMLReference-ReleasedSchemas-SpringIntegration]]
+==== Released Schemas - Spring Integration
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Version |XML Schema
+|2.20.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.20.2.xsd
+
+|2.20.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.20.1.xsd
+
+|2.20.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.20.0.xsd
+
+|2.19.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.19.4.xsd
+
+|2.19.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.19.3.xsd
+
+|2.19.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.19.2.xsd
+
+|2.19.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.19.1.xsd
+
+|2.19.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.19.0.xsd
+
+|2.18.5
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.18.5.xsd
+
+|2.18.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.18.4.xsd
+
+|2.18.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.18.3.xsd
+
+|2.18.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.18.2.xsd
+
+|2.18.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.18.1.xsd
+
+|2.18.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.18.0.xsd
+
+|2.17.7
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.17.7.xsd
+
+|2.17.6
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.17.6.xsd
+
+|2.17.5
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.17.5.xsd
+
+|2.17.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.17.4.xsd
+
+|2.17.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.17.3.xsd
+
+|2.17.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.17.2.xsd
+
+|2.17.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.17.1.xsd
+
+|2.17.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.17.0.xsd
+
+|2.16.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.16.4.xsd
+
+|2.16.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.16.3.xsd
+
+|2.16.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.16.2.xsd
+
+|2.16.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.16.1.xsd
+
+|2.16.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.16.0.xsd
+
+|2.15.6
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.15.6.xsd
+
+|2.15.5
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.15.5.xsd
+
+|2.15.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.15.4.xsd
+
+|2.15.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.15.3.xsd
+
+|2.15.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.15.2.xsd
+
+|2.15.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.15.1.xsd
+
+|2.15.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.15.0.xsd
+
+|2.14.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.14.4.xsd
+
+|2.14.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.14.3.xsd
+
+|2.14.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.14.2.xsd
+
+|2.14.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.14.1.xsd
+
+|2.14.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.14.0.xsd
+
+|2.13.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.13.4.xsd
+
+|2.13.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.13.3.xsd
+
+|2.13.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.13.2.xsd
+
+|2.13.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.13.1.xsd
+
+|2.13.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.13.0.xsd
+
+|2.12.5
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.12.5.xsd
+
+|2.12.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.12.4.xsd
+
+|2.12.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.12.3.xsd
+
+|2.12.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.12.2.xsd
+
+|2.12.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.12.1.xsd
+
+|2.12.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.12.0.xsd
+
+|2.11.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.11.4.xsd
+
+|2.11.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.11.3.xsd
+
+|2.11.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.11.2.xsd
+
+|2.11.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.11.1.xsd
+
+|2.11.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.11.0.xsd
+
+|2.10.6
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.10.6.xsd
+
+|2.10.6
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.10.6.xsd
+
+|2.10.5
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.10.5.xsd
+
+|2.10.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.10.4.xsd
+
+|2.10.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.10.3.xsd
+
+|2.10.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.10.2.xsd
+
+|2.10.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.10.1.xsd
+
+|2.10.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.10.0.xsd
+
+|2.9.8
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.9.8.xsd
+
+|2.9.7
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.9.7.xsd
+
+|2.9.6
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.9.6.xsd
+
+|2.9.5
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.9.5.xsd
+
+|2.9.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.9.4.xsd
+
+|2.9.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.9.3.xsd
+
+|2.9.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.9.2.xsd
+
+|2.9.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.9.1.xsd
+
+|2.9.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.9.0.xsd
+
+|2.8.6
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.8.6.xsd
+
+|2.8.5
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.8.5.xsd
+
+|2.8.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.8.4.xsd
+
+|2.8.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.8.3.xsd
+
+|2.8.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.8.2.xsd
+
+|2.8.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.8.1.xsd
+
+|2.8.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.8.0.xsd
+
+|2.7.5
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.7.5.xsd
+
+|2.7.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.7.4.xsd
+
+|2.7.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.7.3.xsd
+
+|2.7.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.7.2.xsd
+
+|2.7.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.7.1.xsd
+
+|2.7.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.7.0.xsd
+
+|2.6.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.6.0.xsd
+
+|2.5.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.5.0.xsd
+
+|2.4.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.4.0.xsd
+
+|2.3.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.3.0.xsd
+
+|2.2.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.2.0.xsd
+
+|2.1.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.1.0.xsd
+
+|2.0.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-2.0.0.xsd
+
+|1.6.4
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-1.6.4.xsd
+
+|1.6.3
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-1.6.3.xsd
+
+|1.6.2
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-1.6.2.xsd
+
+|1.6.1
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-1.6.1.xsd
+
+|1.6.0
+|http://camel.apache.org/schema/spring/integration/camel-spring-integration-1.6.0.xsd
+
+|1.5.0
+|http://activemq.apache.org/camel/schema/spring/integration/camel-spring-integration-1.5.0.xsd
+
+|1.4.0
+|http://activemq.apache.org/camel/schema/spring/integration/camel-spring-integration-1.4.0.xsd
+|=======================================================================
+
+[[XMLReference-ReleasedSchemas-SpringSecurity]]
+==== Released Schemas - Spring Security
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Version |XML Schema
+|2.20.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.20.2.xsd
+
+|2.20.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.20.1.xsd
+
+|2.20.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.20.0.xsd
+
+|2.19.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.19.4.xsd
+
+|2.19.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.19.3.xsd
+
+|2.19.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.19.2.xsd
+
+|2.19.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.19.1.xsd
+
+|2.19.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.19.0.xsd
+
+|2.18.5
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.18.5.xsd
+
+|2.18.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.18.4.xsd
+
+|2.18.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.18.3.xsd
+
+|2.18.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.18.2.xsd
+
+|2.18.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.18.1.xsd
+
+|2.18.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.18.0.xsd
+
+|2.17.7
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.17.7.xsd
+
+|2.17.6
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.17.6.xsd
+
+|2.17.5
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.17.5.xsd
+
+|2.17.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.17.4.xsd
+
+|2.17.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.17.3.xsd
+
+|2.17.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.17.2.xsd
+
+|2.17.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.17.1.xsd
+
+|2.17.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.17.0.xsd
+
+|2.16.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.16.4.xsd
+
+|2.16.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.16.3.xsd
+
+|2.16.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.16.2.xsd
+
+|2.16.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.16.1.xsd
+
+|2.16.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.16.0.xsd
+
+|2.15.6
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.15.6.xsd
+
+|2.15.5
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.15.5.xsd
+
+|2.15.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.15.4.xsd
+
+|2.15.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.15.3.xsd
+
+|2.15.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.15.2.xsd
+
+|2.15.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.15.1.xsd
+
+|2.15.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.15.0.xsd
+
+|2.14.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.14.4.xsd
+
+|2.14.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.14.3.xsd
+
+|2.14.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.14.2.xsd
+
+|2.14.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.14.1.xsd
+
+|2.14.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.14.0.xsd
+
+|2.13.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.13.4.xsd
+
+|2.13.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.13.3.xsd
+
+|2.13.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.13.2.xsd
+
+|2.13.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.13.1.xsd
+
+|2.13.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.13.0.xsd
+
+|2.12.5
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.12.5.xsd
+
+|2.12.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.12.4.xsd
+
+|2.12.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.12.3.xsd
+
+|2.12.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.12.2.xsd
+
+|2.12.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.12.1.xsd
+
+|2.12.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.12.0.xsd
+
+|2.11.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.11.4.xsd
+
+|2.11.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.11.3.xsd
+
+|2.11.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.11.2.xsd
+
+|2.11.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.11.1.xsd
+
+|2.11.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.11.0.xsd
+
+|2.10.7
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.10.7.xsd
+
+|2.10.6
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.10.6.xsd
+
+|2.10.5
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.10.5.xsd
+
+|2.10.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.10.4.xsd
+
+|2.10.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.10.3.xsd
+
+|2.10.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.10.2.xsd
+
+|2.10.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.10.1.xsd
+
+|2.10.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.10.0.xsd
+
+|2.9.8
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.9.8.xsd
+
+|2.9.7
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.9.7.xsd
+
+|2.9.6
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.9.6.xsd
+
+|2.9.5
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.9.5.xsd
+
+|2.9.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.9.4.xsd
+
+|2.9.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.9.3.xsd
+
+|2.9.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.9.2.xsd
+
+|2.9.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.9.1.xsd
+
+|2.9.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.9.0.xsd
+
+|2.8.6
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.8.6.xsd
+
+|2.8.5
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.8.5.xsd
+
+|2.8.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.8.4.xsd
+
+|2.8.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.8.3.xsd
+
+|2.8.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.8.2.xsd
+
+|2.8.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.8.1.xsd
+
+|2.8.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.8.0.xsd
+
+|2.7.5
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.7.5.xsd
+
+|2.7.4
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.7.4.xsd
+
+|2.7.3
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.7.3.xsd
+
+|2.7.2
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.7.2.xsd
+
+|2.7.1
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.7.1.xsd
+
+|2.7.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.7.0.xsd
+
+|2.6.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.6.0.xsd
+
+|2.5.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.5.0.xsd
+
+|2.4.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.4.0.xsd
+
+|2.3.0
+|http://camel.apache.org/schema/spring-security/camel-spring-security-2.3.0.xsd
+|=======================================================================
+
+[[XMLReference-UsingtheXSDsinconfigurationfiles]]
+==== Using the XSDs in configuration files
+
+When you are using link:spring.adoc[Spring]'s 2.5 XML handling to parse
+the XML then you need to refer to the XSD locations in your XML
+document.
+
+You can refer to a specific version of the XSD in your XML as follows:
+
+[source,xml]
+----
+<beans 
+  xmlns="http://www.springframework.org/schema/beans" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.13.1.xsd">
+----
+
+Or if you prefer you can use a generic XSD without the version number:
+
+[source,xml]
+----
+<beans 
+  xmlns="http://www.springframework.org/schema/beans" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+----
+
+Your IDE won't be able to fetch this XSD, you'll have to manually
+associate a specific release; however it does mean that you won't have
+to upgrade your XML config file with each Camel release; as it will
+resolve this XSD using the bundled XSD inside the `camel-spring.jar`.

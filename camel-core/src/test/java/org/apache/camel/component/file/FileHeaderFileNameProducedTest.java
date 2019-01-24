@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test that tests that the header contains the absolute path to the filename it used.
  */
 public class FileHeaderFileNameProducedTest extends ContextTestSupport {
 
+    @Test
     public void testHeaderFileNameProduced() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

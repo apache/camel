@@ -16,9 +16,6 @@
  */
 package org.apache.camel.spring.issues;
 
-/**
- * @version 
- */
 public class MyStatefulBean {
 
     private volatile String state = "";

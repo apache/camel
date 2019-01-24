@@ -30,9 +30,6 @@ import org.apache.camel.util.FileUtil;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
@@ -70,7 +67,7 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
-        context.startRoute("myRoute");
+        context.getRouteController().startRoute("myRoute");
 
         assertMockEndpointsSatisfied();
 

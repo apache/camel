@@ -44,9 +44,9 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.http.NameValuePair;
@@ -209,7 +209,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 // use string based for forms
                 String body = exchange.getIn().getBody(String.class);
                 if (body != null) {
-                    List<NameValuePair> pairs = URLEncodedUtils.parse(body, Charset.forName(IOHelper.getCharsetName(exchange, true)));
+                    List<NameValuePair> pairs = URLEncodedUtils.parse(body, Charset.forName(ExchangeHelper.getCharsetName(exchange, true)));
                     for (NameValuePair p : pairs) {
                         form.add(p.getName(), p.getValue());
                     }
@@ -286,8 +286,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             request.setEntity(form.getWebRepresentation());
             LOG.debug("Populate Restlet {} request from exchange body as form using media type {}", method, mediaType);
         } else {
-            // include body if PUT or POST
-            if (request.getMethod() == Method.PUT || request.getMethod() == Method.POST) {
+            // include body if PUT, POST or PATCH
+            if (request.getMethod().equals(Method.PUT) || request.getMethod().equals(Method.POST) || request.getMethod().equals(Method.PATCH)) {
                 Representation body = createRepresentationFromBody(exchange, mediaType);
                 request.setEntity(body);
                 LOG.debug("Populate Restlet {} request from exchange body: {} using media type {}", method, body, mediaType);
@@ -538,7 +538,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             // get content type
             MediaType mediaType = response.getEntity().getMediaType();
             if (mediaType != null) {
-                LOG.debug("Setting the Content-Type to be {}",  mediaType.toString());
+                LOG.debug("Setting the Content-Type to be {}", mediaType);
                 exchange.getOut().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
             }
             if (streamRepresentation && response.getEntity() instanceof StreamRepresentation) {

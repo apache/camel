@@ -18,9 +18,6 @@ package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.spring.SpringRouteBuilder;
 
-/**
- * @version 
- */
 public class AnnotatedRoute extends SpringRouteBuilder {
 
     public void configure() throws Exception {

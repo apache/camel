@@ -19,7 +19,6 @@ package org.apache.camel.component.sjms.consumer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-
 import org.junit.Test;
 
 public class InOnlyTopicConsumerTest extends JmsTestSupport {

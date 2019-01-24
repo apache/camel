@@ -15,10 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.bind;
-
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import junit.framework.TestCase;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.bean.BeanInfo;
@@ -26,18 +24,19 @@ import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.DefaultParameterMappingStrategy;
 import org.apache.camel.component.bean.MethodInvocation;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
-public class BeanInfoTest extends TestCase {
+public class BeanInfoTest extends Assert {
     protected DefaultCamelContext camelContext = new DefaultCamelContext();
     protected Exchange exchange = new DefaultExchange(camelContext);
     protected DefaultParameterMappingStrategy strategy = new DefaultParameterMappingStrategy();
     protected ExampleBean bean = new ExampleBean();
     protected BeanInfo info;
 
+    @Test
     public void testFindsSingleMethodMatchingBody() throws Throwable {
         MethodInvocation invocation = info.createInvocation(bean, exchange);
         assertNotNull("Should have found a method invocation!", invocation);
@@ -53,14 +52,16 @@ public class BeanInfoTest extends TestCase {
         assertEquals("Hello James!", exchange.getIn().getBody());
     }
 
+    @Test
     public void testBeanProcessor() throws Exception {
         BeanProcessor processor = new BeanProcessor(bean, info);
         processor.process(exchange);
         assertEquals("Hello James!", exchange.getIn().getBody());
     }
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+
         exchange.getIn().setBody("James");
         info = new BeanInfo(camelContext, bean.getClass(), strategy);
     }

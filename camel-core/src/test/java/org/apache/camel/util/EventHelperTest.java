@@ -16,15 +16,13 @@
  */
 package org.apache.camel.util;
 
-import java.util.EventObject;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.event.CamelContextStoppingEvent;
-import org.apache.camel.management.event.RouteStartedEvent;
-import org.apache.camel.management.event.RouteStoppedEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.Test;
 
@@ -130,18 +128,18 @@ public class EventHelperTest {
         AtomicInteger camelContextStoppingEvent = new AtomicInteger();
         
         @Override
-        public void notify(EventObject event) throws Exception {
-            if (event instanceof RouteStartedEvent) {
+        public void notify(CamelEvent event) throws Exception {
+            if (event.getType() == Type.RouteStarted) {
                 routeStartedEvent.incrementAndGet();
-            } else if (event instanceof RouteStoppedEvent) {
+            } else if (event.getType() == Type.RouteStopped) {
                 routeStoppedEvent.incrementAndGet();
-            } else if (event instanceof CamelContextStoppingEvent) {
+            } else if (event.getType() == Type.CamelContextStopping) {
                 camelContextStoppingEvent.incrementAndGet();
             }
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return true;
         }
 

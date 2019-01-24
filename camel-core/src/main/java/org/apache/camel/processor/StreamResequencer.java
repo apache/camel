@@ -24,7 +24,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -37,13 +36,10 @@ import org.apache.camel.processor.resequencer.SequenceElementComparator;
 import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.LoggingExceptionHandler;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A resequencer that re-orders a (continuous) stream of {@link Exchange}s. The
@@ -63,13 +59,10 @@ import org.slf4j.LoggerFactory;
  * <code>endpoint</code>. Resequencing work and the delivery of messages to
  * the next <code>processor</code> is done within the single polling thread.
  * 
- * @version 
- * 
+ *
  * @see ResequencerEngine
  */
-public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
+public class StreamResequencer extends AsyncProcessorSupport implements SequenceSender<Exchange>, Navigate<Processor>, Traceable, IdAware {
 
     private String id;
     private final CamelContext camelContext;
@@ -194,7 +187,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(processor);
+        ServiceHelper.startService(processor);
         delivery = new Delivery();
         engine.start();
         delivery.start();
@@ -205,7 +198,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         // let's stop everything in the reverse order
         // no need to stop the worker thread -- it will stop automatically when this service is stopped
         engine.stop();
-        ServiceHelper.stopServices(processor);
+        ServiceHelper.stopService(processor);
     }
 
     /**
@@ -215,10 +208,6 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
      */
     public void sendElement(Exchange exchange) throws Exception {
         processor.process(exchange);
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -238,7 +227,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
             delivery.request();
         } catch (Exception e) {
             if (isIgnoreInvalidExchanges()) {
-                LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
+                log.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
             } else {
                 exchange.setException(new CamelExchangeException("Error processing Exchange in StreamResequencer", exchange, e));
             }

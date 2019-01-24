@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+
 import javax.xml.transform.stream.StreamSource;
 
 import com.google.common.io.ByteSource;
@@ -33,7 +34,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.converter.stream.StreamSourceCache;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.ByteSourcePayload;
@@ -53,7 +54,7 @@ public final class JcloudsPayloadConverter {
 
     @Converter
     public static Payload toPayload(String str, Exchange ex) throws UnsupportedEncodingException {
-        return toPayload(str.getBytes(IOHelper.getCharsetName(ex)));
+        return toPayload(str.getBytes(ExchangeHelper.getCharsetName(ex)));
     }
     
     public static Payload toPayload(String str) throws UnsupportedEncodingException {

@@ -34,6 +34,11 @@ public class SqsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-sqs component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS SQS default configuration
      */
     private SqsConfigurationNestedConfiguration configuration;
@@ -154,6 +159,11 @@ public class SqsComponentConfiguration
          */
         private Integer delaySeconds;
         /**
+         * Define if you want to apply delaySeconds option to the queue or on
+         * single messages
+         */
+        private Boolean delayQueue = false;
+        /**
          * The maximumMessageSize (in bytes) an SQS message can contain for this
          * queue.
          */
@@ -207,10 +217,42 @@ public class SqsComponentConfiguration
          * queueOwnerAWSAccountId to build the service URL.
          */
         private String region;
+        /**
+         * Allows you to use multiple threads to poll the sqs queue to increase
+         * throughput
+         */
         private Integer concurrentConsumers = 1;
+        /**
+         * To define the queueUrl explicitly. All other parameters, which would
+         * influence the queueUrl, are ignored. This parameter is intended to be
+         * used, to connect to a mock implementation of SQS, for testing
+         * purposes.
+         */
         private String queueUrl;
+        /**
+         * To define a proxy host when instantiating the SQS client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the SQS client
+         */
         private Integer proxyPort;
+        /**
+         * The ID of an AWS-managed customer master key (CMK) for Amazon SQS or
+         * a custom CMK.
+         */
+        private String kmsMasterKeyId;
+        /**
+         * The length of time, in seconds, for which Amazon SQS can reuse a data
+         * key to encrypt or decrypt messages before calling AWS KMS again. An
+         * integer representing seconds, between 60 seconds (1 minute) and
+         * 86,400 seconds (24 hours). Default: 300 (5 minutes).
+         */
+        private Integer kmsDataKeyReusePeriodSeconds;
+        /**
+         * Define if Server Side Encryption is enabled or not on the queue
+         */
+        private Boolean serverSideEncryptionEnabled = false;
 
         public String getAmazonAWSHost() {
             return amazonAWSHost;
@@ -298,6 +340,14 @@ public class SqsComponentConfiguration
 
         public void setDelaySeconds(Integer delaySeconds) {
             this.delaySeconds = delaySeconds;
+        }
+
+        public Boolean getDelayQueue() {
+            return delayQueue;
+        }
+
+        public void setDelayQueue(Boolean delayQueue) {
+            this.delayQueue = delayQueue;
         }
 
         public Integer getMaximumMessageSize() {
@@ -411,6 +461,32 @@ public class SqsComponentConfiguration
 
         public void setProxyPort(Integer proxyPort) {
             this.proxyPort = proxyPort;
+        }
+
+        public String getKmsMasterKeyId() {
+            return kmsMasterKeyId;
+        }
+
+        public void setKmsMasterKeyId(String kmsMasterKeyId) {
+            this.kmsMasterKeyId = kmsMasterKeyId;
+        }
+
+        public Integer getKmsDataKeyReusePeriodSeconds() {
+            return kmsDataKeyReusePeriodSeconds;
+        }
+
+        public void setKmsDataKeyReusePeriodSeconds(
+                Integer kmsDataKeyReusePeriodSeconds) {
+            this.kmsDataKeyReusePeriodSeconds = kmsDataKeyReusePeriodSeconds;
+        }
+
+        public Boolean getServerSideEncryptionEnabled() {
+            return serverSideEncryptionEnabled;
+        }
+
+        public void setServerSideEncryptionEnabled(
+                Boolean serverSideEncryptionEnabled) {
+            this.serverSideEncryptionEnabled = serverSideEncryptionEnabled;
         }
     }
 }

@@ -43,7 +43,18 @@ public class CamelHazelcastTest extends AbstractSpringBootTestSupport {
 
     @Test
     public void componentTests() throws Exception {
-        this.runComponentTest(config);
+        this.runComponentTest(config, "hazelcast-list");
+        this.runComponentTest(config, "hazelcast-map");
+        this.runComponentTest(config, "hazelcast-replicatedmap");
+        this.runComponentTest(config, "hazelcast-queue");
+        this.runComponentTest(config, "hazelcast-topic");
+        this.runComponentTest(config, "hazelcast-set");
+        this.runComponentTest(config, "hazelcast-seda");
+        this.runComponentTest(config, "hazelcast-multimap");
+        this.runComponentTest(config, "hazelcast-ringbuffer");
+        this.runComponentTest(config, "hazelcast-instance");
+        this.runComponentTest(config, "hazelcast-atomicvalue");
+
         this.runModuleUnitTestsIfEnabled(config);
     }
 

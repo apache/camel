@@ -18,17 +18,19 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
+import org.junit.Test;
 
 /**
  *
  */
 public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
 
+    @Test
     public void testSimpleEqFunctionInvalid() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == abc", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == abc", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -37,11 +39,12 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleInvalidSymbol() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} = true", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${header.high} = true", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -50,10 +53,11 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleUnevenSingleQuote() throws Exception {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} == 'foo", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${body} == 'foo", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -62,10 +66,11 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleUnevenDoubleQuote() throws Exception {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} == \"foo", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${body} == \"foo", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -74,10 +79,11 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleTwoAnd() throws Exception {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} == 'foo' && && ${header} == 123", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${body} == 'foo' && && ${header} == 123", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -86,10 +92,11 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleTwoOr() throws Exception {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} == 'foo' || || ${header} == 123", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${body} == 'foo' || || ${header} == 123", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");
@@ -98,10 +105,11 @@ public class SimpleParserPredicateInvalidTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testSimpleTwoEq() throws Exception {
         exchange.getIn().setBody("foo");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} == == 'foo'", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${body} == == 'foo'", true, null);
         try {
             parser.parsePredicate();
             fail("Should thrown exception");

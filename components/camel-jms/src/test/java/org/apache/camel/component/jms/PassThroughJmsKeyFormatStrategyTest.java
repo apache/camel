@@ -19,9 +19,6 @@ package org.apache.camel.component.jms;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class PassThroughJmsKeyFormatStrategyTest extends Assert {
 
     private JmsKeyFormatStrategy strategy = new PassThroughJmsKeyFormatStrategy();

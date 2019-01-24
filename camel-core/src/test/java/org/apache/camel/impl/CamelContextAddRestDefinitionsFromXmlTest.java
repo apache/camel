@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-
 import java.net.URL;
 import java.util.List;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -28,10 +28,9 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version
- */
 public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSupport {
 
     protected JAXBContext jaxbContext;
@@ -45,7 +44,8 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         jaxbContext = context.getModelJAXBContextFactory().newJAXBContext();
     }
@@ -63,6 +63,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
         return assertIsInstanceOf(RestDefinition.class, rest);
     }
 
+    @Test
     public void testAddRestDefinitionsFromXml() throws Exception {
         RestDefinition rest = loadRest("rest1.xml");
         assertNotNull(rest);
@@ -81,7 +82,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
 
         assertEquals(2, context.getRoutes().size());
 
-        assertTrue("Route should be started", context.getRouteStatus("route1").isStarted());
+        assertTrue("Route should be started", context.getRouteController().getRouteStatus("route1").isStarted());
 
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         template.sendBody("seda:get-say-hello-bar", "Hello World");

@@ -35,8 +35,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppProducer</code>
- * 
- * @version 
  */
 public class SmppProducerLazySessionCreationTest {
     
@@ -49,6 +47,8 @@ public class SmppProducerLazySessionCreationTest {
     public void setUp() {
         configuration = new SmppConfiguration();
         configuration.setLazySessionCreation(true);
+        configuration.setServiceType("CMT");
+        configuration.setSystemType("cp");
         endpoint = mock(SmppEndpoint.class);
         session = mock(SMPPSession.class);
         

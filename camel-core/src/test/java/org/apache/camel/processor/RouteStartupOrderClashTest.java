@@ -19,10 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RouteStartupOrderClashTest extends ContextTestSupport {
 
     @Override
@@ -30,6 +28,7 @@ public class RouteStartupOrderClashTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testRouteStartupOrderClash() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

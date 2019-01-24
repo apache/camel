@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultDebugger;
@@ -108,7 +109,7 @@ public final class CamelAnnotationsHandler {
                     RouteCoverageDumper.dumpRouteCoverage(camelContext, testClass.getName(), testMethodName);
 
                     // reset JMX statistics
-                    ManagedCamelContextMBean managedCamelContext = camelContext.getManagedCamelContext();
+                    ManagedCamelContextMBean managedCamelContext = camelContext.getExtension(ManagedCamelContext.class).getManagedCamelContext();
                     if (managedCamelContext != null) {
                         LOGGER.debug("Resetting JMX statistics for RouteCoverage");
                         managedCamelContext.reset(true);
@@ -197,7 +198,7 @@ public final class CamelAnnotationsHandler {
 
             public void execute(String contextName, SpringCamelContext camelContext)
                     throws Exception {
-                LOGGER.info("Setting shutdown timeout to [{} {}] on CamelContext with name [{}].", new Object[]{shutdownTimeout, shutdownTimeUnit, contextName});
+                LOGGER.info("Setting shutdown timeout to [{} {}] on CamelContext with name [{}].", shutdownTimeout, shutdownTimeUnit, contextName);
                 camelContext.getShutdownStrategy().setTimeout(shutdownTimeout);
                 camelContext.getShutdownStrategy().setTimeUnit(shutdownTimeUnit);
             }

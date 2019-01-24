@@ -28,8 +28,6 @@ import org.apache.camel.spi.RouteStartupOrder;
 
 /**
  * Default implementation of {@link org.apache.camel.spi.RouteStartupOrder}.
- *
- * @version 
  */
 public class DefaultRouteStartupOrder implements RouteStartupOrder {
 
@@ -52,12 +50,8 @@ public class DefaultRouteStartupOrder implements RouteStartupOrder {
     }
 
     public List<Consumer> getInputs() {
-        List<Consumer> answer = new ArrayList<>();
         Map<Route, Consumer> inputs = routeService.getInputs();
-        for (Consumer consumer : inputs.values()) {
-            answer.add(consumer);
-        }
-        return answer;
+        return new ArrayList<>(inputs.values());
     }
 
     public List<Service> getServices() {

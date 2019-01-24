@@ -72,13 +72,13 @@ public class CustomCamelContextTest {
         assertThat(inbound.getCamelContext().getName(), is(equalTo(context.getName())));
         assertThat(outbound.getCamelContext().getName(), is(equalTo(context.getName())));
 
-        assertThat(context.getRouteStatus("uri-route"), is(equalTo(ServiceStatus.Stopped)));
+        assertThat(context.getRouteController().getRouteStatus("uri-route"), is(equalTo(ServiceStatus.Stopped)));
     }
 
     @Test
     @InSequence(2)
     public void sendMessageToInbound(CamelContext context) throws Exception {
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         outbound.expectedMessageCount(1);
         outbound.expectedBodiesReceived("test");

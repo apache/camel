@@ -38,22 +38,21 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.RestProducerFactoryHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Netty HTTP based component.
  */
+@Component("netty-http,netty4-http")
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware, RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpComponent.class);
 
     // factories which is created by this component and therefore manage their lifecycles
     private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new HashMap<>();
@@ -107,7 +106,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         NettySharedHttpServer shared = resolveAndRemoveReferenceParameter(parameters, "nettySharedHttpServer", NettySharedHttpServer.class);
         if (shared != null) {
             // use port number from the shared http server
-            LOG.debug("Using NettySharedHttpServer: {} with port: {}", shared, shared.getPort());
+            log.debug("Using NettySharedHttpServer: {} with port: {}", shared, shared.getPort());
             sharedPort = shared.getPort();
         }
 
@@ -127,7 +126,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
                 remaining = "https://" + remaining.substring(6);
             }
         }
-        LOG.debug("Netty http url: {}", remaining);
+        log.debug("Netty http url: {}", remaining);
 
         // set port on configuration which is either shared or using default values
         if (sharedPort != -1) {
@@ -360,11 +359,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+            if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                 host = "0.0.0.0";
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                 host = HostUtils.getLocalHostName();
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                 host = HostUtils.getLocalIp();
             }
         }
@@ -445,11 +444,20 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             }
         }
 
+        if (host.startsWith("https:")) {
+            map.put("ssl", true);
+        }
+
         // get the endpoint
         String query = URISupport.createQueryString(map);
         if (!query.isEmpty()) {
             url = url + "?" + query;
         }
+
+        // there are cases where we might end up here without component being created beforehand
+        // we need to abide by the component properties specified in the parameters when creating
+        // the component
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
 
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {
@@ -479,7 +487,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     protected void doStop() throws Exception {
         super.doStop();
 
-        ServiceHelper.stopServices(bootstrapFactories.values());
+        ServiceHelper.stopService(bootstrapFactories.values());
         bootstrapFactories.clear();
 
         ServiceHelper.stopService(multiplexChannelHandlers.values());

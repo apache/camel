@@ -79,7 +79,7 @@ public class AdvisedMockEndpointProducerTest {
             }
         });
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
     }
 
     @Test

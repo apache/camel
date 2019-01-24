@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -45,6 +45,7 @@ public class RemoteFileProduceOverruleOnlyOnceTest extends FtpServerTestSupport 
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/out");
         super.setUp();

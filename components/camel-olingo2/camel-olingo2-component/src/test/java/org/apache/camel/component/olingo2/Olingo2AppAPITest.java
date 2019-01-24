@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.olingo2;
-
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -55,6 +54,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -258,14 +258,14 @@ public class Olingo2AppAPITest {
         olingoApp.read(edm, TEST_MANUFACTURER_FOUNDED_PROPERTY, null, null, propertyHandler);
 
         Calendar founded = (Calendar) propertyHandler.await().get(FOUNDED_PROPERTY);
-        LOG.info("Founded property {}", founded.toString());
+        LOG.info("Founded property {}", founded);
 
         final TestOlingo2ResponseHandler<Calendar> valueHandler = new TestOlingo2ResponseHandler<>();
 
         olingoApp.read(edm, TEST_MANUFACTURER_FOUNDED_VALUE, null, null, valueHandler);
 
         founded = valueHandler.await();
-        LOG.info("Founded property {}", founded.toString());
+        LOG.info("Founded property {}", founded);
 
         final TestOlingo2ResponseHandler<HttpStatusCodes> statusHandler =
             new TestOlingo2ResponseHandler<>();

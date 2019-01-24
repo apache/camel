@@ -19,6 +19,7 @@ package org.apache.camel.component.sjms.batch;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -121,9 +122,9 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
         LOG.info("Send complete");
 
         StopWatch stopWatch = new StopWatch();
-        context.startRoute("batchConsumer");
+        context.getRouteController().startRoute("batchConsumer");
         assertMockEndpointsSatisfied();
-        long time = stopWatch.stop();
+        long time = stopWatch.taken();
 
         LOG.info("Processed {} messages in {} ms", messageCount, time);
         LOG.info("Average throughput {} msg/s", (long) (messageCount / (time / 1000d)));
@@ -379,10 +380,10 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
         LOG.info("Send complete");
 
         StopWatch stopWatch = new StopWatch();
-        context.startRoute("batchConsumer");
+        context.getRouteController().startRoute("batchConsumer");
 
         assertMockEndpointsSatisfied();
-        stopWatch.stop();
+        stopWatch.taken();
 
     }
 

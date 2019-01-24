@@ -40,10 +40,11 @@ import org.apache.camel.spi.SubUnitOfWork;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
-import org.apache.camel.spi.TracedRouteNodes;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.UnitOfWorkHelper;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.MessageSupport;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private CamelContext context;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
-    private TracedRouteNodes tracedRouteNodes;
     private Set<Object> transactedBy;
     private final Deque<RouteContext> routeContextStack = new ArrayDeque<>();
     private Deque<DefaultSubUnitOfWork> subUnitOfWorks;
@@ -82,12 +82,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         context = exchange.getContext();
-
-        // only use tracer if explicit enabled
-        if (context.isTracing() != null && context.isTracing()) {
-            // backwards compatible
-            tracedRouteNodes = new DefaultTracedRouteNodes();
-        }
 
         if (context.isAllowUseOriginalMessage()) {
             // special for JmsMessage as it can cause it to loose headers later.
@@ -169,9 +163,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         // need to clean up when we are stopping to not leak memory
         if (synchronizations != null) {
             synchronizations.clear();
-        }
-        if (tracedRouteNodes != null) {
-            tracedRouteNodes.clear();
         }
         if (transactedBy != null) {
             transactedBy.clear();
@@ -274,7 +265,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     @Override
     public void beforeRoute(Exchange exchange, Route route) {
         if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork beforeRoute: {} for ExchangeId: {} with {}", new Object[]{route.getId(), exchange.getExchangeId(), exchange});
+            log.trace("UnitOfWork beforeRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(), exchange);
         }
         UnitOfWorkHelper.beforeRouteSynchronizations(route, exchange, synchronizations, log);
     }
@@ -282,7 +273,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     @Override
     public void afterRoute(Exchange exchange, Route route) {
         if (log.isTraceEnabled()) {
-            log.trace("UnitOfWork afterRoute: {} for ExchangeId: {} with {}", new Object[]{route.getId(), exchange.getExchangeId(), exchange});
+            log.trace("UnitOfWork afterRoute: {} for ExchangeId: {} with {}", route.getId(), exchange.getExchangeId(), exchange);
         }
         UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, synchronizations, log);
     }
@@ -299,10 +290,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             throw new IllegalStateException("AllowUseOriginalMessage is disabled. Cannot access the original message.");
         }
         return originalInMessage;
-    }
-
-    public TracedRouteNodes getTracedRouteNodes() {
-        return tracedRouteNodes;
     }
 
     public boolean isTransacted() {
@@ -330,12 +317,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     }
 
     public RouteContext popRouteContext() {
-        try {
-            return routeContextStack.pop();
-        } catch (NoSuchElementException e) {
-            // ignore and return null
-        }
-        return null;
+        return routeContextStack.pollFirst();
     }
 
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {

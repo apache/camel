@@ -42,11 +42,9 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RouteBuilderTest extends TestSupport {
     protected Processor myProcessor = new MyProcessor();
     protected DelegateProcessor interceptor1;
@@ -73,6 +71,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSimpleRoute() throws Exception {
         List<Route> routes = buildSimpleRoute();
 
@@ -104,6 +103,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSimpleRouteWithHeaderPredicate() throws Exception {
         List<Route> routes = buildSimpleRouteWithHeaderPredicate();
 
@@ -143,6 +143,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSimpleRouteWithChoice() throws Exception {
         List<Route> routes = buildSimpleRouteWithChoice();
 
@@ -190,6 +191,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testCustomProcessor() throws Exception {
         List<Route> routes = buildCustomProcessor();
 
@@ -215,6 +217,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testCustomProcessorWithFilter() throws Exception {
         List<Route> routes = buildCustomProcessorWithFilter();
 
@@ -241,6 +244,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testWireTap() throws Exception {
         List<Route> routes = buildWireTap();
 
@@ -264,7 +268,7 @@ public class RouteBuilderTest extends TestSupport {
     }
 
     protected List<Route> buildRouteWithInterceptor() throws Exception {
-        interceptor1 = new org.apache.camel.processor.DelegateProcessor() {
+        interceptor1 = new org.apache.camel.support.processor.DelegateProcessor() {
         };
 
         interceptor2 = new MyInterceptorProcessor();
@@ -282,6 +286,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testRouteWithInterceptor() throws Exception {
 
         List<Route> routes = buildRouteWithInterceptor();
@@ -305,6 +310,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
+    @Test
     public void testComplexExpressions() throws Exception {
         // START SNIPPET: e7
         RouteBuilder builder = new RouteBuilder() {
@@ -356,6 +362,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testRouteDynamicReceipentList() throws Exception {
 
         List<Route> routes = buildDynamicRecipientList();
@@ -391,7 +398,7 @@ public class RouteBuilderTest extends TestSupport {
                 errorHandler(deadLetterChannel("mock:error"));
 
                 from("direct:a")
-                    .split(body(String.class).tokenize("\n"))
+                    .split(bodyAs(String.class).tokenize("\n"))
                         .to("direct:b");
             }
         };
@@ -399,6 +406,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testSplitter() throws Exception {
 
         List<Route> routes = buildSplitter();
@@ -432,6 +440,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testIdempotentConsumer() throws Exception {
 
         List<Route> routes = buildIdempotentConsumer();
@@ -471,6 +480,7 @@ public class RouteBuilderTest extends TestSupport {
         return getRouteList(builder);
     }
 
+    @Test
     public void testThreads() throws Exception {
 
         List<Route> routes = buildThreads();
@@ -483,17 +493,13 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "direct://a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Channel channel = unwrapChannel(consumer.getProcessor());
 
-            Pipeline line = assertIsInstanceOf(Pipeline.class, channel.getNextProcessor());
-            Iterator<?> it = line.getProcessors().iterator();
+            Pipeline line = assertIsInstanceOf(Pipeline.class, unwrap(consumer.getProcessor()));
+            Iterator<Processor> it = line.getProcessors().iterator();
 
-            assertIsInstanceOf(ThreadsProcessor.class, it.next());
-            // output should be wrapped in a pipeline
-            Pipeline threadsLine = assertIsInstanceOf(Pipeline.class, it.next());
-            Iterator<Processor> it2 = threadsLine.getProcessors().iterator();
-            assertIsInstanceOf(SendProcessor.class, unwrapChannel(it2.next()).getNextProcessor());
-            assertIsInstanceOf(SendProcessor.class, unwrapChannel(it2.next()).getNextProcessor());
+            assertIsInstanceOf(ThreadsProcessor.class, unwrapChannel(it.next()).getNextProcessor());
+            assertIsInstanceOf(SendProcessor.class, unwrapChannel(it.next()).getNextProcessor());
+            assertIsInstanceOf(SendProcessor.class, unwrapChannel(it.next()).getNextProcessor());
         }
     }
 
@@ -547,6 +553,7 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
+    @Test
     public void testCorrectNumberOfRoutes() throws Exception {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() throws Exception {

@@ -22,7 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ApiName;
-import org.apache.camel.util.component.AbstractApiComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.component.AbstractApiComponent;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +31,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link AS2Endpoint}.
  */
+@Component("as2")
 public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configuration, AS2ApiCollection> {
     
-    private static final Logger LOG = LoggerFactory.getLogger(AS2Component.class);
-
     public AS2Component() {
         super(AS2Endpoint.class, AS2ApiName.class, AS2ApiCollection.getCollection());
     }
@@ -50,9 +50,9 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, AS2ApiName apiName,
                                       AS2Configuration endpointConfiguration) {
-        AS2Endpoint endpoint = new AS2Endpoint(uri, this, apiName, methodName, endpointConfiguration);
-        endpoint.setName(methodName);
-        return endpoint;
+        endpointConfiguration.setApiName(apiName);
+        endpointConfiguration.setMethodName(methodName);
+        return new AS2Endpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
     /**
@@ -67,7 +67,7 @@ public class AS2Component extends AbstractApiComponent<AS2ApiName, AS2Configurat
     protected void doStart() throws Exception {
         super.doStart();
         if (Security.getProvider("BC") == null) {
-            LOG.debug("Adding BouncyCastleProvider as security provider");
+            log.debug("Adding BouncyCastleProvider as security provider");
             Security.addProvider(new BouncyCastleProvider());
         }
     }

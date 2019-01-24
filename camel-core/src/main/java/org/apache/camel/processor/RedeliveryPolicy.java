@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,8 +76,6 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * If you want to set a starting delay, then use 0 as the first limit, eg: <tt>0:1000;5:5000</tt> will use 1 sec delay
  * until attempt number 5 where it will use 5 seconds going forward.
- *
- * @version 
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
     protected static Random randomNumberGenerator;
@@ -251,8 +250,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         // find the group where the redelivery counter matches
         long answer = 0;
         for (String group : groups) {
-            long delay = Long.valueOf(ObjectHelper.after(group, ":"));
-            int count = Integer.valueOf(ObjectHelper.before(group, ":"));
+            long delay = Long.valueOf(StringHelper.after(group, ":"));
+            int count = Integer.valueOf(StringHelper.before(group, ":"));
             if (count > redeliveryCounter) {
                 break;
             } else {
@@ -265,16 +264,6 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     // Builder methods
     // -------------------------------------------------------------------------
-
-    /**
-     * Sets the initial redelivery delay in milliseconds
-     *
-     * @deprecated will be removed in the near future. Instead use {@link #redeliveryDelay(long)} instead
-     */
-    @Deprecated
-    public RedeliveryPolicy redeliverDelay(long delay) {
-        return redeliveryDelay(delay);
-    }
 
     /**
      * Sets the initial redelivery delay in milliseconds
@@ -476,22 +465,6 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     // Properties
     // -------------------------------------------------------------------------
 
-    /**
-     * @deprecated will be removed in the near future. Instead use {@link #getRedeliveryDelay()}
-     */
-    @Deprecated
-    public long getRedeliverDelay() {
-        return getRedeliveryDelay();
-    }
-
-    /**
-     * @deprecated will be removed in the near future. Instead use {@link #setRedeliveryDelay(long)}
-     */
-    @Deprecated
-    public void setRedeliverDelay(long redeliveryDelay) {
-        setRedeliveryDelay(redeliveryDelay);
-    }
-    
     public long getRedeliveryDelay() {
         return redeliveryDelay;
     }

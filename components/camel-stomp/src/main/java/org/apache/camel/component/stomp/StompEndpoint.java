@@ -27,8 +27,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -54,10 +54,10 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 /**
  * The stomp component is used for communicating with Stomp compliant message brokers.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination", label = "messaging")
 public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
-    @UriPath(description = "Name of the queue") @Metadata(required = "true")
+    @UriPath(description = "Name of the queue") @Metadata(required = true)
     private String destination;
     @UriParam
     private StompConfiguration configuration;
@@ -109,7 +109,7 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
                 connection.receive(new Callback<StompFrame>() {
                     @Override
                     public void onFailure(Throwable value) {
-                        if (started.get()) {
+                        if (isStarted()) {
                             connection.close(null);
                         }
                     }

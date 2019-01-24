@@ -25,12 +25,12 @@
   <parent>
     <groupId>org.apache.camel.example</groupId>
     <artifactId>examples</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-example-cdi-rest-servlet</artifactId>
-  <name>Camel :: Example :: CDI :: REST :: Servlet</name>
-  <description>REST DSL / Servlet with CDI example</description>
+  <name>Camel :: Example :: CDI :: Rest Servlet</name>
+  <description>Rest DSL using Servlet with CDI example</description>
   <packaging>war</packaging>
 
   <properties>
@@ -52,6 +52,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cdi</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -97,6 +101,12 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hamcrest</groupId>

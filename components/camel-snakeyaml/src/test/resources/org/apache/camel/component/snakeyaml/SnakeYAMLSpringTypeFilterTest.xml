@@ -44,19 +44,19 @@
 
         <route>
             <from uri="direct:safe-constructor"/>
-            <unmarshal ref="yaml-safe-constructor"/>
+            <unmarshal><custom ref="yaml-safe-constructor"/></unmarshal>
         </route>
         <route>
             <from uri="direct:type-constructor"/>
-            <unmarshal ref="yaml-type-constructor"/>
+            <unmarshal><custom ref="yaml-type-constructor"/></unmarshal>
         </route>
         <route>
             <from uri="direct:type-constructor-strdef"/>
-            <unmarshal ref="yaml-type-constructor-strdef"/>
+            <unmarshal><custom ref="yaml-type-constructor-strdef"/></unmarshal>
         </route>
         <route>
             <from uri="direct:all-constructor"/>
-            <unmarshal ref="yaml-all-constructor"/>
+            <unmarshal><custom ref="yaml-all-constructor"/></unmarshal>
         </route>
     </camelContext>
 </beans>

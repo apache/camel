@@ -19,12 +19,12 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AdviceWithMockEndpointsHavingParameterTest extends ContextTestSupport {
 
+    @Test
     public void testNoAdvised() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:foo").expectedBodiesReceived("Bye World");
@@ -34,10 +34,11 @@ public class AdviceWithMockEndpointsHavingParameterTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdvisedMockEndpoints() throws Exception {
         // advice the first route using the inlined AdviceWith route builder
         // which has extended capabilities than the regular route builder
-        context.getRouteDefinitions().get(1).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(1), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // mock all endpoints (will mock in all routes)

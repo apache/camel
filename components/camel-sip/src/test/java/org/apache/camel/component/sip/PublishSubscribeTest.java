@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.sip;
-
 import javax.sip.message.Request;
 
 import org.apache.camel.EndpointInject;
@@ -25,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -45,6 +45,7 @@ public class PublishSubscribeTest extends CamelTestSupport {
     private ProducerTemplate producerTemplate;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         port1 = AvailablePortFinder.getNextAvailable(17189);
         port2 = AvailablePortFinder.getNextAvailable(port1 + 1);

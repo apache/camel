@@ -16,10 +16,11 @@
  */
 package org.apache.camel.issues;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 /**
  * Tests the issue stated in
@@ -27,6 +28,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
  */
 public class RecipientListParallelWithAggregationStrategyThrowingExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testAggregationTimeExceptionWithParallelProcessing() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(1);
@@ -48,10 +50,13 @@ public class RecipientListParallelWithAggregationStrategyThrowingExceptionTest e
                 // must use share UoW if we want the error handler to react on
                 // exceptions
                 // from the aggregation strategy also.
-                from("direct:start").
-                recipientList(header("recipients")).aggregationStrategy(new MyAggregateBean()).
-                parallelProcessing().stopOnAggregateException().shareUnitOfWork()
-                .end()
+                from("direct:start")
+                    .recipientList(header("recipients"))
+                        .aggregationStrategy(new MyAggregateBean())
+                        .parallelProcessing()
+                        .stopOnAggregateException()
+                        .shareUnitOfWork()
+                        .end()
                     .to("mock:end");
             }
         };

@@ -19,9 +19,11 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelCamelContext;
+import org.junit.Test;
 
 public class ModelCamelContextTest extends ContextTestSupport {
 
+    @Test
     public void testAdapt() throws Exception {
         ModelCamelContext mcc = context.adapt(ModelCamelContext.class);
         assertNotNull(mcc);

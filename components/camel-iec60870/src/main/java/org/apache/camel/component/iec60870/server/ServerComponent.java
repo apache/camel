@@ -25,20 +25,18 @@ import org.apache.camel.component.iec60870.AbstractIecComponent;
 import org.apache.camel.component.iec60870.ConnectionId;
 import org.apache.camel.component.iec60870.Constants;
 import org.apache.camel.component.iec60870.ObjectAddress;
+import org.apache.camel.spi.annotations.Component;
 import org.eclipse.neoscada.protocol.iec60870.server.data.DataModuleOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+@Component("iec60870-server")
 public class ServerComponent extends AbstractIecComponent<ServerConnectionMultiplexor, ServerOptions> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ServerComponent.class);
-
     public ServerComponent(final CamelContext context) {
-        super(ServerOptions.class, new ServerOptions(), context, ServerEndpoint.class);
+        super(ServerOptions.class, new ServerOptions(), context);
     }
 
     public ServerComponent() {
-        super(ServerOptions.class, new ServerOptions(), ServerEndpoint.class);
+        super(ServerOptions.class, new ServerOptions());
     }
 
     @Override
@@ -50,7 +48,7 @@ public class ServerComponent extends AbstractIecComponent<ServerConnectionMultip
 
     @Override
     protected ServerConnectionMultiplexor createConnection(final ConnectionId id, final ServerOptions options) {
-        LOG.debug("Create new server - id: {}", id);
+        log.debug("Create new server - id: {}", id);
 
         try {
             return new ServerConnectionMultiplexor(new ServerInstance(id.getHost(), id.getPort(), options));

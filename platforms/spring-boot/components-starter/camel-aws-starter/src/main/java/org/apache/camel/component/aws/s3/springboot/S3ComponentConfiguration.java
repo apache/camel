@@ -22,7 +22,6 @@ import com.amazonaws.services.s3.model.EncryptionMaterials;
 import org.apache.camel.component.aws.s3.S3Operations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The aws-s3 component is used for storing and retrieving objecct from Amazon
@@ -36,6 +35,11 @@ public class S3ComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the aws-s3 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * The AWS S3 default configuration
      */
@@ -111,7 +115,7 @@ public class S3ComponentConfiguration
         private Long partSize = 26214400L;
         /**
          * If it is true, camel will upload the file with multi part format, the
-         * part size is decided by the option of `partSize`
+         * part size is decided by the option of partSize
          */
         private Boolean multiPartUpload = false;
         /**
@@ -123,8 +127,8 @@ public class S3ComponentConfiguration
          */
         private String secretKey;
         /**
-         * Reference to a `com.amazonaws.services.sqs.AmazonS3` in the
-         * link:registry.html[Registry].
+         * Reference to a com.amazonaws.services.sqs.AmazonS3 in the
+         * link:registry.htmlRegistry.
          */
         private AmazonS3 amazonS3Client;
         /**
@@ -159,13 +163,11 @@ public class S3ComponentConfiguration
         /**
          * Delete objects from S3 after they have been retrieved. The delete is
          * only performed if the Exchange is committed. If a rollback occurs,
-         * the object is not deleted.
-         * <p/>
-         * If this option is false, then the same objects will be retrieve over
-         * and over again on the polls. Therefore you need to use the Idempotent
-         * Consumer EIP in the route to filter out duplicates. You can filter
-         * using the {@link S3Constants#BUCKET_NAME} and {@link S3Constants#KEY}
-         * headers, or only the {@link S3Constants#KEY} header.
+         * the object is not deleted. If this option is false, then the same
+         * objects will be retrieve over and over again on the polls. Therefore
+         * you need to use the Idempotent Consumer EIP in the route to filter
+         * out duplicates. You can filter using the S3Constants#BUCKET_NAME and
+         * S3Constants#KEY headers, or only the S3Constants#KEY header.
          */
         private Boolean deleteAfterRead = true;
         /**
@@ -174,17 +176,17 @@ public class S3ComponentConfiguration
         private Boolean deleteAfterWrite = false;
         /**
          * The policy for this queue to set in the
-         * `com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method.
+         * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          */
         private String policy;
         /**
          * The storage class to set in the
-         * `com.amazonaws.services.s3.model.PutObjectRequest` request.
+         * com.amazonaws.services.s3.model.PutObjectRequest request.
          */
         private String storageClass;
         /**
          * Sets the server-side encryption algorithm when encrypting the object
-         * using AWS-managed keys. For example use <tt>AES256</tt>.
+         * using AWS-managed keys. For example use AES256.
          */
         private String serverSideEncryption;
         /**
@@ -216,7 +218,6 @@ public class S3ComponentConfiguration
          * The encryption materials to use in case of Symmetric/Asymmetric
          * client usage
          */
-        @NestedConfigurationProperty
         private EncryptionMaterials encryptionMaterials;
         /**
          * Define if encryption must be used or not

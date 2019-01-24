@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.spark;
 
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 
 /**
  * Generic block of code with parameters which can be executed against Spark Data Frames and return results.
@@ -25,6 +26,6 @@ import org.apache.spark.sql.DataFrame;
  */
 public interface DataFrameCallback<T> {
 
-    T onDataFrame(DataFrame dataFrame, Object... payloads);
+    T onDataFrame(Dataset<Row> dataFrame, Object... payloads);
 
 }

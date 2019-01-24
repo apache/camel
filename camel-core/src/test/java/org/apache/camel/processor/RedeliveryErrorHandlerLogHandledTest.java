@@ -21,10 +21,8 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
 
     @Override
@@ -32,6 +30,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testRedeliveryErrorHandlerOnExceptionLogHandledDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -55,6 +54,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRedeliveryErrorHandlerOnExceptionLogHandled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -79,6 +79,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRedeliveryErrorHandlerOnExceptionLogRetryAttempted() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -104,6 +105,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRedeliveryErrorHandlerDoNotLogExhausted() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -129,6 +131,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRedeliveryErrorHandlerLogExhaustedDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -154,6 +157,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRedeliveryErrorHandlerAllOptions() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -183,6 +187,7 @@ public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRedeliveryErrorHandlerOnExceptionAllOptions() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

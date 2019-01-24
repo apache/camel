@@ -49,7 +49,7 @@
         <endpoint id="input1" uri="jetty:https://localhost:#{dynaPort}/test"/>
 
         <route>
-            <from ref="input1"/>
+            <from uri="ref:input1"/>
             <to uri="mock:a"/>
         </route>
     </camelContext>

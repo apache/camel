@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.transform.Source;
 
 import org.w3c.dom.Element;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,8 +30,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 
 /**
  * A unit test for testing reading SOAP body with address override in PAYLOAD mode.
- * 
- * @version 
  */
 public class CxfPayLoadMessageRouterAddressOverrideTest extends CxfPayLoadMessageRouterTest {
 

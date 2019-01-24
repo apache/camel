@@ -32,14 +32,11 @@ import org.w3c.dom.Document;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.ByteBufInputStream;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 
 /**
  * A set of converter methods for working with Netty types
- *
- * @version 
  */
 @Converter
 public final class NettyConverter {

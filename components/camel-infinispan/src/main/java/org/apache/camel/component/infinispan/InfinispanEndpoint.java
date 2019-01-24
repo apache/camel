@@ -19,20 +19,20 @@ package org.apache.camel.component.infinispan;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * For reading/writing from/to Infinispan distributed key/value store and data grid.
  */
-@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:cacheName", consumerClass = InfinispanConsumer.class, label = "cache,datagrid,clustering")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "infinispan", title = "Infinispan", syntax = "infinispan:cacheName", label = "cache,datagrid,clustering")
 public class InfinispanEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "The cache to use")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String cacheName;
 
     @UriParam

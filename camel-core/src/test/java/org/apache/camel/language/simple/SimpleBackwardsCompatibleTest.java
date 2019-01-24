@@ -18,6 +18,7 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
+import org.junit.Test;
 
 /**
  *
@@ -29,44 +30,42 @@ public class SimpleBackwardsCompatibleTest extends LanguageTestSupport {
         return "simple";
     }
 
+    @Test
     public void testSimpleBody() throws Exception {
         assertExpression(exchange, "${body}", "<hello id='m123'>world!</hello>");
-        assertExpression(exchange, "$simple{body}", "<hello id='m123'>world!</hello>");
-        assertExpression(exchange, "body", "<hello id='m123'>world!</hello>");
 
         assertPredicate("${body}", true);
-        assertPredicate("body", true);
     }
 
+    @Test
     public void testSimpleHeader() throws Exception {
         exchange.getIn().setHeader("foo", 123);
         assertExpression(exchange, "${header.foo}", 123);
-        assertExpression(exchange, "header.foo", 123);
 
         assertPredicate("${header.foo}", true);
-        assertPredicate("header.foo", true);
 
         assertPredicate("${header.unknown}", false);
-        assertPredicate("header.unknown", false);
     }
 
+    @Test
     public void testSimpleLogicalAnd() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true and ${header.foo} == 123", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == true && ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue("Should match", pre.matches(exchange));
     }
 
+    @Test
     public void testSimpleLogicalOr() throws Exception {
         exchange.getIn().setBody("Hello");
         exchange.getIn().setHeader("high", true);
         exchange.getIn().setHeader("foo", 123);
 
-        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == false or ${header.foo} == 123", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${header.high} == false || ${header.foo} == 123", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue("Should match", pre.matches(exchange));

@@ -31,8 +31,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -169,7 +169,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processRollback(Exchange exchange, String unreadLabelId) {
         try {
-            LOG.warn("Exchange failed, so rolling back mail {} to un " + exchange);
+            LOG.warn("Exchange failed, so rolling back mail {} to un {}", exchange);
 
             List<String> add = new ArrayList<>();
             add.add(unreadLabelId);

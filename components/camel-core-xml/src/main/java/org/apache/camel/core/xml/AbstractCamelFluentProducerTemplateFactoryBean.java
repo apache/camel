@@ -26,13 +26,11 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A factory for creating a new {@link org.apache.camel.FluentProducerTemplate}
  * instance with a minimum of XML
- *
- * @version
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelFluentProducerTemplateFactoryBean extends AbstractCamelFactoryBean<FluentProducerTemplate> {

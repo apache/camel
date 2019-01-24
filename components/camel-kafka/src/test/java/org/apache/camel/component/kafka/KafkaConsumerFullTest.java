@@ -24,7 +24,9 @@ import java.util.stream.StreamSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.After;
@@ -69,6 +71,13 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
                 from(from).routeId("foo").to(to);
             }
         };
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myHeaderDeserializer", new MyKafkaHeaderDeserializer());
+        return jndi;
     }
 
     @Test
@@ -117,12 +126,12 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
 
         //Restart endpoint,
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
         kafkaEndpoint.getConfiguration().setSeekTo("beginning");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         // As wee set seek to beginning we should re-consume all messages
         to.assertIsSatisfied(3000);
@@ -145,18 +154,28 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         to.expectedMessageCount(0);
 
         //Restart endpoint,
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         KafkaEndpoint kafkaEndpoint = (KafkaEndpoint) from;
         kafkaEndpoint.getConfiguration().setSeekTo("end");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         // As wee set seek to end we should not re-consume any messages
         synchronized (this) {
             Thread.sleep(1000);
         }
         to.assertIsSatisfied(3000);
+    }
+
+    @Test
+    public void headerDeserializerCouldBeOverridden() {
+        KafkaEndpoint kafkaEndpoint = context.getEndpoint(
+                "kafka:random_topic?kafkaHeaderDeserializer=#myHeaderDeserializer", KafkaEndpoint.class);
+        assertIsInstanceOf(MyKafkaHeaderDeserializer.class, kafkaEndpoint.getConfiguration().getKafkaHeaderDeserializer());
+    }
+
+    private static class MyKafkaHeaderDeserializer extends DefaultKafkaHeaderDeserializer {
     }
 }
 

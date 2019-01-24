@@ -37,6 +37,11 @@ public class DisruptorVmComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the disruptor-vm component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To configure the default number of concurrent consumers
      */
     private Integer defaultConcurrentConsumers = 1;

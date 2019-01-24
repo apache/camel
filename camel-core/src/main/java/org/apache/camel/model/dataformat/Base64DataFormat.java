@@ -28,8 +28,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * The Base64 data format is used for base64 encoding and decoding.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.11.0", label = "dataformat,transformation", title = "Base64")
 @XmlRootElement(name = "base64")

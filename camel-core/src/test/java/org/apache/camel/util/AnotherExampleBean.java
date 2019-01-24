@@ -19,9 +19,6 @@ package org.apache.camel.util;
 import java.util.Collection;
 import java.util.Date;
 
-/**
- * @version 
- */
 public class AnotherExampleBean {
     private String id;
     private String name;

@@ -36,8 +36,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +70,7 @@ import org.slf4j.LoggerFactory;
  * <li>http://en.wikipedia.org/wiki/HMAC</li>
  * </ul>
  */
+@Dataformat("crypto")
 public class CryptoDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     public static final String KEY = "CamelCryptoKey";

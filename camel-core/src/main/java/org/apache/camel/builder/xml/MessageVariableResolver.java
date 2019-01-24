@@ -39,8 +39,6 @@ import static org.apache.camel.builder.xml.Namespaces.SYSTEM_PROPERTIES_NAMESPAC
  * properties available.
  * <p/>
  * Implementations of this resolver must be thread safe
- *
- * @version 
  */
 public class MessageVariableResolver implements XPathVariableResolver {
     private static final Logger LOG = LoggerFactory.getLogger(MessageVariableResolver.class);

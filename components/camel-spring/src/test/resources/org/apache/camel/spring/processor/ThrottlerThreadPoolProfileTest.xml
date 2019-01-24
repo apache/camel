@@ -32,8 +32,8 @@
       <from uri="direct:start"/>
       <throttle executorServiceRef="myPool">
         <constant>2</constant>
-        <to uri="mock:result"/>
       </throttle>
+      <to uri="mock:result"/>
     </route>
 
   </camelContext>

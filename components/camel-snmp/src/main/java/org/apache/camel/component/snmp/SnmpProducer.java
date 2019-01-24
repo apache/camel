@@ -19,9 +19,7 @@ package org.apache.camel.component.snmp;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultProducer;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
 import org.snmp4j.Snmp;
@@ -45,8 +43,6 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
  */
 public class SnmpProducer extends DefaultProducer {
    
-    private static final Logger LOG = LoggerFactory.getLogger(SnmpProducer.class);
-    
     private SnmpEndpoint endpoint;
     
     private Address targetAddress;
@@ -64,7 +60,7 @@ public class SnmpProducer extends DefaultProducer {
         super.doStart();
 
         this.targetAddress = GenericAddress.parse(this.endpoint.getAddress());
-        LOG.debug("targetAddress: {}", targetAddress);
+        log.debug("targetAddress: {}", targetAddress);
 
         this.usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
         SecurityModels.getInstance().addSecurityModel(this.usm);
@@ -109,7 +105,7 @@ public class SnmpProducer extends DefaultProducer {
         TransportMapping<? extends Address> transport = null;
 
         try {
-            LOG.debug("Starting SNMP producer on {}", this.endpoint.getAddress());
+            log.debug("Starting SNMP producer on {}", this.endpoint.getAddress());
             
             // either tcp or udp
             if ("tcp".equals(this.endpoint.getProtocol())) {
@@ -117,17 +113,17 @@ public class SnmpProducer extends DefaultProducer {
             } else if ("udp".equals(this.endpoint.getProtocol())) {
                 transport = new DefaultUdpTransportMapping();
             } else {
-                throw new IllegalArgumentException("Unknown protocol: {} " + this.endpoint.getProtocol());
+                throw new IllegalArgumentException("Unknown protocol: " + this.endpoint.getProtocol());
             }
     
             snmp = new Snmp(transport);
             
-            LOG.debug("Snmp: i am sending");
+            log.debug("Snmp: i am sending");
     
             snmp.listen();
             ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
             
-            LOG.debug("Snmp: sended");
+            log.debug("Snmp: sended");
     
             if (responseEvent.getResponse() != null) {
                 exchange.getIn().setBody(new SnmpMessage(getEndpoint().getCamelContext(), responseEvent.getResponse()));

@@ -40,6 +40,6 @@ public class SpringXStreamConfigurationTest extends XStreamConfigurationTest {
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 }

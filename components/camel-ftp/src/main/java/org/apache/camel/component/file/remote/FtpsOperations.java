@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.IOException;
+
 import javax.net.ssl.SSLException;
 
 import org.apache.camel.component.file.GenericFileOperationFailedException;
@@ -26,8 +27,6 @@ import org.apache.commons.net.ftp.FTPSClient;
 
 /**
  * FTP Secure (FTP over SSL/TLS) operations
- *
- * @version 
  */
 public class FtpsOperations extends FtpOperations {
 

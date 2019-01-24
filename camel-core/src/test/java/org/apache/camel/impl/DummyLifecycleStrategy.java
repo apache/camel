@@ -32,9 +32,6 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.LifecycleStrategySupport;
 
-/**
- * @version 
- */
 public class DummyLifecycleStrategy extends LifecycleStrategySupport {
 
     private List<String> events = new ArrayList<>();

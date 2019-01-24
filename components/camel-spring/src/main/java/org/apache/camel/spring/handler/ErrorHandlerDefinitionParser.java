@@ -141,49 +141,39 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
                     + ErrorHandlerType.TransactionErrorHandler.name() + ", in error handler with id: " + id);
         }
         String useOriginalMessage = element.getAttribute("useOriginalMessage");
-        if (ObjectHelper.isNotEmpty(useOriginalMessage) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+        if (ObjectHelper.isNotEmpty(useOriginalMessage) && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException("Attribute useOriginalMessage is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
         String onRedeliveryRef = element.getAttribute("onRedeliveryRef");
-        if (ObjectHelper.isNotEmpty(onRedeliveryRef) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+        if (ObjectHelper.isNotEmpty(onRedeliveryRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException("Attribute onRedeliveryRef is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
         String onExceptionOccurredRef = element.getAttribute("onExceptionOccurredRef");
-        if (ObjectHelper.isNotEmpty(onExceptionOccurredRef) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+        if (ObjectHelper.isNotEmpty(onExceptionOccurredRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException("Attribute onExceptionOccurredRef is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
         String onPrepareFailureRef = element.getAttribute("onPrepareFailureRef");
-        if (ObjectHelper.isNotEmpty(onPrepareFailureRef) && (type.equals(ErrorHandlerType.TransactionErrorHandler) || type.equals(ErrorHandlerType.LoggingErrorHandler) 
+        if (ObjectHelper.isNotEmpty(onPrepareFailureRef) && (type.equals(ErrorHandlerType.TransactionErrorHandler)
             || type.equals(ErrorHandlerType.NoErrorHandler))) {
             throw new IllegalArgumentException("Attribute onPrepareFailureRef is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
         String retryWhileRef = element.getAttribute("retryWhileRef");
-        if (ObjectHelper.isNotEmpty(retryWhileRef) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+        if (ObjectHelper.isNotEmpty(retryWhileRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException("Attribute retryWhileRef is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
         String redeliveryPolicyRef = element.getAttribute("redeliveryPolicyRef");
-        if (ObjectHelper.isNotEmpty(redeliveryPolicyRef) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+        if (ObjectHelper.isNotEmpty(redeliveryPolicyRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException("Attribute redeliveryPolicyRef is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
         String executorServiceRef = element.getAttribute("executorServiceRef");
-        if (ObjectHelper.isNotEmpty(executorServiceRef) && (type.equals(ErrorHandlerType.LoggingErrorHandler) || type.equals(ErrorHandlerType.NoErrorHandler))) {
+        if (ObjectHelper.isNotEmpty(executorServiceRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException("Attribute executorServiceRef is not supported by error handler type: "
-                    + type.name() + ", in error handler with id: " + id);
-        }
-        String logName = element.getAttribute("logName");
-        if (ObjectHelper.isNotEmpty(logName) && (!type.equals(ErrorHandlerType.LoggingErrorHandler))) {
-            throw new IllegalArgumentException("Attribute logName is not supported by error handler type: "
-                    + type.name() + ", in error handler with id: " + id);
-        }
-        String level = element.getAttribute("level");
-        if (ObjectHelper.isNotEmpty(level) && (!type.equals(ErrorHandlerType.LoggingErrorHandler))) {
-            throw new IllegalArgumentException("Attribute level is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
     }

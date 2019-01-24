@@ -19,12 +19,8 @@ package org.apache.camel.component.sjms;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-
 import org.junit.Test;
 
-/**
- * @version
- */
 public class JmsSelectorTest extends JmsTestSupport {
 
     @Override

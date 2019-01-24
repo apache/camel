@@ -20,12 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version
- */
 public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSendToSeda() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -35,7 +34,7 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         try {
-            context.startRoute("first");
+            context.getRouteController().startRoute("first");
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
             assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
@@ -43,6 +42,7 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testStartThird() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -52,10 +52,10 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // this should be okay
-        context.startRoute("third");
+        context.getRouteController().startRoute("third");
 
         try {
-            context.startRoute("first");
+            context.getRouteController().startRoute("first");
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
             assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"

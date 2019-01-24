@@ -19,16 +19,17 @@ package org.apache.camel.component.sjms.jms;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
+import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
  * Utility class for {@link javax.jms.Message}.

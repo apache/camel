@@ -22,23 +22,23 @@ import javax.net.ssl.SSLContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.linkedin.api.LinkedInOAuthRequestFilter;
 import org.apache.camel.component.linkedin.api.OAuthParams;
+import org.apache.camel.component.linkedin.api.OAuthSecureStorage;
 import org.apache.camel.component.linkedin.internal.CachingOAuthSecureStorage;
 import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.component.AbstractApiComponent;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.component.AbstractApiComponent;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents the component that manages {@link LinkedInEndpoint}.
  */
+@Component("linkedin")
 public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, LinkedInConfiguration, LinkedInApiCollection> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(LinkedInComponent.class);
 
     private LinkedInOAuthRequestFilter requestFilter;
 
@@ -70,7 +70,7 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
     public LinkedInConfiguration getConfiguration() {
         return super.getConfiguration();
     }
- 
+
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, LinkedInApiName apiName,
                                       LinkedInConfiguration endpointConfiguration) {
@@ -100,17 +100,21 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
             final SSLContext sslContext = new SSLContextParameters().createSSLContext(getCamelContext());
             enabledProtocols = sslContext.createSSLEngine().getEnabledProtocols();
         } catch (GeneralSecurityException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return new LinkedInOAuthRequestFilter(getOAuthParams(configuration),
             configuration.getHttpParams(), configuration.isLazyAuth(), enabledProtocols);
     }
 
     private static OAuthParams getOAuthParams(LinkedInConfiguration configuration) {
+        OAuthSecureStorage secureStorage = configuration.getSecureStorage();
+        if (secureStorage == null && !ObjectHelper.isEmpty(configuration.getAccessToken())) {
+            secureStorage = new DefaultOAuthSecureStorage(configuration.getAccessToken(), configuration.getExpiryTime());
+        }
         return new OAuthParams(configuration.getUserName(), configuration.getUserPassword(),
-            new CachingOAuthSecureStorage(configuration.getSecureStorage()), configuration.getClientId(), configuration.getClientSecret(),
+            new CachingOAuthSecureStorage(secureStorage), configuration.getClientId(), configuration.getClientSecret(),
             configuration.getRedirectUri(), configuration.getScopes());
     }
 
@@ -132,7 +136,7 @@ public class LinkedInComponent extends AbstractApiComponent<LinkedInApiName, Lin
         try {
             requestFilter.close();
         } catch (Exception e) {
-            LOG.warn("Error closing OAuth2 request filter: " + e.getMessage(), e);
+            log.warn("Error closing OAuth2 request filter: {}", e.getMessage(), e);
         }
     }
 }

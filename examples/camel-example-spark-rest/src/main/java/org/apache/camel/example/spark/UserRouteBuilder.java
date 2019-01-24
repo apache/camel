@@ -41,7 +41,7 @@ public class UserRouteBuilder extends RouteBuilder {
             .get("/view/{id}").outType(User.class)
                 .to("bean:userService?method=getUser(${header.id})")
 
-            .get("/list").outTypeList(User.class)
+            .get("/list").outType(User[].class)
                 .to("bean:userService?method=listUsers")
 
             .put("/update").type(User.class).outType(User.class)

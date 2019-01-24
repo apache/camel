@@ -26,15 +26,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ScheduledPollConsumer;
+import org.junit.Test;
 
 /**
  *
  */
 public class DefaultScheduledPollConsumerBridgeErrorHandlerTest extends ContextTestSupport {
 
+    @Test
     public void testDefaultConsumerBridgeErrorHandler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:dead").expectedMinimumMessageCount(1);

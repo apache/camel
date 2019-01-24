@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,6 +28,7 @@ public class SpringCamelContextShutdownAfterBeanTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SpringCamelContextShutdownAfterBeanTest.xml");
     }
 
+    @Test
     public void testShutdown() throws Exception {
         // you may have errors during shutdown, which you can see from the log
 
@@ -49,7 +51,6 @@ public class SpringCamelContextShutdownAfterBeanTest extends SpringTestSupport {
 
         // stop spring to cause shutdown of Camel
         applicationContext.close();
-        applicationContext.destroy();
 
         assertEquals(3, order.getStart().size());
         assertEquals(3, order.getShutdown().size());

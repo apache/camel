@@ -16,10 +16,10 @@
  */
 package org.apache.camel;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class LoggingLevelTest extends TestCase {
+public class LoggingLevelTest extends Assert {
 
     @Test
     public void testLoggingLevelInfo() throws Exception {

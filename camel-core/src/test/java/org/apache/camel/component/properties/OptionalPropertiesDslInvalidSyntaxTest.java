@@ -20,12 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Test that placeholder DSL is working as expected.
  */
 public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
 
+    @Test
     public void testPlaceholderDslKeyNotFoundTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -44,6 +46,7 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPlaceholderDslSetterNotFoundTest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

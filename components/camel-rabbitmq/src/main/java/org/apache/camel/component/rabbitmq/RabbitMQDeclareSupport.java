@@ -59,7 +59,6 @@ public class RabbitMQDeclareSupport {
     private Map<String, Object> resolvedQueueArguments() {
         Map<String, Object> queueArgs = new HashMap<>();
         populateQueueArgumentsFromDeadLetterExchange(queueArgs);
-        populateQueueArgumentsFromConfigurer(queueArgs);
         queueArgs.putAll(endpoint.getQueueArgs());
         formatSpecialQueueArguments(queueArgs);
         return queueArgs;
@@ -70,6 +69,11 @@ public class RabbitMQDeclareSupport {
         Object queueLengthLimit = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY);
         if (queueLengthLimit instanceof String) {
             queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_LENGTH_LIMIT_KEY, Long.parseLong((String) queueLengthLimit));
+        }
+        
+        Object queueMaxPriority = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY);
+        if (queueMaxPriority instanceof String) {
+            queueArgs.put(RabbitMQConstants.RABBITMQ_QUEUE_MAX_PRIORITY_KEY, Integer.parseInt((String) queueMaxPriority));
         }
 
         Object queueMessageTtl = queueArgs.get(RabbitMQConstants.RABBITMQ_QUEUE_MESSAGE_TTL_KEY);
@@ -91,12 +95,7 @@ public class RabbitMQDeclareSupport {
     }
 
     private Map<String, Object> resolvedExchangeArguments() {
-        Map<String, Object> exchangeArgs = new HashMap<>();
-        if (endpoint.getExchangeArgsConfigurer() != null) {
-            endpoint.getExchangeArgsConfigurer().configurArgs(exchangeArgs);
-        }
-        exchangeArgs.putAll(endpoint.getExchangeArgs());
-        return exchangeArgs;
+        return endpoint.getExchangeArgs();
     }
 
     private boolean shouldDeclareQueue() {
@@ -109,12 +108,6 @@ public class RabbitMQDeclareSupport {
 
     private boolean shouldBindQueue() {
         return !endpoint.isSkipQueueBind();
-    }
-
-    private void populateQueueArgumentsFromConfigurer(final Map<String, Object> queueArgs) {
-        if (endpoint.getQueueArgsConfigurer() != null) {
-            endpoint.getQueueArgsConfigurer().configurArgs(queueArgs);
-        }
     }
 
     private void declareExchange(final Channel channel, final String exchange, final String exchangeType, final Map<String, Object> exchangeArgs) throws IOException {

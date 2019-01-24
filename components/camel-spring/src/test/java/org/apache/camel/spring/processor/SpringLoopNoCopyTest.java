@@ -21,9 +21,6 @@ import org.apache.camel.processor.LoopNoCopyTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringLoopNoCopyTest extends LoopNoCopyTest {
 
     @Override

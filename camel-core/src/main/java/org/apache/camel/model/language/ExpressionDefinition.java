@@ -18,6 +18,7 @@ package org.apache.camel.model.language;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -40,11 +41,11 @@ import org.apache.camel.model.OtherAttributesAware;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.builder.ScriptHelper;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 
 /**
  * A useful base class for an expression
@@ -57,7 +58,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
     @XmlAttribute
     @XmlID
     private String id;
-    @XmlValue @Metadata(required = "true")
+    @XmlValue @Metadata(required = true)
     private String expression;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean trim;
@@ -169,7 +170,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                     exp = exp.trim();
                 }
                 // resolve the expression as it may be an external script from the classpath/file etc
-                exp = ResourceHelper.resolveOptionalExternalScript(camelContext, exp);
+                exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
 
                 predicate = language.createPredicate(exp);
                 configurePredicate(camelContext, predicate);
@@ -204,7 +205,7 @@ public class ExpressionDefinition implements Expression, Predicate, OtherAttribu
                     exp = exp.trim();
                 }
                 // resolve the expression as it may be an external script from the classpath/file etc
-                exp = ResourceHelper.resolveOptionalExternalScript(camelContext, exp);
+                exp = ScriptHelper.resolveOptionalExternalScript(camelContext, exp);
 
                 setExpressionValue(language.createExpression(exp));
                 configureExpression(camelContext, getExpressionValue());

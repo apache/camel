@@ -26,9 +26,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-/**
- * @version 
- */
 @ContextConfiguration
 public class SpringSimpleFileNameWithQuoteTest extends SpringRunWithTestSupport {
     protected String expectedBody = "Hello World!";

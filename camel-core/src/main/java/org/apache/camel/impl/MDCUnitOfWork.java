@@ -27,18 +27,8 @@ import org.slf4j.MDC;
 
 /**
  * This unit of work supports <a href="http://www.slf4j.org/api/org/slf4j/MDC.html">MDC</a>.
- *
- * @version 
  */
 public class MDCUnitOfWork extends DefaultUnitOfWork {
-
-    public static final String MDC_BREADCRUMB_ID = "camel.breadcrumbId";
-    public static final String MDC_EXCHANGE_ID = "camel.exchangeId";
-    public static final String MDC_MESSAGE_ID = "camel.messageId";
-    public static final String MDC_CORRELATION_ID = "camel.correlationId";
-    public static final String MDC_ROUTE_ID = "camel.routeId";
-    public static final String MDC_CAMEL_CONTEXT_ID = "camel.contextId";
-    public static final String MDC_TRANSACTION_KEY = "camel.transactionKey";
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCUnitOfWork.class);
 
@@ -134,12 +124,14 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync) {
+        /*
         if (!doneSync) {
             // must clear MDC on current thread as the exchange is being processed asynchronously
             // by another thread
             clear();
         }
         super.afterProcess(processor, exchange, callback, doneSync);
+        */
     }
 
     /**

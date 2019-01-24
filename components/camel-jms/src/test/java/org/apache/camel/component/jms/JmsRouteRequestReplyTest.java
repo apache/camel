@@ -26,6 +26,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
@@ -45,9 +46,6 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 
-/**
- * @version 
- */
 public class JmsRouteRequestReplyTest extends CamelTestSupport {
 
     protected static final String REPLY_TO_DESTINATION_SELECTOR_NAME = "camelProducer";

@@ -20,16 +20,13 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpComponent;
+import org.apache.camel.component.http4.HttpComponent;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConstants;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpJavaBodyTest extends BaseJettyTest {
 
     @Override

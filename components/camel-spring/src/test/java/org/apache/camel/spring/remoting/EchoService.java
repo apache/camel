@@ -16,9 +16,6 @@
  */
 package org.apache.camel.spring.remoting;
 
-/**
- * @version 
- */
 public class EchoService implements Echo {
 
     public String echo(String name) {

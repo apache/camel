@@ -31,6 +31,7 @@ public class AbstractInfluxDbTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new AnnotationConfigApplicationContext(MockedInfluxDbConfiguration.class);
         CamelContext ctx = new SpringCamelContext(applicationContext);
+        ctx.init();
         PropertiesComponent pc = new PropertiesComponent("classpath:influxdb.test.properties");
         ctx.addComponent("properties", pc);
         return ctx;

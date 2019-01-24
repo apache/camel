@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -65,11 +66,11 @@ public class CamelServlet extends HttpServlet {
 
         final String asyncParam = config.getInitParameter(ASYNC_PARAM);
         this.async = asyncParam == null ? false : ObjectHelper.toBoolean(asyncParam);
-        log.trace("servlet '{}' initialized with: async={}", new Object[]{servletName, async});
+        log.trace("servlet '{}' initialized with: async={}", servletName, async);
     }
 
     @Override
-    protected final void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isAsync()) {
             final AsyncContext context = req.startAsync();
             //run async
@@ -141,14 +142,18 @@ public class CamelServlet extends HttpServlet {
 
         // if its an OPTIONS request then return which method is allowed
         if ("OPTIONS".equals(request.getMethod()) && !consumer.isOptionsEnabled()) {
-            String s;
-            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
-                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
-            } else {
-                // allow them all
-                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            String allowedMethods = METHODS.stream().filter(m -> getServletResolveConsumerStrategy().isHttpMethodAllowed(request, m, getConsumers())).collect(Collectors.joining(","));
+            if (allowedMethods == null && consumer.getEndpoint().getHttpMethodRestrict() != null) {
+                allowedMethods = consumer.getEndpoint().getHttpMethodRestrict();
             }
-            response.addHeader("Allow", s);
+            if (allowedMethods == null) {
+               // allow them all
+                allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            }
+            if (!allowedMethods.contains("OPTIONS")) {
+                allowedMethods = allowedMethods + ",OPTIONS";
+            }
+            response.addHeader("Allow", allowedMethods);
             response.setStatus(HttpServletResponse.SC_OK);
             return;
         }

@@ -38,14 +38,13 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.ObjectHelper;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version
- */
 public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     private MySynchronization mySynchronization = new MySynchronization();
@@ -69,6 +68,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testConstructor() {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper();
         assertNull(helper.getCamelContext());
@@ -77,17 +77,20 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertNotNull(helper.getCamelContext());
     }
 
+    @Test
     public void testConstructorCamelContext() {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
         assertNotNull(helper.getCamelContext());
     }
 
+    @Test
     public void testMatchContext() {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
         assertTrue(helper.matchContext(context.getName()));
         assertFalse(helper.matchContext("foo"));
     }
 
+    @Test
     public void testConsume() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -103,6 +106,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConsumePrivate() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -118,6 +122,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testConsumeSynchronization() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -136,6 +141,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         await("onDone invokation").atMost(1, TimeUnit.SECONDS).until(mySynchronization::isOnDone);
     }
 
+    @Test
     public void testProduceSynchronization() throws Exception {
         MyProduceAndSynchronizationBean my = new MyProduceAndSynchronizationBean();
 
@@ -154,6 +160,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         await("onDone invocation").atMost(1, TimeUnit.SECONDS).until(mySynchronization::isOnDone);
     }
 
+    @Test
     public void testEndpointInjectProducerTemplate() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -163,7 +170,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
-            String propertyName = ObjectHelper.getPropertyName(method);
+            String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
             Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
@@ -177,6 +184,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEndpointInjectProducer() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -186,7 +194,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
-            String propertyName = ObjectHelper.getPropertyName(method);
+            String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
             Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
@@ -204,6 +212,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEndpointInjectPollingConsumer() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -213,7 +222,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
-            String propertyName = ObjectHelper.getPropertyName(method);
+            String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
             Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
@@ -231,6 +240,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEndpointInjectProducerTemplateField() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -255,6 +265,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEndpointInjectFluentProducerTemplateField() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -279,6 +290,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEndpointInjectProducerTemplateFieldNoDefaultEndpoint() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -303,6 +315,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEndpointInjectProducerTemplateFieldNameUnknown() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -321,6 +334,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testEndpointInjectProducerTemplateFieldUrlUnknown() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -339,6 +353,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testEndpointInjectBothUriAndRef() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -357,6 +372,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPropertyFieldInject() throws Exception {
         myProp.put("myTimeout", "2000");
         myProp.put("myApp", "Camel");
@@ -378,6 +394,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertEquals("Hello Camel", value);
     }
 
+    @Test
     public void testPropertyFieldDefaultValueInject() throws Exception {
         myProp.put("myApp", "Camel");
 
@@ -398,6 +415,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertEquals("Hello Camel", value);
     }
 
+    @Test
     public void testPropertyMethodInject() throws Exception {
         myProp.put("myTimeout", "2000");
         myProp.put("myApp", "Camel");
@@ -419,6 +437,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertEquals("Hello Camel", value);
     }
 
+    @Test
     public void testBeanInject() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -434,6 +453,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertEquals("Hello World", out);
     }
 
+    @Test
     public void testBeanInjectNotFound() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -450,6 +470,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testBeanInjectByType() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
 
@@ -465,6 +486,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         assertEquals("Hello Camel", out);
     }
 
+    @Test
     public void testFluentProducerTemplateWithNoInjection() throws Exception {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
         NoBeanInjectionTestClass myBean = new NoBeanInjectionTestClass();

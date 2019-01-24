@@ -24,8 +24,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Used for export a service using Spring Remoting to hide the network call using an interface.
- *
- * @version 
 */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "export")

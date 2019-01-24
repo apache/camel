@@ -18,14 +18,14 @@ package org.apache.camel.builder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
 /**
  * Test how to add routes at runtime using a RouteBuilder
- *
- * @version 
  */
 public class AddRoutesAtRuntimeTest extends ContextTestSupport {
 
+    @Test
     public void testAddRoutesAtRuntime() throws Exception {
         getMockEndpoint("mock:start").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");

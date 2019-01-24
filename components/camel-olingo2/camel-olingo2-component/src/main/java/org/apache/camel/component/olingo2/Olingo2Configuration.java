@@ -23,7 +23,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.http.HttpHost;
 import org.apache.http.entity.ContentType;
@@ -40,9 +40,9 @@ public class Olingo2Configuration {
     private static final int DEFAULT_TIMEOUT = 30 * 1000;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private Olingo2ApiName apiName;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String methodName;
     @UriParam
     private String serviceUri;

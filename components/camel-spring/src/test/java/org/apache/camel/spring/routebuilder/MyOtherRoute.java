@@ -20,9 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.spring.SpringRouteBuilder;
 
-/**
- * @version 
- */
 public class MyOtherRoute extends SpringRouteBuilder implements CamelContextAware {
 
     private CamelContext ctx;

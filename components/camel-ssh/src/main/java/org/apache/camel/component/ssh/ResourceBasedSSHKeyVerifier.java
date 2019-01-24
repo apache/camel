@@ -30,7 +30,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.sshd.client.keyverifier.ServerKeyVerifier;
 import org.apache.sshd.client.session.ClientSession;
 import org.bouncycastle.util.Arrays;

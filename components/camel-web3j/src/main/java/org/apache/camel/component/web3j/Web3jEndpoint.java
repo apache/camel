@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -37,18 +37,19 @@ import org.web3j.protocol.core.methods.request.ShhFilter;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.protocol.ipc.UnixIpcService;
 import org.web3j.protocol.ipc.WindowsIpcService;
+import org.web3j.quorum.Quorum;
 
 /**
  * The web3j component uses the Web3j client API and allows you to add/read nodes to/from a web3j compliant content repositories.
  */
 @UriEndpoint(firstVersion = "2.22.0", scheme = "web3j", title = "Web3j Ethereum Blockchain", syntax = "web3j:nodeAddress",
-    consumerClass = Web3jConsumer.class, label = "bitcoin,blockchain")
+    label = "bitcoin,blockchain")
 public class Web3jEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(Web3jEndpoint.class);
 
     private final Web3j web3j;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String nodeAddress;
 
     @UriParam
@@ -82,7 +83,7 @@ public class Web3jEndpoint extends DefaultEndpoint {
     }
 
     private Web3j buildService(String clientAddress, Web3jConfiguration configuration) {
-        LOG.info("Building service for endpoint: " + clientAddress + configuration);
+        LOG.info("Building service for endpoint: {}", clientAddress + configuration);
 
         if (configuration.getWeb3j() != null) {
             return configuration.getWeb3j();
@@ -97,6 +98,10 @@ public class Web3jEndpoint extends DefaultEndpoint {
             web3jService = new WindowsIpcService(clientAddress);
         } else {
             web3jService = new UnixIpcService(clientAddress);
+        }
+
+        if (configuration.isQuorumAPI()) {
+            return Quorum.build(web3jService);
         }
 
         return Web3j.build(web3jService);

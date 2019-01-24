@@ -18,17 +18,16 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ShutdownGracefulNoAutoStartedRoutesTest extends ContextTestSupport {
 
+    @Test
     public void testShutdownGraceful() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
 
-        context.startRoute("bar");
+        context.getRouteController().startRoute("bar");
 
         template.sendBody("direct:foo", "Hello World");
         template.sendBody("direct:bar", "Bye World");
@@ -37,8 +36,8 @@ public class ShutdownGracefulNoAutoStartedRoutesTest extends ContextTestSupport 
 
         context.stop();
 
-        assertTrue("Route foo should be stopped", context.getRouteStatus("foo").isStopped());
-        assertTrue("Route bar should be stopped", context.getRouteStatus("bar").isStopped());
+        assertTrue("Route foo should be stopped", context.getRouteController().getRouteStatus("foo").isStopped());
+        assertTrue("Route bar should be stopped", context.getRouteController().getRouteStatus("bar").isStopped());
     }
 
     @Override

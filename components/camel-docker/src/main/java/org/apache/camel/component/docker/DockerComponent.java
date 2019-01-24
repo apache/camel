@@ -22,16 +22,15 @@ import java.util.Map;
 import com.github.dockerjava.api.DockerClient;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.docker.exception.DockerException;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link DockerEndpoint}.
  */
+@Component("docker")
 public class DockerComponent extends DefaultComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(DockerComponent.class);
 
     @Metadata(label = "advanced")
     private DockerConfiguration configuration = new DockerConfiguration();

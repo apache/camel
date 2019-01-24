@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class ThrottlerDslTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
@@ -32,6 +33,7 @@ public class ThrottlerDslTest extends ContextTestSupport {
         return !isPlatform("windows");
     }
 
+    @Test
     public void testDsl() throws Exception {
         if (!canTest()) {
             return;

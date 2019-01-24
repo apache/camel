@@ -17,7 +17,7 @@
 package org.apache.camel.component.as2.internal;
 
 import org.apache.camel.component.as2.AS2Configuration;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * Singleton {@link ApiMethodPropertiesHelper} for AS2 component.

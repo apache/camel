@@ -28,7 +28,6 @@ package org.apache.camel.component.elasticsearch;
  * Delete       - Deletes a document from the index based on the index, type and id
  * Search       - Search across one or more indices and one or more types with a query
  * Exists       - Checks the index exists or not (using search with size=0 and terminate_after=1 parameters)
- * 
  */
 public enum ElasticsearchOperation {
     Index("Index"),
@@ -37,6 +36,7 @@ public enum ElasticsearchOperation {
     BulkIndex("BulkIndex"),
     GetById("GetById"),
     MultiGet("MultiGet"),
+    MultiSearch("MultiSearch"),
     Delete("Delete"),
     DeleteIndex("DeleteIndex"),
     Search("Search"),

@@ -19,12 +19,14 @@ package org.apache.camel.component.as2.springboot;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import javax.annotation.Generated;
+import org.apache.camel.component.as2.api.AS2CompressionAlgorithm;
+import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
 import org.apache.camel.component.as2.api.AS2MessageStructure;
+import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.http.entity.ContentType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Component used for transferring data secure and reliable over the internet
@@ -38,6 +40,11 @@ public class AS2ComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the as2 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * To use the shared configuration
      */
@@ -71,82 +78,123 @@ public class AS2ComponentConfiguration
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.as2.AS2Configuration.class;
         /**
          * What kind of operation to perform
-         * 
-         * @param apiName
-         *            - the API Name to set
          */
         private AS2ApiName apiName;
         /**
          * What sub operation to use for the selected operation
-         * 
-         * @param methodName
-         *            - the methodName to set
          */
         private String methodName;
         /**
          * The version of the AS2 protocol.
-         * 
-         * @param as2Version
-         *            - the version of the AS2 protocol.
          */
-        private String as2Version;
+        private String as2Version = "1.1";
         /**
-         * The value included in the <code>User-Agent</code> message header
-         * identifying the AS2 user agent.
-         * 
-         * @param userAgent
-         *            - AS2 user agent identification string.
+         * The value included in the User-Agent message header identifying the
+         * AS2 user agent.
          */
-        private String userAgent;
+        private String userAgent = "Camel AS2 Client Endpoint";
         /**
-         * The value included in the <code>Server</code> message header
-         * identifying the AS2 Server.
-         * 
-         * @param server
-         *            - AS2 server identification string.
+         * The value included in the Server message header identifying the AS2
+         * Server.
          */
-        private String server;
+        private String server = "Camel AS2 Server Endpoint";
         /**
-         * The Server Fully Qualified Domain Name (FQDN).
-         * <p>
-         * Used in message ids sent by endpoint.
-         * 
-         * @param clientFqdn
-         *            - the FQDN of server.
+         * The Server Fully Qualified Domain Name (FQDN). Used in message ids
+         * sent by endpoint.
          */
-        private String serverFqdn;
+        private String serverFqdn = "camel.apache.org";
         /**
          * The host name (IP or DNS name) of target host.
-         * 
-         * @param targetHostname
-         *            - the target host name (IP or DNS name).
          */
         private String targetHostname;
+        /**
+         * The port number of target host. -1 indicates the scheme default port.
+         */
         private Integer targetPortNumber;
         /**
-         * The Client Fully Qualified Domain Name (FQDN).
-         * <p>
-         * Used in message ids sent by endpoint.
-         * 
-         * @param clientFqdn
-         *            - the FQDN of client.
+         * The Client Fully Qualified Domain Name (FQDN). Used in message ids
+         * sent by endpoint.
          */
-        private String clientFqdn;
+        private String clientFqdn = "camel.apache.org";
+        /**
+         * The port number of server.
+         */
         private Integer serverPortNumber;
-        private String requestUri;
-        @NestedConfigurationProperty
+        /**
+         * The request URI of EDI message.
+         */
+        private String requestUri = "/";
+        /**
+         * The content type of EDI message. One of application/edifact,
+         * application/edi-x12, application/edi-consent
+         */
         private ContentType ediMessageType;
+        /**
+         * The transfer encoding of EDI message.
+         */
         private String ediMessageTransferEncoding;
+        /**
+         * The structure of AS2 Message. One of: PLAIN - No encryption, no
+         * signature, SIGNED - No encryption, signature, ENCRYPTED - Encryption,
+         * no signature, ENCRYPTED_SIGNED - Encryption, signature
+         */
         private AS2MessageStructure as2MessageStructure;
+        /**
+         * The value of Subject header of AS2 message.
+         */
         private String subject;
+        /**
+         * The value of the From header of AS2 message.
+         */
         private String from;
+        /**
+         * The value of the AS2From header of AS2 message.
+         */
         private String as2From;
+        /**
+         * The value of the AS2To header of AS2 message.
+         */
         private String as2To;
-        private String signingAlgorithmName;
+        /**
+         * The algorithm used to sign EDI message.
+         */
+        private AS2SignatureAlgorithm signingAlgorithm;
+        /**
+         * The chain of certificates used to sign EDI message.
+         */
         private Certificate[] signingCertificateChain;
+        /**
+         * The key used to sign the EDI message.
+         */
         private PrivateKey signingPrivateKey;
+        /**
+         * The algorithm used to compress EDI message.
+         */
+        private AS2CompressionAlgorithm compressionAlgorithm;
+        /**
+         * The value of the Disposition-Notification-To header. Assigning a
+         * value to this parameter requests a message disposition notification
+         * (MDN) for the AS2 message.
+         */
         private String dispositionNotificationTo;
+        /**
+         * The list of algorithms, in order of preference, requested to generate
+         * a message integrity check (MIC) returned in message dispostion
+         * notification (MDN)
+         */
         private String[] signedReceiptMicAlgorithms;
+        /**
+         * The algorithm used to encrypt EDI message.
+         */
+        private AS2EncryptionAlgorithm encryptingAlgorithm;
+        /**
+         * The chain of certificates used to encrypt EDI message.
+         */
+        private Certificate[] encryptingCertificateChain;
+        /**
+         * The key used to encrypt the EDI message.
+         */
+        private PrivateKey decryptingPrivateKey;
 
         public AS2ApiName getApiName() {
             return apiName;
@@ -294,12 +342,12 @@ public class AS2ComponentConfiguration
             this.as2To = as2To;
         }
 
-        public String getSigningAlgorithmName() {
-            return signingAlgorithmName;
+        public AS2SignatureAlgorithm getSigningAlgorithm() {
+            return signingAlgorithm;
         }
 
-        public void setSigningAlgorithmName(String signingAlgorithmName) {
-            this.signingAlgorithmName = signingAlgorithmName;
+        public void setSigningAlgorithm(AS2SignatureAlgorithm signingAlgorithm) {
+            this.signingAlgorithm = signingAlgorithm;
         }
 
         public Certificate[] getSigningCertificateChain() {
@@ -319,6 +367,15 @@ public class AS2ComponentConfiguration
             this.signingPrivateKey = signingPrivateKey;
         }
 
+        public AS2CompressionAlgorithm getCompressionAlgorithm() {
+            return compressionAlgorithm;
+        }
+
+        public void setCompressionAlgorithm(
+                AS2CompressionAlgorithm compressionAlgorithm) {
+            this.compressionAlgorithm = compressionAlgorithm;
+        }
+
         public String getDispositionNotificationTo() {
             return dispositionNotificationTo;
         }
@@ -335,6 +392,32 @@ public class AS2ComponentConfiguration
         public void setSignedReceiptMicAlgorithms(
                 String[] signedReceiptMicAlgorithms) {
             this.signedReceiptMicAlgorithms = signedReceiptMicAlgorithms;
+        }
+
+        public AS2EncryptionAlgorithm getEncryptingAlgorithm() {
+            return encryptingAlgorithm;
+        }
+
+        public void setEncryptingAlgorithm(
+                AS2EncryptionAlgorithm encryptingAlgorithm) {
+            this.encryptingAlgorithm = encryptingAlgorithm;
+        }
+
+        public Certificate[] getEncryptingCertificateChain() {
+            return encryptingCertificateChain;
+        }
+
+        public void setEncryptingCertificateChain(
+                Certificate[] encryptingCertificateChain) {
+            this.encryptingCertificateChain = encryptingCertificateChain;
+        }
+
+        public PrivateKey getDecryptingPrivateKey() {
+            return decryptingPrivateKey;
+        }
+
+        public void setDecryptingPrivateKey(PrivateKey decryptingPrivateKey) {
+            this.decryptingPrivateKey = decryptingPrivateKey;
         }
     }
 }

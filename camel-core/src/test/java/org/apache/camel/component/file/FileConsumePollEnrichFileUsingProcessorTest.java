@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ContextTestSupport;
@@ -24,19 +23,20 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/enrich");
         deleteDirectory("target/enrichdata");
         super.setUp();
     }
 
+    @Test
     public void testPollEnrich() throws Exception {
         getMockEndpoint("mock:start").expectedBodiesReceived("Start");
 

@@ -18,13 +18,13 @@ package org.apache.camel.component.weather;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.weather.http.AuthenticationHttpClientConfigurer;
 import org.apache.camel.component.weather.http.AuthenticationMethod;
 import org.apache.camel.component.weather.http.CompositeHttpConfigurer;
 import org.apache.camel.component.weather.http.HttpClientConfigurer;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -35,16 +35,14 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
  * <p/>
  * Camel uses <a href="http://openweathermap.org/api#weather">Open Weather</a> to get the information.
  */
-public class WeatherComponent extends UriEndpointComponent {
+@Component("weather")
+public class WeatherComponent extends DefaultComponent {
 
     private HttpClient httpClient;
+    private String geolocationAccessKey;
+    private String geolocationRequestHostIP;
 
     public WeatherComponent() {
-        super(WeatherEndpoint.class);
-    }
-
-    public WeatherComponent(CamelContext context) {
-        super(context, WeatherEndpoint.class);
     }
 
     @Override
@@ -55,6 +53,8 @@ public class WeatherComponent extends UriEndpointComponent {
         setProperties(configuration, parameters);
 
         httpClient = createHttpClient(configuration);
+        geolocationAccessKey = configuration.getGeolocationAccessKey();
+        geolocationRequestHostIP = configuration.getGeolocationRequestHostIP();
         WeatherEndpoint endpoint = new WeatherEndpoint(uri, this, configuration);
         return endpoint;
     }
@@ -67,8 +67,7 @@ public class WeatherComponent extends UriEndpointComponent {
         HttpClient httpClient = new HttpClient(connectionManager);
 
         if (configuration.getProxyHost() != null && configuration.getProxyPort() != null) {
-            httpClient.getHostConfiguration().setProxy(configuration.getProxyHost(),
-                    configuration.getProxyPort());
+            httpClient.getHostConfiguration().setProxy(configuration.getProxyHost(), configuration.getProxyPort());
         }
 
         if (configuration.getProxyAuthUsername() != null && configuration.getProxyAuthMethod() == null) {
@@ -77,12 +76,8 @@ public class WeatherComponent extends UriEndpointComponent {
 
         CompositeHttpConfigurer configurer = new CompositeHttpConfigurer();
         if (configuration.getProxyAuthMethod() != null) {
-            configureProxyAuth(configurer,
-                    configuration.getProxyAuthMethod(),
-                    configuration.getProxyAuthUsername(),
-                    configuration.getProxyAuthPassword(),
-                    configuration.getProxyAuthDomain(),
-                    configuration.getProxyAuthHost());
+            configureProxyAuth(configurer, configuration.getProxyAuthMethod(), configuration.getProxyAuthUsername(), configuration.getProxyAuthPassword(),
+                               configuration.getProxyAuthDomain(), configuration.getProxyAuthHost());
         }
 
         configurer.configureHttpClient(httpClient);
@@ -90,12 +85,7 @@ public class WeatherComponent extends UriEndpointComponent {
         return httpClient;
     }
 
-    private HttpClientConfigurer configureProxyAuth(CompositeHttpConfigurer configurer,
-                                    String authMethod,
-                                    String username,
-                                    String password,
-                                    String domain,
-                                    String host) {
+    private HttpClientConfigurer configureProxyAuth(CompositeHttpConfigurer configurer, String authMethod, String username, String password, String domain, String host) {
         // no proxy auth is in use
         if (username == null && authMethod == null) {
             return configurer;
@@ -129,4 +119,28 @@ public class WeatherComponent extends UriEndpointComponent {
     public HttpClient getHttpClient() {
         return httpClient;
     }
+
+    public String getGeolocationAccessKey() {
+        return geolocationAccessKey;
+    }
+
+    /**
+     * The geolocation service now needs an accessKey to be used
+     */
+    public void setGeolocationAccessKey(String geolocationAccessKey) {
+        this.geolocationAccessKey = geolocationAccessKey;
+    }
+
+    public String getGeolocationRequestHostIP() {
+        return geolocationRequestHostIP;
+    }
+
+    /**
+     * The geolocation service now needs to specify the IP associated to the
+     * accessKey you're using
+     */
+    public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
+        this.geolocationRequestHostIP = geolocationRequestHostIP;
+    }
+
 }

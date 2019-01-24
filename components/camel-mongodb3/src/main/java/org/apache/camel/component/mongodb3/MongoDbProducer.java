@@ -36,18 +36,15 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.WriteModel;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.apache.camel.component.mongodb3.MongoDbConstants.BATCH_SIZE;
@@ -74,7 +71,6 @@ import static org.apache.camel.component.mongodb3.MongoDbConstants.WRITERESULT;
  * The MongoDb producer.
  */
 public class MongoDbProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDbProducer.class);
     private final Map<MongoDbOperation, Processor> operations = new HashMap<>();
     private MongoDbEndpoint endpoint;
 
@@ -104,7 +100,7 @@ public class MongoDbProducer extends DefaultProducer {
         MongoDbOperation operation = endpoint.getOperation();
         Object header = exchange.getIn().getHeader(OPERATION_HEADER);
         if (header != null) {
-            LOG.debug("Overriding default operation with operation specified on header: {}", header);
+            log.debug("Overriding default operation with operation specified on header: {}", header);
             try {
                 if (header instanceof MongoDbOperation) {
                     operation = ObjectHelper.cast(MongoDbOperation.class, header);
@@ -171,8 +167,8 @@ public class MongoDbProducer extends DefaultProducer {
             db = endpoint.getMongoConnection().getDatabase(dynamicDB);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Dynamic database selected: {}", db.getName());
+        if (log.isDebugEnabled()) {
+            log.debug("Dynamic database selected: {}", db.getName());
         }
         return db;
     }
@@ -224,8 +220,8 @@ public class MongoDbProducer extends DefaultProducer {
             }
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Dynamic database and/or collection selected: {}->{}", endpoint.getDatabase(), endpoint.getCollection());
+        if (log.isDebugEnabled()) {
+            log.debug("Dynamic database and/or collection selected: {}->{}", endpoint.getDatabase(), endpoint.getCollection());
         }
         return dbCol;
     }

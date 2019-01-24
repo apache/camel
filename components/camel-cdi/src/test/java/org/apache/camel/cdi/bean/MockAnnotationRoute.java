@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.Mock;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -31,7 +30,7 @@ public class MockAnnotationRoute extends RouteBuilder {
     private Endpoint directEP;
 
     @Inject
-    @Mock("mock:result")
+    @Uri("mock:result")
     private MockEndpoint mockEP;
 
     @Override

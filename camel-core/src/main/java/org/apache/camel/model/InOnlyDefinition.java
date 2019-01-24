@@ -26,8 +26,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Marks the exchange pattern for the route to one way
- *
- * @version 
  */
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "inOnly")
@@ -50,6 +48,11 @@ public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {
         return "InOnly[" + getLabel() + "]";
     }
     
+    @Override
+    public String getShortName() {
+        return "inOnly";
+    }
+
     @Override
     public String getLabel() {
         return "inOnly";

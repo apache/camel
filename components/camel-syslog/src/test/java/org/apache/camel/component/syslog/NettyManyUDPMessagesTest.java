@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.syslog;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;

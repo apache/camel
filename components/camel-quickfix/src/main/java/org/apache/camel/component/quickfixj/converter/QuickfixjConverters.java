@@ -26,10 +26,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.quickfixj.QuickfixjEndpoint;
 import org.apache.camel.component.quickfixj.QuickfixjEventCategory;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.ConfigError;
 import quickfix.DataDictionary;
 import quickfix.FieldNotFound;
@@ -65,7 +64,7 @@ public final class QuickfixjConverters {
     @Converter
     public static Message toMessage(byte[] value, Exchange exchange) throws InvalidMessage, ConfigError, UnsupportedEncodingException {
         DataDictionary dataDictionary = getDataDictionary(exchange);
-        String charsetName = IOHelper.getCharsetName(exchange);
+        String charsetName = ExchangeHelper.getCharsetName(exchange);
 
         String message;
         if (charsetName != null) {
@@ -87,7 +86,7 @@ public final class QuickfixjConverters {
     @Converter
     public static InputStream toInputStream(Message value, Exchange exchange) throws InvalidMessage, ConfigError, UnsupportedEncodingException {
         if (exchange != null) {
-            String charsetName = IOHelper.getCharsetName(exchange);
+            String charsetName = ExchangeHelper.getCharsetName(exchange);
             if (charsetName != null) {
                 return new ByteArrayInputStream(value.toString().getBytes(charsetName));
             } else {

@@ -24,6 +24,7 @@ import org.apache.camel.Header;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * Unit test for the retry until predicate
@@ -39,6 +40,7 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRetryUntil() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

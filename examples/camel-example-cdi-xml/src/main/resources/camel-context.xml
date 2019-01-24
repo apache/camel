@@ -36,11 +36,11 @@
         <!-- Read input from the console using the stream component -->
         <from uri="stream:in?delay=1000&amp;promptMessage=Which pill (red|blue)?: "/>
         <!-- To send messages to Neo -->
-        <to ref="neo"/>
+        <to uri="ref:neo"/>
     </route>
 
     <route id="matrix">
-        <from ref="neo"/>
+        <from uri="ref:neo"/>
         <choice>
             <when>
                 <simple>${body} contains '{{poison}}'</simple>

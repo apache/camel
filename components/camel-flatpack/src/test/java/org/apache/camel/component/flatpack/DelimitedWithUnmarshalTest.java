@@ -34,9 +34,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 
-/**
- * @version 
- */
 @ContextConfiguration
 public class DelimitedWithUnmarshalTest extends AbstractJUnit4SpringContextTests {
     private static final Logger LOG = LoggerFactory.getLogger(FixedLengthTest.class);

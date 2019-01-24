@@ -32,6 +32,11 @@ public class GoogleBigQueryComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the google-bigquery component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Google Cloud Project Id
      */
     private String projectId;

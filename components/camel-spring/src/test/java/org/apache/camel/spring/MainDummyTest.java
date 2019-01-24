@@ -16,11 +16,13 @@
  */
 package org.apache.camel.spring;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class MainDummyTest extends TestCase {
+public class MainDummyTest extends Assert {
 
+    @Test
     public void testMain() throws Exception {
         Main main = new Main();
         main.start();

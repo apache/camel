@@ -20,12 +20,14 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
-public class PrinterComponent extends UriEndpointComponent {
+@Component("lpr")
+public class PrinterComponent extends DefaultComponent {
 
     public PrinterComponent() {
-        super(PrinterEndpoint.class);
+
     }
 
     @Override

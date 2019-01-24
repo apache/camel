@@ -34,7 +34,7 @@
     <property name="routeStartRepeatInterval" value="3000"/>
   </bean>
 
-  <bean id="throttlePolicy" class="org.apache.camel.impl.ThrottlingInflightRoutePolicy">
+  <bean id="throttlePolicy" class="org.apache.camel.throttling.ThrottlingInflightRoutePolicy">
     <property name="maxInflightExchanges" value="10"/>
   </bean>
 

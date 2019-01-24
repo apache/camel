@@ -24,6 +24,7 @@ import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.component.jackson.JacksonConstants;
@@ -36,12 +37,13 @@ import org.apache.camel.spi.TypeConverterRegistry;
  * This implementation uses a {@link FallbackConverter}.
  * <p/>
  * The converter is disabled by default. To enable then set the property
- * {@link JacksonConstants#ENABLE_TYPE_CONVERTER} to <tt>true</tt> on {@link CamelContext#getProperties()}.
+ * {@link JacksonConstants#ENABLE_TYPE_CONVERTER} to <tt>true</tt> on {@link CamelContext#getGlobalOptions()}.
  * <br/>
  * The option {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} can be used to allow converting to POJO types. By
  * default the converter only attempts to convert to primitive types such as String and numbers. To convert to any kind, then
- * enable this by setting {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} to <tt>true</tt> on {@link CamelContext#getProperties()}.
+ * enable this by setting {@link JacksonConstants#TYPE_CONVERTER_TO_POJO} to <tt>true</tt> on {@link CamelContext#getGlobalOptions()}.
  */
+@Converter
 public final class JacksonTypeConverters {
 
     private final ObjectMapper defaultMapper;
@@ -62,14 +64,14 @@ public final class JacksonTypeConverters {
         // only do this if enabled (disabled by default)
         if (!init && exchange != null) {
             // init to see if this is enabled
-            String text = exchange.getContext().getProperties().get(JacksonConstants.ENABLE_TYPE_CONVERTER);
+            String text = exchange.getContext().getGlobalOptions().get(JacksonConstants.ENABLE_TYPE_CONVERTER);
             if (text != null) {
                 text = exchange.getContext().resolvePropertyPlaceholders(text);
                 enabled = "true".equalsIgnoreCase(text);
             }
 
             // pojoOnly is enabled by default
-            text = exchange.getContext().getProperties().get(JacksonConstants.TYPE_CONVERTER_TO_POJO);
+            text = exchange.getContext().getGlobalOptions().get(JacksonConstants.TYPE_CONVERTER_TO_POJO);
             if (text != null) {
                 text = exchange.getContext().resolvePropertyPlaceholders(text);
                 toPojo = "true".equalsIgnoreCase(text);
@@ -98,7 +100,7 @@ public final class JacksonTypeConverters {
             } else if (byte[].class.isAssignableFrom(type)) {
                 byte[] out = mapper.writeValueAsBytes(value);
                 return type.cast(out);
-            } else if (mapper.canSerialize(type)) {
+            } else if (mapper.canSerialize(type) && !Enum.class.isAssignableFrom(type)) {
                 // if the source value type is readable by the mapper then use its read operation
                 if (String.class.isAssignableFrom(value.getClass())) {
                     return mapper.readValue((String) value, type);

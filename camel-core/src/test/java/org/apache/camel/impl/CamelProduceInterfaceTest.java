@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.ProxyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -27,6 +28,7 @@ public class CamelProduceInterfaceTest extends ContextTestSupport {
 
     private Echo echo;
 
+    @Test
     public void testCamelProduceInterface() throws Exception {
         String reply = echo.hello("Camel");
         assertEquals("Hello Camel", reply);

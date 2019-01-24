@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Having custom endpoint options should not override or change any component configured options.
- *
- * @version 
  */
 public class HttpEndpointOptionsNotChangeComponentTest extends CamelTestSupport {
 

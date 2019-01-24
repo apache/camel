@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriEndpoint;
  * performing the AMQP connectivity.
  */
 @UriEndpoint(firstVersion = "1.2.0", scheme = "amqp", extendsScheme = "jms", title = "AMQP",
-        syntax = "amqp:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
+        syntax = "amqp:destinationType:destinationName", label = "messaging")
 public class AMQPEndpoint extends JmsEndpoint implements AsyncEndpoint {
 
 }

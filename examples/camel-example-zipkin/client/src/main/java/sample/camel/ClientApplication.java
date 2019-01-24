@@ -19,7 +19,7 @@ package sample.camel;
 import javax.enterprise.event.Observes;
 
 import org.apache.camel.cdi.ContextName;
-import org.apache.camel.management.event.CamelContextStartingEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.zipkin.ZipkinTracer;
 
 @ContextName("Server1")

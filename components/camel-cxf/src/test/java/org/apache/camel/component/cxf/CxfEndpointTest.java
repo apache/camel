@@ -40,8 +40,6 @@ import static org.mockito.Mockito.verify;
 
 /**
  * A unit test for spring configured cxf endpoint.
- *
- * @version
  */
 public class CxfEndpointTest extends Assert {
     private int port1 = CXFTestSupport.getPort1();

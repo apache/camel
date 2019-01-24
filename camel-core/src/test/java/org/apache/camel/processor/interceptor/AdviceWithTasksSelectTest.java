@@ -19,14 +19,17 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
 /**
  * Advice with match multiple ids test
  */
 public class AdviceWithTasksSelectTest extends ContextTestSupport {
 
+    @Test
     public void testSelectFirst() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should only match the first
@@ -46,8 +49,9 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSelectLast() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should only match the last
@@ -68,8 +72,9 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
     }
 
 
+    @Test
     public void testSelectIndexZero() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should match the first index (0 based)
@@ -89,8 +94,9 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSelectIndexOne() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should match the second index (0 based)
@@ -110,8 +116,9 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSelectIndexTwo() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should match the third index (0 based)
@@ -131,9 +138,10 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSelectIndexOutOfBounds() throws Exception {
         try {
-            context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+            RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     // should be out of bounds
@@ -146,8 +154,9 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSelectRangeZeroOne() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should match the first two (0-based)
@@ -167,8 +176,9 @@ public class AdviceWithTasksSelectTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSelectRangeOneTwo() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // should match the 2nd and 3rd (0-based)

@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.lucene;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * To insert or query from Apache Lucene databases.
@@ -38,18 +37,8 @@ public class LuceneEndpoint extends DefaultEndpoint {
     public LuceneEndpoint() {
     }
 
-    @SuppressWarnings("deprecation")
-    public LuceneEndpoint(String endpointUri, CamelContext camelContext) {
-        super(endpointUri, camelContext);
-    }
-
     public LuceneEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-    }
-
-    @SuppressWarnings("deprecation")
-    public LuceneEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public LuceneEndpoint(String endpointUri, LuceneComponent component, LuceneConfiguration config) throws Exception {

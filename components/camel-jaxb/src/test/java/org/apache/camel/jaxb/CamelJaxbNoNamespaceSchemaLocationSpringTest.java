@@ -38,7 +38,7 @@ public class CamelJaxbNoNamespaceSchemaLocationSpringTest extends CamelJaxbNoNam
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
         
     }
     

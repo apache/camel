@@ -442,52 +442,6 @@ public interface CamelCatalog {
     EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties, boolean consumerOnly, boolean producerOnly);
 
     /**
-     * Parses and validates the simple expression.
-     * <p/>
-     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
-     *
-     * @param simple  the simple expression
-     * @return validation result
-     * @deprecated use {@link #validateSimpleExpression(ClassLoader, String)}
-     */
-    @Deprecated
-    SimpleValidationResult validateSimpleExpression(String simple);
-
-    /**
-     * Parses and validates the simple expression.
-     * <p/>
-     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
-     *
-     * @param classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for using default classloader
-     * @param simple  the simple expression
-     * @return validation result
-     */
-    SimpleValidationResult validateSimpleExpression(ClassLoader classLoader, String simple);
-
-    /**
-     * Parses and validates the simple predicate
-     * <p/>
-     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
-     *
-     * @param simple  the simple predicate
-     * @return validation result
-     * @deprecated use {@link #validateSimplePredicate(ClassLoader, String)}
-     */
-    @Deprecated
-    SimpleValidationResult validateSimplePredicate(String simple);
-
-    /**
-     * Parses and validates the simple predicate
-     * <p/>
-     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
-     *
-     * @param classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for using default classloader
-     * @param simple  the simple predicate
-     * @return validation result
-     */
-    SimpleValidationResult validateSimplePredicate(ClassLoader classLoader, String simple);
-
-    /**
      * Parses and validates the language as a predicate
      * <p/>
      * <b>Important:</b> This requires having <tt>camel-core</tt> and the language dependencies on the classpath
@@ -518,30 +472,6 @@ public interface CamelCatalog {
      * @return the component name (aka scheme), or <tt>null</tt> if not possible to determine
      */
     String endpointComponentName(String uri);
-
-    /**
-     * Creates an endpoint uri in Java style from the information in the json schema
-     *
-     * @param scheme the endpoint schema
-     * @param json the json schema with the endpoint properties
-     * @param encode whether to URL encode the returned uri or not
-     * @return the constructed endpoint uri
-     * @throws java.net.URISyntaxException is thrown if there is encoding error
-     */
-    @Deprecated
-    String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException;
-
-    /**
-     * Creates an endpoint uri in XML style from the information in the json schema
-     *
-     * @param scheme the endpoint schema
-     * @param json the json schema with the endpoint properties
-     * @param encode whether to URL encode the returned uri or not
-     * @return the constructed endpoint uri
-     * @throws java.net.URISyntaxException is thrown if there is encoding error
-     */
-    @Deprecated
-    String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException;
 
     /**
      * Creates an endpoint uri in Java style from the information from the properties

@@ -24,11 +24,11 @@ import org.apache.camel.component.thrift.generated.Calculator;
 import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.jsse.KeyManagersParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jsse.KeyManagersParameters;
-import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSSLTransportFactory;
@@ -45,8 +45,8 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
     private static final int THRIFT_TEST_PORT = AvailablePortFinder.getNextAvailable();
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
-    private static final String TRUST_STORE_PATH = "src/test/resources/certs/truststore.jks";
-    private static final String KEY_STORE_PATH = "src/test/resources/certs/keystore.jks";
+    private static final String TRUST_STORE_RESOURCE = "file:src/test/resources/certs/truststore.jks";
+    private static final String KEY_STORE_RESOURCE = "file:src/test/resources/certs/keystore.jks";
     private static final String SECURITY_STORE_PASSWORD = "camelinaction";
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
     
@@ -62,7 +62,7 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
             
             TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters();
             
-            sslParams.setTrustStore(TRUST_STORE_PATH, SECURITY_STORE_PASSWORD);
+            sslParams.setTrustStore(TRUST_STORE_RESOURCE, SECURITY_STORE_PASSWORD);
             transport = TSSLTransportFactory.getClientSocket("localhost", THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT, sslParams);
             
             protocol = new TBinaryProtocol(transport);
@@ -86,7 +86,7 @@ public class ThriftConsumerSecurityTest extends CamelTestSupport {
         SSLContextParameters sslParameters = new SSLContextParameters();
         
         KeyStoreParameters keyStoreParams = new KeyStoreParameters();
-        keyStoreParams.setResource(KEY_STORE_PATH);
+        keyStoreParams.setResource(KEY_STORE_RESOURCE);
         keyStoreParams.setPassword(SECURITY_STORE_PASSWORD);
         
         KeyManagersParameters keyManagerParams = new KeyManagersParameters();

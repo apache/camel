@@ -34,11 +34,8 @@ import javax.naming.ldap.PagedResultsResponseControl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
-/**
- * @version $
- */
 public class LdapProducer extends DefaultProducer {
     private String remaining;
     private SearchControls searchControls;

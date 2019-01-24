@@ -33,6 +33,11 @@ public class TwitterTimelineComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the twitter-timeline component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The access token
      */
     private String accessToken;

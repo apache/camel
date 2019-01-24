@@ -23,12 +23,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTestSupport {
 
+    @Test
     public void testRouteStartupOrderSuspendResumeNoAutoStartup() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -41,7 +40,7 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         context.resume();
 
         // route C should still be stopped after we have resumed
-        assertEquals(true, context.getRouteStatus("C").isStopped());
+        assertEquals(true, context.getRouteController().getRouteStatus("C").isStopped());
 
         // assert correct order
         DefaultCamelContext dcc = (DefaultCamelContext) context;
@@ -53,6 +52,7 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         assertEquals("direct://bar", order.get(2).getRoute().getEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testRouteStartupOrderSuspendResumeStartC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -62,13 +62,13 @@ public class RouteStartupOrderSuspendResumeNoAutoStartupTest extends ContextTest
         assertMockEndpointsSatisfied();
 
         // start C
-        context.startRoute("C");
+        context.getRouteController().startRoute("C");
 
         context.suspend();
         context.resume();
 
         // route C should be started
-        assertEquals(true, context.getRouteStatus("C").isStarted());
+        assertEquals(true, context.getRouteController().getRouteStatus("C").isStarted());
 
         // assert correct order
         DefaultCamelContext dcc = (DefaultCamelContext) context;

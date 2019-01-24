@@ -17,6 +17,7 @@
 package org.apache.camel.component.lumberjack.io;
 
 import java.util.concurrent.ThreadFactory;
+
 import javax.net.ssl.SSLContext;
 
 import io.netty.bootstrap.ServerBootstrap;

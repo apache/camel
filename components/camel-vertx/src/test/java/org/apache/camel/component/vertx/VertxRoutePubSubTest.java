@@ -23,9 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class VertxRoutePubSubTest extends VertxBaseTestSupport {
 
     protected String startUri = "vertx:foo.start?pubSub=true";

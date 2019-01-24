@@ -19,12 +19,14 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Testing http://camel.apache.org/dsl.html
  */
 public class InterceptFromLogTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptor() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);

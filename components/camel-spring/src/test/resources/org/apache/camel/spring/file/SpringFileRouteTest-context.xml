@@ -29,7 +29,7 @@
         <template id="camelTemplate"/>
 
         <route>
-            <from ref="inputFile"/>
+            <from uri="ref:inputFile"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

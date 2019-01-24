@@ -50,12 +50,12 @@
                 <redeliveryPolicy maximumRedeliveries="4" redeliveryDelay="100" maximumRedeliveryDelay="5000"
                                   backOffMultiplier="2" useExponentialBackOff="true"/>
             </onException>
-            <to ref="httpEndpoint"/>
+            <to uri="ref:httpEndpoint"/>
         </route>
 
         <route id="jetty">
 
-            <from ref="jettyEndpoint"/>
+            <from uri="ref:jettyEndpoint"/>
             <transform><simple>Bye ${body}</simple></transform>
         </route>
         

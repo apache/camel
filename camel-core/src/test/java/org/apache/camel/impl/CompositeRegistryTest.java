@@ -42,7 +42,7 @@ public class CompositeRegistryTest {
         assertNotNull(result);
         assertEquals("Get a wrong result", result, "12");
         
-        result = registry.lookup("test", Integer.class);
+        result = registry.lookupByNameAndType("test", Integer.class);
         assertNull(result);
     }
 

@@ -18,8 +18,6 @@ package org.apache.camel.component.mina2;
 
 /**
  * Mina constants
- *
- * @version 
  */
 public final class Mina2Constants {
 

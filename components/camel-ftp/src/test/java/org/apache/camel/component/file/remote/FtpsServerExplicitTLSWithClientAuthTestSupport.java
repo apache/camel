@@ -20,8 +20,6 @@ package org.apache.camel.component.file.remote;
 /**
  * Abstract base class for unit testing using a secure FTP Server over TLS (explicit)
  * and with client authentication.
- * 
- * @version 
  */
 public abstract class FtpsServerExplicitTLSWithClientAuthTestSupport extends FtpsServerTestSupport {
     

@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-ognl</artifactId>
@@ -32,8 +32,6 @@
   <description>Camel OGNL support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.language.ognl.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=ognl</camel.osgi.export.service>
   </properties>
 
   <dependencies>

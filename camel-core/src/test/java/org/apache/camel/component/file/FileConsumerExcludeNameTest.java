@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test that file consumer will exclude pre and postfixes
  */
 public class FileConsumerExcludeNameTest extends ContextTestSupport {
 
+    @Test
     public void testExludePreAndPostfixes() throws Exception {
         deleteDirectory("target/exclude");
         prepareFiles();

@@ -27,17 +27,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
 
 
 public class XsltDTDTest extends ContextTestSupport {
     private static final String MESSAGE = 
         "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
     
+    @Test
     public void testSendingStringMessage() throws Exception {
         sendEntityMessage(MESSAGE);
     }
     
+    @Test
     public void testSendingInputStreamMessage() throws Exception {
         InputStream is = IOConverter.toInputStream(MESSAGE, new DefaultExchange(context));
         sendEntityMessage(is);   

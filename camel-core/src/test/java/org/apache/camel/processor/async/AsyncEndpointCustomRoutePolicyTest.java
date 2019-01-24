@@ -26,12 +26,10 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version 
- */
 public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
 
     private static String beforeThreadName;
@@ -62,6 +60,7 @@ public class AsyncEndpointCustomRoutePolicyTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Camel");

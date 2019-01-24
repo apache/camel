@@ -22,10 +22,8 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RoutePoliciesTest extends ContextTestSupport {
 
     private final MyCustomRoutePolicy policyA = new MyCustomRoutePolicy("A");
@@ -46,6 +44,7 @@ public class RoutePoliciesTest extends ContextTestSupport {
 
     }
 
+    @Test
     public void testCustomPolicies() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

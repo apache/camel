@@ -2,7 +2,7 @@
 
 === Introduction
 
-An example which shows how to integrate Camel with Kakfa.
+An example which shows how to integrate Camel with Kafka.
 
 This project consists of the following examples:
 

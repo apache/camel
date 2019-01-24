@@ -22,14 +22,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ThreadsRejectedExecutionTest extends ContextTestSupport {
 
     @Override
@@ -37,6 +35,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testThreadsRejectedExecution() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -65,6 +64,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testThreadsRejectedExecutionCallerNotRuns() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -77,7 +77,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
                     .to("log:before")
                     // will use our custom pool
                     .threads().executorService(pool).callerRunsWhenRejected(false)
-                    .delay(200)
+                    .delay(200).syncDelayed()
                     .to("log:after")
                     .to("mock:result");
             }
@@ -100,6 +100,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(1, mock.getReceivedCounter());
     }
 
+    @Test
     public void testThreadsRejectedDiscard() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -128,6 +129,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
     
+    @Test
     public void testThreadsRejectedDiscardOldest() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -156,6 +158,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
 
+    @Test
     public void testThreadsRejectedAbort() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -184,6 +187,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
 
+    @Test
     public void testThreadsRejectedCallerRuns() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -212,6 +216,7 @@ public class ThreadsRejectedExecutionTest extends ContextTestSupport {
         assertEquals(0, inflight);
     }
 
+    @Test
     public void testThreadsRejectedAbortNoRedelivery() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -20,6 +20,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.junit.Test;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
@@ -27,6 +28,7 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
 public class TransactionalClientDataSourceTest extends TransactionClientDataSourceSupport {
 
     // START SNIPPET: e3
+    @Test
     public void testTransactionSuccess() throws Exception {
         template.sendBody("direct:okay", "Hello World");
 
@@ -36,6 +38,7 @@ public class TransactionalClientDataSourceTest extends TransactionClientDataSour
     // END SNIPPET: e3
 
     // START SNIPPET: e4
+    @Test
     public void testTransactionRollback() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");

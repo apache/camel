@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for file producer option tempPrefix
@@ -31,11 +32,13 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     private String fileUrl = "file://target/tempandrename/?tempPrefix=inprogress.";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/tempandrename");
         super.setUp();
     }
 
+    @Test
     public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
@@ -46,6 +49,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         assertDirectoryEquals("target/tempandrename/inprogress.claus.txt", tempFileName);
     }
 
+    @Test
     public void testCreateTempFileNameUsingComplexName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
@@ -56,6 +60,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         assertDirectoryEquals("target/tempandrename/foo/inprogress.claus.txt", tempFileName);
     }
 
+    @Test
     public void testNoPathCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
         GenericFileProducer<?> producer = (GenericFileProducer<?>) endpoint.createProducer();
@@ -66,6 +71,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         assertDirectoryEquals("inprogress.claus.txt", tempFileName);
     }
 
+    @Test
     public void testTempPrefix() throws Exception {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -73,6 +79,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         assertEquals("The generated file should exists: " + file, true, file.exists());
     }
 
+    @Test
     public void testTempPrefixUUIDFilename() throws Exception {
         template.sendBody("direct:a", "Bye World");
     }

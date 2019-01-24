@@ -30,22 +30,20 @@ import com.amazonaws.services.sns.model.CreateTopicResult;
 import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.Topic;
+import com.amazonaws.services.sns.util.Topics;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
@@ -54,23 +52,16 @@ import org.slf4j.LoggerFactory;
     producerOnly = true, label = "cloud,mobile,messaging")
 public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SnsEndpoint.class);
-
     private AmazonSNS snsClient;
 
     @UriPath(description = "Topic name or ARN")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topicNameOrArn; // to support component docs
     @UriParam
     private SnsConfiguration configuration;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
 
-    @Deprecated
-    public SnsEndpoint(String uri, CamelContext context, SnsConfiguration configuration) {
-        super(uri, context);
-        this.configuration = configuration;
-    }
     public SnsEndpoint(String uri, Component component, SnsConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
@@ -126,7 +117,7 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                     }
                 } while (nextToken != null);
             } catch (final AmazonServiceException ase) {
-                LOG.trace("The list topics operation return the following error code {}", ase.getErrorCode());
+                log.trace("The list topics operation return the following error code {}", ase.getErrorCode());
                 throw ase;
             }
         }
@@ -135,20 +126,29 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             // creates a new topic, or returns the URL of an existing one
             CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
 
-            LOG.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), request);
+            log.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), request);
 
             CreateTopicResult result = snsClient.createTopic(request);
             configuration.setTopicArn(result.getTopicArn());
 
-            LOG.trace("Topic created with Amazon resource name: {}", configuration.getTopicArn());
+            log.trace("Topic created with Amazon resource name: {}", configuration.getTopicArn());
         }
         
         if (ObjectHelper.isNotEmpty(configuration.getPolicy())) {
-            LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
+            log.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
             
             snsClient.setTopicAttributes(new SetTopicAttributesRequest(configuration.getTopicArn(), "Policy", configuration.getPolicy()));
             
-            LOG.trace("Topic policy updated");
+            log.trace("Topic policy updated");
+        }
+        
+        if (configuration.isSubscribeSNStoSQS()) {
+            if (ObjectHelper.isNotEmpty(configuration.getAmazonSQSClient()) && ObjectHelper.isNotEmpty(configuration.getQueueUrl())) {
+                String subscriptionARN = Topics.subscribeQueue(snsClient, configuration.getAmazonSQSClient(), configuration.getTopicArn(), configuration.getQueueUrl());
+                log.trace("Subscription of SQS Queue to SNS Topic done with Amazon resource name: {}", subscriptionARN);
+            } else {
+                throw new IllegalArgumentException("Using the SubscribeSNStoSQS option require both AmazonSQSClient and Queue URL options");
+            }
         }
         
     }

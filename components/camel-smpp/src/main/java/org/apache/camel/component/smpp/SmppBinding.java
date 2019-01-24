@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and
  * {@link SmppMessage} to and from a SMPP {@link Command}
- * 
- * @version 
  */
 public class SmppBinding {
 
@@ -78,8 +76,7 @@ public class SmppBinding {
      * Create a new SmppMessage from the inbound alert notification
      */
     public SmppMessage createSmppMessage(CamelContext camelContext, AlertNotification alertNotification) {
-        SmppMessage smppMessage = new SmppMessage(alertNotification, configuration);
-        smppMessage.setCamelContext(camelContext);
+        SmppMessage smppMessage = new SmppMessage(camelContext, alertNotification, configuration);
 
         smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.AlertNotification.toString());
         smppMessage.setHeader(SmppConstants.SEQUENCE_NUMBER, alertNotification.getSequenceNumber());
@@ -99,8 +96,7 @@ public class SmppBinding {
      * Create a new SmppMessage from the inbound deliver sm or deliver receipt
      */
     public SmppMessage createSmppMessage(CamelContext camelContext, DeliverSm deliverSm) throws Exception {
-        SmppMessage smppMessage = new SmppMessage(deliverSm, configuration);
-        smppMessage.setCamelContext(camelContext);
+        SmppMessage smppMessage = new SmppMessage(camelContext, deliverSm, configuration);
 
         String messagePayload = null;
 
@@ -203,10 +199,10 @@ public class SmppBinding {
                         optParams.put(valueOfTag.toString(), null);
                     }
                 } else {
-                    LOG.debug("Skipping optional parameter with tag {} because it was not recogized", optPara.tag);
+                    LOG.debug("Skipping optional parameter with tag {} because it was not recognized", optPara.tag);
                 }
             } catch (IllegalArgumentException e) {
-                LOG.debug("Skipping optional parameter with tag {} due " + e.getMessage(), optPara.tag);
+                LOG.debug("Skipping optional parameter with tag {} due to {}", optPara.tag, e.getMessage());
             }
         }
 
@@ -237,8 +233,7 @@ public class SmppBinding {
     }
 
     public SmppMessage createSmppMessage(CamelContext camelContext, DataSm dataSm, String smppMessageId) {
-        SmppMessage smppMessage = new SmppMessage(dataSm, configuration);
-        smppMessage.setCamelContext(camelContext);
+        SmppMessage smppMessage = new SmppMessage(camelContext, dataSm, configuration);
 
         smppMessage.setHeader(SmppConstants.MESSAGE_TYPE, SmppMessageType.DataSm.toString());
         smppMessage.setHeader(SmppConstants.ID, smppMessageId);

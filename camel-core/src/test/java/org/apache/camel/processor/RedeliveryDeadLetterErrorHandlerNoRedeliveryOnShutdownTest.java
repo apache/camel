@@ -24,11 +24,13 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends ContextTestSupport {
 
     private final AtomicInteger counter = new AtomicInteger();
 
+    @Test
     public void testRedeliveryErrorHandlerNoRedeliveryOnShutdown() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:deadLetter").expectedMessageCount(1);
@@ -43,7 +45,7 @@ public class RedeliveryDeadLetterErrorHandlerNoRedeliveryOnShutdownTest extends 
         // sleep 0.5 seconds to do some redeliveries before we stop
         Thread.sleep(500);
         log.info("==== stopping route foo ====");
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         long taken = watch.taken();
 
         getMockEndpoint("mock:deadLetter").assertIsSatisfied();

@@ -23,18 +23,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * JSon data format is used for unmarshal a JSon payload to POJO or to marshal
  * POJO back to JSon payload.
- *
- * @version
  */
 @Metadata(label = "dataformat,transformation,json", title = "JSon")
 @XmlRootElement(name = "json")
@@ -181,7 +179,7 @@ public class JsonDataFormat extends DataFormatDefinition {
     /**
      * If you want to marshal a pojo to JSON, and the pojo has some fields with
      * null values. And you want to skip these null values, you can set this
-     * option to <tt>NOT_NULL</tt>
+     * option to <tt>NON_NULL</tt>
      */
     public void setInclude(String include) {
         this.include = include;
@@ -388,14 +386,14 @@ public class JsonDataFormat extends DataFormatDefinition {
             try {
                 unmarshalType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(unmarshalTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         if (collectionType == null && collectionTypeName != null) {
             try {
                 collectionType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(collectionTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

@@ -21,9 +21,6 @@ import org.apache.camel.processor.onexception.OnExceptionContinueTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringOnExceptionContinueTest extends OnExceptionContinueTest {
 
     protected CamelContext createCamelContext() throws Exception {

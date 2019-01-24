@@ -19,8 +19,8 @@ package org.apache.camel.component.shiro.security;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.AuthorizationPolicy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.shiro.SecurityUtils;
@@ -104,7 +104,7 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
         this.setPermissionsList(permissionsList);
     }
 
-    public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {  
+    public void beforeWrap(RouteContext routeContext, NamedNode definition) {
         // noop
     }
     

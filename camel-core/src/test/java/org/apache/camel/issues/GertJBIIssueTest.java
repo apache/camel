@@ -24,10 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class GertJBIIssueTest extends ContextTestSupport {
 
     private static Exception cause;
@@ -37,6 +35,7 @@ public class GertJBIIssueTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testSimulateJBIEndpointFail() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -60,6 +59,7 @@ public class GertJBIIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSimulateJBIEndpointNotExistOnCompletion() throws Exception {
         cause = null;
 

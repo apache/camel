@@ -37,7 +37,7 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
         sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert();
 
         // now stop route A
-        context.stopRoute("a");
+        context.getRouteController().stopRoute("a");
 
         // send new message should go to B only
         resetMocks();
@@ -51,7 +51,7 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // now start route A
-        context.startRoute("a");
+        context.getRouteController().startRoute("a");
 
         // send new message should go to both A and B
         resetMocks();
@@ -64,7 +64,7 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
         sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert();
 
         // now stop and remove route A
-        context.stopRoute("a");
+        context.getRouteController().stopRoute("a");
         assertTrue(context.removeRoute("a"));
 
         // send new message should go to B only

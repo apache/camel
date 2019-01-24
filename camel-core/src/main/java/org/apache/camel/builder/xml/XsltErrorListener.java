@@ -32,18 +32,18 @@ public class XsltErrorListener implements ErrorListener {
     @Override
     public void warning(TransformerException e) throws TransformerException {
         // just log warning
-        LOG.warn("Warning parsing XSLT file: " + e.getMessageAndLocation());
+        LOG.warn("Warning parsing XSLT file: {}", e.getMessageAndLocation());
     }
 
     @Override
     public void error(TransformerException e) throws TransformerException {
-        LOG.error("Error parsing XSLT file: " + e.getMessageAndLocation());
+        LOG.error("Error parsing XSLT file: {}", e.getMessageAndLocation());
         throw e;
     }
 
     @Override
     public void fatalError(TransformerException e) throws TransformerException {
-        LOG.error("Fatal error parsing XSLT file: " + e.getMessageAndLocation());
+        LOG.error("Fatal error parsing XSLT file: {}", e.getMessageAndLocation());
         throw e;
     }
 }

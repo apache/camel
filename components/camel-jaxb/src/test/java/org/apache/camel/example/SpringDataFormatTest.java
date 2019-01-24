@@ -23,9 +23,6 @@ import org.junit.Test;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringDataFormatTest extends CamelSpringTestSupport {
     @Test
     public void testMarshalThenUnmarshalBean() throws Exception {

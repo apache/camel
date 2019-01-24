@@ -33,6 +33,11 @@ public class GeoCoderComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the geocoder component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.

@@ -16,25 +16,27 @@
  */
 package org.apache.camel.processor.enricher;
 
-import java.util.EventObject;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.management.DefaultManagementStrategy;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.impl.DefaultManagementStrategy;
 import org.apache.camel.processor.async.MyAsyncComponent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Test;
 
 
 public class EnricherSendEventTest extends ContextTestSupport {
     private MyEventNotifier en = new MyEventNotifier();
     
+    @Test
     public void testAsyncEnricher() throws Exception {
         
         template.sendBody("direct:start1", "test");
@@ -43,6 +45,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
     }
     
     
+    @Test
     public void testSyncEnricher() throws Exception {
         template.sendBody("direct:start2", "test");
         assertEquals("Get a wrong sending event number", 3, en.exchangeSendingEvent.get());
@@ -51,6 +54,7 @@ public class EnricherSendEventTest extends ContextTestSupport {
     
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
+        camelContext.init();
         ShutdownStrategy shutdownStrategy = camelContext.getShutdownStrategy();
         camelContext.addComponent("async", new MyAsyncComponent());
         
@@ -91,26 +95,13 @@ public class EnricherSendEventTest extends ContextTestSupport {
       
         
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             
             if (event instanceof ExchangeSendingEvent) {
                 exchangeSendingEvent.incrementAndGet();
             } else if (event instanceof ExchangeSentEvent) {
                 exchangeSentEvent.incrementAndGet();
             }
-        }
-
-        @Override
-        public boolean isEnabled(EventObject event) {
-            return true;
-        }
-
-        @Override
-        protected void doStart() throws Exception {
-        }
-
-        @Override
-        protected void doStop() throws Exception {
         }
     }
 

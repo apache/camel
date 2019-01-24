@@ -22,10 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.http.HttpStatus;
 
-/**
- *
- * @version 
- */
 public abstract class BaseHttpTest extends HttpServerTestSupport {
 
     protected void assertExchange(Exchange exchange) {

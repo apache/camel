@@ -21,10 +21,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ProducerTemplateDisableEventNotifierTest extends ContextTestSupport {
 
     private MySentEventNotifier notifier = new MySentEventNotifier();
@@ -32,10 +30,12 @@ public class ProducerTemplateDisableEventNotifierTest extends ContextTestSupport
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
+        context.init();
         context.getManagementStrategy().addEventNotifier(notifier);
         return context;
     }
 
+    @Test
     public void testExchangeSent() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

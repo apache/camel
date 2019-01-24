@@ -15,22 +15,25 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         setupDirectory();
         super.setUp();
     }
 
+    @Test
     public void testUnlocking() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
         writeFiles();

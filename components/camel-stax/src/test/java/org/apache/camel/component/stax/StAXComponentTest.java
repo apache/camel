@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.stax;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

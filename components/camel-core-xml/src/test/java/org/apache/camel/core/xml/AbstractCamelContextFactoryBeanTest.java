@@ -35,9 +35,10 @@ import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
-import org.apache.camel.util.ReflectionInjector;
+import org.apache.camel.support.ObjectHelper;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.Invocation;
@@ -59,7 +60,16 @@ public class AbstractCamelContextFactoryBeanTest {
     Set<String> propertiesThatAreNotPlaceholdered = Collections.singleton("{{getErrorHandlerRef}}");
 
     TypeConverter typeConverter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-        new ReflectionInjector(),
+        new Injector() {
+            @Override
+            public <T> T newInstance(Class<T> type) {
+                return ObjectHelper.newInstance(type);
+            }
+            @Override
+            public boolean supportsAutoWiring() {
+                return false;
+            }
+        },
         new DefaultFactoryFinder(new DefaultClassResolver(), "META-INF/services/org/apache/camel/"), false);
 
     // properties that should return value that can be converted to boolean

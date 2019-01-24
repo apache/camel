@@ -27,13 +27,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
 /**
  * LZF data format.
  * See {@link org.apache.camel.model.dataformat.LZFDataFormat} for "deflate" compression.
  */
+@Dataformat("lzf")
 public class LZFDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private boolean parallelCompression;
 

@@ -16,17 +16,16 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AggregateMultipleSourceTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateMultipleSourceTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

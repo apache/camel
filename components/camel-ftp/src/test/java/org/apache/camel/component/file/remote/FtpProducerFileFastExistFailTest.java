@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-/**
- * @version 
- */
 public class FtpProducerFileFastExistFailTest extends FtpProducerFileExistFailTest {
 
     protected String getFtpUrl() {

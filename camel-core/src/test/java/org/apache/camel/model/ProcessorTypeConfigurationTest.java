@@ -19,12 +19,14 @@ package org.apache.camel.model;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test to verify end-user exceptions for miss configuration
  */
 public class ProcessorTypeConfigurationTest extends ContextTestSupport {
 
+    @Test
     public void testProcessorRefMissConfigured() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

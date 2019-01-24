@@ -33,6 +33,11 @@ public class HL7DataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the hl7 data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether to validate the HL7 message Is by default true.
      */
     private Boolean validate = true;

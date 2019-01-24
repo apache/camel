@@ -21,18 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.util.ExchangeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
  * Processor to handle do finally supporting asynchronous routing engine
- *
- * @version
  */
 public class FinallyProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FinallyProcessor.class);
     private String id;
 
     public FinallyProcessor(Processor processor) {
@@ -84,7 +80,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
         this.id = id;
     }
 
-    private static final class FinallyAsyncCallback implements AsyncCallback {
+    private final class FinallyAsyncCallback implements AsyncCallback {
 
         private final Exchange exchange;
         private final AsyncCallback callback;
@@ -120,7 +116,7 @@ public class FinallyProcessor extends DelegateAsyncProcessor implements Traceabl
                 if (!doneSync) {
                     // signal callback to continue routing async
                     ExchangeHelper.prepareOutToIn(exchange);
-                    LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
+                    log.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
                 }
             } finally {
                 // callback must always be called

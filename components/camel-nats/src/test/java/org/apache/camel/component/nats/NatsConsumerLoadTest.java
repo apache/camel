@@ -20,17 +20,15 @@ import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import io.nats.client.Connection;
-import io.nats.client.ConnectionFactory;
+import io.nats.client.Nats;
+import io.nats.client.Options;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore("Require a running Nats server")
-public class NatsConsumerLoadTest extends CamelTestSupport {
+public class NatsConsumerLoadTest extends NatsTestSupport {
     
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint mockResultEndpoint;
@@ -38,8 +36,8 @@ public class NatsConsumerLoadTest extends CamelTestSupport {
     @Test
     public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
         mockResultEndpoint.setExpectedMessageCount(10000);
-        ConnectionFactory cf = new ConnectionFactory("nats://localhost:4222");
-        Connection connection = cf.createConnection();
+        Options options = new Options.Builder().server("nats://" + getNatsUrl()).build();
+        Connection connection = Nats.connect(options);
 
         for (int i = 0; i < 10000; i++) {
             connection.publish("test", ("test" + i).getBytes());
@@ -53,8 +51,7 @@ public class NatsConsumerLoadTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://localhost:4222?topic=test");
-                from("nats://localhost:4222?topic=test").to(mockResultEndpoint);
+                from("nats://"  + getNatsUrl() + "?topic=test").to(mockResultEndpoint);
             }
         };
     }

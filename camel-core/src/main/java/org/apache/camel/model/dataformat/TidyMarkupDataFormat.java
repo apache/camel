@@ -25,11 +25,11 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * TidyMarkup data format is used for parsing HTML and return it as pretty well-formed HTML.
@@ -101,7 +101,7 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
             try {
                 dataObjectType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(dataObjectTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

@@ -60,7 +60,7 @@ public class MQTTProducerTest extends MQTTBaseTest {
 
         Producer producer = context.getEndpoint("direct:foo").createProducer();
         for (int i = 0; i < numberOfMessages; i++) {
-            Exchange exchange = producer.createExchange();
+            Exchange exchange = producer.getEndpoint().createExchange();
             exchange.getIn().setBody("test message " + i);
             producer.process(exchange);
         }

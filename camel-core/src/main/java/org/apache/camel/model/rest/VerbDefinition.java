@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -111,6 +110,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     private Boolean usedForGeneratingNodeId = Boolean.FALSE;
 
     @Override
+    public String getShortName() {
+        return "verb";
+    }
+
+    @Override
     public String getLabel() {
         if (method != null) {
             return method;
@@ -137,7 +141,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     /**
      * Sets swagger operation response messages.
      */
-    public void setResponseMsgs(List<RestOperationResponseMsgDefinition> params) {
+    public void setResponseMsgs(List<RestOperationResponseMsgDefinition> responseMsgs) {
         this.responseMsgs = responseMsgs;
     }
 
@@ -441,8 +445,6 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
             return "delete";
         } else if (this instanceof HeadVerbDefinition) {
             return "head";
-        } else if (this instanceof OptionsVerbDefinition) {
-            return "options";
         } else {
             return method;
         }

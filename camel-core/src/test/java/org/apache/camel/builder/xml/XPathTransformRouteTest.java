@@ -22,11 +22,9 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 
-/**
- * @version 
- */
 public class XPathTransformRouteTest extends ContextTestSupport {
 
     public Document replaceMe(Document doc) throws Exception {
@@ -37,6 +35,7 @@ public class XPathTransformRouteTest extends ContextTestSupport {
         return doc;
     }
 
+    @Test
     public void testXPathTransform() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<root><firstname>Servicemix</firstname><lastname>Camel</lastname></root>");

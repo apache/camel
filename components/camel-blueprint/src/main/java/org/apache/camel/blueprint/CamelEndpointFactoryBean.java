@@ -29,8 +29,6 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
 
 /**
  * A factory which instantiates {@link Endpoint} objects
- *
- * @version 
  */
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)

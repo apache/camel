@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.component.cm.client.SMSMessage;
 import org.apache.camel.component.cm.exceptions.HostUnavailableException;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -58,7 +58,7 @@ public class CMProducer extends DefaultProducer {
         final SMSMessage smsMessage = exchange.getIn().getMandatoryBody(SMSMessage.class);
 
         // Validates Payload - SMSMessage
-        log.trace("Validating SMSMessage instance provided: {}", smsMessage.toString());
+        log.trace("Validating SMSMessage instance provided: {}", smsMessage);
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = getValidator().validate(smsMessage);
         if (constraintViolations.size() > 0) {
             final StringBuffer msg = new StringBuffer();
@@ -68,7 +68,7 @@ public class CMProducer extends DefaultProducer {
             log.debug(msg.toString());
             throw new InvalidPayloadRuntimeException(exchange, SMSMessage.class);
         }
-        log.trace("SMSMessage instance is valid: {}", smsMessage.toString());
+        log.trace("SMSMessage instance is valid: {}", smsMessage);
 
         // We have a valid (immutable) SMSMessage instance, lets extend to
         // CMMessage
@@ -93,7 +93,7 @@ public class CMProducer extends DefaultProducer {
         //  for abnormal situations.
         sender.send(cmMessage);
 
-        log.debug("Request accepted by CM Host: {}", cmMessage.toString());
+        log.debug("Request accepted by CM Host: {}", cmMessage);
     }
 
     @Override

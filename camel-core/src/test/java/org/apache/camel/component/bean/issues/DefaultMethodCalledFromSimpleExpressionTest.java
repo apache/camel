@@ -18,11 +18,13 @@ package org.apache.camel.component.bean.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class DefaultMethodCalledFromSimpleExpressionTest extends ContextTestSupport {
 
     private static final String DEFAULT_METHOD_CONTENT = "A.defaultMethod() has been called";
 
+    @Test
     public void testDefaultMethodFromSimpleExpression() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(DEFAULT_METHOD_CONTENT);
 

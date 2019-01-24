@@ -18,14 +18,13 @@ package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class TwoRouteRefOnExceptionTest extends SpringTestSupport {
 
+    @Test
     public void testTwoRouteRefNoOnException() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(0);
@@ -41,6 +40,7 @@ public class TwoRouteRefOnExceptionTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTwoRouteRefOnException() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(1);

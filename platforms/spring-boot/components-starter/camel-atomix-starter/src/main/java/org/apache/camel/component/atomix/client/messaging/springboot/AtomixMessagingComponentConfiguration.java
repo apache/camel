@@ -18,14 +18,12 @@ package org.apache.camel.component.atomix.client.messaging.springboot;
 
 import java.util.List;
 import javax.annotation.Generated;
-import io.atomix.AtomixClient;
 import io.atomix.catalyst.transport.Address;
 import org.apache.camel.component.atomix.client.messaging.AtomixMessaging.Action;
 import org.apache.camel.component.atomix.client.messaging.AtomixMessaging.BroadcastType;
 import org.apache.camel.component.atomix.client.messaging.AtomixMessagingComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The atomix-messaging component is used to access Atomix's group messaging.
@@ -39,14 +37,19 @@ public class AtomixMessagingComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the atomix-messaging component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The shared component configuration
      */
     private AtomixMessagingConfigurationNestedConfiguration configuration;
     /**
-     * The shared AtomixClient instance
+     * The shared AtomixClient instance. The option is a io.atomix.AtomixClient
+     * type.
      */
-    @NestedConfigurationProperty
-    private AtomixClient atomix;
+    private String atomix;
     /**
      * The nodes the AtomixClient should connect to
      */
@@ -71,11 +74,11 @@ public class AtomixMessagingComponentConfiguration
         this.configuration = configuration;
     }
 
-    public AtomixClient getAtomix() {
+    public String getAtomix() {
         return atomix;
     }
 
-    public void setAtomix(AtomixClient atomix) {
+    public void setAtomix(String atomix) {
         this.atomix = atomix;
     }
 

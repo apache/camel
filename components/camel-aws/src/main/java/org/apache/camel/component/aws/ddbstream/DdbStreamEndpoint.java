@@ -29,9 +29,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -39,7 +39,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "aws-ddbstream", title = "AWS DynamoDB Streams",
         consumerOnly = true, syntax = "aws-ddbstream:tableName",
-        consumerClass = DdbStreamConsumer.class, label = "cloud,messaging,streams")
+        label = "cloud,messaging,streams")
 public class DdbStreamEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

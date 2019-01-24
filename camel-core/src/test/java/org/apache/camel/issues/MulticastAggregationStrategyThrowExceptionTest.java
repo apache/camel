@@ -16,16 +16,15 @@
  */
 package org.apache.camel.issues;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MulticastAggregationStrategyThrowExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testThrowException() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(1);

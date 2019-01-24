@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-zipfile</artifactId>
@@ -32,23 +32,16 @@
   <description>Camel Zip file support</description>
 
   <properties>
-    <camel.osgi.import>
-    	!org.apache.camel.dataformat.zipfile,
-    	!org.apache.camel.processor.aggregate.zipfile,
-    	*
-    </camel.osgi.import>
-    <camel.osgi.export>
-    	org.apache.camel.dataformat.zipfile;${camel.osgi.version},
-    	org.apache.camel.processor.aggregate.zipfile;${camel.osgi.version}
-    </camel.osgi.export>
-    <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=zipfile</camel.osgi.export.service>
-    
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-file</artifactId>
     </dependency>
 
     <!-- test dependencies -->

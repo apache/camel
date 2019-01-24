@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.camel.Converter;
@@ -248,7 +249,7 @@ public final class SyslogConverter {
         }
 
         syslogMessage.setLogMessage(msg.toString());
-        LOG.trace("Syslog message : {}", syslogMessage.toString());
+        LOG.trace("Syslog message : {}", syslogMessage);
 
         return syslogMessage;
     }

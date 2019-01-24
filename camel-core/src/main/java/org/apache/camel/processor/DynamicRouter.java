@@ -21,7 +21,7 @@ import java.util.Iterator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * Implements a <a href="http://camel.apache.org/dynamic-router.html">Dynamic Router</a> pattern
@@ -29,8 +29,6 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * This implementation builds on top of {@link org.apache.camel.processor.RoutingSlip} which contains
  * the most logic.
- *
- * @version 
  */
 public class DynamicRouter extends RoutingSlip {
     

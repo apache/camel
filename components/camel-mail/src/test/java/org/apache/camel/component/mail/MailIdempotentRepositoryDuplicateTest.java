@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
-
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -24,8 +23,9 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
@@ -44,6 +44,7 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         // lets assume this ID is already done
         myRepo.add("myuid-3");
@@ -60,7 +61,7 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
         // no 3 is already in the idempotent repo
         mock.expectedBodiesReceived("Message 0", "Message 1", "Message 2", "Message 4");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

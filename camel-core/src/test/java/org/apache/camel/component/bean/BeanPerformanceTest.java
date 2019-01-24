@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.junit.Test;
 
 /**
  *
@@ -36,6 +37,7 @@ public class BeanPerformanceTest extends ContextTestSupport {
         INVOKED.incrementAndGet();
     }
 
+    @Test
     public void testBeanPerformance() throws Exception {
         StopWatch watch = new StopWatch();
 

@@ -37,70 +37,66 @@ import org.apache.camel.maven.packaging.model.EipOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.camel.maven.packaging.model.LanguageOptionModel;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.mvel2.templates.TemplateRuntime;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.JSonSchemaHelper.*;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.parseJsonSchema;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 import static org.apache.camel.maven.packaging.StringHelper.isEmpty;
 
 /**
  * Generate or updates the component/dataformat/language/eip readme.md and .adoc files in the project root directory.
- *
- * @goal update-readme
  */
+@Mojo(name = "update-readme", threadSafe = true)
 public class UpdateReadmeMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The project build directory
      *
-     * @parameter default-value="${project.build.directory}"
      */
+    @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
 
     /**
      * The documentation directory
      *
-     * @parameter default-value="${basedir}/src/main/docs"
      */
+    @Parameter(defaultValue = "${basedir}/src/main/docs")
     protected File docDir;
 
     /**
      * The documentation directory
      *
-     * @parameter default-value="${basedir}/src/main/docs/eips"
      */
+    @Parameter(defaultValue = "${basedir}/src/main/docs/eips")
     protected File eipDocDir;
 
     /**
      * Whether to fail the build fast if any Warnings was detected.
-     *
-     * @parameter
      */
+    @Parameter
     protected Boolean failFast;
 
     /**
      * build context to check changed files and mark them for refresh (used for
      * m2e compatibility)
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private BuildContext buildContext;
 
     @Override
@@ -1165,25 +1161,20 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
     private List<String> findComponentNames() {
         List<String> componentNames = new ArrayList<>();
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/component");
 
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory
-                        if (file.isDirectory()) {
-                            continue;
-                        }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
-                            componentNames.add(name);
-                        }
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/component");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // skip directories as there may be a sub .resolver directory
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    String name = file.getName();
+                    if (name.charAt(0) != '.') {
+                        componentNames.add(name);
                     }
                 }
             }
@@ -1193,52 +1184,41 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
     private List<String> findDataFormatNames() {
         List<String> dataFormatNames = new ArrayList<>();
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/dataformat");
-
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory
-                        if (file.isDirectory()) {
-                            continue;
-                        }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
-                            dataFormatNames.add(name);
-                        }
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/dataformat");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // skip directories as there may be a sub .resolver directory
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    String name = file.getName();
+                    if (name.charAt(0) != '.') {
+                        dataFormatNames.add(name);
                     }
                 }
             }
         }
         return dataFormatNames;
     }
+
     private List<String> findLanguageNames() {
         List<String> languageNames = new ArrayList<>();
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/language");
-
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        // skip directories as there may be a sub .resolver directory
-                        if (file.isDirectory()) {
-                            continue;
-                        }
-                        String name = file.getName();
-                        if (name.charAt(0) != '.') {
-                            languageNames.add(name);
-                        }
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/language");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    // skip directories as there may be a sub .resolver directory
+                    if (file.isDirectory()) {
+                        continue;
+                    }
+                    String name = file.getName();
+                    if (name.charAt(0) != '.') {
+                        languageNames.add(name);
                     }
                 }
             }

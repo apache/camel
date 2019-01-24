@@ -33,16 +33,15 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.processor.CamelInternalProcessor;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * A {@link Processor} which is used for POJO @Consume where you can have multiple @Consume on the same endpoint/consumer
  * and via predicate's can filter and call different methods.
  */
-public final class SubscribeMethodProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
+public final class SubscribeMethodProcessor extends AsyncProcessorSupport implements Navigate<Processor> {
 
     private final Endpoint endpoint;
     private final Map<AsyncProcessor, Predicate> methods = new LinkedHashMap<>();
@@ -72,11 +71,6 @@ public final class SubscribeMethodProcessor extends ServiceSupport implements As
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             // evaluate which predicate matches and call the method
@@ -88,20 +82,19 @@ public final class SubscribeMethodProcessor extends ServiceSupport implements As
             }
         } catch (Throwable e) {
             exchange.setException(e);
-            return true;
         }
-
+        callback.done(true);
         return true;
     }
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(methods.keySet());
+        ServiceHelper.startService(methods.keySet());
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(methods.keySet());
+        ServiceHelper.stopService(methods.keySet());
     }
 
     @Override

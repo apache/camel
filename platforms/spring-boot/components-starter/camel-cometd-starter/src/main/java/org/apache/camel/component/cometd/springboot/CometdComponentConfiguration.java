@@ -19,11 +19,8 @@ package org.apache.camel.component.cometd.springboot;
 import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.cometd.bayeux.server.BayeuxServer.Extension;
-import org.cometd.bayeux.server.SecurityPolicy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The cometd component is a transport for working with the Jetty implementation
@@ -38,6 +35,11 @@ public class CometdComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the cometd component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The password for the keystore when using SSL.
      */
     private String sslKeyPassword;
@@ -50,20 +52,20 @@ public class CometdComponentConfiguration
      */
     private String sslKeystore;
     /**
-     * To use a custom configured SecurityPolicy to control authorization
+     * To use a custom configured SecurityPolicy to control authorization. The
+     * option is a org.cometd.bayeux.server.SecurityPolicy type.
      */
-    @NestedConfigurationProperty
-    private SecurityPolicy securityPolicy;
+    private String securityPolicy;
     /**
      * To use a list of custom BayeuxServer.Extension that allows modifying
      * incoming and outgoing requests.
      */
     private List<Extension> extensions;
     /**
-     * To configure security using SSLContextParameters
+     * To configure security using SSLContextParameters. The option is a
+     * org.apache.camel.support.jsse.SSLContextParameters type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String sslContextParameters;
     /**
      * Enable usage of global SSL context parameters.
      */
@@ -99,11 +101,11 @@ public class CometdComponentConfiguration
         this.sslKeystore = sslKeystore;
     }
 
-    public SecurityPolicy getSecurityPolicy() {
+    public String getSecurityPolicy() {
         return securityPolicy;
     }
 
-    public void setSecurityPolicy(SecurityPolicy securityPolicy) {
+    public void setSecurityPolicy(String securityPolicy) {
         this.securityPolicy = securityPolicy;
     }
 
@@ -115,12 +117,11 @@ public class CometdComponentConfiguration
         this.extensions = extensions;
     }
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 

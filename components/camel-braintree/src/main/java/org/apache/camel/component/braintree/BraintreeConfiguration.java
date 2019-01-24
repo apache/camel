@@ -42,7 +42,7 @@ public class BraintreeConfiguration {
     private static final String ACCESS_TOKEN = "access_token";
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private BraintreeApiName apiName;
     @UriPath
     private String methodName;

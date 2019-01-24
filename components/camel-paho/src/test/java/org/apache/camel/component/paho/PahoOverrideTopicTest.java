@@ -22,6 +22,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.junit.After;
 import org.junit.Test;
 
 public class PahoOverrideTopicTest extends CamelTestSupport {
@@ -47,6 +48,7 @@ public class PahoOverrideTopicTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         broker.stop();

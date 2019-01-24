@@ -18,6 +18,7 @@ package org.apache.camel.test.issues;
 
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -38,7 +39,7 @@ public class AdviceWithOnCompletionTest extends CamelSpringTestSupport {
     @Test
     public void testOnCompletion() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             public void configure() throws Exception {
                 replaceFromWith("direct:start");
 

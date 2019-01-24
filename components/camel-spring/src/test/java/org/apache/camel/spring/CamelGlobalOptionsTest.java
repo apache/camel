@@ -16,15 +16,17 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelGlobalOptionsTest extends SpringTestSupport {
 
+    @Test
     public void testGlobalOptionsOverrideProperties() {
         assertEquals(3, context.getGlobalOptions().size());
         assertEquals("VALUE_1", context.getGlobalOptions().get("KEY_1"));
-        assertEquals("VALUE_2_OVERIDDEN", context.getGlobalOptions().get("KEY_2"));
+        assertEquals("VALUE_2", context.getGlobalOptions().get("KEY_2"));
         assertEquals("VALUE_3", context.getGlobalOptions().get("KEY_3"));
     }
 

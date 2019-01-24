@@ -19,10 +19,8 @@ package org.apache.camel.component.log;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ThroughputLoggerTest extends ContextTestSupport {
 
     @Override
@@ -30,6 +28,7 @@ public class ThroughputLoggerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testSendMessageToLogUsingGroupSize() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -49,6 +48,7 @@ public class ThroughputLoggerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendMessageToLogUsingGroupInterval() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {

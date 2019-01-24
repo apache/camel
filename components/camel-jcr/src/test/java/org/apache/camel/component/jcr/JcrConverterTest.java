@@ -18,6 +18,7 @@ package org.apache.camel.component.jcr;
 
 import java.io.ByteArrayInputStream;
 import java.util.Calendar;
+
 import javax.jcr.Value;
 
 import org.apache.camel.TypeConverter;
@@ -25,8 +26,9 @@ import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.camel.util.ReflectionInjector;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.jackrabbit.value.BinaryValue;
 import org.apache.jackrabbit.value.BooleanValue;
 import org.apache.jackrabbit.value.DateValue;
@@ -45,7 +47,17 @@ public class JcrConverterTest extends Assert {
     @Before
     public void init() throws Exception {
         converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-                new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), true);
+                new Injector() {
+                    @Override
+                    public <T> T newInstance(Class<T> type) {
+                        return ObjectHelper.newInstance(type);
+                    }
+
+                    @Override
+                    public boolean supportsAutoWiring() {
+                        return false;
+                    }
+                }, new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), true);
         ServiceHelper.startService(converter);
     }
 

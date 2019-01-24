@@ -26,9 +26,6 @@ import org.apache.camel.converter.IOConverter;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
@@ -69,7 +66,7 @@ public class FtpConsumerResumeDownloadTest extends FtpServerTestSupport {
         mock.expectedBodiesReceived("Hello\nWorld\nI was here");
 
         // start route
-        context.startRoute("myRoute");
+        context.getRouteController().startRoute("myRoute");
 
         assertMockEndpointsSatisfied();
         assertTrue(notify.matchesMockWaitTime());

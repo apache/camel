@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
 
@@ -35,6 +36,7 @@ public class TypeConverterRegistryPerformanceTest extends ContextTestSupport {
     private ExecutorService executorService;
     private CountDownLatch latch;
 
+    @Test
     public void testManual() throws Exception {
         // noop
     }

@@ -20,19 +20,19 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The paxlogging component can be used in an OSGi environment to receive PaxLogging events and process them.
  */
 @UriEndpoint(firstVersion = "2.6.0", scheme = "paxlogging", title = "OSGi PAX Logging", syntax = "paxlogging:appender",
-    consumerOnly = true, consumerClass = PaxLoggingConsumer.class, label = "monitoring")
+    consumerOnly = true, label = "monitoring")
 public class PaxLoggingEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private final String appender;
 
     public PaxLoggingEndpoint(String uri, PaxLoggingComponent component, String appender) {

@@ -17,23 +17,23 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AdviceWithTransactedTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceTransacted() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:advice").expectedMessageCount(1);
 
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddFirst().to("mock:advice");
@@ -62,7 +62,7 @@ public class AdviceWithTransactedTest extends ContextTestSupport {
     private static final class MyDummyPolicy implements Policy {
 
         @Override
-        public void beforeWrap(RouteContext routeContext, ProcessorDefinition<?> definition) {
+        public void beforeWrap(RouteContext routeContext, NamedNode definition) {
             // noop
         }
 

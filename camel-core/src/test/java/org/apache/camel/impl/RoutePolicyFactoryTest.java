@@ -19,15 +19,17 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.RoutePolicySupport;
+import org.junit.Test;
 
 public class RoutePolicyFactoryTest extends ContextTestSupport {
 
+    @Test
     public void testRoutePolicyFactory() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
@@ -46,7 +48,7 @@ public class RoutePolicyFactoryTest extends ContextTestSupport {
         }
 
         @Override
-        public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+        public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
             return new MyRoutePolicy(routeId);
         }
     }

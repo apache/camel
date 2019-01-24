@@ -29,11 +29,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 /**
  * The sql component allows you to work with databases using JDBC SQL queries.
  */
-@UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query", consumerClass = SqlConsumer.class, label = "database,sql")
+@UriEndpoint(firstVersion = "1.4.0", scheme = "sql", title = "SQL", syntax = "sql:query", label = "database,sql")
 public class SqlEndpoint extends DefaultSqlEndpoint {
 
     @UriPath(description = "Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String query;
 
     public SqlEndpoint() {
@@ -56,6 +56,8 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
         consumer.setExpectedUpdateCount(getExpectedUpdateCount());
         consumer.setUseIterator(isUseIterator());
         consumer.setRouteEmptyResultSet(isRouteEmptyResultSet());
+        consumer.setParametersCount(getParametersCount());
+        consumer.setAlwaysPopulateStatement(isAlwaysPopulateStatement());
         configureConsumer(consumer);
         return consumer;
     }

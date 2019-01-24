@@ -1,0 +1,67 @@
+[[BatchConsumer-BatchConsumer]]
+=== Batch Consumer
+
+*Available as of Camel 2.0*
+
+Batch Consumer is basically a link:polling-consumer.html[Polling
+Consumer] that is capable of polling multiple
+Exchanges in a pool. What we have done in Camel 2.0
+is to standardize this into a `org.apache.camel.BatchConsumer` interface
+that a consumer can implement to indicate it support batching as well.
+
+The following components supports link:batch-consumer.html[Batch
+Consumer] by its consumer:
+
+* <<atom-component,Atom>>
+* File
+* FTP
+* <<hbase-component,hbase>>
+* <<ibatis-component,iBatis>>
+* <<jpa-component,JPA>>
+* <<jclouds-component,JCLOUDS>>
+* <<mail-component,Mail>>
+* <<mybatis-component,MyBatis>>
+* <<snmp-component,SNMP>>
+* <<sql-component,SQL>>
+* <<aws-sqs-component,SQS>>
+* <<aws-s3-component,S3>>
+
+[[BatchConsumer-ConsumerOptions]]
+==== Consumer Options
+
+The Batch Consumer supports the following options:
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Option |Description
+
+|maxMessagesPerPoll |An integer to define a maximum messages to gather per poll. By default
+no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when
+starting up the server that there are thousands of files. Set a value of
+0 or negative to disabled it.
+|=======================================================================
+
+[[BatchConsumer-ExchangeProperties]]
+==== Exchange Properties
+
+The following properties is set on the Exchange for
+each Exchange polled in the same batch.
+
+[width="100%",cols="20%,80%",options="header",]
+|=======================================================================
+|Property |Description
+
+|CamelBatchSize |The total number of Exchanges that was polled in
+this batch.
+
+|CamelBatchIndex |The current index of the batch. Starts from 0.
+
+|CamelBatchComplete |A boolean indicating the last Exchange in the batch.
+Is only `true` for the last entry.
+|=======================================================================
+
+[[BatchConsumer-SeeAlso]]
+==== See Also
+
+* Polling Consumer
+

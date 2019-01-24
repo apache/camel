@@ -18,6 +18,7 @@ package org.apache.camel.component.test;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class TestAnyOrderTest extends ContextTestSupport {
 
@@ -26,6 +27,7 @@ public class TestAnyOrderTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testAnyOrder() throws Exception {
         template.sendBody("seda:testme", "Bye World");
         template.sendBody("seda:testme", "Hello World");

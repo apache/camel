@@ -19,16 +19,16 @@ package org.apache.camel.component.gora;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
 
 /**
  * The gora component allows you to work with NoSQL databases using the Apache Gora framework.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "gora", title = "Gora", syntax = "gora:name", consumerClass = GoraConsumer.class, label = "database,hadoop,nosql")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "gora", title = "Gora", syntax = "gora:name", label = "database,hadoop,nosql")
 public class GoraEndpoint extends DefaultEndpoint {
 
     /**

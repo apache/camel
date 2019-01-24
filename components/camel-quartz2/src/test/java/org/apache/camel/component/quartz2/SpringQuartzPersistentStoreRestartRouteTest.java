@@ -22,9 +22,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTestSupport {
 
     @Override
@@ -45,7 +42,7 @@ public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTest
         assertMockEndpointsSatisfied();
 
         // restart route
-        context().stopRoute("myRoute");
+        context().getRouteController().stopRoute("myRoute");
         mock.reset();
         mock.expectedMessageCount(0);
 
@@ -58,7 +55,7 @@ public class SpringQuartzPersistentStoreRestartRouteTest extends CamelSpringTest
         mock.reset();
         mock.expectedMinimumMessageCount(2);
 
-        context().startRoute("myRoute");
+        context().getRouteController().startRoute("myRoute");
 
         assertMockEndpointsSatisfied();
     }

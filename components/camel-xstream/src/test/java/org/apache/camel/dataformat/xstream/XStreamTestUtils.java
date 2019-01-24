@@ -16,9 +16,6 @@
  */
 package org.apache.camel.dataformat.xstream;
 
-/**
- * 
- */
 final class XStreamTestUtils {
     static final String PERMISSIONS_PROPERTY_KEY = "org.apache.camel.xstream.permissions";  
     private static String oldProperty;

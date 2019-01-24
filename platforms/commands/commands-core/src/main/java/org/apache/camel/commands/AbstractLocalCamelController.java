@@ -38,6 +38,8 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -90,7 +92,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.put("applicationContextClassLoader", context.getApplicationContextClassLoader().toString());
             answer.put("headersMapFactory", context.getHeadersMapFactory().toString());
 
-            for (Map.Entry<String, String> entry : context.getProperties().entrySet()) {
+            for (Map.Entry<String, String> entry : context.getGlobalOptions().entrySet()) {
                 answer.put("property." + entry.getKey(), entry.getValue());
             }
 
@@ -98,7 +100,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             long inactiveRoutes = 0;
             List<Route> routeList = context.getRoutes();
             for (Route route : routeList) {
-                if (context.getRouteStatus(route.getId()).isStarted()) {
+                if (context.getRouteController().getRouteStatus(route.getId()).isStarted()) {
                     activeRoutes++;
                 } else {
                     inactiveRoutes++;
@@ -230,7 +232,11 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
     public void startContext(String camelContextName) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.start();
+            if (context.getStatus().equals(ServiceStatus.Suspended)) {
+                context.resume();
+            } else {
+                context.start();
+            }
         }
     }
 
@@ -272,7 +278,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                         row.put("routeId", route.getId());
                         row.put("state", getRouteState(route));
                         row.put("uptime", route.getUptime());
-                        ManagedRouteMBean mr = context.getManagedRoute(route.getId(), ManagedRouteMBean.class);
+                        ManagedRouteMBean mr = context.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId());
                         if (mr != null) {
                             row.put("exchangesTotal", "" + mr.getExchangesTotal());
                             row.put("exchangesInflight", "" + mr.getExchangesInflight());
@@ -338,28 +344,28 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
     public void startRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.startRoute(routeId);
+            context.getRouteController().startRoute(routeId);
         }
     }
 
     public void stopRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.stopRoute(routeId);
+            context.getRouteController().stopRoute(routeId);
         }
     }
 
     public void suspendRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.suspendRoute(routeId);
+            context.getRouteController().suspendRoute(routeId);
         }
     }
 
     public void resumeRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
-            context.resumeRoute(routeId);
+            context.getRouteController().resumeRoute(routeId);
         }
     }
 
@@ -368,12 +374,12 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         if (context == null) {
             return null;
         }
-        RouteDefinition route = context.getRouteDefinition(routeId);
+        RouteDefinition route = context.adapt(ModelCamelContext.class).getRouteDefinition(routeId);
         if (route == null) {
             return null;
         }
 
-        return ModelHelper.dumpModelAsXml(null, route);
+        return ModelHelper.dumpModelAsXml(context, route);
     }
 
     @Override
@@ -386,13 +392,11 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
         if (agent != null) {
             MBeanServer mBeanServer = agent.getMBeanServer();
-            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + routeId + "\",*"), null);
-            Iterator<ObjectName> iterator = set.iterator();
-            if (iterator.hasNext()) {
-                ObjectName routeMBean = iterator.next();
-
-                // the route must be part of the camel context
-                String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + routeId + "\",*"), null);            
+            for (ObjectName routeMBean : set) {
+            	
+            	// the route must be part of the camel context
+            	String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
                 if (camelId != null && camelId.equals(camelContextName)) {
                     String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{fullStats, includeProcessors}, new String[]{"boolean", "boolean"});
                     return xml;
@@ -408,14 +412,14 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             return null;
         }
 
-        List<RestDefinition> rests = context.getRestDefinitions();
+        List<RestDefinition> rests = context.adapt(ModelCamelContext.class).getRestDefinitions();
         if (rests == null || rests.isEmpty()) {
             return null;
         }
         // use a rests definition to dump the rests
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
-        return ModelHelper.dumpModelAsXml(null, def);
+        return ModelHelper.dumpModelAsXml(context, def);
     }
 
     public String getRestApiDocAsJson(String camelContextName) throws Exception {
@@ -684,7 +688,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
     private static String getRouteState(Route route) {
         // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
 
-        ServiceStatus status = route.getRouteContext().getCamelContext().getRouteStatus(route.getId());
+        ServiceStatus status = route.getRouteContext().getCamelContext().getRouteController().getRouteStatus(route.getId());
         if (status != null) {
             return status.name();
         }

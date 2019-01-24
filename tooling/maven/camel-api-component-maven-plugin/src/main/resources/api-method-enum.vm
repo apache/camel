@@ -26,11 +26,11 @@ import java.util.List;
 
 import $proxyType.CanonicalName;
 
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodArg;
-import org.apache.camel.util.component.ApiMethodImpl;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodArg;
+import org.apache.camel.support.component.ApiMethodImpl;
 
-import static org.apache.camel.util.component.ApiMethodArg.arg;
+import static org.apache.camel.support.component.ApiMethodArg.arg;
 
 /**
  * Camel {@link ApiMethod} Enumeration for $proxyType.Name

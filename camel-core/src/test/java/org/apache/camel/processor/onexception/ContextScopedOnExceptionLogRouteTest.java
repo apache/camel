@@ -18,6 +18,7 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -29,6 +30,7 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testContextScopedOnExceptionLogRouteBarFail() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -62,6 +64,7 @@ public class ContextScopedOnExceptionLogRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testContextScopedOnExceptionLogRouteFooFail() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

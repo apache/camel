@@ -81,12 +81,12 @@
       <camel:from uri="cxf:bean:reportIncident"/>
       <camel:convertBodyTo type="org.apache.camel.example.reportincident.InputReportIncident"/>
       <camel:setHeader headerName="CamelFileName">
-        <camel:method bean="filenameGenerator" method="generateFilename"/>
+        <camel:method ref="filenameGenerator" method="generateFilename"/>
       </camel:setHeader>
       <camel:to uri="velocity:etc/MailBody.vm"/>
       <camel:to uri="file://target/subfolder"/>
       <camel:transform>
-        <camel:method bean="myBean" method="getOK"/>
+        <camel:method ref="myBean" method="getOK"/>
       </camel:transform>
     </camel:route>
 

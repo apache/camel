@@ -17,24 +17,23 @@
 package org.apache.camel.processor.async;
 
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
 
-    private final List<EventObject> events = new ArrayList<>();
+    private final List<CamelEvent> events = new ArrayList<>();
 
+    @Test
     public void testAsyncEndpointEventNotifier() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
@@ -60,20 +59,16 @@ public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext(createRegistry());
         context.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-            public void notify(EventObject event) throws Exception {
+            public void notify(CamelEvent event) throws Exception {
                 events.add(event);
             }
 
-            public boolean isEnabled(EventObject event) {
+            public boolean isEnabled(CamelEvent event) {
                 return event instanceof ExchangeSendingEvent || event instanceof ExchangeSentEvent;
             }
 
             @Override
             protected void doStart() throws Exception {
-            }
-
-            @Override
-            protected void doStop() throws Exception {
             }
         });
         return context;

@@ -25,9 +25,6 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
 
     private String body = "12345678901234567890123456789012345678901234567890";
@@ -61,8 +58,8 @@ public class HttpStreamCacheFileStopIssueTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // enable stream caching and use a low threshold so its forced to write to file
-                context.getProperties().put(CachedOutputStream.TEMP_DIR, "target/cachedir");
-                context.getProperties().put(CachedOutputStream.THRESHOLD, "16");
+                context.getStreamCachingStrategy().setSpoolThreshold(16);
+                context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
                 context.setStreamCaching(true);
 
                 // use a route so we got an unit of work

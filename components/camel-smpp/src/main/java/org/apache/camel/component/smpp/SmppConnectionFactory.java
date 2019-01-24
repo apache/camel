@@ -54,8 +54,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-
 import java.util.Map;
+
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -69,8 +69,6 @@ import org.jsmpp.session.connection.socket.SocketConnection;
 
 /**
  * A Jsmpp ConnectionFactory that creates SSL Sockets.
- * 
- * @version 
  */
 public final class SmppConnectionFactory implements ConnectionFactory {
     private SmppConfiguration config;
@@ -111,7 +109,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
 
             return new SocketConnection(socket);
         } catch (Exception e) {
-            throw new IOException(e.getMessage());
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -179,7 +177,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             throw re;
         } catch (Exception e) {
             closeSocket(socket);
-            throw new RuntimeException("SmppConnectionFactory: " + e.getMessage());
+            throw new RuntimeException("SmppConnectionFactory: " + e.getMessage(), e);
         }
     }
 

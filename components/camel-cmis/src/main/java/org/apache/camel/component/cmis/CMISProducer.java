@@ -26,9 +26,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
@@ -36,14 +36,12 @@ import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The CMIS producer.
  */
 public class CMISProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(CMISProducer.class);
+
     private final CMISSessionFacadeFactory sessionFacadeFactory;
     private CMISSessionFacade sessionFacade;
 
@@ -60,7 +58,7 @@ public class CMISProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         CmisObject cmisObject = createNode(exchange);
-        LOG.debug("Created node with id: {}", cmisObject.getId());
+        log.debug("Created node with id: {}", cmisObject.getId());
 
         // copy the header of in message to the out message
         exchange.getOut().copyFrom(exchange.getIn());
@@ -152,7 +150,7 @@ public class CMISProducer extends DefaultProducer {
         if (!cmisProperties.containsKey(PropertyIds.OBJECT_TYPE_ID)) {
             cmisProperties.put(PropertyIds.OBJECT_TYPE_ID, CamelCMISConstants.CMIS_FOLDER);
         }
-        LOG.debug("Creating folder with properties: {}", cmisProperties);
+        log.debug("Creating folder with properties: {}", cmisProperties);
         return parentFolder.createFolder(cmisProperties);
     }
 
@@ -165,7 +163,7 @@ public class CMISProducer extends DefaultProducer {
         if (getSessionFacade().isObjectTypeVersionable((String) cmisProperties.get(PropertyIds.OBJECT_TYPE_ID))) {
             versioningState = VersioningState.MAJOR;
         }
-        LOG.debug("Creating document with properties: {}", cmisProperties);
+        log.debug("Creating document with properties: {}", cmisProperties);
         return parentFolder.createDocument(cmisProperties, contentStream, versioningState);
     }
 

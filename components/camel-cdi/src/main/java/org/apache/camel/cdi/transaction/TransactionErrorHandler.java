@@ -18,6 +18,7 @@ package org.apache.camel.cdi.transaction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javax.transaction.TransactionRolledbackException;
@@ -30,12 +31,13 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.ShutdownPrepared;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Does transactional execution according given policy. This class is based on
@@ -114,6 +116,13 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         // notify callback we are done synchronously
         callback.done(true);
         return true;
+    }
+
+    @Override
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        process(exchange, callback);
+        return callback.getFuture();
     }
 
     protected void processInTransaction(final Exchange exchange) throws Exception {
@@ -327,7 +336,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(output);
+        ServiceHelper.startService(output);
         preparingShutdown = false;
     }
 

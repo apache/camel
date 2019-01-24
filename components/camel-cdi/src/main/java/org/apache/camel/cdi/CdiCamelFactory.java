@@ -30,7 +30,6 @@ import javax.enterprise.inject.InjectionException;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
-import javax.enterprise.inject.UnsatisfiedResolutionException;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.apache.camel.CamelContext;
@@ -69,9 +68,7 @@ final class CdiCamelFactory {
 
     private static ProducerTemplate producerTemplateFromUri(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension, Uri uri) {
         try {
-            CamelContext context = uri.context().isEmpty()
-                ? selectContext(ip, instance, extension)
-                : selectContext(uri.context(), instance);
+            CamelContext context = selectContext(ip, instance, extension);
             ProducerTemplate producerTemplate = context.createProducerTemplate();
             Endpoint endpoint = context.getEndpoint(uri.value(), Endpoint.class);
             producerTemplate.setDefaultEndpoint(endpoint);
@@ -101,9 +98,7 @@ final class CdiCamelFactory {
 
     private static FluentProducerTemplate fluentProducerTemplateFromUri(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension, Uri uri) {
         try {
-            CamelContext context = uri.context().isEmpty()
-                ? selectContext(ip, instance, extension)
-                : selectContext(uri.context(), instance);
+            CamelContext context = selectContext(ip, instance, extension);
             FluentProducerTemplate producerTemplate = context.createFluentProducerTemplate();
             Endpoint endpoint = context.getEndpoint(uri.value(), Endpoint.class);
             producerTemplate.setDefaultEndpoint(endpoint);
@@ -141,31 +136,11 @@ final class CdiCamelFactory {
     private static MockEndpoint mockEndpointFromUri(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
         Uri uri = getQualifierByType(ip, Uri.class).get();
         try {
-            CamelContext context = uri.context().isEmpty()
-                ? selectContext(ip, instance, extension)
-                : selectContext(uri.context(), instance);
+            CamelContext context = selectContext(ip, instance, extension);
             return context.getEndpoint(uri.value(), MockEndpoint.class);
         } catch (Exception cause) {
             throw new InjectionException("Error injecting mock endpoint annotated with " + uri
                 + " into " + ip, cause);
-        }
-    }
-
-    // Maintained for backward compatibility reason though this is redundant with @Uri
-    // see https://issues.apache.org/jira/browse/CAMEL-5553?focusedCommentId=13445936&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-13445936
-    @Mock
-    @Produces
-    @Typed(MockEndpoint.class)
-    // Qualifiers are dynamically added in CdiCamelExtension
-    private static MockEndpoint createMockEndpoint(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
-        Mock mock = getQualifierByType(ip, Mock.class).get();
-        try {
-            CamelContext context = mock.context().isEmpty()
-                ? selectContext(ip, instance, extension)
-                : selectContext(mock.context(), instance);
-            return context.getEndpoint(mock.value(), MockEndpoint.class);
-        } catch (Exception cause) {
-            throw new InjectionException("Error injecting mock endpoint annotated with " + mock + " into " + ip, cause);
         }
     }
 
@@ -175,9 +150,7 @@ final class CdiCamelFactory {
     private static Endpoint endpoint(InjectionPoint ip, @Any Instance<CamelContext> instance, CdiCamelExtension extension) {
         Uri uri = getQualifierByType(ip, Uri.class).get();
         try {
-            CamelContext context = uri.context().isEmpty()
-                ? selectContext(ip, instance, extension)
-                : selectContext(uri.context(), instance);
+            CamelContext context = selectContext(ip, instance, extension);
             return context.getEndpoint(uri.value(), Endpoint.class);
         } catch (Exception cause) {
             throw new InjectionException("Error injecting endpoint annotated with " + uri + " into " + ip, cause);
@@ -198,15 +171,6 @@ final class CdiCamelFactory {
             context.addEndpoint(uri, extension.getEventEndpoint(uri));
         }
         return context.getEndpoint(uri, CdiEventEndpoint.class);
-    }
-
-    private static <T extends CamelContext> T selectContext(String name, Instance<T> instance) {
-        for (T context : instance) {
-            if (name.equals(context.getName())) {
-                return context;
-            }
-        }
-        throw new UnsatisfiedResolutionException("No Camel context with name [" + name + "] is deployed!");
     }
 
     private static <T extends CamelContext> T selectContext(InjectionPoint ip, Instance<T> instance, CdiCamelExtension extension) {

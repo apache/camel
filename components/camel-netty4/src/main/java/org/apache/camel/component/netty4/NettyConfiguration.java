@@ -34,9 +34,11 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -186,15 +188,9 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         passphrase = component.getAndRemoveOrResolveReferenceParameter(parameters, "passphrase", String.class, passphrase);
         keyStoreFormat = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreFormat", String.class, keyStoreFormat == null ? "JKS" : keyStoreFormat);
         securityProvider = component.getAndRemoveOrResolveReferenceParameter(parameters, "securityProvider", String.class, securityProvider == null ? "SunX509" : securityProvider);
-        keyStoreFile = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreFile", File.class, keyStoreFile);
-        trustStoreFile = component.getAndRemoveOrResolveReferenceParameter(parameters, "trustStoreFile", File.class, trustStoreFile);
-        keyStoreResource = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreResource", String.class, keyStoreResource);
-        trustStoreResource = component.getAndRemoveOrResolveReferenceParameter(parameters, "trustStoreResource", String.class, trustStoreResource);
-        // clientPipelineFactory is @deprecated and to be removed
-        clientInitializerFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "clientPipelineFactory", ClientInitializerFactory.class, clientInitializerFactory);
+        keyStoreResource = uriRef(component, parameters, "keyStoreResource", keyStoreResource);
+        trustStoreResource = uriRef(component, parameters, "trustStoreResource", trustStoreResource);
         clientInitializerFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "clientInitializerFactory", ClientInitializerFactory.class, clientInitializerFactory);
-        // serverPipelineFactory is @deprecated and to be removed
-        serverInitializerFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "serverPipelineFactory", ServerInitializerFactory.class, serverInitializerFactory);
         serverInitializerFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "serverInitializerFactory", ServerInitializerFactory.class, serverInitializerFactory);
 
         // set custom encoders and decoders first
@@ -249,6 +245,23 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
             }
         } else {
             LOG.debug("Using configured encoders and/or decoders");
+        }
+    }
+
+    private String uriRef(NettyComponent component, Map<String, Object> parameters, String key, String defaultValue) {
+        Object value = parameters.remove(key);
+        if (value == null) {
+            value = defaultValue;
+        } else if (value instanceof String && EndpointHelper.isReferenceParameter((String) value)) {
+            String name = StringHelper.replaceAll((String) value, "#", "");
+            value = CamelContextHelper.mandatoryLookup(component.getCamelContext(), name);
+        }
+        if (value instanceof File) {
+            return "file:" + value.toString();
+        } else if (value != null) {
+            return value.toString();
+        } else {
+            return null;
         }
     }
 
@@ -493,7 +506,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     }
 
     /**
-     * The netty component installs a default codec if both, encoder/deocder is null and textline is false.
+     * The netty component installs a default codec if both, encoder/decoder is null and textline is false.
      * Setting allowDefaultCodec to false prevents the netty component from installing a default codec as the first element in the filter chain.
      */
     public void setAllowDefaultCodec(boolean allowDefaultCodec) {

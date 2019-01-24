@@ -19,7 +19,6 @@ package org.apache.camel.component.zookeeper;
 import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.KeeperState;
@@ -55,7 +54,7 @@ public class ConnectionHolder implements Watcher {
         try {
             zookeeper = new ZooKeeper(configuration.getConnectString(), configuration.getTimeout(), this);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         awaitConnection();
         return zookeeper;
@@ -72,7 +71,7 @@ public class ConnectionHolder implements Watcher {
         try {
             connectionLatch.await();
         } catch (InterruptedException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

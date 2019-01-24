@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.jpa;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -26,12 +25,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.VersionedItem;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version
- */
 @Ignore("Need the fix of OPENJPA-2461")
 public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + VersionedItem.class.getName() + " x";
@@ -52,14 +49,14 @@ public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
         template.sendBody("jpa://" + VersionedItem.class.getName(), new VersionedItem("three"));
         template.sendBody("jpa://" + VersionedItem.class.getName(), new VersionedItem("four"));
         
-        this.context.startRoute("second");
-        this.context.startRoute("first");
+        this.context.getRouteController().startRoute("second");
+        this.context.getRouteController().startRoute("first");
 
         assertMockEndpointsSatisfied();
        
         //force test to wait till finished
-        this.context.stopRoute("first");
-        this.context.stopRoute("second");
+        this.context.getRouteController().stopRoute("first");
+        this.context.getRouteController().stopRoute("second");
 
         setLockTimeout(60);
         List<?> list = entityManager.createQuery(selectAllString()).getResultList();
@@ -109,6 +106,7 @@ public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         setLockTimeout(0);

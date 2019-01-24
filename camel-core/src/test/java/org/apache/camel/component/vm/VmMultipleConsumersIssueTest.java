@@ -19,12 +19,14 @@ package org.apache.camel.component.vm;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class VmMultipleConsumersIssueTest extends ContextTestSupport {
 
+    @Test
     public void testVmMultipleConsumersIssue() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");

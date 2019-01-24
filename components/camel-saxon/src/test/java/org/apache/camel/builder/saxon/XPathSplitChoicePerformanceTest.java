@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.builder.saxon;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -45,6 +45,7 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
     private final StopWatch watch = new StopWatch();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         createDataFile(log, size);
         super.setUp();
@@ -56,7 +57,7 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(size).create();
 
         boolean matches = notify.matches(60, TimeUnit.SECONDS);
-        log.info("Processed file with " + size + " elements in: " + TimeUtils.printDuration(watch.stop()));
+        log.info("Processed file with " + size + " elements in: " + TimeUtils.printDuration(watch.taken()));
 
         log.info("Processed " + tiny.get() + " tiny messages");
         log.info("Processed " + small.get() + " small messages");

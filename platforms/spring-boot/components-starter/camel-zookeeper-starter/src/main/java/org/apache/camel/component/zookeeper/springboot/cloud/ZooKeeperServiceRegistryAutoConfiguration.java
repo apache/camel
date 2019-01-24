@@ -18,7 +18,7 @@ package org.apache.camel.component.zookeeper.springboot.cloud;
 
 import org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceRegistry;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

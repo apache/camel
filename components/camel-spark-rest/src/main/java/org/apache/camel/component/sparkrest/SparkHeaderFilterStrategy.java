@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.sparkrest;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 /**
  * Default Spark {@link org.apache.camel.spi.HeaderFilterStrategy} used when binding with {@link org.apache.camel.component.sparkrest.SparkBinding}.

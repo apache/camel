@@ -36,8 +36,6 @@ import static org.mockito.Mockito.when;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConsumer</code>
- * 
- * @version 
  */
 public class SmppConsumerTest {
     
@@ -50,6 +48,8 @@ public class SmppConsumerTest {
     @Before
     public void setUp() {
         configuration = new SmppConfiguration();
+        configuration.setServiceType("CMT");
+        configuration.setSystemType("cp");
         endpoint = mock(SmppEndpoint.class);
         processor = mock(Processor.class);
         session = mock(SMPPSession.class);

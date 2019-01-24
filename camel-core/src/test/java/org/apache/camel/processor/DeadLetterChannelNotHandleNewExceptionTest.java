@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class DeadLetterChannelNotHandleNewExceptionTest extends ContextTestSupport {
 
@@ -31,6 +32,7 @@ public class DeadLetterChannelNotHandleNewExceptionTest extends ContextTestSuppo
         }
     }
 
+    @Test
     public void testDeadLetterChannelNotHandleNewException() throws Exception {
         try {
             template.sendBody("direct:start", "Hello World");

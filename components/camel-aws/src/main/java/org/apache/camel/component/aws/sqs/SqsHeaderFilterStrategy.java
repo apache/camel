@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class SqsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     public SqsHeaderFilterStrategy() {
@@ -25,6 +25,6 @@ public class SqsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     protected void initialize() {
         // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern("(Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*"); 
+        setOutFilterPattern("(breadcrumbId|Camel|org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*"); 
     }
 }

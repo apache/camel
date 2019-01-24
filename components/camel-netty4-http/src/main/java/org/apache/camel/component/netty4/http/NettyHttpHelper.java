@@ -30,9 +30,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeExchangeException;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -45,11 +43,10 @@ public final class NettyHttpHelper {
     private NettyHttpHelper() {
     }
 
-    @SuppressWarnings("deprecation")
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
         String charset = getCharsetFromContentType(contentType);
         if (charset != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(charset));
+            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
         }
     }
 
@@ -61,7 +58,7 @@ public final class NettyHttpHelper {
                 String charset = contentType.substring(index + 8);
                 // there may be another parameter after a semi colon, so skip that
                 if (charset.contains(";")) {
-                    charset = ObjectHelper.before(charset, ";");
+                    charset = StringHelper.before(charset, ";");
                 }
                 return IOHelper.normalizeCharset(charset);
             }

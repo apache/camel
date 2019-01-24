@@ -18,7 +18,9 @@ package org.apache.camel.component.kubernetes.deployments;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("kubernetes-deployments")
 public class KubernetesDeploymentsComponent extends AbstractKubernetesComponent {
 
     protected KubernetesDeploymentsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {

@@ -20,12 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class SplitterCompletedPropertyTest extends ContextTestSupport {
 
+    @Test
     public void testSplitterCompleted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Hello World", "Bye World", "Bye Moon");
@@ -38,6 +37,7 @@ public class SplitterCompletedPropertyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitterStreamingCompleted() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Hello World", "Bye World", "Bye Moon");

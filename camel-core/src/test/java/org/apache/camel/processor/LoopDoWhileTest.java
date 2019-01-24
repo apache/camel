@@ -18,9 +18,11 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class LoopDoWhileTest extends ContextTestSupport {
 
+    @Test
     public void testLoopDoWhileSimple() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("AAAAAA");
         getMockEndpoint("mock:loop").expectedBodiesReceived("A", "AA", "AAA", "AAAA", "AAAAA");
@@ -30,6 +32,7 @@ public class LoopDoWhileTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLoopDoWhileFunctional() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("AAAAAA");
         getMockEndpoint("mock:loop").expectedBodiesReceived("A", "AA", "AAA", "AAAA", "AAAAA");

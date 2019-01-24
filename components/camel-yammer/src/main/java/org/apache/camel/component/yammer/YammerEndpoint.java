@@ -19,14 +19,14 @@ package org.apache.camel.component.yammer;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
  * The yammer component allows you to interact with the Yammer enterprise social network.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "yammer", title = "Yammer", syntax = "yammer:function", consumerClass = YammerMessagePollingConsumer.class, label = "social")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "yammer", title = "Yammer", syntax = "yammer:function", label = "social")
 public class YammerEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

@@ -18,9 +18,6 @@ package org.apache.camel.component.bean;
 
 import org.w3c.dom.Document;
 
-/**
- * @version 
- */
 // START SNIPPET: e1
 public interface OrderService {
 

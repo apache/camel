@@ -46,6 +46,6 @@
         <constructor-arg index="1" ref="mapConfig"/>
     </bean>
 
-    <bean id="mapper" class="org.dozer.Mapper" factory-bean="mapperFactory" factory-method="create"/>
+    <bean id="mapper" class="com.github.dozermapper.core.Mapper" factory-bean="mapperFactory" factory-method="create"/>
 
 </beans>

@@ -20,9 +20,6 @@ import org.apache.camel.CamelContext;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringPropertiesComponentOnExceptionRefTest extends PropertiesComponentOnExceptionTest {
 
     protected CamelContext createCamelContext() throws Exception {

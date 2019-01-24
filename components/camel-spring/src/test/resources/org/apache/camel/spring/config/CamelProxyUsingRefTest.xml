@@ -30,7 +30,7 @@
         <!-- create a proxy that will route to the direct:start endpoint when invoked -->
         <proxy id="myProxySender"
                serviceInterface="org.apache.camel.spring.config.MyProxySender"
-               serviceRef="cool"/>
+               serviceUrl="ref:cool"/>
 
         <!-- define the endpoint we want to proxy -->
         <endpoint id="cool" uri="direct:start"/>
@@ -38,7 +38,7 @@
         <!-- this is the route that our proxy will routed when invoked
              and the output from this route is returned as reply on the proxy -->
         <route>
-            <from ref="cool"/>
+            <from uri="ref:cool"/>
             <to uri="log:foo"/>
             <transform>
                 <constant>Hello World</constant>

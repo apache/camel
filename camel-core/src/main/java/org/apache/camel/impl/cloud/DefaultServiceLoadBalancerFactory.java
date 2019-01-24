@@ -19,7 +19,9 @@ package org.apache.camel.impl.cloud;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.cloud.ServiceLoadBalancerFactory;
+import org.apache.camel.spi.annotations.CloudServiceFactory;
 
+@CloudServiceFactory("default-service-load-balancer")
 public class DefaultServiceLoadBalancerFactory implements ServiceLoadBalancerFactory {
 
     @Override

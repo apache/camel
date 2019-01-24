@@ -17,14 +17,13 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class RouteBuilderRef2Test extends SpringTestSupport {
 
+    @Test
     public void testRouteBuilderRef2Test() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

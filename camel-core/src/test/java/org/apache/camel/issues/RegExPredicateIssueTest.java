@@ -18,10 +18,8 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RegExPredicateIssueTest extends ContextTestSupport {
 
     @Override
@@ -38,6 +36,7 @@ public class RegExPredicateIssueTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testMatch() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -47,6 +46,7 @@ public class RegExPredicateIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotMatch() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);

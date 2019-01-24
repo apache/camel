@@ -58,7 +58,7 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             merchandise = in.getMandatoryBody(Merchandise__c.class);
 
             assertNotNull("Missing event body", merchandise);
-            log.info("Merchandise notification: {}", merchandise.toString());
+            log.info("Merchandise notification: {}", merchandise);
             assertNotNull("Missing field Id", merchandise.getId());
             assertNotNull("Missing field Name", merchandise.getName());
 

@@ -24,9 +24,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.olingo4.api.Olingo4ResponseHandler;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.component.AbstractApiConsumer;
-import org.apache.camel.util.component.ApiConsumerHelper;
+import org.apache.camel.support.component.AbstractApiConsumer;
+import org.apache.camel.support.component.ApiConsumerHelper;
+import org.apache.olingo.client.api.domain.ClientEntitySet;
 
 /**
  * The Olingo4 consumer.
@@ -83,10 +83,18 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
                 throw error[0];
             }
 
-            return ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
+            //
+            // Allow consumer idle properties to properly handle an empty polling response
+            //
+            if (result[0] instanceof ClientEntitySet && (((ClientEntitySet) result[0]).getEntities().isEmpty())) {
+                return 0;
+            } else {
+                int processed = ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
+                return processed;
+            }
 
         } catch (Throwable t) {
-            throw ObjectHelper.wrapRuntimeCamelException(t);
+            throw RuntimeCamelException.wrapRuntimeCamelException(t);
         }
     }
 }

@@ -38,6 +38,11 @@ public class CaffeineCacheComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the caffeine-cache component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the global component configuration
      */
     private CaffeineConfigurationNestedConfiguration configuration;
@@ -84,15 +89,15 @@ public class CaffeineCacheComponentConfiguration
          */
         private Object key;
         /**
-         * The cache key type, default "java.lang.Object"
+         * The cache key type, default java.lang.Object
          */
         private String keyType = "java.lang.Object";
         /**
-         * The cache value type, default "java.lang.Object"
+         * The cache value type, default java.lang.Object
          */
         private String valueType = "java.lang.Object";
         /**
-         * To configure the default an already instantianted cache to be used
+         * To configure an already instantiated cache to be used
          */
         private Cache cache;
         /**

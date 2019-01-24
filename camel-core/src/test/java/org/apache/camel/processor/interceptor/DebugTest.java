@@ -22,20 +22,21 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.ConditionSupport;
 import org.apache.camel.impl.DefaultDebugger;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.spi.CamelEvent.Type;
 import org.apache.camel.spi.Condition;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
+
 public class DebugTest extends ContextTestSupport {
 
     private List<String> logs = new ArrayList<>();
@@ -45,33 +46,34 @@ public class DebugTest extends ContextTestSupport {
     private Breakpoint breakpoint;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         breakpoint = new BreakpointSupport() {
-            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+            public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
                 String body = exchange.getIn().getBody(String.class);
                 logs.add("Breakpoint at " + definition + " with body: " + body);
             }
 
-            public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition) {
+            public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
                 String body = exchange.getIn().getBody(String.class);
                 logs.add("Breakpoint event " + event.getClass().getSimpleName() + " with body: " + body);
             }
         };
 
         camelCondition = new ConditionSupport() {
-            public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
                 return body().contains("Camel").matches(exchange);
             }
         };
 
         mockCondition = new ConditionSupport() {
-            public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+            public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
                 // match when sending to mocks
                 if (definition instanceof ToDefinition) {
                     ToDefinition to = (ToDefinition) definition;
-                    return to.getUriOrRef().startsWith("mock");
+                    return to.getUri().startsWith("mock");
                 }
                 return false;
             }
@@ -79,12 +81,13 @@ public class DebugTest extends ContextTestSupport {
 
         doneCondition = new ConditionSupport() {
             @Override
-            public boolean matchEvent(Exchange exchange, EventObject event) {
-                return event instanceof ExchangeCompletedEvent;
+            public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
+                return event.getType() == Type.ExchangeCompleted;
             }
         };
     }
 
+    @Test
     public void testDebug() throws Exception {
         context.getDebugger().addBreakpoint(breakpoint, camelCondition);
 
@@ -100,6 +103,7 @@ public class DebugTest extends ContextTestSupport {
         assertEquals("Breakpoint at To[mock:result] with body: Hello Camel", logs.get(1));
     }
 
+    @Test
     public void testDebugEvent() throws Exception {
         context.getDebugger().addBreakpoint(breakpoint, doneCondition);
 
@@ -115,6 +119,7 @@ public class DebugTest extends ContextTestSupport {
         assertEquals("Breakpoint event ExchangeCompletedEvent with body: Hello Camel", logs.get(1));
     }
 
+    @Test
     public void testDebugSuspended() throws Exception {
         context.getDebugger().addBreakpoint(breakpoint, mockCondition, camelCondition);
 
@@ -147,6 +152,7 @@ public class DebugTest extends ContextTestSupport {
         assertEquals("Breakpoint at To[mock:result] with body: Hello Camel", logs.get(0));
     }
 
+    @Test
     public void testDebugRemoveBreakpoint() throws Exception {
         context.getDebugger().addBreakpoint(breakpoint);
 

@@ -19,11 +19,13 @@ package org.apache.camel.component.couchbase;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Couchbase component.
  */
+@Component("couchbase")
 public class CouchbaseComponent extends DefaultComponent {
 
     public CouchbaseComponent() {

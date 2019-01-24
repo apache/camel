@@ -53,7 +53,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
 
     @Override
     public DynamicAwareEntry prepare(Exchange exchange, String uri) throws Exception {
-        RuntimeCamelCatalog catalog = exchange.getContext().getRuntimeCamelCatalog();
+        RuntimeCamelCatalog catalog = exchange.getContext().getExtension(RuntimeCamelCatalog.class);
         Map<String, String> properties = catalog.endpointProperties(uri);
         Map<String, String> lenient = catalog.endpointLenientProperties(uri);
         return new DynamicAwareEntry(uri, properties, lenient);
@@ -82,7 +82,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                     params.remove("path");
                 }
             }
-            RuntimeCamelCatalog catalog = exchange.getContext().getRuntimeCamelCatalog();
+            RuntimeCamelCatalog catalog = exchange.getContext().getExtension(RuntimeCamelCatalog.class);
             return catalog.asEndpointUri(scheme, params, false);
         } else {
             // no need for optimisation
@@ -141,7 +141,7 @@ public class HttpSendDynamicAware implements SendDynamicAware {
             // if the path is just a trailing slash then skip it (eg it must be longer than just the slash itself)
             if (path != null && path.length() > 1) {
                 int port = parse.getPort();
-                if (port != 80 && port != 443) {
+                if (port > 0 && port != 80 && port != 443) {
                     host += ":" + port;
                 }
                 if (!httpComponent) {

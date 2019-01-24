@@ -20,24 +20,25 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConversionException;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class EnumConverterTest extends ContextTestSupport {
 
+    @Test
     public void testMandatoryConvertEnum() throws Exception {
         LoggingLevel level = context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, "DEBUG");
         assertEquals(LoggingLevel.DEBUG, level);
     }
 
+    @Test
     public void testMandatoryConvertWithExchangeEnum() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         LoggingLevel level = context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, exchange, "WARN");
         assertEquals(LoggingLevel.WARN, level);
     }
 
+    @Test
     public void testCaseInsensitive() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         LoggingLevel level = context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, exchange, "Warn");
@@ -53,6 +54,7 @@ public class EnumConverterTest extends ContextTestSupport {
         assertEquals(LoggingLevel.INFO, level);
     }
 
+    @Test
     public void testMandatoryConvertFailed() throws Exception {
         try {
             context.getTypeConverter().mandatoryConvertTo(LoggingLevel.class, "XXX");

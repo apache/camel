@@ -24,7 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneEndpoint;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -79,7 +79,7 @@ public class GroupProducer extends AbstractKeystoneProducer {
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.GROUP_ID, String.class), String.class);
-        ObjectHelper.notEmpty(id, "Group ID");
+        StringHelper.notEmpty(id, "Group ID");
         final Group result = osV3Client.identity().groups().get(id);
         msg.setBody(result);
     }
@@ -99,7 +99,7 @@ public class GroupProducer extends AbstractKeystoneProducer {
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.GROUP_ID, String.class), String.class);
-        ObjectHelper.notEmpty(id, "Group ID");
+        StringHelper.notEmpty(id, "Group ID");
         final ActionResponse response = osV3Client.identity().groups().delete(id);
         checkFailure(response, msg, "Delete group with ID " + id);
     }
@@ -108,8 +108,8 @@ public class GroupProducer extends AbstractKeystoneProducer {
         final Message msg = exchange.getIn();
         final String userId = msg.getHeader(KeystoneConstants.USER_ID, String.class);
         final String groupId = msg.getHeader(KeystoneConstants.GROUP_ID, String.class);
-        ObjectHelper.notEmpty(userId, "User ID");
-        ObjectHelper.notEmpty(groupId, "Group ID");
+        StringHelper.notEmpty(userId, "User ID");
+        StringHelper.notEmpty(groupId, "Group ID");
         final ActionResponse response = osV3Client.identity().groups().addUserToGroup(groupId, userId);
         checkFailure(response, msg, String.format("Add user %s to group %s", userId, groupId));
     }
@@ -118,8 +118,8 @@ public class GroupProducer extends AbstractKeystoneProducer {
         final Message msg = exchange.getIn();
         final String userId = msg.getHeader(KeystoneConstants.USER_ID, String.class);
         final String groupId = msg.getHeader(KeystoneConstants.GROUP_ID, String.class);
-        ObjectHelper.notEmpty(userId, "User ID");
-        ObjectHelper.notEmpty(groupId, "Group ID");
+        StringHelper.notEmpty(userId, "User ID");
+        StringHelper.notEmpty(groupId, "Group ID");
         final ActionResponse response = osV3Client.identity().groups().checkGroupUser(groupId, userId);
         msg.setBody(response.isSuccess());
     }
@@ -128,8 +128,8 @@ public class GroupProducer extends AbstractKeystoneProducer {
         final Message msg = exchange.getIn();
         final String userId = msg.getHeader(KeystoneConstants.USER_ID, String.class);
         final String groupId = msg.getHeader(KeystoneConstants.GROUP_ID, String.class);
-        ObjectHelper.notEmpty(userId, "User ID");
-        ObjectHelper.notEmpty(groupId, "Group ID");
+        StringHelper.notEmpty(userId, "User ID");
+        StringHelper.notEmpty(groupId, "Group ID");
         final ActionResponse response = osV3Client.identity().groups().removeUserFromGroup(groupId, userId);
         checkFailure(response, msg, String.format("Delete user %s from group %s", userId, groupId));
     }
@@ -141,7 +141,7 @@ public class GroupProducer extends AbstractKeystoneProducer {
             Map headers = message.getHeaders();
             GroupBuilder builder = Builders.group();
 
-            ObjectHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
+            StringHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
             builder.name(message.getHeader(OpenstackConstants.NAME, String.class));
 
             if (headers.containsKey(KeystoneConstants.DOMAIN_ID)) {

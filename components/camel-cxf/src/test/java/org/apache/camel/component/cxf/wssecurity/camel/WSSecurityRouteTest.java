@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.wssecurity.camel;
-
 import java.net.URL;
 
 import javax.xml.ws.BindingProvider;
@@ -57,7 +56,7 @@ public class WSSecurityRouteTest extends CamelTestSupport {
     
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     private static ClassPathXmlApplicationContext createApplicationContext() {

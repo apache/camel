@@ -67,9 +67,9 @@ public class ApprovalRequestTest {
         assertThat("Combined approval request should be a new instance", combined,
             both(not(sameInstance(request))).and(not(sameInstance(template))));
 
-        assertEquals("Action type should not be overwriten", request.getActionType(), combined.getActionType());
-        assertEquals("Comment should not be overwriten", request.getComments(), combined.getComments());
-        assertEquals("Context id should not be overwriten", request.getContextId(), combined.getContextId());
+        assertEquals("Action type should not be overwritten", request.getActionType(), combined.getActionType());
+        assertEquals("Comment should not be overwritten", request.getComments(), combined.getComments());
+        assertEquals("Context id should not be overwritten", request.getContextId(), combined.getContextId());
         assertEquals("Next approver id should be taken from template", template.getNextApproverIds(),
             combined.getNextApproverIds());
     }

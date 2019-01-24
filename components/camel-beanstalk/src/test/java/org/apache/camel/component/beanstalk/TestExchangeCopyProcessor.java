@@ -25,7 +25,7 @@ public class TestExchangeCopyProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        this.exchange = exchange.copy(true);
+        this.exchange = exchange.copy();
     }
 
     public Exchange getExchangeCopy() {

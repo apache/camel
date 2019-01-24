@@ -28,7 +28,7 @@
     </dataFormats>
     <route>
         <from uri="direct:start"/>
-        <to ref="xml2json"/>
+        <to uri="ref:xml2json"/>
         <to uri="mock:result"/>
     </route>
 </camelContext>

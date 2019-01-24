@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *
  */
 public class TryCatchCaughtExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testTryCatchCaughtException() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);

@@ -28,9 +28,11 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExchangeBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class ConvertBodyTest extends ContextTestSupport {
     
+    @Test
     public void testConvertBodyTo() {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -45,6 +47,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testConvertBodyCharset() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -61,6 +64,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertBodyCharsetWithExistingCharsetName() throws Exception {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
@@ -79,6 +83,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertToInteger() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(11);
@@ -88,6 +93,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertNullBody() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -98,6 +104,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertFailed() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
@@ -111,6 +118,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertToBytesCharset() throws Exception {
         byte[] body = "Hello World".getBytes("iso-8859-1");
 
@@ -122,6 +130,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertToStringCharset() throws Exception {
 
         String body = "Hello World";
@@ -134,6 +143,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testConvertToBytesCharsetFail() throws Exception {
         byte[] body = "Hello World".getBytes("utf-8");
 
@@ -146,6 +156,7 @@ public class ConvertBodyTest extends ContextTestSupport {
         result.assertIsNotSatisfied();
     }
 
+    @Test
     public void testConvertToStringCharsetFail() throws Exception {
 
         // does not work on AIX

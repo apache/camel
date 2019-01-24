@@ -17,11 +17,8 @@
 package org.apache.camel.component.crypto.cms.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration;
-import org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The crypto cms component is used for encrypting data in CMS Enveloped Data
@@ -37,17 +34,24 @@ public class CryptoCmsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To configure the shared SignedDataVerifierConfiguration, which determines
-     * the uri parameters for the verify operation.
+     * Whether to enable auto configuration of the crypto-cms component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private SignedDataVerifierConfiguration signedDataVerifierConfiguration;
+    private Boolean enabled;
+    /**
+     * To configure the shared SignedDataVerifierConfiguration, which determines
+     * the uri parameters for the verify operation. The option is a
+     * org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration
+     * type.
+     */
+    private String signedDataVerifierConfiguration;
     /**
      * To configure the shared EnvelopedDataDecryptorConfiguration, which
-     * determines the uri parameters for the decrypt operation.
+     * determines the uri parameters for the decrypt operation. The option is a
+     * org.apache.camel.component.crypto.cms.crypt.
+     * EnvelopedDataDecryptorConfiguration type.
      */
-    @NestedConfigurationProperty
-    private EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration;
+    private String envelopedDataDecryptorConfiguration;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -55,21 +59,21 @@ public class CryptoCmsComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public SignedDataVerifierConfiguration getSignedDataVerifierConfiguration() {
+    public String getSignedDataVerifierConfiguration() {
         return signedDataVerifierConfiguration;
     }
 
     public void setSignedDataVerifierConfiguration(
-            SignedDataVerifierConfiguration signedDataVerifierConfiguration) {
+            String signedDataVerifierConfiguration) {
         this.signedDataVerifierConfiguration = signedDataVerifierConfiguration;
     }
 
-    public EnvelopedDataDecryptorConfiguration getEnvelopedDataDecryptorConfiguration() {
+    public String getEnvelopedDataDecryptorConfiguration() {
         return envelopedDataDecryptorConfiguration;
     }
 
     public void setEnvelopedDataDecryptorConfiguration(
-            EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration) {
+            String envelopedDataDecryptorConfiguration) {
         this.envelopedDataDecryptorConfiguration = envelopedDataDecryptorConfiguration;
     }
 

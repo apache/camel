@@ -23,9 +23,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -35,13 +35,12 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.ShareUnitOfWorkAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -50,24 +49,10 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * href="http://camel.apache.org/splitter.html">Splitter</a> pattern
  * where an expression is evaluated to iterate through each of the parts of a
  * message and then each part is then send to some endpoint.
- *
- * @version 
  */
 public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
 
     private final Expression expression;
-
-    public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
-        this(camelContext, expression, destination, aggregationStrategy, false, null, false, false, false, 0, null, false);
-    }
-
-    @Deprecated
-    public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
-                    boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
-                    boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean useSubUnitOfWork) {
-        this(camelContext, expression, destination, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
-                streaming, stopOnException, timeout, onPrepare, useSubUnitOfWork, false);
-    }
 
     public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
                     ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
@@ -98,14 +83,18 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
-        final AggregationStrategy strategy = getAggregationStrategy();
+        AggregationStrategy strategy = getAggregationStrategy();
+
 
         // set original exchange if not already pre-configured
         if (strategy instanceof UseOriginalAggregationStrategy) {
+            // need to create a new private instance, as we can also have concurrency issue so we cannot store state
             UseOriginalAggregationStrategy original = (UseOriginalAggregationStrategy) strategy;
-            if (original.getOriginal() == null) {
-                original.setOriginal(exchange);
+            AggregationStrategy clone = original.newInstance(exchange);
+            if (isShareUnitOfWork()) {
+                clone = new ShareUnitOfWorkAggregationStrategy(clone);
             }
+            setAggregationStrategyOnExchange(exchange, clone);
         }
 
         // if no custom aggregation strategy is being used then fallback to keep the original
@@ -130,12 +119,9 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             throw exchange.getException();
         }
 
-        Iterable<ProcessorExchangePair> answer;
-        if (isStreaming()) {
-            answer = createProcessorExchangePairsIterable(exchange, value);
-        } else {
-            answer = createProcessorExchangePairsList(exchange, value);
-        }
+        Iterable<ProcessorExchangePair> answer = isStreaming()
+                ? createProcessorExchangePairsIterable(exchange, value)
+                : createProcessorExchangePairsList(exchange, value);
         if (exchange.getException() != null) {
             // force any exceptions occurred during creation of exchange paris to be thrown
             // before returning the answer;
@@ -230,18 +216,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         @Override
         public void close() throws IOException {
-            if (value instanceof Scanner) {
-                // special for Scanner which implement the Closeable since JDK7 
-                Scanner scanner = (Scanner) value;
-                scanner.close();
-                IOException ioException = scanner.ioException();
-                if (ioException != null) {
-                    throw ioException;
-                }
-            } else if (value instanceof Closeable) {
-                // we should throw out the exception here   
-                IOHelper.closeWithException((Closeable) value);
-            }
+            IOHelper.closeIterator(value);
         }
        
     }
@@ -267,8 +242,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     @Override
-    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs,
-                                     Iterator<ProcessorExchangePair> it) {
+    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs, boolean hasNext) {
         // do not share unit of work
         exchange.setUnitOfWork(null);
 
@@ -277,7 +251,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
             // non streaming mode, so we know the total size already
             exchange.setProperty(Exchange.SPLIT_SIZE, ((Collection<?>) allPairs).size());
         }
-        if (it.hasNext()) {
+        if (hasNext) {
             exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.FALSE);
         } else {
             exchange.setProperty(Exchange.SPLIT_COMPLETE, Boolean.TRUE);

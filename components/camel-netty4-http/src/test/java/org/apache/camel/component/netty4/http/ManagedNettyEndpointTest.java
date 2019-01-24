@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty4.http;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 

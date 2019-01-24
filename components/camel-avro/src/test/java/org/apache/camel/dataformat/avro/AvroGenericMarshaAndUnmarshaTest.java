@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.avro;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -25,6 +24,7 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 
@@ -33,6 +33,7 @@ public class AvroGenericMarshaAndUnmarshaTest extends CamelTestSupport {
     private Schema schema;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         schema = getSchema();
         super.setUp();

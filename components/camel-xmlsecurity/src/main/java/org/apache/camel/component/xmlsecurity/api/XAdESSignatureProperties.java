@@ -47,6 +47,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -720,7 +721,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         if (!qualifiers.isEmpty()) {
             Element qualifiersEl = createElement("CommitmentTypeQualifiers", doc, input);
             commitmentTypeIndication.appendChild(qualifiersEl);
-            String errorMessage = "The XAdES confguration is invalid. The list of the commitment type qualifiers contains the invalid entry '%s'. An entry must either be a text or an XML fragment "
+            String errorMessage = "The XAdES configuration is invalid. The list of the commitment type qualifiers contains the invalid entry '%s'. An entry must either be a text or an XML fragment "
                     + "with the root element '%s' with the namespace '%s'.";
             for (String qualifier : getCommitmentTypeQualifiers()) {
                 Element qualifierEl = createChildFromXmlFragmentOrText(doc, input, "CommitmentTypeQualifier", errorMessage, qualifier);
@@ -867,7 +868,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
             LOG.debug("Adding claimed roles");
             Element claimedRolesEl = createElement("ClaimedRoles", doc, input);
             signerRole.appendChild(claimedRolesEl);
-            String errorMessage = "The XAdES confguration is invalid. The list of the claimed roles contains the invalid entry '%s'."
+            String errorMessage = "The XAdES configuration is invalid. The list of the claimed roles contains the invalid entry '%s'."
                     + " An entry must either be a text or an XML fragment with the root element '%s' with the namespace '%s'.";
             for (String claimedRole : claimedRoles) {
                 Element claimedRoleEl = createChildFromXmlFragmentOrText(doc, input, "ClaimedRole", errorMessage, claimedRole);
@@ -915,7 +916,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
             Element identifier = createElement("Identifier", doc, input);
             sigPolicyId.appendChild(identifier);
             if (getSigPolicyId() == null || getSigPolicyId().isEmpty()) {
-                throw new XmlSignatureException("The XAdES-EPES confguration is invalid. The signature policy identifier is missing.");
+                throw new XmlSignatureException("The XAdES-EPES configuration is invalid. The signature policy identifier is missing.");
             }
             identifier.setTextContent(getSigPolicyId());
             if (getSigPolicyIdQualifier() != null && !getSigPolicyIdQualifier().isEmpty()) {
@@ -941,16 +942,16 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
             id.appendChild(sigPolicyHash);
             if (getSignaturePolicyDigestAlgorithm() == null || getSignaturePolicyDigestAlgorithm().isEmpty()) {
                 throw new XmlSignatureException(
-                        "The XAdES-EPES confguration is invalid. The digest algorithm for the signature policy is missing.");
+                        "The XAdES-EPES configuration is invalid. The digest algorithm for the signature policy is missing.");
             }
-            Element digestMethod = createDigSigElement("DigestMethod", doc, input.getPrefixForXmlSignatureNamespace());
+            Element digestMethod = createElementNS(doc, input, "DigestMethod");
             sigPolicyHash.appendChild(digestMethod);
             setAttribute(digestMethod, "Algorithm", getSignaturePolicyDigestAlgorithm());
             if (getSignaturePolicyDigestValue() == null || getSignaturePolicyDigestValue().isEmpty()) {
                 throw new XmlSignatureException(
-                        "The XAdES-EPES confguration is invalid. The digest value for the signature policy is missing.");
+                        "The XAdES-EPES configuration is invalid. The digest value for the signature policy is missing.");
             }
-            Element digestValue = createDigSigElement("DigestValue", doc, input.getPrefixForXmlSignatureNamespace());
+            Element digestValue = createElementNS(doc, input, "DigestValue");
             sigPolicyHash.appendChild(digestValue);
             digestValue.setTextContent(getSignaturePolicyDigestValue());
 
@@ -958,7 +959,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
             if (!qualifiers.isEmpty()) {
                 Element qualifiersEl = createElement("SigPolicyQualifiers", doc, input);
                 id.appendChild(qualifiersEl);
-                String errorMessage = "The XAdES confguration is invalid. The list of the signatue policy qualifiers contains the invalid entry '%s'."
+                String errorMessage = "The XAdES configuration is invalid. The list of the signatue policy qualifiers contains the invalid entry '%s'."
                         + " An entry must either be a text or an XML fragment with the root element '%s' with the namespace '%s'.";
                 for (String elementOrText : getSigPolicyQualifiers()) {
                     Element child = createChildFromXmlFragmentOrText(doc, input, "SigPolicyQualifier", errorMessage, elementOrText);
@@ -991,7 +992,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
                 if (!ns.equals(child.getNamespaceURI())) {
                     throw new XmlSignatureException(
                             String.format(
-                                    "The XAdES confguration is invalid. The root element '%s' of the provided XML fragment '%s' has the invalid namespace '%s'. The correct namespace is '%s'.",
+                                    "The XAdES configuration is invalid. The root element '%s' of the provided XML fragment '%s' has the invalid namespace '%s'. The correct namespace is '%s'.",
                                     child.getLocalName(), elementOrText, child.getNamespaceURI(), ns));
                 }
             } catch (SAXException e) {
@@ -1141,10 +1142,10 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         String digest = calculateDigest(algorithm, cert.getEncoded());
         Element certDigest = createElement("CertDigest", doc, input);
         elCert.appendChild(certDigest);
-        Element digestMethod = createDigSigElement("DigestMethod", doc, input.getPrefixForXmlSignatureNamespace());
+        Element digestMethod = createElementNS(doc, input, "DigestMethod");
         certDigest.appendChild(digestMethod);
         setAttribute(digestMethod, "Algorithm", getDigestAlgorithmForSigningCertificate());
-        Element digestValue = createDigSigElement("DigestValue", doc, input.getPrefixForXmlSignatureNamespace());
+        Element digestValue = createElementNS(doc, input, "DigestValue");
         certDigest.appendChild(digestValue);
         digestValue.setTextContent(digest);
 
@@ -1186,6 +1187,16 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         MessageDigest digest = MessageDigest.getInstance(algorithm);
         byte[] digestBytes = digest.digest(bytes);
         return new Base64().encodeAsString(digestBytes);
+    }
+
+    protected Element createElementNS(Document doc, Input input, String elementName) {
+        Element digestMethod;
+        if (HTTP_URI_ETSI_ORG_01903_V1_1_1.equals(findNamespace(input.getMessage()))) {
+            digestMethod = createElement(elementName, doc, input);
+        } else {
+            digestMethod = createDigSigElement(elementName, doc, input.getPrefixForXmlSignatureNamespace());
+        }
+        return digestMethod;
     }
 
     protected Element createDigSigElement(String localName, Document doc, String prefixForXmlSignatureNamespace) {

@@ -23,10 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
 
     private static AtomicBoolean check = new AtomicBoolean();
@@ -39,6 +37,7 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testCBR() throws Exception {
         check.set(false);
         check2.set(false);
@@ -56,6 +55,7 @@ public class CBRPredicateBeanThrowExceptionTest extends ContextTestSupport {
         assertTrue(check2.get());
     }
 
+    @Test
     public void testCBRKaboom() throws Exception {
         check.set(false);
         check2.set(false);

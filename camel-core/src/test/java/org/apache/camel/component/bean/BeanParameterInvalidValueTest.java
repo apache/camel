@@ -24,12 +24,14 @@ import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *
  */
 public class BeanParameterInvalidValueTest extends ContextTestSupport {
 
+    @Test
     public void testBeanParameterInvalidValueA() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
@@ -46,6 +48,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterInvalidValueB() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
@@ -62,6 +65,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterNullC() throws Exception {
         // should be an empty string
         getMockEndpoint("mock:result").expectedBodiesReceived("");
@@ -71,6 +75,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanParameterInvalidValueD() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

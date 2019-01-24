@@ -18,11 +18,9 @@ package org.apache.camel.spring.processor.onexception;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.onexception.OnExceptionFromChoiceUseOriginalBodyTest;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringOnExceptionFromChoiceUseOriginalBodyTest extends OnExceptionFromChoiceUseOriginalBodyTest {
 
     protected CamelContext createCamelContext() throws Exception {

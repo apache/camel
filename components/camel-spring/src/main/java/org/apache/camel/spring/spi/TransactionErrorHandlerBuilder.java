@@ -21,9 +21,9 @@ import java.util.Map;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
-import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +32,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * A transactional error handler that supports leveraging Spring TransactionManager.
- *
- * @version 
  */
 public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
@@ -99,7 +97,7 @@ public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
             }
 
             if (transactionTemplate != null) {
-                LOG.debug("Found TransactionTemplate in registry to use: " + transactionTemplate);
+                LOG.debug("Found TransactionTemplate in registry to use: {}", transactionTemplate);
             }
         }
 

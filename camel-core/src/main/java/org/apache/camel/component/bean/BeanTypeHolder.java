@@ -18,8 +18,6 @@ package org.apache.camel.component.bean;
 
 /**
  * Object holder for a bean type.
- *
- * @version 
  */
 public interface BeanTypeHolder extends BeanHolder {
 

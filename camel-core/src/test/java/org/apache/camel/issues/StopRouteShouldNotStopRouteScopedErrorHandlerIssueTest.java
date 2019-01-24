@@ -18,17 +18,19 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class StopRouteShouldNotStopRouteScopedErrorHandlerIssueTest extends ContextTestSupport {
 
+    @Test
     public void testIssue() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
         // stopping foo route, which should not stop context scoped error handler
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         template.sendBody("direct:start", "Hello World");
 

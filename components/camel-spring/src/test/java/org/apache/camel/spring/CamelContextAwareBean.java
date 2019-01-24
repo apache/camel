@@ -19,9 +19,6 @@ package org.apache.camel.spring;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 
-/**
- * @version 
- */
 public class CamelContextAwareBean implements CamelContextAware {
     private CamelContext camelContext;
 

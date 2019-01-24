@@ -19,25 +19,24 @@ package org.apache.camel.component.rabbitmq;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.Address;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
 
-public class RabbitMQComponent extends UriEndpointComponent {
+@Component("rabbitmq")
+public class RabbitMQComponent extends DefaultComponent {
 
     public static final String ARG_PREFIX = "arg.";
     public static final String EXCHANGE_ARG_PREFIX = "exchange.";
     public static final String QUEUE_ARG_PREFIX = "queue.";
     public static final String BINDING_ARG_PREFIX = "binding.";
-
-    private static final Logger LOG = LoggerFactory.getLogger(RabbitMQComponent.class);
 
     @Metadata(label = "common")
     private String hostname;
@@ -81,6 +80,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
     private String deadLetterQueue;
     @Metadata(label = "common", defaultValue = "direct", enums = "direct,fanout,headers,topic")
     private String deadLetterExchangeType = "direct";
+    @Metadata(label = "producer")
+    private boolean allowNullHeaders;
     @Metadata(label = "security")
     private String sslProtocol;
     @Metadata(label = "security")
@@ -137,11 +138,10 @@ public class RabbitMQComponent extends UriEndpointComponent {
     private Map<String, Object> clientProperties;
 
     public RabbitMQComponent() {
-        super(RabbitMQEndpoint.class);
     }
 
     public RabbitMQComponent(CamelContext context) {
-        super(context, RabbitMQEndpoint.class);
+        super(context);
     }
 
     @Override
@@ -154,7 +154,7 @@ public class RabbitMQComponent extends UriEndpointComponent {
         String exchangeName = remaining;
 
         if (remaining.contains(":") || remaining.contains("/")) {
-            LOG.warn("The old syntax rabbitmq://hostname:port/exchangeName is deprecated. You should configure the hostname on the component or ConnectionFactory");
+            log.warn("The old syntax rabbitmq://hostname:port/exchangeName is deprecated. You should configure the hostname on the component or ConnectionFactory");
             try {
                 URI u = new URI("http://" + remaining);
                 host = u.getHost();
@@ -182,7 +182,7 @@ public class RabbitMQComponent extends UriEndpointComponent {
                 if (name == null) {
                     name = "anonymous";
                 }
-                LOG.info("Auto-detected single instance: {} of type ConnectionFactory in Registry to be used as ConnectionFactory when creating endpoint: {}", name, uri);
+                log.info("Auto-detected single instance: {} of type ConnectionFactory in Registry to be used as ConnectionFactory when creating endpoint: {}", name, uri);
             }
         }
 
@@ -241,10 +241,11 @@ public class RabbitMQComponent extends UriEndpointComponent {
         endpoint.setDeadLetterExchangeType(getDeadLetterExchangeType());
         endpoint.setDeadLetterQueue(getDeadLetterQueue());
         endpoint.setDeadLetterRoutingKey(getDeadLetterRoutingKey());
+        endpoint.setAllowNullHeaders(isAllowNullHeaders());
         setProperties(endpoint, params);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
+        if (log.isDebugEnabled()) {
+            log.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
                     new Object[]{endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName()});
         }
 
@@ -256,12 +257,8 @@ public class RabbitMQComponent extends UriEndpointComponent {
         localArgs.putAll(IntrospectionSupport.extractProperties(params, ARG_PREFIX));
         endpoint.setArgs(localArgs);
 
-        Map<String, Object> argsCopy = new HashMap<>(localArgs);
-        
-        // Combine the three types of rabbit arguments with their individual endpoint properties
-        endpoint.getExchangeArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, EXCHANGE_ARG_PREFIX));
-        endpoint.getQueueArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, QUEUE_ARG_PREFIX));
-        endpoint.getBindingArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, BINDING_ARG_PREFIX));
+        // Change null headers processing for message converter
+        endpoint.getMessageConverter().setAllowNullHeaders(endpoint.isAllowNullHeaders());
 
         return endpoint;
     }
@@ -271,7 +268,7 @@ public class RabbitMQComponent extends UriEndpointComponent {
     }
 
     /**
-     * The hostname of the running rabbitmq instance or cluster.
+     * The hostname of the running RabbitMQ instance or cluster.
      */
     public void setHostname(String hostname) {
         this.hostname = hostname;
@@ -859,4 +856,14 @@ public class RabbitMQComponent extends UriEndpointComponent {
         this.deadLetterExchangeType = deadLetterExchangeType;
     }
 
+    /**
+     * Allow pass null values to header
+     */
+    public boolean isAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
+    }
 }

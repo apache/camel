@@ -26,9 +26,8 @@ import com.datastax.driver.core.querybuilder.Delete;
 import com.datastax.driver.core.querybuilder.Insert;
 import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.core.querybuilder.Truncate;
-
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,10 +45,8 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateTruncate;
  * Advice: use LeveledCompaction for this table and tune read/write consistency levels.
  * Warning: Cassandra is not the best tool for queuing use cases
  * See http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
- *
- * @param <K> Message Id
  */
-public class CassandraIdempotentRepository<K> extends ServiceSupport implements IdempotentRepository<K> {
+public class CassandraIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     /**
      * Logger
      */
@@ -65,7 +62,7 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
     /**
      * Values used as primary key prefix
      */
-    private Object[] prefixPKValues = new Object[0];
+    private String[] prefixPKValues = new String[0];
     /**
      * Primary key columns
      */
@@ -114,7 +111,7 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
         return row == null || row.getBool("[applied]");
     }
 
-    protected Object[] getPKValues(K key) {
+    protected Object[] getPKValues(String key) {
         return append(prefixPKValues, key);
     }
     // -------------------------------------------------------------------------
@@ -144,7 +141,7 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
     }
 
     @Override
-    public boolean add(K key) {
+    public boolean add(String key) {
         Object[] idValues = getPKValues(key);
         LOGGER.debug("Inserting key {}", (Object) idValues);
         return isApplied(getSession().execute(insertStatement.bind(idValues)));
@@ -161,14 +158,14 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
     }
 
     @Override
-    public boolean contains(K key) {
+    public boolean contains(String key) {
         Object[] idValues = getPKValues(key);
         LOGGER.debug("Checking key {}", (Object) idValues);
         return isKey(getSession().execute(selectStatement.bind(idValues)));
     }
 
     @Override
-    public boolean confirm(K key) {
+    public boolean confirm(String key) {
         return true;
     }
 
@@ -183,7 +180,7 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
     }
 
     @Override
-    public boolean remove(K key) {
+    public boolean remove(String key) {
         Object[] idValues = getPKValues(key);
         LOGGER.debug("Deleting key {}", (Object) idValues);
         return isApplied(getSession().execute(deleteStatement.bind(idValues)));
@@ -256,11 +253,11 @@ public class CassandraIdempotentRepository<K> extends ServiceSupport implements 
         this.readConsistencyLevel = readConsistencyLevel;
     }
 
-    public Object[] getPrefixPKValues() {
+    public String[] getPrefixPKValues() {
         return prefixPKValues;
     }
 
-    public void setPrefixPKValues(Object[] prefixPKValues) {
+    public void setPrefixPKValues(String[] prefixPKValues) {
         this.prefixPKValues = prefixPKValues;
     }
 

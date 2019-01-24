@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class SplitGroupMultiLinesTest extends ContextTestSupport {
 
+    @Test
     public void testSplitMultiLines() throws Exception {
         getMockEndpoint("mock:group").expectedBodiesReceived("ABC\nDEF\nGHI", "JKL\nMN");
 

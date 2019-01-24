@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.bean;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,10 +23,10 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanLifecycleTest extends ContextTestSupport {
 
     private MyBean statefulInstance;
@@ -35,7 +34,8 @@ public class BeanLifecycleTest extends ContextTestSupport {
     private MyBean statefulInstanceInRegistryNoCache;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         statefulInstance = new MyBean();
         statefulInstanceInRegistry = new MyBean();
         statefulInstanceInRegistryNoCache = new MyBean();
@@ -44,7 +44,8 @@ public class BeanLifecycleTest extends ContextTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
 
         assertEquals("stopped", statefulInstance.getStatus());
@@ -53,6 +54,7 @@ public class BeanLifecycleTest extends ContextTestSupport {
         assertEquals(2, MyStatefulBean.INSTANCES.get());
     }
 
+    @Test
     public void testBeanLifecycle() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

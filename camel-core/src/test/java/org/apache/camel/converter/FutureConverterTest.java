@@ -23,13 +23,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FutureConverterTest extends ContextTestSupport {
 
+    @Test
     public void testConvertFuture() {
         Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
 
@@ -37,6 +36,7 @@ public class FutureConverterTest extends ContextTestSupport {
         assertEquals("Bye World", out);
     }
 
+    @Test
     public void testConvertMandatoryFuture() throws Exception {
         Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
 
@@ -44,6 +44,7 @@ public class FutureConverterTest extends ContextTestSupport {
         assertEquals("Bye World", out);
     }
 
+    @Test
     public void testConvertMandatoryFutureWithExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
@@ -52,6 +53,7 @@ public class FutureConverterTest extends ContextTestSupport {
         assertEquals("Bye World", out);
     }
 
+    @Test
     public void testConvertMandatoryFutureWithExchangeFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
@@ -64,6 +66,7 @@ public class FutureConverterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testConvertFutureWithExchangeFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
@@ -72,6 +75,7 @@ public class FutureConverterTest extends ContextTestSupport {
         assertNull(out);
     }
 
+    @Test
     public void testConvertFutureCancelled() {
         Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
         future.cancel(true);
@@ -81,6 +85,7 @@ public class FutureConverterTest extends ContextTestSupport {
         assertNull(out);
     }
 
+    @Test
     public void testConvertFutureCancelledThenOkay() {
         Future<?> future = template.asyncRequestBody("direct:foo", "Hello World");
         future.cancel(true);

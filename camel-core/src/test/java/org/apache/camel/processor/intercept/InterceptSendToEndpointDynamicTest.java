@@ -15,22 +15,22 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.intercept;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for intercepting sending to endpoint with dynamic endpoints
  * and uri matching
- *
- * @version 
  */
 public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/foo");
         deleteDirectory("target/bar");
         deleteDirectory("target/cheese");
@@ -42,6 +42,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testSendToWildcard() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -70,6 +71,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendToWildcardHeaderUri() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -93,6 +95,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendToRegex() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -121,6 +124,7 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendToDynamicEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

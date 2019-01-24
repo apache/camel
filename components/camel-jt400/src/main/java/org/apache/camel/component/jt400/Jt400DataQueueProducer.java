@@ -21,7 +21,7 @@ import com.ibm.as400.access.DataQueue;
 import com.ibm.as400.access.KeyedDataQueue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 /**
  * {@link Producer} to send data to an AS/400 data queue.

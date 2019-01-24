@@ -25,6 +25,7 @@ import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.core.osgi.OsgiDefaultCamelContext;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RoutesDefinition;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -65,8 +66,8 @@ public abstract class KuraRouter extends RouteBuilder implements BundleActivator
                 Object routePropertyValue = camelKuraConfig.getProperties().get(camelXmlRoutesProperty());
                 if (routePropertyValue != null) {
                     InputStream routesXml = new ByteArrayInputStream(routePropertyValue.toString().getBytes());
-                    RoutesDefinition loadedRoutes = camelContext.loadRoutesDefinition(routesXml);
-                    camelContext.addRouteDefinitions(loadedRoutes.getRoutes());
+                    RoutesDefinition loadedRoutes = camelContext.adapt(ModelCamelContext.class).loadRoutesDefinition(routesXml);
+                    camelContext.adapt(ModelCamelContext.class).addRouteDefinitions(loadedRoutes.getRoutes());
                 }
             }
 

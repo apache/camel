@@ -22,12 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestletHeaderFilterStrategyTest extends RestletTestSupport {
 
     private static final String HEADER_FILTER = "filter";

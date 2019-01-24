@@ -50,7 +50,9 @@ public final class HBaseHelper {
     }
 
     public static byte[] toBytes(Object obj) {
-        if (obj instanceof byte[]) {
+        if (obj instanceof String) {
+            return Bytes.toBytes((String) obj);
+        } else if (obj instanceof byte[]) {
             return (byte[]) obj;
         } else if (obj instanceof Byte) {
             return Bytes.toBytes((Byte) obj);
@@ -62,8 +64,6 @@ public final class HBaseHelper {
             return Bytes.toBytes((Long) obj);
         } else if (obj instanceof Double) {
             return Bytes.toBytes((Double) obj);
-        } else if (obj instanceof String) {
-            return Bytes.toBytes((String) obj);
         } else {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = null;

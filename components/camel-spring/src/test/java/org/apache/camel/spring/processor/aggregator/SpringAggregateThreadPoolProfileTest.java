@@ -21,9 +21,6 @@ import org.apache.camel.processor.aggregator.AggregateThreadPoolProfileTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringAggregateThreadPoolProfileTest extends AggregateThreadPoolProfileTest {
 
     protected CamelContext createCamelContext() throws Exception {

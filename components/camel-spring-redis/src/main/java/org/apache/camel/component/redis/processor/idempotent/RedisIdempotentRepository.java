@@ -21,12 +21,12 @@ import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.redis.RedisConfiguration;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 
 @ManagedResource(description = "Spring Redis based message id repository")
-public class RedisIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
+public class RedisIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     private final SetOperations<String, String> setOperations;
     private final String processorName;
     private RedisConfiguration redisConfiguration;

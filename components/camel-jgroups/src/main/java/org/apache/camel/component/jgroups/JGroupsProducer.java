@@ -17,7 +17,7 @@
 package org.apache.camel.component.jgroups;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.Message;

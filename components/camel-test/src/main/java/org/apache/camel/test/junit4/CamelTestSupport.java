@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -51,6 +52,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.Message;
+import org.apache.camel.NamedNode;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -73,9 +75,13 @@ import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.Language;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -181,7 +187,7 @@ public abstract class CamelTestSupport extends TestSupport {
      * <p/>
      * Return <tt>*</tt> to mock all endpoints.
      *
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
+     * @see EndpointHelper#matchEndpoint(CamelContext, String, String)
      */
     public String isMockEndpoints() {
         return null;
@@ -193,7 +199,7 @@ public abstract class CamelTestSupport extends TestSupport {
      * <p/>
      * Return <tt>*</tt> to mock all endpoints.
      *
-     * @see org.apache.camel.util.EndpointHelper#matchEndpoint(String, String)
+     * @see EndpointHelper#matchEndpoint(CamelContext, String, String)
      */
     public String isMockEndpointsAndSkip() {
         return null;
@@ -401,7 +407,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
     private void replaceFromEndpoints() throws Exception {
         for (final Map.Entry<String, String> entry : fromEndpoints.entrySet()) {
-            context.getRouteDefinition(entry.getKey()).adviceWith(context, new AdviceWithRouteBuilder() {
+            RouteReifier.adviceWith(context.getRouteDefinition(entry.getKey()), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     replaceFromWith(entry.getValue());
@@ -428,7 +434,7 @@ public abstract class CamelTestSupport extends TestSupport {
             String dir = "target/camel-route-coverage";
             String name = className + "-" + getTestMethodName() + ".xml";
 
-            ManagedCamelContextMBean managedCamelContext = context != null ? context.getManagedCamelContext() : null;
+            ManagedCamelContextMBean managedCamelContext = context != null ? context.getExtension(ManagedCamelContext.class).getManagedCamelContext() : null;
             if (managedCamelContext == null) {
                 log.warn("Cannot dump route coverage to file as JMX is not enabled. Override useJmx() method to enable JMX in the unit test classes.");
             } else {
@@ -524,7 +530,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
         // log processor coverage for each route
         for (Route route : context.getRoutes()) {
-            ManagedRouteMBean managedRoute = context.getManagedRoute(route.getId(), ManagedRouteMBean.class);
+            ManagedRouteMBean managedRoute = context.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId());
             if (managedRoute.getExchangesTotal() == 0) {
                 uncoveredRoutes.add(route.getId());
             }
@@ -576,7 +582,7 @@ public abstract class CamelTestSupport extends TestSupport {
             String name = objectName.getKeyProperty("name");
             name = ObjectName.unquote(name);
 
-            ManagedProcessorMBean managedProcessor = context.getManagedProcessor(name, ManagedProcessorMBean.class);
+            ManagedProcessorMBean managedProcessor = context.getExtension(ManagedCamelContext.class).getManagedProcessor(name);
 
             if (managedProcessor != null) {
                 if (processorsForRoute.get(routeId) == null) {
@@ -764,10 +770,8 @@ public abstract class CamelTestSupport extends TestSupport {
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(createRegistry());
-        context.setLazyLoadTypeConverters(isLazyLoadingTypeConverter());
         return context;
     }
 
@@ -784,7 +788,7 @@ public abstract class CamelTestSupport extends TestSupport {
             log.debug("Using jndi.properties from classpath root");
             properties.load(in);
         } else {
-            properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
+            properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
         }
         return new InitialContext(new Hashtable<>(properties));
     }
@@ -1022,13 +1026,13 @@ public abstract class CamelTestSupport extends TestSupport {
     private class DebugBreakpoint extends BreakpointSupport {
 
         @Override
-        public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
-            CamelTestSupport.this.debugBefore(exchange, processor, definition, definition.getId(), definition.getLabel());
+        public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
+            CamelTestSupport.this.debugBefore(exchange, processor, (ProcessorDefinition) definition, definition.getId(), definition.getLabel());
         }
 
         @Override
-        public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
-            CamelTestSupport.this.debugAfter(exchange, processor, definition, definition.getId(), definition.getLabel(), timeTaken);
+        public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
+            CamelTestSupport.this.debugAfter(exchange, processor, (ProcessorDefinition) definition, definition.getId(), definition.getLabel(), timeTaken);
         }
     }
 

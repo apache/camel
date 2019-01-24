@@ -19,8 +19,10 @@ package org.apache.camel.component.openstack.neutron;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
+@Component("openstack-neutron")
 public class NeutronComponent extends DefaultComponent {
 
     @Override

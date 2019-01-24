@@ -26,12 +26,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
@@ -393,7 +394,7 @@ public class ReactorStreamsServiceTest extends ReactorStreamsServiceTestSupport 
     // misc
     // ************************************************
 
-    @Test(expected = IllegalStateException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void testOnlyOneCamelProducerPerPublisher() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

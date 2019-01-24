@@ -38,8 +38,6 @@ import static org.junit.Assert.fail;
 
 /**
  * Unit test to verify that splitRows=true option works with XML Conversion.
- *
- * @version
  */
 @ContextConfiguration
 public class XMLSplitRowsTest extends AbstractJUnit4SpringContextTests {

@@ -18,6 +18,7 @@
 package org.apache.camel.component.cxf.blueprint;
 
 import java.util.StringTokenizer;
+
 import org.w3c.dom.Element;
 
 import org.apache.aries.blueprint.ParserContext;

@@ -18,12 +18,11 @@ package org.apache.camel.component.disruptor.vm;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
+import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorVmInOnlyTest extends AbstractVmTestSupport {
 
+    @Test
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 

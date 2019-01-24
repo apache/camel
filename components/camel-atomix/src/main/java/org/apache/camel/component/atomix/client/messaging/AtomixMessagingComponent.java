@@ -21,12 +21,13 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientComponent;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("atomix-messaging")
 public final class AtomixMessagingComponent extends AbstractAtomixClientComponent<AtomixMessagingConfiguration> {
     private AtomixMessagingConfiguration configuration = new AtomixMessagingConfiguration();
 
     public AtomixMessagingComponent() {
-        super();
     }
 
     public AtomixMessagingComponent(CamelContext camelContext) {

@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for fired time exchange property
  */
 public class TimerRepeatCountTest extends ContextTestSupport {
 
+    @Test
     public void testRepeatCount() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
@@ -36,7 +38,7 @@ public class TimerRepeatCountTest extends ContextTestSupport {
 
         // we should only get 3 messages as we have a repeat count limit at 3
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }

@@ -19,7 +19,7 @@ package org.apache.camel.component.metrics.messagehistory;
 import com.codahale.metrics.Timer;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
-import org.apache.camel.impl.DefaultMessageHistory;
+import org.apache.camel.support.DefaultMessageHistory;
 
 /**
  * A codahale metrics based {@link MessageHistory}

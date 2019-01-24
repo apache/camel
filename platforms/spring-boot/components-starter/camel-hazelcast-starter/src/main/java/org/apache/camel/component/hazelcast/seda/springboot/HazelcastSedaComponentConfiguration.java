@@ -17,10 +17,8 @@
 package org.apache.camel.component.hazelcast.seda.springboot;
 
 import javax.annotation.Generated;
-import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The hazelcast-seda component is used to access Hazelcast BlockingQueue.
@@ -34,12 +32,17 @@ public class HazelcastSedaComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the hazelcast-seda component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The hazelcast instance reference which can be used for hazelcast
      * endpoint. If you don't specify the instance reference, camel use the
-     * default hazelcast instance from the camel-hazelcast instance.
+     * default hazelcast instance from the camel-hazelcast instance. The option
+     * is a com.hazelcast.core.HazelcastInstance type.
      */
-    @NestedConfigurationProperty
-    private HazelcastInstance hazelcastInstance;
+    private String hazelcastInstance;
     /**
      * The hazelcast mode reference which kind of instance should be used. If
      * you don't specify the mode, then the node mode will be the default.
@@ -52,11 +55,11 @@ public class HazelcastSedaComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public HazelcastInstance getHazelcastInstance() {
+    public String getHazelcastInstance() {
         return hazelcastInstance;
     }
 
-    public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
+    public void setHazelcastInstance(String hazelcastInstance) {
         this.hazelcastInstance = hazelcastInstance;
     }
 

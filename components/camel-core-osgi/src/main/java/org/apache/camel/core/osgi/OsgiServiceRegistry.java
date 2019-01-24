@@ -19,17 +19,19 @@ package org.apache.camel.core.osgi;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Service;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,13 +39,14 @@ import org.slf4j.LoggerFactory;
 /**
  * The OsgiServiceRegistry support to get the service object from the bundle context
  */
-public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry {
-    private static final Logger LOG = LoggerFactory.getLogger(OsgiCamelContextHelper.class);
+public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry, Service, ServiceListener {
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiServiceRegistry.class);
     private final BundleContext bundleContext;
-    private final Queue<ServiceReference<?>> serviceReferenceQueue = new ConcurrentLinkedQueue<>();
+    private final Map<ServiceReference<?>, AtomicLong> serviceReferenceUsageMap = new ConcurrentHashMap<>();
     
     public OsgiServiceRegistry(BundleContext bc) {
         bundleContext = bc;
+        bundleContext.addServiceListener(this);
     }
 
     /**
@@ -51,17 +54,17 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
      */
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         Object service = null;
-        ServiceReference<?> sr  = null;
+        ServiceReference<?> sr;
         try {
             ServiceReference<?>[] refs = bundleContext.getServiceReferences(type.getName(), "(name=" + name + ")");            
             if (refs != null && refs.length > 0) {
                 // just return the first one
                 sr = refs[0];
-                serviceReferenceQueue.add(sr);
+                incrementServiceUsage(sr);
                 service = bundleContext.getService(sr);
             }
         } catch (Exception ex) {
-            throw ObjectHelper.wrapRuntimeCamelException(ex);
+            throw RuntimeCamelException.wrapRuntimeCamelException(ex);
         }
         return type.cast(service);
     }
@@ -83,14 +86,12 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                 }
             } catch (InvalidSyntaxException ex) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Invalid OSGi service reference filter, skipped lookup by service.pid. Filter expression: " + filterExpression, ex);
+                    LOG.debug("Invalid OSGi service reference filter, skipped lookup by service.pid. Filter expression: {}", filterExpression, ex);
                 }
             }
         }
         if (sr != null) {
-            // Need to keep the track of Service
-            // and call ungetService when the camel context is closed 
-            serviceReferenceQueue.add(sr);
+            incrementServiceUsage(sr);
             service = bundleContext.getService(sr);
         }
         return service;
@@ -105,7 +106,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                 for (ServiceReference<?> sr : refs) {
                     if (sr != null) {
                         Object service = bundleContext.getService(sr);
-                        serviceReferenceQueue.add(sr);
+                        incrementServiceUsage(sr);
                         if (service != null) {
                             String name = (String)sr.getProperty("name");
                             if (name != null) {
@@ -120,7 +121,7 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
                 }
             }
         } catch (Exception ex) {
-            throw ObjectHelper.wrapRuntimeCamelException(ex);
+            throw RuntimeCamelException.wrapRuntimeCamelException(ex);
         }
         return result;
     }
@@ -130,28 +131,46 @@ public class OsgiServiceRegistry extends LifecycleStrategySupport implements Reg
         return new HashSet<>(map.values());
     }
 
-    public Object lookup(String name) {
-        return lookupByName(name);
-    }
-
-    public <T> T lookup(String name, Class<T> type) {
-        return lookupByNameAndType(name, type);
-    }
-
-    public <T> Map<String, T> lookupByType(Class<T> type) {
-        return findByTypeWithName(type);
+    @Override
+    public void start() throws Exception {
+        // noop
     }
 
     @Override
-    public void onContextStop(CamelContext context) {
-        // Unget the OSGi service
-        ServiceReference<?> sr = serviceReferenceQueue.poll();
-        while (sr != null) {
-            bundleContext.ungetService(sr);
-            sr = serviceReferenceQueue.poll();
-        }
-        // Clean up the OSGi Service Cache
-        serviceReferenceQueue.clear();
+    public void stop() throws Exception {
+        // Unget the OSGi service as OSGi uses reference counting
+        // and we should do this as one of the last actions when stopping Camel
+        this.serviceReferenceUsageMap.forEach(this::drainServiceUsage);
+        this.serviceReferenceUsageMap.clear();
     }
 
+    private void drainServiceUsage(ServiceReference<?> serviceReference, AtomicLong serviceUsageCount) {
+        if (serviceUsageCount != null && serviceReference != null) {
+            while (serviceUsageCount.decrementAndGet() >= 0) {
+                this.bundleContext.ungetService(serviceReference);
+            }
+        }
+    }
+
+    private void incrementServiceUsage(ServiceReference<?> sr) {
+        AtomicLong serviceUsageCount = this.serviceReferenceUsageMap.get(sr);
+        if (serviceUsageCount != null) {
+            serviceUsageCount.incrementAndGet();
+        } else {
+            this.serviceReferenceUsageMap.merge(sr, new AtomicLong(1),
+                (existingServiceUsageCount, newServiceUsageCount) -> {
+                    existingServiceUsageCount.getAndAdd(newServiceUsageCount.get());
+                    return existingServiceUsageCount;
+                });
+        }
+    }
+
+    @Override
+    public void serviceChanged(ServiceEvent event) {
+        if (event.getType() == ServiceEvent.UNREGISTERING) {
+            ServiceReference<?> serviceReference = event.getServiceReference();
+            AtomicLong serviceUsageCount = this.serviceReferenceUsageMap.remove(serviceReference);
+            drainServiceUsage(serviceReference, serviceUsageCount);
+        }
+    }
 }

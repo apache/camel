@@ -34,7 +34,7 @@ import org.apache.camel.component.kubernetes.KubernetesHelper;
 import org.apache.camel.component.kubernetes.cluster.lock.KubernetesClusterEvent;
 import org.apache.camel.component.kubernetes.cluster.lock.KubernetesLeadershipController;
 import org.apache.camel.component.kubernetes.cluster.lock.KubernetesLockConfiguration;
-import org.apache.camel.impl.cluster.AbstractCamelClusterView;
+import org.apache.camel.support.cluster.AbstractCamelClusterView;
 import org.apache.camel.util.ObjectHelper;
 
 /**

@@ -19,26 +19,23 @@ package org.apache.camel.processor;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.EmptyProducerCache;
-import org.apache.camel.impl.ProducerCache;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -47,12 +44,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * href="http://camel.apache.org/recipient-list.html">Recipient List</a>
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on some dynamic expression.
- *
- * @version 
  */
-public class RecipientList extends ServiceSupport implements AsyncProcessor, IdAware {
+public class RecipientList extends AsyncProcessorSupport implements IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RecipientList.class);
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
     private String id;
@@ -81,7 +75,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     public RecipientList(CamelContext camelContext, String delimiter) {
         notNull(camelContext, "camelContext");
-        ObjectHelper.notEmpty(delimiter, "delimiter");
+        StringHelper.notEmpty(delimiter, "delimiter");
         this.camelContext = camelContext;
         this.delimiter = delimiter;
     }
@@ -93,8 +87,8 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     public RecipientList(CamelContext camelContext, Expression expression, String delimiter) {
         notNull(camelContext, "camelContext");
-        ObjectHelper.notNull(expression, "expression");
-        ObjectHelper.notEmpty(delimiter, "delimiter");
+        org.apache.camel.util.ObjectHelper.notNull(expression, "expression");
+        StringHelper.notEmpty(delimiter, "delimiter");
         this.camelContext = camelContext;
         this.expression = expression;
         this.delimiter = delimiter;
@@ -111,10 +105,6 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -136,7 +126,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
      * Sends the given exchange to the recipient list
      */
     public boolean sendToRecipientList(Exchange exchange, Object recipientList, AsyncCallback callback) {
-        Iterator<Object> iter;
+        Iterator<?> iter;
 
         if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
             iter = ObjectHelper.createIterator(recipientList, null);
@@ -186,22 +176,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            if (cacheSize < 0) {
-                producerCache = new EmptyProducerCache(this, camelContext);
-                LOG.debug("RecipientList {} is not using ProducerCache", this);
-            } else if (cacheSize == 0) {
-                producerCache = new ProducerCache(this, camelContext);
-                LOG.debug("RecipientList {} using ProducerCache with default cache size", this);
-            } else {
-                producerCache = new ProducerCache(this, camelContext, cacheSize);
-                LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, cacheSize);
-            }
+            producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
+            log.debug("RecipientList {} using ProducerCache with cacheSize={}", this, producerCache.getCapacity());
         }
-        ServiceHelper.startServices(aggregationStrategy, producerCache);
+        ServiceHelper.startService(aggregationStrategy, producerCache);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(producerCache, aggregationStrategy);
+        ServiceHelper.stopService(producerCache, aggregationStrategy);
     }
 
     protected void doShutdown() throws Exception {

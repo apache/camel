@@ -18,7 +18,7 @@ package org.apache.camel.component.xchange;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.xchange.XChangeConfiguration.XChangeMethod;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 public class XChangeAccountProducer extends DefaultProducer {
     

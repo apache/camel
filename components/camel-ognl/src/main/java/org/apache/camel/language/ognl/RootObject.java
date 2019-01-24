@@ -22,9 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
-/**
- * @version 
- */
 public class RootObject {
     private final Exchange exchange;
 

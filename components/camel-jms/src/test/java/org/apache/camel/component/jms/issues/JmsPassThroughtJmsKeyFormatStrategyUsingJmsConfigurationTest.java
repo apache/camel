@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.issues;
 
 import java.util.Map;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -28,14 +29,10 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.PassThroughJmsKeyFormatStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extends CamelTestSupport {
 
     private String uri = "activemq:queue:hello";

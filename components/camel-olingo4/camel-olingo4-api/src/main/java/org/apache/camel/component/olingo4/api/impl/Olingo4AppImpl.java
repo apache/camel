@@ -194,7 +194,7 @@ public final class Olingo4AppImpl implements Olingo4App {
     @Override
     public void setServiceUri(String serviceUri) {
         if (serviceUri == null || serviceUri.isEmpty()) {
-            throw new IllegalArgumentException("serviceUri");
+            throw new IllegalArgumentException("serviceUri is not set");
         }
         this.serviceUri = serviceUri.endsWith(SEPARATOR) ? serviceUri.substring(0, serviceUri.length() - 1) : serviceUri;
     }
@@ -778,7 +778,7 @@ public final class Olingo4AppImpl implements Olingo4App {
 
         final StringBuilder absolutUri = new StringBuilder(resourceUri).append(SEPARATOR).append(resourcePath);
         if (queryOptions != null && !queryOptions.isEmpty()) {
-            absolutUri.append("/?" + queryOptions);
+            absolutUri.append("?" + queryOptions);
         }
         return absolutUri.toString();
 

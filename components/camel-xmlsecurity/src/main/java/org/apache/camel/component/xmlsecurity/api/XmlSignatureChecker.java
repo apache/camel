@@ -41,7 +41,6 @@ import org.apache.camel.Message;
  * You can get the total and current count of the XML signatures via the methods
  * {@link Input#getTotalCountOfSignatures()} and
  * {@link Input#getCurrentCountOfSignatures()}.
- * 
  */
 public interface XmlSignatureChecker {
 

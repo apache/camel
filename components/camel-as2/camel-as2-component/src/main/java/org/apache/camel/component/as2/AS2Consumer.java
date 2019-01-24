@@ -21,15 +21,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.internal.AS2ApiName;
-import org.apache.camel.util.component.AbstractApiConsumer;
-import org.apache.camel.util.component.ApiConsumerHelper;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodHelper;
+import org.apache.camel.support.component.AbstractApiConsumer;
+import org.apache.camel.support.component.ApiConsumerHelper;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodHelper;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -98,19 +99,32 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
     @Override
     public void handle(HttpRequest request, HttpResponse response, HttpContext context)
             throws HttpException, IOException {
+        Exception exception = null;
         try {
             if (request instanceof HttpEntityEnclosingRequest) {
                 EntityParser.parseAS2MessageEntity(request);
                 // TODO derive last to parameters from configuration.
                 apiProxy.handleMDNResponse((HttpEntityEnclosingRequest)request, response, context, "MDN Response", "Camel AS2 Server Endpoint");
             }
-            // Convert HTTP context to exchange and process
-            log.debug("Processed {} event for {}", ApiConsumerHelper.getResultsProcessed(this, context, false),
-                    as2ServerConnection);
-        } catch (Exception e) {
-            log.info("Received exception consuming AS2 message: ", e);
-        }
+            
+            Exchange exchange = getEndpoint().createExchange();
+            exchange.getIn().setBody(context);
 
+            try {
+                // send message to next processor in the route
+                getProcessor().process(exchange);
+            } finally {
+                // check if an exception occurred and was not handled
+                exception = exchange.getException();
+            }
+        } catch (Exception e) {
+            log.info("Failed to process AS2 message", e);
+            exception = e;
+        }
+        
+        if (exception != null) {
+            throw new HttpException("Failed to process AS2 message: " + exception.getMessage(), exception);
+        }
     }
 
 }

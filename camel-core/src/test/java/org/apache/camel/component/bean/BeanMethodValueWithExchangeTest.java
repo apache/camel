@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *
  */
 public class BeanMethodValueWithExchangeTest extends ContextTestSupport {
 
+    @Test
     public void testExchangeFoo() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -34,6 +36,7 @@ public class BeanMethodValueWithExchangeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testExchangeBar() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

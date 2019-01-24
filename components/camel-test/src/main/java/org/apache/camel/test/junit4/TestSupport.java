@@ -22,22 +22,19 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.util.PredicateAssertHelper;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.PredicateAssertHelper;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -46,8 +43,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A bunch of useful testing methods
- *
- * @version 
  */
 public abstract class TestSupport extends Assert {
 
@@ -97,47 +92,6 @@ public abstract class TestSupport extends Assert {
      */
     public static <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
-    }
-
-    /**
-     * Returns a predicate and value builder for the outbound body on an
-     * exchange
-     *
-     * @deprecated use {@link #body()}
-     */
-    @Deprecated
-    public static ValueBuilder outBody() {
-        return Builder.outBody();
-    }
-
-    /**
-     * Returns a predicate and value builder for the outbound message body as a
-     * specific type
-     *
-     * @deprecated use {@link #bodyAs(Class)}
-     */
-    @Deprecated
-    public static <T> ValueBuilder outBodyAs(Class<T> type) {
-        return Builder.outBodyAs(type);
-    }
-
-    /**
-     * Returns a predicate and value builder for the fault body on an
-     * exchange
-     */
-    public static ValueBuilder faultBody() {
-        return Builder.faultBody();
-    }
-
-    /**
-     * Returns a predicate and value builder for the fault message body as a
-     * specific type
-     *
-     * @deprecated use {@link #bodyAs(Class)}
-     */
-    @Deprecated
-    public static <T> ValueBuilder faultBodyAs(Class<T> type) {
-        return Builder.faultBodyAs(type);
     }
 
     /**
@@ -376,40 +330,6 @@ public abstract class TestSupport extends Assert {
     public static void assertStringContains(String text, String containedText) {
         assertNotNull("Text should not be null!", text);
         assertTrue("Text: " + text + " does not contain: " + containedText, text.contains(containedText));
-    }
-
-    /**
-     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects
-     * this call will drill through them and return the wrapped Processor.
-     */
-    @Deprecated
-    public static Processor unwrap(Processor processor) {
-        while (true) {
-            if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor)processor).getProcessor();
-            } else {
-                return processor;
-            }
-        }
-    }
-
-    /**
-     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects
-     * this call will drill through them and return the Channel.
-     * <p/>
-     * Returns null if no channel is found.
-     */
-    @Deprecated
-    public static Channel unwrapChannel(Processor processor) {
-        while (true) {
-            if (processor instanceof Channel) {
-                return (Channel) processor;
-            } else if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor)processor).getProcessor();
-            } else {
-                return null;
-            }
-        }
     }
 
     /**

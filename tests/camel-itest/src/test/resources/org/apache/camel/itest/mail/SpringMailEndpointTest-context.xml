@@ -48,7 +48,7 @@
         <template id="camelTemplate"/>
 
         <route>
-            <from ref="myMailEndpoint"/>
+            <from uri="ref:myMailEndpoint"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

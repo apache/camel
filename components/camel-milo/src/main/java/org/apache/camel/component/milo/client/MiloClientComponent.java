@@ -22,13 +22,11 @@ import java.util.Map;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
+@Component("milo-client")
 public class MiloClientComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MiloClientComponent.class);
 
     private final Map<String, MiloClientConnection> cache = new HashMap<>();
     private final Multimap<String, MiloClientEndpoint> connectionMap = HashMultimap.create();
@@ -52,7 +50,7 @@ public class MiloClientComponent extends DefaultComponent {
         MiloClientConnection connection = this.cache.get(cacheId);
 
         if (connection == null) {
-            LOG.info("Cache miss - creating new connection instance: {}", cacheId);
+            log.info("Cache miss - creating new connection instance: {}", cacheId);
 
             connection = new MiloClientConnection(configuration);
             this.cache.put(cacheId, connection);
@@ -127,7 +125,7 @@ public class MiloClientComponent extends DefaultComponent {
             try {
                 connection.close();
             } catch (final Exception e) {
-                LOG.warn("Failed to close connection", e);
+                log.warn("Failed to close connection", e);
             }
         }
     }

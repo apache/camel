@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.ManagementNameStrategy;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Default implementation of {@link ManagementNameStrategy}
@@ -110,8 +110,8 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
      * @throws IllegalArgumentException if the pattern or name is invalid or empty
      */
     public String resolveManagementName(String pattern, String name, boolean invalidCheck) {
-        ObjectHelper.notEmpty(pattern, "pattern");
-        ObjectHelper.notEmpty(name, "name");
+        StringHelper.notEmpty(pattern, "pattern");
+        StringHelper.notEmpty(name, "name");
 
         // must quote the names to have it work as literal replacement
         name = Matcher.quoteReplacement(name);

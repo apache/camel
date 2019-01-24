@@ -23,7 +23,7 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-spring-security</artifactId>
@@ -36,7 +36,6 @@
     <firstVersion>2.3.0</firstVersion>
     <label>security,spring</label>
 
-    <camel.osgi.export.pkg>org.apache.camel.component.spring.security.*</camel.osgi.export.pkg>
     <camel.osgi.import.before.defaults>org.springframework.security.*;version="[4,5)"</camel.osgi.import.before.defaults>
   </properties>
 

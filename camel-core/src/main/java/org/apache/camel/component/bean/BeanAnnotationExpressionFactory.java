@@ -23,11 +23,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.language.bean.BeanExpression;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
-/**
- * @version 
- */
 public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpressionFactory {
 
     @Override
@@ -36,10 +34,10 @@ public class BeanAnnotationExpressionFactory extends DefaultAnnotationExpression
         String method = getFromAnnotation(annotation, "method");
 
         // ref is mandatory
-        ObjectHelper.notEmpty(beanName, "ref", annotation);
+        StringHelper.notEmpty(beanName, "ref", annotation);
 
         // method is optional but provide it as null to the bean expression
-        if (ObjectHelper.isEmpty(method)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(method)) {
             method = null;
         }
 

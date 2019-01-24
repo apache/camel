@@ -158,7 +158,7 @@ public class Web3jProducerTest extends Web3jMockTestSupport {
 
     @Test
     public void netPeerCountTest() throws Exception {
-        BigInteger peerCount = BigInteger.valueOf(1L);
+        BigInteger peerCount = BigInteger.ONE;
         NetPeerCount response = Mockito.mock(NetPeerCount.class);
         Mockito.when(mockWeb3j.netPeerCount()).thenReturn(request);
         Mockito.when(request.send()).thenReturn(response);

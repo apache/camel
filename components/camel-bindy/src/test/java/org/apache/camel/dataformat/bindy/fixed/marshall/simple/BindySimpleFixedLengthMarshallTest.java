@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -35,7 +34,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.processor.interceptor.Tracer;
+
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -96,12 +95,6 @@ public class BindySimpleFixedLengthMarshallTest extends AbstractJUnit4SpringCont
 
     public static class ContextConfig extends RouteBuilder {
         public void configure() {
-
-            Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.ERROR);
-            tracer.setLogName("org.apache.camel.bindy");
-
-            getContext().addInterceptStrategy(tracer);
 
             // default should errors go to mock:error
             errorHandler(deadLetterChannel(URI_MOCK_ERROR).redeliveryDelay(0));

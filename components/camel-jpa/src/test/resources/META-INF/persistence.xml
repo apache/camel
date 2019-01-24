@@ -77,20 +77,6 @@
   </persistence-unit>
   <!-- END SNIPPET: e1 -->
 
-  <!-- START SNIPPET: e2 -->
-  <persistence-unit name="trace" transaction-type="RESOURCE_LOCAL">
-    <class>org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage</class>
-
-    <properties>
-      <property name="openjpa.ConnectionURL" value="jdbc:derby:target/trace;create=true"/>
-      <property name="openjpa.ConnectionDriverName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
-      <property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema"/>
-      <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
-      <property name="openjpa.Multithreaded" value="true"/>
-    </properties>
-  </persistence-unit>
-  <!-- END SNIPPET: e2 -->
-
   <persistence-unit name="skipLockedEntiy" transaction-type="RESOURCE_LOCAL">
   	<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
     <class>org.apache.camel.examples.VersionedItem</class>

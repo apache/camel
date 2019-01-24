@@ -26,7 +26,7 @@ import mousio.etcd4j.requests.EtcdKeyPutRequest;
 import mousio.etcd4j.requests.EtcdRequest;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public class EtcdKeysProducer extends AbstractEtcdProducer {
     private final EtcdConfiguration configuration;
@@ -45,8 +45,8 @@ public class EtcdKeysProducer extends AbstractEtcdProducer {
             path = getPath();
         }
 
-        ObjectHelper.notEmpty(path, EtcdConstants.ETCD_PATH);
-        ObjectHelper.notEmpty(action, EtcdConstants.ETCD_ACTION);
+        StringHelper.notEmpty(path, EtcdConstants.ETCD_PATH);
+        StringHelper.notEmpty(action, EtcdConstants.ETCD_ACTION);
 
         switch(action) {
         case EtcdConstants.ETCD_KEYS_ACTION_SET:

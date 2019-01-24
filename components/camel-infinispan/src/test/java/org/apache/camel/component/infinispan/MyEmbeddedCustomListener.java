@@ -20,6 +20,7 @@ import org.apache.camel.component.infinispan.embedded.InfinispanEmbeddedCustomLi
 import org.infinispan.notifications.Listener;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated;
 import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
+
 import static org.junit.Assert.assertEquals;
 
 @Listener(sync = true)

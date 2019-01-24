@@ -35,13 +35,13 @@
 
         <route>
             <from uri="direct:in"/>
-            <marshal ref="xstream-default"/>
+            <marshal><custom ref="xstream-default"/></marshal>
             <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:in-UTF-8"/>
-            <marshal ref="xstream-utf8"/>
+            <marshal><custom ref="xstream-utf8"/></marshal>
             <to uri="mock:result"/>
         </route>
 

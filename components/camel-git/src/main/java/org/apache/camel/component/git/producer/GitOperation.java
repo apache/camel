@@ -19,6 +19,7 @@ package org.apache.camel.component.git.producer;
 public interface GitOperation {
 
     String CLONE_OPERATION = "clone";
+    String CHECKOUT_OPERATION = "checkout";
     String INIT_OPERATION = "init";
     String ADD_OPERATION = "add";
     String REMOVE_OPERATION = "remove";
@@ -31,6 +32,7 @@ public interface GitOperation {
     String STATUS_OPERATION = "status";
     String LOG_OPERATION = "log";
     String PUSH_OPERATION = "push";
+    String PUSH_TAG_OPERATION = "pushTag";
     String PULL_OPERATION = "pull";
     String MERGE_OPERATION = "merge";
     String SHOW_BRANCHES_OPERATION = "showBranches";

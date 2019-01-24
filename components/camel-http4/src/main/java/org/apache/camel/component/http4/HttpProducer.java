@@ -44,14 +44,14 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
-import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.GZIPHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.GZIPHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -71,14 +71,9 @@ import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * @version
- */
 public class HttpProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
+
     private HttpClient httpClient;
     private HttpContext httpContext;
     private boolean throwException;
@@ -111,6 +106,7 @@ public class HttpProducer extends DefaultProducer {
                 skipRequestHeaders = URISupport.parseQuery(queryString, false, true);
             }
         }
+
         HttpRequestBase httpRequest = createMethod(exchange);
         Message in = exchange.getIn();
         String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
@@ -186,12 +182,12 @@ public class HttpProducer extends DefaultProducer {
         // lets store the result in the output message.
         HttpResponse httpResponse = null;
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI().toString());
+            if (log.isDebugEnabled()) {
+                log.debug("Executing http {} method: {}", httpRequest.getMethod(), httpRequest.getURI());
             }
             httpResponse = executeMethod(httpRequest);
             int responseCode = httpResponse.getStatusLine().getStatusCode();
-            LOG.debug("Http responseCode: {}", responseCode);
+            log.debug("Http responseCode: {}", responseCode);
 
             if (!throwException) {
                 // if we do not use failed exception then populate response for all response codes
@@ -404,7 +400,7 @@ public class HttpProducer extends DefaultProducer {
         }
     }
 
-    private static InputStream doExtractResponseBodyAsStream(InputStream is, Exchange exchange) throws IOException {
+    private InputStream doExtractResponseBodyAsStream(InputStream is, Exchange exchange) throws IOException {
         // As httpclient is using a AutoCloseInputStream, it will be closed when the connection is closed
         // we need to cache the stream for it.
         CachedOutputStream cos = null;
@@ -423,7 +419,7 @@ public class HttpProducer extends DefaultProducer {
             }
             throw ex;
         } finally {
-            IOHelper.close(is, "Extracting response body", LOG);
+            IOHelper.close(is, "Extracting response body", log);
         }
     }
 
@@ -460,12 +456,12 @@ public class HttpProducer extends DefaultProducer {
             method = new HttpDeleteWithBodyMethod(url, requestEntity);
         }
 
-        LOG.trace("Using URL: {} with method: {}", url, method);
+        log.trace("Using URL: {} with method: {}", url, method);
 
         if (methodToUse.isEntityEnclosing()) {
             ((HttpEntityEnclosingRequestBase) method).setEntity(requestEntity);
             if (requestEntity != null && requestEntity.getContentType() == null) {
-                LOG.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
+                log.debug("No Content-Type provided for URL: {} with exchange: {}", url, exchange);
             }
         }
 
@@ -539,7 +535,7 @@ public class HttpProducer extends DefaultProducer {
                         // so we only do an instanceof check and accept String if the body is really a String
                         // do not fallback to use the default charset as it can influence the request
                         // (for example application/x-www-form-urlencoded forms being sent)
-                        String charset = IOHelper.getCharsetName(exchange, false);
+                        String charset = ExchangeHelper.getCharsetName(exchange, false);
                         if (charset == null && contentType != null) {
                             // okay try to get the charset from the content-type
                             Charset cs = contentType.getCharset();
@@ -548,9 +544,7 @@ public class HttpProducer extends DefaultProducer {
                             }
                         }
                         StringEntity entity = new StringEntity((String) data, charset);
-                        if (contentType != null) {
-                            entity.setContentType(contentType.toString());
-                        }
+                        entity.setContentType(contentType != null ? contentType.toString() : null);
                         answer = entity;
                     }
 
@@ -558,13 +552,9 @@ public class HttpProducer extends DefaultProducer {
                     if (answer == null) {
                         // force the body as an input stream since this is the fallback
                         InputStream is = in.getMandatoryBody(InputStream.class);
-                        String length = in.getHeader(Exchange.CONTENT_LENGTH, String.class);
-                        InputStreamEntity entity = null;
-                        if (ObjectHelper.isEmpty(length)) {
-                            entity = new InputStreamEntity(is, -1);
-                        } else {
-                            entity = new InputStreamEntity(is, Long.parseLong(length));
-                        }
+                        
+                        InputStreamEntity entity = new InputStreamEntity(is, -1);
+                        
                         if (contentType != null) {
                             entity.setContentType(contentType.toString());
                         }

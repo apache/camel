@@ -20,17 +20,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 public class ComposedMessageProcessorTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testValidatingCorrectOrder() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
@@ -50,6 +52,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
     }
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testValidatingIncorrectOrder() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);

@@ -21,11 +21,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSupport {
     protected static final RuntimeException RUNTIME_EXCEPTION = new RuntimeException("Expected exception.");
     protected String body = "<hello>world!</hello>";
 
+    @Test
     public void testFirstFewAttemptsFail() throws Exception {
         MockEndpoint failedEndpoint = getMockEndpoint("mock:failed");
         MockEndpoint successEndpoint = getMockEndpoint("mock:success");

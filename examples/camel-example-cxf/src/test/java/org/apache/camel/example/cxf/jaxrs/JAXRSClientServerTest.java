@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.example.cxf.jaxrs;
-
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookNotFoundFault;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.cxf.BusFactory;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -75,6 +75,7 @@ public class JAXRSClientServerTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/JAXRSCamelContext.xml"});
     }
     
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         BusFactory.setDefaultBus(null);

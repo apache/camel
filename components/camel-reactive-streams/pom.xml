@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.23.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-reactive-streams</artifactId>
@@ -33,8 +33,6 @@
     <description>Camel Reactive Streams Component</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.reactive.streams.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=reactive-streams</camel.osgi.export.service>
     </properties>
 
     <dependencies>
@@ -92,6 +90,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

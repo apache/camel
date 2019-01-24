@@ -28,7 +28,7 @@ public class NettySuspendResumeTest extends BaseNettyTest {
         String out = template.requestBody("netty4:tcp://localhost:{{port}}?sync=true&disconnect=true", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
 
         try {
             template.requestBody("netty4:tcp://localhost:{{port}}?sync=true&disconnect=true", "World", String.class);
@@ -37,7 +37,7 @@ public class NettySuspendResumeTest extends BaseNettyTest {
             // expected
         }
 
-        context.resumeRoute("foo");
+        context.getRouteController().resumeRoute("foo");
 
         out = template.requestBody("netty4:tcp://localhost:{{port}}?sync=true&disconnect=true", "Again", String.class);
         assertEquals("Bye Again", out);

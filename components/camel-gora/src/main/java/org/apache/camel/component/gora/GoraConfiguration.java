@@ -32,7 +32,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @UriParams
 public class GoraConfiguration {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
     @UriParam
     private String keyClass;

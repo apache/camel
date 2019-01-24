@@ -23,9 +23,6 @@ import org.apache.camel.pollconsumer.quartz2.QuartzScheduledPollConsumerSchedule
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MailComponentTest extends CamelTestSupport {
 
     @Test

@@ -24,12 +24,10 @@ import javax.imageio.ImageIO;
 import javax.xml.ws.Holder;
 
 import org.apache.camel.cxf.mtom_feature.Hello;
-
 import org.junit.Assert;
 
 /**
  * Hello Test Impl class
- * @version 
  */
 public class HelloImpl implements Hello {
 

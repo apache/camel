@@ -23,8 +23,7 @@
     <feature name='camel-example-aggregate' version='${project.version}'>
         <feature version="${project.version}">camel</feature>
         <feature version="${project.version}">camel-stream</feature>
-        <feature version="${project.version}">camel-hawtdb</feature>
-        <bundle>mvn:org.apache.camel/camel-example-aggregate/${project.version}</bundle>
+        <bundle>mvn:org.apache.camel.example/camel-example-aggregate/${project.version}</bundle>
     </feature>
 
 </features>

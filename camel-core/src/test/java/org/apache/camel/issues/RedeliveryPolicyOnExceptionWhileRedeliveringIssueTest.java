@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -53,6 +54,7 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
             }
         }
     }
+    @Test
     public void testMessageShouldGoToError() throws Exception {
         String msg = "payload";
 

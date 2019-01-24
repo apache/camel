@@ -31,14 +31,6 @@ public final class ExceptionPolicyKey {
     private final WhenDefinition when;
 
     /**
-     * @deprecated will be removed in the near future, use the other constructor
-     */
-    @Deprecated
-    public ExceptionPolicyKey(Class<? extends Throwable> exceptionClass, WhenDefinition when) {
-        this(null, exceptionClass, when);
-    }
-
-    /**
      * Key for exception clause
      *
      * @param routeId          the route, or use <tt>null</tt> for a global scoped
@@ -61,22 +53,6 @@ public final class ExceptionPolicyKey {
 
     public String getRouteId() {
         return routeId;
-    }
-
-    /**
-     * @deprecated will be removed in the near future. Use the constructor instead.
-     */
-    @Deprecated
-    public static ExceptionPolicyKey newInstance(Class<? extends Throwable> exceptionClass) {
-        return new ExceptionPolicyKey(exceptionClass, null);
-    }
-
-    /**
-     * @deprecated will be removed in the near future. Use the constructor instead.
-     */
-    @Deprecated
-    public static ExceptionPolicyKey newInstance(Class<? extends Throwable> exceptionClass, WhenDefinition when) {
-        return new ExceptionPolicyKey(exceptionClass, when);
     }
 
     @Override

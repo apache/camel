@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for try .. handle routing (CAMEL-564).
@@ -33,14 +34,17 @@ public class TryProcessorTest extends ContextTestSupport {
 
     private boolean handled;
 
+    @Test
     public void testTryCatchFinallyProcessor() throws Exception {
         testTryCatchFinally("direct:processor");
     }
 
+    @Test
     public void testTryCatchFinallyExpression() throws Exception {
         testTryCatchFinally("direct:expression");
     }
 
+    @Test
     public void testTryCatchFinallyPredicate() throws Exception {
         testTryCatchFinally("direct:predicate");
     }

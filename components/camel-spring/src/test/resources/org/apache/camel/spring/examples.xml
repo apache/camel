@@ -39,8 +39,8 @@
       <to uri="seda:b"/>
     </route>
     <route>
-      <from ref="a"/>
-      <to ref="b"/>
+      <from uri="ref:a"/>
+      <to uri="ref:b"/>
     </route>
 
     <route>

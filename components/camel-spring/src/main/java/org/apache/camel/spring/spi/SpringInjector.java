@@ -16,15 +16,12 @@
  */
 package org.apache.camel.spring.spi;
 
-import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Injector;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * A Spring implementation of {@link Injector} allowing Spring to be used to dependency inject newly created POJOs
- *
- * @version 
  */
 public class SpringInjector implements Injector {
     private final ConfigurableApplicationContext applicationContext;
@@ -38,16 +35,6 @@ public class SpringInjector implements Injector {
     public <T> T newInstance(Class<T> type) {
         Object value = applicationContext.getBeanFactory().createBean(type, autowireMode, dependencyCheck);
         return type.cast(value);
-    }
-
-    public <T> T newInstance(Class<T> type, Object instance) {
-        if (instance instanceof IsSingleton) {
-            boolean singleton = ((IsSingleton) instance).isSingleton();
-            if (singleton) {
-                return type.cast(instance);
-            }
-        }
-        return newInstance(type);
     }
 
     @Override

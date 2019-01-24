@@ -18,6 +18,7 @@ package org.apache.camel.model.dataformat;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
@@ -34,8 +36,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * YAML is a data format to marshal and unmarshal Java objects to and from YAML.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.17.0", label = "dataformat,transformation,yaml", title = "YAML")
 @XmlRootElement(name = "yaml")
@@ -239,7 +239,7 @@ public class YAMLDataFormat extends DataFormatDefinition {
             try {
                 yamlUnmarshalType = camelContext.getClassResolver().resolveMandatoryClass(unmarshalTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

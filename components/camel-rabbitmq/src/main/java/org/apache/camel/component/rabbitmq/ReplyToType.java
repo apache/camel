@@ -18,8 +18,6 @@ package org.apache.camel.component.rabbitmq;
 
 /**
  * Types for replyTo queues
- *
- * @version 
  */
 public enum ReplyToType {
     Temporary, Shared, Exclusive

@@ -25,9 +25,9 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
     @Test
     public void testBasicConfiguration() throws Exception {
         Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicName=" + TEST_TOPIC
-                + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
+                                                + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
         assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
-        MQTTEndpoint mqttEndpoint = (MQTTEndpoint) endpoint;
+        MQTTEndpoint mqttEndpoint = (MQTTEndpoint)endpoint;
 
         assertEquals(mqttEndpoint.getConfiguration().getQoS(), QoS.EXACTLY_ONCE);
         assertEquals(mqttEndpoint.getConfiguration().getPublishTopicName(), TEST_TOPIC);
@@ -38,9 +38,9 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
     @Test
     public void testMultipleSubscribeTopicsConfiguration() throws Exception {
         Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicNames=" + TEST_TOPICS
-                + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
+                                                + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
         assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
-        MQTTEndpoint mqttEndpoint = (MQTTEndpoint) endpoint;
+        MQTTEndpoint mqttEndpoint = (MQTTEndpoint)endpoint;
 
         assertEquals(mqttEndpoint.getConfiguration().getQoS(), QoS.EXACTLY_ONCE);
         assertEquals(mqttEndpoint.getConfiguration().getPublishTopicName(), TEST_TOPIC);
@@ -50,14 +50,41 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
 
     @Test
     public void testWildcardSubscribeTopicsConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicNames=" + TEST_TOPICS_WITH_WILDCARDS
-                + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?byDefaultRetain=true&qualityOfService=exactlyOnce&publishTopicName=" + TEST_TOPIC + "&subscribeTopicNames="
+                                                + TEST_TOPICS_WITH_WILDCARDS + "&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
         assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
-        MQTTEndpoint mqttEndpoint = (MQTTEndpoint) endpoint;
+        MQTTEndpoint mqttEndpoint = (MQTTEndpoint)endpoint;
 
         assertEquals(mqttEndpoint.getConfiguration().getQoS(), QoS.EXACTLY_ONCE);
         assertEquals(mqttEndpoint.getConfiguration().getPublishTopicName(), TEST_TOPIC);
         assertEquals(mqttEndpoint.getConfiguration().getSubscribeTopicNames(), TEST_TOPICS_WITH_WILDCARDS);
         assertTrue(mqttEndpoint.getConfiguration().isByDefaultRetain());
+    }
+
+    @Test
+    public void testExactlyOnceQualityOfServiceConfiguration() throws Exception {
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?qualityOfService=exactlyOnce&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
+        assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
+        MQTTEndpoint mqttEndpoint = (MQTTEndpoint)endpoint;
+
+        assertEquals(mqttEndpoint.getConfiguration().getQoS(), QoS.EXACTLY_ONCE);
+    }
+
+    @Test
+    public void testAtLeastOnceQualityOfServiceConfiguration() throws Exception {
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?qualityOfService=AtLeastOnce&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
+        assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
+        MQTTEndpoint mqttEndpoint = (MQTTEndpoint)endpoint;
+
+        assertEquals(mqttEndpoint.getConfiguration().getQoS(), QoS.AT_LEAST_ONCE);
+    }
+
+    @Test
+    public void testAtMostOnceQualityOfServiceConfiguration() throws Exception {
+        Endpoint endpoint = context.getEndpoint("mqtt:todo?qualityOfService=AtMostOnce&host=" + MQTTTestSupport.getHostForMQTTEndpoint());
+        assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
+        MQTTEndpoint mqttEndpoint = (MQTTEndpoint)endpoint;
+
+        assertEquals(mqttEndpoint.getConfiguration().getQoS(), QoS.AT_MOST_ONCE);
     }
 }

@@ -17,10 +17,13 @@
 package org.apache.camel.component.sjms.tx;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.CamelJmsTestHelper;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +35,7 @@ public class TransactedProducerInOutErrorTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactedProducerInOutErrorTest.class);
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = FailedToCreateRouteException.class)
     public void test() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(createRouteBuilder());
@@ -41,6 +44,9 @@ public class TransactedProducerInOutErrorTest {
         try {
             context.start();
         } catch (Throwable t) {
+            Assert.assertEquals(FailedToCreateRouteException.class, t.getClass());
+            Assert.assertEquals(FailedToCreateProducerException.class, t.getCause().getClass());
+            Assert.assertEquals(IllegalArgumentException.class, t.getCause().getCause().getClass());
             LOG.info("Exception was thrown as expected", t);
             throw t;
         }

@@ -20,6 +20,7 @@ package org.apache.camel.component.xslt;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -29,7 +30,7 @@ import javax.xml.transform.stream.StreamSource;
 import net.sf.saxon.TransformerFactoryImpl;
 import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.junit.Assert;
 import org.junit.Test;
 

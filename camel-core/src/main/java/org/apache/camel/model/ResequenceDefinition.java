@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,30 +28,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.CamelInternalProcessor;
-import org.apache.camel.processor.Resequencer;
-import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Resequences (re-order) messages based on an expression
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "resequence")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefinition> {
-    @Metadata(required = "false")
+    @Metadata(required = false)
     @XmlElements({
         @XmlElement(name = "batch-config", type = BatchResequencerConfig.class),
         @XmlElement(name = "stream-config", type = StreamResequencerConfig.class)}
@@ -60,7 +52,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     private BatchResequencerConfig batchConfig;
     @XmlTransient
     private StreamResequencerConfig streamConfig;
-    @XmlElementRef @Metadata(required = "true")
+    @XmlElementRef @Metadata(required = true)
     private ExpressionDefinition expression;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
@@ -286,6 +278,11 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
     }
     
     @Override
+    public String getShortName() {
+        return "resequence";
+    }
+
+    @Override
     public String getLabel() {
         return "resequencer[" + (getExpression() != null ? getExpression().getLabel() : "") + "]";
     }
@@ -332,103 +329,6 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
      */
     public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // if configured from XML then streamConfig has been set with the configuration
-        if (resequencerConfig != null) {
-            if (resequencerConfig instanceof StreamResequencerConfig) {
-                streamConfig = (StreamResequencerConfig) resequencerConfig;
-            } else {
-                batchConfig = (BatchResequencerConfig) resequencerConfig;
-            }
-        }
-
-        if (streamConfig != null) {
-            return createStreamResequencer(routeContext, streamConfig);
-        } else {
-            if (batchConfig == null) {
-                // default as batch mode
-                batch();
-            }
-            return createBatchResequencer(routeContext, batchConfig);
-        }
-    }
-
-    /**
-     * Creates a batch {@link Resequencer} instance applying the given <code>config</code>.
-     * 
-     * @param routeContext route context.
-     * @param config batch resequencer configuration.
-     * @return the configured batch resequencer.
-     * @throws Exception can be thrown
-     */
-    @SuppressWarnings("deprecation")
-    protected Resequencer createBatchResequencer(RouteContext routeContext,
-                                                 BatchResequencerConfig config) throws Exception {
-        Processor processor = this.createChildProcessor(routeContext, true);
-        Expression expression = getExpression().createExpression(routeContext);
-
-        // and wrap in unit of work
-        CamelInternalProcessor internal = new CamelInternalProcessor(processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
-
-        ObjectHelper.notNull(config, "config", this);
-        ObjectHelper.notNull(expression, "expression", this);
-
-        boolean isReverse = config.getReverse() != null && config.getReverse();
-        boolean isAllowDuplicates = config.getAllowDuplicates() != null && config.getAllowDuplicates();
-
-        Resequencer resequencer = new Resequencer(routeContext.getCamelContext(), internal, expression, isAllowDuplicates, isReverse);
-        resequencer.setBatchSize(config.getBatchSize());
-        resequencer.setBatchTimeout(config.getBatchTimeout());
-        resequencer.setReverse(isReverse);
-        resequencer.setAllowDuplicates(isAllowDuplicates);
-        if (config.getIgnoreInvalidExchanges() != null) {
-            resequencer.setIgnoreInvalidExchanges(config.getIgnoreInvalidExchanges());
-        }
-        return resequencer;
-    }
-
-    /**
-     * Creates a {@link StreamResequencer} instance applying the given <code>config</code>.
-     * 
-     * @param routeContext route context.
-     * @param config stream resequencer configuration.
-     * @return the configured stream resequencer.
-     * @throws Exception can be thrwon
-     */
-    protected StreamResequencer createStreamResequencer(RouteContext routeContext,
-                                                        StreamResequencerConfig config) throws Exception {
-        Processor processor = this.createChildProcessor(routeContext, true);
-        Expression expression = getExpression().createExpression(routeContext);
-
-        CamelInternalProcessor internal = new CamelInternalProcessor(processor);
-        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeContext));
-
-        ObjectHelper.notNull(config, "config", this);
-        ObjectHelper.notNull(expression, "expression", this);
-
-        ExpressionResultComparator comparator;
-        if (config.getComparatorRef() != null) {
-            comparator = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), config.getComparatorRef(), ExpressionResultComparator.class);
-        } else {
-            comparator = config.getComparator();
-        }
-        comparator.setExpression(expression);
-
-        StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), internal, comparator, expression);
-        resequencer.setTimeout(config.getTimeout());
-        if (config.getDeliveryAttemptInterval() != null) {
-            resequencer.setDeliveryAttemptInterval(config.getDeliveryAttemptInterval());
-        }
-        resequencer.setCapacity(config.getCapacity());
-        resequencer.setRejectOld(config.getRejectOld());
-        if (config.getIgnoreInvalidExchanges() != null) {
-            resequencer.setIgnoreInvalidExchanges(config.getIgnoreInvalidExchanges());
-        }
-        return resequencer;
     }
 
 }

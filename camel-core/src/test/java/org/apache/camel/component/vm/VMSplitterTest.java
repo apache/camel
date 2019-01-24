@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class VMSplitterTest extends AbstractVmTestSupport {
     
@@ -33,6 +34,7 @@ public class VMSplitterTest extends AbstractVmTestSupport {
     }
     
 
+    @Test
     public void testSplitUsingMethodCall() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("Claus", "James", "Willem");

@@ -23,7 +23,7 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-weather</artifactId>
@@ -32,8 +32,6 @@
   <description>Camel Weather support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.weather.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=weather</camel.osgi.export.service>
   </properties>
 
   <dependencies>
@@ -43,7 +41,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>

@@ -16,14 +16,13 @@
  */
 package org.apache.camel.example.spring;
 
-import junit.framework.TestCase;
 import org.apache.camel.spring.Main;
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * @version 
- */
-public class IntegrationTest extends TestCase {
+public class IntegrationTest extends Assert {
 
+    @Test
     public void testCamelRulesDeployCorrectlyInSpring() throws Exception {
         // let's boot up the Spring application context for 2 seconds to check that it works OK
         Main.main("-duration", "2s", "-o", "target/site/cameldoc");

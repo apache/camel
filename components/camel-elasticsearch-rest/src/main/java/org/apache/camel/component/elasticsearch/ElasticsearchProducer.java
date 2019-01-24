@@ -21,7 +21,7 @@ import java.net.UnknownHostException;
 import java.util.Collections;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
@@ -35,8 +35,10 @@ import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.MultiGetRequest;
 import org.elasticsearch.action.index.IndexRequest;
+import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -44,16 +46,15 @@ import org.elasticsearch.client.sniff.Sniffer;
 import org.elasticsearch.client.sniff.SnifferBuilder;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL;
+import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
 
 
 /**
  * Represents an Elasticsearch producer.
  */
 public class ElasticsearchProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchProducer.class);
 
     protected final ElasticsearchConfiguration configuration;
     private RestClient client;
@@ -95,6 +96,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             return ElasticsearchOperation.Delete;
         } else if (request instanceof SearchRequest) {
             return ElasticsearchOperation.Search;
+        } else if (request instanceof MultiSearchRequest) {
+            return ElasticsearchOperation.MultiSearch;
         } else if (request instanceof DeleteIndexRequest) {
             return ElasticsearchOperation.DeleteIndex;
         }
@@ -152,22 +155,22 @@ public class ElasticsearchProducer extends DefaultProducer {
 
         if (operation == ElasticsearchOperation.Index) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
-            message.setBody(restHighLevelClient.index(indexRequest).getId());
+            message.setBody(restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT).getId());
         } else if (operation == ElasticsearchOperation.Update) {
             UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
-            message.setBody(restHighLevelClient.update(updateRequest).getId());
+            message.setBody(restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT).getId());
         } else if (operation == ElasticsearchOperation.GetById) {
             GetRequest getRequest = message.getBody(GetRequest.class);
-            message.setBody(restHighLevelClient.get(getRequest));
+            message.setBody(restHighLevelClient.get(getRequest, RequestOptions.DEFAULT));
         } else if (operation == ElasticsearchOperation.Bulk) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-            message.setBody(restHighLevelClient.bulk(bulkRequest).getItems());
+            message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
         } else if (operation == ElasticsearchOperation.BulkIndex) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
-            message.setBody(restHighLevelClient.bulk(bulkRequest).getItems());
+            message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
         } else if (operation == ElasticsearchOperation.Delete) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
-            message.setBody(restHighLevelClient.delete(deleteRequest).getResult());
+            message.setBody(restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT).getResult());
         } else if (operation == ElasticsearchOperation.DeleteIndex) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
             message.setBody(client.performRequest("Delete", deleteRequest.index()).getStatusLine().getStatusCode());
@@ -179,7 +182,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             SearchRequest searchRequest = new SearchRequest(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
             searchRequest.source(sourceBuilder);
             try {
-                restHighLevelClient.search(searchRequest);
+                restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
                 message.setBody(true);
             } catch (ElasticsearchStatusException e) {
                 if (e.status().equals(RestStatus.NOT_FOUND)) {
@@ -191,11 +194,22 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
         } else if (operation == ElasticsearchOperation.Search) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
-            message.setBody(restHighLevelClient.search(searchRequest).getHits());
+            // is it a scroll request ?
+            boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.getUseScroll(), Boolean.class);
+            if (useScroll) {
+                int scrollKeepAliveMs = message.getHeader(PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(), Integer.class);
+                ElasticsearchScrollRequestIterator scrollRequestIterator = new ElasticsearchScrollRequestIterator(searchRequest, restHighLevelClient, scrollKeepAliveMs, exchange);
+                exchange.getIn().setBody(scrollRequestIterator);
+            } else {
+                message.setBody(restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT).getHits());
+            }
+        } else if (operation == ElasticsearchOperation.MultiSearch) {
+            MultiSearchRequest searchRequest = message.getBody(MultiSearchRequest.class);
+            message.setBody(restHighLevelClient.msearch(searchRequest, RequestOptions.DEFAULT).getResponses());
         } else if (operation == ElasticsearchOperation.Ping) {
-            message.setBody(restHighLevelClient.ping());
+            message.setBody(restHighLevelClient.ping(RequestOptions.DEFAULT));
         } else if (operation == ElasticsearchOperation.Info) {
-            message.setBody(restHighLevelClient.info());
+            message.setBody(restHighLevelClient.info(RequestOptions.DEFAULT));
         } else {
             throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }
@@ -220,6 +234,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         }
         if (configuration.getDisconnect()) {
             IOHelper.close(client);
+            IOHelper.close(restHighLevelClient);
             client = null;
             if (configuration.getEnableSniffer()) {
                 IOHelper.close(sniffer);
@@ -240,12 +255,12 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     private void startClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, UnknownHostException {
         if (client == null) {
-            LOG.info("Connecting to the ElasticSearch cluster: " + configuration.getClusterName());
+            log.info("Connecting to the ElasticSearch cluster: {}", configuration.getClusterName());
             if (configuration.getHostAddressesList() != null
                 && !configuration.getHostAddressesList().isEmpty()) {
                 client = createClient();
             } else {
-                LOG.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
+                log.warn("Incorrect ip address and port parameters settings for ElasticSearch cluster");
             }
         }
     }
@@ -277,7 +292,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     @Override
     protected void doStop() throws Exception {
         if (client != null) {
-            LOG.info("Disconnecting from ElasticSearch cluster: {}", configuration.getClusterName());
+            log.info("Disconnecting from ElasticSearch cluster: {}", configuration.getClusterName());
             client.close();
             if (sniffer != null) {
                 sniffer.close();

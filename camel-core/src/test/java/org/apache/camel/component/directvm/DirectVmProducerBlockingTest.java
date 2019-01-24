@@ -24,9 +24,11 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 public class DirectVmProducerBlockingTest extends ContextTestSupport {
 
+    @Test
     public void testProducerBlocksForSuspendedConsumer() throws Exception {
         DirectVmEndpoint endpoint = getMandatoryEndpoint("direct-vm:suspended", DirectVmEndpoint.class);
         endpoint.getConsumer().suspend();
@@ -42,6 +44,7 @@ public class DirectVmProducerBlockingTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testProducerBlocksWithNoConsumers() throws Exception {
         DirectVmEndpoint endpoint = getMandatoryEndpoint("direct-vm:suspended", DirectVmEndpoint.class);
         endpoint.getConsumer().suspend();
@@ -58,8 +61,9 @@ public class DirectVmProducerBlockingTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testProducerBlocksResumeTest() throws Exception {
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(new Runnable() {
@@ -68,7 +72,7 @@ public class DirectVmProducerBlockingTest extends ContextTestSupport {
                 try {
                     Thread.sleep(200);
                     log.info("Resuming consumer");
-                    context.resumeRoute("foo");
+                    context.getRouteController().resumeRoute("foo");
                 } catch (Exception e) {
                     // ignore
                 }

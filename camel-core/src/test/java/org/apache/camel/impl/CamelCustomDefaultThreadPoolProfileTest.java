@@ -18,13 +18,11 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport {
 
     @Override
@@ -39,10 +37,14 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
         profile.setAllowCoreThreadTimeOut(true);
         profile.setRejectedPolicy(ThreadPoolRejectedPolicy.Abort);
 
-        camel.getExecutorServiceManager().setDefaultThreadPoolProfile(profile);
+        DefaultExecutorServiceManager executorServiceManager = new DefaultExecutorServiceManager(camel);
+        executorServiceManager.setDefaultThreadPoolProfile(profile);
+        camel.setExecutorServiceManager(executorServiceManager);
+
         return camel;
     }
 
+    @Test
     public void testCamelCustomDefaultThreadPoolProfile() throws Exception {
         DefaultExecutorServiceManager manager = (DefaultExecutorServiceManager)context.getExecutorServiceManager();
         ThreadPoolProfile profile = manager.getDefaultThreadPoolProfile();

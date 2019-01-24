@@ -25,11 +25,11 @@
   <parent>
     <groupId>org.apache.camel.example</groupId>
     <artifactId>examples</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-example-rest-producer</artifactId>
-  <name>Camel :: Example :: Rest Producer</name>
+  <name>Camel :: Example :: Rest :: Producer</name>
   <description>An example showing how to use Camel Rest to call a REST service</description>
 
   <properties>
@@ -57,6 +57,11 @@
         <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${javax.servlet.api.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

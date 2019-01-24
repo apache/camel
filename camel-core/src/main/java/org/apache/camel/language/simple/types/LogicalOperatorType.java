@@ -21,26 +21,28 @@ package org.apache.camel.language.simple.types;
  */
 public enum LogicalOperatorType {
 
-    // TODO: and|or is @deprecated and to be removed in Camel 3.0
-
     AND, OR;
 
     public static LogicalOperatorType asOperator(String text) {
-        if ("&&".equals(text) || "and".equals(text)) {
+        switch (text) {
+        case "&&":
             return AND;
-        } else if ("||".equals(text) || "or".equals(text)) {
+        case "||":
             return OR;
+        default:
+            throw new IllegalArgumentException("Operator not supported: " + text);
         }
-        throw new IllegalArgumentException("Operator not supported: " + text);
     }
 
     public String getOperatorText(LogicalOperatorType operator) {
-        if (operator == AND) {
+        switch (operator) {
+        case AND:
             return "&&";
-        } else if (operator == OR) {
+        case OR:
             return "||";
+        default:
+            return "";
         }
-        return "";
     }
 
     @Override

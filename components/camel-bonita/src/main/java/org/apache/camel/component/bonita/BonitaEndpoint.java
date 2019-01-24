@@ -22,9 +22,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.bonita.exception.BonitaException;
 import org.apache.camel.component.bonita.producer.BonitaStartProducer;
 import org.apache.camel.component.bonita.util.BonitaOperation;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * Used for communicating with a remote Bonita BPM process engine.
@@ -42,10 +42,6 @@ public class BonitaEndpoint extends DefaultEndpoint {
             BonitaConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-    }
-
-    public BonitaEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public Producer createProducer() throws Exception {

@@ -23,9 +23,6 @@ import javax.jms.Session;
 
 import org.apache.camel.Endpoint;
 
-/**
- * @version
- */
 public interface JmsObjectFactory {
     MessageConsumer createMessageConsumer(Session session, Endpoint endpoint) throws Exception;
 

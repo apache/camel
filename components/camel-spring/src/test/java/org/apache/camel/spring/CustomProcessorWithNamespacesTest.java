@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
-
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -26,16 +25,16 @@ import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.spring.example.MyProcessor;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class CustomProcessorWithNamespacesTest extends TestSupport {
     protected String body = "<hello>world!</hello>";
     protected AbstractXmlApplicationContext applicationContext;
 
+    @Test
     public void testXMLRouteLoading() throws Exception {
         applicationContext = createApplicationContext();
 
@@ -74,7 +73,8 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);
     }

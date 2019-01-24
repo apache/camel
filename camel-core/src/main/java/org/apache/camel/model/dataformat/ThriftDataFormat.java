@@ -29,8 +29,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * The Thrift data format is used for serialization and deserialization of messages using Apache Thrift binary dataformat.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.20.0", label = "dataformat,transformation", title = "Thrift")
 @XmlRootElement(name = "thrift")

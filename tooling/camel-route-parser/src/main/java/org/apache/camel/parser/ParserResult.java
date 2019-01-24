@@ -24,16 +24,18 @@ public class ParserResult {
     private final String node;
     private boolean parsed;
     private int position;
+    private int length;
     private String element;
     private Boolean predicate;
 
-    public ParserResult(String node, int position, String element) {
-        this(node, position, element, true);
+    public ParserResult(String node, int position, int length, String element) {
+        this(node, position, length, element, true);
     }
 
-    public ParserResult(String node, int position, String element, boolean parsed) {
+    public ParserResult(String node, int position, int length, String element, boolean parsed) {
         this.node = node;
         this.position = position;
+        this.length = length;
         this.element = element;
         this.parsed = parsed;
     }
@@ -43,6 +45,13 @@ public class ParserResult {
      */
     public int getPosition() {
         return position;
+    }
+
+    /**
+     * Length of node in the source code (not line based).
+     */
+    public int getLength() {
+        return length;
     }
 
     /**

@@ -18,14 +18,13 @@ package org.apache.camel.spring.example;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class FooEventRouteTest extends SpringTestSupport {
 
+    @Test
     public void testMultipleConsumersOnSeda() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceivedInAnyOrder("fooA", "anotherA", "fooB", "anotherB");

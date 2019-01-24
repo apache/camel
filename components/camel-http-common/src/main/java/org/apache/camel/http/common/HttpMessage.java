@@ -22,12 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
 public class HttpMessage extends DefaultMessage {
 
     private final HttpServletRequest request;
@@ -35,8 +32,7 @@ public class HttpMessage extends DefaultMessage {
     private final HttpCommonEndpoint endpoint;
 
     public HttpMessage(Exchange exchange, HttpCommonEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) {
-        setExchange(exchange);
-        setCamelContext(exchange.getContext());
+        super(exchange);
         this.endpoint = endpoint;
 
         this.request = request;
@@ -57,11 +53,10 @@ public class HttpMessage extends DefaultMessage {
     }
 
     private HttpMessage(HttpServletRequest request, HttpServletResponse response, Exchange exchange, HttpCommonEndpoint endpoint) {
+        super(exchange);
         this.request = request;
         this.response = response;
-        setExchange(getExchange());
         this.endpoint = endpoint;
-        setCamelContext(exchange.getContext());
     }
 
     public HttpServletRequest getRequest() {

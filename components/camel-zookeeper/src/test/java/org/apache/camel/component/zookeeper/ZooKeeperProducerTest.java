@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.zookeeper.operations.GetChildrenOperation;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
-
 import org.junit.Test;
 
 import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_CREATE_MODE;

@@ -30,8 +30,6 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * A helper class which will find all {@link org.apache.camel.builder.RouteBuilder} instances on the classpath
- *
- * @version 
  */
 public class PackageScanRouteBuilderFinder {
     private static final Logger LOG = LoggerFactory.getLogger(PackageScanRouteBuilderFinder.class);

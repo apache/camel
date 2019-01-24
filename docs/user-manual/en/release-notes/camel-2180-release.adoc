@@ -1,0 +1,370 @@
+[[Camel2.18.0Release-Camel2.18.0release]]
+== Camel 2.18.0 Release
+
+### New and Noteworthy
+
+Welcome to the 2.18.0 release which resolved over 500 issues. This is
+first release that requires Java 8 and comes with a much-improved Spring
+Boot support, and ships with numerous new features, improvements and bug
+fixes.
+
+* Java DSL with experimental Java8 functional/lambda support. Check out
+the
+https://github.com/apache/camel/tree/master/examples/camel-example-java8[camel-example-java8].
+We love feedback on this DSL and expect to improved the API over the
+next couple of releases.
+* The XSD schema for <camelContext> and its other configuration elements
+are now also documented (before it was only <routes> and <rests>). The
+XSD schema now also documents the default values of all the options.
+* Introduced `FluentProducerTemplate` using fluent builder style as a
+alternative to link:producertemplate.html[ProducerTemplate]
+* All Camel link:../component.adoc[Components] that has options to be
+configured now supports and include link:spring-boot.html[Spring
+Boot] auto configuration for those options, so they can easily be
+configured in your application.yaml file when using Spring Boot with
+Camel. 
+* Camel link:spring-boot.html[Spring Boot] now supports the
+same link:advanced-configuration-of-camelcontext-using-spring.html[advanced
+configuration] you can do with Spring XML, if the beans have been
+configured using `@Bean` style in a Spring Boot configuration class.
+* Added link:hystrix-eip.html[Hystrix EIP] as EIP pattern that uses
+native Netflixx Hystrix as the Circuit Breaker implementation. This
+requires having `camel-hystrix` on the classpath.
+* Added link:servicecall-eip.html[Service Call EIP] as EIP pattern that
+allows to call a remote service in a distributed system, where the
+service is looked up from a service registry of some sorts, such as
+kubernetes, consul, etcd, zookeeper etc.
+* Running Camel with link:spring-boot.html[Spring Boot] now includes a
+Camel Health Indicator (actuator) if `spring-boot-starter-actuator` is
+on the classpath.
+* The link:rest.html[Rest] component allows to call REST services now
+(as a client), where you can pick one of the following Camel components
+for the HTTP transport: http, http4, netty4-http, jetty, restlet,
+undertow. You can also refer to a existing swagger api doc and include
+camel-swagger-java on the classpath, for automatic validation of rest
+endpoint is configured to use a valid rest operation/parameters.
+* The Rest DSL now auto discovers which HTTP component to use if no
+explicit component name has been configured, by the available components
+on the classpath (by their default name) and if there only exists one,
+then that is used.
+* Spring-DM for OSGi moved out of camel-spring into a separate
+camel-spring-dm module. +
+* Improved the <<bean-component,Bean>> component to better match method
+parameter types when using <<simple-language,Simple>> language as
+parameter values.
+* Added `BindyConverter` that allows to implement custom data converters
+for <<bindy-dataformat,Bindy>>
+* The access in the link:rest-dsl.html[Rest DSL] has been deprecated and
+no longer in use - its not part of swagger specification anymore.
+* link:nats.html[Camel-NATS] now uses JNATS client instead of the
+deprecated Java_nats one.
+* During startup of link:../camelcontext.adoc[CamelContext] the services
+that are used as part of routes are now deferred being started to the
+end of the startup process. Some IoC frameworks like Spring can
+otherwise causes a circular dependency issue if services are started too
+early. A side effect is that if service startup failures happen when
+being started later, they are now wrapped in the
+`FailedToStartupRouteException` to better pin point which route thas the
+problem.
+* Improved the startup sequence of link:spring-java-config.html[Spring
+Java Config] to be similar to link:spring-boot.html[Spring Boot] that
+helps prevent Spring initialization errors about circular dependencies
+issues.
+* Added PATCH to link:rest-dsl.html[Rest DSL]
+* Added "starts with" and "ends with" operator to the
+<<simple-language,Simple>> language.
+* Added `BeanIOSplitter` to <<beanio-dataformat,BeanIO>> that can be used
+with the <<split-eip,Splitter>> EIP to split big payloads in
+streaming mode without reading the entire content into memory.
+* Some of the link:aws.html[AWS] components allows to specify ARN in the
+endpoint configuration. 
+* The create operation in link:zookeeper.html[Zookeeper] now creates sub
+paths if missing.
+* Added support for async mode for link:servlet.html[SERVLET] component
+to leverage Asynchronous Servlet from the Servlet 3.0 spec.
+* <<bean-component,Bean>> component and link:bean-language.html[Bean
+Language] validates method name must be a valid according to java
+identifier rules, and also if parameter syntax has an ending
+parenthesis.
+* You can now use `@RunWith(CamelSpringBootJUnit4ClassRunner.class)` to
+test Camel link:spring-boot.html[Spring Boot] applications and use the
+Camel test annotations from link:../spring-testing.adoc[Spring Testing]
+such as `@MockEndpoints`.
+* To turn on logging exhausted message body with the message history you
+can configure this easily on the CamelContext level
+with `setLogExhaustedMessageBody`
+* link:infinispan.html[Camel-Infinispan] now supports Aggregation
+Repository: InfinispanLocalAggregationRepository and
+InfinispanRemoteAggregationRepository
+* The link:sql-component.html[SQL Component] and
+link:elsql.html[ElSql] now supports `outputType=StreamList` to use an
+iterator for the output of the SQL query that allows to process the data
+in a streaming fashion such as with the <<split-eip,Splitter>> EIP
+to process the data row by row, and load data from the database as
+needed.
+* <<jpa-component,JPA>> now includes a `JpaPollingConsumer` implementation
+that better supports link:content-enricher.html[Content Enricher]
+using `pollEnrich` to do a on-demand poll that returns either none, one
+or a list of entities as the result. 
+* Calling <<bean-component,Bean>> with method parameters defined
+using <<simple-language,Simple>> parameters, now avoids an intermediate
+conversion of the parameters to a String value. This ensures the passed
+in values when calling the bean method is using the parameter type as-is
+from <<simple-language,Simple>>.
+* link:cdi.html[Camel CDI] now supports importing Camel XML
+configuration files
+* link:cdi.html[Camel CDI] does not deploy an empty Camel context bean
+anymore if not route builder beans nor Camel beans are deployed
+* link:cdi.html[Camel CDI] adds the `@Named` qualifier to Camel route
+management events so that it's possible to observe these events for a
+specific route with an explicit `id`
+* link:beanio.html[Camel BeanIO] now supports the possibility to use a
+custom BeanReaderErrorHandler implementation in his configuration
+* link:kubernetes.html[Camel Kubernetes] now supports Kubernetes
+ConfigMap feature
+* The link:tokenizer.html[Tokenizer]
+and link:xmltokenizer.html[XMLTokenizer] language now supports using
+<<simple-language,Simple>> expressions as the token / xml tag names so
+they can be dynamic values.
+* Added `filterDirectory` and `filterFile` options
+to link:file2.html[File2] so filtering can be done
+using <<simple-language,Simple>> language or predicates. 
+* Optimize Camel to only enable AllowUseOriginalMessage if in use by
+error handler or link:oncompletion.html[OnCompletion]. End user who
+manually access the original message using the Java API must
+configure AllowUseOriginalMessage=true.
+* link:ahc.html[Camel-AHC]
+link:http.html[Camel-HTTP] link:http4.html[Camel-HTTP4] link:jetty.html[Camel-Jetty] now
+support a connectionClose parameter to allow explicitly adding a
+Connection Close header to HTTP request
+* <<bindy-dataformat,Bindy>> allows to plugin custom formatters for mapping
+to custom types.
+* link:content-enricher.html[Content Enricher] using `pollEnrich` now
+supports consumers configured with `consumer.bridgeErrorHandler=true` to
+let any exceptions from the poll propagate to the route error handler,
+to let it be able to perform redeliveries and whatnot.
+* link:cxf.html[CXF] and link:cxfrs.html[CXFRS] now support setting of
+the SSL-context link:camel-configuration-utilities.html[Using the JSSE
+Configuration Utility]
+* link:mongodb.html[MongoDB] now is fully converted to MongoDB 3
+although we still use BasicDBObject instead of Document
+* Camel Spring Boot can now scan for classes in Spring Boot FAR jars
+with embeds third party JARs.
+* You can now set the SNI Hostnames using the
+link:camel-configuration-utilities.html[Camel Configuration Utilities]
+to indicate the hostnames you try to connect
+* The XML DSL will preserve double spaces in the context-path of uri
+attributes when removing white space noise, when uri's are configured
+using mutli lines.
+* The Camel Catalog module can now load older versions of Camel to be
+used when querying the catalog. There is a `camel-catalog-maven` module
+that is able to download catalog JARs from Maven central.
+* A new Camel Attachment interface was added that allows propagating
+headers for attachments. link:cxf.html[Camel CXF], link:mail.html[Camel
+Mail] (including the <<mime-multipart-dataformat,MIME-Multipart>>data
+format), and link:jetty.html[Camel-Jetty] set and consume attachment
+headers.
+* Improved link:bean.html[bean method call] to validate if method name
+with parameters has valid number of parenthesis in the syntax.
+* The link:jsonpath.html[JSonPath] now supports
+inlined <<simple-language,Simple>> language expressions to allow more
+dynamic expressions.
+* Improved Netty4 producer to be fully asynchronous when connecting to
+remote server.
+* The link:websocket.html[Websocket] component now uses a timeout when
+sending to websocket channels to avoid potentially blocking for a long
+time due networking issues with clients.
+* link:hazelcast-component.html[Hazelcast Component] now provide
+a link:routepolicy.adoc[RoutePolicy].
+* Saxon has been upgraded to version 9.7
+
+### Resolved Issues
+
+* Fixed <<bean-component,Bean>> component to avoid ambiguous error for
+classes that extends generic interface and calling which could lead to
+falsely duplicate methods (due Java type erasure inserts bridge
+methods) 
+* Fixed splitting using tarfile could cause OOME if splitting big files
+which was mistakenly loaded into memory. Now we work on the tar stream
+directly.
+* Fixed link:netty-http.html[Netty HTTP]
+and link:netty4-http.html[Netty4 HTTP] issue when not specifying a port
+number then port 80 would not be used but an error about port -1 is not
+allowed.
+* Fixed link:swagger-java.html[Swagger Java] when using property
+placeholders in link:rest-dsl.html[Rest DSL] could cause invalid
+parameters to be included that was from the placeholder.
+* The `threads` EIP now lets link:../error-handling-in-camel.adoc[Error
+handling in Camel] perform redeliveries if the thread pool would
+otherwise reject accepting the task. This allows the error handler to
+perform redeliveries to attempt to put the task on the thread pool
+queue, or eventually move the message to a dead letter queue etc.
+* Fixed link:rest-dsl.html[Rest DSL] adding empty header if specifying a
+non required query parameter that has no default value assigned.
+* Fixed link:loop.html[doWhile] loop which could potentially loop
+forever.
+* Fixed a NPE in link:zookeeper.html[Zookeeper] consumer if no zookeeper
+node path was set
+* When using continued with link:../exception-clause.adoc[onException] then
+dead letter channel endpooint should not be invoked.
+* Fixed link:error-handler.html[Error Handler] to not log exceptions
+when using `continued(true)` by default.
+* Fixed so using shareUnitOfWork would now also call
+specialized `AggregationStrategy` for onTimeout, onCompletion etc.
+* Fixed <<jetty-component,Jetty>> consumer incorrectly handle
+multipart/form data not being mapped as attachments on the Camel
+Message.
+* Fixed link:netty4-http.html[Netty4 HTTP] may fail reading the http
+content from the raw netty stream if the Exchange was routed
+asynchronously.
+* Fixed link:netty4-http.html[Netty4 HTTP] leak ByteBuf's on the
+producer side which was not released in all corner cases before they may
+be gargage collected. 
+* Fixed link:dozer.html[Dozer] not able to use variables in mapping
+files when using OSGi.
+* Fixed a potential dead-lock when doing request/reply
+over <<jms-component,JMS>> and requests are timing out concurrently and
+continued routing the exchanges are calling another <<jms-component,JMS>>
+endpoint that is also doing request/reply which also timeout. 
+* Fixed <<loadBalance-eip,Load Balancer>> EIPs to support
+using _any_ link:using-propertyplaceholder.html[property placeholder]
+using the *prop:* prefix.
+* Fixed context scoped link:oncompletion.html[OnCompletion] would not
+stop/shutdown its processors when CamelContext is being shutdown. 
+* Fixed memory leak in link:routing-slip.html[Routing Slip] when the
+slip routes to certain kind of Camel components.
+* Fixed link:sql-component.html[SQL Component] query parameter mis-match
+issue when using IN queries together with other named parameters.
+* Fixed a memory leak with link:cxf.html[CXF] when continuation was
+expired could cause Camel message not to be unregisteted from in-flight
+registry.
+* Fixed a preformance regression when using `camel-jaxb`
+
+### New Components
+
+* camel-asterisk - For interacting with Asterisk PBX Servers
+* camel-cm-sms - For sending SMS messages using SM SMS Gateway.
+* link:consul-component.html[camel-consul] - For integrating your
+application with https://www.consul.io/[Consul].
+* link:ehcache.html[camel-ehcache] - For interacting with Ehcache 3
+cache.
+* link:flink.html[camel-flink] - Bridges Camel connectors with Apache
+Flink tasks.
+* link:lumberjack.html[camel-lumberjack] - For receiving logs over the
+lumberjack protocol (used by Filebeat for instance)
+* camel-ribbon - To use Netflixx Ribbon with
+the link:servicecall-eip.html[Service Call EIP].
+* camel-servicenow - For cloud management with ServiceNow.
+* camel-telegram - For messaging with Telegram.
+* link:camel-zipkin.html[camel-zipkin] - For tracking Camel message
+flows/timings using http://zipkin.io/[zipkin].
+* link:chronicle-engine.html[camel-chronicle] - For interacting with
+OpenHFT's https://github.com/OpenHFT/Chronicle-Engine[Chronicle-Engine].
+
+### New DSL
+
+* link:hystrix-eip.html[hystrix] - Using Netflixx Hystrix as circuit
+breaker. This requires having `camel-hsytrix` on the classpath.
+* link:servicecall-eip.html[serviceCall] - To call a remote service in a
+distributed system where the service is looked up from a service
+registry of some sorts.
+
+### New Examples
+
+* `camel-example-cdi-xml`: illustrates the use of Camel XML
+configuration files into a Camel CDI application
+* `camel-example-spring-boot-rest-jpa`: Spring Boot example that
+demonstrates how to use JPA along with Camel's REST DSL to expose a
+RESTful API that performs CRUD operations on a database
+* `camel-example-java8`: Demonstrates the Java DSL with experimental new
+Java8 lambda support for expression/preidcate/processor's. We love
+feedback on this DSL and expect to improved the API over the next couple
+of releases.
+* `camel-example-java8-rx`: Demonstrates the Java DSL with experimental
+new Java8 lambda support for typesafe filtering and transforming of
+messages wit Rx-Java. We love feedback on this DSL and expect to
+improved the API over the next couple of releases.
+
+### API breaking
+
+* Removed the deprecated vtdxml language. You can use the generic
+language("vtdxml") instead
+
+### Known Issues
+
+### Important changes to consider when upgrading
+
+* *Java 1.8 is now required.*
+* Karaf 2.4.x is no longer supported. Karaf 4.0.x is the primary
+supported OSGi platform.
+* Jetty 8.x is no longer supported and camel-jetty8 has been removed
+* spring 4.0 is no longer supported and camel-test-spring40 has been
+removed
+* spring 3.x is no longer supported
+* Upgraded to Spring 4.3.x and Spring Boot 1.4.x
+* (only spring-dm using spring 3.2.x as part of camel-spring in
+osgi/karaf is still in use - but spring-dm is deprecated and we
+recommend using blueprint)
+* Spring-DM for OSGi moved out of camel-spring into a separate
+camel-spring-dm module. If using Spring XML with Spring-DM then you need
+to install camel-spring-dm feature in Karaf/ServiceMix.
+* The deprecated `@LazyLoadTypeConverter` has been removed from
+all <<test-component,Camel Test>> modules
+* camel-gae has been removed (was not working anyway)
+* The access in the link:rest-dsl.html[Rest DSL] has been deprecated and
+no longer in use - its not part of swagger specification anymore.
+* Removed the deprecated maven archetypes for SOAP WS using CXF with
+OSGi Blueprint
+* The XML DSL will preserve double spaces in the context-path of uri
+attributes when removing white space noise, when uri's are configured
+using mutli lines.
+* Optimize Camel to only enable AllowUseOriginalMessage if in use by
+error handler or link:oncompletion.html[OnCompletion]. End user who
+manually access the original message using the Java API must
+configure AllowUseOriginalMessage=true.
+* The link:ftp2.html[FTPS] component is now using known hosts file from
+the user.home/.ssh directory by default. Set the
+option useUserKnownHostsFile=false to use old behavior.
+* the link:mongodb.html[MongoDB] component is migrated to MongoDB 3.
+Returned objects might be different e.g. findAll always returns an
+Iterable (FindIterable or ArrayList). Sometimes the returning of headers
+is remove e.g. for the paged findAll the total size isn't fetch
+* the link:salesforce.html[Salesforce] component doesn't use jodatime
+anymore. It uses the java 8 ZonedDateTime. DTO's need to be changed or
+regenerated.
+* The camel-testng module is deprecated, use the JUnit based test
+modules instead.
+* The link:cache.html[camel-cache] module is deprecated, you should
+use link:ehcache.html[camel-ehcache] instead.
+* The camel-docker module has been removed from Karaf features as it
+does not work in OSGi
+* In link:xslt.html[camel-xslt] selecting saxon using the object model
+url does not work anymore
+(see http://www.saxonica.com/documentation/index.html#!xpath-api/jaxp-xpath/factory[doc]),
+you need to explicit seth both the model url and the implementation
+class or use dsl/xml shortcut to enable saxon.
+
+### Getting the Binaries using Maven 
+
+To use this release in your maven project, the proper dependency
+configuration that you should use in your
+http://maven.apache.org/guides/introduction/introduction-to-the-pom.html[Maven
+POM] is:
+
+[source,java]
+-------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-core</artifactId>
+  <version>2.18.0</version>
+</dependency>
+-------------------------------------
+
+### Changelog
+
+For a more detailed view of new features and bug fixes, see the:
+
+https://issues.apache.org/jira/secure/ReleaseNote.jspa?version=12334759&projectId=12311211[release
+notes for 2.18.0]
+
+

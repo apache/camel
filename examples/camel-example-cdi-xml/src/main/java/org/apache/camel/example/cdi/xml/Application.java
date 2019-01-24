@@ -28,7 +28,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Handler;
 import org.apache.camel.Processor;
 import org.apache.camel.cdi.ImportResource;
-import org.apache.camel.management.event.RouteStoppedEvent;
+import org.apache.camel.spi.CamelEvent.RouteStoppedEvent;
 
 import static org.apache.camel.builder.Builder.simple;
 

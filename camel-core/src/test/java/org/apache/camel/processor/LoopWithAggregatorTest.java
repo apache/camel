@@ -16,14 +16,16 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 public class LoopWithAggregatorTest extends ContextTestSupport {
 
+    @Test
     public void testLoopCopy() throws Exception {
         getMockEndpoint("mock:loop").expectedBodiesReceived("AB", "AB", "AB");
         getMockEndpoint("mock:result").expectedBodiesReceived("AB");

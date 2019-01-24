@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -23,25 +22,25 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
     protected MockEndpoint a;
     protected MockEndpoint b;
     protected MockEndpoint dead;
-    protected IdempotentRepository<String> repo;
+    protected IdempotentRepository repo;
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
+    @Test
     public void testCompletionEager() throws Exception {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
         context.addRoutes(new RouteBuilder() {
@@ -79,6 +78,7 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotCompletionEager() throws Exception {
         repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
         context.addRoutes(new RouteBuilder() {
@@ -127,7 +127,8 @@ public class IdempotentConsumerCompletionEagerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:start");

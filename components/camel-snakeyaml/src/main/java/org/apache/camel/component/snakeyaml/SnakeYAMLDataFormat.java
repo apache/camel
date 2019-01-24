@@ -35,8 +35,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
@@ -52,6 +53,7 @@ import org.yaml.snakeyaml.resolver.Resolver;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://www.snakeyaml.org">SnakeYAML</a> to marshal to and from YAML.
  */
+@Dataformat("yaml-snakeyaml")
 public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private final ThreadLocal<WeakReference<Yaml>> yamlCache;
     private Function<CamelContext, BaseConstructor> constructor;
@@ -95,14 +97,14 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
-        try (OutputStreamWriter osw = new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange))) {
+        try (OutputStreamWriter osw = new OutputStreamWriter(stream, ExchangeHelper.getCharsetName(exchange))) {
             getYaml(exchange.getContext()).dump(graph, osw);
         }
     }
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
-        try (InputStreamReader isr = new InputStreamReader(stream, IOHelper.getCharsetName(exchange))) {
+        try (InputStreamReader isr = new InputStreamReader(stream, ExchangeHelper.getCharsetName(exchange))) {
             Class<?> unmarshalObjectType = unmarshalType != null ? unmarshalType : Object.class;
             return getYaml(exchange.getContext()).loadAs(isr, unmarshalObjectType);
         }

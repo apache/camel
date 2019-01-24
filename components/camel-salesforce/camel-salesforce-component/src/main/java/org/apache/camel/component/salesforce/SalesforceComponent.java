@@ -26,12 +26,9 @@ import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.VerifiableComponent;
-import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.internal.OperationName;
@@ -40,14 +37,15 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpProxy;
 import org.eclipse.jetty.client.Origin;
 import org.eclipse.jetty.client.ProxyConfiguration;
@@ -56,8 +54,6 @@ import org.eclipse.jetty.client.api.Authentication;
 import org.eclipse.jetty.client.util.BasicAuthentication;
 import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAULT_LOGIN_URL;
 
@@ -65,7 +61,8 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class SalesforceComponent extends DefaultComponent implements VerifiableComponent, SSLContextParametersAware {
+@Component("salesforce")
+public class SalesforceComponent extends DefaultComponent implements SSLContextParametersAware {
 
     public static final String HTTP_PROXY_HOST = "httpProxyHost";
     public static final String HTTP_PROXY_PORT = "httpProxyPort";
@@ -80,27 +77,26 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     public static final String HTTP_PROXY_REALM = "httpProxyRealm";
 
     static final int CONNECTION_TIMEOUT = 60000;
+    static final int IDLE_TIMEOUT = 5000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
     static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
-
-    private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 
     @Metadata(description = "All authentication configuration in one nested bean, all properties set there can be set"
         + " directly on the component as well", label = "common,security")
     private SalesforceLoginConfig loginConfig;
 
-    @Metadata(description = "URL of the Salesforce instance used after authantication, by default received from"
+    @Metadata(description = "URL of the Salesforce instance used after authentication, by default received from"
         + " Salesforce on successful authentication", label = "common,security")
     private String instanceUrl;
 
     // allow fine grained login as well
     @Metadata(description = "URL of the Salesforce instance used for authentication, by default set to "
-    + DEFAULT_LOGIN_URL, label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = "true")
+    + DEFAULT_LOGIN_URL, label = "common,security", defaultValue = DEFAULT_LOGIN_URL, required = true)
     private String loginUrl;
 
     @Metadata(description = "OAuth Consumer Key of the connected app configured in the Salesforce instance setup."
         + " Typically a connected app needs to be configured but one can be provided by installing a package.",
-        label = "common,security", required = "true")
+        label = "common,security", required = true)
     private String clientId;
 
     @Metadata(description = "OAuth Consumer Secret of the connected app configured in the Salesforce instance setup.",
@@ -116,7 +112,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         label = "common,security", secret = true)
     private String refreshToken;
 
-    @Metadata(description = "Username used in OAuth flow to gain access to access token. It's easy to get started with" 
+    @Metadata(description = "Username used in OAuth flow to gain access to access token. It's easy to get started with"
         + " password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows.",
         label = "common,security")
     private String userName;
@@ -140,7 +136,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
     private AuthenticationType authenticationType;
 
     @Metadata(description = "If set to true prevents the component from authenticating to Salesforce with the start of"
-        + " the component. You would generaly set this to the (default) false and authenticate early and be immediately"
+        + " the component. You would generally set this to the (default) false and authenticate early and be immediately"
         + " aware of any authentication issues.", defaultValue = "false", label = "common,security")
     private boolean lazyLogin;
 
@@ -240,7 +236,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         String topicName = null;
         String apexUrl = null;
         try {
-            LOG.debug("Creating endpoint for: {}", remaining);
+            log.debug("Creating endpoint for: {}", remaining);
             if (remaining.startsWith(APEX_CALL_PREFIX)) {
                 // extract APEX URL
                 apexUrl = remaining.substring(APEX_CALL_PREFIX.length());
@@ -319,9 +315,9 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
             loginConfig.setType(authenticationType);
             loginConfig.setUserName(userName);
 
-            LOG.debug("Created login configuration: {}", loginConfig);
+            log.debug("Created login configuration: {}", loginConfig);
         } else {
-            LOG.debug("Using shared login configuration: {}", loginConfig);
+            log.debug("Using shared login configuration: {}", loginConfig);
         }
 
         // create a Jetty HttpClient if not already set
@@ -361,10 +357,10 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         if (packages != null && packages.length > 0) {
             // parse the packages to create SObject name to class map
             classMap = parsePackages();
-            LOG.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
+            log.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
         } else {
             // use an empty map to avoid NPEs later
-            LOG.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
+            log.warn("Missing property packages, getSObject* operations will NOT work without property rawPayload=true");
             classMap = new HashMap<>(0);
         }
 
@@ -651,12 +647,6 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         return classMap;
     }
 
-    @Override
-    public ComponentVerifier getVerifier() {
-        return (scope, parameters) -> getExtension(ComponentVerifierExtension.class)
-            .orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
-    }
-
     public RestClient createRestClientFor(final SalesforceEndpoint endpoint) throws SalesforceException {
         final SalesforceEndpointConfig endpointConfig = endpoint.getConfiguration();
 
@@ -716,6 +706,7 @@ public class SalesforceComponent extends DefaultComponent implements VerifiableC
         // default settings, use httpClientProperties to set other
         // properties
         httpClient.setConnectTimeout(CONNECTION_TIMEOUT);
+        httpClient.setIdleTimeout(IDLE_TIMEOUT);
 
         return httpClient;
     }

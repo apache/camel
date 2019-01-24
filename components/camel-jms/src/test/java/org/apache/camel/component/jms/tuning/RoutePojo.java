@@ -22,9 +22,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RecipientList;
 
-/**
- * @version 
- */
 public class RoutePojo {
 
     @Produce(uri = "activemq:topic:audit")

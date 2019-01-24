@@ -23,9 +23,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DebugJUnit4Test extends CamelTestSupport {
 
     // START SNIPPET: e1

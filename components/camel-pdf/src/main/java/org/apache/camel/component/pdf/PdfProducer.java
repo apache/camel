@@ -28,18 +28,15 @@ import org.apache.camel.component.pdf.text.LineTerminationWriterAbstractFactory;
 import org.apache.camel.component.pdf.text.SplitStrategy;
 import org.apache.camel.component.pdf.text.TextProcessingAbstractFactory;
 import org.apache.camel.component.pdf.text.WriteStrategy;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.ProtectionPolicy;
 import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.pdf.PdfHeaderConstants.*;
 
 public class PdfProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(PdfProducer.class);
 
     private final WriteStrategy writeStrategy;
     private final SplitStrategy splitStrategy;
@@ -79,7 +76,7 @@ public class PdfProducer extends DefaultProducer {
     }
 
     private Object doAppend(Exchange exchange) throws IOException {
-        LOG.debug("Got {} operation, going to append text to provided pdf.", pdfConfiguration.getOperation());
+        log.debug("Got {} operation, going to append text to provided pdf.", pdfConfiguration.getOperation());
         String body = exchange.getIn().getBody(String.class);
         PDDocument document = exchange.getIn().getHeader(PDF_DOCUMENT_HEADER_NAME, PDDocument.class);
         if (document == null) {
@@ -101,7 +98,7 @@ public class PdfProducer extends DefaultProducer {
     }
 
     private String doExtractText(Exchange exchange) throws IOException {
-        LOG.debug("Got {} operation, going to extract text from provided pdf.", pdfConfiguration.getOperation());
+        log.debug("Got {} operation, going to extract text from provided pdf.", pdfConfiguration.getOperation());
         PDDocument document = exchange.getIn().getBody(PDDocument.class);
 
 
@@ -110,7 +107,7 @@ public class PdfProducer extends DefaultProducer {
     }
 
     private OutputStream doCreate(Exchange exchange) throws IOException {
-        LOG.debug("Got {} operation, going to create and write provided string to pdf document.",
+        log.debug("Got {} operation, going to create and write provided string to pdf document.",
                 pdfConfiguration.getOperation());
         String body = exchange.getIn().getBody(String.class);
         PDDocument document = new PDDocument();

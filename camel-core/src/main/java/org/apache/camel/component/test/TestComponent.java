@@ -19,8 +19,8 @@ package org.apache.camel.component.test;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -28,13 +28,11 @@ import org.apache.camel.util.URISupport;
  *
  * Component for testing by polling test messages from another endpoint on startup as the expected message bodies to
  * receive during testing.
- *
- * @version 
  */
-public class TestComponent extends UriEndpointComponent {
+@org.apache.camel.spi.annotations.Component("test")
+public class TestComponent extends DefaultComponent {
 
     public TestComponent() {
-        super(TestEndpoint.class);
     }
 
     @Override

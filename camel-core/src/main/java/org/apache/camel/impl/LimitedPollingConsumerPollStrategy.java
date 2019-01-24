@@ -22,7 +22,8 @@ import java.util.Map;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Service;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.DefaultPollingConsumerPollStrategy;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A {@link org.apache.camel.spi.PollingConsumerPollStrategy} which supports suspending consumers if they
@@ -30,8 +31,6 @@ import org.apache.camel.util.ServiceHelper;
  * <p/>
  * If Camel cannot successfully consumer from a given consumer, then after X consecutive failed attempts the consumer
  * will be suspended/stopped. This prevents the log to get flooded with failed attempts, for example during nightly runs.
- *
- * @version 
  */
 public class LimitedPollingConsumerPollStrategy extends DefaultPollingConsumerPollStrategy implements Service {
 

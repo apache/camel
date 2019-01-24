@@ -56,14 +56,23 @@ public final class OsgiCamelContextHelper {
     public static Registry wrapRegistry(CamelContext camelContext, Registry registry, BundleContext bundleContext) {
         ObjectHelper.notNull(bundleContext, "BundleContext");
 
-        LOG.debug("Setting up OSGi ServiceRegistry");
-        OsgiServiceRegistry osgiServiceRegistry = new OsgiServiceRegistry(bundleContext);
+        OsgiServiceRegistry osgiServiceRegistry = null;
+        Registry resultingRegistry = registry;
+        if (registry instanceof OsgiServiceRegistry) {
+            osgiServiceRegistry = (OsgiServiceRegistry)registry;
+        } else {
+            LOG.debug("Wrapping Registry in OsgiServiceRegistry");
+            osgiServiceRegistry = new OsgiServiceRegistry(bundleContext);
+            CompositeRegistry compositeRegistry = new CompositeRegistry();
+            compositeRegistry.addRegistry(osgiServiceRegistry);
+            compositeRegistry.addRegistry(registry);
+            resultingRegistry = compositeRegistry;
+        }
+        
         // Need to clean up the OSGi service when camel context is closed.
         camelContext.addLifecycleStrategy(osgiServiceRegistry);
-        CompositeRegistry compositeRegistry = new CompositeRegistry();
-        compositeRegistry.addRegistry(osgiServiceRegistry);
-        compositeRegistry.addRegistry(registry);
-        return compositeRegistry;
+        
+        return resultingRegistry;
     }
 
 }

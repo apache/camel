@@ -100,6 +100,6 @@ public class JibxDataFormatSpringDslTest extends CamelTestSupport {
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 }

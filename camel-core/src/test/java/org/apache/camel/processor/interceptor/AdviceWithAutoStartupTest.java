@@ -19,31 +19,31 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AdviceWithAutoStartupTest extends ContextTestSupport {
 
+    @Test
     public void testAdvised() throws Exception {
-        assertFalse(context.getRouteStatus("foo").isStarted());
-        assertFalse(context.getRouteStatus("bar").isStarted());
+        assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
+        assertFalse(context.getRouteController().getRouteStatus("bar").isStarted());
 
-        context.getRouteDefinition("bar").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("bar"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 replaceFromWith("seda:newBar");
             }
         });
 
-        assertFalse(context.getRouteStatus("foo").isStarted());
-        assertFalse(context.getRouteStatus("bar").isStarted());
+        assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
+        assertFalse(context.getRouteController().getRouteStatus("bar").isStarted());
 
-        context.startRoute("foo");
-        context.startRoute("bar");
+        context.getRouteController().startRoute("foo");
+        context.getRouteController().startRoute("bar");
 
-        assertTrue(context.getRouteStatus("foo").isStarted());
-        assertTrue(context.getRouteStatus("bar").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("bar").isStarted());
 
         getMockEndpoint("mock:newBar").expectedMessageCount(1);
 

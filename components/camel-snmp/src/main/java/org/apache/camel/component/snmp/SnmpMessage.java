@@ -17,7 +17,7 @@
 package org.apache.camel.component.snmp;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 import org.snmp4j.CommandResponderEvent;
 import org.snmp4j.PDU;
 import org.snmp4j.smi.OctetString;

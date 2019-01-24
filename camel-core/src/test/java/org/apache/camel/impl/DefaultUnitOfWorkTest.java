@@ -16,21 +16,28 @@
  */
 package org.apache.camel.impl;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.SimpleUuidGenerator;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class DefaultUnitOfWorkTest extends TestCase {
+
+public class DefaultUnitOfWorkTest extends Assert {
     
     private DefaultUnitOfWork unitOfWork;
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Before
+    public void setUp() throws Exception {
+
         
         CamelContext context = new DefaultCamelContext();
         context.setUuidGenerator(new SimpleUuidGenerator());
         unitOfWork = new DefaultUnitOfWork(new DefaultExchange(context));
     }
 
+    @Test
     public void testGetId() {
         String id = unitOfWork.getId();
         assertNotNull(id);

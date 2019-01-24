@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -36,71 +36,26 @@
 
   <properties>
     <camel.osgi.export.pkg>
-      !org.apache.camel.tools.*,
-      org.apache.camel.*;-noimport:=true
+      org.apache.camel.builder.*;
+      org.apache.camel.component.*;
+      org.apache.camel.impl;
+      org.apache.camel.impl.cloud;
+      org.apache.camel.impl.cluster;
+      org.apache.camel.impl.transformer;
+      org.apache.camel.impl.osgi;
+      org.apache.camel.impl.osgi.tracker;
+      org.apache.camel.language.*;
+      org.apache.camel.main;
+      org.apache.camel.model.*;
+      org.apache.camel.processor.*;
+      org.apache.camel.reifier.*;
+        -noimport:=true
     </camel.osgi.export.pkg>
-    <camel.osgi.import>
-      org.apache.camel.tools.*;resolution:=optional,
-      !org.apache.camel.*,
-      !com.github.benmanes.caffeine.cache,
-      !org.json.simple,
-      ${camel.osgi.import.defaults},
-      org.springframework.transaction;resolution:=optional,
-      org.apache.camel.spring.spi;resolution:=optional,
-      org.apache.xalan.xsltc.trax;resolution:=optional,
-      javax.activation;resolution:=optional,
-      javax.xml.bind;resolution:=optional,
-      javax.xml.bind.annotation;resolution:=optional,
-      javax.xml.bind.annotation.adapters;resolution:=optional,
-      javax.xml.stream;resolution:=optional,
-      javax.xml.transform.stax;resolution:=optional,
-      net.sf.saxon.event;resolution:=optional,
-      net.sf.saxon.serialize;resolution:=optional,
-      net.sf.saxon.xpath;resolution:=optional,
+    <camel.osgi.import.pkg>
+      =org.apache.camel,
+      =org.apache.camel.util.concurrent,
       *
-    </camel.osgi.import>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=bean,
-      org.apache.camel.spi.ComponentResolver;component=binding,
-      org.apache.camel.spi.ComponentResolver;component=browse,
-      org.apache.camel.spi.ComponentResolver;component=class,
-      org.apache.camel.spi.ComponentResolver;component=controlbus,
-      org.apache.camel.spi.ComponentResolver;component=dataformat,
-      org.apache.camel.spi.ComponentResolver;component=dataset,
-      org.apache.camel.spi.ComponentResolver;component=direct,
-      org.apache.camel.spi.ComponentResolver;component=direct-vm,
-      org.apache.camel.spi.ComponentResolver;component=file,
-      org.apache.camel.spi.ComponentResolver;component=language,
-      org.apache.camel.spi.ComponentResolver;component=log,
-      org.apache.camel.spi.ComponentResolver;component=mock,
-      org.apache.camel.spi.ComponentResolver;component=properties,
-      org.apache.camel.spi.ComponentResolver;component=ref,
-      org.apache.camel.spi.ComponentResolver;component=rest,
-      org.apache.camel.spi.ComponentResolver;component=rest-api,
-      org.apache.camel.spi.ComponentResolver;component=scheduler,
-      org.apache.camel.spi.ComponentResolver;component=saga,
-      org.apache.camel.spi.ComponentResolver;component=seda,
-      org.apache.camel.spi.ComponentResolver;component=stub,
-      org.apache.camel.spi.ComponentResolver;component=test,
-      org.apache.camel.spi.ComponentResolver;component=timer,
-      org.apache.camel.spi.ComponentResolver;component=validator,
-      org.apache.camel.spi.ComponentResolver;component=vm,
-      org.apache.camel.spi.ComponentResolver;component=xslt,
-      org.apache.camel.spi.DataFormatResolver;dataformat=gzip,
-      org.apache.camel.spi.DataFormatResolver;dataformat=serialization,
-      org.apache.camel.spi.DataFormatResolver;dataformat=string,
-      org.apache.camel.spi.DataFormatResolver;dataformat=zip,
-      org.apache.camel.spi.LanguageResolver;language=bean,
-      org.apache.camel.spi.LanguageResolver;language=constant,
-      org.apache.camel.spi.LanguageResolver;language=exchangeProperty,
-      org.apache.camel.spi.LanguageResolver;language=file,
-      org.apache.camel.spi.LanguageResolver;language=header,
-      org.apache.camel.spi.LanguageResolver;language=ref,
-      org.apache.camel.spi.LanguageResolver;language=simple,
-      org.apache.camel.spi.LanguageResolver;language=tokenize,
-      org.apache.camel.spi.LanguageResolver;language=xpath,
-      org.apache.camel.spi.LanguageResolver;language=xtokenize
-    </camel.osgi.export.service>
+    </camel.osgi.import.pkg>
     <camel.osgi.dynamic>
       org.apache.camel.spring.util;${camel.osgi.import.strict.version},
       org.apache.camel.spring.pollingconsumer;${camel.osgi.import.strict.version},
@@ -128,6 +83,137 @@
       <artifactId>spi-annotations</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
+    </dependency>
+
+    <!-- required dependencies by camel-core -->
+    <!-- it will be shade into camel-core by bnd plugin -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>meta-annotations</artifactId>
+      <version>${project.version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- required dependencies by camel-core -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- required dependencies by camel-core -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- required dependencies by camel-core -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-management-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- required dependencies by camel-core -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-base</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- required dependencies by camel-core -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-support</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- core components -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-browse</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-controlbus</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-dataformat</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-direct</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-directvm</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-file</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-language</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-log</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-properties</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ref</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-saga</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-scheduler</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-seda</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-stub</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-timer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-validator</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-vm</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -159,8 +245,31 @@
 
     <!-- testing -->
     <dependency>
+      <groupId>org.codehaus.woodstox</groupId>
+      <artifactId>woodstox-core-asl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>1.21</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <version>1.21</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -173,6 +282,12 @@
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
@@ -260,8 +375,25 @@
 
     <plugins>
 
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>test-compile</id>
+            <phase>process-test-sources</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+            <configuration>
+              <proc>none</proc>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- shade caffeine cache for faster Camel and spi-annotations as needed by everybody -->
       <!-- shade json-simple for parsing Camel component JSon schema files -->
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -289,41 +421,23 @@
                 </relocation>
                 <relocation>
                   <pattern>org.json.simple</pattern>
-                  <!-- scala compiler do not like org.apache.camel.org so its just json.simple instead of org.json.simple -->
                   <shadedPattern>org.apache.camel.json.simple</shadedPattern>
                 </relocation>
               </relocations>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/LICENSE</exclude>
+                    <exclude>META-INF/NOTICE</exclude>
+                  </excludes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>
       </plugin>
-
-      <!-- include additional metadata from target/generated into the camel-core JAR -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>include-metadata</id>
-            <phase>package</phase>
-            <configuration>
-              <target>
-                <echo>Including metadata properties files in camel-core.jar</echo>
-                <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}.jar"
-                     update="true">
-                  <fileset dir="${basedir}/target/generated/camel/components/" includes="**/*"/>
-                  <fileset dir="${basedir}/target/generated/camel/dataformats/" includes="**/*"/>
-                  <fileset dir="${basedir}/target/generated/camel/languages/" includes="**/*"/>
-                  <fileset dir="${basedir}/target/generated/camel/models/" includes="**/*"/>
-                </jar>
-              </target>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+      -->
 
       <!-- generate the attached tests jar -->
       <plugin>
@@ -365,44 +479,29 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
         <version>${project.version}</version>
+        <configuration>
+          <!-- set to true to make build fail fast if missing documentation in docs files -->
+          <failFast>false</failFast>
+        </configuration>
         <executions>
           <execution>
-            <id>components</id>
+            <id>generate</id>
             <goals>
-              <goal>generate-components-list</goal>
-            </goals>
-            <phase>generate-resources</phase>
-          </execution>
-          <execution>
-            <id>eips</id>
-            <goals>
+              <goal>generate-jaxb-list</goal>
               <goal>generate-eips-list</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-          <!-- camel-core needs to generate dataformats after compilation -->
-          <execution>
-            <id>dataformats</id>
-            <goals>
+              <goal>generate-components-list</goal>
               <goal>generate-dataformats-list</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-          <!-- camel-core needs to generate languages after compilation -->
-          <execution>
-            <id>languages</id>
-            <goals>
               <goal>generate-languages-list</goal>
             </goals>
             <phase>process-classes</phase>
           </execution>
-          <!-- camel-core needs to validate before packaging -->
           <execution>
             <id>validate</id>
             <goals>
               <goal>validate-components</goal>
               <goal>prepare-spring-boot-starter</goal>
               <goal>prepare-spring-boot-auto-configuration</goal>
+              <goal>generate-legal</goal>
             </goals>
             <phase>prepare-package</phase>
           </execution>
@@ -414,6 +513,58 @@
             <phase>package</phase>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-generated-resources</id>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/components</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/dataformats</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/languages</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/models</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/jaxb</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <configuration>
+          <instructions>
+            <_plugin>
+              org.apache.felix.bundleplugin.BlueprintPlugin,
+              aQute.lib.spring.SpringXMLType,
+              org.apache.felix.bundleplugin.JpaPlugin,
+              org.apache.camel.maven.bundle.CamelPlugin
+            </_plugin>
+          </instructions>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-bundle-plugin</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
       </plugin>
     </plugins>
   </build>

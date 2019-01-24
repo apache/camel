@@ -22,16 +22,13 @@ import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class JmsRouteUsingSpringTest extends JmsRouteTest {
     private ClassPathXmlApplicationContext applicationContext;
     
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = createApplicationContext();
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
     
     protected ClassPathXmlApplicationContext createApplicationContext() {

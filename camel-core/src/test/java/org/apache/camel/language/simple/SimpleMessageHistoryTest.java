@@ -18,9 +18,11 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class SimpleMessageHistoryTest extends ContextTestSupport {
 
+    @Test
     public void testMessageHistory() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(1);

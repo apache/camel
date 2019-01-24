@@ -32,10 +32,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 
-/**
- *
- * @version 
- */
 public class HttpBodyTest extends BaseHttpTest {
     private String protocolString = "http4://";
     // default content encoding of the local test server

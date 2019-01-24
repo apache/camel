@@ -23,14 +23,13 @@ import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.withoutsection.Order;
-import org.apache.camel.processor.interceptor.Tracer;
+
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
@@ -99,14 +98,6 @@ public class BindySimpleKeyValuePairWithoutSectionMarshallDslTest extends Abstra
         BindyKeyValuePairDataFormat orderBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.withoutsection.Order.class);
 
         public void configure() {
-
-            Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.ERROR);
-            tracer.setLogName("org.apache.camel.bindy");
-            tracer.setLogStackTrace(true);
-            tracer.setTraceExceptions(true);
-
-            getContext().addInterceptStrategy(tracer);
 
             // default should errors go to mock:error
             errorHandler(deadLetterChannel(URI_MOCK_ERROR));

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.milo;
 
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 
 public final class Messages {

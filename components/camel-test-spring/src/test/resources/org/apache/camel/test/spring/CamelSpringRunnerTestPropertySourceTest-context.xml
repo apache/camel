@@ -26,7 +26,7 @@
   <!-- Enable PropertySource -->
   <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"/>
 
-  <bean id="myBean" class="org.apache.camel.util.ValueHolder">
+  <bean id="myBean" class="org.apache.camel.ValueHolder">
     <constructor-arg value="${fixedBody}"/> <!-- configured from @TestPropertySource -->
   </bean>
 

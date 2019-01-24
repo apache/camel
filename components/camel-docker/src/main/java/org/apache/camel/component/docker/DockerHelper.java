@@ -19,7 +19,7 @@ package org.apache.camel.component.docker;
 import java.lang.reflect.Array;
 
 import org.apache.camel.Message;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.commons.lang.BooleanUtils;
 
 /**
@@ -41,7 +41,7 @@ public final class DockerHelper {
      * @return
      */
     public static String transformFromHeaderName(String name) {
-        ObjectHelper.notEmpty(name, "name");
+        StringHelper.notEmpty(name, "name");
 
         StringBuilder formattedName = new StringBuilder();
 

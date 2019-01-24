@@ -28,7 +28,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="file://src/test/data/delim?noop=true"/>
-      <unmarshal ref="delimitedFormat"/>
+      <unmarshal><custom ref="delimitedFormat"/></unmarshal>
       <split>
         <simple>${body}</simple>
         <convertBodyTo type="java.util.Map"/>

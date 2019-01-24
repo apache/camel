@@ -17,10 +17,8 @@
 package org.apache.camel.component.beanstalk.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.beanstalk.ConnectionSettingsFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The beanstalk component is used for job retrieval and post-processing of
@@ -35,12 +33,18 @@ public class BeanstalkComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the beanstalk component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory
      * to use to make connections to Beanstalkd. Especially useful for unit
-     * testing without beanstalkd daemon (you can mock ConnectionSettings)
+     * testing without beanstalkd daemon (you can mock ConnectionSettings). The
+     * option is a
+     * org.apache.camel.component.beanstalk.ConnectionSettingsFactory type.
      */
-    @NestedConfigurationProperty
-    private ConnectionSettingsFactory connectionSettingsFactory;
+    private String connectionSettingsFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -48,12 +52,11 @@ public class BeanstalkComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public ConnectionSettingsFactory getConnectionSettingsFactory() {
+    public String getConnectionSettingsFactory() {
         return connectionSettingsFactory;
     }
 
-    public void setConnectionSettingsFactory(
-            ConnectionSettingsFactory connectionSettingsFactory) {
+    public void setConnectionSettingsFactory(String connectionSettingsFactory) {
         this.connectionSettingsFactory = connectionSettingsFactory;
     }
 

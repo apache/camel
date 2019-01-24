@@ -35,8 +35,6 @@ import org.apache.cxf.staxutils.StaxUtils;
 
 /**
  * CxfMessage body type when {@link DataFormat#PAYLOAD} is used.
- * 
- * @version 
  */
 public class CxfPayload<T> {
     

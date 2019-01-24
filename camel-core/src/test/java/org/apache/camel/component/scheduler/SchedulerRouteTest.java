@@ -17,22 +17,22 @@
 package org.apache.camel.component.scheduler;
 
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class SchedulerRouteTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(SchedulerRouteTest.class);
     private MyBean bean = new MyBean();
 
+    @Test
     public void testSchedulerInvokesBeanMethod() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);

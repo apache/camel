@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jms.tx;
-
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,6 +31,7 @@ public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupp
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("activemq-data");
         super.setUp();

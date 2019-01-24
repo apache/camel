@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,7 +38,7 @@ public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
     private static String afterThreadName;
 
     private String url = "cxf://" + SIMPLE_SERVER_ADDRESS
-                + "?serviceClass=org.apache.camel.component.cxf.HelloService&dataFormat=MESSAGE&synchronous=false";
+                + "?serviceClass=org.apache.camel.component.cxf.HelloService&dataFormat=RAW&synchronous=false";
     @Override
     public boolean isCreateCamelContextPerClass() {
         return true;
@@ -65,8 +64,6 @@ public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
         assertTrue("It should has the echoResponse tag", response.indexOf("echoResponse") > 0);
 
         assertMockEndpointsSatisfied();
-
-        assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
     protected RouteBuilder createRouteBuilder() {

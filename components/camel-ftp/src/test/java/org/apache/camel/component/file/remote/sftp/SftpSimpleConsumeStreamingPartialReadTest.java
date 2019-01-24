@@ -28,8 +28,6 @@ import org.junit.Test;
 
 /**
  * Tests that a file move can occur on the server even if the remote stream was only partially read.
- *
- * @version 
  */
 public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSupport {
 
@@ -48,7 +46,7 @@ public class SftpSimpleConsumeStreamingPartialReadTest extends SftpServerTestSup
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
         GenericFile<?> remoteFile1 = (GenericFile<?>) mock.getExchanges().get(0).getIn().getBody();

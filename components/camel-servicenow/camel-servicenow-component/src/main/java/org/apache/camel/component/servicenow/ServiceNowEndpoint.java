@@ -19,7 +19,7 @@ package org.apache.camel.component.servicenow;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -35,7 +35,7 @@ public class ServiceNowEndpoint extends DefaultEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowEndpoint.class);
 
     @UriPath(description = "The ServiceNow instance name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String instanceName;
 
     @UriParam

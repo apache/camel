@@ -26,8 +26,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Marks the exchange pattern for the route to request/reply
- *
- * @version 
  */
 @Metadata(label = "eip,endpoint,routing")
 @XmlRootElement(name = "inOut")
@@ -48,6 +46,11 @@ public class InOutDefinition extends SendDefinition<InOutDefinition> {
     @Override
     public String toString() {
         return "InOut[" + getLabel() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "inOut";
     }
 
     @Override

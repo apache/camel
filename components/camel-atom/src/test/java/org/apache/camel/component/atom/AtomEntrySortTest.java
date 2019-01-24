@@ -17,6 +17,7 @@
 package org.apache.camel.component.atom;
 
 import java.util.Date;
+
 import javax.naming.Context;
 
 import org.apache.abdera.model.Entry;
@@ -24,8 +25,8 @@ import org.apache.camel.Body;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.jndi.JndiContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 public class AtomEntrySortTest extends CamelTestSupport {

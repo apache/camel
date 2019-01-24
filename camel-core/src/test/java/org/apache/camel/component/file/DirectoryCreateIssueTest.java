@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,17 +23,17 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class DirectoryCreateIssueTest extends ContextTestSupport {
 
     private final int numFiles = 10;
     private final String path = "target/a/b/c/d/e/f/g/h";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/a");
         super.setUp();
     }
@@ -59,6 +58,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testFileCreatedAsDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");        
         mock.expectedMessageCount(numFiles);         

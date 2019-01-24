@@ -16,17 +16,14 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregateController;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.DefaultAggregateController;
 import org.junit.Test;
 
-/**
- *
- */
 public class AggregateControllerTest extends ContextTestSupport {
 
     private AggregateController controller;

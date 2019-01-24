@@ -28,15 +28,8 @@
   <!-- This is our aggregation strategy for the numbers received as input -->
   <bean id="myStrategy" class="org.apache.camel.example.NumberAggregationStrategy"/>
 
-  <!-- This is the persistent repository to store aggregated messages -->
-  <bean id="myRepo" class="org.apache.camel.component.hawtdb.HawtDBAggregationRepository">
-    <!-- use data/hawtdb.dat as the persistent store -->
-    <property name="persistentFileName" value="data/hawtdb.dat"/>
-    <!-- the repo must have an unique name, as you can have multiple repositories in the same file -->
-    <property name="repositoryName" value="myCoolRepo"/>
-    <!-- the repo file segment size -->
-    <property name="bufferSize" value="602400"/>
-  </bean>
+  <!-- This is the repository to store aggregated messages -->
+  <bean id="myRepo" class="org.apache.camel.processor.aggregate.MemoryAggregationRepository"/>
 
   <!-- This is the Camel route which asks for input and aggregates incoming numbers -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">

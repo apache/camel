@@ -18,9 +18,6 @@ package org.apache.camel.example;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class DataFormatComponentTest extends DataFormatTest {
     
     protected RouteBuilder createRouteBuilder() {

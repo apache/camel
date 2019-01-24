@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -40,7 +41,8 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         // create database and insert dummy data
@@ -48,6 +50,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         jdbc = new JdbcTemplate(ds);
     }
 
+    @Test
     public void testRequiredOnly() throws Exception {
         template.sendBody("direct:required", "Tiger in Action");
 
@@ -56,6 +59,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 2, count);
     }
 
+    @Test
     public void testRequired2Only() throws Exception {
         template.sendBody("direct:required2", "Tiger in Action");
 
@@ -65,6 +69,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 3, count);
     }
 
+    @Test
     public void testRequiresNewOnly() throws Exception {
         template.sendBody("direct:new", "Elephant in Action");
 
@@ -73,6 +78,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 2, count);
     }
 
+    @Test
     public void testRequiredAndRequiresNew() throws Exception {
         template.sendBody("direct:requiredAndNew", "Tiger in Action");
 
@@ -81,6 +87,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 3, count);
     }
 
+    @Test
     public void testRequiredOnlyRollback() throws Exception {
         try {
             template.sendBody("direct:required", "Donkey in Action");
@@ -97,6 +104,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
+    @Test
     public void testRequiresNewOnlyRollback() throws Exception {
         try {
             template.sendBody("direct:new", "Donkey in Action");
@@ -113,6 +121,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 1, count);
     }
 
+    @Test
     public void testRequiredAndNewRollback() throws Exception {
         try {
             template.sendBody("direct:requiredAndNewRollback", "Tiger in Action");

@@ -21,20 +21,17 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.converter.dozer.DozerBeanMapperConfiguration;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
-public class DozerComponent extends UriEndpointComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DozerComponent.class);
+@Component("dozer")
+public class DozerComponent extends DefaultComponent {
 
     public DozerComponent() {
-        super(DozerEndpoint.class);
     }
 
     public DozerComponent(CamelContext context) {
-        super(context, DozerEndpoint.class);
+        super(context);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

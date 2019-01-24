@@ -23,7 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.util.ResolverHelper;
+import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
  * components by using the URI scheme prefix and searching for a file of the URI
  * scheme name in the <b>META-INF/services/org/apache/camel/component/</b>
  * directory on the classpath.
- *
- * @version
  */
 public class DefaultComponentResolver implements ComponentResolver {
 
@@ -65,7 +63,7 @@ public class DefaultComponentResolver implements ComponentResolver {
         }
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Found component: {} via type: {} via: {}{}", new Object[]{name, type.getName(), factoryFinder.getResourcePath(), name});
+            getLog().debug("Found component: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(), name);
         }
 
         // create the component

@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.seda;
 
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Tests that a Seda producer supports the blockWhenFull option by blocking
@@ -27,11 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class SedaBlockWhenFullTest extends ContextTestSupport {
     private static final int QUEUE_SIZE = 1;
     private static final int DELAY = 10;
-    private static final int DELAY_LONG = 100;
+    private static final int DELAY_LONG = 130;
     private static final String MOCK_URI = "mock:blockWhenFullOutput";
     private static final String SIZE_PARAM = "?size=%d";
     private static final String SEDA_WITH_OFFER_TIMEOUT_URI = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&offerTimeout=100";
-    private static final String BLOCK_WHEN_FULL_URI = "seda:blockingFoo" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&timeout=0&offerTimeout=200";
+    private static final String BLOCK_WHEN_FULL_URI = "seda:blockingBar" + String.format(SIZE_PARAM, QUEUE_SIZE) + "&blockWhenFull=true&timeout=0&offerTimeout=200";
     private static final String DEFAULT_URI = "seda:foo" + String.format(SIZE_PARAM, QUEUE_SIZE);
 
     @Override
@@ -39,16 +39,15 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(BLOCK_WHEN_FULL_URI).delay(DELAY_LONG).to(MOCK_URI);
+                from(BLOCK_WHEN_FULL_URI).delay(DELAY_LONG).syncDelayed().to(MOCK_URI);
 
                 // use same delay as above on purpose
-                from(DEFAULT_URI).delay(DELAY).to("mock:whatever");
+                from(DEFAULT_URI).delay(DELAY).syncDelayed().to("mock:whatever");
             }
         };
     }
-    
-    
-   
+
+    @Test
     public void testSedaOfferTimeoutWhenFull() throws Exception {
         try {
             SedaEndpoint seda = context.getEndpoint(SEDA_WITH_OFFER_TIMEOUT_URI, SedaEndpoint.class);
@@ -56,13 +55,14 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
 
             sendTwoOverCapacity(SEDA_WITH_OFFER_TIMEOUT_URI, QUEUE_SIZE);
 
-            fail("Fails to insert element into queue, "
-                    + "after timeout of"  + seda.getOfferTimeout() + "milliseconds");
+            fail("Failed to insert element into queue, "
+                    + "after timeout of " + seda.getOfferTimeout() + " milliseconds");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalStateException.class, e.getCause());
         }
     }
 
+    @Test
     public void testSedaDefaultWhenFull() throws Exception {
         try {
             SedaEndpoint seda = context.getEndpoint(DEFAULT_URI, SedaEndpoint.class);
@@ -76,6 +76,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSedaBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 2);
         SedaEndpoint seda = context.getEndpoint(BLOCK_WHEN_FULL_URI, SedaEndpoint.class);
@@ -85,6 +86,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testAsyncSedaBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 1);
         getMockEndpoint(MOCK_URI).setResultWaitTime(DELAY_LONG * 3);

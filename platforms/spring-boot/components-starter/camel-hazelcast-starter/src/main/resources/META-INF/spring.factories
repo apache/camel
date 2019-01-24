@@ -15,7 +15,6 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.hazelcast.springboot.HazelcastComponentAutoConfiguration,\
 org.apache.camel.component.hazelcast.list.springboot.HazelcastListComponentAutoConfiguration,\
 org.apache.camel.component.hazelcast.list.springboot.customizer.HazelcastInstanceCustomizer,\
 org.apache.camel.component.hazelcast.map.springboot.HazelcastMapComponentAutoConfiguration,\

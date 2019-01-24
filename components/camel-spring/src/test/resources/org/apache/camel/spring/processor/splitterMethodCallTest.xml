@@ -29,7 +29,7 @@
         <route>
             <from uri="direct:start"/>
             <split>
-                <method bean="splitWordsBean" method="splitWords"/>
+                <method ref="splitWordsBean" method="splitWords"/>
                 <to uri="mock:result"/>
             </split>
         </route>

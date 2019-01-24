@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor.idempotent;
-
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -25,12 +24,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FileUtil;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
-    private IdempotentRepository<String> repo;
+    private IdempotentRepository repo;
 
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/idempotent/fileConsumerIdempotentTest.xml");
@@ -38,7 +39,8 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/fileidempotent");
         createDirectory("target/fileidempotent");
 
@@ -58,6 +60,7 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
         repo = context.getRegistry().lookupByNameAndType("fileStore", IdempotentRepository.class);
     }
 
+    @Test
     public void testIdempotentLoad() throws Exception {
         // send two files (report.txt exists already in idempotent repo)
         template.sendBodyAndHeader("file://target/fileidempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");

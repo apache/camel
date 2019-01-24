@@ -22,12 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class OnCompletionMoreGlobalTest extends ContextTestSupport {
 
+    @Test
     public void testSynchronizeComplete() throws Exception {
         getMockEndpoint("mock:complete").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:failure").expectedMessageCount(0);
@@ -43,6 +42,7 @@ public class OnCompletionMoreGlobalTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSynchronizeFailure() throws Exception {
         getMockEndpoint("mock:complete").expectedMessageCount(0);
         getMockEndpoint("mock:failure").expectedMessageCount(1);

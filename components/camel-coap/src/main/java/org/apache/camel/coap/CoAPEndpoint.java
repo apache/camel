@@ -21,16 +21,16 @@ import java.net.URI;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.eclipse.californium.core.CoapServer;
 
 /**
  * The coap component is used for sending and receiving messages from COAP capable devices.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "coap", title = "CoAP", syntax = "coap:uri", consumerClass = CoAPConsumer.class, label = "iot")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "coap", title = "CoAP", syntax = "coap:uri", label = "iot")
 public class CoAPEndpoint extends DefaultEndpoint {
     @UriPath
     private URI uri;

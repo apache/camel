@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jclouds;
 
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 public abstract class JcloudsProducer extends DefaultProducer {
 

@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
+import org.junit.Test;
 
 public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
 
@@ -34,6 +35,7 @@ public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testCustomUnitOfWorkFactory() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedHeaderReceived("before", "I was here");

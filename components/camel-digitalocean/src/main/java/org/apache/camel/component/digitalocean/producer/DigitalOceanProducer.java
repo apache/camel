@@ -21,7 +21,7 @@ import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
 import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

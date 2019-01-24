@@ -27,23 +27,24 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
 /**
  * Based on user forum issue
- *
- * @version 
  */
 public class TwoRouteScopedOnExceptionWithInterceptSendToEndpointIssueWithPredicateTest extends ContextTestSupport {
 
     private final AtomicInteger invoked = new AtomicInteger();
 
+    @Test
     public void testIssue() throws Exception {
         final Predicate fail = PredicateBuilder.or(
             header(Exchange.REDELIVERY_COUNTER).isNull(),
             header(Exchange.REDELIVERY_COUNTER).isLessThan(5));
 
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new RouteBuilder() {
+        RouteReifier.adviceWith(route, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:*")

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.RoutesDefinition;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,6 +31,7 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/camelLoadRoutesFromXMLTest.xml");
     }
 
+    @Test
     public void testLoadRoutes() throws Exception {
         SpringCamelContext camel = applicationContext.getBean(SpringCamelContext.class);
         assertEquals(0, camel.getRoutes().size());
@@ -43,8 +45,8 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
         assertEquals(2, camel.getRoutes().size());
 
         // they should be started
-        assertTrue(camel.getRouteStatus("foo").isStarted());
-        assertTrue(camel.getRouteStatus("bar").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("bar").isStarted());
 
         // and they should work
         MockEndpoint foo = camel.getEndpoint("mock:foo", MockEndpoint.class);
@@ -63,14 +65,14 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
         camel.removeRouteDefinitions(routes.getRoutes());
 
         // they should be removed
-        assertNull(camel.getRouteStatus("foo"));
-        assertNull(camel.getRouteStatus("bar"));
+        assertNull(camel.getRouteController().getRouteStatus("foo"));
+        assertNull(camel.getRouteController().getRouteStatus("bar"));
 
         // you can also do this manually via their route ids
-        //camel.stopRoute("foo");
-        //camel.removeRoute("foo");
-        //camel.stopRoute("bar");
-        //camel.removeRoute("bar");
+        //camel.getRouteController().stopRoute("foo");
+        //camel.getRouteController().removeRoute("foo");
+        //camel.getRouteController().stopRoute("bar");
+        //camel.getRouteController().removeRoute("bar");
 
         // load updated xml
         is = this.getClass().getResourceAsStream("myUpdatedRoutes.xml");
@@ -80,8 +82,8 @@ public class CamelLoadRoutesFromXMLTest extends SpringTestSupport {
         assertEquals(2, camel.getRoutes().size());
 
         // they should be started
-        assertTrue(camel.getRouteStatus("foo").isStarted());
-        assertTrue(camel.getRouteStatus("bar").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("bar").isStarted());
 
         // and they should work again (need to get new mock endpoint as the old is gone)
         foo = camel.getEndpoint("mock:foo", MockEndpoint.class);

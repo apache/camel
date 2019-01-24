@@ -33,6 +33,11 @@ public class ThriftDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the thrift data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Name of class to use when unarmshalling
      */
     private String instanceClass;

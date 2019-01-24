@@ -16,7 +16,7 @@
  */
 package org.apache.camel.http.common;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     

@@ -63,18 +63,7 @@
 
         <route>
             <from uri="direct:doCatch"/>
-            <doTry>
-                <to uri="cxf:bean:springEndpoint"/>
-                <doCatch>
-                    <!-- and catch all other exceptions they are handled by default (ie handled
-                        = true) -->
-                    <exception>java.lang.Exception</exception>
-                    <handled>
-                        <constant>false</constant>
-                    </handled>
-                    <to uri="mock:error"/>
-                </doCatch>
-            </doTry>
+            <to uri="cxf:bean:springEndpoint"/>
         </route>
     </camelContext>
 

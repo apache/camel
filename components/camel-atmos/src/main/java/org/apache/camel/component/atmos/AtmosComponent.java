@@ -21,10 +21,12 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.atmos.util.AtmosOperation;
 import org.apache.camel.component.atmos.validator.AtmosConfigurationValidator;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
-public class AtmosComponent extends UriEndpointComponent {
+@Component("atmos")
+public class AtmosComponent extends DefaultComponent {
 
     @Metadata(label = "security")
     private String fullTokenId;
@@ -36,11 +38,10 @@ public class AtmosComponent extends UriEndpointComponent {
     private boolean sslValidation;
 
     public AtmosComponent() {
-        super(AtmosEndpoint.class);
     }
 
     public AtmosComponent(CamelContext context) {
-        super(context, AtmosEndpoint.class);
+        super(context);
     }
 
     protected AtmosEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

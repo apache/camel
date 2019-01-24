@@ -19,10 +19,10 @@ package org.apache.camel.core.xml.util.jsse;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.util.jsse.BaseSSLContextParameters;
-import org.apache.camel.util.jsse.CipherSuitesParameters;
-import org.apache.camel.util.jsse.FilterParameters;
-import org.apache.camel.util.jsse.SecureSocketProtocolsParameters;
+import org.apache.camel.support.jsse.BaseSSLContextParameters;
+import org.apache.camel.support.jsse.CipherSuitesParameters;
+import org.apache.camel.support.jsse.FilterParameters;
+import org.apache.camel.support.jsse.SecureSocketProtocolsParameters;
 
 @XmlTransient
 public abstract class AbstractBaseSSLContextParametersFactoryBean<T extends BaseSSLContextParameters> extends AbstractJsseUtilFactoryBean<T> {

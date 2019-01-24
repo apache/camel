@@ -24,12 +24,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 
 /**
  * A factory which instantiates {@link RedeliveryPolicy} objects
- *
- * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractCamelFactoryBean<RedeliveryPolicy> {

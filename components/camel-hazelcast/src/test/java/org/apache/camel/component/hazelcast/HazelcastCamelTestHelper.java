@@ -70,9 +70,6 @@ public final class HazelcastCamelTestHelper {
         HazelcastTopicComponent topic = new HazelcastTopicComponent(context);
         topic.setHazelcastInstance(hazelcastInstance);
         context.addComponent("hazelcast-topic", topic);
-        HazelcastComponent old = new HazelcastComponent(context);
-        old.setHazelcastInstance(hazelcastInstance);
-        context.addComponent("hazelcast", old);
     }
 
 }

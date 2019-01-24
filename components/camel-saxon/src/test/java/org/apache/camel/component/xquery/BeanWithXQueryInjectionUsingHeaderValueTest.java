@@ -20,7 +20,7 @@ import javax.naming.Context;
 
 import org.apache.camel.Handler;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Test;
 
 public class BeanWithXQueryInjectionUsingHeaderValueTest extends CamelTestSupport {

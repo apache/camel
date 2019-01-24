@@ -22,16 +22,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spring.SpringTestSupport;
-
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class ProcessorAsEndpointTest extends SpringTestSupport {
     protected Object body = "<hello>world!</hello>";
 
+    @Test
     public void testSendingToProcessorEndpoint() throws Exception {
         ProcessorStub processor = getMandatoryBean(ProcessorStub.class, "myProcessor");
 
@@ -43,6 +41,7 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
         log.debug("Found exchanges: " + list);
     }
 
+    @Test
     public void testSendingToNonExistentEndpoint() throws Exception {
         String uri = "unknownEndpoint";
         Endpoint endpoint = context.getEndpoint(uri);

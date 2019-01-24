@@ -24,6 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.support.RoutePolicySupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,8 @@ public class CuratorLeaderRoutePolicy extends RoutePolicySupport implements Elec
     public void onInit(Route route) {
         ensureElectionIsCreated(route);
         LOG.info("Route managed by {}. Setting route {} AutoStartup flag to false.", this.getClass(), route.getId());
-        route.getRouteContext().getRoute().setAutoStartup("false");
+        RouteDefinition definition = (RouteDefinition) route.getRouteContext().getRoute();
+        definition.setAutoStartup("false");
         ensureElectionIsCreated(route);
 
         if (election.isMaster()) {

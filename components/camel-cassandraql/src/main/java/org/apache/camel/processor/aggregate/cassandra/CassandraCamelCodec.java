@@ -26,8 +26,8 @@ import java.nio.ByteBuffer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultExchangeHolder;
+import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.support.DefaultExchange;
 
 /**
  * Marshall/unmarshall Exchange to/from a ByteBuffer.

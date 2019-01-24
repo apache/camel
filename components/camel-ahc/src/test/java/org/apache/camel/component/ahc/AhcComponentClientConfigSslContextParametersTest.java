@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.ahc;
 
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 public class AhcComponentClientConfigSslContextParametersTest extends AhcComponentClientConfigTest {
 

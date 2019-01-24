@@ -21,20 +21,20 @@ import java.util.Map;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
  */
-@UriEndpoint(firstVersion = "2.11.0", scheme = "cmis", title = "CMIS", syntax = "cmis:cmsUrl", consumerClass = CMISConsumer.class, label = "cms,database")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "cmis", title = "CMIS", syntax = "cmis:cmsUrl", label = "cms,database")
 public class CMISEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "URL to the cmis repository")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String cmsUrl;
 
     @UriParam(label = "producer")

@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.InOnly;
@@ -28,17 +27,16 @@ import org.apache.camel.InOut;
 import org.apache.camel.Pattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version
- */
-public class BeanInfoTest extends TestCase {
+public class BeanInfoTest extends Assert {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfoTest.class);
 
     protected CamelContext camelContext = new DefaultCamelContext();
 
+    @Test
     public void testObjectOperations() throws Exception {
         BeanInfo info = createBeanInfo(Object.class);
 
@@ -47,73 +45,73 @@ public class BeanInfoTest extends TestCase {
         assertEquals("toString", operations.get(0).getMethod().getName());
     }
 
+    @Test
     public void testGetOperations() throws Exception {
         BeanInfo info = createBeanInfo(Foo.class);
 
         List<MethodInfo> operations = info.getMethods();
-        assertEquals(3, operations.size());
+        assertEquals(2, operations.size());
 
         long size = operations.stream().filter(m -> m.getMethod().getName().equals("inOnlyMethod")).count();
         assertEquals(1, size);
 
         size = operations.stream().filter(m -> m.getMethod().getName().equals("inOutMethod")).count();
         assertEquals(1, size);
-
-        size = operations.stream().filter(m -> m.getMethod().getName().equals("robustInOnlyMethod")).count();
-        assertEquals(1, size);
     }
 
+    @Test
     public void testMethodPatternUsingMethodAnnotations() throws Exception {
         BeanInfo info = createBeanInfo(Foo.class);
 
         assertMethodPattern(info, "inOutMethod", ExchangePattern.InOut);
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
+    @Test
     public void testMethodPatternUsingClassAnnotationsOnInterface() throws Exception {
         BeanInfo info = createBeanInfo(MyOneWayInterface.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
     }
 
+    @Test
     public void testMethodPatternUsingMethodAnnotationsOnInterface() throws Exception {
         BeanInfo info = createBeanInfo(MyOneWayInterfaceWithOverloadedMethod.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
         assertMethodPattern(info, "inOutMethod", ExchangePattern.InOut);
     }
 
+    @Test
     public void testMethodPatternUsingClassAnnotationsButOverloadingOnMethod() throws Exception {
         BeanInfo info = createBeanInfo(OverloadOnMethod.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
+    @Test
     public void testMethodPatternUsingClassAnnotationsButOverloadingOnBaseClassMethod() throws Exception {
         BeanInfo info = createBeanInfo(OverloadOnBaseClass.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
+    @Test
     public void testMethodPatternUsingClassAnnotationsOnClassWithAnnotationsOnInterface() throws Exception {
         BeanInfo info = createBeanInfo(OverloadOnMethod.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
     }
 
+    @Test
     public void testMethodPatternUsingClassAnnotationsOnBaseInterfaceAndOverloadingMethodOnDerivedInterface() throws Exception {
         BeanInfo info = createBeanInfo(OverloadOnInterface.class);
 
         assertMethodPattern(info, "inOnlyMethod", ExchangePattern.InOnly);
-        assertMethodPattern(info, "robustInOnlyMethod", ExchangePattern.RobustInOnly);
         assertMethodPattern(info, "inOutMethod", ExchangePattern.InOut);
     }
 
+    @Test
     public void testImplementLevel2InterfaceMethodInPackagePrivateClass() {
         BeanInfo info = createBeanInfo(PackagePrivateClassImplementingLevel2InterfaceMethod.class);
         List<MethodInfo> mis = info.getMethods();
@@ -126,6 +124,7 @@ public class BeanInfoTest extends TestCase {
         Assert.assertTrue(Modifier.isPublic(m.getDeclaringClass().getModifiers()));
     }
 
+    @Test
     public void testPublicClassImplementingInterfaceMethodBySuperPackagePrivateClass() {
         BeanInfo info = createBeanInfo(PublicClassImplementingBySuperPackagePrivateClass.class);
         List<MethodInfo> mis = info.getMethods();
@@ -162,9 +161,6 @@ public class BeanInfoTest extends TestCase {
 
         @Pattern(ExchangePattern.InOnly)
         void inOnlyMethod();
-
-        @Pattern(ExchangePattern.RobustInOnly)
-        void robustInOnlyMethod();
     }
 
     @InOnly
@@ -176,9 +172,6 @@ public class BeanInfoTest extends TestCase {
     public interface MyOneWayInterfaceWithOverloadedMethod {
         void inOnlyMethod();
 
-        @Pattern(ExchangePattern.RobustInOnly)
-        void robustInOnlyMethod();
-
         @InOut
         Object inOutMethod();
     }
@@ -186,10 +179,6 @@ public class BeanInfoTest extends TestCase {
     public static class OverloadOnMethod implements MyOneWayInterface {
 
         public void inOnlyMethod() {
-        }
-
-        @Pattern(ExchangePattern.RobustInOnly)
-        public void robustInOnlyMethod() {
         }
     }
 
@@ -201,9 +190,6 @@ public class BeanInfoTest extends TestCase {
     public static class OverloadOnInterface implements MyOneWayInterfaceWithOverloadedMethod {
 
         public void inOnlyMethod() {
-        }
-
-        public void robustInOnlyMethod() {
         }
 
         public Object inOutMethod() {

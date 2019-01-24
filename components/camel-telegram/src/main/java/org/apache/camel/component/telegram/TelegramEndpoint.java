@@ -22,14 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.telegram.model.Update;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * The telegram component provides access to the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type/authorizationToken", consumerClass = TelegramConsumer.class, label = "chat")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "telegram", title = "Telegram", syntax = "telegram:type/authorizationToken", label = "chat")
 public class TelegramEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -60,6 +60,12 @@ public class TelegramEndpoint extends ScheduledPollEndpoint {
 
             if (update.getMessage().getChat() != null) {
                 exchange.getIn().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getMessage().getChat().getId());
+            }
+        } else if (update.getChannelPost() != null) {
+            exchange.getIn().setBody(update.getChannelPost());
+
+            if (update.getChannelPost().getChat() != null) {
+                exchange.getIn().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getChannelPost().getChat().getId());
             }
         }
 

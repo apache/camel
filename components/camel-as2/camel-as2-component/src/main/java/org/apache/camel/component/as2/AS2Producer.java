@@ -18,7 +18,7 @@ package org.apache.camel.component.as2;
 
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2PropertiesHelper;
-import org.apache.camel.util.component.AbstractApiProducer;
+import org.apache.camel.support.component.AbstractApiProducer;
 
 /**
  * The AS2 producer.

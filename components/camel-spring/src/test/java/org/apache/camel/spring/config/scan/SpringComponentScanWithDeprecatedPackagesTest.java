@@ -16,11 +16,13 @@
  */
 
 package org.apache.camel.spring.config.scan;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,7 +31,8 @@ public class SpringComponentScanWithDeprecatedPackagesTest extends ContextTestSu
     private AbstractApplicationContext applicationContext;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/scan/componentScanWithPackages.xml");
         context = applicationContext.getBean("camelContext", ModelCamelContext.class);
@@ -37,13 +40,15 @@ public class SpringComponentScanWithDeprecatedPackagesTest extends ContextTestSu
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         // we're done so let's properly close the application context
         IOHelper.close(applicationContext);
 
         super.tearDown();
     }
 
+    @Test
     public void testSpringComponentScanFeature() throws InterruptedException {
         template.sendBody("direct:start", "request");
         MockEndpoint mock = getMockEndpoint("mock:end");

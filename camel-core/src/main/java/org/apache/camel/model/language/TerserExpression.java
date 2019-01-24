@@ -24,8 +24,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To use HL7 terser scripts in Camel expressions or predicates.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.11.0", label = "language,hl7", title = "HL7 Terser")
 @XmlRootElement(name = "terser")

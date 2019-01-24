@@ -20,8 +20,6 @@ package org.apache.camel.processor.resequencer;
  * A strategy for comparing {@link Element} instances. This strategy uses
  * another {@link SequenceElementComparator} instance for comparing elements
  * contained by {@link Element} instances.
- * 
- * @version 
  */
 class ElementComparator<E> implements SequenceElementComparator<Element<E>> {
 

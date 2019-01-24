@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  *
@@ -36,6 +37,7 @@ public class RoutingSlipNoSuchEndpointExceptionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testRoutingSlip() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -57,6 +59,7 @@ public class RoutingSlipNoSuchEndpointExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRoutingSlipChild() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

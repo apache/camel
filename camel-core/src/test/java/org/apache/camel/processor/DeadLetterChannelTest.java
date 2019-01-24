@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -24,10 +23,9 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class DeadLetterChannelTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint deadEndpoint;
@@ -35,6 +33,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
     protected int failUntilAttempt = 2;
     protected String body = "<hello>world!</hello>";
 
+    @Test
     public void testFirstFewAttemptsFail() throws Exception {
         successEndpoint.expectedBodiesReceived(body);
         successEndpoint.message(0).header(Exchange.REDELIVERED).isEqualTo(true);
@@ -48,6 +47,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLotsOfAttemptsFail() throws Exception {
         failUntilAttempt = 5;
 
@@ -72,6 +72,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         assertEquals(ExchangePattern.InOnly, dead.getPattern());
     }
 
+    @Test
     public void testLotsOfAttemptsFailInOut() throws Exception {
         failUntilAttempt = 5;
 
@@ -97,7 +98,8 @@ public class DeadLetterChannelTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         deadEndpoint = getMockEndpoint("mock:failed");

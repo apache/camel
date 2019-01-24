@@ -18,19 +18,16 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Processor;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BoonDataFormat;
-import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.apache.camel.model.dataformat.CryptoDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.CustomDataFormat;
@@ -39,7 +36,6 @@ import org.apache.camel.model.dataformat.FhirXmlDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
-import org.apache.camel.model.dataformat.HessianDataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
@@ -58,23 +54,16 @@ import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedWidthDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
-import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
-import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 import org.apache.camel.model.dataformat.XmlRpcDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
-import org.apache.camel.processor.MarshalProcessor;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Marshals data into a specified format for transmission over a transport or component
- *
- * @version
  */
 @Metadata(label = "eip,transformation")
 @XmlRootElement(name = "marshal")
@@ -91,7 +80,6 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
         @XmlElement(required = false, name = "boon", type = BoonDataFormat.class),
-        @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
         @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
@@ -99,7 +87,6 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         @XmlElement(required = false, name = "fhirXml", type = FhirXmlDataFormat.class),
         @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
         @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
-        @XmlElement(required = false, name = "hessian", type = HessianDataFormat.class),
         @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
         @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),
         @XmlElement(required = false, name = "jacksonxml", type = JacksonXMLDataFormat.class),
@@ -119,8 +106,6 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         @XmlElement(required = false, name = "univocity-csv", type = UniVocityCsvDataFormat.class),
         @XmlElement(required = false, name = "univocity-fixed", type = UniVocityFixedWidthDataFormat.class),
         @XmlElement(required = false, name = "univocity-tsv", type = UniVocityTsvDataFormat.class),
-        @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
-        @XmlElement(required = false, name = "xmljson", type = XmlJsonDataFormat.class),
         @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
         @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
         @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
@@ -130,19 +115,11 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         )
     private DataFormatDefinition dataFormatType;
 
-    @XmlAttribute
-    @Deprecated
-    private String ref;
-
     public MarshalDefinition() {
     }
 
     public MarshalDefinition(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
-    }
-
-    public MarshalDefinition(String ref) {
-        this.ref = ref;
     }
 
     @Override
@@ -151,26 +128,17 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
     }
 
     protected String description() {
-        return dataFormatType != null ? dataFormatType.toString() : "ref:" + ref;
+        return dataFormatType != null ? dataFormatType.toString() : "";
+    }
+
+    @Override
+    public String getShortName() {
+        return "marshal";
     }
 
     @Override
     public String getLabel() {
         return "marshal[" + description() + "]";
-    }
-
-    public String getRef() {
-        return ref;
-    }
-
-    /**
-     * To refer to a custom data format to use as marshaller
-     *
-     * @deprecated use uri with ref:uri instead
-     */
-    @Deprecated
-    public void setRef(String ref) {
-        this.ref = ref;
     }
 
     public DataFormatDefinition getDataFormatType() {
@@ -184,9 +152,4 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         this.dataFormatType = dataFormatType;
     }
 
-    @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        DataFormat dataFormat = DataFormatDefinition.getDataFormat(routeContext, getDataFormatType(), ref);
-        return new MarshalProcessor(dataFormat);
-    }
 }

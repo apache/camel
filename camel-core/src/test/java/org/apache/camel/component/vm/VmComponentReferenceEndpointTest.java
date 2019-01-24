@@ -21,12 +21,14 @@ import java.util.Iterator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.QueueReference;
+import org.junit.Test;
 
 /**
  *
  */
 public class VmComponentReferenceEndpointTest extends ContextTestSupport {
     
+    @Test
     public void testVmComponentReference() throws Exception {
         VmComponent vm = context.getComponent("vm", VmComponent.class);
 
@@ -46,14 +48,14 @@ public class VmComponentReferenceEndpointTest extends ContextTestSupport {
         assertEquals(3, numberOfReferences(vm));
 
         // remove the 1st route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         context.removeRoute("foo");
 
         assertEquals(1, vm.getQueues().get(key).getCount());
         assertEquals(2, numberOfReferences(vm));
 
         // remove the 2nd route
-        context.stopRoute("foo2");
+        context.getRouteController().stopRoute("foo2");
         context.removeRoute("foo2");
 
         // and there is no longer queues for the foo key

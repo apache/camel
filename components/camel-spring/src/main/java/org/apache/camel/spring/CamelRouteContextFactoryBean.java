@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,8 +31,6 @@ import org.springframework.beans.factory.FactoryBean;
 
 /**
  * Configuration of routes using XML
- *
- * @version
  */
 @Metadata(label = "spring,configuration,routing")
 @XmlRootElement(name = "routeContext")

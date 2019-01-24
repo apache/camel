@@ -668,13 +668,8 @@
       "javaType": "org.apache.camel.ExchangePattern",
       "enum": [
         "InOnly",
-        "RobustInOnly",
         "InOut",
-        "InOptionalOut",
-        "OutOnly",
-        "RobustOutOnly",
-        "OutIn",
-        "OutOptionalIn"
+        "InOptionalOut"
       ],
       "deprecated": "false",
       "defaultValue": "InOnly",

@@ -32,11 +32,11 @@ import static org.apache.camel.component.avro.AvroConstants.AVRO_MESSAGE_NAME_SE
 @UriParams
 public class AvroConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private AvroTransport transport;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private int port;
     @UriPath
     private String messageName;
@@ -119,12 +119,15 @@ public class AvroConfiguration implements Cloneable {
     }
 
     /**
-     * Transport to use
+     * Transport to use, can be either http or netty
      */
     public void setTransport(String transport) {
         this.transport = AvroTransport.valueOf(transport);
     }
 
+    /**
+     * Transport to use, can be either http or netty
+     */
     public void setTransport(AvroTransport transport) {
         this.transport = transport;
     }

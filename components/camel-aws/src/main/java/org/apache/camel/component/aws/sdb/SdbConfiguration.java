@@ -26,7 +26,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class SdbConfiguration {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String domainName;
     @UriParam
     private AmazonSimpleDB amazonSDBClient;
@@ -124,35 +124,35 @@ public class SdbConfiguration {
         this.consistentRead = consistentRead;
     }
     
-    /**
-     * To define a proxy host when instantiating the SDB client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the SDB client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the SDB client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
     
-    /**
-     * The region in which SDB client needs to work
-     */
     public String getRegion() {
         return region;
     }
 
+    /**
+     * The region in which SDB client needs to work
+     */
     public void setRegion(String region) {
         this.region = region;
     }

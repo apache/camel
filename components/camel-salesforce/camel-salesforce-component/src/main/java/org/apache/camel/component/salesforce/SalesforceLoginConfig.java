@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.salesforce;
 
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.KeyStoreParameters;
 
 /**
  * Configuration object for Salesforce login properties

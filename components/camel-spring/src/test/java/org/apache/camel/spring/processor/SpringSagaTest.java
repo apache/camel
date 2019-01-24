@@ -19,11 +19,13 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringSagaTest extends ContextTestSupport {
 
+    @Test
     public void testSendAMessageWithinASaga() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
         resultEndpoint.expectedBodiesReceived("correct");
@@ -39,6 +41,7 @@ public class SpringSagaTest extends ContextTestSupport {
         completionEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testCompensationWithinASaga() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:end");
         resultEndpoint.expectedMessageCount(1);

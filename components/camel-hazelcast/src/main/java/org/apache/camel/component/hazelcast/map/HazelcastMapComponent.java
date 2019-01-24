@@ -23,11 +23,12 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("hazelcast-map")
 public class HazelcastMapComponent extends HazelcastDefaultComponent {
 
     public HazelcastMapComponent() {
-        super();
     }
 
     public HazelcastMapComponent(final CamelContext context) {

@@ -21,9 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.MDC;
 
-/**
- * @version 
- */
 public class MDCWithBreadcrumbTest extends MDCTest {
 
     @Override

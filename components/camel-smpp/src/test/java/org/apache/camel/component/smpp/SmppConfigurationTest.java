@@ -18,9 +18,9 @@ package org.apache.camel.component.smpp;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.util.HashMap;
 import java.util.Map;
+
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
 import org.jsmpp.bean.TypeOfNumber;
@@ -35,8 +35,6 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConfiguration</code>
- * 
- * @version 
  */
 public class SmppConfigurationTest {
     
@@ -45,6 +43,7 @@ public class SmppConfigurationTest {
     @Before
     public void setUp() {
         configuration = new SmppConfiguration();
+        configuration.setServiceType("CMT");
     }
 
     @Test
@@ -66,7 +65,7 @@ public class SmppConfigurationTest {
         assertEquals(0x00, configuration.getSourceAddrNpi());
         assertEquals(0x00, configuration.getSourceAddrTon());
         assertEquals("smppclient", configuration.getSystemId());
-        assertEquals("cp", configuration.getSystemType());
+        assertEquals("", configuration.getSystemType());
         assertEquals(new Integer(10000), configuration.getTransactionTimer());
         assertEquals("ISO-8859-1", configuration.getEncoding());
         assertEquals(0x00, configuration.getNumberingPlanIndicator());
@@ -172,7 +171,7 @@ public class SmppConfigurationTest {
                 + "password=password, "
                 + "port=2775, "
                 + "systemId=smppclient, "
-                + "systemType=cp, "
+                + "systemType=, "
                 + "dataCoding=0, "
                 + "alphabet=0, "
                 + "encoding=ISO-8859-1, "

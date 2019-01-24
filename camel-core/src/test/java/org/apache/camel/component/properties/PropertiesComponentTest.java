@@ -21,10 +21,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class PropertiesComponentTest extends ContextTestSupport {
 
     @Override
@@ -32,6 +30,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPropertiesComponent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -48,6 +47,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentTwo() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -65,6 +65,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testPropertiesComponentCustomTokens() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setPrefixToken("[[");
@@ -94,6 +95,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertEquals(PropertiesComponent.DEFAULT_SUFFIX_TOKEN, pc.getSuffixToken());
     }
 
+    @Test
     public void testPropertiesComponentTemplate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -111,6 +113,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentResult() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -127,6 +130,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentMockMock() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -143,6 +147,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentConcat() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -159,6 +164,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentLocationOverride() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -175,6 +181,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentLocationsOverride() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -195,6 +202,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentInvalidKey() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -212,6 +220,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPropertiesComponentCircularReference() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -229,6 +238,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testPropertiesComponentCacheDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -248,6 +258,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentCacheDisabled() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setCache(false);
@@ -269,6 +280,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testPropertiesComponentPropertyPrefix() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setPropertyPrefix("cool.");
@@ -290,6 +302,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentParameterizedPropertyPrefix() throws Exception {
         System.setProperty("myPrefix", "cool");
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
@@ -315,6 +328,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         System.clearProperty("myPrefix");
     }
 
+    @Test
     public void testPropertiesComponentPropertyPrefixFallbackDefault() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setPropertyPrefix("cool.");
@@ -336,6 +350,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testPropertiesComponentPropertyPrefixFallbackDefaultNotFound() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setPropertyPrefix("cool.");
@@ -358,6 +373,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         }
     }
     
+    @Test
     public void testPropertiesComponentPropertyPrefixFallbackFalse() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setPropertyPrefix("cool.");
@@ -382,6 +398,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         }
     }
     
+    @Test
     public void testPropertiesComponentPropertySuffix() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setPropertySuffix(".end");
@@ -401,6 +418,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testPropertiesComponentPropertySuffixFallbackDefault() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setPropertySuffix(".end");
@@ -420,6 +438,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testPropertiesComponentPropertySuffixFallbackFalse() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setPropertySuffix(".end");
@@ -443,6 +462,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testJvmSystemPropertyNotFound() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -459,6 +479,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testCache() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         assertTrue(pc.isCache());
@@ -470,6 +491,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testCacheRoute() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -490,6 +512,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testQuotedPrefix() throws Exception {
         assertEquals("mock", context.resolvePropertyPlaceholders("{{cool.mock}}"));
         assertEquals("'{{' + something + '}}'", context.resolvePropertyPlaceholders("'{{' + something + '}}'"));
@@ -500,6 +523,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         assertEquals("\"mock", context.resolvePropertyPlaceholders("\"{{cool.mock}}"));
     }
 
+    @Test
     public void testPropertiesComponentOverride() throws Exception {
         System.setProperty("cool.result", "bar");
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
@@ -523,6 +547,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         System.clearProperty("cool.result");
     }
 
+    @Test
     public void testPropertiesComponentFallback() throws Exception {
         System.setProperty("cool.result", "bar");
         System.setProperty("beer", "Carlsberg");
@@ -549,6 +574,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         System.clearProperty("beer");
     }
 
+    @Test
     public void testPropertiesComponentNever() throws Exception {
         System.setProperty("cool.result", "bar");
         System.setProperty("beer", "Carlsberg");
@@ -572,6 +598,7 @@ public class PropertiesComponentTest extends ContextTestSupport {
         System.clearProperty("beer");
     }
 
+    @Test
     public void testCamelProperties() throws Exception {
         context.getGlobalOptions().put("foo", "Hello {{cool.name}}");
         context.getGlobalOptions().put("bar", "cool.name");

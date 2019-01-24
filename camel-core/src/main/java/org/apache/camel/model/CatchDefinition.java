@@ -17,7 +17,9 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,21 +27,12 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * Catches exceptions as part of a try, catch, finally block
- *
- * @version 
  */
 @Metadata(label = "error")
 @XmlRootElement(name = "doCatch")
@@ -49,14 +42,10 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     private List<String> exceptions = new ArrayList<>();
     @XmlElement(name = "onWhen") @AsPredicate
     private WhenDefinition onWhen;
-    @XmlElement(name = "handled") @AsPredicate
-    private ExpressionSubElementDefinition handled;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private List<Class<? extends Throwable>> exceptionClasses;
-    @XmlTransient
-    private Predicate handledPolicy;
 
     public CatchDefinition() {
     }
@@ -76,41 +65,13 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     }
 
     @Override
-    public String getLabel() {
-        return "doCatch[ " + getExceptionClasses() + "]";
+    public String getShortName() {
+        return "doCatch";
     }
 
     @Override
-    public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
-        // create and load exceptions if not done
-        if (exceptionClasses == null) {
-            exceptionClasses = createExceptionClasses(routeContext.getCamelContext());
-        }
-
-        // must have at least one exception
-        if (exceptionClasses.isEmpty()) {
-            throw new IllegalArgumentException("At least one Exception must be configured to catch");
-        }
-
-        // parent must be a try
-        if (!(getParent() instanceof TryDefinition)) {
-            throw new IllegalArgumentException("This doCatch should have a doTry as its parent on " + this);
-        }
-
-        // do catch does not mandate a child processor
-        Processor childProcessor = this.createChildProcessor(routeContext, false);
-
-        Predicate when = null;
-        if (onWhen != null) {
-            when = onWhen.getExpression().createPredicate(routeContext);
-        }
-
-        Predicate handle = handledPolicy;
-        if (handled != null) {
-            handle = handled.createPredicate(routeContext);
-        }
-
-        return new CatchProcessor(exceptionClasses, childProcessor, when, handle);
+    public String getLabel() {
+        return "doCatch[ " + getExceptionClasses() + "]";
     }
 
     @Override
@@ -158,9 +119,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
             exceptionClasses = new ArrayList<>();
         }
         if (exceptions != null) {
-            for (Class<? extends Throwable> exception : exceptions) {
-                exceptionClasses.add(exception);
-            }
+            exceptionClasses.addAll(Arrays.asList(exceptions));
         }
         return this;
     }
@@ -176,48 +135,6 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      */
     public CatchDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
-        return this;
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  handled or not
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public CatchDefinition handled(boolean handled) {
-        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
-        return handled(expression);
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  predicate that determines true or false
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public CatchDefinition handled(@AsPredicate Predicate handled) {
-        setHandledPolicy(handled);
-        return this;
-    }
-
-    /**
-     * Sets whether the exchange should be marked as handled or not.
-     *
-     * @param handled  expression that determines true or false
-     * @return the builder
-     * @deprecated will be removed in Camel 3.0. Instead of using handled(false) you can re-throw the exception
-     * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
-     */
-    @Deprecated
-    public CatchDefinition handled(@AsPredicate Expression handled) {
-        setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
         return this;
     }
 
@@ -249,31 +166,4 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
         this.onWhen = onWhen;
     }
 
-    public Predicate getHandledPolicy() {
-        return handledPolicy;
-    }
-
-    public void setHandledPolicy(Predicate handledPolicy) {
-        this.handledPolicy = handledPolicy;
-    }
-
-    public ExpressionSubElementDefinition getHandled() {
-        return handled;
-    }
-
-    public void setHandled(ExpressionSubElementDefinition handled) {
-        this.handled = handled;
-    }
-
-    protected List<Class<? extends Throwable>> createExceptionClasses(CamelContext context) throws ClassNotFoundException {
-        // must use the class resolver from CamelContext to load classes to ensure it can
-        // be loaded in all kind of environments such as JEE servers and OSGi etc.
-        List<String> list = getExceptions();
-        List<Class<? extends Throwable>> answer = new ArrayList<>(list.size());
-        for (String name : list) {
-            Class<Throwable> type = context.getClassResolver().resolveMandatoryClass(name, Throwable.class);
-            answer.add(type);
-        }
-        return answer;
-    }
 }

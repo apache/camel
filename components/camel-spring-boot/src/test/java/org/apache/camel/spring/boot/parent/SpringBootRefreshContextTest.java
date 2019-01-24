@@ -20,6 +20,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.boot.RoutesCollector;
 import org.junit.Test;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -33,7 +34,7 @@ public class SpringBootRefreshContextTest {
     public void shouldOnlyCollectRoutesOnce() {
         GenericApplicationContext parent = new GenericApplicationContext();
         parent.refresh();
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(Configuration.class).web(false).parent(parent).run();
+        ConfigurableApplicationContext context = new SpringApplicationBuilder(Configuration.class).web(WebApplicationType.NONE).parent(parent).run();
         ContextRefreshedEvent refreshEvent = new ContextRefreshedEvent(context);
         RoutesCollector collector = context.getBean(RoutesCollector.class);
         collector.onApplicationEvent(refreshEvent); //no changes should happen here

@@ -17,6 +17,7 @@
 package org.apache.camel.example.cdi.xml;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -29,8 +30,9 @@ import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.reifier.RouteReifier;
+import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.test.cdi.CamelCdiRunner;
 import org.apache.camel.test.cdi.Order;
 import org.awaitility.Awaitility;
@@ -51,8 +53,8 @@ public class CdiXmlTest {
 
     void pipeMatrixStream(@Observes CamelContextStartingEvent event,
                           ModelCamelContext context) throws Exception {
-        context.getRouteDefinition("matrix")
-            .adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier
+            .adviceWith(context.getRouteDefinition("matrix"), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() {
                     weaveAddLast().to("mock:matrix");
@@ -95,6 +97,6 @@ public class CdiXmlTest {
     public void verifyRescue(CamelContext context) {
         Awaitility.await("Neo is still in the matrix!")
             .atMost(5, TimeUnit.SECONDS)
-            .until(() -> ServiceStatus.Stopped.equals(context.getRouteStatus("terminal")));
+            .until(() -> ServiceStatus.Stopped.equals(context.getRouteController().getRouteStatus("terminal")));
     }
 }

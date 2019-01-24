@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
 /**
  * Tests that the redelivery error handler will break out if CamelContext is shutting down.
  */
 public class RedeliveryErrorHandlerBreakoutDuringShutdownTest extends ContextTestSupport {
 
+    @Test
     public void testRedelivery() throws Exception {
 
         getMockEndpoint("mock:before").expectedMessageCount(1);

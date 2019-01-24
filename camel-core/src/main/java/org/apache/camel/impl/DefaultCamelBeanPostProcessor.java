@@ -22,10 +22,12 @@ import java.lang.reflect.Method;
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +66,7 @@ public class DefaultCamelBeanPostProcessor {
      * initialization callbacks (like <code>afterPropertiesSet</code>
      * or a custom init-method). The bean will already be populated with property values.
      * The returned bean instance may be a wrapper around the original.
-     * 
+     *
      * @param bean the new bean instance
      * @param beanName the name of the bean
      * @return the bean instance to use, either the original or a wrapped one; if
@@ -84,10 +86,12 @@ public class DefaultCamelBeanPostProcessor {
 
         if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
             CamelContextAware contextAware = (CamelContextAware)bean;
+            DeferredContextBinding deferredBinding = bean.getClass().getAnnotation(DeferredContextBinding.class);
             CamelContext context = getOrLookupCamelContext();
-            if (context == null) {
-                LOG.warn("No CamelContext defined yet so cannot inject into bean: " + beanName);
-            } else {
+
+            if (context == null && deferredBinding == null) {
+                LOG.warn("No CamelContext defined yet so cannot inject into bean: {}", beanName);
+            } else if (context != null) {
                 contextAware.setCamelContext(context);
             }
         }
@@ -100,7 +104,7 @@ public class DefaultCamelBeanPostProcessor {
      * initialization callbacks (like <code>afterPropertiesSet</code>
      * or a custom init-method). The bean will already be populated with property values.
      * The returned bean instance may be a wrapper around the original.
-     * 
+     *
      * @param bean the new bean instance
      * @param beanName the name of the bean
      * @return the bean instance to use, either the original or a wrapped one; if
@@ -193,7 +197,7 @@ public class DefaultCamelBeanPostProcessor {
                                Object bean, String beanName) {
         injectField(field, endpointUri, endpointRef, endpointProperty, bean, beanName, true);
     }
-    
+
     public void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
                                Object bean, String beanName, boolean binding) {
         ReflectionHelper.setField(field, bean,
@@ -247,9 +251,9 @@ public class DefaultCamelBeanPostProcessor {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null) {
             if (parameterTypes.length != 1) {
-                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
             } else {
-                String propertyName = ObjectHelper.getPropertyName(method);
+                String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
                 Object value = getPostProcessorHelper().getInjectionValue(parameterTypes[0], endpointUri, endpointRef, endpointProperty,
                         propertyName, bean, beanName);
                 ObjectHelper.invokeMethod(method, bean, value);
@@ -262,9 +266,9 @@ public class DefaultCamelBeanPostProcessor {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null) {
             if (parameterTypes.length != 1) {
-                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
             } else {
-                String propertyName = ObjectHelper.getPropertyName(method);
+                String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
                 Object value = getPostProcessorHelper().getInjectionPropertyValue(parameterTypes[0], propertyValue, propertyDefaultValue, propertyName, bean, beanName);
                 ObjectHelper.invokeMethod(method, bean, value);
             }
@@ -275,7 +279,7 @@ public class DefaultCamelBeanPostProcessor {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null) {
             if (parameterTypes.length != 1) {
-                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
             } else {
                 Object value = getPostProcessorHelper().getInjectionBeanValue(parameterTypes[0], name);
                 ObjectHelper.invokeMethod(method, bean, value);

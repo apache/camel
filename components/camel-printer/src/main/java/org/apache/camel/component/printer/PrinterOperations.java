@@ -64,7 +64,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
     }
 
     public void print(Doc doc, boolean sendToPrinter, String mimeType, String jobName) throws PrintException {
-        LOG.trace("Print Service: " + this.printService.getName());
+        LOG.trace("Print Service: {}", this.printService.getName());
 
         if (!sendToPrinter) {
             LOG.debug("Print flag is set to false. This job will not be printed as long as this setting remains in effect. Please set the flag to true or remove the setting.");
@@ -80,7 +80,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
                 file = new File("./target/PrintOutput_" + UUID.randomUUID() + ".txt");
             }
 
-            LOG.debug("Writing print job to file: " + file.getAbsolutePath());
+            LOG.debug("Writing print job to file: {}", file.getAbsolutePath());
             try {
                 InputStream in = doc.getStreamForBytes();
                 FileOutputStream fos = new FileOutputStream(file);

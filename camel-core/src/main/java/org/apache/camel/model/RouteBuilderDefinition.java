@@ -25,13 +25,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * To refer to a Java {@link org.apache.camel.builder.RouteBuilder} instance to use.
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routeBuilder")

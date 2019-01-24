@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sns;
 
 import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
@@ -39,6 +40,12 @@ public class SnsConfiguration implements Cloneable {
     private String proxyHost;
     @UriParam
     private Integer proxyPort;
+    @UriParam
+    private AmazonSQS amazonSQSClient;
+    @UriParam
+    private String queueUrl;
+    @UriParam
+    private boolean subscribeSNStoSQS;
 
     // Producer only properties
     @UriParam
@@ -138,37 +145,70 @@ public class SnsConfiguration implements Cloneable {
         this.messageStructure = messageStructure;
     }
     
-    /**
-     * To define a proxy host when instantiating the SNS client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the SNS client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the SNS client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
     
-    /**
-     * The region in which SNS client needs to work
-     */
     public String getRegion() {
         return region;
     }
 
+    /**
+     * The region in which SNS client needs to work
+     */
     public void setRegion(String region) {
         this.region = region;
+    }
+
+    public AmazonSQS getAmazonSQSClient() {
+        return amazonSQSClient;
+    }
+
+    /**
+     * An SQS Client to use as bridge between SNS and SQS
+     */
+    public void setAmazonSQSClient(AmazonSQS amazonSQSClient) {
+        this.amazonSQSClient = amazonSQSClient;
+    }
+
+    public String getQueueUrl() {
+        return queueUrl;
+    }
+
+    /**
+     * The queueUrl to subscribe to
+     */
+    public void setQueueUrl(String queueUrl) {
+        this.queueUrl = queueUrl;
+    }
+
+    public boolean isSubscribeSNStoSQS() {
+        return subscribeSNStoSQS;
+    }
+
+    /**
+     * Define if the subscription between SNS Topic and SQS must be done or not
+     */
+    public void setSubscribeSNStoSQS(boolean subscribeSNStoSQS) {
+        this.subscribeSNStoSQS = subscribeSNStoSQS;
     }
     
     // *************************************************

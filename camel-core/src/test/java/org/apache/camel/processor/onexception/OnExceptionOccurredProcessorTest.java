@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
 
@@ -31,6 +32,7 @@ public class OnExceptionOccurredProcessorTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testOnExceptionOccurred() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
 

@@ -63,8 +63,6 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultCompositeApiClient extends AbstractClientBase implements CompositeApiClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultCompositeApiClient.class);
-
     // Composite (non-tree, non-batch) does not support XML format
     private static final XStream NO_XSTREAM = null;
 
@@ -74,7 +72,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     private final Map<Class<?>, ObjectReader> readers = new HashMap<>();
 
-    private final Map<Class<?>, ObjectWriter> writters = new HashMap<>();
+    private final Map<Class<?>, ObjectWriter> writers = new HashMap<>();
 
     private final XStream xStreamCompositeBatch;
 
@@ -183,7 +181,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     ObjectWriter jsonWriterFor(final Object obj) {
         final Class<?> type = obj.getClass();
 
-        return Optional.ofNullable(writters.get(type)).orElseGet(() -> mapper.writerFor(type));
+        return Optional.ofNullable(writers.get(type)).orElseGet(() -> mapper.writerFor(type));
     }
 
     ContentProvider serialize(final XStream xstream, final Object body, final Class<?>... additionalTypes)
@@ -226,7 +224,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
             // must be XML
             return Optional.of(fromXml(xstream, responseStream));
         } catch (XStreamException | IOException e) {
-            LOG.warn("Unable to read response from the Composite API", e);
+            log.warn("Unable to read response from the Composite API", e);
             return Optional.empty();
         } finally {
             IOHelper.close(responseStream);

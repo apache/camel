@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Unit test for testing CXF bus injection.
- *
- * @version 
  */
 public class CxfEndpointBeanWithBusTest extends AbstractSpringBeanTestSupport {
     static int port1 = CXFTestSupport.getPort1();

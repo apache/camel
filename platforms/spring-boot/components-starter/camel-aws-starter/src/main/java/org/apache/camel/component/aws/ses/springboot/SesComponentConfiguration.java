@@ -34,6 +34,11 @@ public class SesComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-ses component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS SES default configuration
      */
     private SesConfigurationNestedConfiguration configuration;
@@ -136,8 +141,17 @@ public class SesComponentConfiguration
          * 'CamelAwsSesReplyToAddresses' header.
          */
         private List replyToAddresses;
+        /**
+         * To define a proxy host when instantiating the SES client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the SES client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which SES client needs to work
+         */
         private String region;
 
         public String getAccessKey() {

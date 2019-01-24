@@ -21,10 +21,10 @@ import com.amazonaws.xray.AWSXRay;
 import com.amazonaws.xray.entities.Subsegment;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class EIPTracingStrategy implements InterceptStrategy {
 
     @Override
     public Processor wrapProcessorInInterceptors(CamelContext camelContext,
-        ProcessorDefinition<?> processorDefinition, Processor target, Processor nextTarget)
+                                                 NamedNode processorDefinition, Processor target, Processor nextTarget)
         throws Exception {
 
         String defName = processorDefinition.getShortName();

@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class EndpointRegistryKeepRouteEndpointsRemoteRouteSharedEndpointTest extends ContextTestSupport {
 
@@ -30,6 +31,7 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteSharedEndpointTest ext
         return context;
     }
 
+    @Test
     public void testEndpointRegistryKeepRouteEndpointsRemoveRouteSharedEndpoint() throws Exception {
         assertTrue(context.hasEndpoint("direct://start") != null);
         assertTrue(context.hasEndpoint("log://start") != null);
@@ -58,7 +60,7 @@ public class EndpointRegistryKeepRouteEndpointsRemoteRouteSharedEndpointTest ext
         assertTrue(context.hasEndpoint("log://private") != null);
 
         // now stop and remove the bar route
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         context.removeRoute("bar");
 
         assertEquals(5, context.getEndpointRegistry().staticSize());

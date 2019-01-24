@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -35,12 +36,14 @@ import javax.jms.MessageConsumer;
 import javax.jms.Queue;
 import javax.jms.Session;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +83,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         this.sjmsBatchEndpoint = ObjectHelper.notNull(sjmsBatchEndpoint, "batchJmsEndpoint");
 
-        destinationName = ObjectHelper.notEmpty(sjmsBatchEndpoint.getDestinationName(), "destinationName");
+        destinationName = StringHelper.notEmpty(sjmsBatchEndpoint.getDestinationName(), "destinationName");
 
         completionSize = sjmsBatchEndpoint.getCompletionSize();
         completionInterval = sjmsBatchEndpoint.getCompletionInterval();
@@ -215,7 +218,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     if (recoveryEnabled) {
                         getExceptionHandler().handleException("Error starting consumer after " + attempt + " attempts. Will try again in " + recoveryInterval + " millis.", e);
                     } else {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
                 }
 

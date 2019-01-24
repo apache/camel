@@ -30,7 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.examples.MultiSteps;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,9 +41,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * @version 
- */
 public class JpaWithNamedQueryTest extends Assert {
     
     protected static final Logger LOG = LoggerFactory.getLogger(JpaWithNamedQueryTest.class);
@@ -164,7 +161,7 @@ public class JpaWithNamedQueryTest extends Assert {
     @Before
     public void setUp() throws Exception {
         template = camelContext.createProducerTemplate();
-        ServiceHelper.startServices(template, camelContext);
+        ServiceHelper.startService(template, camelContext);
 
         Endpoint value = camelContext.getEndpoint(getEndpointUri());
         assertNotNull("Could not find endpoint!", value);
@@ -181,6 +178,6 @@ public class JpaWithNamedQueryTest extends Assert {
 
     @After
     public void tearDown() throws Exception {
-        ServiceHelper.stopServices(consumer, template, camelContext);
+        ServiceHelper.stopService(consumer, template, camelContext);
     }
 }

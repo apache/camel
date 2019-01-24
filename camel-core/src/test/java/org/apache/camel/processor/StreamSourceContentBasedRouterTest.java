@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.io.StringReader;
 
 import javax.xml.transform.stream.StreamSource;
@@ -24,16 +23,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.StringSource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test for handling a StreamSource in a content-based router with XPath predicates
- *
- * @version 
  */
 public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     protected MockEndpoint x;
     protected MockEndpoint y;
 
+    @Test
     public void testSendStreamSource() throws Exception {
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);
@@ -44,6 +44,7 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendStringSource() throws Exception {
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);
@@ -55,7 +56,8 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");

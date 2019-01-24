@@ -20,6 +20,7 @@ import io.swagger.models.Swagger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.util.ObjectHelper;
 
 public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
 
@@ -37,7 +38,7 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
     public String generate(final CamelContext context) throws Exception {
         final RestDefinitionEmitter emitter = new RestDefinitionEmitter(context);
 
-        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(emitter, filter, destinationGenerator());
+        final PathVisitor<RestsDefinition> restDslStatement = new PathVisitor<>(swagger.getBasePath(), emitter, filter, destinationGenerator());
 
         swagger.getPaths().forEach(restDslStatement::visit);
 
@@ -49,6 +50,20 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
         // remove all customId attributes as we do not want them in the output
         xml = xml.replaceAll(" customId=\"true\"", "");
         xml = xml.replaceAll(" customId=\"false\"", "");
+
+        if (restComponent != null) {
+            String extra = "<restConfiguration component=\"" + restComponent + "\"";
+            if (restContextPath != null) {
+                extra = extra.concat(" contextPath=\"" + restContextPath + "\"");
+            }
+            if (ObjectHelper.isNotEmpty(apiContextPath)) {
+                extra = extra.concat(" apiContextPath=\"" + apiContextPath + "\"");
+            }
+            extra = extra.concat("/>");
+            xml = xml.replaceFirst("<rest>", extra + "\n    <rest>");
+            xml = xml.replaceFirst("<rest ", extra + "\n    <rest ");
+        }
+
         return xml;
     }
 }

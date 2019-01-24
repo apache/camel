@@ -19,14 +19,14 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * This test stops a route, mutates it then restarts it
- *
- * @version 
  */
 public class StartStopAndShutdownRouteTest extends ContextTestSupport {
 
+    @Test
     public void testStartStopAndShutdownRoute() throws Exception {
 
         // there should still be 2 services on the route
@@ -35,13 +35,13 @@ public class StartStopAndShutdownRouteTest extends ContextTestSupport {
         assertTrue(services > 0);
 
         // stop the route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         // there should still be the same number of services on the route
         assertEquals(services, myRoute.getServices().size());
 
         // shutting down the route, by stop and remove
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         context.removeRoute("foo");
 
         // and now no more services as the route is shutdown

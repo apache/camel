@@ -18,12 +18,11 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RouteRemove2Test extends ContextTestSupport {
 
+    @Test
     public void testRemove() throws Exception {
         DefaultCamelContext defaultContext = (DefaultCamelContext) context;
         assertEquals("2 routes to start with", 2, context.getRoutes().size());
@@ -36,13 +35,13 @@ public class RouteRemove2Test extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteStatus("bar").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
 
         // stop foo route
-        context.stopRoute("foo");
-        assertEquals("Stopped", context.getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteStatus("bar").name());
+        context.getRouteController().stopRoute("foo");
+        assertEquals("Stopped", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
 
         resetMocks();
 
@@ -53,8 +52,8 @@ public class RouteRemove2Test extends ContextTestSupport {
 
         // remove foo route and bar should continue to be functional
         context.removeRoute("foo");
-        assertEquals("There should be no foo route anymore", null, context.getRouteStatus("foo"));
-        assertEquals("Started", context.getRouteStatus("bar").name());
+        assertEquals("There should be no foo route anymore", null, context.getRouteController().getRouteStatus("foo"));
+        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
 
         resetMocks();
 

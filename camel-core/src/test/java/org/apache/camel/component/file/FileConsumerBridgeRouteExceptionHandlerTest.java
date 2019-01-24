@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *
@@ -32,6 +33,7 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
 
     private MyReadLockStrategy myReadLockStrategy = new MyReadLockStrategy();
 
+    @Test
     public void testCustomExceptionHandler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
         getMockEndpoint("mock:error").expectedBodiesReceived("Error Forced to simulate no space on device");

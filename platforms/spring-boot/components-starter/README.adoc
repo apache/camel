@@ -19,9 +19,7 @@ The following components do not have a starter because of compatibility issues:
 * **camel-core-xml**
 * **camel-ejb**  (intended for JEE only)
 * **camel-eventadmin** (intended for OSGi only)
-* **camel-groovy-dsl**
 * **camel-ibatis** (`camel-mybatis-starter` is included)
-* **camel-jclouds**
 * **camel-mina** (`camel-mina2-starter` is included)
 * **camel-paxlogging** (intended for OSGi only)
 * **camel-quartz** (`camel-quartz2-starter` is included)

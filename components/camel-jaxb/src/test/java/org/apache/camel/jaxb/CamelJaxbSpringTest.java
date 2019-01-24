@@ -38,7 +38,7 @@ public class CamelJaxbSpringTest extends CamelJaxbTest {
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
         
     }
     

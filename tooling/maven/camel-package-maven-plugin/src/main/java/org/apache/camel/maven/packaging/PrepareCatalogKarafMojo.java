@@ -29,16 +29,21 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import static org.w3c.dom.Node.ELEMENT_NODE;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
@@ -46,77 +51,64 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
 /**
  * Prepares the Karaf provider camel catalog to include component it supports
- *
- * @goal prepare-catalog-karaf
  */
+@Mojo(name = "prepare-catalog-karaf", threadSafe = true)
 public class PrepareCatalogKarafMojo extends AbstractMojo {
 
     public static final int BUFFER_SIZE = 128 * 1024;
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The output directory for components catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/karaf/components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/karaf/components")
     protected File componentsOutDir;
 
     /**
      * The output directory for dataformats catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/karaf/dataformats"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/karaf/dataformats")
     protected File dataFormatsOutDir;
 
     /**
      * The output directory for languages catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/karaf/languages"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/karaf/languages")
     protected File languagesOutDir;
 
     /**
      * The output directory for others catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/karaf/others"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/karaf/others")
     protected File othersOutDir;
 
     /**
      * The karaf features directory
-     *
-     * @parameter default-value="${project.build.directory}/../../../platforms/karaf/features/src/main/resources/"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../platforms/karaf/features/src/main/resources/")
     protected File featuresDir;
 
     /**
      * The components directory where all the Apache Camel components are
-     *
-     * @parameter default-value="${project.build.directory}/../../../components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components")
     protected File componentsDir;
 
     /**
      * The camel-core directory where camel-core components are
-     *
-     * @parameter default-value="${project.build.directory}/../../../camel-core"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../camel-core")
     protected File coreDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
@@ -640,6 +632,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             dbf.setNamespaceAware(false);
             dbf.setValidating(false);
             dbf.setXIncludeAware(false);
+            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
             Document dom = dbf.newDocumentBuilder().parse(is);
 
             NodeList children = dom.getElementsByTagName("features");

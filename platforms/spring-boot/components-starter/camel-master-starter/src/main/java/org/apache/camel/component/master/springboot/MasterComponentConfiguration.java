@@ -17,11 +17,8 @@
 package org.apache.camel.component.master.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.cluster.CamelClusterService;
-import org.apache.camel.cluster.CamelClusterService.Selector;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Represents an endpoint which only becomes active when the CamelClusterView
@@ -36,16 +33,21 @@ public class MasterComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * Inject the service to use.
+     * Whether to enable auto configuration of the master component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private CamelClusterService service;
+    private Boolean enabled;
+    /**
+     * Inject the service to use. The option is a
+     * org.apache.camel.cluster.CamelClusterService type.
+     */
+    private String service;
     /**
      * Inject the service selector used to lookup the CamelClusterService to
-     * use.
+     * use. The option is a
+     * org.apache.camel.cluster.CamelClusterService.Selector type.
      */
-    @NestedConfigurationProperty
-    private Selector serviceSelector;
+    private String serviceSelector;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -53,19 +55,19 @@ public class MasterComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public CamelClusterService getService() {
+    public String getService() {
         return service;
     }
 
-    public void setService(CamelClusterService service) {
+    public void setService(String service) {
         this.service = service;
     }
 
-    public Selector getServiceSelector() {
+    public String getServiceSelector() {
         return serviceSelector;
     }
 
-    public void setServiceSelector(Selector serviceSelector) {
+    public void setServiceSelector(String serviceSelector) {
         this.serviceSelector = serviceSelector;
     }
 

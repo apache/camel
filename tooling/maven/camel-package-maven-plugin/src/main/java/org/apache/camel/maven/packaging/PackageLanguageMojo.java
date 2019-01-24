@@ -31,11 +31,13 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -46,49 +48,39 @@ import static org.apache.camel.maven.packaging.PackageHelper.parseAsMap;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
- *
- * @goal generate-languages-list
  */
+@Mojo(name = "generate-languages-list", threadSafe = true)
 public class PackageLanguageMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The output directory for generated languages file
-     *
-     * @parameter default-value="${project.build.directory}/generated/camel/languages"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/languages")
     protected File languageOutDir;
 
     /**
      * The output directory for generated languages file
-     *
-     * @parameter default-value="${project.build.directory}/classes"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes")
     protected File schemaOutDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * build context to check changed files and mark them for refresh
      * (used for m2e compatibility)
-     * 
-     * @component
-     * @readonly
      */
+    @Component
     private BuildContext buildContext;
 
     /**
@@ -102,7 +94,7 @@ public class PackageLanguageMojo extends AbstractMojo {
         prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir, buildContext);
     }
 
-    public static void prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File languageOutDir,
+    public static int prepareLanguage(Log log, MavenProject project, MavenProjectHelper projectHelper, File languageOutDir,
                                        File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
         File camelMetaDir = new File(languageOutDir, "META-INF/services/org/apache/camel/");
@@ -114,31 +106,26 @@ public class PackageLanguageMojo extends AbstractMojo {
         }
 
         if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
-            return;
+            return 0;
         }
 
         Map<String, String> javaTypes = new HashMap<>();
 
         StringBuilder buffer = new StringBuilder();
         int count = 0;
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/language");
 
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        String javaType = readClassFromCamelResource(file, buffer, buildContext);
-                        if (!file.isDirectory() && file.getName().charAt(0) != '.') {
-                            count++;
-                        }
-                        if (javaType != null) {
-                            javaTypes.put(file.getName(), javaType);
-                        }
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/language");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    String javaType = readClassFromCamelResource(file, buffer, buildContext);
+                    if (!file.isDirectory() && file.getName().charAt(0) != '.') {
+                        count++;
+                    }
+                    if (javaType != null) {
+                        javaTypes.put(file.getName(), javaType);
                     }
                 }
             }
@@ -213,12 +200,16 @@ public class PackageLanguageMojo extends AbstractMojo {
                                         languageModel.setFirstVersion(row.get("firstVersion"));
                                     }
                                 }
-                                log.debug("Model " + languageModel);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Model: " + languageModel);
+                                }
 
                                 // build json schema for the data format
                                 String properties = after(json, "  \"properties\": {");
                                 String schema = createParameterJsonSchema(languageModel, properties);
-                                log.debug("JSon schema\n" + schema);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("JSon schema\n" + schema);
+                                }
 
                                 // write this to the directory
                                 File dir = new File(schemaOutDir, schemaSubDirectory(languageModel.getJavaType()));
@@ -230,6 +221,7 @@ public class PackageLanguageMojo extends AbstractMojo {
                                 fos.close();
 
                                 buildContext.refresh(out);
+
                                 if (log.isDebugEnabled()) {
                                     log.debug("Generated " + out + " containing JSon schema for " + name + " language");
                                 }
@@ -270,7 +262,7 @@ public class PackageLanguageMojo extends AbstractMojo {
                     // are the content the same?
                     if (existing.equals(properties)) {
                         log.debug("No language changes detected");
-                        return;
+                        return count;
                     }
                 } catch (IOException e) {
                     // ignore
@@ -284,12 +276,16 @@ public class PackageLanguageMojo extends AbstractMojo {
 
                 log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "languages: " : "language: ") + names);
 
+                buildContext.refresh(outFile);
+
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
             }
         } else {
             log.debug("No META-INF/services/org/apache/camel/language directory found. Are you sure you have created a Camel language?");
         }
+
+        return count;
     }
 
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {

@@ -33,6 +33,11 @@ public class XMLTokenizeLanguageConfiguration
             LanguageConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the xtokenize language. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The extraction mode. The available extraction modes are: i - injecting
      * the contextual namespace bindings into the extracted token (default) w -
      * wrapping the extracted token in its ancestor context u - unwrapping the

@@ -22,9 +22,6 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.FileUtil;
 
-/**
- * @version 
- */
 public class OrderServiceBean {
 
     private TypeConverter converter;

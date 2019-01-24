@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>tooling</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>apt</artifactId>
@@ -33,6 +33,9 @@
   <description>Processes Camel endpoint source code</description>
 
   <properties>
+    <camel.osgi.export.pkg>
+      !*
+    </camel.osgi.export.pkg>
   </properties>
 
   <dependencies>

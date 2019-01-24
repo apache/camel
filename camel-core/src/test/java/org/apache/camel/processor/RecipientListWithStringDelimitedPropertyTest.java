@@ -19,15 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSupport {
 
     private static final String BODY = "answer";
     private static final String PROPERTY_VALUE = "mock:x, mock:y, mock:z";
 
+    @Test
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
@@ -54,7 +53,7 @@ public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSup
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").recipientList(property("myProperty"));
+                from("direct:a").recipientList(exchangeProperty("myProperty"));
                 // END SNIPPET: example
             }
         };

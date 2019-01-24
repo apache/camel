@@ -19,16 +19,17 @@ package org.apache.camel.component.spark;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.spark.api.java.JavaRDDLike;
 
-public class SparkComponent extends UriEndpointComponent {
+@Component("spark")
+public class SparkComponent extends DefaultComponent {
 
     private JavaRDDLike rdd;
     private RddCallback rddCallback;
 
     public SparkComponent() {
-        super(SparkEndpoint.class);
     }
 
     @Override

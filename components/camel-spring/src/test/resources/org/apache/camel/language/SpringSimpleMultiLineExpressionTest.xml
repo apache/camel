@@ -30,7 +30,7 @@
             <choice>
                 <when>
                     <simple>
-                        ${header.h} contains 'some' and
+                        ${header.h} contains 'some' &amp;&amp;
                         ${header.h} contains 'text'
                     </simple>
                     <transform>

@@ -17,7 +17,6 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -32,29 +31,33 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
-
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.IntrospectionSupport;
+
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.BINDING_ARG_PREFIX;
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.EXCHANGE_ARG_PREFIX;
+import static org.apache.camel.component.rabbitmq.RabbitMQComponent.QUEUE_ARG_PREFIX;
 
 /**
  * The rabbitmq component allows you produce and consume messages from
  * <a href="http://www.rabbitmq.com/">RabbitMQ</a> instances.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:exchangeName", consumerClass = RabbitMQConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:exchangeName", label = "messaging")
 public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     // header to indicate that the message body needs to be de-serialized
     public static final String SERIALIZE_HEADER = "CamelSerialize";
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String exchangeName;
     @UriParam(label = "common")
     private String hostname;
@@ -148,21 +151,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean immediate;
     @UriParam(label = "advanced", prefix = "arg.", multiValue = true)
     private Map<String, Object> args;
-    @UriParam(label = "advanced")
-    @Deprecated
-    private Map<String, Object> exchangeArgs = new HashMap<>();
-    @UriParam(label = "advanced")
-    @Deprecated
-    private Map<String, Object> queueArgs = new HashMap<>();
-    @UriParam(label = "advanced")
-    @Deprecated
-    private Map<String, Object> bindingArgs = new HashMap<>();
-    @UriParam(label = "advanced")
-    @Deprecated
-    private ArgsConfigurer queueArgsConfigurer;
-    @UriParam(label = "advanced")
-    @Deprecated
-    private ArgsConfigurer exchangeArgsConfigurer;
     @UriParam(label = "advanced", defaultValue = "20000")
     private long requestTimeout = 20000;
     @UriParam(label = "advanced", defaultValue = "1000")
@@ -175,6 +163,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private long publisherAcknowledgementsTimeout;
     @UriParam(label = "producer")
     private boolean guaranteedDeliveries;
+    @UriParam(label = "producer")
+    private boolean allowNullHeaders;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
     private boolean useMessageIDAsCorrelationID = true;
     // camel-jms supports this setting but it is not currently configurable in camel-rabbitmq
@@ -808,79 +798,19 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return args;
     }
 
-    /**
-     * Key/value args for configuring the exchange parameters when declare=true
-     *
-     * @Deprecated Use args instead e.g arg.exchange.x-message-ttl=1000
-     */
-    @Deprecated
-    public void setExchangeArgs(Map<String, Object> exchangeArgs) {
-        this.exchangeArgs = exchangeArgs;
-    }
-
     public Map<String, Object> getExchangeArgs() {
-        return exchangeArgs;
-    }
-
-    /**
-     * Key/value args for configuring the queue parameters when declare=true
-     *
-     * @Deprecated Use args instead e.g arg.queue.x-message-ttl=1000
-     */
-    public void setQueueArgs(Map<String, Object> queueArgs) {
-        this.queueArgs = queueArgs;
+        return IntrospectionSupport.extractProperties(args, EXCHANGE_ARG_PREFIX);
     }
 
     public Map<String, Object> getQueueArgs() {
-        return queueArgs;
-    }
-
-    /**
-     * Key/value args for configuring the queue binding parameters when
-     * declare=true
-     *
-     * @Deprecated Use args instead e.g arg.binding.foo=bar
-     */
-    public void setBindingArgs(Map<String, Object> bindingArgs) {
-        this.bindingArgs = bindingArgs;
+        return IntrospectionSupport.extractProperties(args, QUEUE_ARG_PREFIX);
     }
 
     public Map<String, Object> getBindingArgs() {
-        return bindingArgs;
+        return IntrospectionSupport.extractProperties(args, BINDING_ARG_PREFIX);
     }
 
-    @Deprecated
-    public ArgsConfigurer getQueueArgsConfigurer() {
-        return queueArgsConfigurer;
-    }
-
-    /**
-     * Set the configurer for setting the queue args in Channel.queueDeclare
-     *
-     * @deprecated Use args instead e.g arg.queue.x-message-ttl=1000
-     */
-    @Deprecated
-    public void setQueueArgsConfigurer(ArgsConfigurer queueArgsConfigurer) {
-        this.queueArgsConfigurer = queueArgsConfigurer;
-    }
-
-    @Deprecated
-    public ArgsConfigurer getExchangeArgsConfigurer() {
-        return exchangeArgsConfigurer;
-    }
-
-    /**
-     * Set the configurer for setting the exchange args in
-     * Channel.exchangeDeclare
-     *
-     * @deprecated Use args instead e.g arg.exchange.x-message-ttl=1000
-     */
-    @Deprecated
-    public void setExchangeArgsConfigurer(ArgsConfigurer exchangeArgsConfigurer) {
-        this.exchangeArgsConfigurer = exchangeArgsConfigurer;
-    }
-
-    /**
+     /**
      * Set timeout for waiting for a reply when using the InOut Exchange Pattern
      * (in milliseconds)
      */
@@ -997,6 +927,17 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void setExclusiveConsumer(boolean exclusiveConsumer) {
         this.exclusiveConsumer = exclusiveConsumer;
+    }
+
+    /**
+     * Allow pass null values to header
+     */
+    public boolean isAllowNullHeaders() {
+        return allowNullHeaders;
+    }
+
+    public void setAllowNullHeaders(boolean allowNullHeaders) {
+        this.allowNullHeaders = allowNullHeaders;
     }
 
     public boolean isPassive() {

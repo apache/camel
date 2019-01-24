@@ -23,15 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
@@ -42,13 +41,16 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.RestProducerFactoryHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
@@ -62,19 +64,14 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContexts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Defines the <a href="http://camel.apache.org/http4.html">HTTP4
  * Component</a>
- *
- * @version 
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent, SSLContextParametersAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
+@Component("http,http4,https,https4")
+public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, SSLContextParametersAware {
 
     @Metadata(label = "advanced", description = "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")
     protected HttpClientConfigurer httpClientConfigurer;
@@ -84,7 +81,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "advanced", description = "To use a custom org.apache.http.protocol.HttpContext when executing requests.")
     protected HttpContext httpContext;
     @Metadata(label = "security", description = "To configure security using SSLContextParameters."
-        + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
+        + " Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent."
         + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
     protected SSLContextParameters sslContextParameters;
     @Metadata(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
@@ -129,7 +126,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     public HttpComponent(Class<? extends HttpEndpoint> endpointClass) {
-        super(endpointClass);
+        super();
 
         registerExtension(HttpComponentVerifierExtension::new);
     }
@@ -165,6 +162,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             String authHost = getParameter(parameters, "authHost", String.class);
             
             return CompositeHttpConfigurer.combineConfigurers(configurer, new BasicAuthenticationHttpClientConfigurer(authUsername, authPassword, authDomain, authHost));
+        } else if (this.httpConfiguration != null) {
+            if ("basic".equalsIgnoreCase(this.httpConfiguration.getAuthMethod())) {
+                return CompositeHttpConfigurer.combineConfigurers(configurer, new BasicAuthenticationHttpClientConfigurer(this.httpConfiguration.getAuthUsername(), 
+                this.httpConfiguration.getAuthPassword(), this.httpConfiguration.getAuthDomain(), this.httpConfiguration.getAuthHost()));
+            }
         }
         
         return configurer;
@@ -256,7 +258,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, httpClientParameters);
 
         // the endpoint uri should use the component name as scheme, so we need to re-create it once more
-        String scheme = ObjectHelper.before(uri, "://");
+        String scheme = StringHelper.before(uri, "://");
         endpointUri = URISupport.createRemainingURI(
                 new URI(scheme,
                         endpointUri.getUserInfo(),
@@ -270,7 +272,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // create the endpoint and set the http uri to be null
         String endpointUriString = endpointUri.toString();
 
-        LOG.debug("Creating endpoint uri {}", endpointUriString);
+        log.debug("Creating endpoint uri {}", endpointUriString);
         final HttpClientConnectionManager localConnectionManager = createConnectionManager(parameters, sslContextParameters);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
 
@@ -309,9 +311,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         } else {
             setEndpointHeaderFilterStrategy(endpoint);
         }
-        endpoint.setBinding(getHttpBinding());
+        endpoint.setHttpBinding(getHttpBinding());
         if (httpBinding != null) {
-            endpoint.setBinding(httpBinding);
+            endpoint.setHttpBinding(httpBinding);
         }
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
@@ -374,8 +376,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             builder.register("https", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
             builder.register("https4", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(getCamelContext()), x509HostnameVerifier));
         } else {
-            builder.register("https4", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
             builder.register("https", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
+            builder.register("https4", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
         }
         return builder.build();
     }
@@ -402,7 +404,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (localConnectionsPerRoute > 0) {
             answer.setDefaultMaxPerRoute(localConnectionsPerRoute);
         }
-        LOG.info("Created ClientConnectionManager " + answer);
+        log.info("Created ClientConnectionManager {}", answer);
 
         return answer;
     }
@@ -453,6 +455,12 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (!query.isEmpty()) {
             url = url + "?" + query;
         }
+
+        // there are cases where we might end up here without component being created beforehand
+        // we need to abide by the component properties specified in the parameters when creating
+        // the component, one such case is when we switch from "http4" to "https4" component name
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
+
         HttpEndpoint endpoint = camelContext.getEndpoint(url, HttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {
             setProperties(camelContext, endpoint, parameters);
@@ -506,7 +514,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     /**
      * To configure security using SSLContextParameters.
-     * Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent.
+     * Important: Only one instance of org.apache.camel.support.jsse.SSLContextParameters is supported per HttpComponent.
      * If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
@@ -531,8 +539,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To use a custom X509HostnameVerifier such as {@link DefaultHostnameVerifier}
-     * or {@link org.apache.http.conn.ssl.NoopHostnameVerifier}.
+     * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.
      */
     public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
@@ -598,7 +605,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * A negative value is interpreted as undefined (system default).
      * </p>
      * <p>
-     * Default: {@code -1}
+     * Default: -1
      * </p>
      */
     public void setConnectionRequestTimeout(int connectionRequestTimeout) {
@@ -617,7 +624,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * A negative value is interpreted as undefined (system default).
      * </p>
      * <p>
-     * Default: {@code -1}
+     * Default: -1
      * </p>
      */
     public void setConnectTimeout(int connectTimeout) {
@@ -629,7 +636,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * Defines the socket timeout ({@code SO_TIMEOUT}) in milliseconds,
+     * Defines the socket timeout (SO_TIMEOUT) in milliseconds,
      * which is the timeout for waiting for data  or, put differently,
      * a maximum period inactivity between two consecutive data packets).
      * <p>
@@ -637,7 +644,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      * A negative value is interpreted as undefined (system default).
      * </p>
      * <p>
-     * Default: {@code -1}
+     * Default: -1
      * </p>
      */
     public void setSocketTimeout(int socketTimeout) {
@@ -653,7 +660,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     public void doStop() throws Exception {
         // shutdown connection manager
         if (clientConnectionManager != null) {
-            LOG.info("Shutting down ClientConnectionManager: " + clientConnectionManager);
+            log.info("Shutting down ClientConnectionManager: {}", clientConnectionManager);
             clientConnectionManager.shutdown();
             clientConnectionManager = null;
         }
@@ -661,8 +668,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         super.doStop();
     }
 
-    @Override
-    public ComponentVerifier getVerifier() {
+    public ComponentVerifierExtension getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

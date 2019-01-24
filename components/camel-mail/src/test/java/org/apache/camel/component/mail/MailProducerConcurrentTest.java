@@ -32,8 +32,6 @@ import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Mail producer concurrent test.
- *
- * @version 
  */
 public class MailProducerConcurrentTest extends CamelTestSupport {
 

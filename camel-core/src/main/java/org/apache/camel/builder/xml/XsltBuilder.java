@@ -52,8 +52,8 @@ import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxp.StAX2SAXSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -61,14 +61,13 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
+
 /**
  * Creates a <a href="http://camel.apache.org/processor.html">Processor</a>
  * which performs an XSLT transformation of the IN message body.
  * <p/>
  * Will by default output the result as a String. You can chose which kind of output
  * you want using the <tt>outputXXX</tt> methods.
- *
- * @version 
  */
 public class XsltBuilder implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);

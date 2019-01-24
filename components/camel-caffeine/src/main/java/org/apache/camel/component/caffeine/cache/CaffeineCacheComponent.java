@@ -21,8 +21,9 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.caffeine.CaffeineConfiguration;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link DefaultComponent}.
  */
+@Component("caffeine-cache")
 public class CaffeineCacheComponent extends DefaultComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(CaffeineCacheComponent.class);
 

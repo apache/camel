@@ -28,7 +28,7 @@ import org.apache.avro.ipc.Server;
 import org.apache.avro.ipc.specific.SpecificResponder;
 import org.apache.avro.specific.SpecificData;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.commons.lang.StringUtils;
 import org.mortbay.log.Log;
 
@@ -113,7 +113,7 @@ public class AvroListener {
     public boolean unregister(String messageName) {
         if (!StringUtils.isEmpty(messageName)) {
             if (consumerRegistry.remove(messageName) == null) {
-                Log.warn("Consumer with message name " + messageName + " was already unregistered.");
+                Log.warn("Consumer with message name {} was already unregistered.", messageName);
             }
         } else {
             defaultConsumer = null;

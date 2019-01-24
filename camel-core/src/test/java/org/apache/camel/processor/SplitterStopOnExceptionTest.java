@@ -23,12 +23,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class SplitterStopOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testSplitStopOnExceptionOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Hello World", "Bye World");
@@ -38,6 +37,7 @@ public class SplitterStopOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitStopOnExceptionStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         // we do stop so we stop splitting when the exception occurs and thus we only receive 1 message
@@ -48,7 +48,7 @@ public class SplitterStopOnExceptionTest extends ContextTestSupport {
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Sequential processing failed for number 1."));
+            assertTrue(cause.getMessage().startsWith("Multicast processing failed for number 1."));
             assertEquals("Forced", cause.getCause().getMessage());
         }
 

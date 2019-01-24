@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.test.patterns;
-
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Test;
 
 public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
@@ -35,6 +35,7 @@ public class RouteProcessorDumpRouteCoverageTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
 

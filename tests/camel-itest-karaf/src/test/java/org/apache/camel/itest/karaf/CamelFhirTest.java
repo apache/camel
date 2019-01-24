@@ -29,6 +29,7 @@ public class CamelFhirTest extends BaseKarafTest {
     public void test() throws Exception {
         testDataFormat(COMPONENT, "fhirJson");
         testDataFormat(COMPONENT, "fhirXml");
+        testComponent(COMPONENT, "fhir");
     }
 
 }

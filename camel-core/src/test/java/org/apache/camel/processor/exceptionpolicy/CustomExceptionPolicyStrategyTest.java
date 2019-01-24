@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.junit.Test;
 
 /**
  * Unit test with a user plugged in exception policy to use instead of default.
@@ -52,6 +53,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     }
     // END SNIPPET e2
 
+    @Test
     public void testCustomPolicy() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);

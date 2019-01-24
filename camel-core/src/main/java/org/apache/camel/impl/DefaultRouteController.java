@@ -21,19 +21,21 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Experimental;
 import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
+import org.apache.camel.meta.Experimental;
 import org.apache.camel.spi.RouteController;
+import org.apache.camel.support.service.ServiceSupport;
 
 @Experimental
-public class DefaultRouteController extends org.apache.camel.support.ServiceSupport implements RouteController  {
-    private CamelContext camelContext;
+public class DefaultRouteController extends ServiceSupport implements RouteController  {
+    private DefaultCamelContext camelContext;
 
     public DefaultRouteController() {
         this(null);
     }
 
-    public DefaultRouteController(CamelContext camelContext) {
+    public DefaultRouteController(DefaultCamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
@@ -43,7 +45,7 @@ public class DefaultRouteController extends org.apache.camel.support.ServiceSupp
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+        this.camelContext = (DefaultCamelContext) camelContext;
     }
 
     @Override
@@ -68,6 +70,21 @@ public class DefaultRouteController extends org.apache.camel.support.ServiceSupp
     // ***************************************************
     // Route management
     // ***************************************************
+
+    @Override
+    public void startAllRoutes() throws Exception {
+        camelContext.startAllRoutes();
+    }
+
+    @Override
+    public boolean isStartingRoutes() {
+        return camelContext.isStartingRoutes();
+    }
+
+    @Override
+    public ServiceStatus getRouteStatus(String routeId) {
+        return camelContext.getRouteStatus(routeId);
+    }
 
     @Override
     public void startRoute(String routeId) throws Exception {

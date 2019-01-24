@@ -18,7 +18,7 @@ package org.apache.camel.component.atmos.integration.producer;
 
 import org.apache.camel.component.atmos.AtmosConfiguration;
 import org.apache.camel.component.atmos.AtmosEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 public abstract class AtmosProducer extends DefaultProducer {
 

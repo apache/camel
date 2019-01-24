@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.bean.validator;
 
-/**
- * @version 
- */
 public interface Car {
 
     String getManufacturer();

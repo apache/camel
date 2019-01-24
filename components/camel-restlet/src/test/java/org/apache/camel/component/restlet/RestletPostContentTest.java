@@ -26,10 +26,6 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class RestletPostContentTest extends RestletTestSupport {
 
     private static final String MSG_BODY = "Hello World!";

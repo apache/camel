@@ -23,7 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 /**
  * A drill producer

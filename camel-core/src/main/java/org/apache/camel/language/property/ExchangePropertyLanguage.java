@@ -21,20 +21,13 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 /**
  * A language for exchange property expressions.
  */
+@org.apache.camel.spi.annotations.Language("exchangeProperty")
 public class ExchangePropertyLanguage implements Language, IsSingleton {
-
-    /**
-     * @deprecated use {@link #exchangeProperty(String)} instead
-     */
-    @Deprecated
-    public static Expression property(String propertyName) {
-        return exchangeProperty(propertyName);
-    }
 
     public static Expression exchangeProperty(String propertyName) {
         return ExpressionBuilder.exchangePropertyExpression(propertyName);

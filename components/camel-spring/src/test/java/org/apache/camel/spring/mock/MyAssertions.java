@@ -24,8 +24,6 @@ import org.springframework.beans.factory.InitializingBean;
 /**
  * An example bean which adds some expectations on some mock endpoints and then
  * asserts that the expectactions are met.
- *
- * @version 
  */
 // START SNIPPET: example
 public class MyAssertions implements InitializingBean {

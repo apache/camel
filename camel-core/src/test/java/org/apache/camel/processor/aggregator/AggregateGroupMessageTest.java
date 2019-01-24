@@ -24,10 +24,12 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedMessageAggregationStrategy;
+import org.junit.Test;
 
 public class AggregateGroupMessageTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testGrouped() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
 

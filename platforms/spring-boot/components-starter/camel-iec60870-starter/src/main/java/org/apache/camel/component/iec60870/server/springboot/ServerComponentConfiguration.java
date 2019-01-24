@@ -34,6 +34,11 @@ public class ServerComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the iec60870-server component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Default connection options
      */
     private ServerOptionsNestedConfiguration defaultConnectionOptions;

@@ -22,12 +22,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.DynamicRouterDefinition;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public class DynamicRouterWithInterceptorTest extends ContextTestSupport {
         private static final Logger LOGGER = LoggerFactory.getLogger(MyInterceptStrategy.class);
         private static int doneCount;
 
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,
+        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
             if (definition instanceof DynamicRouterDefinition<?>) {
                 final DelegateAsyncProcessor delegateAsyncProcessor = new DelegateAsyncProcessor() {
@@ -67,6 +68,7 @@ public class DynamicRouterWithInterceptorTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testDynamicRouterOne() throws Exception {
         interceptStrategy.reset();
 
@@ -81,6 +83,7 @@ public class DynamicRouterWithInterceptorTest extends ContextTestSupport {
         assertEquals("Done method shall be called only once", 1, MyInterceptStrategy.doneCount);
     }
 
+    @Test
     public void testDynamicRouterTwo() throws Exception {
         interceptStrategy.reset();
 

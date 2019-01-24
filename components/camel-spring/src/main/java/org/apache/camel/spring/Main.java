@@ -30,7 +30,6 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.MainSupport;
 import org.apache.camel.util.IOHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -48,8 +47,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  * Each line in the {@link #LOCATION_PROPERTIES} is a reference to a Spring XML file to include,
  * which by default gets loaded from classpath.
  */
-@SuppressWarnings("deprecation")
-public class Main extends MainSupport {
+public class Main extends org.apache.camel.main.MainSupport {
 
     public static final String LOCATION_PROPERTIES = "META-INF/camel-spring/location.properties";
     protected static Main instance;
@@ -158,12 +156,12 @@ public class Main extends MainSupport {
             if (additionalApplicationContext == null) {
                 additionalApplicationContext = createAdditionalLocationsFromClasspath();
                 if (additionalApplicationContext != null) {
-                    LOG.debug("Starting Additional ApplicationContext: " + additionalApplicationContext.getId());
+                    LOG.debug("Starting Additional ApplicationContext: {}", additionalApplicationContext.getId());
                     additionalApplicationContext.start();
                 }
             }
 
-            LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getId());
+            LOG.debug("Starting Spring ApplicationContext: {}", applicationContext.getId());
             applicationContext.start();
 
             postProcessContext();
@@ -180,11 +178,11 @@ public class Main extends MainSupport {
     protected void doStop() throws Exception {
         super.doStop();
         if (additionalApplicationContext != null) {
-            LOG.debug("Stopping Additional ApplicationContext: " + additionalApplicationContext.getId());
+            LOG.debug("Stopping Additional ApplicationContext: {}", additionalApplicationContext.getId());
             IOHelper.close(additionalApplicationContext);
         }
         if (applicationContext != null) {
-            LOG.debug("Stopping Spring ApplicationContext: " + applicationContext.getId());
+            LOG.debug("Stopping Spring ApplicationContext: {}", applicationContext.getId());
             IOHelper.close(applicationContext);
         }
     }

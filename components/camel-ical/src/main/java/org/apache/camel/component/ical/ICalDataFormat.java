@@ -26,11 +26,13 @@ import net.fortuna.ical4j.model.Calendar;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Bridge ICal data format to camel world.
  */
+@Dataformat("ical")
 public class ICalDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private CalendarOutputter outputer = new CalendarOutputter();

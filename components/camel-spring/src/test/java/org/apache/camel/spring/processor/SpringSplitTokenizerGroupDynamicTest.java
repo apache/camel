@@ -21,9 +21,6 @@ import org.apache.camel.processor.SplitTokenizerGroupDynamicTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringSplitTokenizerGroupDynamicTest extends SplitTokenizerGroupDynamicTest {
 
     protected CamelContext createCamelContext() throws Exception {

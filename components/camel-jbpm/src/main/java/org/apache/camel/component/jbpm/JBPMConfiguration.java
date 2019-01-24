@@ -17,6 +17,7 @@
 package org.apache.camel.component.jbpm;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -24,18 +25,18 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.kie.api.task.model.OrganizationalEntity;
-import org.kie.api.task.model.Status;
 import org.kie.api.task.model.Task;
 
 @UriParams
 public class JBPMConfiguration {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath
+    @Metadata(required = true)
     private URL connectionURL;
     @UriParam(label = "producer", defaultValue = "startProcess")
     private String operation;
-    @UriParam @Metadata(required = "true")
+    @UriParam
+    @Metadata(required = true)
     private String deploymentId;
     @UriParam
     private Long processInstanceId;
@@ -58,7 +59,9 @@ public class JBPMConfiguration {
     @UriParam
     private String userId;
     @UriParam
-    private String language;
+    private Integer page = 0;
+    @UriParam
+    private Integer pageSize = 10;
     @UriParam
     private String targetUserId;
     @UriParam
@@ -68,9 +71,9 @@ public class JBPMConfiguration {
     @UriParam
     private Task task;
     @UriParam(label = "advanced")
-    private List<OrganizationalEntity> entities;
+    private List<String> entities;
     @UriParam(label = "filter")
-    private List<Status> statuses;
+    private List<String> statuses;
     @UriParam(label = "security", secret = true)
     private String userName;
     @UriParam(label = "security", secret = true)
@@ -81,6 +84,11 @@ public class JBPMConfiguration {
     private Map<String, Object> parameters;
     @UriParam(label = "advanced")
     private Class[] extraJaxbClasses;
+    @UriParam
+    private Boolean emitterSendItems;
+
+    @UriPath
+    private String eventListenerType;
 
     public String getOperation() {
         return operation;
@@ -153,7 +161,8 @@ public class JBPMConfiguration {
     }
 
     /**
-     * the data associated with this event when signalEvent operation is performed
+     * the data associated with this event when signalEvent operation is
+     * performed
      */
     public void setEvent(Object event) {
         this.event = event;
@@ -197,7 +206,7 @@ public class JBPMConfiguration {
     }
 
     /**
-     *the id of the task
+     * the id of the task
      */
     public void setTaskId(Long taskId) {
         this.taskId = taskId;
@@ -225,15 +234,26 @@ public class JBPMConfiguration {
         this.task = task;
     }
 
-    public String getLanguage() {
-        return language;
+    public Integer getPage() {
+        return page;
     }
 
     /**
-     * The language to use when filtering user tasks
+     * The page to use when retrieving user tasks
      */
-    public void setLanguage(String language) {
-        this.language = language;
+    public void setPage(Integer page) {
+        this.page = page;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    /**
+     * The page size to use when retrieving user tasks
+     */
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
     }
 
     public String getTargetUserId() {
@@ -269,25 +289,25 @@ public class JBPMConfiguration {
         this.contentId = contentId;
     }
 
-    public List<OrganizationalEntity> getEntities() {
+    public List<String> getEntities() {
         return entities;
     }
 
     /**
      * The potentialOwners when nominateTask operation is performed
      */
-    public void setEntities(List<OrganizationalEntity> entities) {
+    public void setEntities(List<String> entities) {
         this.entities = entities;
     }
 
-    public List<Status> getStatuses() {
+    public List<String> getStatuses() {
         return statuses;
     }
 
     /**
      * The list of status to use when filtering tasks
      */
-    public void setStatuses(List<Status> statuses) {
+    public void setStatuses(List<String> statuses) {
         this.statuses = statuses;
     }
 
@@ -355,5 +375,38 @@ public class JBPMConfiguration {
      */
     public void setExtraJaxbClasses(Class[] extraJaxbClasses) {
         this.extraJaxbClasses = extraJaxbClasses;
+    }
+
+    public String getEventListenerType() {
+        return eventListenerType;
+    }
+
+    /**
+     * Sets the event listener type to attach to
+     */
+    public void setEventListenerType(String eventListenerType) {
+        this.eventListenerType = eventListenerType;
+    }
+
+    public Boolean getEmitterSendItems() {
+        return emitterSendItems;
+    }
+
+    /**
+     * Sets if event produced by emitter should be sent as single items or
+     * complete collection
+     */
+    public void setEmitterSendItems(Boolean emiterSendItems) {
+        this.emitterSendItems = emiterSendItems;
+    }
+
+    @Override
+    public String toString() {
+        return "JBPMConfiguration [connectionURL=" + connectionURL + ", operation=" + operation + ", deploymentId=" + deploymentId + ", processInstanceId=" + processInstanceId
+               + ", value=" + value + ", processId=" + processId + ", eventType=" + eventType + ", event=" + event + ", maxNumber=" + maxNumber + ", identifier=" + identifier
+               + ", workItemId=" + workItemId + ", taskId=" + taskId + ", userId=" + userId + ", page=" + page + ", pageSize=" + pageSize + ", targetUserId=" + targetUserId
+               + ", attachmentId=" + attachmentId + ", contentId=" + contentId + ", task=" + task + ", entities=" + entities + ", statuses=" + statuses + ", userName=" + userName
+               + ", password=" + password + ", timeout=" + timeout + ", parameters=" + parameters + ", extraJaxbClasses=" + Arrays.toString(extraJaxbClasses)
+               + ", eventListenerType=" + eventListenerType + "]";
     }
 }

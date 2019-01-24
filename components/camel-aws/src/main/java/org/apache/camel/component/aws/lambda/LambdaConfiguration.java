@@ -28,10 +28,10 @@ import org.apache.camel.spi.UriPath;
 public class LambdaConfiguration implements Cloneable {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String function;
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private LambdaOperations operation;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -112,24 +112,24 @@ public class LambdaConfiguration implements Cloneable {
         this.operation = operation;
     }
 
-    /**
-     * To define a proxy host when instantiating the Lambda client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the Lambda client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the Lambda client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }

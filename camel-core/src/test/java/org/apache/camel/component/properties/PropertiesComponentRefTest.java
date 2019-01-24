@@ -22,10 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class PropertiesComponentRefTest extends ContextTestSupport {
 
     @Override
@@ -33,6 +31,7 @@ public class PropertiesComponentRefTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPropertiesComponent() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -49,6 +48,7 @@ public class PropertiesComponentRefTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertiesComponentLocationsOverride() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

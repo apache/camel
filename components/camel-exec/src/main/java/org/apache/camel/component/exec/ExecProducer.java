@@ -18,7 +18,7 @@ package org.apache.camel.component.exec;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.exec.impl.DefaultExecCommandExecutor;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

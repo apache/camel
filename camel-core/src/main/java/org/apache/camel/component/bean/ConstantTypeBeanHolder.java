@@ -22,8 +22,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A constant (singleton) bean implementation of {@link org.apache.camel.component.bean.BeanTypeHolder}
- *
- * @version
  */
 public class ConstantTypeBeanHolder implements BeanTypeHolder {
     private final Class<?> type;

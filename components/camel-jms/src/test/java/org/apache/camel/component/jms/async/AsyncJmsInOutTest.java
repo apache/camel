@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.async;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -29,9 +30,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class AsyncJmsInOutTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
@@ -58,7 +56,7 @@ public class AsyncJmsInOutTest extends CamelTestSupport {
         // just in case we run on slow boxes
         assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
 
-        log.info("Took " + watch.stop() + " ms. to process 100 messages request/reply over JMS");
+        log.info("Took " + watch.taken() + " ms. to process 100 messages request/reply over JMS");
     }
 
     @Override

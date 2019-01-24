@@ -16,12 +16,10 @@
  */
 
 package org.apache.camel.component.cxf;
-
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hello_world_soap_http.GreeterImpl;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -52,8 +50,8 @@ public class CxfGreeterMessageRouterTest extends AbstractCXFGreeterRouterTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("cxf:bean:routerEndpoint?dataFormat=Message&publishedEndpointUrl=http://www.simple.com/services/test")
-                    .to("cxf:bean:serviceEndpoint?dataFormat=Message");
+                from("cxf:bean:routerEndpoint?dataFormat=RAW&publishedEndpointUrl=http://www.simple.com/services/test")
+                    .to("cxf:bean:serviceEndpoint?dataFormat=RAW");
             }
         };
     }

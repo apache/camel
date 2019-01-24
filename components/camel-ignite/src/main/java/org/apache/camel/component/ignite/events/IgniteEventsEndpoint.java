@@ -17,7 +17,6 @@
 package org.apache.camel.component.ignite.events;
 
 import java.lang.reflect.Field;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,7 +27,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.ClusterGroupExpression;
-import org.apache.camel.component.ignite.IgniteComponent;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -36,8 +34,6 @@ import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteEvents;
 import org.apache.ignite.cluster.ClusterGroup;
 import org.apache.ignite.events.EventType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Ignite Events endpoint is one of camel-ignite endpoints which allows you to
@@ -47,10 +43,8 @@ import org.slf4j.LoggerFactory;
  * The Exchanges created by this consumer put the received Event object into the body of the IN message.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-events", title = "Ignite Events", syntax = "ignite-events:endpointId", label = "nosql,cache,compute,messaging,data",
-    consumerOnly = true, consumerClass = IgniteEventsConsumer.class)
+    consumerOnly = true)
 public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(IgniteEventsEndpoint.class);
 
     @UriPath
     private String endpointId;
@@ -60,17 +54,6 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
     @UriParam(label = "consumer")
     private ClusterGroupExpression clusterGroupExpression;
-
-    @Deprecated
-    public IgniteEventsEndpoint(String uri, URI remainingUri, Map<String, Object> parameters, IgniteComponent igniteComponent) {
-        super(uri, igniteComponent);
-
-        // Initialize subscribed event types with ALL.
-        events = new HashSet<>();
-        for (Integer eventType : EventType.EVTS_ALL) {
-            events.add(eventType);
-        }
-    }
 
     public IgniteEventsEndpoint(String uri, String remaining, Map<String, Object> parameters, IgniteEventsComponent igniteComponent) {
         super(uri, igniteComponent);
@@ -94,7 +77,7 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
         IgniteEventsConsumer consumer = new IgniteEventsConsumer(this, processor, events);
         configureConsumer(consumer);
 
-        LOG.info("Created Ignite Events consumer for event types: {}.", events);
+        log.info("Created Ignite Events consumer for event types: {}.", events);
 
         return consumer;
     }
@@ -103,11 +86,11 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
         Ignite ignite = ignite();
         IgniteEvents events;
         if (clusterGroupExpression == null) {
-            LOG.info("Ignite Events endpoint for event types {} using no Cluster Group.", this.events);
+            log.info("Ignite Events endpoint for event types {} using no Cluster Group.", this.events);
             events = ignite.events();
         } else {
             ClusterGroup group = clusterGroupExpression.getClusterGroup(ignite);
-            LOG.info("Ignite Events endpoint for event types {} using Cluster Group: {}.", this.events, group);
+            log.info("Ignite Events endpoint for event types {} using Cluster Group: {}.", this.events, group);
             events = ignite.events(group);
         }
         return events;

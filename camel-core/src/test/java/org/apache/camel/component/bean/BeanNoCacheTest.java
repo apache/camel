@@ -20,14 +20,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanNoCacheTest extends ContextTestSupport {
 
     private static final AtomicInteger COUNTER = new AtomicInteger();
 
+    @Test
     public void testBeanRefNoCache() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello1", "Bye2", "Camel3");
 
@@ -44,7 +43,7 @@ public class BeanNoCacheTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .bean(MyCoolBean.class, "doSomething", false, false)
+                    .bean(MyCoolBean.class, "doSomething", false)
                     .to("mock:result");
             }
         };

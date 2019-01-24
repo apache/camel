@@ -25,9 +25,6 @@ import org.apache.camel.dataformat.bindy.model.tab.PurchaseOrder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class BindyTabSeparatorTest extends CamelTestSupport {
 
     @Test

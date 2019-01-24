@@ -25,7 +25,6 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

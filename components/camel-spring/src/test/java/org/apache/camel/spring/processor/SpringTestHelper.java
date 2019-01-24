@@ -23,9 +23,6 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public final class SpringTestHelper {
     
     private SpringTestHelper() {        
@@ -45,6 +42,6 @@ public final class SpringTestHelper {
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 }

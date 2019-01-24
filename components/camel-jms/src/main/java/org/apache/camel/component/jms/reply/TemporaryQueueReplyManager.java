@@ -36,8 +36,6 @@ import org.springframework.jms.support.destination.DestinationResolver;
 
 /**
  * A {@link ReplyManager} when using temporary queues.
- *
- * @version 
  */
 public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     

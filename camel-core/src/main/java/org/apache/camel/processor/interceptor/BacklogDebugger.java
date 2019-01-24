@@ -17,9 +17,7 @@
 package org.apache.camel.processor.interceptor;
 
 import java.util.Date;
-import java.util.EventObject;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -31,25 +29,24 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.NamedNode;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.impl.BreakpointSupport;
 import org.apache.camel.impl.DefaultDebugger;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
-import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A {@link org.apache.camel.spi.Debugger} that has easy debugging functionality which
@@ -64,14 +61,12 @@ import org.slf4j.LoggerFactory;
  * concurrency then sub-sequent {@link Exchange} will continue to be routed, if there breakpoint already holds a
  * suspended {@link Exchange}.
  */
-public class BacklogDebugger extends ServiceSupport implements InterceptStrategy {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BacklogDebugger.class);
+public class BacklogDebugger extends ServiceSupport {
 
     private long fallbackTimeout = 300;
     private final CamelContext camelContext;
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
-    private final CamelLogger logger = new CamelLogger(LOG, loggingLevel);
+    private final CamelLogger logger = new CamelLogger(log, loggingLevel);
     private final AtomicBoolean enabled = new AtomicBoolean();
     private final AtomicLong debugCounter = new AtomicLong(0);
     private final Debugger debugger;
@@ -108,17 +103,19 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
-    public BacklogDebugger(CamelContext camelContext) {
+    private BacklogDebugger(CamelContext camelContext) {
         this.camelContext = camelContext;
-        DefaultDebugger debugger = new DefaultDebugger(camelContext);
-        debugger.setUseTracer(false);
-        this.debugger = debugger;
+        this.debugger = new DefaultDebugger(camelContext);
     }
 
-    @Override
-    @Deprecated
-    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
-        throw new UnsupportedOperationException("Deprecated");
+    /**
+     * Creates a new backlog debugger.
+     *
+     * @param context Camel context
+     * @return a new backlog debugger
+     */
+    public static BacklogDebugger createDebugger(CamelContext context) {
+        return new BacklogDebugger(context);
     }
 
     /**
@@ -127,13 +124,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
      * @return the backlog debugger or null if none can be found
      */
     public static BacklogDebugger getBacklogDebugger(CamelContext context) {
-        List<InterceptStrategy> list = context.getInterceptStrategies();
-        for (InterceptStrategy interceptStrategy : list) {
-            if (interceptStrategy instanceof BacklogDebugger) {
-                return (BacklogDebugger) interceptStrategy;
-            }
-        }
-        return null;
+        return context.hasService(BacklogDebugger.class);
     }
 
     public Debugger getDebugger() {
@@ -155,7 +146,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             ServiceHelper.startService(debugger);
             enabled.set(true);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -545,7 +536,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
 
         @Override
-        public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+        public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
             // store a copy of the message so we can see that from the debugger
             Date timestamp = new Date();
             String toNode = definition.getId();
@@ -576,7 +567,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
 
         @Override
-        public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+        public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
             // must match node
             if (!nodeId.equals(definition.getId())) {
                 return false;
@@ -594,7 +585,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
 
         @Override
-        public boolean matchEvent(Exchange exchange, EventObject event) {
+        public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
             return false;
         }
     }
@@ -605,7 +596,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     private final class StepBreakpoint extends BreakpointSupport implements Condition {
 
         @Override
-        public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+        public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
             // store a copy of the message so we can see that from the debugger
             Date timestamp = new Date();
             String toNode = definition.getId();
@@ -636,20 +627,20 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
 
         @Override
-        public boolean matchProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+        public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
             return true;
         }
 
         @Override
-        public boolean matchEvent(Exchange exchange, EventObject event) {
+        public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
             return event instanceof ExchangeCompletedEvent;
         }
 
         @Override
-        public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition) {
+        public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
             // when the exchange is complete, we need to turn off single step mode if we were debug stepping the exchange
             if (event instanceof ExchangeCompletedEvent) {
-                String completedId = ((ExchangeCompletedEvent) event).getExchange().getExchangeId();
+                String completedId = event.getExchange().getExchangeId();
 
                 if (singleStepExchangeId != null && singleStepExchangeId.equals(completedId)) {
                     logger.log("ExchangeId: " + completedId + " is completed, so exiting single step mode.");

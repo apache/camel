@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.amqp;
-
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;

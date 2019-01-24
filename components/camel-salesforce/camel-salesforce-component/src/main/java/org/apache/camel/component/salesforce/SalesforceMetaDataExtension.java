@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.extension.metadata.AbstractMetaDataExtension;
 import org.apache.camel.component.extension.metadata.MetaDataBuilder;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
@@ -36,7 +37,6 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient.ResponseCallback;
-import org.apache.camel.util.ObjectHelper;
 
 public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
 
@@ -71,7 +71,7 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
 
             return allObjectsSchema(parameters);
         } catch (final Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
     }
@@ -99,7 +99,7 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
         try {
             return ret.get();
         } catch (InterruptedException | ExecutionException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

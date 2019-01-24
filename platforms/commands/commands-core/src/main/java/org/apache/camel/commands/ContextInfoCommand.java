@@ -24,7 +24,7 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.camel.util.CamelContextStatDump;
+import org.apache.camel.support.dump.CamelContextStatDump;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 

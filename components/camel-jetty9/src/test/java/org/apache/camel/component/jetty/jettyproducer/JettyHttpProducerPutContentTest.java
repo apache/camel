@@ -26,9 +26,6 @@ import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettyHttpProducerPutContentTest extends BaseJettyTest {
     
     @Test
@@ -50,7 +47,7 @@ public class JettyHttpProducerPutContentTest extends BaseJettyTest {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(new File("src/test/data/logo.jpeg"));
                 exchange.getIn().setHeader("Content-Type", "image/jpeg");
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, org.apache.camel.component.http.HttpMethods.PUT);
+                exchange.getIn().setHeader(Exchange.HTTP_METHOD, org.apache.camel.component.http4.HttpMethods.PUT);
             }
         });
 

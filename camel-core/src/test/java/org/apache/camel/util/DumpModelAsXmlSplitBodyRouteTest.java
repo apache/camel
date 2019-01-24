@@ -24,23 +24,25 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.ModelHelper;
+import org.junit.Test;
 
 /**
  *
  */
 public class DumpModelAsXmlSplitBodyRouteTest extends ContextTestSupport {
 
+    @Test
     public void testDumpModelAsXml() throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
-        Document doc = new XmlConverter().toDOMDocument(xml);
+        Document doc = new XmlConverter().toDOMDocument(xml, null);
         NodeList nodes = doc.getElementsByTagName("simple");
         assertEquals(1, nodes.getLength());
         Element node = (Element)nodes.item(0);
         assertNotNull("Node <simple> expected to be instanceof Element", node);
-        assertEquals("body", node.getTextContent());
+        assertEquals("${body}", node.getTextContent());
 
         nodes = doc.getElementsByTagName("split");
         assertEquals(1, nodes.getLength());

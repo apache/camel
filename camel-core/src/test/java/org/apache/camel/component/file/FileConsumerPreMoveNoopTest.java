@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,18 +22,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/premove");
         super.setUp();
     }
 
+    @Test
     public void testPreMoveNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -49,6 +49,7 @@ public class FileConsumerPreMoveNoopTest extends ContextTestSupport {
         assertTrue("Pre move file should exist", pre.exists());
     }
 
+    @Test
     public void testPreMoveNoopSameFileTwice() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

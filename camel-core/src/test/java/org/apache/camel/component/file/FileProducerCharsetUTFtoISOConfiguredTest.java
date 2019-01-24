@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -25,6 +24,8 @@ import java.nio.file.Paths;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -35,7 +36,8 @@ public class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSuppor
     private byte[] iso;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // use utf-8 as original payload with 00e6 which is a danish ae letter
         utf = "ABC\u00e6".getBytes("utf-8");
         iso = "ABC\u00e6".getBytes("iso-8859-1");
@@ -61,6 +63,7 @@ public class FileProducerCharsetUTFtoISOConfiguredTest extends ContextTestSuppor
         super.setUp();
     }
 
+    @Test
     public void testFileProducerCharsetUTFtoISO() throws Exception {
         oneExchangeDone.matchesMockWaitTime();
 

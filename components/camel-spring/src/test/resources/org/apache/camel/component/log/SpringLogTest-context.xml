@@ -28,7 +28,7 @@
         <property name="logger" ref="myLogger"/>
     </bean>
 
-    <bean id="myLogger" class="org.apache.camel.processor.CamelLogProcessor">
+    <bean id="myLogger" class="org.apache.camel.support.processor.CamelLogProcessor">
         <property name="level" value="WARN"/>
         <property name="logName" value="cool"/>
     </bean>
@@ -36,7 +36,7 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
-            <to ref="log"/>
+            <to uri="ref:log"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>

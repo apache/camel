@@ -18,12 +18,11 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ChoiceNoActionTest extends ContextTestSupport {
 
+    @Test
     public void testWhen() throws Exception {
         getMockEndpoint("mock:world").expectedMessageCount(1);
 
@@ -32,6 +31,7 @@ public class ChoiceNoActionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNoAction() throws Exception {
         getMockEndpoint("mock:world").expectedMessageCount(0);
 

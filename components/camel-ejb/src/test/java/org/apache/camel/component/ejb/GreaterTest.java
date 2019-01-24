@@ -15,27 +15,28 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ejb;
-
 import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
-public class GreaterTest extends TestCase {
+public class GreaterTest extends Assert {
 
     private InitialContext initialContext;
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         Properties properties = new Properties();
         properties.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.openejb.client.LocalInitialContextFactory");
 
         initialContext = new InitialContext(properties);
     }
 
+    @Test
     public void testGreaterViaLocalInterface() throws Exception {
         Object object = initialContext.lookup("GreaterImplLocal");
 

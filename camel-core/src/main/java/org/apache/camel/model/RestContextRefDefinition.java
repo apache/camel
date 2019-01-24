@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,8 +28,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To refer to an XML file with rest services defined using the rest-dsl
- *
- * @version 
  */
 @Metadata(label = "configuration,rest")
 @XmlRootElement(name = "restContextRef")

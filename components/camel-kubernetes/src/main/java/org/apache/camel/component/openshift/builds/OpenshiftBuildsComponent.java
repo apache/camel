@@ -19,7 +19,9 @@ package org.apache.camel.component.openshift.builds;
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("openshift-builds")
 public class OpenshiftBuildsComponent extends AbstractKubernetesComponent {
 
     protected AbstractKubernetesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {

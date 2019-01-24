@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-cdi</artifactId>
@@ -43,9 +43,6 @@
       ${camel.osgi.import.defaults},
       *
     </camel.osgi.import>
-    <camel.osgi.export.pkg>
-      org.apache.camel.cdi;${camel.osgi.version}
-    </camel.osgi.export.pkg>
     <camel.osgi.provide.capability>
       org.ops4j.pax.cdi.extension; extension=camel-cdi-extension
     </camel.osgi.provide.capability>
@@ -81,7 +78,7 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
 
     <!-- DeltaSpike is only used to provide Main support thus optional -->
@@ -128,16 +125,15 @@
     <!-- test dependencies -->
 
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-context</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -256,6 +252,10 @@
             <configuration>
               <excludes>
                 <exclude>**/*Cdi20Test.java</exclude>
+                <!-- Reactivate when CAMEL-12834 is fixed -->
+                <exclude>**/UnsatisfiedContextForEndpointInjectTest.java</exclude>
+                <!-- Reactivate when CAMEL-12834 is fixed -->
+                <exclude>**/UriWithWrongContextTest.java</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -294,6 +294,23 @@
 
     <profile>
       <id>weld-2.0</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <!-- Reactivate when CAMEL-12834 is fixed -->
+                <exclude>**/UnsatisfiedContextForEndpointInjectTest.java</exclude>
+                <!-- Reactivate when CAMEL-12834 is fixed -->
+                <exclude>**/UriWithWrongContextTest.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
 
       <dependencies>
 

@@ -18,13 +18,11 @@ package org.apache.camel.processor.loadbalancer;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 /**
  * Represents a consumer which on starting registers itself with a {@link LoadBalancer} and on closing unregisters
  * itself with a load balancer
- *
- * @version 
  */
 public class LoadBalancerConsumer extends DefaultConsumer {
     private final LoadBalancer loadBalancer;
@@ -37,12 +35,12 @@ public class LoadBalancerConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        loadBalancer.addProcessor(getProcessor());
+        loadBalancer.addProcessor(getAsyncProcessor());
     }
 
     @Override
     protected void doStop() throws Exception {
-        loadBalancer.removeProcessor(getProcessor());
+        loadBalancer.removeProcessor(getAsyncProcessor());
         super.doStop();
     }
 }

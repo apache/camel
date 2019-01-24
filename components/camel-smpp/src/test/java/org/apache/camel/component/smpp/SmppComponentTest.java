@@ -37,8 +37,6 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppComponent</code>
- * 
- * @version 
  */
 public class SmppComponentTest {
     
@@ -133,8 +131,8 @@ public class SmppComponentTest {
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?systemType=&serviceType=", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
 
-        assertEquals("", smppEndpoint.getConfiguration().getSystemType());
-        assertEquals("", smppEndpoint.getConfiguration().getServiceType());
+        assertEquals(null, smppEndpoint.getConfiguration().getSystemType());
+        assertEquals(null, smppEndpoint.getConfiguration().getServiceType());
     }
 
     @Test

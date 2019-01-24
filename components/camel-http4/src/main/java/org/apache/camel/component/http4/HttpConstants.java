@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.http4;
 
-/**
- * @version 
- */
 public final class HttpConstants {
 
     public static final String CONTENT_TYPE_JAVA_SERIALIZED_OBJECT = "application/x-java-serialized-object";

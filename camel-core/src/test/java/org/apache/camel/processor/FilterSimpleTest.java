@@ -18,9 +18,6 @@ package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class FilterSimpleTest extends FilterTest {
 
     protected RouteBuilder createRouteBuilder() {

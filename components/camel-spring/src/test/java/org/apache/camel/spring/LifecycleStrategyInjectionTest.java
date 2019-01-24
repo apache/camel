@@ -16,13 +16,12 @@
  */
 package org.apache.camel.spring;
 
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Test for LifecycleStrategy injection.
- *
- * @version 
  */
 public class LifecycleStrategyInjectionTest extends SpringTestSupport {
 
@@ -31,6 +30,7 @@ public class LifecycleStrategyInjectionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/lifecycleStrategyInjection.xml");
     }
 
+    @Test
     public void testInjectedStrategy() throws Exception {
         assertEquals(2, context.getLifecycleStrategies().size());
         assertIsInstanceOf(DummyLifecycleStrategy.class, context.getLifecycleStrategies().get(0));

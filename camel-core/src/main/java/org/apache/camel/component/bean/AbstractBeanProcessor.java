@@ -17,31 +17,25 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A {@link Processor} which converts the inbound exchange to a method
  * invocation on a POJO
- *
- * @version 
  */
-public abstract class AbstractBeanProcessor implements AsyncProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractBeanProcessor.class);
+public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
 
     private final BeanHolder beanHolder;
     private transient Processor processor;
     private transient boolean lookupProcessorDone;
     private final Object lock = new Object();
-    private boolean multiParameterArray;
+    private Boolean cache;
     private String method;
     private boolean shorthandMethod;
 
@@ -66,10 +60,6 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
         return "BeanProcessor[" + beanHolder + "]";
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // do we have an explicit method name we always should invoke (either configured on endpoint or as a header)
         String explicitMethodName = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, method, String.class);
@@ -92,20 +82,32 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
 
         // do we have a custom adapter for this POJO to a Processor
         // but only do this if allowed
+        // we need to check beanHolder is Processor is support, to avoid the bean cached issue
         if (allowProcessor(explicitMethodName, beanInfo)) {
-            processor = getProcessor();
-            if (processor == null && !lookupProcessorDone) {
+            Processor target = getProcessor();
+            if (target == null) {
                 // only attempt to lookup the processor once or nearly once
-                synchronized (lock) {
-                    lookupProcessorDone = true;
+                boolean allowCache = cache == null || cache; // allow cache by default
+                if (allowCache) {
+                    if (!lookupProcessorDone) {
+                        synchronized (lock) {
+                            lookupProcessorDone = true;
+                            // so if there is a custom type converter for the bean to processor
+                            target = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
+                            processor = target;
+                        }
+                    }
+                } else {
                     // so if there is a custom type converter for the bean to processor
-                    processor = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
+                    target = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
                 }
             }
-            if (processor != null) {
-                LOG.trace("Using a custom adapter as bean invocation: {}", processor);
+            if (target != null) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Using a custom adapter as bean invocation: {}", target);
+                }
                 try {
-                    processor.process(exchange);
+                    target.process(exchange);
                 } catch (Throwable e) {
                     exchange.setException(e);
                 }
@@ -130,11 +132,13 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
             // and therefore the message body contains a BeanInvocation object.
             // However this can causes problem if we in a Camel route invokes another bean,
             // so we must test whether BeanHolder and BeanInvocation is the same bean or not
-            LOG.trace("Exchange IN body is a BeanInvocation instance: {}", beanInvoke);
+            if (log.isTraceEnabled()) {
+                log.trace("Exchange IN body is a BeanInvocation instance: {}", beanInvoke);
+            }
             Class<?> clazz = beanInvoke.getMethod().getDeclaringClass();
             boolean sameBean = clazz.isInstance(bean);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", new Object[]{bean.getClass(), clazz, sameBean});
+            if (log.isDebugEnabled()) {
+                log.debug("BeanHolder bean: {} and beanInvocation bean: {} is same instance: {}", bean.getClass(), clazz, sameBean);
             }
             if (sameBean) {
                 try {
@@ -151,10 +155,6 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
             }
         }
 
-        // set temporary header which is a hint for the bean info that introspect the bean
-        if (isMultiParameterArray()) {
-            in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, Boolean.TRUE);
-        }
         // set explicit method name to invoke as a header, which is how BeanInfo can detect it
         if (explicitMethodName != null) {
             in.setHeader(Exchange.BEAN_METHOD_NAME, explicitMethodName);
@@ -169,9 +169,6 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
             return true;
         } finally {
             // must remove headers as they were provisional
-            if (isMultiParameterArray()) {
-                in.removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
-            }
             if (explicitMethodName != null) {
                 in.removeHeader(Exchange.BEAN_METHOD_NAME);
             }
@@ -206,12 +203,12 @@ public abstract class AbstractBeanProcessor implements AsyncProcessor {
         return method;
     }
 
-    public boolean isMultiParameterArray() {
-        return multiParameterArray;
+    public Boolean getCache() {
+        return cache;
     }
 
-    public void setMultiParameterArray(boolean mpArray) {
-        multiParameterArray = mpArray;
+    public void setCache(Boolean cache) {
+        this.cache = cache;
     }
 
     /**

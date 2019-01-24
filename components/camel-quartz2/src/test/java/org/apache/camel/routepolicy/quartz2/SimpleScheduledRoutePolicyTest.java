@@ -25,8 +25,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.quartz2.QuartzComponent;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ServiceHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,10 +61,10 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
             }
         });
         context.start();
-        context.stopRoute("test", 1000, TimeUnit.MILLISECONDS);
+        context.getRouteController().stopRoute("test", 1000, TimeUnit.MILLISECONDS);
         
         Thread.sleep(5000);
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Started);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Started);
         template.sendBody("direct:start", "Ready or not, Here, I come");
 
         context.getComponent("quartz2", QuartzComponent.class).stop();
@@ -93,7 +93,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         
         Thread.sleep(4000);
 
-        assertTrue(context.getRouteStatus("test") == ServiceStatus.Stopped);
+        assertTrue(context.getRouteController().getRouteStatus("test") == ServiceStatus.Stopped);
 
         boolean consumerStopped = false;
         try {

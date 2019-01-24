@@ -90,6 +90,11 @@ public final class XmlRouteParser {
                 node.setLineNumber(lineNumber);
                 node.setLineNumberEnd(lineNumberEnd);
 
+                String column = (String) route.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
+                if (column != null) {
+                    node.setLinePosition(Integer.valueOf(column));
+                }
+
                 // parse the route and gather all its EIPs
                 List<CamelNodeDetails> tree = parser.parseCamelRouteTree(route, routeId, node, baseDir, fullyQualifiedFileName);
                 answer.addAll(tree);
@@ -150,6 +155,12 @@ public final class XmlRouteParser {
                     detail.setFileName(fileName);
                     detail.setLineNumber(lineNumber);
                     detail.setLineNumberEnd(lineNumberEnd);
+
+                    String column = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
+                    if (column != null) {
+                        detail.setLinePosition(Integer.valueOf(column));
+                    }
+
                     detail.setEndpointInstance(id);
                     detail.setEndpointUri(uri);
                     detail.setEndpointComponentName(endpointComponentName(uri));
@@ -198,6 +209,11 @@ public final class XmlRouteParser {
                 detail.setLineNumber(lineNumber);
                 detail.setLineNumberEnd(lineNumberEnd);
                 detail.setSimple(simple);
+
+                String column = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
+                if (column != null) {
+                    detail.setLinePosition(Integer.valueOf(column));
+                }
 
                 // is it used as predicate or not
                 boolean asPredicate = isSimplePredicate(node);

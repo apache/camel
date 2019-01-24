@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 
 import org.apache.camel.cdi.transaction.JtaTransactionErrorHandlerBuilder;
@@ -36,7 +35,6 @@ public enum ErrorHandlerType {
 
     DefaultErrorHandler,
     DeadLetterChannel,
-    LoggingErrorHandler,
     NoErrorHandler,
     TransactionErrorHandler;
 
@@ -51,8 +49,6 @@ public enum ErrorHandlerType {
             return DefaultErrorHandlerBuilder.class;
         case DeadLetterChannel:
             return DeadLetterChannelBuilder.class;
-        case LoggingErrorHandler:
-            return LoggingErrorHandlerBuilder.class;
         case NoErrorHandler:
             return NoErrorHandlerBuilder.class;
         case TransactionErrorHandler:

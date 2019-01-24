@@ -33,14 +33,14 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.cxf.message.MessageContentsList;
+
+import static org.apache.camel.TypeConverter.MISS_VALUE;
 
 /**
  * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * for CXF related types' converting .
- *
- * @version 
  */
 @Converter
 public final class CxfConverter {
@@ -83,7 +83,7 @@ public final class CxfConverter {
     public static String soapMessageToString(final SOAPMessage soapMessage, Exchange exchange) throws SOAPException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         soapMessage.writeTo(baos);
-        return baos.toString(IOHelper.getCharsetName(exchange));
+        return baos.toString(ExchangeHelper.getCharsetName(exchange));
     }
     
     @Converter
@@ -162,7 +162,7 @@ public final class CxfConverter {
                 }
             }
             // return void to indicate its not possible to convert at this time
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
 
         // CXF-RS Response class
@@ -176,7 +176,7 @@ public final class CxfConverter {
             }
 
             // return void to indicate its not possible to convert at this time
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
         
         return null;

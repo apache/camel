@@ -18,9 +18,6 @@ package org.apache.camel.component.properties.route;
 
 import org.apache.camel.spring.SpringRouteBuilder;
 
-/**
- * @version 
- */
 public class SpringSimpleRoute extends SpringRouteBuilder {
 
     @Override

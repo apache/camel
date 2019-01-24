@@ -24,8 +24,6 @@ import java.lang.annotation.Target;
 
 /**
  * Creates a namespace prefix for an XPath
- *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

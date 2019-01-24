@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.RollbackExchangeException;
@@ -24,14 +23,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Transactional client test with rollback in the DSL.
- *
- * @version 
  */
 public class TransactionalClientWithRollbackTest extends SpringTestSupport {
 
@@ -43,13 +42,15 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
         jdbc = new JdbcTemplate(ds);
     }
 
+    @Test
     public void testTransactionSuccess() throws Exception {
         template.sendBody("direct:okay", "Hello World");
 
@@ -57,6 +58,7 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
         assertEquals("Number of books", 3, count);
     }
 
+    @Test
     public void testTransactionRollback() throws Exception {
         try {
             template.sendBody("direct:fail", "Hello World");

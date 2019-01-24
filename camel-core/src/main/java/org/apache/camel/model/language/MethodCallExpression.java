@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanInfo;
 import org.apache.camel.component.bean.ConstantBeanHolder;
@@ -39,16 +40,11 @@ import org.apache.camel.util.OgnlHelper;
 
 /**
  * To use a Java bean (aka method call) in Camel expressions or predicates.
- *
- * @version
  */
 @Metadata(firstVersion = "1.3.0", label = "language,core,java", title = "Bean method")
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MethodCallExpression extends ExpressionDefinition {
-    @XmlAttribute
-    @Deprecated
-    private String bean;
     @XmlAttribute
     private String ref;
     @XmlAttribute
@@ -95,17 +91,6 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     public String getLanguage() {
         return "bean";
-    }
-
-    public String getBean() {
-        return bean;
-    }
-
-    /**
-     * Either a reference or a class name of the bean to use
-     */
-    public void setBean(String bean) {
-        this.bean = bean;
     }
 
     public String getRef() {
@@ -173,7 +158,7 @@ public class MethodCallExpression extends ExpressionDefinition {
             try {
                 beanType = camelContext.getClassResolver().resolveMandatoryClass(beanTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -207,7 +192,7 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public Predicate createPredicate(CamelContext camelContext) {
-        return (BeanExpression) createExpression(camelContext);
+        return (Predicate) createExpression(camelContext);
     }
 
     /**
@@ -238,27 +223,25 @@ public class MethodCallExpression extends ExpressionDefinition {
         // if invalid OGNL then fail
         if (OgnlHelper.isInvalidValidOgnlExpression(method)) {
             ExpressionIllegalSyntaxException cause = new ExpressionIllegalSyntaxException(method);
-            throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(bean != null ? bean : type, method, cause));
+            throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(bean != null ? bean : type, method, cause));
         }
 
         if (bean != null) {
             BeanInfo info = new BeanInfo(context, bean.getClass());
             if (!info.hasMethod(method)) {
-                throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
+                throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, bean, method));
             }
         } else {
             BeanInfo info = new BeanInfo(context, type);
             // must be a static method as we do not have a bean instance to invoke
             if (!info.hasStaticMethod(method)) {
-                throw ObjectHelper.wrapRuntimeCamelException(new MethodNotFoundException(null, type, method, true));
+                throw RuntimeCamelException.wrapRuntimeCamelException(new MethodNotFoundException(null, type, method, true));
             }
         }
     }
 
     protected String beanName() {
-        if (bean != null) {
-            return bean;
-        } else if (ref != null) {
+        if (ref != null) {
             return ref;
         } else if (instance != null) {
             return ObjectHelper.className(instance);
@@ -268,7 +251,7 @@ public class MethodCallExpression extends ExpressionDefinition {
 
     @Override
     public String toString() {
-        boolean isRef = bean != null || ref != null;
+        boolean isRef = ref != null;
         return "bean[" + (isRef ? "ref:" : "") + beanName() + (method != null ? " method:" + method : "") + "]";
     }
 }

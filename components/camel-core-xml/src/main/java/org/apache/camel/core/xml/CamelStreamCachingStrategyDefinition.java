@@ -26,8 +26,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Stream caching configuration.
- *
- * @version 
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "streamCaching")

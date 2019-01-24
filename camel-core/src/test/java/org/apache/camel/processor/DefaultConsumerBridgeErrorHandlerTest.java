@@ -28,9 +28,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultEndpoint;
+import org.junit.Test;
 
 /**
  *
@@ -39,6 +40,7 @@ public class DefaultConsumerBridgeErrorHandlerTest extends ContextTestSupport {
 
     protected final CountDownLatch latch = new CountDownLatch(1);
 
+    @Test
     public void testDefaultConsumerBridgeErrorHandler() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello World");
         getMockEndpoint("mock:dead").expectedBodiesReceived("Cannot process");

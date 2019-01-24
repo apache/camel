@@ -17,9 +17,7 @@
 package org.apache.camel.component.snmp;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultProducer;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
 import org.snmp4j.Snmp;
@@ -41,8 +39,6 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
  */
 public class SnmpTrapProducer extends DefaultProducer {
    
-    private static final Logger LOG = LoggerFactory.getLogger(SnmpTrapProducer.class);
-    
     private SnmpEndpoint endpoint;
     
     private Address targetAddress;
@@ -59,7 +55,7 @@ public class SnmpTrapProducer extends DefaultProducer {
         super.doStart();
 
         this.targetAddress = GenericAddress.parse(this.endpoint.getAddress());
-        LOG.debug("targetAddress: {}", targetAddress);
+        log.debug("targetAddress: {}", targetAddress);
 
         this.usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
         SecurityModels.getInstance().addSecurityModel(this.usm);
@@ -93,7 +89,7 @@ public class SnmpTrapProducer extends DefaultProducer {
         TransportMapping<? extends Address> transport = null;
 
         try {
-            LOG.debug("Starting SNMP Trap producer on {}", this.endpoint.getAddress());
+            log.debug("Starting SNMP Trap producer on {}", this.endpoint.getAddress());
             
             // either tcp or udp
             if ("tcp".equals(this.endpoint.getProtocol())) {
@@ -101,12 +97,12 @@ public class SnmpTrapProducer extends DefaultProducer {
             } else if ("udp".equals(this.endpoint.getProtocol())) {
                 transport = new DefaultUdpTransportMapping();
             } else {
-                throw new IllegalArgumentException("Unknown protocol: {} " + this.endpoint.getProtocol());
+                throw new IllegalArgumentException("Unknown protocol: " + this.endpoint.getProtocol());
             }
     
             snmp = new Snmp(transport);
 
-            LOG.debug("SnmpTrap: getting pdu from body");
+            log.debug("SnmpTrap: getting pdu from body");
             PDU trap = exchange.getIn().getBody(PDU.class);
 
             trap.setErrorIndex(0);
@@ -118,9 +114,9 @@ public class SnmpTrapProducer extends DefaultProducer {
                 trap.setType(PDU.TRAP);
             }
 
-            LOG.debug("SnmpTrap: sending");
+            log.debug("SnmpTrap: sending");
             snmp.send(trap, this.target);            
-            LOG.debug("SnmpTrap: sent");
+            log.debug("SnmpTrap: sent");
         } finally {
             try {
                 transport.close(); 

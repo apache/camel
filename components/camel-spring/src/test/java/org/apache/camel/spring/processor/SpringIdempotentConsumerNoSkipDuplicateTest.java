@@ -21,12 +21,10 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringIdempotentConsumerNoSkipDuplicateTest extends SpringTestSupport {
 
     @Override
@@ -34,15 +32,16 @@ public class SpringIdempotentConsumerNoSkipDuplicateTest extends SpringTestSuppo
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringIdempotentConsumerNoSkipDuplicateTest.xml");
     }
 
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("one", "two", "one", "two", "one", "three");
-        mock.message(0).property(Exchange.DUPLICATE_MESSAGE).isNull();
-        mock.message(1).property(Exchange.DUPLICATE_MESSAGE).isNull();
-        mock.message(2).property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
-        mock.message(3).property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
-        mock.message(4).property(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
-        mock.message(5).property(Exchange.DUPLICATE_MESSAGE).isNull();
+        mock.message(0).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isNull();
+        mock.message(1).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isNull();
+        mock.message(2).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        mock.message(3).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        mock.message(4).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(Boolean.TRUE);
+        mock.message(5).exchangeProperty(Exchange.DUPLICATE_MESSAGE).isNull();
 
         sendMessage("1", "one");
         sendMessage("2", "two");

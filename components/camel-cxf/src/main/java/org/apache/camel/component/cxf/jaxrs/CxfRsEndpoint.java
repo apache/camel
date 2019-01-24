@@ -23,26 +23,26 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import javax.net.ssl.HostnameVerifier;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The cxfrs component is used for JAX-RS REST services using Apache CXF.
  */
-@UriEndpoint(firstVersion = "2.0.0", scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", consumerClass = CxfRsConsumer.class, label = "rest", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.0.0", scheme = "cxfrs", title = "CXF-RS", syntax = "cxfrs:beanId:address", label = "rest", lenientProperties = true)
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
@@ -84,6 +84,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private String address;
     @UriParam
     private List<Class<?>> resourceClasses;
+    @UriParam(label = "consumer,advanced")
+    private List<Object> serviceBeans;
     @UriParam
     private String modelRef;
     @UriParam(label = "consumer", defaultValue = "Default")
@@ -133,12 +135,6 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private CookieHandler cookieHandler;
 
     public CxfRsEndpoint() {
-    }
-
-    @Deprecated
-    public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
-        super(endpointUri, camelContext);
-        setAddress(endpointUri);
     }
 
     public CxfRsEndpoint(String endpointUri, Component component) {
@@ -251,6 +247,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         processResourceModel(sfb);
         if (getResourceClasses() != null) {
             sfb.setResourceClasses(getResourceClasses());
+        }
+        if (serviceBeans != null && !serviceBeans.isEmpty()) {
+            sfb.setServiceBeans(serviceBeans);
         }
 
         // setup the resource providers for interfaces
@@ -396,7 +395,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
                 return str;
             }
         } catch (Exception ex) {
-            throw ObjectHelper.wrapRuntimeCamelException(ex);
+            throw RuntimeCamelException.wrapRuntimeCamelException(ex);
         }
     }
 
@@ -437,6 +436,33 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public void setResourceClasses(Class<?>... classes) {
         setResourceClasses(Arrays.asList(classes));
     }
+
+    public List<?> getServiceBeans() {
+        return serviceBeans;
+    }
+
+    public void addServiceBean(Object bean) {
+        if (serviceBeans == null) {
+            serviceBeans = new ArrayList<>();
+        }
+        serviceBeans.add(bean);
+    }
+
+    /**
+     * The service beans which you want to export as REST service. Multiple beans can be separated by comma.
+     */
+    public void setServiceBeans(List<?> beans) {
+        this.serviceBeans = new ArrayList<Object>(beans);
+    }
+
+    public void setServiceBeans(Object... beans) {
+        setServiceBeans(Arrays.asList(beans));
+    }
+
+    public void setServiceBeans(String beans) {
+        setServiceBeans(EndpointHelper.resolveReferenceListParameter(getCamelContext(), beans, Object.class));
+    }
+
 
     /**
      * The service publish address.

@@ -35,7 +35,7 @@
 
         <route>
             <from uri="direct:backPojo"/>
-            <unmarshal ref="pojo"/>
+            <unmarshal><custom ref="pojo"/></unmarshal>
             <to uri="mock:reversePojo"/>
         </route>
 

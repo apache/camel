@@ -27,9 +27,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
-/**
- * @version 
- */
 @Entity
 @Table(
     name = "CAMEL_MESSAGEPROCESSED",

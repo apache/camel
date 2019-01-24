@@ -19,18 +19,18 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AdviceWithOnCompletionTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceOnCompletion() throws Exception {
         getMockEndpoint("mock:done").expectedMessageCount(1);
         getMockEndpoint("mock:advice").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddFirst().to("mock:advice");

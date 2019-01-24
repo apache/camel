@@ -16,8 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
@@ -26,29 +26,25 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.impl.BridgeExceptionHandlerToErrorHandler;
-import org.apache.camel.impl.ConsumerCache;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.EmptyConsumerCache;
-import org.apache.camel.impl.EventDrivenPollingConsumer;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.impl.DefaultConsumerCache;
+import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.EventDrivenPollingConsumer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
-import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
+import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern;
 
 /**
  * A content enricher that enriches input data by first obtaining additional
  * data from a <i>resource</i> represented by an endpoint <code>producer</code>
  * and second by aggregating input data and additional data. Aggregation of
- * input data and additional data is delegated to an {@link org.apache.camel.processor.aggregate.AggregationStrategy}
+ * input data and additional data is delegated to an {@link AggregationStrategy}
  * object.
  * <p/>
  * Uses a {@link org.apache.camel.PollingConsumer} to obtain the additional data as opposed to {@link Enricher}
@@ -56,9 +52,8 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  *
  * @see Enricher
  */
-public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
+public class PollEnricher extends AsyncProcessorSupport implements IdAware, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
     private CamelContext camelContext;
     private ConsumerCache consumerCache;
     private String id;
@@ -164,16 +159,12 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
         this.ignoreInvalidEndpoint = ignoreInvalidEndpoint;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     /**
      * Enriches the input data (<code>exchange</code>) by first obtaining
      * additional data from an endpoint represented by an endpoint
      * <code>producer</code> and second by aggregating input data and additional
      * data. Aggregation of input data and additional data is delegated to an
-     * {@link org.apache.camel.processor.aggregate.AggregationStrategy} object set at construction time. If the
+     * {@link AggregationStrategy} object set at construction time. If the
      * message exchange with the resource endpoint fails then no aggregation
      * will be done and the failed exchange content is copied over to the
      * original message exchange.
@@ -203,8 +194,8 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
             consumer = consumerCache.acquirePollingConsumer(endpoint);
         } catch (Throwable e) {
             if (isIgnoreInvalidEndpoint()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                if (log.isDebugEnabled()) {
+                    log.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
                 }
             } else {
                 exchange.setException(e);
@@ -231,20 +222,20 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
         Exchange resourceExchange;
         try {
             if (timeout < 0) {
-                LOG.debug("Consumer receive: {}", consumer);
+                log.debug("Consumer receive: {}", consumer);
                 resourceExchange = consumer.receive();
             } else if (timeout == 0) {
-                LOG.debug("Consumer receiveNoWait: {}", consumer);
+                log.debug("Consumer receiveNoWait: {}", consumer);
                 resourceExchange = consumer.receiveNoWait();
             } else {
-                LOG.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
+                log.debug("Consumer receive with timeout: {} ms. {}", timeout, consumer);
                 resourceExchange = consumer.receive(timeout);
             }
 
             if (resourceExchange == null) {
-                LOG.debug("Consumer received no exchange");
+                log.debug("Consumer received no exchange");
             } else {
-                LOG.debug("Consumer received: {}", resourceExchange);
+                log.debug("Consumer received: {}", resourceExchange);
             }
         } catch (Exception e) {
             exchange.setException(new CamelExchangeException("Error during poll", exchange, e));
@@ -373,25 +364,17 @@ public class PollEnricher extends ServiceSupport implements AsyncProcessor, IdAw
     protected void doStart() throws Exception {
         if (consumerCache == null) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
-            if (cacheSize < 0) {
-                consumerCache = new EmptyConsumerCache(this, camelContext);
-                LOG.debug("PollEnrich {} is not using ConsumerCache", this);
-            } else if (cacheSize == 0) {
-                consumerCache = new ConsumerCache(this, camelContext);
-                LOG.debug("PollEnrich {} using ConsumerCache with default cache size", this);
-            } else {
-                consumerCache = new ConsumerCache(this, camelContext, cacheSize);
-                LOG.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
-            }
+            consumerCache = new DefaultConsumerCache(this, camelContext, cacheSize);
+            log.debug("PollEnrich {} using ConsumerCache with cacheSize={}", this, cacheSize);
         }
         if (aggregationStrategy instanceof CamelContextAware) {
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
         }
-        ServiceHelper.startServices(consumerCache, aggregationStrategy);
+        ServiceHelper.startService(consumerCache, aggregationStrategy);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(aggregationStrategy, consumerCache);
+        ServiceHelper.stopService(aggregationStrategy, consumerCache);
     }
 
     protected void doShutdown() throws Exception {

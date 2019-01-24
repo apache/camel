@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -41,6 +42,7 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
@@ -236,13 +238,8 @@ public final class ModelHelper {
     }
 
     private static JAXBContext getJAXBContext(CamelContext context) throws JAXBException {
-        JAXBContext jaxbContext;
-        if (context == null) {
-            jaxbContext = createJAXBContext();
-        } else {
-            jaxbContext = context.getModelJAXBContextFactory().newJAXBContext();
-        }
-        return jaxbContext;
+        ModelJAXBContextFactory factory = context.getModelJAXBContextFactory();
+        return factory.newJAXBContext();
     }
 
     private static void applyNamespaces(RouteDefinition route, Map<String, String> namespaces) {
@@ -267,11 +264,6 @@ public final class ModelHelper {
         }
 
         return na;
-    }
-
-    private static JAXBContext createJAXBContext() throws JAXBException {
-        // must use classloader from CamelContext to have JAXB working
-        return JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES, CamelContext.class.getClassLoader());
     }
 
     /**

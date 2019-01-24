@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.xstream.springboot;
 
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.spring.boot.DataFormatConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -34,6 +33,11 @@ public class XStreamDataFormatConfiguration
         extends
             DataFormatConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the xstream data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * Adds permissions that controls which Java packages and classes XStream is
      * allowed to use during unmarshal from xml/json to Java beans. A permission
@@ -76,20 +80,23 @@ public class XStreamDataFormatConfiguration
      */
     private List<String> converters;
     /**
-     * Alias a Class to a shorter name to be used in XML elements.
+     * Alias a Class to a shorter name to be used in XML elements. The option is
+     * a java.util.Map<java.lang.String,java.lang.String> type.
      */
-    private Map<String, String> aliases;
+    private String aliases;
     /**
      * Prevents a field from being serialized. To omit a field you must always
      * provide the declaring type and not necessarily the type that is
-     * converted.
+     * converted. The option is a
+     * java.util.Map<java.lang.String,java.lang.String[]> type.
      */
-    private Map<String, String[]> omitFields;
+    private String omitFields;
     /**
      * Adds a default implicit collection which is used for any unmapped XML
-     * tag.
+     * tag. The option is a java.util.Map<java.lang.String,java.lang.String[]>
+     * type.
      */
-    private Map<String, String[]> implicitCollections;
+    private String implicitCollections;
     /**
      * Whether the data format should set the Content-Type header with the type
      * from the data format if the data format is capable of doing so. For
@@ -146,27 +153,27 @@ public class XStreamDataFormatConfiguration
         this.converters = converters;
     }
 
-    public Map<String, String> getAliases() {
+    public String getAliases() {
         return aliases;
     }
 
-    public void setAliases(Map<String, String> aliases) {
+    public void setAliases(String aliases) {
         this.aliases = aliases;
     }
 
-    public Map<String, String[]> getOmitFields() {
+    public String getOmitFields() {
         return omitFields;
     }
 
-    public void setOmitFields(Map<String, String[]> omitFields) {
+    public void setOmitFields(String omitFields) {
         this.omitFields = omitFields;
     }
 
-    public Map<String, String[]> getImplicitCollections() {
+    public String getImplicitCollections() {
         return implicitCollections;
     }
 
-    public void setImplicitCollections(Map<String, String[]> implicitCollections) {
+    public void setImplicitCollections(String implicitCollections) {
         this.implicitCollections = implicitCollections;
     }
 

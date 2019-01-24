@@ -17,12 +17,10 @@
 package org.apache.camel.component.properties;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringPropertiesResolverTest extends SpringTestSupport {
 
     @Override
@@ -30,6 +28,7 @@ public class SpringPropertiesResolverTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringPropertiesResolverTest.xml");
     }
 
+    @Test
     public void testSpringPropertiesResolver() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

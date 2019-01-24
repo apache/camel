@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-elsql</artifactId>
@@ -32,22 +32,18 @@
   <description>Camel ElSql support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.elsql.*;${camel.osgi.version}
-    </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
       org.apache.camel.component.sql.*,
       !org.apache.camel.component.elsql.*,
       ${camel.osgi.import.defaults},
       *
     </camel.osgi.import.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=elsql</camel.osgi.export.service>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
     <!-- this component extends camel-sql -->
     <dependency>

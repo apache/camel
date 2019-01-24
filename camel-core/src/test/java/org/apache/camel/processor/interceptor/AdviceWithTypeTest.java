@@ -23,15 +23,18 @@ import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.TransformDefinition;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
 /**
  * Advice with tests
  */
 public class AdviceWithTypeTest extends ContextTestSupport {
 
+    @Test
     public void testUnknownType() throws Exception {
         try {
-            context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+            RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     weaveByType(SplitDefinition.class).replace().to("mock:xxx");
@@ -43,9 +46,10 @@ public class AdviceWithTypeTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testReplace() throws Exception {
         // START SNIPPET: e1
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave by type in the route
@@ -64,9 +68,10 @@ public class AdviceWithTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRemove() throws Exception {
         // START SNIPPET: e2
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave the type in the route and remove it
@@ -82,9 +87,10 @@ public class AdviceWithTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBefore() throws Exception {
         // START SNIPPET: e3
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave the type in the route and remove it
@@ -101,9 +107,10 @@ public class AdviceWithTypeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAfter() throws Exception {
         // START SNIPPET: e4
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // weave the type in the route and remove it

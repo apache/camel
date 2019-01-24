@@ -19,7 +19,7 @@ package org.apache.camel.component.stomp;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.fusesource.hawtbuf.AsciiBuffer;
 
 public class StompConsumer extends DefaultConsumer {

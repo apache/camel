@@ -19,12 +19,13 @@ package org.apache.camel.component.chunk;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
-public class ChunkComponent extends UriEndpointComponent {
+@Component("chunk")
+public class ChunkComponent extends DefaultComponent {
 
     public ChunkComponent() {
-        super(ChunkEndpoint.class);
     }
 
     @Override

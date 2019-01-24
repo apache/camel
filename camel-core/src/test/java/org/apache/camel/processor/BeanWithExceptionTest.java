@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,17 +25,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class BeanWithExceptionTest extends ContextTestSupport {
     protected MockEndpoint validEndpoint;
     protected MockEndpoint invalidEndpoint;
 
+    @Test
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         invalidEndpoint.expectedMessageCount(0);
@@ -52,6 +51,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInvalidMessage() throws Exception {
         validEndpoint.expectedMessageCount(0);
         invalidEndpoint.expectedMessageCount(1);
@@ -72,7 +72,8 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

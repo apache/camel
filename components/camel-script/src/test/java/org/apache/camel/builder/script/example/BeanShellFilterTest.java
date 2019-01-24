@@ -18,26 +18,26 @@ package org.apache.camel.builder.script.example;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class BeanShellFilterTest extends XPathFilterTest {
 
     @Override
+    @Test
     public void testSendMatchingMessage() throws Exception {
         super.testSendMatchingMessage();
     }
 
     @Override
+    @Test
     public void testSendNotMatchingMessage() throws Exception {
         super.testSendNotMatchingMessage();
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/beanShellFilter.xml"));
+        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/beanShellFilter.xml"), true);
     }
 
 }

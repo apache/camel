@@ -20,12 +20,13 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
-public class PdfComponent extends UriEndpointComponent {
+@Component("pdf")
+public class PdfComponent extends DefaultComponent {
 
     public PdfComponent() {
-        super(PdfEndpoint.class);
     }
 
     @Override

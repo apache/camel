@@ -19,9 +19,6 @@ package org.apache.camel.component.ahc.ws;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ServerConnector;
 
-/**
- * @version 
- */
 public class WsProducerTest extends WsProducerTestBase {
     
     @Override

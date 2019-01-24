@@ -19,7 +19,7 @@ package org.apache.camel.processor.aggregate;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 
 /**
  * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges
@@ -27,8 +27,6 @@ import org.apache.camel.impl.DefaultExchange;
  * <p/>
  * <b>Important:</b> This strategy is not to be used with the <a href="http://camel.apache.org/content-enricher.html">Content Enricher</a> EIP
  * which is enrich or pollEnrich.
- *
- * @version 
  */
 public class GroupedExchangeAggregationStrategy extends AbstractListAggregationStrategy<Exchange> {
 

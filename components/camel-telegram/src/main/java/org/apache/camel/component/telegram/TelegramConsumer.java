@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.telegram.model.Update;
 import org.apache.camel.component.telegram.model.UpdateResult;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * A polling consumer that reads messages from a chat using the Telegram bot API.

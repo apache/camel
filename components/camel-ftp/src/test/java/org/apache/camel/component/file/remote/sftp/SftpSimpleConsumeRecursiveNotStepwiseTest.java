@@ -18,9 +18,6 @@ package org.apache.camel.component.file.remote.sftp;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class SftpSimpleConsumeRecursiveNotStepwiseTest extends SftpSimpleConsumeRecursiveTest {
 
     @Override

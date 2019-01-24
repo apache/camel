@@ -26,22 +26,20 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.RecoverableAggregationRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.fusesource.hawtbuf.Buffer;
 import org.iq80.leveldb.DBIterator;
 import org.iq80.leveldb.WriteBatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An instance of {@link org.apache.camel.spi.AggregationRepository} which is backed by a {@link LevelDBFile}.
  */
 public class LevelDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregationRepository.class);
     private LevelDBFile levelDBFile;
     private String persistentFileName;
     private String repositoryName;
@@ -66,7 +64,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
      * @param repositoryName the repository name
      */
     public LevelDBAggregationRepository(String repositoryName) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
         this.repositoryName = repositoryName;
     }
 
@@ -78,8 +76,8 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
      * @param persistentFileName the persistent store filename
      */
     public LevelDBAggregationRepository(String repositoryName, String persistentFileName) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
-        ObjectHelper.notEmpty(persistentFileName, "persistentFileName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(persistentFileName, "persistentFileName");
         this.repositoryName = repositoryName;
         this.persistentFileName = persistentFileName;
     }
@@ -91,14 +89,14 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
      * @param levelDBFile    the leveldb file to use as persistent store
      */
     public LevelDBAggregationRepository(String repositoryName, LevelDBFile levelDBFile) {
-        ObjectHelper.notEmpty(repositoryName, "repositoryName");
+        StringHelper.notEmpty(repositoryName, "repositoryName");
         ObjectHelper.notNull(levelDBFile, "levelDBFile");
         this.levelDBFile = levelDBFile;
         this.repositoryName = repositoryName;
     }
 
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
-        LOG.debug("Adding key [{}] -> {}", key, exchange);
+        log.debug("Adding key [{}] -> {}", key, exchange);
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
             final Buffer exchangeBuffer = codec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
@@ -108,9 +106,9 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 rc = levelDBFile.getDb().get(lDbKey);
             }
 
-            LOG.trace("Adding key index {} for repository {}", key, repositoryName);
+            log.trace("Adding key index {} for repository {}", key, repositoryName);
             levelDBFile.getDb().put(lDbKey, exchangeBuffer.toByteArray(), levelDBFile.getWriteOptions());
-            LOG.trace("Added key index {}", key);
+            log.trace("Added key index {}", key);
 
             if (rc == null) {
                 return null;
@@ -132,7 +130,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
-            LOG.trace("Getting key index {}", key);
+            log.trace("Getting key index {}", key);
             byte[] rc = levelDBFile.getDb().get(lDbKey);
 
             if (rc != null) {
@@ -142,12 +140,12 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             throw new RuntimeException("Error getting key " + key + " from repository " + repositoryName, e);
         }
 
-        LOG.debug("Getting key  [{}] -> {}", key, answer);
+        log.debug("Getting key  [{}] -> {}", key, answer);
         return answer;
     }
 
     public void remove(final CamelContext camelContext, final String key, final Exchange exchange) {
-        LOG.debug("Removing key [{}]", key);
+        log.debug("Removing key [{}]", key);
 
         try {
             byte[] lDbKey = keyBuilder(repositoryName, key);
@@ -161,12 +159,12 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 WriteBatch batch = levelDBFile.getDb().createWriteBatch();
                 try {
                     batch.delete(lDbKey);
-                    LOG.trace("Removed key index {} -> {}", key, new Buffer(rc));
+                    log.trace("Removed key index {} -> {}", key, new Buffer(rc));
 
                     // add exchange to confirmed index
                     byte[] confirmedLDBKey = keyBuilder(getRepositoryNameCompleted(), exchangeId);
                     batch.put(confirmedLDBKey, exchangeBuffer.toByteArray());
-                    LOG.trace("Added confirm index {} for repository {}", exchangeId, getRepositoryNameCompleted());
+                    log.trace("Added confirm index {} for repository {}", exchangeId, getRepositoryNameCompleted());
 
                     levelDBFile.getDb().write(batch, levelDBFile.getWriteOptions());
                 } finally {
@@ -180,7 +178,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     }
 
     public void confirm(final CamelContext camelContext, final String exchangeId) {
-        LOG.debug("Confirming exchangeId [{}]", exchangeId);
+        log.debug("Confirming exchangeId [{}]", exchangeId);
 
         byte[] confirmedLDBKey = keyBuilder(getRepositoryNameCompleted(), exchangeId);
 
@@ -188,7 +186,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
         if (rc != null) {
             levelDBFile.getDb().delete(confirmedLDBKey);
-            LOG.trace("Removed confirm index {} -> {}", exchangeId, new Buffer(rc));
+            log.trace("Removed confirm index {} -> {}", exchangeId, new Buffer(rc));
         }
     }
 
@@ -217,7 +215,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
                 String key = keyBuffer.substring(prefix.length());
 
-                LOG.trace("getKey [{}]", key);
+                log.trace("getKey [{}]", key);
                 keys.add(key);
             }
         } finally {
@@ -249,7 +247,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
                 }
                 String exchangeId = keyBuffer.substring(prefix.length());
 
-                LOG.trace("Scan exchangeId [{}]", exchangeId);
+                log.trace("Scan exchangeId [{}]", exchangeId);
                 answer.add(exchangeId);
             }
         } finally {
@@ -258,10 +256,10 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         }
 
         if (answer.size() == 0) {
-            LOG.trace("Scanned and found no exchange to recover.");
+            log.trace("Scanned and found no exchange to recover.");
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Scanned and found {} exchange(s) to recover (note some of them may already be in progress).", answer.size());
+            if (log.isDebugEnabled()) {
+                log.debug("Scanned and found {} exchange(s) to recover (note some of them may already be in progress).", answer.size());
             }
         }
         return answer;
@@ -283,7 +281,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             throw new RuntimeException("Error recovering exchangeId " + exchangeId + " from repository " + repositoryName, e);
         }
 
-        LOG.debug("Recovering exchangeId [{}] -> {}", exchangeId, answer);
+        log.debug("Recovering exchangeId [{}] -> {}", exchangeId, answer);
         return answer;
     }
 
@@ -304,7 +302,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
             IOHelper.close(it);
         }
 
-        LOG.debug("Size of repository [{}] -> {}", repositoryName, count);
+        log.debug("Size of repository [{}] -> {}", repositoryName, count);
         return count;
     }
 
@@ -415,14 +413,14 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         int completed = size(getRepositoryNameCompleted());
 
         if (current > 0) {
-            LOG.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            log.info("On startup there are " + current + " aggregate exchanges (not completed) in repository: " + getRepositoryName());
         } else {
-            LOG.info("On startup there are no existing aggregate exchanges (not completed) in repository: " + getRepositoryName());
+            log.info("On startup there are no existing aggregate exchanges (not completed) in repository: " + getRepositoryName());
         }
         if (completed > 0) {
-            LOG.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            log.warn("On startup there are " + completed + " completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
         } else {
-            LOG.info("On startup there are no completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
+            log.info("On startup there are no completed exchanges to be recovered in repository: " + getRepositoryNameCompleted());
         }
     }
 

@@ -22,8 +22,6 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 /**
  * Using Spring property placeholder instead of Camel properties component.
- *
- * @version 
  */
 public class SpringPropertyPlaceholderOnExceptionRefTest extends PropertiesComponentOnExceptionTest {
 

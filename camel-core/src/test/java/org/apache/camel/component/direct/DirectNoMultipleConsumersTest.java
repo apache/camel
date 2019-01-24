@@ -21,14 +21,16 @@ import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 /**
  * MultipleConsumers option test.
  */
 public class DirectNoMultipleConsumersTest extends TestSupport {
 
+    @Test
     public void testNoMultipleConsumersTest() throws Exception {
-        CamelContext container = new DefaultCamelContext();
+        CamelContext container = new DefaultCamelContext(false);
         container.disableJMX();
 
         container.addRoutes(new RouteBuilder() {

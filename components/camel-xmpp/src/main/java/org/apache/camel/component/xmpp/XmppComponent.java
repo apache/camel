@@ -22,35 +22,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.jivesoftware.smack.ReconnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
-public class XmppComponent extends UriEndpointComponent {
-    private static final Logger LOG = LoggerFactory.getLogger(XmppComponent.class);
+@Component("xmpp")
+public class XmppComponent extends DefaultComponent {
 
     // keep a cache of endpoints so they can be properly cleaned up
     private final Map<String, XmppEndpoint> endpointCache = new HashMap<>();
 
     public XmppComponent() {
-        super(XmppEndpoint.class);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String cacheKey = extractCacheKeyFromUri(uri);
         if (endpointCache.containsKey(cacheKey)) {
-            LOG.debug("Using cached endpoint for URI {}", URISupport.sanitizeUri(uri));
+            log.debug("Using cached endpoint for URI {}", URISupport.sanitizeUri(uri));
             return endpointCache.get(cacheKey);
         }
 
-        LOG.debug("Creating new endpoint for URI {}", URISupport.sanitizeUri(uri));
+        log.debug("Creating new endpoint for URI {}", URISupport.sanitizeUri(uri));
         XmppEndpoint endpoint = new XmppEndpoint(uri, this);
 
         URI u = new URI(uri);
@@ -91,7 +86,7 @@ public class XmppComponent extends UriEndpointComponent {
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(endpointCache.values());
+        ServiceHelper.stopService(endpointCache.values());
         endpointCache.clear();
 
         super.doStop();

@@ -25,9 +25,6 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SedaNoConsumerTest extends ContextTestSupport {
 
     @Override
@@ -132,7 +129,7 @@ public class SedaNoConsumerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        context.stopRoute("stopThisRoute");
+        context.getRouteController().stopRoute("stopThisRoute");
         TimeUnit.MILLISECONDS.sleep(100);
         try {
             template.sendBody("seda:foo?failIfNoConsumers=true", "Hello World");

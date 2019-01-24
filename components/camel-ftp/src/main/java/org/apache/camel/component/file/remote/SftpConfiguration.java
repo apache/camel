@@ -69,6 +69,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private LoggingLevel jschLoggingLevel = LoggingLevel.WARN;
     @UriParam(label = "advanced")
     private Integer bulkRequests;
+    @UriParam(label = "advanced")
+    private String bindAddress;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -295,5 +297,16 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public Integer getBulkRequests() {
         return bulkRequests;
+    }
+
+    /**
+     * Specifies the address of the local interface against which the connection should bind.
+     */
+    public void setBindAddress(String bindAddress) {
+        this.bindAddress = bindAddress;
+    }
+
+    public String getBindAddress() {
+        return bindAddress;
     }
 }

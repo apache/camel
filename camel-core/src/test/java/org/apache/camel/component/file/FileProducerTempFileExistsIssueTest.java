@@ -15,20 +15,19 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/tempprefix");
         super.setUp();
     }
@@ -38,6 +37,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testIllegalConfiguration() throws Exception {
         try {
             context.getEndpoint("file://target/tempprefix?fileExist=Append&tempPrefix=foo").createProducer();
@@ -54,6 +54,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testWriteUsingTempPrefixButFileExist() throws Exception {
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo", "Bye World", Exchange.FILE_NAME, "hello.txt");
@@ -63,6 +64,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
+    @Test
     public void testWriteUsingTempPrefixButBothFileExist() throws Exception {
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "foohello.txt");
@@ -73,6 +75,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
+    @Test
     public void testWriteUsingTempPrefixButFileExistOverride() throws Exception {
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo&fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
@@ -82,6 +85,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
+    @Test
     public void testWriteUsingTempPrefixButFileExistIgnore() throws Exception {
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/tempprefix?tempPrefix=foo&fileExist=Ignore", "Bye World", Exchange.FILE_NAME, "hello.txt");
@@ -92,6 +96,7 @@ public class FileProducerTempFileExistsIssueTest extends ContextTestSupport {
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
 
+    @Test
     public void testWriteUsingTempPrefixButFileExistFail() throws Exception {
         template.sendBodyAndHeader("file://target/tempprefix", "Hello World", Exchange.FILE_NAME, "hello.txt");
         try {

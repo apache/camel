@@ -18,7 +18,6 @@ package org.apache.camel.language.spel;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
-import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.util.RegistryBeanResolver;
 import org.springframework.context.ApplicationContext;
@@ -35,8 +34,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  * Class responsible for evaluating <a href="https://docs.spring.io/spring/docs/current/spring-framework-reference/core.html#expressions">
  * Spring Expression Language (SpEL)</a> in the context of Camel.
  */
-@SuppressWarnings("deprecation")
-public class SpelExpression extends ExpressionSupport {
+public class SpelExpression extends org.apache.camel.support.ExpressionSupport {
 
     private final String expressionString;
     private final Class<?> type;

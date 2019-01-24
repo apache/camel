@@ -83,7 +83,7 @@ public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
         result.expectedHeaderReceived(Headers.JOB_ID, jobId);
         result.message(0).header(Headers.JOB_ID).isEqualTo(jobId);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         result.assertIsSatisfied();
 

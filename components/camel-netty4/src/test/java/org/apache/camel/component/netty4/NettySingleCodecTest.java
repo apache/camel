@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -54,9 +53,9 @@ public class NettySingleCodecTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:single-codec").to("netty4:tcp://localhost:{{port}}?encoder=#encoder&sync=false");
+                from("direct:single-codec").to("netty4:tcp://localhost:{{port}}?encoders=#encoder&sync=false");
 
-                from("netty4:tcp://localhost:{{port}}?decoder=#decoder&sync=false").to("mock:single-codec");
+                from("netty4:tcp://localhost:{{port}}?decoders=#decoder&sync=false").to("mock:single-codec");
             }
         };
     }

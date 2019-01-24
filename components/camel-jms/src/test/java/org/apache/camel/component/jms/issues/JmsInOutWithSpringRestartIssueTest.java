@@ -22,9 +22,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
 
     @Override
@@ -34,7 +31,7 @@ public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
 
     @Test
     public void testRestartSpringIssue() throws Exception {
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         ProducerTemplate producer = context.createProducerTemplate();
         producer.start();
@@ -44,8 +41,8 @@ public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
 
         // on purpose forget to stop the producer and it should still work
 
-        context.stopRoute("foo");
-        context.startRoute("foo");
+        context.getRouteController().stopRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         out = producer.requestBody("activemq:queue:foo", "Bar");
         assertEquals("Bye Bar", out);

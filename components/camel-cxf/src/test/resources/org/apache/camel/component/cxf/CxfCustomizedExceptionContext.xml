@@ -30,10 +30,10 @@
        <endpoint id="from1" uri="cxf://http://localhost:${CXFTestSupport.port1}/CxfSpringCustomizedExceptionTest/router?serviceClass=org.apache.camel.component.cxf.HelloService"/>
     <route>
       <from uri="direct:start" />
-      <to ref="to1"/>
+      <to uri="ref:to1"/>
     </route>
     <route>
-      <from ref="from1"/>
+      <from uri="ref:from1"/>
       <setFaultBody>
       	<method beanType="org.apache.camel.component.cxf.CxfSpringCustomizedExceptionTest$SOAPFaultFactory"/>
       </setFaultBody>

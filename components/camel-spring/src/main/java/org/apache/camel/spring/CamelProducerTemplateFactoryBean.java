@@ -35,8 +35,6 @@ import org.springframework.context.ApplicationContextAware;
 
 /**
  * Configures a {@link ProducerTemplate}
- * 
- * @version 
  */
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "template")

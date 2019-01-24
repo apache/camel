@@ -18,11 +18,9 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.OnCompletionAndInterceptTest;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringOnCompletionAndInterceptTest extends OnCompletionAndInterceptTest {
 
     protected CamelContext createCamelContext() throws Exception {

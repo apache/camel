@@ -169,20 +169,20 @@ public class ASN1DataFormatWithStreamIteratorClassTest extends CamelTestSupport 
 
                 asn1 = new ASN1DataFormat(SmsCdr.class);
 
-                from("direct:unmarshal").unmarshal(asn1).split(body(Iterator.class)).streaming().to("mock:unmarshal");
-                from("direct:unmarshalthenmarshal").unmarshal(asn1).split(body(Iterator.class)).streaming().marshal(asn1).to("mock:marshal");
-                from("direct:doubleunmarshal").unmarshal(asn1).split(body(Iterator.class)).streaming().wireTap("direct:secondunmarshal").to("mock:firstunmarshal");
-                from("direct:secondunmarshal").marshal(asn1).unmarshal(asn1).split(body(Iterator.class)).streaming().to("mock:secondunmarshal");
+                from("direct:unmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().to("mock:unmarshal");
+                from("direct:unmarshalthenmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().marshal(asn1).to("mock:marshal");
+                from("direct:doubleunmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().wireTap("direct:secondunmarshal").to("mock:firstunmarshal");
+                from("direct:secondunmarshal").marshal(asn1).unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().to("mock:secondunmarshal");
 
-                from("direct:unmarshaldsl").unmarshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(body(Iterator.class)).streaming()
+                from("direct:unmarshaldsl").unmarshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class)).streaming()
                     .to("mock:unmarshaldsl");
-                from("direct:unmarshalthenmarshaldsl").unmarshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(body(Iterator.class)).streaming()
+                from("direct:unmarshalthenmarshaldsl").unmarshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class)).streaming()
                     .marshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").to("mock:marshaldsl");
 
-                from("direct:doubleunmarshaldsl").unmarshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(body(Iterator.class)).streaming()
+                from("direct:doubleunmarshaldsl").unmarshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class)).streaming()
                     .wireTap("direct:secondunmarshaldsl").to("mock:firstunmarshaldsldsl");
                 from("direct:secondunmarshaldsl").marshal().asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").unmarshal()
-                    .asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(body(Iterator.class)).streaming().to("mock:secondunmarshaldsl");
+                    .asn1("org.apache.camel.dataformat.asn1.model.testsmscbercdr.SmsCdr").split(bodyAs(Iterator.class)).streaming().to("mock:secondunmarshaldsl");
             }
         };
     }

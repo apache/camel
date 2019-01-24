@@ -63,8 +63,8 @@ public final class AS2ConnectionHelper {
             AS2ServerConnection serverConnection = serverConnections.get(configuration.getServerPortNumber());
             if (serverConnection == null) {
                 serverConnection = new AS2ServerConnection(configuration.getAs2Version(), configuration.getServer(),
-                        configuration.getServerFqdn(), configuration.getServerPortNumber(),
-                        configuration.getSigningCertificateChain(), configuration.getSigningPrivateKey());
+                        configuration.getServerFqdn(), configuration.getServerPortNumber(), configuration.getSigningAlgorithm(),
+                        configuration.getSigningCertificateChain(), configuration.getSigningPrivateKey(), configuration.getDecryptingPrivateKey());
                 serverConnections.put(configuration.getServerPortNumber(), serverConnection);
             }
             return serverConnection;

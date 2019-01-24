@@ -1,0 +1,48 @@
+[[CamelJARDependencies-CamelJARDependencies]]
+=== Camel JAR Dependencies
+
+Camel core itself is lightweight and can run with a few .jars.
+
+[[CamelJARDependencies-camel-coredependenciesforCamel2.0orlower]]
+==== `camel-core` dependencies for Camel 2.0 or lower
+
+* `commons-logging-api.jar` - API for commons logging
+* JAXB 2.1.x - XML stuff - Is provided in the JDK core from Java 1.6
+* `activation.jar` - For Attachments support - Is provided in the JDK
+core from Java 1.6
+
+[[CamelJARDependencies-camel-coredependenciesforCamel2.1-2.6]]
+==== `camel-core` dependencies for Camel 2.1 - 2.6
+
+* `commons-logging-api-1.1.jar` - API for commons logging
+* `commons-management-1.0.jar` - API for JMX
+* JAXB 2.1.x - XML stuff - Is provided in the JDK core from Java 1.6
+* `activation-1.1.jar` - For Attachments support - Is provided in the
+JDK core from Java 1.6
+
+[[CamelJARDependencies-camel-coredependenciesforCamel2.7-2.8]]
+==== `camel-core` dependencies for Camel 2.7 - 2.8
+
+* `slf4j-api-1.5.11.jar` - API for slf4j logging
+* `commons-management-1.0.jar` - API for JMX
+
+[[CamelJARDependencies-camel-coredependenciesforCamel2.9]]
+==== `camel-core` dependencies for Camel 2.9
+
+* `slf4j-api-1.6.1.jar` - API for slf4j logging
+
+[[CamelJARDependencies-OptionaldependenciesforJMXforCamel1.x-2.8]]
+==== Optional dependencies for JMX for Camel 1.x - 2.8
+
+* `spring-core.jar`, `spring-beans.jar`,
+`spring-context.jar`, `spring-aop.jar` - All 4 jars needed to use JMX
+with Camel (subject to change in the future).
+
+From *Camel 2.9*: the Spring JARs are no longer required for using JMX.
+
+[[CamelJARDependencies-OtherComponents]]
+=== Other Components
+
+All the other link:component.adoc[Components] have a range of 3rd party
+.jars they depend on. They are listed in the maven pom files which files
+they require.

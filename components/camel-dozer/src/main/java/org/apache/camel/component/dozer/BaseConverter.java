@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.dozer;
 
-import org.dozer.ConfigurableCustomConverter;
+import com.github.dozermapper.core.ConfigurableCustomConverter;
 
 /**
  * Configurable converters in Dozer are not thread-safe if a single converter 

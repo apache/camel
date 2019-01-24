@@ -35,6 +35,11 @@ public class LambdaComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-lambda component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS Lambda default configuration
      */
     private LambdaConfigurationNestedConfiguration configuration;
@@ -126,7 +131,13 @@ public class LambdaComponentConfiguration
          * createFunction, deleteFunction or invokeFunction
          */
         private LambdaOperations operation;
+        /**
+         * To define a proxy host when instantiating the Lambda client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the Lambda client
+         */
         private Integer proxyPort;
 
         public String getFunction() {

@@ -83,8 +83,8 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
         to.expectedBodiesReceivedInAnyOrder("m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10");
 
         //Restart endpoint,
-        context.stopRoute("foo");
-        context.startRoute("foo");
+        context.getRouteController().stopRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         //Second route must wake up and consume all from scratch and commit 9 consumed
         for (int k = 3; k <= 10; k++) {

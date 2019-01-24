@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestParamType;
+import org.junit.Test;
 
 public class FromRestDefaultValueTest extends ContextTestSupport {
 
@@ -30,6 +31,7 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testDefaultValue() throws Exception {
         getMockEndpoint("mock:bye").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bye").expectedHeaderReceived("kind", "customer");
@@ -40,6 +42,7 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDefaultValueOverride() throws Exception {
         getMockEndpoint("mock:bye").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:bye").expectedHeaderReceived("kind", "admin");

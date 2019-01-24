@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.bean.issues;
 
-/**
- * @version 
- */
 public class DerivedClass extends BaseClass {
 
     private String body;

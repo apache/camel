@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
@@ -31,7 +32,7 @@ import javax.naming.NamingException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.jndi.CamelInitialContextFactory;
+import org.apache.camel.support.jndi.CamelInitialContextFactory;
 
 /**
  * A {@link Registry} implementation which looks up the objects in JNDI
@@ -125,18 +126,6 @@ public class JndiRegistry implements Registry {
         return answer;
     }
 
-    public Object lookup(String name) {
-        return lookupByName(name);
-    }
-
-    public <T> T lookup(String name, Class<T> type) {
-        return lookupByNameAndType(name, type);
-    }
-
-    public <T> Map<String, T> lookupByType(Class<T> type) {
-        return findByTypeWithName(type);
-    }
-
     public void bind(String name, Object object) {
         try {
             getContext().bind(name, object);
@@ -169,7 +158,7 @@ public class JndiRegistry implements Registry {
         }
         // must include a factory if none provided in standalone mode
         if (standalone && !properties.containsKey("java.naming.factory.initial")) {
-            properties.put("java.naming.factory.initial", "org.apache.camel.util.jndi.CamelInitialContextFactory");
+            properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
         }
         return new InitialContext(properties);
     }

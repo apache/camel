@@ -21,13 +21,11 @@ import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
-
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.util.ObjectHelper;
 
 public class ValidationContextPredicate implements Predicate {
 
@@ -59,7 +57,7 @@ public class ValidationContextPredicate implements Predicate {
             MessageValidator validator = new MessageValidator(context, false);
             return validator.validate(message);
         } catch (HL7Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

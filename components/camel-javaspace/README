@@ -1,9 +1,0 @@
-This component has been tested with Gigaspaces
-For running the tests just run Gigaspaces setting the NIC_ADDR to localhost:
-1) export NIC_ADDR=localhost
-2) cd $JSHOMEDIR/bin
-3) ./gsInstance.sh
-
-Then in another shell:
-1) export JSHOMEDIR=<home directory of the GS installation>
-2) mvn install -Dintegration-test-gigaspaces

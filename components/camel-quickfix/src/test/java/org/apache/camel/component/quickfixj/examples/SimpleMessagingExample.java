@@ -32,14 +32,12 @@ import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecremen
 import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.field.MsgType;
 import quickfix.fix42.Email;
 
 /**
  * This example demonstrates several features of the QuickFIX/J component. It uses
  * QFJ session events to synchronize application behavior (e.g., Session logon).
- * 
  */
 public class SimpleMessagingExample {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleMessagingExample.class);
@@ -90,7 +88,7 @@ public class SimpleMessagingExample {
         Producer producer = context.getEndpoint(marketUri).createProducer();
         
         Email email = TestSupport.createEmailMessage("Example");
-        Exchange exchange = producer.createExchange(ExchangePattern.InOnly);
+        Exchange exchange = producer.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(email);
         producer.process(exchange);            
 

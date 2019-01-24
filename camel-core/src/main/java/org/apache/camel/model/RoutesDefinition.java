@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -31,8 +32,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * A series of Camel routes
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routes")
@@ -53,7 +52,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @XmlTransient
     private ModelCamelContext camelContext;
     @XmlTransient
-    private ErrorHandlerFactory errorHandlerBuilder;
+    private ErrorHandlerFactory errorHandlerFactory;
 
     public RoutesDefinition() {
     }
@@ -61,6 +60,11 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     @Override
     public String toString() {
         return "Routes: " + routes;
+    }
+
+    @Override
+    public String getShortName() {
+        return "routes";
     }
 
     public String getLabel() {
@@ -125,12 +129,12 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         this.camelContext = camelContext;
     }
 
-    public ErrorHandlerFactory getErrorHandlerBuilder() {
-        return errorHandlerBuilder;
+    public ErrorHandlerFactory getErrorHandlerFactory() {
+        return errorHandlerFactory;
     }
 
-    public void setErrorHandlerBuilder(ErrorHandlerFactory errorHandlerBuilder) {
-        this.errorHandlerBuilder = errorHandlerBuilder;
+    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
+        this.errorHandlerFactory = errorHandlerFactory;
     }
 
     // Fluent API
@@ -288,7 +292,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     //-------------------------------------------------------------------------
     protected RouteDefinition createRoute() {
         RouteDefinition route = new RouteDefinition();
-        ErrorHandlerFactory handler = getErrorHandlerBuilder();
+        ErrorHandlerFactory handler = getErrorHandlerFactory();
         if (handler != null) {
             route.setErrorHandlerBuilderIfNull(handler);
         }

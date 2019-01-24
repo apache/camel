@@ -18,40 +18,36 @@ package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 
 public class WeightedRoundRobinLoadBalancer extends WeightedLoadBalancer {
-    private int counter;
-    
+
+    int counter = -1;
+
     public WeightedRoundRobinLoadBalancer(List<Integer> distributionRatios) {
         super(distributionRatios);
     }
     
     @Override
-    protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
-        if (isRuntimeRatiosZeroed())  {
-            resetRuntimeRatios();
-            counter = 0;
-        }
-        
-        boolean found = false;
-        while (!found) {
-            if (counter >= getRuntimeRatios().size()) {
+    protected synchronized AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
+        int counter = this.counter;
+        List<DistributionRatio> ratios = getRatios();
+        while (true) {
+            if (++counter >= ratios.size()) {
                 counter = 0;
             }
-            
-            if (getRuntimeRatios().get(counter).getRuntimeWeight() > 0) {
-                getRuntimeRatios().get(counter).setRuntimeWeight((getRuntimeRatios().get(counter).getRuntimeWeight()) - 1);
-                found = true;
-            } else {
-                counter++;
+            DistributionRatio ratio = ratios.get(counter);
+            if (ratio.decrement()) {
+                this.counter = lastIndex = counter;
+                decrementSum();
+                return processors[counter];
             }
         }
-
-        lastIndex = counter;
-       
-        return processors.get(counter++);
     }
-    
+
+    protected void reset() {
+        super.reset();
+        counter = -1;
+    }
 }

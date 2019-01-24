@@ -23,9 +23,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventNotifierSupport;
+import org.junit.Test;
 
 public class SentExchangeEventNotifierTwoIssueTest extends ContextTestSupport {
 
@@ -36,12 +38,12 @@ public class SentExchangeEventNotifierTwoIssueTest extends ContextTestSupport {
         private int counter;
 
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             counter++;
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return event instanceof ExchangeSentEvent;
         }
 
@@ -57,10 +59,12 @@ public class SentExchangeEventNotifierTwoIssueTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        context.init();
         context.getManagementStrategy().addEventNotifier(notifier);
         return context;
     }
 
+    @Test
     public void testExchangeSentNotifier() throws Exception {
         notifier.reset();
 
@@ -70,6 +74,7 @@ public class SentExchangeEventNotifierTwoIssueTest extends ContextTestSupport {
         assertEquals(2, notifier.getCounter());
     }
 
+    @Test
     public void testExchangeSentNotifierExchange() throws Exception {
         notifier.reset();
 
@@ -84,6 +89,7 @@ public class SentExchangeEventNotifierTwoIssueTest extends ContextTestSupport {
         assertEquals(2, notifier.getCounter());
     }
 
+    @Test
     public void testExchangeSentNotifierManualExchange() throws Exception {
         notifier.reset();
 

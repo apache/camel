@@ -30,7 +30,7 @@ import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class Mina2ComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = "mina2-component")
+    @Bean(name = {"mina-component", "mina2-component"})
     @ConditionalOnMissingBean(Mina2Component.class)
     public Mina2Component configureMina2Component() throws Exception {
         Mina2Component component = new Mina2Component();

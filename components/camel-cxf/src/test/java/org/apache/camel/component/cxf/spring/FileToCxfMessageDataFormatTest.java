@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf.spring;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.HelloService;
@@ -24,19 +23,19 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1(); 
 
     private Server server;
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/filetocxf");
 
@@ -54,6 +53,7 @@ public class FileToCxfMessageDataFormatTest extends CamelSpringTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
 

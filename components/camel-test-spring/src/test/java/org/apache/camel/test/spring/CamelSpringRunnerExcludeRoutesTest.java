@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.spring;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertNull;
 
 @ExcludeRoutes(TestRouteBuilder.class)
@@ -23,6 +25,7 @@ public class CamelSpringRunnerExcludeRoutesTest
         extends CamelSpringRunnerPlainTest {
 
     @Override
+    @Test
     public void testExcludedRoute() {
         assertNull(camelContext.getRoute("excludedRoute"));
     }

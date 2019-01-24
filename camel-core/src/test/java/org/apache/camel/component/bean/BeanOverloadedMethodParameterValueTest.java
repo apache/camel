@@ -18,6 +18,7 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -29,6 +30,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testHelloOverloadedString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -48,6 +50,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHelloOverloadedWildcard() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -67,6 +70,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHelloOverloadedStringString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -87,6 +91,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testHelloOverloadedWildcardString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -106,6 +111,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTimesOverloadedStringInt() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -125,6 +131,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTimesOverloadedStringIntHeader() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -144,6 +151,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTimesOverloadedBytesInt() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -164,6 +172,7 @@ public class BeanOverloadedMethodParameterValueTest extends ContextTestSupport {
     }
 
 
+    @Test
     public void testTimesOverloadedBytesIntLanguageTokens() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

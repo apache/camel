@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.net.ssl.SSLContext;
@@ -30,13 +31,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
  * Represents the configuration data for communicating over email
- *
- * @version
  */
 @UriParams
 public class MailConfiguration implements Cloneable {
@@ -47,7 +46,7 @@ public class MailConfiguration implements Cloneable {
 
     // protocol is implied by component name so it should not be in UriPath
     private String protocol;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
     @UriPath
     private int port = -1;
@@ -272,7 +271,7 @@ public class MailConfiguration implements Cloneable {
 
     private SSLContext createSSLContext() {
         try {
-            return sslContextParameters.createSSLContext();
+            return sslContextParameters.createSSLContext(null);
         } catch (Exception e) {
             throw new RuntimeCamelException("Error initializing SSLContext.", e);
         }

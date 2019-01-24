@@ -68,7 +68,7 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             Assert.isInstanceOf(Exception.class, e.getCause());
-            // LOG.info(">> Error : " + e);
+            // log.info(">> Error : " + e);
         }
 
         resultEndpoint1.assertIsSatisfied();
@@ -183,7 +183,7 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
             template2.sendBody(header + record4);
             resultEndpoint2.assertIsSatisfied();
         } catch (CamelExecutionException e) {
-            // LOG.info(">> Error : " + e);
+            // log.info(">> Error : " + e);
         }
     }
 

@@ -15,8 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.language.simple;
-
 import org.apache.camel.LanguageTestSupport;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -29,6 +31,7 @@ public class SimpleChangeFunctionTokensTest extends LanguageTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         super.setUp();
 
@@ -37,6 +40,7 @@ public class SimpleChangeFunctionTokensTest extends LanguageTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -45,6 +49,7 @@ public class SimpleChangeFunctionTokensTest extends LanguageTestSupport {
         SimpleLanguage.changeFunctionEndToken("}");
     }
 
+    @Test
     public void testSimpleBody() throws Exception {
         assertExpression(exchange, "[[body]]", "<hello id='m123'>world!</hello>");
 
@@ -52,6 +57,7 @@ public class SimpleChangeFunctionTokensTest extends LanguageTestSupport {
         assertExpression(exchange, "${body}", "${body}");
     }
 
+    @Test
     public void testSimpleConstantAndBody() throws Exception {
         exchange.getIn().setBody("Camel");
         assertExpression(exchange, "Hi [[body]] how are you", "Hi Camel how are you");
@@ -61,12 +67,14 @@ public class SimpleChangeFunctionTokensTest extends LanguageTestSupport {
         assertExpression(exchange, "Hi ${body} how are you", "Hi ${body} how are you");
     }
 
+    @Test
     public void testSimpleConstantAndBodyAndHeader() throws Exception {
         exchange.getIn().setBody("Camel");
         exchange.getIn().setHeader("foo", "Tiger");
         assertExpression(exchange, "Hi [[body]] how are [[header.foo]]", "Hi Camel how are Tiger");
     }
 
+    @Test
     public void testSimpleEqOperator() throws Exception {
         exchange.getIn().setBody("Camel");
         assertPredicate(exchange, "[[body]] == 'Tiger'", false);

@@ -20,15 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointRecipientListParallelTest extends ContextTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
@@ -37,8 +36,7 @@ public class AsyncEndpointRecipientListParallelTest extends ContextTestSupport {
         String reply = template.requestBody("direct:start", "Hello Camel", String.class);
         assertEquals("Bye Camel", reply);
 
-        // to hard to do parallel async routing so the caller thread is synchronized
-        assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
+        assertNotEquals("Should use different threads", beforeThreadName, afterThreadName);
     }
 
     @Override

@@ -18,14 +18,14 @@ package org.apache.camel.component.geocoder;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class GeoCoderCurrentAddressTest extends CamelTestSupport {
+public class GeoCoderCurrentAddressTest extends GeoCoderApiKeyTestBase  {
 
     @Test
     public void testGeoCoder() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello");
         mock.message(0).header(GeoCoderConstants.LATLNG).isNotNull();
 
@@ -39,7 +39,7 @@ public class GeoCoderCurrentAddressTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("geocoder:address:current?headersOnly=true")
+                    .to("geocoder:address:current?headersOnly=true&apiKey=" + getApiKey())
                     .to("log:result")
                     .log("You are at ${header.CamelGeoCoderLatlng} in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
                     .to("mock:result");

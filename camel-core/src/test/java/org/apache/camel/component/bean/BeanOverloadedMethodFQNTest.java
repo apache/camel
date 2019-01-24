@@ -20,6 +20,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -31,6 +32,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testOrderNoFQN() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -50,6 +52,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOrderNoFQNUnknown() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -71,6 +74,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testOrderNoFQNBoolean() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -90,6 +94,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOrderFQN() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -109,6 +114,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOrderFQNUnknown() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -130,6 +136,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testOrderFQNBoolean() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

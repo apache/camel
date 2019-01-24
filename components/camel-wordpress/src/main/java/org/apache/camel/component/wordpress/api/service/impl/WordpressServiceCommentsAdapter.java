@@ -17,11 +17,13 @@
 package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.List;
+
 import org.apache.camel.component.wordpress.api.model.Comment;
 import org.apache.camel.component.wordpress.api.model.CommentSearchCriteria;
 import org.apache.camel.component.wordpress.api.model.Context;
 import org.apache.camel.component.wordpress.api.service.WordpressServiceComments;
 import org.apache.camel.component.wordpress.api.service.spi.CommentsSPI;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class WordpressServiceCommentsAdapter extends AbstractWordpressCrudServiceAdapter<CommentsSPI, Comment, CommentSearchCriteria> implements WordpressServiceComments {

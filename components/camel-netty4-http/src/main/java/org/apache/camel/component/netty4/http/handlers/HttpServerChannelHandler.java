@@ -19,8 +19,8 @@ package org.apache.camel.component.netty4.http.handlers;
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
-import java.util.Iterator;
 import java.util.Locale;
+
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -33,7 +33,6 @@ import io.netty.handler.codec.http.HttpHeaderValues;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.netty4.NettyConverter;
@@ -43,14 +42,14 @@ import org.apache.camel.component.netty4.http.HttpPrincipal;
 import org.apache.camel.component.netty4.http.NettyHttpConsumer;
 import org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty4.http.SecurityAuthenticator;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static io.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
@@ -91,24 +90,6 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             return;
         }
 
-        // if its an OPTIONS request then return which methods is allowed
-        boolean isRestrictedToOptions = consumer.getEndpoint().getHttpMethodRestrict() != null
-                && consumer.getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
-        if ("OPTIONS".equals(request.method().name()) && !isRestrictedToOptions) {
-            String s;
-            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
-                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
-            } else {
-                // allow them all
-                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
-            }
-            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, OK);
-            response.headers().set("Allow", s);
-            // do not include content-type as that would indicate to the caller that we can only do text/plain
-            response.headers().set(Exchange.CONTENT_LENGTH, 0);
-            ctx.writeAndFlush(response);
-            return;
-        }
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
                 && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.method().name())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
@@ -144,7 +125,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
             // drop parameters from url
             if (url.contains("?")) {
-                url = ObjectHelper.before(url, "?");
+                url = StringHelper.before(url, "?");
             }
 
             // we need the relative path without the hostname and port
@@ -220,9 +201,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         // see if any of the user roles is contained in the roles list
-        Iterator<Object> it = ObjectHelper.createIterator(userRoles);
-        while (it.hasNext()) {
-            String userRole = it.next().toString();
+        for (String userRole : ObjectHelper.createIterable(userRoles)) {
             if (roles.contains(userRole)) {
                 return true;
             }
@@ -242,17 +221,17 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected static HttpPrincipal extractBasicAuthSubject(HttpRequest request) {
         String auth = request.headers().get("Authorization");
         if (auth != null) {
-            String constraint = ObjectHelper.before(auth, " ");
+            String constraint = StringHelper.before(auth, " ");
             if (constraint != null) {
                 if ("Basic".equalsIgnoreCase(constraint.trim())) {
-                    String decoded = ObjectHelper.after(auth, " ");
+                    String decoded = StringHelper.after(auth, " ");
                     // the decoded part is base64 encoded, so we need to decode that
                     ByteBuf buf = NettyConverter.toByteBuffer(decoded.getBytes());
                     ByteBuf out = Base64.decode(buf);
                     try {
                         String userAndPw = out.toString(Charset.defaultCharset());
-                        String username = ObjectHelper.before(userAndPw, ":");
-                        String password = ObjectHelper.after(userAndPw, ":");
+                        String username = StringHelper.before(userAndPw, ":");
+                        String password = StringHelper.after(userAndPw, ":");
                         HttpPrincipal principal = new HttpPrincipal(username, password);
                         LOG.debug("Extracted Basic Auth principal from HTTP header: {}", principal);
                         return principal;

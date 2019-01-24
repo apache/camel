@@ -46,10 +46,12 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.GZIPHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.FileUtil;
+import org.apache.camel.support.GZIPHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +83,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean mapHttpMessageHeaders = true;
     private boolean mapHttpMessageFormUrlEncodedBody = true;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+    private String fileNameExtWhitelist;
 
     public DefaultHttpBinding() {
     }
@@ -256,7 +259,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
                 // Push POST form params into the headers to retain compatibility with DefaultHttpBinding
                 String text = message.getBody(String.class);
-                if (ObjectHelper.isNotEmpty(text)) {
+                if (org.apache.camel.util.ObjectHelper.isNotEmpty(text)) {
                     for (String param : text.split("&")) {
                         String[] pair = param.split("=", 2);
                         if (pair.length == 2) {
@@ -300,7 +303,23 @@ public class DefaultHttpBinding implements HttpBinding {
             LOG.trace("HTTP attachment {} = {}", name, object);
             if (object instanceof File) {
                 String fileName = request.getParameter(name);
-                message.addAttachment(fileName, new DataHandler(new CamelFileDataSource((File)object, fileName)));
+                // is the file name accepted
+                boolean accepted = true;
+                if (fileNameExtWhitelist != null) {
+                    String ext = FileUtil.onlyExt(fileName);
+                    if (ext != null) {
+                        ext = ext.toLowerCase(Locale.US);
+                        fileNameExtWhitelist = fileNameExtWhitelist.toLowerCase(Locale.US);
+                        if (!fileNameExtWhitelist.equals("*") && !fileNameExtWhitelist.contains(ext)) {
+                            accepted = false;
+                        }
+                    }
+                }
+                if (accepted) {
+                    message.addAttachment(fileName, new DataHandler(new CamelFileDataSource((File) object, fileName)));
+                } else {
+                    LOG.debug("Cannot add file as attachment: {} because the file is not accepted according to fileNameExtWhitelist: {}", fileName, fileNameExtWhitelist);
+                }
             }
         }
     }
@@ -500,7 +519,7 @@ public class DefaultHttpBinding implements HttpBinding {
             String data = message.getBody(String.class);
             if (data != null) {
                 // set content length and encoding before we write data
-                String charset = IOHelper.getCharsetName(exchange, true);
+                String charset = ExchangeHelper.getCharsetName(exchange, true);
                 final int dataByteLength = data.getBytes(charset).length;
                 response.setCharacterEncoding(charset);
                 response.setContentLength(dataByteLength);
@@ -535,7 +554,7 @@ public class DefaultHttpBinding implements HttpBinding {
         try {
             bytes = message.getMandatoryBody(byte[].class);
         } catch (InvalidPayloadException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         byte[] data = GZIPHelper.compressGZIP(bytes);
@@ -640,6 +659,14 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody) {
         this.mapHttpMessageFormUrlEncodedBody = mapHttpMessageFormUrlEncodedBody;
+    }
+
+    public String getFileNameExtWhitelist() {
+        return fileNameExtWhitelist;
+    }
+
+    public void setFileNameExtWhitelist(String fileNameExtWhitelist) {
+        this.fileNameExtWhitelist = fileNameExtWhitelist;
     }
 
     protected static SimpleDateFormat getHttpDateFormat() {

@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.jsmpp.bean.AlertNotification;
@@ -33,7 +33,7 @@ import org.jsmpp.bean.DeliverSm;
  * To send and receive SMS using a SMSC (Short Message Service Center).
  */
 @UriEndpoint(firstVersion = "2.2.0", scheme = "smpp,smpps", title = "SMPP", syntax = "smpp:host:port",
-        consumerClass = SmppConsumer.class, label = "mobile", lenientProperties = true)
+        label = "mobile", lenientProperties = true)
 public class SmppEndpoint extends DefaultEndpoint {
 
     private SmppBinding binding;

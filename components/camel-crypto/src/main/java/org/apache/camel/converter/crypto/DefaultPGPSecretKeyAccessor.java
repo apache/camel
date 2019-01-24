@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
@@ -35,7 +36,6 @@ import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
 /**
  * Caches a Secret Keyring. Assumes that the password for all private keys is
  * the same.
- * 
  */
 public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
 
@@ -63,8 +63,8 @@ public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
      */
     public DefaultPGPSecretKeyAccessor(byte[] secretKeyRing, String password, String provider) throws PGPException, IOException {
         ObjectHelper.notNull(secretKeyRing, "secretKeyRing");
-        ObjectHelper.notEmpty(password, "password");
-        ObjectHelper.notEmpty(provider, "provider");
+        StringHelper.notEmpty(password, "password");
+        StringHelper.notEmpty(provider, "provider");
         pgpSecretKeyring = 
             new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(new ByteArrayInputStream(secretKeyRing)),
                                            new BcKeyFingerprintCalculator());

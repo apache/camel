@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Predicate;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class RefPredicateTest extends LanguageTestSupport {
 
@@ -30,6 +31,7 @@ public class RefPredicateTest extends LanguageTestSupport {
         return jndi;
     }
 
+    @Test
     public void testExpression() throws Exception {
         exchange.getIn().setBody("Hello World");
         assertExpression("myPredicate", "true");
@@ -38,6 +40,7 @@ public class RefPredicateTest extends LanguageTestSupport {
         assertExpression("myPredicate", "false");
     }
  
+    @Test
     public void testPredicates() throws Exception {
         exchange.getIn().setBody("Hello World");
         assertPredicate("myPredicate", true);

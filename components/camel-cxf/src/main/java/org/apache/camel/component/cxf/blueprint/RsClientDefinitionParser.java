@@ -18,6 +18,7 @@
 package org.apache.camel.component.cxf.blueprint;
 
 import java.util.List;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;

@@ -20,12 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 
+    @Test
     public void testForceCompletionTrue() throws Exception {
         MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
@@ -43,6 +42,7 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
         assertEquals("aggregation should have completed", 2, myCompletionProcessor.getAggregationCount());
     }
 
+    @Test
     public void testForceCompletionFalse() throws Exception {
         MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
@@ -60,6 +60,7 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
         assertEquals("aggregation should not have completed yet", 0, myCompletionProcessor.getAggregationCount());
     }
 
+    @Test
     public void testStopRouteForceCompletionTrue() throws Exception {
         MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
@@ -74,10 +75,11 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 
         assertEquals("aggregation should not have completed yet", 0, myCompletionProcessor.getAggregationCount());
         // stopping a route should also force the completion
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         assertEquals("aggregation should have completed", 2, myCompletionProcessor.getAggregationCount());
     }
 
+    @Test
     public void testStopRouteForceCompletionFalse() throws Exception {
         MyCompletionProcessor myCompletionProcessor = context.getRegistry().lookupByNameAndType("myCompletionProcessor", MyCompletionProcessor.class);
         myCompletionProcessor.reset();
@@ -91,7 +93,7 @@ public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:forceCompletionFalse", "test4", "id", "2");
 
         assertEquals("aggregation should not have completed yet", 0, myCompletionProcessor.getAggregationCount());
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         assertEquals("aggregation should not have completed yet", 0, myCompletionProcessor.getAggregationCount());
     }
 

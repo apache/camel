@@ -22,6 +22,7 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.junit.Test;
 
 /**
  *
@@ -30,6 +31,7 @@ public class VetoCamelContextStartTest extends ContextTestSupport {
 
     private LifecycleStrategy veto = new MyVeto();
 
+    @Test
     public void testVetoCamelContextStart() throws Exception {
         // context is veto'ed but appears as started
         assertEquals(false, context.getStatus().isStarted());

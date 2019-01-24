@@ -32,6 +32,11 @@ public class GooglePubsubComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the google-pubsub component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Sets the connection factory to use: provides the ability to explicitly
      * manage connection credentials: - the path to the key file - the Service
      * Account Key / Email pair

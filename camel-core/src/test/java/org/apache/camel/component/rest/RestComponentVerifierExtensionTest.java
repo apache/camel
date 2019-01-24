@@ -28,12 +28,13 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.DefaultComponent;
 import org.junit.Assert;
+import org.junit.Test;
 
 public class RestComponentVerifierExtensionTest extends ContextTestSupport {
     @Override
@@ -44,6 +45,7 @@ public class RestComponentVerifierExtensionTest extends ContextTestSupport {
         return registry;
     }
 
+    @Test
     public void testParameters() throws Exception {
         RestComponent component = context.getComponent("rest", RestComponent.class);
         RestComponentVerifierExtension verifier = component.getExtension(RestComponentVerifierExtension.class).orElseThrow(() -> new IllegalStateException());
@@ -63,6 +65,7 @@ public class RestComponentVerifierExtensionTest extends ContextTestSupport {
         Assert.assertEquals(RestComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
+    @Test
     public void testMissingParameters() throws Exception {
         RestComponent component = context.getComponent("rest", RestComponent.class);
         RestComponentVerifierExtension verifier = component.getExtension(RestComponentVerifierExtension.class).orElseThrow(() -> new IllegalStateException());

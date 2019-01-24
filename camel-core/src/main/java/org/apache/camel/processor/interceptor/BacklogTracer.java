@@ -25,17 +25,13 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
@@ -43,11 +39,10 @@ import org.slf4j.LoggerFactory;
  * This tracer allows to store message tracers per node in the Camel routes. The tracers
  * is stored in a backlog queue (FIFO based) which allows to pull the traced messages on demand.
  */
-public final class BacklogTracer extends ServiceSupport implements InterceptStrategy {
+public final class BacklogTracer extends ServiceSupport {
 
     // lets limit the tracer to 10 thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 10 * 1000;
-    private static final Logger LOG = LoggerFactory.getLogger(BacklogTracer.class);
     private final CamelContext camelContext;
     private boolean enabled;
     private final AtomicLong traceCounter = new AtomicLong(0);
@@ -69,12 +64,6 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
         this.camelContext = camelContext;
     }
 
-    @Override
-    @Deprecated
-    public Processor wrapProcessorInInterceptors(CamelContext context, ProcessorDefinition<?> definition, Processor target, Processor nextTarget) throws Exception {
-        throw new UnsupportedOperationException("Deprecated");
-    }
-
     /**
      * Creates a new backlog tracer.
      *
@@ -91,13 +80,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
      * @return the backlog tracer or null if none can be found
      */
     public static BacklogTracer getBacklogTracer(CamelContext context) {
-        List<InterceptStrategy> list = context.getInterceptStrategies();
-        for (InterceptStrategy interceptStrategy : list) {
-            if (interceptStrategy instanceof BacklogTracer) {
-                return (BacklogTracer) interceptStrategy;
-            }
-        }
-        return null;
+        return context.getExtension(BacklogTracer.class);
     }
 
     /**
@@ -122,8 +105,8 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
             filter = shouldTraceFilter(exchange);
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Should trace evaluated {} -> pattern: {}, filter: {}", new Object[]{definition.getId(), pattern, filter});
+        if (log.isTraceEnabled()) {
+            log.trace("Should trace evaluated {} -> pattern: {}, filter: {}", definition.getId(), pattern, filter);
         }
         return pattern && filter;
     }
@@ -133,13 +116,13 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
             // match either route id, or node id
             String id = definition.getId();
             // use matchPattern method from endpoint helper that has a good matcher we use in Camel
-            if (EndpointHelper.matchPattern(id, pattern)) {
+            if (PatternHelper.matchPattern(id, pattern)) {
                 return true;
             }
             RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
             if (route != null) {
                 id = route.getId();
-                if (EndpointHelper.matchPattern(id, pattern)) {
+                if (PatternHelper.matchPattern(id, pattern)) {
                     return true;
                 }
             }
@@ -244,7 +227,7 @@ public final class BacklogTracer extends ServiceSupport implements InterceptStra
         this.traceFilter = filter;
         if (filter != null) {
             // assume simple language
-            String name = ObjectHelper.before(filter, ":");
+            String name = StringHelper.before(filter, ":");
             if (name == null) {
                 // use simple language by default
                 name = "simple";

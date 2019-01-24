@@ -29,8 +29,6 @@ import static org.apache.camel.component.jms.JmsMessageHelper.getJMSMessageID;
  * <p/>
  * This callback will keep the correlation registration in {@link ReplyManager} up-to-date with
  * the <tt>JMSMessageID</tt> which was assigned and used when the message was sent.
- *
- * @version 
  */
 public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSentCallback {
 

@@ -30,7 +30,7 @@ karaf@root()> feature:install camel
 Then you need to install the following features in Karaf/ServiceMix:
 
 ```sh
-karaf@root()> feature:install camel-netty-http
+karaf@root()> feature:install camel-netty4-http
 ```
 
 Then you can install the shared Netty HTTP server which by default runs on port `8888`.

@@ -18,7 +18,7 @@ package org.apache.camel.component.zendesk;
 
 import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.component.zendesk.internal.ZendeskPropertiesHelper;
-import org.apache.camel.util.component.AbstractApiProducer;
+import org.apache.camel.support.component.AbstractApiProducer;
 
 /**
  * The Zendesk producer.

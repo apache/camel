@@ -18,21 +18,24 @@ package org.apache.camel.component.mock;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.processor.ThroughputLogger;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.processor.ThroughputLogger;
 
 /**
  * The <a href="http://camel.apache.org/mock.html">Mock Component</a> provides mock endpoints for testing.
- *
- * @version 
  */
-public class MockComponent extends UriEndpointComponent {
+@org.apache.camel.spi.annotations.Component("mock")
+public class MockComponent extends DefaultComponent {
 
     public MockComponent() {
-        super(MockEndpoint.class);
+    }
+
+    public MockComponent(CamelContext context) {
+        super(context);
     }
 
     @Override

@@ -23,11 +23,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.log.LogComponent;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MultipleLifecycleStrategyTest extends TestSupport {
 
     private DummyLifecycleStrategy dummy1 = new DummyLifecycleStrategy();
@@ -40,6 +38,7 @@ public class MultipleLifecycleStrategyTest extends TestSupport {
         return context;
     }
 
+    @Test
     public void testMultipleLifecycleStrategies() throws Exception {
         CamelContext context = createCamelContext();
         context.start();
@@ -52,8 +51,8 @@ public class MultipleLifecycleStrategyTest extends TestSupport {
 
         List<String> expectedEvents = Arrays.asList("onContextStart",
             "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd",
-            "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", 
-            "onComponentAdd", "onEndpointAdd", "onComponentRemove", "onContextStop");
+            "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd", "onServiceAdd",
+            "onServiceAdd", "onComponentAdd", "onEndpointAdd", "onComponentRemove", "onContextStop");
         
         assertEquals(expectedEvents, dummy1.getEvents());
         assertEquals(expectedEvents, dummy2.getEvents());

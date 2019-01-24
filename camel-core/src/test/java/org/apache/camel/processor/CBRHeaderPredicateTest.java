@@ -22,10 +22,8 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class CBRHeaderPredicateTest extends ContextTestSupport {
 
     @Override
@@ -35,6 +33,7 @@ public class CBRHeaderPredicateTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testCBR() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedBodiesReceived("Hello Foo");

@@ -27,17 +27,17 @@ import java.util.List;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * The rmi component is for invoking Java RMI beans from Camel.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "rmi", title = "RMI", syntax = "rmi:hostname:port/name", consumerClass = RmiConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "rmi", title = "RMI", syntax = "rmi:hostname:port/name", label = "messaging")
 public class RmiEndpoint extends DefaultEndpoint {
 
     private ClassLoader classLoader;
@@ -47,7 +47,7 @@ public class RmiEndpoint extends DefaultEndpoint {
     private String hostname;
     @UriPath(description = "Port number of RMI server", defaultValue = "" + Registry.REGISTRY_PORT)
     private int port;
-    @UriPath(description = "Name to use when binding to RMI server") @Metadata(required = "true")
+    @UriPath(description = "Name to use when binding to RMI server") @Metadata(required = true)
     private String name;
     @UriParam
     private List<Class<?>> remoteInterfaces;
@@ -59,12 +59,6 @@ public class RmiEndpoint extends DefaultEndpoint {
 
     protected RmiEndpoint(String endpointUri, RmiComponent component) throws URISyntaxException {
         super(endpointUri, component);
-        this.uri = new URI(endpointUri);
-    }
-
-    @Deprecated
-    public RmiEndpoint(String endpointUri) throws URISyntaxException {
-        super(endpointUri);
         this.uri = new URI(endpointUri);
     }
 

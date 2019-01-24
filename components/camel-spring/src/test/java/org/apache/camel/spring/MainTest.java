@@ -18,21 +18,20 @@ package org.apache.camel.spring;
 
 import java.util.List;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.example.MyProcessor;
+import org.junit.Assert;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
-public class MainTest extends TestCase {
+public class MainTest extends Assert {
     private static final Logger LOG = LoggerFactory.getLogger(MainTest.class);
 
+    @Test
     public void testMain() throws Exception {
         // lets make a simple route
         Main main = new Main();

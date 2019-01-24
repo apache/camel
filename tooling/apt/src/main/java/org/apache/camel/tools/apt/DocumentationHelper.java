@@ -16,17 +16,11 @@
  */
 package org.apache.camel.tools.apt;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.camel.tools.apt.helper.IOHelper;
 
 import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.parseJsonSchema;
 
@@ -42,16 +36,12 @@ public final class DocumentationHelper {
     public static String findComponentJavaDoc(String scheme, String extendsScheme, String fieldName) {
         File file = jsonFile(scheme, extendsScheme);
         if (file != null) {
-            FileInputStream fis = null;
             try {
-                fis = new FileInputStream(file);
-                String json = loadText(fis);
+                String json = loadText(file);
                 List<Map<String, String>> rows = parseJsonSchema("componentProperties", json, true);
                 return getPropertyDescription(rows, fieldName);
             } catch (Exception e) {
                 // ignore
-            } finally {
-                IOHelper.close(fis);
             }
         }
 
@@ -62,16 +52,12 @@ public final class DocumentationHelper {
     public static String findEndpointJavaDoc(String scheme, String extendsScheme, String fieldName) {
         File file = jsonFile(scheme, extendsScheme);
         if (file != null) {
-            FileInputStream fis = null;
             try {
-                fis = new FileInputStream(file);
-                String json = loadText(fis);
+                String json = loadText(file);
                 List<Map<String, String>> rows = parseJsonSchema("properties", json, true);
                 return getPropertyDescription(rows, fieldName);
             } catch (Exception e) {
                 // ignore
-            } finally {
-                IOHelper.close(fis);
             }
         }
 
@@ -101,7 +87,7 @@ public final class DocumentationHelper {
         // so load these resources using the file system
 
         if ("file".equals(extendsScheme)) {
-            return new File("../../camel-core/target/classes/org/apache/camel/component/file/file.json");
+            return new File("../camel-file/target/classes/org/apache/camel/component/file/file.json");
         } else if ("ahc".equals(extendsScheme)) {
             return new File("../camel-ahc/target/classes/org/apache/camel/component/ahc/ahc.json");
         } else if ("atom".equals(extendsScheme)) {
@@ -135,25 +121,13 @@ public final class DocumentationHelper {
      * <p/>
      * Warning, don't use for crazy big streams :)
      */
-    private static String loadText(InputStream in) throws IOException {
+    private static String loadText(File file) throws IOException {
         StringBuilder builder = new StringBuilder();
-        InputStreamReader isr = new InputStreamReader(in);
-        try {
-            BufferedReader reader = new LineNumberReader(isr);
-            while (true) {
-                String line = reader.readLine();
-                if (line != null) {
-                    builder.append(line);
-                    builder.append("\n");
-                } else {
-                    break;
-                }
-            }
-            return builder.toString();
-        } finally {
-            isr.close();
-            in.close();
-        }
+        Files.readAllLines(file.toPath()).forEach(line -> {
+            builder.append(line);
+            builder.append("\n");
+        });
+        return builder.toString();
     }
 
 }

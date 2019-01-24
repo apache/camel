@@ -26,9 +26,8 @@ import org.apache.camel.component.olingo4.api.Olingo4ResponseHandler;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.component.olingo4.internal.Olingo4Constants;
 import org.apache.camel.component.olingo4.internal.Olingo4PropertiesHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.component.AbstractApiProducer;
-import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.support.component.AbstractApiProducer;
+import org.apache.camel.support.component.ApiMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +99,7 @@ public class Olingo4Producer extends AbstractApiProducer<Olingo4ApiName, Olingo4
         try {
             doInvokeMethod(method, properties);
         } catch (Throwable t) {
-            exchange.setException(ObjectHelper.wrapRuntimeCamelException(t));
+            exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(t));
             callback.done(true);
             return true;
         }

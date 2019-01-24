@@ -20,9 +20,6 @@ import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 
-/**
- * @version 
- */
 public class AnotherFooEventConsumer {
 
     @EndpointInject(uri = "mock:result")

@@ -27,9 +27,6 @@ import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JpaRouteTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
@@ -42,7 +39,7 @@ public class JpaRouteTest extends AbstractJpaTest {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        ValueBuilder header = mock.message(0).header(JpaConstants.ENTITYMANAGER);
+        ValueBuilder header = mock.message(0).header(JpaConstants.ENTITY_MANAGER);
         header.isNotNull();
         header.isInstanceOf(EntityManager.class);
 

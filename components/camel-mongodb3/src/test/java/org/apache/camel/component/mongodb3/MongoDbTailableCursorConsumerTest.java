@@ -20,7 +20,6 @@ import java.util.Calendar;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.CreateCollectionOptions;
-
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -59,10 +58,10 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         assertEquals(0, cappedTestCollection.count());
 
         addTestRoutes();
-        context.startRoute("tailableCursorConsumer1");
+        context.getRouteController().startRoute("tailableCursorConsumer1");
         Thread.sleep(1000);
         mock.assertIsSatisfied();
-        context.stopRoute("tailableCursorConsumer1");
+        context.getRouteController().stopRoute("tailableCursorConsumer1");
 
     }
 
@@ -78,7 +77,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         db.createCollection(cappedTestCollectionName, createCollectionOptions);
         cappedTestCollection = db.getCollection(cappedTestCollectionName, Document.class);
         addTestRoutes();
-        context.startRoute("tailableCursorConsumer1");
+        context.getRouteController().startRoute("tailableCursorConsumer1");
 
         // pump 5 bursts of 1000 records each with 500ms pause between burst and
         // burst
@@ -105,7 +104,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         t.join();
 
         mock.assertIsSatisfied();
-        context.stopRoute("tailableCursorConsumer1");
+        context.getRouteController().stopRoute("tailableCursorConsumer1");
 
     }
 
@@ -121,7 +120,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         db.createCollection(cappedTestCollectionName, new CreateCollectionOptions().capped(true).sizeInBytes(1000000000).maxDocuments(1000));
         cappedTestCollection = db.getCollection(cappedTestCollectionName, Document.class);
         addTestRoutes();
-        context.startRoute("tailableCursorConsumer1");
+        context.getRouteController().startRoute("tailableCursorConsumer1");
 
         // continuous pump of 100000 records, asserting incrementally to reduce
         // overhead on the mock endpoint
@@ -149,7 +148,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         // before we stop the route, wait for the data pumping to end
         t.join();
 
-        context.stopRoute("tailableCursorConsumer1");
+        context.getRouteController().stopRoute("tailableCursorConsumer1");
 
     }
 
@@ -169,7 +168,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         cappedTestCollection.createIndex(new Document("increasing", 1));
 
         addTestRoutes();
-        context.startRoute("tailableCursorConsumer2");
+        context.getRouteController().startRoute("tailableCursorConsumer2");
 
         mock.expectedMessageCount(300);
         // pump 300 records
@@ -188,10 +187,10 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         t.join();
         mock.assertIsSatisfied();
         mock.reset();
-        context.stopRoute("tailableCursorConsumer2");
-        while (context.getRouteStatus("tailableCursorConsumer2") != ServiceStatus.Stopped) {
+        context.getRouteController().stopRoute("tailableCursorConsumer2");
+        while (context.getRouteController().getRouteStatus("tailableCursorConsumer2") != ServiceStatus.Stopped) {
         }
-        context.startRoute("tailableCursorConsumer2");
+        context.getRouteController().startRoute("tailableCursorConsumer2");
 
         // expect 300 messages and not 600
         mock.expectedMessageCount(300);
@@ -220,8 +219,8 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         // and after stopping the route
         assertEquals(300, db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION).find(eq("persistentId", "darwin")).first().get("lastTrackingValue"));
         // stop the route and verify the last value has been updated
-        context.stopRoute("tailableCursorConsumer2");
-        while (context.getRouteStatus("tailableCursorConsumer2") != ServiceStatus.Stopped) {
+        context.getRouteController().stopRoute("tailableCursorConsumer2");
+        while (context.getRouteController().getRouteStatus("tailableCursorConsumer2") != ServiceStatus.Stopped) {
         }
         assertEquals(600, db.getCollection(MongoDbTailTrackingConfig.DEFAULT_COLLECTION).find(eq("persistentId", "darwin")).first().get("lastTrackingValue"));
 
@@ -245,7 +244,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         db.createCollection(cappedTestCollectionName, new CreateCollectionOptions().capped(true).sizeInBytes(1000000000).maxDocuments(1000));
         cappedTestCollection = db.getCollection(cappedTestCollectionName, Document.class);
         addTestRoutes();
-        context.startRoute("tailableCursorConsumer2");
+        context.getRouteController().startRoute("tailableCursorConsumer2");
 
         mock.expectedMessageCount(300);
         // pump 300 records
@@ -269,9 +268,9 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         // ensure that the persisted lastVal is startTimestamp + 300min
         Calendar cal300 = (Calendar)startTimestamp.clone();
         cal300.add(Calendar.MINUTE, 300);
-        context.stopRoute("tailableCursorConsumer2");
+        context.getRouteController().stopRoute("tailableCursorConsumer2");
         assertEquals(cal300.getTime(), trackingCol.find(eq("persistentId", "darwin")).first().get(MongoDbTailTrackingConfig.DEFAULT_FIELD));
-        context.startRoute("tailableCursorConsumer2");
+        context.getRouteController().startRoute("tailableCursorConsumer2");
 
         // expect 300 messages and not 600
         mock.expectedMessageCount(300);
@@ -298,7 +297,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         assertEquals(cal301.getTime(), Document.class.cast(firstBody).get("increasing"));
         // check that the persisted lastVal after stopping the route is
         // startTimestamp + 600min
-        context.stopRoute("tailableCursorConsumer2");
+        context.getRouteController().stopRoute("tailableCursorConsumer2");
         Calendar cal600 = (Calendar)startTimestamp.clone();
         cal600.add(Calendar.MINUTE, 600);
         assertEquals(cal600.getTime(), trackingCol.find(eq("persistentId", "darwin")).first().get(MongoDbTailTrackingConfig.DEFAULT_FIELD));
@@ -322,7 +321,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         db.createCollection(cappedTestCollectionName, new CreateCollectionOptions().capped(true).sizeInBytes(1000000000).maxDocuments(1000));
         cappedTestCollection = db.getCollection(cappedTestCollectionName, Document.class);
         addTestRoutes();
-        context.startRoute("tailableCursorConsumer3");
+        context.getRouteController().startRoute("tailableCursorConsumer3");
 
         mock.expectedMessageCount(300);
         // pump 300 records
@@ -343,11 +342,11 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         mock.reset();
 
         // stop the route to ensure that our lastVal is persisted, and check it
-        context.stopRoute("tailableCursorConsumer3");
+        context.getRouteController().stopRoute("tailableCursorConsumer3");
         // ensure that the persisted lastVal is 300, newton is the name of the
         // trackingField we are using
         assertEquals(300, trackingCol.find(eq("persistentId", "darwin")).first().get("newton"));
-        context.startRoute("tailableCursorConsumer3");
+        context.getRouteController().startRoute("tailableCursorConsumer3");
 
         // expect 300 messages and not 600
         mock.expectedMessageCount(300);
@@ -372,7 +371,7 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         assertEquals(301, (Document.class.cast(firstBody)).get("increasing"));
         // check that the persisted lastVal after stopping the route is 600,
         // newton is the name of the trackingField we are using
-        context.stopRoute("tailableCursorConsumer3");
+        context.getRouteController().stopRoute("tailableCursorConsumer3");
         assertEquals(600, trackingCol.find(eq("persistentId", "darwin")).first().get("newton"));
 
     }
@@ -398,10 +397,10 @@ public class MongoDbTailableCursorConsumerTest extends AbstractMongoDbTest {
         assertEquals(1000, cappedTestCollection.count());
 
         addTestRoutes();
-        context.startRoute(routeId);
+        context.getRouteController().startRoute(routeId);
         Thread.sleep(1000);
         mock.assertIsSatisfied();
-        context.stopRoute(routeId);
+        context.getRouteController().stopRoute(routeId);
     }
 
     @Override

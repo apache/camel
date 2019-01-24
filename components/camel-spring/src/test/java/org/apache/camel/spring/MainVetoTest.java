@@ -16,13 +16,10 @@
  */
 package org.apache.camel.spring;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version
- */
-public class MainVetoTest extends TestCase {
+public class MainVetoTest extends Assert {
 
     @Test
     public void testMain() throws Exception {

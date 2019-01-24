@@ -21,14 +21,13 @@ import java.lang.reflect.Method;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultMessage;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
 
+    @Test
     public void testRequestA() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
@@ -45,6 +44,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         assertEquals(RequestA.class, method.getGenericParameterTypes()[0]);
     }
 
+    @Test
     public void testRequestB() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 
@@ -61,6 +61,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         assertEquals(RequestB.class, method.getGenericParameterTypes()[0]);
     }
 
+    @Test
     public void testAmbigious() throws Exception {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
 

@@ -25,10 +25,10 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.cluster.CamelClusterView;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * Represents an endpoint which only becomes active when the {@link CamelClusterView}
@@ -39,7 +39,6 @@ import org.apache.camel.spi.UriPath;
     firstVersion = "2.20.0",
     scheme = "master",
     syntax = "master:namespace:delegateUri",
-    consumerClass = MasterConsumer.class,
     consumerOnly = true,
     title = "Master",
     lenientProperties = true,
@@ -49,11 +48,11 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
     private final CamelClusterService clusterService;
 
     @UriPath(description = "The name of the cluster namespace to use")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String namespace;
 
     @UriPath(description = "The endpoint uri to use in master/slave mode")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String delegateUri;
 
     public MasterEndpoint(String uri, MasterComponent component, CamelClusterService clusterService, String namespace, String delegateUri) {

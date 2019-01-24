@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.dropbox.integration.consumer;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
@@ -27,29 +24,27 @@ import org.junit.Test;
 
 public class DropboxConsumerGetSingleTest extends DropboxTestSupport {
 
-    public DropboxConsumerGetSingleTest() throws Exception { }
+    public static final String FILE_NAME = "myFile.txt";
 
     @Test
     public void testCamelDropbox() throws Exception {
+        final String content = "Hi camels";
+        createFile(FILE_NAME, content);
+
+        context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);       
-        assertMockEndpointsSatisfied();
-
-        List<Exchange> exchanges = mock.getReceivedExchanges();
-        Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.DOWNLOADED_FILE.name());
-        Object body = exchange.getIn().getBody();
-        assertNotNull(header);
-        assertNotNull(body);
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived(content);
+        mock.expectedHeaderReceived(DropboxResultHeader.DOWNLOADED_FILE.name(), String.format("%s/%s", workdir, FILE_NAME));
+        mock.assertIsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("dropbox://get?accessToken={{accessToken}}&remotePath=XXX")
-                        .to("file:XXX")
+                from(String.format("dropbox://get?accessToken={{accessToken}}&remotePath=%s/%s", workdir, FILE_NAME)).autoStartup(false).id("consumer")
                         .to("mock:result");
             }
         };

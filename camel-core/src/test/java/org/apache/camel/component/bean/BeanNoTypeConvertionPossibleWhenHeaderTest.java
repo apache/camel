@@ -23,12 +23,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSupport {
 
+    @Test
     public void testBeanHeaderNoTypeConvertionPossibleFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
@@ -53,6 +52,7 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanHeaderNoTypeConvertionPossibleOK() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -62,6 +62,7 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanHeaderNoTypeConvertionPossibleOKNullHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -73,6 +74,7 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanHeaderNoTypeConvertionPossibleOKNoHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

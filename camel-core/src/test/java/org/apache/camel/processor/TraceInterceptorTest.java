@@ -20,13 +20,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class TraceInterceptorTest extends ContextTestSupport {
 
     // START SNIPPET: e1
+    @Test
     public void testSendingSomeMessages() throws Exception {
         template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
         template.sendBodyAndHeader("direct:start", "This is Copenhagen calling", "from", "Claus");

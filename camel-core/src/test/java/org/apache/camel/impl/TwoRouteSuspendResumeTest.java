@@ -22,14 +22,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version 
- */
 public class TwoRouteSuspendResumeTest extends ContextTestSupport {
 
+    @Test
     public void testSuspendResume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A");
@@ -47,7 +46,7 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
         MockEndpoint mockBar = getMockEndpoint("mock:bar");
         mockBar.expectedMessageCount(1);
 
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
 
         // need to give seda consumer thread time to idle
         await().atMost(1, TimeUnit.SECONDS).until(() -> {
@@ -61,19 +60,19 @@ public class TwoRouteSuspendResumeTest extends ContextTestSupport {
         mockBar.assertIsSatisfied();
         mock.assertIsSatisfied(1000);
 
-        assertEquals("Suspended", context.getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteStatus("bar").name());
+        assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
 
         log.info("Resuming");
 
         // now resume and expect the previous message to be routed
         resetMocks();
         mock.expectedBodiesReceived("B");
-        context.resumeRoute("foo");
+        context.getRouteController().resumeRoute("foo");
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteStatus("bar").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
     }
 
     @Override

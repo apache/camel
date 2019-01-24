@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.cxf.BusFactory;
@@ -71,7 +70,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:EndpointA").to(getSimpleEndpointUri());
-                from("direct:EndpointB").to(getSimpleEndpointUri() + "&dataFormat=MESSAGE");
+                from("direct:EndpointB").to(getSimpleEndpointUri() + "&dataFormat=RAW");
                 from("direct:EndpointC").to(getSimpleEndpointUri() + "&dataFormat=PAYLOAD");
                 // This route is for checking camel-cxf producer throwing exception
                 from("direct:start")
@@ -103,8 +102,8 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         CxfEndpoint endpoint = context.getEndpoint(getSimpleEndpointUri(), CxfEndpoint.class);
         assertEquals("Get a wrong endpoint uri", getSimpleEndpointUri(), endpoint.getEndpointUri());
         
-        endpoint = context.getEndpoint(getSimpleEndpointUri() + "&dataFormat=MESSAGE", CxfEndpoint.class);
-        assertEquals("Get a wrong endpoint uri", URISupport.normalizeUri(getSimpleEndpointUri() + "&dataFormat=MESSAGE"), endpoint.getEndpointUri());
+        endpoint = context.getEndpoint(getSimpleEndpointUri() + "&dataFormat=RAW", CxfEndpoint.class);
+        assertEquals("Get a wrong endpoint uri", URISupport.normalizeUri(getSimpleEndpointUri() + "&dataFormat=RAW"), endpoint.getEndpointUri());
 
     }
 

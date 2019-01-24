@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.syslog;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class SyslogEnumsTest extends TestCase {
+public class SyslogEnumsTest extends Assert {
 
     @Test
     public void testFacilityConstants() {

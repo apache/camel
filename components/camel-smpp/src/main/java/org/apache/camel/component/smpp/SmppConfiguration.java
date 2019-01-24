@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Contains the SMPP component configuration properties</a>
- * 
- * @version 
  */
 @UriParams
 public class SmppConfiguration implements Cloneable {
@@ -50,8 +48,8 @@ public class SmppConfiguration implements Cloneable {
     private String systemId = "smppclient";
     @UriParam(label = "security", secret = true)
     private String password = "password";
-    @UriParam(label = "common", defaultValue = "cp")
-    private String systemType = "cp";
+    @UriParam(label = "common", defaultValue = "")
+    private String systemType = "";
     @UriParam(label = "codec")
     private byte dataCoding = (byte) 0;
     @UriParam(label = "codec", enums = "0,4,8")
@@ -64,8 +62,8 @@ public class SmppConfiguration implements Cloneable {
     private Integer transactionTimer = 10000;
     @UriParam(label = "producer", enums = "0,1,2")
     private byte registeredDelivery = SMSCDeliveryReceipt.SUCCESS_FAILURE.value();
-    @UriParam(label = "producer", defaultValue = "CMT", enums = "CMT,CPT,VMN,VMA,WAP,USSD")
-    private String serviceType = "CMT";
+    @UriParam(label = "producer", defaultValue = "", enums = "CMT,CPT,VMN,VMA,WAP,USSD")
+    private String serviceType = "";
     @UriParam(label = "producer", defaultValue = "1616")
     private String sourceAddr = "1616";
     @UriParam(label = "producer", defaultValue = "1717")

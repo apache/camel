@@ -35,17 +35,9 @@ import org.apache.camel.util.URISupport;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFactoryBean<Endpoint> {
-    @XmlAttribute
-    @Deprecated
-    @Metadata(description = "Not in use")
-    private Boolean singleton;
     @XmlAttribute(required = true)
     @Metadata(description = "Sets the URI to use to resolve the endpoint. Notice that additional options can be configured using a series of property.")
     private String uri;
-    @XmlAttribute
-    @Deprecated
-    @Metadata(description = "Sets the exchange pattern of the endpoint")
-    private ExchangePattern pattern;
     @XmlElementRef
     @Metadata(description = "To configure additional endpoint options using a XML style which is similar as configuring Spring or Blueprint beans.")
     private List<PropertyDefinition> properties = new ArrayList<>();
@@ -69,16 +61,6 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
         return Endpoint.class;
     }
 
-    @Deprecated
-    public Boolean getSingleton() {
-        return singleton;
-    }
-
-    @Deprecated
-    public void setSingleton(Boolean singleton) {
-        this.singleton = singleton;
-    }
-
     public String getUri() {
         return uri;
     }
@@ -90,21 +72,6 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
      */
     public void setUri(String uri) {
         this.uri = uri;
-    }
-
-    @Deprecated
-    public ExchangePattern getPattern() {
-        return pattern;
-    }
-
-    /**
-     * Sets the exchange pattern of the endpoint
-     *
-     * @deprecated set the pattern in the uri
-     */
-    @Deprecated
-    public void setPattern(ExchangePattern pattern) {
-        this.pattern = pattern;
     }
 
     public List<PropertyDefinition> getProperties() {

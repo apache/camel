@@ -21,12 +21,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DebugNoLazyTypeConverterTest extends CamelTestSupport {
 
     @Override

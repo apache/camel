@@ -28,15 +28,14 @@ import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DomainMetadataRequest;
 import com.amazonaws.services.simpledb.model.NoSuchDomainException;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.s3.S3Endpoint;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,11 +53,6 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private SdbConfiguration configuration;
 
-    @Deprecated
-    public SdbEndpoint(String uri, CamelContext context, SdbConfiguration configuration) {
-        super(uri, context);
-        this.configuration = configuration;
-    }
     public SdbEndpoint(String uri, Component component, SdbConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;

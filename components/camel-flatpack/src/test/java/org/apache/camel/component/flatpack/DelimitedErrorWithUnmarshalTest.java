@@ -27,9 +27,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 
-/**
- * @version 
- */
 @ContextConfiguration
 public class DelimitedErrorWithUnmarshalTest extends AbstractJUnit4SpringContextTests {
 

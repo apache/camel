@@ -21,7 +21,6 @@ import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +39,6 @@ import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.RefModel;
 import io.swagger.models.Response;
-import io.swagger.models.SecurityRequirement;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.models.auth.ApiKeyAuthDefinition;
@@ -79,8 +77,8 @@ import org.apache.camel.model.rest.RestSecurityOAuth2;
 import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A Camel REST-DSL swagger reader that parse the rest-dsl into a swagger model representation.
@@ -97,13 +95,14 @@ public class RestSwaggerReader {
      * @param config            the swagger configuration
      * @param classResolver     class resolver to use
      * @return the swagger model
+     * @throws ClassNotFoundException 
      */
-    public Swagger read(List<RestDefinition> rests, String route, BeanConfig config, String camelContextId, ClassResolver classResolver) {
+    public Swagger read(List<RestDefinition> rests, String route, BeanConfig config, String camelContextId, ClassResolver classResolver) throws ClassNotFoundException {
         Swagger swagger = new Swagger();
 
         for (RestDefinition rest : rests) {
 
-            if (ObjectHelper.isNotEmpty(route) && !route.equals("/")) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(route) && !route.equals("/")) {
                 // filter by route
                 if (!rest.getPath().equals(route)) {
                     continue;
@@ -118,7 +117,7 @@ public class RestSwaggerReader {
         return swagger;
     }
 
-    private void parse(Swagger swagger, RestDefinition rest, String camelContextId, ClassResolver classResolver) {
+    private void parse(Swagger swagger, RestDefinition rest, String camelContextId, ClassResolver classResolver) throws ClassNotFoundException {
         List<VerbDefinition> verbs = new ArrayList<>(rest.getVerbs());
         // must sort the verbs by uri so we group them together when an uri has multiple operations
         Collections.sort(verbs, new VerbOrdering());
@@ -127,7 +126,7 @@ public class RestSwaggerReader {
         String pathAsTag = rest.getTag() != null ? rest.getTag() : FileUtil.stripLeadingSeparator(rest.getPath());
         String summary = rest.getDescriptionText();
 
-        if (ObjectHelper.isNotEmpty(pathAsTag)) {
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(pathAsTag)) {
             // add rest as tag
             Tag tag = new Tag();
             tag.description(summary);
@@ -194,14 +193,14 @@ public class RestSwaggerReader {
             }
 
             String type = verb.getType();
-            if (ObjectHelper.isNotEmpty(type)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(type)) {
                 if (type.endsWith("[]")) {
                     type = type.substring(0, type.length() - 2);
                 }
                 types.add(type);
             }
             type = verb.getOutType();
-            if (ObjectHelper.isNotEmpty(type)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(type)) {
                 if (type.endsWith("[]")) {
                     type = type.substring(0, type.length() - 2);
                 }
@@ -211,7 +210,7 @@ public class RestSwaggerReader {
             if (verb.getResponseMsgs() != null) {
                 for (RestOperationResponseMsgDefinition def : verb.getResponseMsgs()) {
                     type = def.getResponseModel();
-                    if (ObjectHelper.isNotEmpty(type)) {
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(type)) {
                         if (type.endsWith("[]")) {
                             type = type.substring(0, type.length() - 2);
                         }
@@ -223,7 +222,7 @@ public class RestSwaggerReader {
 
         // use annotation scanner to find models (annotated classes)
         for (String type : types) {
-            Class<?> clazz = classResolver.resolveClass(type);
+            Class<?> clazz = classResolver.resolveMandatoryClass(type);
             appendModels(clazz, swagger);
         }
 
@@ -254,7 +253,7 @@ public class RestSwaggerReader {
             String opPath = SwaggerHelper.buildUrl(basePath, verb.getUri());
 
             Operation op = new Operation();
-            if (ObjectHelper.isNotEmpty(pathAsTag)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(pathAsTag)) {
                 // group in the same tag
                 op.addTag(pathAsTag);
             }
@@ -298,9 +297,7 @@ public class RestSwaggerReader {
             for (SecurityDefinition sd : verb.getSecurity()) {
                 List<String> scopes = new ArrayList<>();
                 if (sd.getScopes() != null) {
-                    Iterator<Object> it = ObjectHelper.createIterator(sd.getScopes());
-                    while (it.hasNext()) {
-                        String scope = it.next().toString();
+                    for (String scope : ObjectHelper.createIterable(sd.getScopes())) {
                         scopes.add(scope);
                     }
                 }
@@ -323,7 +320,7 @@ public class RestSwaggerReader {
 
                 if (parameter != null) {
                     parameter.setName(param.getName());
-                    if (ObjectHelper.isNotEmpty(param.getDescription())) {
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(param.getDescription())) {
                         parameter.setDescription(param.getDescription());
                     }
                     parameter.setRequired(param.getRequired());
@@ -374,7 +371,7 @@ public class RestSwaggerReader {
                     if (parameter instanceof AbstractSerializableParameter) {
                         AbstractSerializableParameter qp = (AbstractSerializableParameter) parameter;
                         // set default value on parameter
-                        if (ObjectHelper.isNotEmpty(param.getDefaultValue())) {
+                        if (org.apache.camel.util.ObjectHelper.isNotEmpty(param.getDefaultValue())) {
                             qp.setDefaultValue(param.getDefaultValue());
                         }
                         // add examples
@@ -494,11 +491,11 @@ public class RestSwaggerReader {
             if (response == null) {
                 response = new Response();
             }
-            if (ObjectHelper.isNotEmpty(msg.getResponseModel())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(msg.getResponseModel())) {
                 Property prop = modelTypeAsProperty(msg.getResponseModel(), swagger);
                 response.setSchema(prop);
             }
-            if (ObjectHelper.isNotEmpty(msg.getMessage())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(msg.getMessage())) {
                 response.setDescription(msg.getMessage());
             }
 
@@ -622,7 +619,7 @@ public class RestSwaggerReader {
                     } else if ("array".equals(type)) {
                         ArrayProperty ap = new ArrayProperty();
                         ap.setName(name);
-                        if (ObjectHelper.isNotEmpty(header.getDescription())) {
+                        if (org.apache.camel.util.ObjectHelper.isNotEmpty(header.getDescription())) {
                             ap.setDescription(header.getDescription());
                         }
                         if (header.getArrayType() != null) {

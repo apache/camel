@@ -25,13 +25,13 @@ import com.box.sdk.BoxEvent;
 import com.box.sdk.EventListener;
 
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.box.api.BoxEventsManager;
 import org.apache.camel.component.box.internal.BoxApiName;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.component.AbstractApiConsumer;
-import org.apache.camel.util.component.ApiConsumerHelper;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodHelper;
+import org.apache.camel.support.component.AbstractApiConsumer;
+import org.apache.camel.support.component.ApiConsumerHelper;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodHelper;
 
 /**
  * The Box consumer.
@@ -86,7 +86,7 @@ public class BoxConsumer extends AbstractApiConsumer<BoxApiName, BoxConfiguratio
 
     @Override
     public boolean onException(Throwable e) {
-        getExceptionHandler().handleException(ObjectHelper.wrapRuntimeCamelException(e));
+        getExceptionHandler().handleException(RuntimeCamelException.wrapRuntimeCamelException(e));
         return true;
     }
 

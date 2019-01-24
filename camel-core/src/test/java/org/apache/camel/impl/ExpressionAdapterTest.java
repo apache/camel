@@ -18,11 +18,10 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExpressionAdapter;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ExpressionAdapterTest extends ContextTestSupport {
 
     private static class MyExpression extends ExpressionAdapter {
@@ -41,6 +40,7 @@ public class ExpressionAdapterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testExpressionAdapter() throws Exception {
         MyExpression my = new MyExpression();
 
@@ -50,6 +50,7 @@ public class ExpressionAdapterTest extends ContextTestSupport {
         my.assertMatches("bar", e);
     }
 
+    @Test
     public void testExpressionAdapterFail() throws Exception {
         MyExpression my = new MyExpression();
 

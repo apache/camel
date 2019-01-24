@@ -16,12 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Exchanger;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,8 +35,9 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(WireTapShutdownBeanTest.class);
 
-    private static final CountDownLatch LATCH = new CountDownLatch(1);
+    private static final Exchanger<Void> EXCHANGER = new Exchanger<>();
 
+    @Test
     public void testWireTapShutdown() throws Exception {
         final MyTapBean tapBean = (MyTapBean) context.getRegistry().lookupByName("tap");
 
@@ -45,9 +47,9 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        LATCH.countDown();
+        EXCHANGER.exchange(null);
 
-        // shutdown Camel which should let the inlfight wire-tap message route to completion
+        // shutdown Camel which should let the inflight wire-tap message route to completion
         context.stop();
 
         // should allow to shutdown nicely
@@ -79,7 +81,7 @@ public class WireTapShutdownBeanTest extends ContextTestSupport {
 
         public void tapSomething(String body) throws Exception {
             try {
-                LATCH.await(5, TimeUnit.SECONDS);
+                EXCHANGER.exchange(null);
                 Thread.sleep(100);
             } catch (Exception e) {
                 fail("Should not be interrupted");

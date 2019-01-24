@@ -29,13 +29,13 @@ import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.netty4.ChannelHandlerFactory;
 import org.apache.camel.component.netty4.ClientInitializerFactory;
 import org.apache.camel.component.netty4.NettyConfiguration;
 import org.apache.camel.component.netty4.NettyProducer;
 import org.apache.camel.component.netty4.http.handlers.HttpClientChannelHandler;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +58,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
         try {
             this.sslContext = createSSLContext(producer);
         } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         if (sslContext != null) {
@@ -146,7 +146,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
             SSLEngineFactory sslEngineFactory;
             if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
                 sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(producer.getContext().getClassResolver(),
+                answer = sslEngineFactory.createSSLContext(producer.getContext(),
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         "file:" + configuration.getKeyStoreFile().getPath(),
@@ -154,7 +154,7 @@ public class HttpClientInitializerFactory extends ClientInitializerFactory {
                         configuration.getPassphrase().toCharArray());
             } else {
                 sslEngineFactory = new SSLEngineFactory();
-                answer = sslEngineFactory.createSSLContext(producer.getContext().getClassResolver(),
+                answer = sslEngineFactory.createSSLContext(producer.getContext(),
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         configuration.getKeyStoreResource(),

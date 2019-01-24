@@ -29,7 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.component.docker.ssl.NoImplSslConfig;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * Methods for communicating with Docker
@@ -46,7 +46,7 @@ public final class DockerClientFactory {
     @SuppressWarnings("resource")
     public static DockerClient getDockerClient(DockerComponent dockerComponent, DockerConfiguration dockerConfiguration, Message message) throws DockerException {
 
-        ObjectHelper.notNull(dockerConfiguration, "dockerConfiguration");
+        org.apache.camel.util.ObjectHelper.notNull(dockerConfiguration, "dockerConfiguration");
 
         Integer port = DockerHelper.getProperty(DockerConstants.DOCKER_PORT, dockerConfiguration, message, Integer.class, dockerConfiguration.getPort());
         String host = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, dockerConfiguration, message, String.class, dockerConfiguration.getHost());
@@ -94,7 +94,7 @@ public final class DockerClientFactory {
 
         SSLConfig sslConfig;
         if (clientProfile.isSecure() != null && clientProfile.isSecure()) {
-            ObjectHelper.notNull(clientProfile.getCertPath(), "certPath must be specified in secure mode");
+            org.apache.camel.util.ObjectHelper.notNull(clientProfile.getCertPath(), "certPath must be specified in secure mode");
             sslConfig = new LocalDirectorySSLConfig(clientProfile.getCertPath());
         } else {
             // docker-java requires an implementation of SslConfig interface

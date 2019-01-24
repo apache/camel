@@ -23,6 +23,7 @@ import org.apache.camel.component.wordpress.api.model.Content;
 import org.apache.camel.component.wordpress.api.model.Post;
 import org.apache.camel.component.wordpress.api.model.PublishableStatus;
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 
 public class WordpressPostOperationTest extends WordpressComponentTestSupport {

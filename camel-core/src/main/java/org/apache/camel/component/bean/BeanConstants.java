@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-/**
- * @version 
- */
 public final class BeanConstants {
 
     public static final String BEAN_PARAMETER_MAPPING_STRATEGY = "CamelBeanParameterMappingStrategy";

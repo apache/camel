@@ -33,9 +33,6 @@ import org.springframework.jms.core.JmsTemplate;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsCustomJMSReplyToIssueTest extends CamelTestSupport {
 
     private JmsComponent amq;

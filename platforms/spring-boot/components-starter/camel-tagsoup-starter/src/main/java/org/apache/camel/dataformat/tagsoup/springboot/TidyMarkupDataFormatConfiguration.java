@@ -33,6 +33,11 @@ public class TidyMarkupDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the tidyMarkup data format. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * What data type to unmarshal as, can either be org.w3c.dom.Node or
      * java.lang.String. Is by default org.w3c.dom.Node
      */

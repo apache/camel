@@ -32,7 +32,7 @@
     serviceName="s:ServiceName"
     xmlns:s="http://www.example.com/test">
     <cxf:properties>
-      <entry key="dataFormat" value="MESSAGE"/>
+      <entry key="dataFormat" value="RAW"/>
       <entry key="defaultBus" value="true"/>
     </cxf:properties>
 

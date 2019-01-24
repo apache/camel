@@ -28,9 +28,6 @@ import org.schwering.irc.lib.IRCUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public final class CodehausIrcChat {
 
     private static final Logger LOG = LoggerFactory.getLogger(CodehausIrcChat.class);
@@ -115,12 +112,12 @@ public final class CodehausIrcChat {
         }
         // while (!conn.isConnected()) {
         // Thread.sleep(1000);
-        // LOG.info("Sleeping");
+        // log.info("Sleeping");
         // }
         LOG.info("Connected");
         // conn.send("/JOIN #camel-test");
 
-        // LOG.info("Joining Channel: " + config.getTarget());
+        // log.info("Joining Channel: " + config.getTarget());
 
         for (IrcChannel channel : config.getChannels()) {
             conn.doJoin(channel.getName());

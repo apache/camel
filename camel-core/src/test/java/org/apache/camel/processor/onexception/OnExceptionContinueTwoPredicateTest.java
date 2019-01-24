@@ -22,16 +22,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version
- */
 public class OnExceptionContinueTwoPredicateTest extends OnExceptionContinueTwoTest {
 
     private final AtomicInteger predicateInvoked = new AtomicInteger();
     private final AtomicInteger processorInvoked = new AtomicInteger();
 
     @Override
+    @Test
     public void testContinuedTwo() throws Exception {
         getMockEndpoint("mock:me").expectedMessageCount(2);
 

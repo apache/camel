@@ -25,7 +25,7 @@ import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.request.ContentStreamUpdateRequest;

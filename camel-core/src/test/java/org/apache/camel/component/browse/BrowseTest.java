@@ -23,18 +23,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class BrowseTest extends ContextTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(BrowseTest.class);
 
     protected Object body1 = "one";
     protected Object body2 = "two";
 
+    @Test
     public void testListEndpoints() throws Exception {
         template.sendBody("browse:foo", body1);
         template.sendBody("browse:foo", body2);

@@ -22,14 +22,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilderTest;
 import org.apache.camel.spring.SpringCamelContext;
-
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * A test case of the builder using Spring 2.0 to load the rules
- *
- * @version 
  */
 public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
     protected AbstractXmlApplicationContext applicationContext;
@@ -89,11 +87,13 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
     }
 
     @Override
+    @Test
     public void testIdempotentConsumer() throws Exception {
         // is tested elsewhere
     }
 
     @Override
+    @Test
     public void testRouteWithInterceptor() throws Exception {
         // is tested elsewhere
     }

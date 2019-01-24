@@ -19,14 +19,14 @@ package org.apache.camel.component.hipchat;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * The hipchat component supports producing and consuming messages from/to Hipchat service.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "hipchat", title = "Hipchat", syntax = "hipchat:protocol:host:port", consumerClass = HipchatConsumer.class, label = "api,cloud")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "hipchat", title = "Hipchat", syntax = "hipchat:protocol:host:port", label = "api,cloud")
 public class HipchatEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

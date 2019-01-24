@@ -18,11 +18,10 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test for intercepting sending to endpoint
- * 
- * @version 
  */
 public class InterceptSendToEndpointTest extends ContextTestSupport {
 
@@ -31,6 +30,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testInterceptEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -65,6 +65,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptEndpointWithPredicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -97,6 +98,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptEndpointStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -134,6 +136,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptEndpointDirectly() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -157,6 +160,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptEndpointWithStop() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -180,6 +184,7 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptEndpointOnce() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

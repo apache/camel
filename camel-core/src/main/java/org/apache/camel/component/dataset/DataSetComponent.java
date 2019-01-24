@@ -19,18 +19,16 @@ package org.apache.camel.component.dataset;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Component for <a href="http://camel.apache.org/dataset.html">DataSet</a>.
- *
- * @version 
  */
-public class DataSetComponent extends UriEndpointComponent {
+@org.apache.camel.spi.annotations.Component("dataset")
+public class DataSetComponent extends DefaultComponent {
 
     public DataSetComponent() {
-        super(DataSetEndpoint.class);
     }
 
     @Override

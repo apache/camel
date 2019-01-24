@@ -23,8 +23,6 @@ import org.apache.camel.test.AvailablePortFinder;
 
 /**
  * Route builder for RestletRouteBuilderAuthTest
- * 
- * @version 
  */
 public class TestRouteBuilder extends RouteBuilder {
 

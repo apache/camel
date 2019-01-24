@@ -28,7 +28,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * Default implementation of {@link AbstractJdbcMessageIdRepository}
  */
-public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<String> {
+public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository {
 
     private boolean createTableIfNotExists = true;
     private String tableExistsString = "SELECT 1 FROM CAMEL_MESSAGEPROCESSED WHERE 1 = 0";

@@ -35,6 +35,11 @@ public class GsonDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the json-gson data format. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Lookup and use the existing ObjectMapper with the given id when using
      * Jackson.
      */
@@ -64,7 +69,7 @@ public class GsonDataFormatConfiguration
     /**
      * If you want to marshal a pojo to JSON, and the pojo has some fields with
      * null values. And you want to skip these null values, you can set this
-     * option to NOT_NULL
+     * option to NON_NULL
      */
     private String include;
     /**

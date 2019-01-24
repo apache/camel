@@ -17,9 +17,7 @@
 package org.apache.camel.spring.produce.generics;
 
 import org.apache.camel.spring.SpringRunWithTestSupport;
-
 import org.junit.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 

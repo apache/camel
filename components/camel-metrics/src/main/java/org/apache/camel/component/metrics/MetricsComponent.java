@@ -24,29 +24,26 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Represents the component that manages metrics endpoints.
  */
-public class MetricsComponent extends UriEndpointComponent {
+@Component("metrics")
+public class MetricsComponent extends DefaultComponent {
 
     public static final String METRIC_REGISTRY_NAME = "metricRegistry";
     public static final MetricsType DEFAULT_METRICS_TYPE = MetricsType.METER;
     public static final long DEFAULT_REPORTING_INTERVAL_SECONDS = 60L;
 
-    private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
-
     @Metadata(label = "advanced")
     private MetricRegistry metricRegistry;
 
     public MetricsComponent() {
-        super(MetricsEndpoint.class);
     }
 
     @Override
@@ -58,19 +55,19 @@ public class MetricsComponent extends UriEndpointComponent {
         String metricsName = getMetricsName(remaining);
         MetricsType metricsType = getMetricsType(remaining);
 
-        LOG.debug("Metrics type: {}; name: {}", metricsType, metricsName);
+        log.debug("Metrics type: {}; name: {}", metricsType, metricsName);
         Endpoint endpoint = new MetricsEndpoint(uri, this, metricRegistry, metricsType, metricsName);
         setProperties(endpoint, parameters);
         return endpoint;
     }
 
     String getMetricsName(String remaining) {
-        String name = ObjectHelper.after(remaining, ":");
+        String name = StringHelper.after(remaining, ":");
         return name == null ? remaining : name;
     }
 
     MetricsType getMetricsType(String remaining) {
-        String name = ObjectHelper.before(remaining, ":");
+        String name = StringHelper.before(remaining, ":");
         MetricsType type;
         if (name == null) {
             type = DEFAULT_METRICS_TYPE;
@@ -84,11 +81,11 @@ public class MetricsComponent extends UriEndpointComponent {
     }
 
     MetricRegistry getOrCreateMetricRegistry(Registry camelRegistry, String registryName) {
-        LOG.debug("Looking up MetricRegistry from Camel Registry for name \"{}\"", registryName);
+        log.debug("Looking up MetricRegistry from Camel Registry for name \"{}\"", registryName);
         MetricRegistry result = getMetricRegistryFromCamelRegistry(camelRegistry, registryName);
         if (result == null) {
-            LOG.debug("MetricRegistry not found from Camel Registry for name \"{}\"", registryName);
-            LOG.info("Creating new default MetricRegistry");
+            log.debug("MetricRegistry not found from Camel Registry for name \"{}\"", registryName);
+            log.info("Creating new default MetricRegistry");
             result = createMetricRegistry();
         }
         return result;
@@ -110,7 +107,7 @@ public class MetricsComponent extends UriEndpointComponent {
     MetricRegistry createMetricRegistry() {
         MetricRegistry registry = new MetricRegistry();
         final Slf4jReporter reporter = Slf4jReporter.forRegistry(registry)
-                .outputTo(LOG)
+                .outputTo(log)
                 .convertRatesTo(TimeUnit.SECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .withLoggingLevel(Slf4jReporter.LoggingLevel.DEBUG)

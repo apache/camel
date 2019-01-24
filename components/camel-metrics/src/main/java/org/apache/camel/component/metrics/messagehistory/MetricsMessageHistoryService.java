@@ -29,13 +29,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.metrics.MetricsComponent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Service holding the {@link MetricsMessageHistory} which registers all message history metrics.
@@ -161,7 +161,7 @@ public final class MetricsMessageHistoryService extends ServiceSupport implement
         try {
             return writer.writeValueAsString(getMetricsRegistry());
         } catch (JsonProcessingException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -173,7 +173,7 @@ public final class MetricsMessageHistoryService extends ServiceSupport implement
         try {
             return writer.writeValueAsString(getMetricsRegistry());
         } catch (JsonProcessingException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 

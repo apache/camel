@@ -16,26 +16,27 @@
  */
 package org.apache.camel.component.geocoder;
 
-import java.math.BigDecimal;
-import java.net.URL;
+import java.util.Locale;
 
-import com.google.code.geocoder.Geocoder;
-import com.google.code.geocoder.model.GeocodeResponse;
-import com.google.code.geocoder.model.GeocoderAddressComponent;
-import com.google.code.geocoder.model.GeocoderRequest;
-import com.google.code.geocoder.model.GeocoderResult;
-import com.google.code.geocoder.model.GeocoderStatus;
-import com.google.code.geocoder.model.LatLng;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.GeolocationApi;
+import com.google.maps.errors.InvalidRequestException;
+import com.google.maps.errors.OverDailyLimitException;
+import com.google.maps.errors.OverQueryLimitException;
+import com.google.maps.errors.RequestDeniedException;
+import com.google.maps.errors.UnknownErrorException;
+import com.google.maps.model.AddressComponent;
+import com.google.maps.model.AddressType;
+import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.GeolocationPayload;
+import com.google.maps.model.GeolocationResult;
+import com.google.maps.model.LatLng;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.isEmpty;
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * The GeoCoder producer.
@@ -44,7 +45,7 @@ public class GeoCoderProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(GeoCoderProducer.class);
 
     private GeoCoderEndpoint endpoint;
-    private Geocoder geocoder;
+    private GeoApiContext context;
 
     public GeoCoderProducer(GeoCoderEndpoint endpoint) {
         super(endpoint);
@@ -52,152 +53,173 @@ public class GeoCoderProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        // header take precedence
-        String address = exchange.getIn().getHeader(GeoCoderConstants.ADDRESS, String.class);
-        if (address == null) {
-            address = endpoint.getAddress();
-        }
-
-        String latlng = exchange.getIn().getHeader(GeoCoderConstants.LATLNG, String.class);
-        if (latlng == null) {
-            latlng = endpoint.getLatlng();
-        }
-
-        if (latlng != null) {
-            GeocoderRequest req = new GeocoderRequest();
-            req.setLanguage(endpoint.getLanguage());
-
-            String lat = ObjectHelper.before(latlng, ",");
-            String lng = ObjectHelper.after(latlng, ",");
-            req.setLocation(new LatLng(lat, lng));
-
-            LOG.debug("Geocode for lat/lng {}", latlng);
-            GeocodeResponse res = geocoder.geocode(req);
-            LOG.debug("Geocode response {}", res);
-
-            if (res != null) {
-                extractGeoResult(res, exchange);
+        try {
+            // headers take precedence
+            String address = exchange.getIn().getHeader(GeoCoderConstants.ADDRESS, String.class);
+            if (address == null) {
+                address = endpoint.getAddress();
             }
-        } else if (address != null) {
 
-            // is it current address
-            if ("current".equals(address)) {
-                processCurrentLocation(exchange);
-            } else {
-                LOG.debug("Geocode for address {}", address);
-                GeocoderRequest req = new GeocoderRequest(address, endpoint.getLanguage());
-                GeocodeResponse res = geocoder.geocode(req);
-                LOG.debug("Geocode response {}", res);
+            String latlng = exchange.getIn().getHeader(GeoCoderConstants.LATLNG, String.class);
+            if (latlng == null) {
+                latlng = endpoint.getLatlng();
+            }
 
-                if (res != null) {
-                    extractGeoResult(res, exchange);
+            if (latlng != null) {
+                String lat = StringHelper.before(latlng, ",");
+                String lng = StringHelper.after(latlng, ",");
+                LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lng));
+
+                LOG.debug("Geocode for lat/lng {}", latlng);
+                GeocodingResult[] results = GeocodingApi.reverseGeocode(context, latLng).await();
+
+                LOG.debug("Geocode response {}", results);
+
+                if (results != null) {
+                    extractGeoResult(results, exchange);
+                }
+
+            } else if (address != null) {
+
+                // is it current address
+                if ("current".equals(address)) {
+                    processCurrentLocation(exchange);
+                } else {
+
+                    LOG.debug("Geocode for address {}", address);
+                    GeocodingResult[] results = GeocodingApi.geocode(context, address).await();
+                    LOG.debug("Geocode response {}", results);
+
+                    if (results != null) {
+                        extractGeoResult(results, exchange);
+                    }
                 }
             }
+        } catch (RequestDeniedException e) {
+            exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.REQUEST_DENIED);
+        } catch (OverQueryLimitException e) {
+            exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.OVER_QUERY_LIMIT);
+        } catch (OverDailyLimitException e) {
+            exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.OVER_DAILY_LIMIT);
+        } catch (InvalidRequestException e) {
+            exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.INVALID_REQUEST);
+        } catch (UnknownErrorException e) {
+            exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.UNKNOWN_ERROR);
         }
     }
 
+    /**
+     * Perform geolocation to retrieve LatLng and then perform a geocoding
+     */
     protected void processCurrentLocation(Exchange exchange) throws Exception {
-        LOG.debug("Geocode for current address");
-        String json = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("https://freegeoip.net/json/"));
-        if (isEmpty(json)) {
-            throw new IllegalStateException("Got the unexpected value '" + json + "' for the geolocation");
-        }
-        LOG.debug("Geocode response {}", json);
+        LOG.debug("Geolocation for current location");
+        GeolocationPayload payload = new GeolocationPayload();
+        payload.considerIp = true;
+        GeolocationResult result = GeolocationApi.geolocate(context, payload).await();
 
+        LOG.debug("Geolocation response {}", result);
+        //status
         exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.OK);
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode node = mapper.readValue(json, JsonNode.class);
-
-        JsonNode latitudeNode = notNull(node.get("latitude"), "latitude");
-        JsonNode longitudeNode = notNull(node.get("longitude"), "longitude");
-        String resLatlng = latitudeNode.asText() + "," + longitudeNode.asText();
+        //latlng
+        String resLatlng = result.location.toString();
         exchange.getIn().setHeader(GeoCoderConstants.LATLNG, resLatlng);
 
-        JsonNode countryCode = node.get("country_code");
-        JsonNode countryName = node.get("country_name");
-        if (countryCode != null) {
-            exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_SHORT, countryCode.asText());
-        }
-        if (countryName != null) {
-            exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_LONG, countryName.asText());
-        }
+        //address - reverse geocode
+        LOG.debug("Geocode - reverse geocode for location {}", resLatlng);
+        GeocodingResult[] results = GeocodingApi.reverseGeocode(context, result.location).await();
 
-        JsonNode regionCode = node.get("region_code");
-        JsonNode regionName = node.get("region_name");
-        if (regionCode != null) {
-            exchange.getIn().setHeader(GeoCoderConstants.REGION_CODE, regionCode.asText());
-        }
-        if (regionName != null) {
-            exchange.getIn().setHeader(GeoCoderConstants.REGION_NAME, regionName.asText());
-        }
+        LOG.debug("Geocode response {}", results);
 
-        JsonNode city = node.get("city");
-        if (city != null) {
-            exchange.getIn().setHeader(GeoCoderConstants.CITY, city.asText());
-        }
-
-        // should we include body
-        if (!endpoint.isHeadersOnly()) {
-            exchange.getIn().setBody(json);
+        if (results != null) {
+            extractGeoResult(results, exchange);
         }
     }
 
-    protected void extractGeoResult(GeocodeResponse res, Exchange exchange) {
-        exchange.getIn().setHeader(GeoCoderConstants.STATUS, res.getStatus());
+    private void setLatLngToExchangeHeader(LatLng location, Exchange exchange) {
+        double resLat = location.lat;
+        double resLng = location.lng;
+        exchange.getIn().setHeader(GeoCoderConstants.LAT, formatLatOrLon(resLat));
+        exchange.getIn().setHeader(GeoCoderConstants.LNG, formatLatOrLon(resLng));
+        String resLatlng = location.toString();
+        exchange.getIn().setHeader(GeoCoderConstants.LATLNG, resLatlng);
+    }
+
+    protected void extractGeoResult(GeocodingResult[] res, Exchange exchange) {
         // should we include body
         if (!endpoint.isHeadersOnly()) {
             exchange.getIn().setBody(res);
         }
+        //no results
+        if (res.length == 0) {
+            exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.ZERO_RESULTS);
+            return;
+        }
 
-        if (res.getStatus() == GeocoderStatus.OK) {
-            exchange.getIn().setHeader(GeoCoderConstants.ADDRESS, res.getResults().get(0).getFormattedAddress());
-            // just grab the first element and its lat and lon
-            BigDecimal resLat = res.getResults().get(0).getGeometry().getLocation().getLat();
-            BigDecimal resLon = res.getResults().get(0).getGeometry().getLocation().getLng();
-            exchange.getIn().setHeader(GeoCoderConstants.LAT, resLat.toPlainString());
-            exchange.getIn().setHeader(GeoCoderConstants.LNG, resLon.toPlainString());
-            String resLatlng = resLat.toPlainString() + "," + resLon.toPlainString();
-            exchange.getIn().setHeader(GeoCoderConstants.LATLNG, resLatlng);
+        exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.OK);
 
-            GeocoderAddressComponent country = getCountry(res);
-            if (country != null) {
-                exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_SHORT, country.getShortName());
-                exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_LONG, country.getLongName());
-            }
+        GeocodingResult first = res[0];
+        exchange.getIn().setHeader(GeoCoderConstants.ADDRESS, first.formattedAddress);
+        // just grab the first element and its lat and lon
+        setLatLngToExchangeHeader(first.geometry.location, exchange);
 
-            GeocoderAddressComponent city = getCity(res);
-            if (city != null) {
-                exchange.getIn().setHeader(GeoCoderConstants.CITY, city.getLongName());
-            }
+        //additional details
+        AddressComponent country = getCountry(res);
+        if (country != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_SHORT, country.shortName);
+            exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_LONG, country.longName);
+        }
+
+        AddressComponent city = getCity(res);
+        if (city != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.CITY, city.longName);
+        }
+
+        AddressComponent postalCode = getPostalCode(res);
+        if (postalCode != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.POSTAL_CODE, postalCode.shortName);
+        }
+
+        AddressComponent region = getRegion(res);
+        if (region != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.REGION_CODE, region.shortName);
+            exchange.getIn().setHeader(GeoCoderConstants.REGION_NAME, region.longName);
         }
     }
 
-    private static GeocoderAddressComponent getCountry(GeocodeResponse res) {
-        for (GeocoderResult result : res.getResults()) {
-            for (String type : result.getTypes()) {
-                if ("country".equals(type)) {
-                    return result.getAddressComponents().get(0);
+    private String formatLatOrLon(double value) {
+        return String.format(Locale.ENGLISH, "%.8f", value);
+    }
+
+    private static AddressComponent getComponent(GeocodingResult[] results, AddressType addressType) {
+        for (GeocodingResult result : results) {
+            for (AddressType type : result.types) {
+                if (type == addressType && result.addressComponents.length > 0) {
+                    return result.addressComponents[0];
                 }
             }
         }
         return null;
     }
 
-    private static GeocoderAddressComponent getCity(GeocodeResponse res) {
-        for (GeocoderResult result : res.getResults()) {
-            for (String type : result.getTypes()) {
-                if ("locality".equals(type)) {
-                    return result.getAddressComponents().get(0);
-                }
-            }
-        }
-        return null;
+    private static AddressComponent getCountry(GeocodingResult[] res) {
+        return getComponent(res, AddressType.COUNTRY);
+    }
+
+    private static AddressComponent getCity(GeocodingResult[] res) {
+        return getComponent(res, AddressType.LOCALITY);
+    }
+
+    private static AddressComponent getPostalCode(GeocodingResult[] res) {
+        return getComponent(res, AddressType.POSTAL_CODE);
+    }
+
+    private static AddressComponent getRegion(GeocodingResult[] res) {
+        return getComponent(res, AddressType.ADMINISTRATIVE_AREA_LEVEL_1);
     }
 
     @Override
-    protected void doStart() throws Exception {
-        geocoder = endpoint.createGeocoder();
+    protected void doStart() {
+        context = endpoint.createGeoApiContext();
     }
-
 }

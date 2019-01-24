@@ -41,8 +41,8 @@
 
         <route>
             <from uri="direct:start"/>
-            <marshal ref="soap"/>
-            <unmarshal ref="soap"/>
+            <marshal><custom ref="soap"/></marshal>
+            <unmarshal><custom ref="soap"/></unmarshal>
             <to uri="mock:result"/>
         </route>
 

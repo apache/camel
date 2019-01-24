@@ -24,8 +24,8 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.ignite.IgniteConstants;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.MessageHelper;
 import org.apache.ignite.IgniteSet;
 
 /**
@@ -107,10 +107,11 @@ public class IgniteSetProducer extends DefaultAsyncProducer {
             
         default:
             exchange.setException(new UnsupportedOperationException("Operation not supported by Ignite Set producer."));
-            return true;
+            break;
         }
 
-        return true;
+        callback.done(false);
+        return false;
     }
 
     private IgniteSetOperation setOperationFor(Exchange exchange) {

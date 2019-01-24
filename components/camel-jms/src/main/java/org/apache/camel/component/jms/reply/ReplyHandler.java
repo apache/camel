@@ -21,8 +21,6 @@ import javax.jms.Session;
 
 /**
  * Handles a reply.
- *
- * @version 
  */
 public interface ReplyHandler {
 

@@ -22,12 +22,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MulticastStopOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testMulticastStopOnExceptionOk() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello");
@@ -39,6 +38,7 @@ public class MulticastStopOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastStopOnExceptionStop() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:bar").expectedMessageCount(0);
@@ -51,7 +51,7 @@ public class MulticastStopOnExceptionTest extends ContextTestSupport {
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Sequential processing failed for number 1."));
+            assertTrue(cause.getMessage().startsWith("Multicast processing failed for number 1."));
             assertEquals("Forced", cause.getCause().getMessage());
         }
 

@@ -16,13 +16,16 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A {@link Producer} that defers being started, until {@link org.apache.camel.CamelContext} has been started, this
@@ -30,38 +33,13 @@ import org.apache.camel.util.ServiceHelper;
  * CamelContext. If we do not defer starting the producer it may not adapt to those changes, and
  * send messages to wrong endpoints.
  */
-public class DeferProducer extends org.apache.camel.support.ServiceSupport implements Producer, AsyncProcessor {
+public class DeferProducer extends ServiceSupport implements Producer, AsyncProcessor {
 
     private Producer delegate;
     private final Endpoint endpoint;
 
     public DeferProducer(Endpoint endpoint) {
         this.endpoint = endpoint;
-    }
-
-    @Override
-    public Exchange createExchange() {
-        if (delegate == null) {
-            throw new IllegalStateException("Not started");
-        }
-        return delegate.createExchange();
-    }
-
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        if (delegate == null) {
-            throw new IllegalStateException("Not started");
-        }
-        return delegate.createExchange(pattern);
-    }
-
-    @Override
-    @Deprecated
-    public Exchange createExchange(Exchange exchange) {
-        if (delegate == null) {
-            throw new IllegalStateException("Not started");
-        }
-        return delegate.createExchange(exchange);
     }
 
     @Override
@@ -93,6 +71,13 @@ public class DeferProducer extends org.apache.camel.support.ServiceSupport imple
 
         callback.done(true);
         return true;
+    }
+
+    @Override
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        process(exchange, callback);
+        return callback.getFuture();
     }
 
     @Override

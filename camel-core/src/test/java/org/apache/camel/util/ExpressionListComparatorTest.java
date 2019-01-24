@@ -22,11 +22,10 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExpressionListComparator;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ExpressionListComparatorTest extends ContextTestSupport {
 
     private static class MyFooExpression implements Expression {
@@ -45,6 +44,7 @@ public class ExpressionListComparatorTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testExpressionListComparator() {
         List<Expression> list = new ArrayList<>();
         list.add(new MyFooExpression());

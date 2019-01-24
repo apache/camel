@@ -18,14 +18,13 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RecipientListExchangePropertyTest extends ContextTestSupport {
 
     private final MyStuff myStuff = new MyStuff("Blah");
 
+    @Test
     public void testExchangeProperty() throws Exception {
         getMockEndpoint("mock:x").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:x").message(0).exchangeProperty("foo").isEqualTo(myStuff);

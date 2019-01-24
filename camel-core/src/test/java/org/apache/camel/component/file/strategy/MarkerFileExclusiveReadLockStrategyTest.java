@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,12 +39,14 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     private AtomicInteger numberOfFilesProcessed = new AtomicInteger(0);
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/marker/");
         createDirectory("target/marker/in");
         super.setUp();
     }
 
+    @Test
     public void testMultithreadedLocking() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);

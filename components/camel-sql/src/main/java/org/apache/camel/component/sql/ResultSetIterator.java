@@ -91,7 +91,7 @@ public class ResultSetIterator implements Iterator, Closeable {
         try {
             resultSet.close();
         } catch (SQLException e) {
-            LOG.warn("Error by closing result set: " + e, e);
+            LOG.warn("Error by closing result set: {}", e, e);
         }
     }
 
@@ -99,7 +99,7 @@ public class ResultSetIterator implements Iterator, Closeable {
         try {
             statement.close();
         } catch (SQLException e) {
-            LOG.warn("Error by closing statement: " + e, e);
+            LOG.warn("Error by closing statement: {}", e, e);
         }
     }
 
@@ -107,7 +107,7 @@ public class ResultSetIterator implements Iterator, Closeable {
         try {
             connection.close();
         } catch (SQLException e) {
-            LOG.warn("Error by closing connection: " + e, e);
+            LOG.warn("Error by closing connection: {}", e, e);
         }
     }
 

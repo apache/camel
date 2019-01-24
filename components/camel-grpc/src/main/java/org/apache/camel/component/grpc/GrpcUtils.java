@@ -25,7 +25,7 @@ import io.grpc.CallCredentials;
 import io.grpc.Channel;
 import io.grpc.stub.StreamObserver;
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 
 /**
@@ -117,7 +117,7 @@ public final class GrpcUtils {
             throw new IllegalArgumentException("gRPC service method not found: " + asyncStubClass.getClass().getName() + "." + invokeMethod);
         }
         if (method.getReturnType().equals(StreamObserver.class)) {
-            StreamObserver<Object> requestObserver = (StreamObserver<Object>)ObjectHelper.invokeMethod(method, asyncStubClass, responseObserver);
+            StreamObserver<Object> requestObserver = (StreamObserver<Object>) ObjectHelper.invokeMethod(method, asyncStubClass, responseObserver);
             if (request instanceof List) {
                 List<Object> requestList = (List<Object>)request;
                 requestList.forEach((requestItem) -> {
@@ -156,7 +156,7 @@ public final class GrpcUtils {
             throw new IllegalArgumentException("gRPC service method not found: " + blockingStubClass.getClass().getName() + "." + invokeMethod);
         }
         if (method.getReturnType().equals(Iterator.class)) {
-            Iterator<Object> responseObjects = (Iterator<Object>)ObjectHelper.invokeMethod(method, blockingStubClass, request);
+            Iterator<Object> responseObjects = (Iterator<Object>) ObjectHelper.invokeMethod(method, blockingStubClass, request);
             List<Object> objectList = new ArrayList<>();
             while (responseObjects.hasNext()) {
                 objectList.add(responseObjects.next());
@@ -190,7 +190,7 @@ public final class GrpcUtils {
     }
     
     private static String constructFullClassName(String packageName, String className) {
-        if (ObjectHelper.isEmpty(packageName)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(packageName)) {
             return className;
         } else {
             return packageName + "." + className;

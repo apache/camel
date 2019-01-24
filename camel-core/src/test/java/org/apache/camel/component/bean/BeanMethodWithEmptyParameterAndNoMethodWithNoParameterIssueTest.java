@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * CAMEL-6455
@@ -35,6 +36,7 @@ public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest ext
         return jndi;
     }
 
+    @Test
     public void testBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
@@ -49,6 +51,7 @@ public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest ext
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOtherBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 

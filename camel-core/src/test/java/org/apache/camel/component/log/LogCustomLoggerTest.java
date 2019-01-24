@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
 
 /**
  * Custom Logger test.
@@ -71,7 +70,7 @@ public class LogCustomLoggerTest extends ContextTestSupport {
         ConsumingAppender.newAppender(
             LogComponent.class.getCanonicalName(),
             "LogComponent",
-            Level.TRACE,
+            Level.INFO,
             event -> sw2.append(event.getLoggerName()));
     }
 

@@ -20,10 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ValueBuilderTest extends ContextTestSupport {
 
     @Override
@@ -31,6 +29,7 @@ public class ValueBuilderTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testAppend() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -49,6 +48,7 @@ public class ValueBuilderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPrepend() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -67,6 +67,7 @@ public class ValueBuilderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMatches() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

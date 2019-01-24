@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.issues;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;

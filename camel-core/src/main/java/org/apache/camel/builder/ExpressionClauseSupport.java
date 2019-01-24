@@ -22,25 +22,19 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.language.ConstantExpression;
-import org.apache.camel.model.language.ELExpression;
 import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.model.language.JXPathExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
 import org.apache.camel.model.language.OgnlExpression;
-import org.apache.camel.model.language.PhpExpression;
-import org.apache.camel.model.language.PythonExpression;
 import org.apache.camel.model.language.RefExpression;
-import org.apache.camel.model.language.RubyExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
-import org.apache.camel.model.language.SqlExpression;
 import org.apache.camel.model.language.TerserExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
@@ -49,8 +43,6 @@ import org.apache.camel.model.language.XQueryExpression;
 
 /**
  * A support class for building expression clauses.
- *
- * @version 
  */
 public class ExpressionClauseSupport<T> {
 
@@ -118,7 +110,7 @@ public class ExpressionClauseSupport<T> {
      */
     public T body() {
         // reuse simple as this allows the model to represent this as a known JAXB type
-        return expression(new SimpleExpression("body"));
+        return expression(new SimpleExpression("${body}"));
     }
 
     /**
@@ -186,29 +178,9 @@ public class ExpressionClauseSupport<T> {
 
     /**
      * An expression of an exchange property of the given name
-     *
-     * @deprecated use {@link #exchangeProperty(String)} instead
-     */
-    @Deprecated
-    public T property(String name) {
-        return expression(new ExchangePropertyExpression(name));
-    }
-
-    /**
-     * An expression of an exchange property of the given name
      */
     public T exchangeProperty(String name) {
         return expression(new ExchangePropertyExpression(name));
-    }
-
-    /**
-     * An expression of the exchange properties
-     *
-     * @deprecated use {@link #exchangeProperties()} instead
-     */
-    @Deprecated
-    public T properties() {
-        return exchangeProperties();
     }
 
     /**
@@ -303,19 +275,6 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
-     * Evaluates the <a href="http://camel.apache.org/el.html">EL
-     * Language from JSP and JSF</a> using the <a
-     * href="http://camel.apache.org/juel.html">JUEL library</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    @Deprecated
-    public T el(String text) {
-        return expression(new ELExpression(text));
-    }
-
-    /**
      * Evaluates a <a href="http://camel.apache.org/groovy.html">Groovy
      * expression</a>
      *
@@ -333,7 +292,9 @@ public class ExpressionClauseSupport<T> {
      *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
+     * @deprecated JavaScript is deprecated in Java 11 onwards
      */
+    @Deprecated
     public T javaScript(String text) {
         return expression(new JavaScriptExpression(text));
     }
@@ -514,31 +475,6 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
-     * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    @Deprecated
-    public T jxpath(String text) {
-        return jxpath(text, false);
-    }
-
-    /**
-     * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @param lenient to configure whether lenient is in use or not
-     * @return the builder to continue processing the DSL
-     */
-    @Deprecated
-    public T jxpath(String text, boolean lenient) {
-        JXPathExpression answer = new JXPathExpression(text);
-        answer.setLenient(lenient);
-        return expression(answer);
-    }
-
-    /**
      * Evaluates an <a href="http://camel.apache.org/ognl.html">OGNL
      * expression</a>
      *
@@ -561,30 +497,6 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
-     * Evaluates a <a href="http://camel.apache.org/php.html">PHP
-     * expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    @Deprecated
-    public T php(String text) {
-        return expression(new PhpExpression(text));
-    }
-
-    /**
-     * Evaluates a <a href="http://camel.apache.org/python.html">Python
-     * expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    @Deprecated
-    public T python(String text) {
-        return expression(new PythonExpression(text));
-    }
-
-    /**
      * Evaluates a {@link Expression} by looking up existing {@link Expression}
      * from the {@link org.apache.camel.spi.Registry}
      *
@@ -596,18 +508,6 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
-     * Evaluates a <a href="http://camel.apache.org/ruby.html">Ruby
-     * expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    @Deprecated
-    public T ruby(String text) {
-        return expression(new RubyExpression(text));
-    }
-
-    /**
      * Evaluates an <a href="http://camel.apache.org/spel.html">SpEL
      * expression</a>
      *
@@ -616,18 +516,6 @@ public class ExpressionClauseSupport<T> {
      */
     public T spel(String text) {
         return expression(new SpELExpression(text));
-    }
-    
-    /**
-     * Evaluates an <a href="http://camel.apache.org/sql.html">SQL
-     * expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     */
-    @Deprecated
-    public T sql(String text) {
-        return expression(new SqlExpression(text));
     }
 
     /**

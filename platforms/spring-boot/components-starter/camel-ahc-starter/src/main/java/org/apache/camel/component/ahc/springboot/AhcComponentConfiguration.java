@@ -17,14 +17,8 @@
 package org.apache.camel.component.ahc.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.ahc.AhcBinding;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.AsyncHttpClientConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * To call external HTTP services using Async Http Client.
@@ -38,30 +32,35 @@ public class AhcComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use a custom AsyncHttpClient
+     * Whether to enable auto configuration of the ahc component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private AsyncHttpClient client;
+    private Boolean enabled;
+    /**
+     * To use a custom AsyncHttpClient. The option is a
+     * org.asynchttpclient.AsyncHttpClient type.
+     */
+    private String client;
     /**
      * To use a custom AhcBinding which allows to control how to bind between
-     * AHC and Camel.
+     * AHC and Camel. The option is a org.apache.camel.component.ahc.AhcBinding
+     * type.
      */
-    @NestedConfigurationProperty
-    private AhcBinding binding;
+    private String binding;
     /**
      * To configure the AsyncHttpClient to use a custom
-     * com.ning.http.client.AsyncHttpClientConfig instance.
+     * com.ning.http.client.AsyncHttpClientConfig instance. The option is a
+     * org.asynchttpclient.AsyncHttpClientConfig type.
      */
-    @NestedConfigurationProperty
-    private AsyncHttpClientConfig clientConfig;
+    private String clientConfig;
     /**
-     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the
+     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the
      * Registry. Note that configuring this option will override any SSL/TLS
      * configuration options provided through the clientConfig option at the
-     * endpoint or component level.
+     * endpoint or component level. The option is a
+     * org.apache.camel.support.jsse.SSLContextParameters type.
      */
-    @NestedConfigurationProperty
-    private SSLContextParameters sslContextParameters;
+    private String sslContextParameters;
     /**
      * Whether to allow java serialization when a request uses
      * context-type=application/x-java-serialized-object This is by default
@@ -76,10 +75,10 @@ public class AhcComponentConfiguration
     private Boolean useGlobalSslContextParameters = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * header to and from Camel message.
+     * header to and from Camel message. The option is a
+     * org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -87,36 +86,35 @@ public class AhcComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public AsyncHttpClient getClient() {
+    public String getClient() {
         return client;
     }
 
-    public void setClient(AsyncHttpClient client) {
+    public void setClient(String client) {
         this.client = client;
     }
 
-    public AhcBinding getBinding() {
+    public String getBinding() {
         return binding;
     }
 
-    public void setBinding(AhcBinding binding) {
+    public void setBinding(String binding) {
         this.binding = binding;
     }
 
-    public AsyncHttpClientConfig getClientConfig() {
+    public String getClientConfig() {
         return clientConfig;
     }
 
-    public void setClientConfig(AsyncHttpClientConfig clientConfig) {
+    public void setClientConfig(String clientConfig) {
         this.clientConfig = clientConfig;
     }
 
-    public SSLContextParameters getSslContextParameters() {
+    public String getSslContextParameters() {
         return sslContextParameters;
     }
 
-    public void setSslContextParameters(
-            SSLContextParameters sslContextParameters) {
+    public void setSslContextParameters(String sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
 
@@ -137,12 +135,11 @@ public class AhcComponentConfiguration
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 

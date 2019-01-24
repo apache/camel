@@ -22,9 +22,6 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringMarshalDomainObjectJSONTest extends MarshalDomainObjectJSONTest {
 
     protected CamelContext createCamelContext() throws Exception {
@@ -42,7 +39,7 @@ public class SpringMarshalDomainObjectJSONTest extends MarshalDomainObjectJSONTe
             }
         });
 
-        return SpringCamelContext.springCamelContext(applicationContext);        
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
 }

@@ -83,11 +83,11 @@ public class ASN1DataFormatWithStreamIteratorByteArrayTest extends CamelTestSupp
                 asn1 = new ASN1DataFormat();
                 asn1.setUsingIterator(true);
 
-                from("direct:unmarshal").unmarshal(asn1).split(body(Iterator.class)).streaming().to("mock:unmarshal");
-                from("direct:unmarshalthenmarshal").unmarshal(asn1).split(body(Iterator.class)).streaming().marshal(asn1).to("mock:marshal");
+                from("direct:unmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().to("mock:unmarshal");
+                from("direct:unmarshalthenmarshal").unmarshal(asn1).split(bodyAs(Iterator.class)).streaming().marshal(asn1).to("mock:marshal");
                 
-                from("direct:unmarshaldsl").unmarshal().asn1(true).split(body(Iterator.class)).streaming().to("mock:unmarshaldsl");
-                from("direct:unmarshalthenmarshaldsl").unmarshal().asn1(true).split(body(Iterator.class)).streaming().marshal().asn1(true).to("mock:marshaldsl");
+                from("direct:unmarshaldsl").unmarshal().asn1(true).split(bodyAs(Iterator.class)).streaming().to("mock:unmarshaldsl");
+                from("direct:unmarshalthenmarshaldsl").unmarshal().asn1(true).split(bodyAs(Iterator.class)).streaming().marshal().asn1(true).to("mock:marshaldsl");
             }
         };
     }

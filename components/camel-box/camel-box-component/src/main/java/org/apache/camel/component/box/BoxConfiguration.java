@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 
 /**
  * Component configuration for Box component.
@@ -50,11 +50,11 @@ public class BoxConfiguration {
     public static final String RSA_SHA_256 = "RSA_SHA_256";
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private BoxApiName apiName;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String methodName;
 
     @UriParam

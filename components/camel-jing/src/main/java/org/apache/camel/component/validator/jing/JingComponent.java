@@ -19,18 +19,17 @@ package org.apache.camel.component.validator.jing;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * A component for validating XML payloads using the
  * <a href="http://www.thaiopensource.com/relaxng/jing.html">Jing library</a>
- *
- * @version 
  */
-public class JingComponent extends UriEndpointComponent {
+@Component("jing")
+public class JingComponent extends DefaultComponent {
 
     public JingComponent() {
-        super(JingEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

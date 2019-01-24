@@ -21,25 +21,25 @@ import java.util.Objects;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 
 /**
  * Connect to OPC UA servers using the binary protocol for acquiring telemetry
  * data
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-client", syntax = "milo-client:endpointUri", title = "OPC UA Client", consumerClass = MiloClientConsumer.class, label = "iot")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "milo-client", syntax = "milo-client:endpointUri", title = "OPC UA Client", label = "iot")
 public class MiloClientEndpoint extends DefaultEndpoint {
 
     /**
      * The OPC UA server endpoint
      */
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String endpointUri;
 
     /**

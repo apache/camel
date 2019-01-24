@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.mq;
 
+import java.util.List;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.mq.AmazonMQ;
 import com.amazonaws.services.mq.model.ConfigurationId;
@@ -23,21 +25,24 @@ import com.amazonaws.services.mq.model.CreateBrokerRequest;
 import com.amazonaws.services.mq.model.CreateBrokerResult;
 import com.amazonaws.services.mq.model.DeleteBrokerRequest;
 import com.amazonaws.services.mq.model.DeleteBrokerResult;
+import com.amazonaws.services.mq.model.DeploymentMode;
+import com.amazonaws.services.mq.model.DescribeBrokerRequest;
+import com.amazonaws.services.mq.model.DescribeBrokerResult;
+import com.amazonaws.services.mq.model.EngineType;
 import com.amazonaws.services.mq.model.ListBrokersRequest;
 import com.amazonaws.services.mq.model.ListBrokersResult;
 import com.amazonaws.services.mq.model.RebootBrokerRequest;
 import com.amazonaws.services.mq.model.RebootBrokerResult;
 import com.amazonaws.services.mq.model.UpdateBrokerRequest;
 import com.amazonaws.services.mq.model.UpdateBrokerResult;
+import com.amazonaws.services.mq.model.User;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
 
@@ -46,8 +51,6 @@ import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageFo
  * <a href="http://aws.amazon.com/mq/">AWS MQ</a>
  */
 public class MQProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MQProducer.class);
 
     private transient String mqProducerToString;
 
@@ -71,6 +74,9 @@ public class MQProducer extends DefaultProducer {
             break;
         case updateBroker:
             updateBroker(getEndpoint().getAmazonMqClient(), exchange);
+            break;
+        case describeBroker:
+            describeBroker(getEndpoint().getAmazonMqClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -112,7 +118,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.listBrokers(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("List Brokers command returned the error code {}", ase.getErrorCode());
+            log.trace("List Brokers command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -121,7 +127,12 @@ public class MQProducer extends DefaultProducer {
 
     private void createBroker(AmazonMQ mqClient, Exchange exchange) {
         String brokerName;
+        String brokerEngine;
+        String brokerEngineVersion;
         String deploymentMode;
+        String instanceType;
+        Boolean publiclyAccessible;
+        List<User> users;
         CreateBrokerRequest request = new CreateBrokerRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_NAME))) {
             brokerName = exchange.getIn().getHeader(MQConstants.BROKER_NAME, String.class);
@@ -129,15 +140,47 @@ public class MQProducer extends DefaultProducer {
         } else {
             throw new IllegalArgumentException("Broker Name must be specified");
         }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_ENGINE))) {
+            brokerEngine = exchange.getIn().getHeader(MQConstants.BROKER_ENGINE, String.class);
+            request.withEngineType(EngineType.fromValue(brokerEngine));
+        } else {
+            request.withEngineType(EngineType.ACTIVEMQ.name());
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_ENGINE_VERSION))) {
+            brokerEngineVersion = exchange.getIn().getHeader(MQConstants.BROKER_ENGINE_VERSION, String.class);
+            request.withEngineVersion(brokerEngineVersion);
+        } else {
+            throw new IllegalArgumentException("Broker Engine Version must be specified");
+        }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_DEPLOYMENT_MODE))) {
             deploymentMode = exchange.getIn().getHeader(MQConstants.BROKER_DEPLOYMENT_MODE, String.class);
-            request.withDeploymentMode(deploymentMode);
+            request.withDeploymentMode(DeploymentMode.fromValue(deploymentMode));
+        } else {
+            throw new IllegalArgumentException("Deployment Mode must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_INSTANCE_TYPE))) {
+            instanceType = exchange.getIn().getHeader(MQConstants.BROKER_INSTANCE_TYPE, String.class);
+            request.withHostInstanceType(instanceType);
+        } else {
+            throw new IllegalArgumentException("Instance Type must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_USERS))) {
+            users = exchange.getIn().getHeader(MQConstants.BROKER_USERS, List.class);
+            request.withUsers(users);
+        } else {
+            throw new IllegalArgumentException("A Users list must be specified");
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_PUBLICLY_ACCESSIBLE))) {
+            publiclyAccessible = exchange.getIn().getHeader(MQConstants.BROKER_PUBLICLY_ACCESSIBLE, Boolean.class);
+            request.withPubliclyAccessible(publiclyAccessible);
+        } else {
+            request.withPubliclyAccessible(false);
         }
         CreateBrokerResult result;
         try {
             result = mqClient.createBroker(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Create Broker command returned the error code {}", ase.getErrorCode());
+            log.trace("Create Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -157,7 +200,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.deleteBroker(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Delete Broker command returned the error code {}", ase.getErrorCode());
+            log.trace("Delete Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -177,7 +220,7 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.rebootBroker(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Delete Broker command returned the error code {}", ase.getErrorCode());
+            log.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -204,7 +247,27 @@ public class MQProducer extends DefaultProducer {
         try {
             result = mqClient.updateBroker(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Update Broker command returned the error code {}", ase.getErrorCode());
+            log.trace("Update Broker command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void describeBroker(AmazonMQ mqClient, Exchange exchange) {
+        String brokerId;
+        DescribeBrokerRequest request = new DescribeBrokerRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MQConstants.BROKER_ID))) {
+            brokerId = exchange.getIn().getHeader(MQConstants.BROKER_ID, String.class);
+            request.withBrokerId(brokerId);
+        } else {
+            throw new IllegalArgumentException("Broker Name must be specified");
+        }
+        DescribeBrokerResult result;
+        try {
+            result = mqClient.describeBroker(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("Reboot Broker command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

@@ -25,10 +25,14 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.util.concurrent.Rejectable;
 import org.apache.camel.util.concurrent.RejectableThreadPoolExecutor;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
+import org.junit.Test;
 
 public class ThreadPoolRejectedPolicyTest extends TestSupport {
 
+    @Test
     public void testAbortAsRejectedExecutionHandler() throws InterruptedException {
 
         final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
@@ -51,6 +55,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
         assertRejected(task3, null);
     }
 
+    @Test
     public void testAbortAsRejectedExecutionHandlerWithRejectableTasks() throws InterruptedException {
 
         final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.Abort.asRejectedExecutionHandler());
@@ -73,6 +78,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
         assertRejected(task4, result4);
     }
 
+    @Test
     public void testCallerRunsAsRejectedExecutionHandler() throws InterruptedException {
 
         final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
@@ -91,6 +97,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
         assertInvoked(task3, result3);
     }
 
+    @Test
     public void testCallerRunsAsRejectedExecutionHandlerWithRejectableTasks() throws InterruptedException {
 
         final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.CallerRuns.asRejectedExecutionHandler());
@@ -109,6 +116,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
         assertInvoked(task3, result3);
     }
 
+    @Test
     public void testDiscardAsRejectedExecutionHandler() throws InterruptedException {
 
         final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.Discard.asRejectedExecutionHandler());
@@ -127,6 +135,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
         assertRejected(task3, result3);
     }
 
+    @Test
     public void testDiscardAsRejectedExecutionHandlerWithRejectableTasks() throws InterruptedException {
 
         final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.Discard.asRejectedExecutionHandler());
@@ -145,6 +154,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
         assertRejected(task3, result3);
     }
 
+    @Test
     public void testDiscardOldestAsRejectedExecutionHandler() throws InterruptedException {
 
         final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.DiscardOldest.asRejectedExecutionHandler());
@@ -163,6 +173,7 @@ public class ThreadPoolRejectedPolicyTest extends TestSupport {
         assertInvoked(task3, result3);
     }
 
+    @Test
     public void testDiscardOldestAsRejectedExecutionHandlerWithRejectableTasks() throws InterruptedException {
 
         final ExecutorService executorService = createTestExecutorService(ThreadPoolRejectedPolicy.DiscardOldest.asRejectedExecutionHandler());

@@ -26,9 +26,6 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorWaitForTaskNeverOnCompletionTest extends CamelTestSupport {
 
     private static String done = "";

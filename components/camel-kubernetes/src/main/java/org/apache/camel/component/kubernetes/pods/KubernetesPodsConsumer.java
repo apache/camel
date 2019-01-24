@@ -32,14 +32,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.consumer.common.PodEvent;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KubernetesPodsConsumer extends DefaultConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesPodsConsumer.class);
 
     private final Processor processor;
     private ExecutorService executor;
@@ -68,7 +64,7 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        LOG.debug("Stopping Kubernetes Pods Consumer");
+        log.debug("Stopping Kubernetes Pods Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 if (podsWatcher != null) {
@@ -122,7 +118,7 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
                 @Override
                 public void onClose(KubernetesClientException cause) {
                     if (cause != null) {
-                        LOG.error(cause.getMessage(), cause);
+                        log.error(cause.getMessage(), cause);
                     }
 
                 }

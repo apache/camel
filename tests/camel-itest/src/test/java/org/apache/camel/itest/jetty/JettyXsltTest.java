@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.junit.Test;
 
 public class JettyXsltTest extends CamelTestSupport {
@@ -70,7 +70,7 @@ public class JettyXsltTest extends CamelTestSupport {
                             ObjectHelper.notNull(name, "name");
 
                             name = "org/apache/camel/itest/jetty/" + name;
-                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), name);
+                            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext(), name);
                             String xml = exchange.getContext().getTypeConverter().convertTo(String.class, is);
 
                             exchange.getOut().setBody(xml);

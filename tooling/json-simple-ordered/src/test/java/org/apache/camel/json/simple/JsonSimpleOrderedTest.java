@@ -25,12 +25,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import junit.framework.TestCase;
 import org.json.simple.JsonObject;
 import org.json.simple.Jsoner;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class JsonSimpleOrderedTest extends TestCase {
+public class JsonSimpleOrderedTest extends Assert {
 
     @Test
     public void testOrdered() throws Exception {

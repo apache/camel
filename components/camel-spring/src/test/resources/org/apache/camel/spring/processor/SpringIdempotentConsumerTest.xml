@@ -26,7 +26,7 @@
 
     <!-- START SNIPPET: e1 -->
     <!-- repository for the idempotent consumer -->
-    <bean id="myRepo" class="org.apache.camel.processor.idempotent.MemoryIdempotentRepository"/>
+    <bean id="myRepo" class="org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>

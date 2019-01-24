@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
- * @version 
 */
 public class MyAggregationStrategy extends UseLatestAggregationStrategy {
 

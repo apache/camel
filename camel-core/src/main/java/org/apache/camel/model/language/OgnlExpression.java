@@ -24,8 +24,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To use OGNL scripts in Camel expressions or predicates.
- *
- * @version 
  */
 @Metadata(firstVersion = "1.1.0", label = "language,java", title = "OGNL")
 @XmlRootElement(name = "ognl")

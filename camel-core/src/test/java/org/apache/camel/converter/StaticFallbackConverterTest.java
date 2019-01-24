@@ -23,11 +23,9 @@ import java.util.TimeZone;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class StaticFallbackConverterTest extends ContextTestSupport {
 
     @Override
@@ -35,6 +33,7 @@ public class StaticFallbackConverterTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testStaticFallbackConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         TimeZone tz = TimeZone.getDefault();
@@ -43,6 +42,7 @@ public class StaticFallbackConverterTest extends ContextTestSupport {
         assertEquals("Time talks", money);
     }
 
+    @Test
     public void testStaticFallbackMandatoryConverter() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         TimeZone tz = TimeZone.getDefault();
@@ -51,6 +51,7 @@ public class StaticFallbackConverterTest extends ContextTestSupport {
         assertEquals("Time talks", money);
     }
 
+    @Test
     public void testStaticFallbackMandatoryFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 
@@ -62,6 +63,7 @@ public class StaticFallbackConverterTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testStaticFallbackFailed() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 

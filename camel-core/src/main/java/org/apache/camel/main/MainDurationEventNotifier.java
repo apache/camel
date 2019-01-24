@@ -16,16 +16,16 @@
  */
 package org.apache.camel.main;
 
-import java.util.EventObject;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeFailedEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -60,7 +60,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     }
 
     @Override
-    public void notify(EventObject event) throws Exception {
+    public void notify(CamelEvent event) throws Exception {
         boolean begin = event instanceof ExchangeCreatedEvent;
         boolean complete = event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent;
 
@@ -96,7 +96,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     }
 
     @Override
-    public boolean isEnabled(EventObject event) {
+    public boolean isEnabled(CamelEvent event) {
         return event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent;
     }
 

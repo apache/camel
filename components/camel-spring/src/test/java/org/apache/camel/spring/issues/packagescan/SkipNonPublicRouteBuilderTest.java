@@ -18,6 +18,7 @@ package org.apache.camel.spring.issues.packagescan;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,6 +32,7 @@ public class SkipNonPublicRouteBuilderTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/packagescan/camelContext.xml");
     }
     
+    @Test
     public void testSkipNonPublicRouteBuilder() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -38,7 +40,7 @@ public class SkipNonPublicRouteBuilderTest extends SpringTestSupport {
                 from("direct:bar").routeId("bar").to("mock:bar");
             }
         });
-        context.startRoute("bar");
+        context.getRouteController().startRoute("bar");
         
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:cool").expectedMessageCount(1);

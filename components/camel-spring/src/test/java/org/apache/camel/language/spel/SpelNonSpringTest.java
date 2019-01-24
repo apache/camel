@@ -22,6 +22,7 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.language.spel.bean.Dummy;
+import org.junit.Test;
 
 /**
  * Test access to beans defined in non-Spring context from SpEL expressions/predicates.
@@ -35,6 +36,7 @@ public class SpelNonSpringTest extends LanguageTestSupport {
         return new DefaultCamelContext(registry);
     }
 
+    @Test
     public void testSpelBeanExpressions() throws Exception {
         assertExpression("#{@myDummy.foo == 'xyz'}", true);
         assertExpression("#{@myDummy.bar == 789}", true);
@@ -46,6 +48,7 @@ public class SpelNonSpringTest extends LanguageTestSupport {
         }
     }
     
+    @Test
     public void testSpelBeanPredicates() throws Exception {
         assertPredicate("@myDummy.foo == 'xyz'");
         assertPredicate("@myDummy.bar == 789");

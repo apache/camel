@@ -25,11 +25,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RouteServicesStartupOrderTest extends ContextTestSupport {
 
     private static String startOrder = "";
@@ -39,6 +37,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
     private MyServiceBean service3 = new MyServiceBean("3");
     private MyServiceBean service4 = new MyServiceBean("4");
 
+    @Test
     public void testRouteServiceStartupOrder() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

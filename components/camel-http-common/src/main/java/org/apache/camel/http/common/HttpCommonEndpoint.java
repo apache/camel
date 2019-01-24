@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.camel.cloud.DiscoverableService;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -37,7 +37,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     HttpCommonComponent component;
 
-    @UriPath(label = "producer", description = "The url of the HTTP endpoint to call.") @Metadata(required = "true")
+    @UriPath(label = "producer", description = "The url of the HTTP endpoint to call.") @Metadata(required = true)
     URI httpUri;
     @UriParam(label = "common", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
@@ -181,6 +181,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     public void disconnect(HttpConsumer consumer) throws Exception {
         component.disconnect(consumer);
+    }
+
+    public boolean canConnect(HttpConsumer consumer) throws Exception {
+        return component.canConnect(consumer);
     }
 
     @Override

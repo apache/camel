@@ -33,7 +33,8 @@ import org.apache.camel.component.zookeepermaster.DefaultContainerIdFactory;
 import org.apache.camel.component.zookeepermaster.ZookeeperGroupListenerSupport;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.curator.framework.CuratorFramework;
 
 /**
@@ -209,7 +210,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         super.doStart();
 
         ObjectHelper.notNull(camelContext, "CamelContext");
-        ObjectHelper.notEmpty("groupName", groupName);
+        StringHelper.notEmpty("groupName", groupName);
 
         String path = getCamelClusterPath(groupName);
         this.groupListener = new ZookeeperGroupListenerSupport(path, route.getEndpoint(), onLockOwned(), onDisconnected());
@@ -246,7 +247,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
                     thisNodeState.setStarted(true);
                     groupListener.updateState(thisNodeState);
                 } catch (Exception e) {
-                    log.error("Failed to start master consumer for: " + route.getEndpoint(), e);
+                    log.error("Failed to start master consumer for: {}", route.getEndpoint(), e);
                 }
 
                 log.info("Elected as master. Consumer started: {}", route.getEndpoint());
@@ -260,7 +261,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
             try {
                 stopConsumer(route.getConsumer());
             } catch (Exception e) {
-                log.warn("Failed to stop master consumer: " + route.getEndpoint(), e);
+                log.warn("Failed to stop master consumer: {}", route.getEndpoint(), e);
             }
         };
     }

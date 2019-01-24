@@ -36,7 +36,7 @@
       <to uri="sql:select * from projects
                %20where license like 'A%25'?dataSource=#myDataSource"/>
       <split>
-        <simple>body</simple>
+        <simple>${body}</simple>
         <to uri="mock:result"/>
       </split>
     </route>

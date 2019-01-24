@@ -17,6 +17,7 @@
 package org.apache.camel.model.dataformat;
 
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,7 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -84,6 +85,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     private Boolean trim;
     @XmlAttribute
     private Boolean trailingDelimiter;
+    @XmlAttribute @Metadata(label = "advanced")
+    private String marshallerFactoryRef;
 
     // Unmarshall options
     @XmlAttribute
@@ -196,6 +199,10 @@ public class CsvDataFormat extends DataFormatDefinition {
             Object recordConverter = CamelContextHelper.mandatoryLookup(camelContext, recordConverterRef);
             setProperty(camelContext, dataFormat, "recordConverter", recordConverter);
         }
+        if (ObjectHelper.isNotEmpty(marshallerFactoryRef)) {
+            Object marshallerFactory = CamelContextHelper.mandatoryLookup(camelContext, marshallerFactoryRef.trim());
+            setProperty(camelContext, dataFormat, "marshallerFactory", marshallerFactory);
+        }
     }
 
     private static Character singleChar(String value, String attributeName) {
@@ -203,6 +210,25 @@ public class CsvDataFormat extends DataFormatDefinition {
             throw new IllegalArgumentException(String.format("The '%s' attribute must be exactly one character long.", attributeName));
         }
         return value.charAt(0);
+    }
+
+    /**
+     * Sets the implementation of the CsvMarshallerFactory interface which is able to customize marshalling/unmarshalling 
+     * behavior by extending CsvMarshaller or creating it from scratch.
+     *
+     * @param marshallerFactoryRef the <code>CsvMarshallerFactory</code> reference.
+     */
+    public void setMarshallerFactoryRef(String marshallerFactoryRef) {
+        this.marshallerFactoryRef = marshallerFactoryRef;
+    }
+
+    /**
+     * Returns the <code>CsvMarshallerFactory</code> reference.
+     *
+     * @return the <code>CsvMarshallerFactory</code> or <code>null</code> if none has been specified.
+     */
+    public String getMarshallerFactoryRef() {
+        return marshallerFactoryRef;
     }
 
     public String getFormatRef() {

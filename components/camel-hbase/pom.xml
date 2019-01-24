@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.23.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hbase</artifactId>
@@ -35,14 +35,12 @@
             org.apache.hadoop.conf;version="[2,3)",
             org.apache.hadoop.hbase.*;version="[1,2)"
         </camel.osgi.import.before.defaults>
-        <camel.osgi.export.pkg>org.apache.camel.component.hbase.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=hbase</camel.osgi.export.service>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-support</artifactId>
         </dependency>
 
         <dependency>

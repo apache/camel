@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.naming.Context;
 
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
 
 public class BeanRecipientListInterfaceAnnotationTest extends BeanRecipientListTest {
     @Override

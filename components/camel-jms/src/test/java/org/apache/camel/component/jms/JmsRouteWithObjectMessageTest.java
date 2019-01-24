@@ -18,9 +18,6 @@ package org.apache.camel.component.jms;
 
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JmsRouteWithObjectMessageTest extends JmsRouteTest {
 
     @Override

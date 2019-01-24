@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testDLCPropagateCaused() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -54,6 +56,7 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertEquals("Damn", cause.getMessage());
     }
 
+    @Test
     public void testDLCPropagateCausedInRoute() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -86,6 +89,7 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertEquals("Damn", cause.getMessage());
     }
 
+    @Test
     public void testDLCPropagateCausedUseOriginalMessage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -114,6 +118,7 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertEquals("Damn", cause.getMessage());
     }
 
+    @Test
     public void testDLCPropagateCausedInRouteUseOriginalMessage() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -146,6 +151,7 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         assertEquals("Damn", cause.getMessage());
     }
 
+    @Test
     public void testDLCPropagateCausedInSplitter() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

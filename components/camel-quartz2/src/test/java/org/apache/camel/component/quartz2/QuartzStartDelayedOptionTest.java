@@ -25,7 +25,7 @@ public class QuartzStartDelayedOptionTest extends BaseQuartzTest {
     @Test
     public void testStartDelayed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.setMinimumResultWaitTime(1500);
+        mock.setResultMinimumWaitTime(1500);
         mock.setResultWaitTime(3000);
         mock.expectedMessageCount(2);
 

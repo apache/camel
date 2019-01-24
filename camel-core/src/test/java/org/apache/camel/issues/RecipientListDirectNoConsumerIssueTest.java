@@ -19,12 +19,14 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
+import org.junit.Test;
 
 /**
  *
  */
 public class RecipientListDirectNoConsumerIssueTest extends ContextTestSupport {
 
+    @Test
     public void testDirectNoConsumerOneMessage() throws Exception {
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
@@ -34,6 +36,7 @@ public class RecipientListDirectNoConsumerIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDirectNoConsumerTwoMessages() throws Exception {
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
@@ -44,6 +47,7 @@ public class RecipientListDirectNoConsumerIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDirectNoConsumerOneMessageBar() throws Exception {
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);

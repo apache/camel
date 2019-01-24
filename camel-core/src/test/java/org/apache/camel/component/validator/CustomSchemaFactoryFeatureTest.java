@@ -21,6 +21,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     // Need to bind the CustomerSchemaFactory
@@ -34,6 +35,7 @@ public class CustomSchemaFactoryFeatureTest extends ContextTestSupport {
     
     
     // just inject the SchemaFactory as we want
+    @Test
     public void testCustomSchemaFactory() throws Exception {
         ValidatorComponent v = new ValidatorComponent();
         v.setCamelContext(context);

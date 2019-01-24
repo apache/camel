@@ -32,11 +32,30 @@ public class BeanComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the bean component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
+     * If enabled, Camel will cache the result of the first Registry look-up.
+     * Cache can be enabled if the bean in the Registry is defined as a
+     * singleton scope.
+     */
+    private Boolean cache;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public Boolean getCache() {
+        return cache;
+    }
+
+    public void setCache(Boolean cache) {
+        this.cache = cache;
+    }
 
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;

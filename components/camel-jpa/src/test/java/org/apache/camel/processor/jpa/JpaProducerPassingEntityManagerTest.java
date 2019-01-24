@@ -28,16 +28,13 @@ import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JpaProducerPassingEntityManagerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
 
     @Test
     public void testRouteJpa() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         JpaEndpoint jpa = context.getEndpoint("jpa://" + SendEmail.class.getName(), JpaEndpoint.class);
         EntityManagerFactory emf = jpa.getEntityManagerFactory();
 
@@ -53,7 +50,7 @@ public class JpaProducerPassingEntityManagerTest extends AbstractJpaTest {
 
         // The same EntityManager returns same entity instance from its 1st level cache
         entityManager = emf.createEntityManager();
-        template.sendBodyAndHeader("direct:start", new SendEmail("bar@beer.org"), JpaConstants.ENTITYMANAGER, entityManager);
+        template.sendBodyAndHeader("direct:start", new SendEmail("bar@beer.org"), JpaConstants.ENTITY_MANAGER, entityManager);
         exchange = mock.getReceivedExchanges().get(0);
         persistedEntity = exchange.getIn().getBody(SendEmail.class);
         emfindEntity = entityManager.find(SendEmail.class, persistedEntity.getId());

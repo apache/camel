@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.RedeliveryErrorHandler;
@@ -32,8 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Base class for builders of error handling.
- *
- * @version 
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
     private Map<RouteContext, List<OnExceptionDefinition>> onExceptions = new HashMap<>();
@@ -122,7 +121,8 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
     protected String getRouteId(RouteContext routeContext) {
         CamelContext context = routeContext.getCamelContext();
         if (context != null) {
-            return routeContext.getRoute().idOrCreate(context.getNodeIdFactory());
+            RouteDefinition route = (RouteDefinition) routeContext.getRoute();
+            return route.idOrCreate(context.getNodeIdFactory());
         } else {
             return routeContext.getRoute().getId();
         }

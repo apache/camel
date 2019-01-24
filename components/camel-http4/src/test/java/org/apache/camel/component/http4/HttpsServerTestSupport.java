@@ -26,10 +26,6 @@ import javax.net.ssl.TrustManagerFactory;
 import org.junit.After;
 import org.junit.Before;
 
-/**
- *
- * @version 
- */
 public abstract class HttpsServerTestSupport extends HttpServerTestSupport {
 
     protected static final String KEYSTORE_PATH = "./src/test/resources/localhost.ks";
@@ -66,7 +62,7 @@ public abstract class HttpsServerTestSupport extends HttpServerTestSupport {
         KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
         trustStore.load(new FileInputStream(KEYSTORE), PASSWORD.toCharArray());
 
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init(trustStore);
 
         SSLContext sslcontext = SSLContext.getInstance(SECURE_SOCKET_PROTOCOL);

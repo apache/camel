@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
@@ -35,9 +36,6 @@ import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.util.security.Constraint;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class HttpBasicAuthTest extends BaseJettyTest {
 
     @Override
@@ -67,7 +65,7 @@ public class HttpBasicAuthTest extends BaseJettyTest {
     }
 
     @Test
-    public void testHttpBaiscAuth() throws Exception {
+    public void testHttpBasicAuth() throws Exception {
         String out = template.requestBody("http://localhost:{{port}}/test?authMethod=Basic&authUsername=donald&authPassword=duck", "Hello World", String.class);
         assertEquals("Bye World", out);
     }

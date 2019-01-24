@@ -24,8 +24,6 @@ import org.apache.camel.Processor;
 
 /**
  * A builder of a number of different {@link Processor} implementations
- *
- * @version 
  */
 public final class ProcessorBuilder {
 
@@ -52,26 +50,6 @@ public final class ProcessorBuilder {
             @Override
             public String toString() {
                 return "setBody(" + expression + ")";
-            }
-        };
-    }
-
-    /**
-     * Creates a processor which sets the body of the OUT message to the value of the expression
-     *
-     * @deprecated use {@link #setBody(org.apache.camel.Expression)}
-     */
-    @Deprecated
-    public static Processor setOutBody(final Expression expression) {
-        return new Processor() {
-            public void process(Exchange exchange) {
-                Object newBody = expression.evaluate(exchange, Object.class);
-                exchange.getOut().setBody(newBody);
-            }
-
-            @Override
-            public String toString() {
-                return "setOutBody(" + expression + ")";
             }
         };
     }
@@ -116,26 +94,6 @@ public final class ProcessorBuilder {
             @Override
             public String toString() {
                 return "setHeader(" + name + ", " + expression + ")";
-            }
-        };
-    }
-
-    /**
-     * Sets the header on the OUT message
-     *
-     * @deprecated use {@link #setHeader(String, org.apache.camel.Expression)}
-     */
-    @Deprecated
-    public static Processor setOutHeader(final String name, final Expression expression) {
-        return new Processor() {
-            public void process(Exchange exchange) {
-                Object value = expression.evaluate(exchange, Object.class);
-                exchange.getOut().setHeader(name, value);
-            }
-
-            @Override
-            public String toString() {
-                return "setOutHeader(" + name + ", " + expression + ")";
             }
         };
     }
@@ -236,25 +194,6 @@ public final class ProcessorBuilder {
             @Override
             public String toString() {
                 return "removeHeaders(" + pattern + ", " + Arrays.toString(exceptionPatterns) + ")";
-            }
-        };
-    }
-
-    /**
-     * Removes the header on the FAULT message (FAULT must be OUT)
-     * @deprecated will be removed in the near future. Instead use {@link #removeHeader(String)}
-     */
-    @Deprecated
-    public static Processor removeFaultHeader(final String name) {
-        return new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getOut().setFault(true);
-                exchange.getOut().removeHeader(name);
-            }
-
-            @Override
-            public String toString() {
-                return "removeFaultHeader(" + name +  ")";
             }
         };
     }

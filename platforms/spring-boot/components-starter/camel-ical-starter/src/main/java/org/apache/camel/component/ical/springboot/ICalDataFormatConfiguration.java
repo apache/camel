@@ -32,6 +32,11 @@ public class ICalDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the ical data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether to validate.
      */
     private Boolean validating = false;

@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -27,7 +28,7 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.jms.JmsConfiguration.QUEUE_PREFIX;
@@ -38,8 +39,6 @@ import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
  * Utility class for {@link javax.jms.Message}.
- *
- * @version
  */
 public final class JmsMessageHelper {
 
@@ -448,9 +447,11 @@ public final class JmsMessageHelper {
         try {
             byte[] bytes = message.getJMSCorrelationIDAsBytes();
             boolean isNull = true;
-            for (byte b : bytes) {
-                if (b != 0) {
-                    isNull = false;
+            if (bytes != null) {
+                for (byte b : bytes) {
+                    if (b != 0) {
+                        isNull = false;
+                    }
                 }
             }
             return isNull ? null : new String(bytes);

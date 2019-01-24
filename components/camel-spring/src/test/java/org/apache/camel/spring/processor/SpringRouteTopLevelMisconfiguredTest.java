@@ -19,6 +19,7 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
@@ -52,9 +53,10 @@ public class SpringRouteTopLevelMisconfiguredTest extends ContextTestSupport {
 
 
         // return a working context instead, to let this test pass
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringTryProcessorHandledTest.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/convertBody.xml");
     }
 
+    @Test
     public void testMisconfigured() {
         // noop
     }

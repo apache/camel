@@ -18,7 +18,7 @@ package org.apache.camel.util.spring;
 
 import javax.annotation.Resource;
 
-import org.apache.camel.util.jsse.SecureRandomParameters;
+import org.apache.camel.support.jsse.SecureRandomParameters;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

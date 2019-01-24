@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
@@ -47,13 +48,15 @@ import javax.mail.util.ByteArrayDataSource;
 import org.apache.camel.Attachment;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.converter.ObjectConverter;
-import org.apache.camel.impl.DefaultAttachment;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultAttachment;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +113,7 @@ public class MailBinding {
         // and headers the headers win.
         String subject = endpoint.getConfiguration().getSubject();
         if (subject != null) {
-            mimeMessage.setSubject(subject, IOHelper.getCharsetName(exchange, false));
+            mimeMessage.setSubject(subject, ExchangeHelper.getCharsetName(exchange, false));
         }
 
         // append the rest of the headers (no recipients) that could be subject, reply-to etc.
@@ -193,7 +196,7 @@ public class MailBinding {
         }
 
         // Using the charset header of exchange as a fall back
-        return IOHelper.getCharsetName(exchange, false);
+        return ExchangeHelper.getCharsetName(exchange, false);
     }
 
     protected String populateContentOnMimeMessage(MimeMessage part, MailConfiguration configuration, Exchange exchange)
@@ -253,12 +256,12 @@ public class MailBinding {
             return message; // raw message
         } catch (Exception e) {
             // try to fix message in case it has an unsupported encoding in the Content-Type header
-            UnsupportedEncodingException uee = ObjectHelper.getException(UnsupportedEncodingException.class, e);
+            UnsupportedEncodingException uee = org.apache.camel.util.ObjectHelper.getException(UnsupportedEncodingException.class, e);
             if (uee != null) {
                 LOG.debug("Unsupported encoding detected: {}", uee.getMessage());
                 try {
                     String contentType = message.getContentType();
-                    String type = ObjectHelper.before(contentType, "charset=");
+                    String type = StringHelper.before(contentType, "charset=");
                     if (type != null) {
                         // try again with fixed content type
                         LOG.debug("Trying to extract mail message again with fixed Content-Type: {}", type);
@@ -314,7 +317,7 @@ public class MailBinding {
                 extractAttachmentsFromMultipart((Multipart) part.getContent(), map);
             } else {
                 String disposition = part.getDisposition();
-                String fileName = part.getFileName();
+                String fileName = FileUtil.stripPath(part.getFileName());
 
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Part #{}: Disposition: {}", i, disposition);
@@ -330,7 +333,11 @@ public class MailBinding {
                     LOG.debug("Mail contains file attachment: {}", fileName);
                     if (!map.containsKey(fileName)) {
                         // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
-                        DefaultAttachment camelAttachment = new DefaultAttachment(part.getDataHandler());
+                        final DataHandler dataHandler = part.getDataHandler();
+                        final DataSource dataSource = dataHandler.getDataSource();
+
+                        final DataHandler replacement = new DataHandler(new DelegatingDataSource(fileName, dataSource));
+                        DefaultAttachment camelAttachment = new DefaultAttachment(replacement);
                         @SuppressWarnings("unchecked")
                         Enumeration<Header> headers = part.getAllHeaders();
                         while (headers.hasMoreElements()) {
@@ -388,7 +395,7 @@ public class MailBinding {
                     }
 
                     // Mail messages can repeat the same header...
-                    if (ObjectConverter.isCollection(headerValue)) {
+                    if (isCollection(headerValue)) {
                         Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                         while (iter.hasNext()) {
                             Object value = iter.next();
@@ -408,7 +415,7 @@ public class MailBinding {
             Object headerValue = entry.getValue();
             if (headerValue != null && isRecipientHeader(headerName)) {
                 // special handling of recipients
-                if (ObjectConverter.isCollection(headerValue)) {
+                if (isCollection(headerValue)) {
                     Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                     while (iter.hasNext()) {
                         Object recipient = iter.next();
@@ -646,7 +653,7 @@ public class MailBinding {
         for (String line : splitRecipients(recipient)) {
             String address = line.trim();
             // Only add the address which is not empty
-            if (ObjectHelper.isNotEmpty(address)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(address)) {
                 recipientsAddresses.add(asEncodedInternetAddress(address, determineCharSet(configuration, exchange)));
             }
         }
@@ -726,6 +733,10 @@ public class MailBinding {
         InternetAddress internetAddress = new InternetAddress(address);
         internetAddress.setPersonal(internetAddress.getPersonal(), charset);
         return internetAddress;
+    }
+
+    private static boolean isCollection(Object value) {
+        return value instanceof Collection || (value != null && value.getClass().isArray());
     }
 
 }

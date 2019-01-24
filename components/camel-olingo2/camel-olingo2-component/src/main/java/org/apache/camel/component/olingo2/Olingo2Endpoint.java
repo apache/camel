@@ -31,18 +31,19 @@ import org.apache.camel.component.olingo2.internal.Olingo2Constants;
 import org.apache.camel.component.olingo2.internal.Olingo2PropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.component.AbstractApiEndpoint;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.AbstractApiEndpoint;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * Communicates with OData 2.0 services using Apache Olingo.
  */
-@UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName", consumerClass = Olingo2Consumer.class, label = "cloud")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "olingo2", title = "Olingo2", syntax = "olingo2:apiName/methodName", label = "cloud")
 public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2Configuration> {
 
     protected static final String RESOURCE_PATH_PROPERTY = "resourcePath";
     protected static final String RESPONSE_HANDLER_PROPERTY = "responseHandler";
+    protected static final String SERVICE_URI_PROPERTY = "serviceUri";
 
     private static final String KEY_PREDICATE_PROPERTY = "keyPredicate";
     private static final String QUERY_PARAMS_PROPERTY = "queryParams";
@@ -74,6 +75,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         // avoid adding edm as queryParam
         endpointPropertyNames.add(EDM_PROPERTY);
         endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
+        endpointPropertyNames.add(SERVICE_URI_PROPERTY);
     }
 
     public Producer createProducer() throws Exception {
@@ -195,6 +197,14 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
             final Map.Entry<String, Object> entry = it.next();
             final String paramName = entry.getKey();
+            
+            /**
+             * Avoid swallowing consumer scheduler properties, which
+             * get processed in configureProperties()
+             */
+            if (paramName.startsWith("consumer.")) {
+                continue;
+            }
 
             if (!endpointPropertyNames.contains(paramName)) {
 

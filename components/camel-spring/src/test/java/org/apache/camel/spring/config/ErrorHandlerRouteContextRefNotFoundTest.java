@@ -15,21 +15,20 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
-
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown exception");
@@ -45,6 +44,7 @@ public class ErrorHandlerRouteContextRefNotFoundTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/ErrorHandlerRouteContextRefNotFoundTest.xml");
     }
 
+    @Test
     public void testDummy() {
         // noop
     }

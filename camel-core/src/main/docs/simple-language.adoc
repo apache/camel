@@ -46,7 +46,7 @@ language as a Predicate then the literal text
 *must* be enclosed in either single or double quotes. For example:
 `"${body} == 'Camel'"`. Notice how we have single quotes around the
 literal. The old style of using `"body"` and `"header.foo"` to refer to
-the message body and header is @deprecated, and it is encouraged to
+the message body and header is not supported anymore, and it is required to
 always use $\{ } tokens for the built-in functions.
 The range operator now requires the range to be in single quote as well
 as shown: `"${header.zip} between '30000..39999'"`.

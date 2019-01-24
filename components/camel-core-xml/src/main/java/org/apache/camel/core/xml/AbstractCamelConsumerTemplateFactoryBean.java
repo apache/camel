@@ -24,13 +24,11 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.impl.DefaultConsumerTemplate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A factory for creating a new {@link org.apache.camel.ConsumerTemplate}
  * instance with a minimum of XML
- *
- * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelConsumerTemplateFactoryBean extends AbstractCamelFactoryBean<ConsumerTemplate> {

@@ -18,7 +18,6 @@
 package org.apache.camel.component.disruptor;
 
 import com.lmax.disruptor.WaitStrategy;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

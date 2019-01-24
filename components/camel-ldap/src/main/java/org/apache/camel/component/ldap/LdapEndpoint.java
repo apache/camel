@@ -24,11 +24,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
@@ -40,7 +40,7 @@ public class LdapEndpoint extends DefaultEndpoint {
     public static final String ONELEVEL_SCOPE = "onelevel";
     public static final String SUBTREE_SCOPE = "subtree";
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String dirContextName;
     @UriParam(defaultValue = SYSTEM_DN)
     private String base = SYSTEM_DN;
@@ -53,12 +53,6 @@ public class LdapEndpoint extends DefaultEndpoint {
 
     protected LdapEndpoint(String endpointUri, String remaining, LdapComponent component) throws URISyntaxException {
         super(endpointUri, component);
-        this.dirContextName = remaining;
-    }
-
-    @SuppressWarnings("deprecation")
-    public LdapEndpoint(String endpointUri, String remaining) throws URISyntaxException {
-        super(endpointUri);
         this.dirContextName = remaining;
     }
 

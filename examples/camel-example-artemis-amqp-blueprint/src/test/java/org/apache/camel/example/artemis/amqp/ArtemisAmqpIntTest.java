@@ -33,12 +33,13 @@ public class ArtemisAmqpIntTest extends CamelBlueprintTestSupport {
     }
 
     @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected String useOverridePropertiesWithConfigAdmin(Dictionary props) { 
         //obtain an available port
         int port = AvailablePortFinder.getNextAvailable(9090);
 
         if (port != 9090) {
-            //override the netty port to use
+            //override the Netty port to use
             props.put("netty.port", "" + port);
 
             //return the PID of the config-admin we are using in the blueprint xml file

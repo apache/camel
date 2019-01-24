@@ -77,7 +77,7 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
     @Test
     public void testConcurrentConsumers() throws Exception {
         long start = System.currentTimeMillis();
-        context.startRoute("iron");
+        context.getRouteController().startRoute("iron");
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(NO_OF_MESSAGES);
         assertMockEndpointsSatisfied(4, TimeUnit.MINUTES);

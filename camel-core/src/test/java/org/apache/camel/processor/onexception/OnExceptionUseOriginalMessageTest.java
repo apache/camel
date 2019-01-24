@@ -22,16 +22,15 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.InputStreamCache;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
     
     private static final String HELLO_WORLD = "Hello World";
     
     private static final String TEST_STRING = "<firstName>James</firstName>";
 
+    @Test
     public void testOnExceptionError() throws Exception {
         getMockEndpoint("mock:middle").expectedBodiesReceived(HELLO_WORLD);
         getMockEndpoint("mock:middle").message(0).exchangeProperty(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
@@ -43,6 +42,7 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testOnExceptionStreamReset() throws Exception {
         
         getMockEndpoint("mock:middle").expectedMessageCount(1);

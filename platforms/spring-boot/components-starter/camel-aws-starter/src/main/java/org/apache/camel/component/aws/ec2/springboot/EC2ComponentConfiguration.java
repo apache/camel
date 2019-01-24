@@ -21,7 +21,6 @@ import com.amazonaws.services.ec2.AmazonEC2Client;
 import org.apache.camel.component.aws.ec2.EC2Operations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The aws-ec2 is used for managing Amazon EC2 instances.
@@ -34,6 +33,11 @@ public class EC2ComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the aws-ec2 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * The AWS EC2 default configuration
      */
@@ -104,7 +108,6 @@ public class EC2ComponentConfiguration
         /**
          * To use a existing configured AmazonEC2Client as client
          */
-        @NestedConfigurationProperty
         private AmazonEC2Client amazonEc2Client;
         /**
          * Amazon AWS Access Key
@@ -121,8 +124,17 @@ public class EC2ComponentConfiguration
          * unmonitorInstances, createTags or deleteTags
          */
         private EC2Operations operation;
+        /**
+         * To define a proxy host when instantiating the EC2 client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the EC2 client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which EC2 client needs to work
+         */
         private String region;
 
         public AmazonEC2Client getAmazonEc2Client() {

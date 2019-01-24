@@ -20,10 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaComponent;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ComponentResolvePropertyPlaceholdersTest extends ContextTestSupport {
 
     @Override
@@ -31,6 +29,7 @@ public class ComponentResolvePropertyPlaceholdersTest extends ContextTestSupport
         return false;
     }
 
+    @Test
     public void testPropertiesComponentEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

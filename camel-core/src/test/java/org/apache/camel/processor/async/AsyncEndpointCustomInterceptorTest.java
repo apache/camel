@@ -18,21 +18,22 @@ package org.apache.camel.processor.async;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 
 /**
  * Using a custom interceptor which is not a {@link org.apache.camel.AsyncProcessor} which Camel
  * detects and uses a bridge to adapt to so the asynchronous engine can still run. Albeit not
  * the most optimal solution but it runs. Camel will log a WARN so user can see the issue
  * and change his interceptor to comply.
- *
- * @version 
  */
 public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
 
@@ -40,6 +41,7 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
     private static String afterThreadName;
     private MyInterceptor interceptor = new MyInterceptor();
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
@@ -88,16 +90,15 @@ public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
     private static class MyInterceptor implements InterceptStrategy {
         private AtomicInteger counter = new AtomicInteger();
 
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,
+        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
 
-            return new Processor() {
-                public void process(Exchange exchange) throws Exception {
+            return new DelegateAsyncProcessor(target) {
+                public boolean process(final Exchange exchange, final AsyncCallback callback) {
                     // we just want to count number of interceptions
                     counter.incrementAndGet();
-
                     // and continue processing the exchange
-                    target.process(exchange);
+                    return super.process(exchange, callback);
                 }
             };
         }

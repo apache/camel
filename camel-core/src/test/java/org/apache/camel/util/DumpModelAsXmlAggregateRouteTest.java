@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
+import org.junit.Test;
 
 /**
  *
  */
 public class DumpModelAsXmlAggregateRouteTest extends ContextTestSupport {
 
+    @Test
     public void testDumpModelAsXml() throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);

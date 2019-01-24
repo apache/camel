@@ -25,21 +25,19 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.johnzon.mapper.Mapper;
 import org.apache.johnzon.mapper.MapperBuilder;
 import org.apache.johnzon.mapper.reflection.JohnzonParameterizedType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://johnzon.apache.org/">Johnzon</a> to marshal to and from JSON.
  */
+@Dataformat("json-johnzon")
 public class JohnzonDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JohnzonDataFormat.class);
 
     private CamelContext camelContext;
     private Mapper objectMapper;
@@ -209,7 +207,7 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
             if (ObjectHelper.isNotEmpty(attributeOrder)) {
                 builder.setAttributeOrder(attributeOrder);
             }
-            objectMapper = new MapperBuilder().build();
+            objectMapper = builder.build();
         }
     }
 

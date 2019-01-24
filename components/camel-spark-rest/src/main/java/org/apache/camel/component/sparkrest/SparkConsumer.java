@@ -18,7 +18,7 @@ package org.apache.camel.component.sparkrest;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 public class SparkConsumer extends DefaultConsumer {
 
@@ -53,7 +53,7 @@ public class SparkConsumer extends DefaultConsumer {
         boolean matchOnUriPrefix = getEndpoint().getSparkConfiguration().isMatchOnUriPrefix();
 
         if (accept != null) {
-            log.debug("Spark-rest: {}({}) accepting: {}", new Object[]{verb, path, accept});
+            log.debug("Spark-rest: {}({}) accepting: {}", verb, path, accept);
         } else {
             log.debug("Spark-rest: {}({})", verb, path);
         }

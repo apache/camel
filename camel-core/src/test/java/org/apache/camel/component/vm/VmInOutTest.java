@@ -17,12 +17,11 @@
 package org.apache.camel.component.vm;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class VmInOutTest extends AbstractVmTestSupport {
 
+    @Test
     public void testInOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

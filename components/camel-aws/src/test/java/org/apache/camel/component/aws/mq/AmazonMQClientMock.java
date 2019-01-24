@@ -21,7 +21,7 @@ import java.util.List;
 
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
-import com.amazonaws.services.mq.AmazonMQ;
+import com.amazonaws.services.mq.AbstractAmazonMQ;
 import com.amazonaws.services.mq.model.BrokerState;
 import com.amazonaws.services.mq.model.BrokerSummary;
 import com.amazonaws.services.mq.model.ConfigurationId;
@@ -60,7 +60,7 @@ import com.amazonaws.services.mq.model.UpdateConfigurationResult;
 import com.amazonaws.services.mq.model.UpdateUserRequest;
 import com.amazonaws.services.mq.model.UpdateUserResult;
 
-public class AmazonMQClientMock implements AmazonMQ {
+public class AmazonMQClientMock extends AbstractAmazonMQ {
 
     public AmazonMQClientMock() {
         super();
@@ -98,7 +98,11 @@ public class AmazonMQClientMock implements AmazonMQ {
 
     @Override
     public DescribeBrokerResult describeBroker(DescribeBrokerRequest describeBrokerRequest) {
-        throw new UnsupportedOperationException();
+        DescribeBrokerResult result = new DescribeBrokerResult();
+        result.setBrokerId("1");
+        result.setBrokerName("Test");
+        result.setBrokerState(BrokerState.RUNNING.toString());
+        return result;
     }
 
     @Override

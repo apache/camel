@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-test-karaf</artifactId>
@@ -39,7 +39,6 @@
     <label>testing,java,osgi</label>
 
     <karf-test-version>${karaf4-version}</karf-test-version>
-    <camel.osgi.export.pkg>org.apache.camel.test.karaf</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -97,7 +96,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -170,11 +169,10 @@
       <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <extensions>true</extensions>
           <configuration>
               <instructions>
                   <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                  <!-- Export-Package>org.apache.camel.test.karaf</Export-Package -->>
+                  <!-- Export-Package>org.apache.camel.test.karaf</Export-Package -->
                   <DynamicImport-Package>*</DynamicImport-Package>
                   <Import-Package/>
                   <_removeheaders>Import-Package, Private-Package, Include-Resource, Karaf-Info, Require-Capability</_removeheaders>

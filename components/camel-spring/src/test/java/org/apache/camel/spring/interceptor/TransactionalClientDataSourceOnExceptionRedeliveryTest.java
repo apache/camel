@@ -21,12 +21,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class TransactionalClientDataSourceOnExceptionRedeliveryTest extends TransactionalClientDataSourceTest {
 
+    @Test
     public void testTransactionRollbackWithExchange() throws Exception {
         Exchange out = template.send("direct:fail", new Processor() {
             public void process(Exchange exchange) throws Exception {

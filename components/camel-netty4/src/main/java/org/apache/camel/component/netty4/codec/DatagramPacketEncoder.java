@@ -25,9 +25,13 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Sharable
 public class DatagramPacketEncoder extends MessageToMessageEncoder<AddressedEnvelope<Object, InetSocketAddress>> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DatagramPacketEncoder.class);
 
     @Override
     protected void encode(ChannelHandlerContext ctx, AddressedEnvelope<Object, InetSocketAddress> msg, List<Object> out) throws Exception {
@@ -36,6 +40,8 @@ public class DatagramPacketEncoder extends MessageToMessageEncoder<AddressedEnve
             // Just wrap the message as DatagramPacket, need to make sure the message content is ByteBuf
             DatagramPacket dp = new DatagramPacket(payload.retain(), msg.recipient());
             out.add(dp);
+        } else {
+            LOG.debug("Ignoring message content as it is not an io.netty.buffer.ByteBuf instance.");
         }
     }
 

@@ -18,12 +18,11 @@ package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class CBRContainsIssueTest extends ContextTestSupport {
 
+    @Test
     public void testNot13() throws Exception {
         getMockEndpoint("mock:13").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
@@ -33,6 +32,7 @@ public class CBRContainsIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIs13() throws Exception {
         getMockEndpoint("mock:13").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -42,6 +42,7 @@ public class CBRContainsIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIs13Number() throws Exception {
         getMockEndpoint("mock:13").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -51,6 +52,7 @@ public class CBRContainsIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testContains13() throws Exception {
         getMockEndpoint("mock:13").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -60,6 +62,7 @@ public class CBRContainsIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testContains13Number() throws Exception {
         getMockEndpoint("mock:13").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -69,6 +72,7 @@ public class CBRContainsIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testContainsNot13Number() throws Exception {
         getMockEndpoint("mock:13").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);

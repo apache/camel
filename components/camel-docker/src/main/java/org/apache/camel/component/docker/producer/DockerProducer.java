@@ -62,7 +62,7 @@ import org.apache.camel.component.docker.DockerEndpoint;
 import org.apache.camel.component.docker.DockerHelper;
 import org.apache.camel.component.docker.DockerOperation;
 import org.apache.camel.component.docker.exception.DockerException;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1019,7 +1019,7 @@ public class DockerProducer extends DefaultProducer {
      */
     private StopContainerCmd executeStopContainerRequest(DockerClient client, Message message) {
 
-        LOGGER.debug("Executing Docker Kill Container Request");
+        LOGGER.debug("Executing Docker Stop Container Request");
 
         String containerId = DockerHelper.getProperty(DockerConstants.DOCKER_CONTAINER_ID, configuration, message, String.class);
 

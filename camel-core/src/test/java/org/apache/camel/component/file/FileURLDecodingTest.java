@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.file.Paths;
 
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 
 public class FileURLDecodingTest extends ContextTestSupport {
@@ -35,48 +36,59 @@ public class FileURLDecodingTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory(TARGET_DIR);
         super.setUp();
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         context.stop();
         super.tearDown();
     }
     
+    @Test
     public void testSimpleFile() throws Exception {
         assertTargetFile("data.txt", "data.txt");
     }
     
+    @Test
     public void testFilePlus() throws Exception {
         assertTargetFile("data+.txt", "data .txt");
     }
     
+    @Test
     public void testFileSpace() throws Exception {
         assertTargetFile("data%20.txt", "data .txt");
     }
     
+    @Test
     public void testFile2B() throws Exception {
         assertTargetFile("data%2B.txt", "data .txt");
     }
+    @Test
     public void testFileRaw2B() throws Exception {
         assertTargetFile("RAW(data%2B.txt)", "data%2B.txt");
     }
 
+    @Test
     public void testFileRawPlus() throws Exception {
         assertTargetFile("RAW(data+.txt)", "data+.txt");
     }
    
+    @Test
     public void testFileRawSpace() throws Exception {
         assertTargetFile("RAW(data%20.txt)", "data%20.txt");
     }
 
+    @Test
     public void testFileRaw2520() throws Exception {
         assertTargetFile("RAW(data%2520.txt)", "data%2520.txt");
     }
     
+    @Test
     public void testFileWithTwoHundredPercent() throws Exception {
         assertTargetFile("RAW(data%%.txt)", "data%%.txt");
     }

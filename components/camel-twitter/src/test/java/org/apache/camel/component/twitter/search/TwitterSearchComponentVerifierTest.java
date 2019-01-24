@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.camel.ComponentVerifier;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.twitter.AbstractComponentVerifierTest;
 import org.apache.camel.component.twitter.AbstractTwitterComponent;
 import org.junit.Assert;
@@ -35,13 +35,13 @@ public class TwitterSearchComponentVerifierTest extends AbstractComponentVerifie
     @Test
     public void testEmptyConfiguration() {
         AbstractTwitterComponent component = context().getComponent(getComponentScheme(), AbstractTwitterComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         {
             // Parameters validation
-            ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, Collections.emptyMap());
+            ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, Collections.emptyMap());
 
-            Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+            Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
             Assert.assertEquals(5, result.getErrors().size());
 
             List<String> expected = new LinkedList<>();
@@ -51,7 +51,7 @@ public class TwitterSearchComponentVerifierTest extends AbstractComponentVerifie
             expected.add("accessToken");
             expected.add("accessTokenSecret");
 
-            for (ComponentVerifier.VerificationError error : result.getErrors()) {
+            for (ComponentVerifierExtension.VerificationError error : result.getErrors()) {
                 expected.removeAll(error.getParameterKeys());
             }
 
@@ -60,13 +60,13 @@ public class TwitterSearchComponentVerifierTest extends AbstractComponentVerifie
 
         {
             // Connectivity validation
-            ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.CONNECTIVITY, Collections.emptyMap());
+            ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, Collections.emptyMap());
 
-            Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+            Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
             Assert.assertEquals(1, result.getErrors().size());
-            Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
-            Assert.assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
-            Assert.assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof IllegalArgumentException);
+            Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, result.getErrors().get(0).getCode());
+            Assert.assertNotNull(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE));
+            Assert.assertTrue(result.getErrors().get(0).getDetails().get(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof IllegalArgumentException);
         }
     }
 }

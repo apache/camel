@@ -20,12 +20,13 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
-import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public class RecipientListWithInterceptorTest extends ContextTestSupport {
         private static final Logger LOGGER = LoggerFactory.getLogger(MyInterceptStrategy.class);
         private static int doneCount;
 
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,
+        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
                                                      final Processor target, final Processor nextTarget) throws Exception {
             if (definition instanceof RecipientListDefinition<?>) {
                 final DelegateAsyncProcessor delegateAsyncProcessor = new DelegateAsyncProcessor() {
@@ -65,6 +66,7 @@ public class RecipientListWithInterceptorTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testRecipientListOne() throws Exception {
         interceptStrategy.reset();
 
@@ -79,6 +81,7 @@ public class RecipientListWithInterceptorTest extends ContextTestSupport {
         assertEquals("Done method shall be called only once", 1, MyInterceptStrategy.doneCount);
     }
 
+    @Test
     public void testRecipientListTwo() throws Exception {
         interceptStrategy.reset();
 

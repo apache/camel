@@ -28,9 +28,11 @@ import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.junit.Test;
 
 public class TransformerBuilderTest extends TestSupport {
 
+    @Test
     public void testDataFormatTransformer() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
@@ -52,6 +54,7 @@ public class TransformerBuilderTest extends TestSupport {
         assertEquals(StringDataFormat.class, dataFormatType.getClass());
     }
 
+    @Test
     public void testEndpointTransformer() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
@@ -75,6 +78,7 @@ public class TransformerBuilderTest extends TestSupport {
         assertEquals("direct://transformer", sp.getEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testCustomTransformer() throws Exception {
         CamelContext ctx = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {

@@ -21,6 +21,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringWireTapUsingFireAndForgetTest extends ContextTestSupport {
@@ -29,6 +31,7 @@ public class SpringWireTapUsingFireAndForgetTest extends ContextTestSupport {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringWireTapUsingFireAndForgetTest.xml");
     }
 
+    @Test
     public void testFireAndForgetUsingExpression() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
@@ -50,6 +53,7 @@ public class SpringWireTapUsingFireAndForgetTest extends ContextTestSupport {
         assertEquals("direct://start", e2.getFromEndpoint().getEndpointUri());
     }
 
+    @Test
     public void testFireAndForgetUsingProcessor() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");

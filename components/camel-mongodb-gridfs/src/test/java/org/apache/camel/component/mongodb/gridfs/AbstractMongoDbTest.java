@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mongodb.gridfs;
-
-
 import com.mongodb.MongoClient;
 import com.mongodb.gridfs.GridFS;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -46,6 +44,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     }
     
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         mongo.close();
@@ -55,6 +54,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new AnnotationConfigApplicationContext(EmbedMongoConfiguration.class);
         CamelContext ctx = new SpringCamelContext(applicationContext);
+        ctx.init();
         PropertiesComponent pc = new PropertiesComponent("classpath:mongodb.test.properties");
         ctx.addComponent("properties", pc);
         return ctx;

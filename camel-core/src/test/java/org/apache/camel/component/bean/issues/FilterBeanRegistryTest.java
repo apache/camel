@@ -19,10 +19,8 @@ package org.apache.camel.component.bean.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FilterBeanRegistryTest extends ContextTestSupport {
 
     @Override
@@ -32,6 +30,7 @@ public class FilterBeanRegistryTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testMethodCallExp() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -52,6 +51,7 @@ public class FilterBeanRegistryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanLanguageExp() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

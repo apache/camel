@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.apns.model.ApnsConstants;
 import org.apache.camel.component.apns.model.MessageType;
 import org.apache.camel.component.apns.util.StringUtils;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 
 public class ApnsProducer extends DefaultProducer {

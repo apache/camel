@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.Comparator;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -24,14 +25,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.SortProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 
 /**
  * Sorts the contents of the message
@@ -63,35 +58,13 @@ public class SortDefinition<T> extends NoOutputExpressionNode {
     }
     
     @Override
-    public String getLabel() {
-        return "sort[" + getExpression() + "]";
+    public String getShortName() {
+        return "sort";
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // lookup in registry
-        if (ObjectHelper.isNotEmpty(comparatorRef)) {
-            comparator = routeContext.getCamelContext().getRegistry().lookupByNameAndType(comparatorRef, Comparator.class);
-        }
-
-        // if no comparator then default on to string representation
-        if (comparator == null) {
-            comparator = new Comparator<T>() {
-                public int compare(T o1, T o2) {
-                    return ObjectHelper.compare(o1, o2);
-                }
-            };
-        }
-
-        // if no expression provided then default to body expression
-        Expression exp;
-        if (getExpression() == null) {
-            exp = bodyExpression();
-        } else {
-            exp = getExpression().createExpression(routeContext);
-        }
-        return new SortProcessor<T>(exp, getComparator());
+    public String getLabel() {
+        return "sort[" + getExpression() + "]";
     }
 
     /**

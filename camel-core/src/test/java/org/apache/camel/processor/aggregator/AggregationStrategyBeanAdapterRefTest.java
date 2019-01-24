@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class AggregationStrategyBeanAdapterRefTest extends ContextTestSupport {
 
@@ -29,6 +30,7 @@ public class AggregationStrategyBeanAdapterRefTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testAggregate() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("ABC");
 

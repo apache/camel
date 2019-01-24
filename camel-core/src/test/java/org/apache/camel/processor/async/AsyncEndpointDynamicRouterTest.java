@@ -21,12 +21,14 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
 
     private static int invoked;
     private static List<String> bodies = new ArrayList<>();    
     
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

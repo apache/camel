@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.cassandra;
-
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.util.HeaderDto;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Test;
 
 import static org.junit.Assume.assumeTrue;
@@ -52,6 +52,7 @@ public class CassandraAggregationSerializedHeadersTest extends CamelTestSupport 
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         aggregationRepository.stop();

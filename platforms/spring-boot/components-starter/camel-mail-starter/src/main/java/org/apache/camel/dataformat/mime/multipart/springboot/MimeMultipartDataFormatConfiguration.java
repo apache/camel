@@ -34,6 +34,11 @@ public class MimeMultipartDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the mime-multipart data format.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Specify the subtype of the MIME Multipart. Default is mixed.
      */
     private String multipartSubType = "mixed";

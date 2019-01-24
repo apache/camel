@@ -18,11 +18,11 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.LogDebugBodyMaxCharsTest;
+import org.junit.Ignore;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
+@Ignore
 public class SpringLogDebugBodyMaxCharsTest extends LogDebugBodyMaxCharsTest {
 
     protected CamelContext createCamelContext() throws Exception {

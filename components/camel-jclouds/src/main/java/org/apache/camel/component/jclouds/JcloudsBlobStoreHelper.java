@@ -23,7 +23,6 @@ import java.util.List;
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.base.Strings;
-
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.util.BlobStoreUtils;

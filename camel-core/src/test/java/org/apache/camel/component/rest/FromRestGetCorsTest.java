@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.RestConfiguration;
+import org.junit.Test;
 
 public class FromRestGetCorsTest extends ContextTestSupport {
 
@@ -32,6 +33,7 @@ public class FromRestGetCorsTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testCors() throws Exception {
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);

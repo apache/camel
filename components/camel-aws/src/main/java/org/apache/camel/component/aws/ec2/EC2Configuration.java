@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class EC2Configuration implements Cloneable {
 
-    @UriPath(description = "Logical name") @Metadata(required = "true")
+    @UriPath(description = "Logical name") @Metadata(required = true)
     private String label;
     @UriParam(label = "producer")
     private AmazonEC2Client amazonEc2Client;
@@ -36,7 +36,7 @@ public class EC2Configuration implements Cloneable {
     @UriParam(label = "producer", secret = true)
     private String secretKey;
     @UriParam(label = "producer")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private EC2Operations operation;
     @UriParam(label = "producer")
     private String proxyHost;
@@ -91,35 +91,35 @@ public class EC2Configuration implements Cloneable {
         this.operation = operation;
     } 
     
-    /**
-     * To define a proxy host when instantiating the EC2 client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the EC2 client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the EC2 client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
     }
     
-    /**
-     * The region in which EC2 client needs to work
-     */
     public String getRegion() {
         return region;
     }
 
+    /**
+     * The region in which EC2 client needs to work
+     */
     public void setRegion(String region) {
         this.region = region;
     }

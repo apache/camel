@@ -16,8 +16,8 @@
  */
 package org.apache.camel.processor.enricher;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class SampleAggregator implements AggregationStrategy {
 

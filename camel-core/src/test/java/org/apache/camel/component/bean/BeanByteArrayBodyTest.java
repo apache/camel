@@ -18,9 +18,11 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class BeanByteArrayBodyTest extends ContextTestSupport {
 
+    @Test
     public void testByteArray() throws Exception {
         byte[] bytes = new byte[]{65, 66, 67};
 

@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.jasypt;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
-public class MainTest extends TestCase {
+public class MainTest extends Assert {
 
     @Test
     public void testMainShowOptions() throws Exception {

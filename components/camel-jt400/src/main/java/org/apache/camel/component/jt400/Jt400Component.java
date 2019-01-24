@@ -20,9 +20,10 @@ import java.util.Map;
 
 import com.ibm.as400.access.AS400ConnectionPool;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,8 @@ import org.slf4j.LoggerFactory;
  * 
  * Current implementation supports working with data queues (*DTAQ) and Program calls (*PGM)
  */
-public class Jt400Component extends UriEndpointComponent {
+@Component("jt400")
+public class Jt400Component extends DefaultComponent {
     
     /**
      * Name of the connection pool URI option.
@@ -53,7 +55,7 @@ public class Jt400Component extends UriEndpointComponent {
     private AS400ConnectionPool connectionPool;
 
     public Jt400Component() {
-        super(Jt400Endpoint.class);
+        super();
     }
 
     @Override
@@ -100,7 +102,7 @@ public class Jt400Component extends UriEndpointComponent {
     protected void doShutdown() throws Exception {
         super.doShutdown();
         if (connectionPool != null) {
-            LOG.info("Shutting down the default connection pool " + connectionPool + " ...");
+            LOG.info("Shutting down the default connection pool {} ...", connectionPool);
             connectionPool.close();
             connectionPool = null;
         }

@@ -15,34 +15,40 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-
 import java.util.Map;
 
-import junit.framework.TestCase;
 import org.apache.camel.NoSuchBeanException;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class SimpleRegistryTest extends TestCase {
+public class SimpleRegistryTest extends Assert {
 
     private SimpleRegistry registry;
     
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         registry = new SimpleRegistry();
         registry.put("a", "b");
         registry.put("c", 1);
     }
 
+    @Test
     public void testLookupByName() {
         assertEquals("b", registry.lookupByName("a"));
     }
 
+    @Test
     public void testLookupByWrongName() {
         assertNull(registry.lookupByName("x"));
     }
 
+    @Test
     public void testLookupByNameAndType() {
         assertEquals("b", registry.lookupByNameAndType("a", String.class));
     }
 
+    @Test
     public void testLookupByNameAndWrongType() {
         try {
             registry.lookupByNameAndType("a", Float.class);
@@ -54,6 +60,7 @@ public class SimpleRegistryTest extends TestCase {
         }
     }
     
+    @Test
     public void testLookupByType() {
         Map<?, ?> map = registry.findByTypeWithName(String.class);
         assertEquals(1, map.size());
@@ -64,6 +71,7 @@ public class SimpleRegistryTest extends TestCase {
         assertEquals(1, map.get("c"));
     }
  
+    @Test
     public void testLookupByWrongType() {
         Map<?, ?> map = registry.findByTypeWithName(Float.class);
         assertEquals(0, map.size());

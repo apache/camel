@@ -34,7 +34,6 @@ import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecremen
 import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.field.DeliverToCompID;
 import quickfix.field.MsgType;
 import quickfix.fix42.Email;
@@ -102,7 +101,7 @@ public class DynamicRoutingExample {
         
         LOG.info("Sending routed message");
         
-        Exchange exchange = producer.createExchange(ExchangePattern.InOnly);
+        Exchange exchange = producer.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(email);
         producer.process(exchange);            
 

@@ -20,9 +20,6 @@ import org.apache.camel.spring.javaconfig.Main;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class IntegrationTest extends Assert {
     
     @Test

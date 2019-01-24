@@ -75,7 +75,7 @@ public class BasicSubscriberTest extends CamelTestSupport {
                         .to("mock:sub2");
 
                 from("timer:tick?period=50")
-                        .setBody().simple("random(500)")
+                        .setBody().simple("${random(500)}")
                         .wireTap("mock:sub3")
                         .to("reactive-streams:pub");
             }

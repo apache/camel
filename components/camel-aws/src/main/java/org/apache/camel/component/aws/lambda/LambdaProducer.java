@@ -25,9 +25,13 @@ import java.util.Map;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.lambda.AWSLambda;
+import com.amazonaws.services.lambda.model.CreateEventSourceMappingRequest;
+import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeadLetterConfig;
+import com.amazonaws.services.lambda.model.DeleteEventSourceMappingRequest;
+import com.amazonaws.services.lambda.model.DeleteEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionRequest;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.Environment;
@@ -36,20 +40,21 @@ import com.amazonaws.services.lambda.model.GetFunctionRequest;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
+import com.amazonaws.services.lambda.model.ListEventSourceMappingsRequest;
+import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.TracingConfig;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeRequest;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.services.lambda.model.VpcConfig;
 import com.amazonaws.util.IOUtils;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
 
@@ -58,8 +63,6 @@ import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageFo
  * href="https://aws.amazon.com/lambda/">AWS Lambda</a>
  */
 public class LambdaProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(LambdaProducer.class);
 
     public LambdaProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -86,6 +89,15 @@ public class LambdaProducer extends DefaultProducer {
         case updateFunction:
             updateFunction(getEndpoint().getAwsLambdaClient(), exchange);
             break;
+        case createEventSourceMapping:
+            createEventSourceMapping(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case deleteEventSourceMapping:
+            deleteEventSourceMapping(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case listEventSourceMapping:
+            listEventSourceMapping(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
         }
@@ -96,7 +108,7 @@ public class LambdaProducer extends DefaultProducer {
         try {
             result = lambdaClient.getFunction(new GetFunctionRequest().withFunctionName(getConfiguration().getFunction()));
         } catch (AmazonServiceException ase) {
-            LOG.trace("getFunction command returned the error code {}", ase.getErrorCode());
+            log.trace("getFunction command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -108,7 +120,7 @@ public class LambdaProducer extends DefaultProducer {
         try {
             result = lambdaClient.deleteFunction(new DeleteFunctionRequest().withFunctionName(getConfiguration().getFunction()));
         } catch (AmazonServiceException ase) {
-            LOG.trace("deleteFunction command returned the error code {}", ase.getErrorCode());
+            log.trace("deleteFunction command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -120,7 +132,7 @@ public class LambdaProducer extends DefaultProducer {
         try {
             result = lambdaClient.listFunctions();
         } catch (AmazonServiceException ase) {
-            LOG.trace("listFunctions command returned the error code {}", ase.getErrorCode());
+            log.trace("listFunctions command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -135,7 +147,7 @@ public class LambdaProducer extends DefaultProducer {
                 .withPayload(exchange.getIn().getBody(String.class));
             result = lambdaClient.invoke(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("invokeFunction command returned the error code {}", ase.getErrorCode());
+            log.trace("invokeFunction command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -269,7 +281,7 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.createFunction(request);
 
         } catch (AmazonServiceException ase) {
-            LOG.trace("createFunction command returned the error code {}", ase.getErrorCode());
+            log.trace("createFunction command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
 
@@ -333,10 +345,90 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.updateFunctionCode(request);
 
         } catch (AmazonServiceException ase) {
-            LOG.trace("updateFunction command returned the error code {}", ase.getErrorCode());
+            log.trace("updateFunction command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
 
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void createEventSourceMapping(AWSLambda lambdaClient, Exchange exchange) {
+        CreateEventSourceMappingResult result;
+        try {
+            CreateEventSourceMappingRequest request = new CreateEventSourceMappingRequest().withFunctionName(getConfiguration().getFunction());
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_ARN))) {
+                request.withEventSourceArn(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_ARN, String.class));
+            } else {
+                throw new IllegalArgumentException("Event Source Arn must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_BATCH_SIZE))) {
+                Integer batchSize = exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_BATCH_SIZE, Integer.class);
+                request.withBatchSize(batchSize);
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT, Integer.class);
+                request.withSdkClientExecutionTimeout(timeout);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT, Integer.class);
+                request.withSdkRequestTimeout(timeout);
+            }
+            result = lambdaClient.createEventSourceMapping(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("createEventSourceMapping command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void deleteEventSourceMapping(AWSLambda lambdaClient, Exchange exchange) {
+        DeleteEventSourceMappingResult result;
+        try {
+            DeleteEventSourceMappingRequest request = new DeleteEventSourceMappingRequest();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_UUID))) {
+                request.withUUID(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_UUID, String.class));
+            } else {
+                throw new IllegalArgumentException("Event Source Arn must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT, Integer.class);
+                request.withSdkClientExecutionTimeout(timeout);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT, Integer.class);
+                request.withSdkRequestTimeout(timeout);
+            }
+            result = lambdaClient.deleteEventSourceMapping(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("deleteEventSourceMapping command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void listEventSourceMapping(AWSLambda lambdaClient, Exchange exchange) {
+        ListEventSourceMappingsResult result;
+        try {
+            ListEventSourceMappingsRequest request = new ListEventSourceMappingsRequest().withFunctionName(getConfiguration().getFunction());
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT, Integer.class);
+                request.withSdkClientExecutionTimeout(timeout);
+            }
+
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT))) {
+                Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_REQUEST_TIMEOUT, Integer.class);
+                request.withSdkRequestTimeout(timeout);
+            }
+            result = lambdaClient.listEventSourceMappings(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("listEventSourceMapping command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }

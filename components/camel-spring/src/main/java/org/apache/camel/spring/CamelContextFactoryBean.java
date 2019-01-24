@@ -19,6 +19,7 @@ package org.apache.camel.spring;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,6 +31,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TypeConverterExists;
@@ -52,7 +54,6 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
-import org.apache.camel.model.PropertiesDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
@@ -69,8 +70,7 @@ import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer;
 import org.apache.camel.spring.spi.XmlCamelContextConfigurer;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +86,7 @@ import org.springframework.context.Phased;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.Ordered;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * CamelContext using XML configuration.
@@ -122,9 +122,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String autoStartup;
     @XmlAttribute @Metadata(defaultValue = "true")
     private String shutdownEager;
-    @XmlAttribute @Metadata(defaultValue = "false")
-    @Deprecated
-    private String registerEndpointIdsFromRoute;
     @XmlAttribute
     private String useMDCLogging;
     @XmlAttribute
@@ -143,9 +140,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private ShutdownRoute shutdownRoute;
     @XmlAttribute @Metadata(defaultValue = "CompleteCurrentTaskOnly")
     private ShutdownRunningTask shutdownRunningTask;
-    @XmlAttribute
-    @Deprecated  @Metadata(defaultValue = "false")
-    private Boolean lazyLoadTypeConverters;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean loadTypeConverters;
     @XmlAttribute
@@ -154,9 +148,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private TypeConverterExists typeConverterExists;
     @XmlAttribute @Metadata(defaultValue = "WARN")
     private LoggingLevel typeConverterExistsLoggingLevel;
-    @Deprecated
-    @XmlElement(name = "properties")
-    private PropertiesDefinition properties;
     @XmlElement(name = "globalOptions")
     private GlobalOptionsDefinition globalOptions;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class)
@@ -304,17 +295,17 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
         Boolean shutdownEager = CamelContextHelper.parseBoolean(getContext(), getShutdownEager());
         if (shutdownEager != null) {
-            LOG.debug("Using shutdownEager: " + shutdownEager);
+            LOG.debug("Using shutdownEager: {}", shutdownEager);
             getContext().setShutdownEager(shutdownEager);
         }
 
-        LOG.debug("afterPropertiesSet() took {} millis", watch.stop());
+        LOG.debug("afterPropertiesSet() took {} millis", watch.taken());
     }
 
     protected void initCustomRegistry(SpringCamelContext context) {
         Registry registry = getBeanForType(Registry.class);
         if (registry != null) {
-            LOG.info("Using custom Registry: " + registry);
+            LOG.info("Using custom Registry: {}", registry);
             context.setRegistry(registry);
         }
     }
@@ -328,7 +319,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             // setup properties component that uses this beans
             BridgePropertyPlaceholderConfigurer configurer = beans.values().iterator().next();
             String id = beans.keySet().iterator().next();
-            LOG.info("Bridging Camel and Spring property placeholder configurer with id: " + id);
+            LOG.info("Bridging Camel and Spring property placeholder configurer with id: {}", id);
 
             // get properties component
             PropertiesComponent pc = (PropertiesComponent) getContext().getComponent("properties", false);
@@ -466,7 +457,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             }
         } catch (Exception e) {
             // error during configuration
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
     }
 
@@ -478,6 +469,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         if (context == null && create) {
             context = createContext();
             configure(context);
+            context.init();
         }
         return context;
     }
@@ -567,25 +559,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.interceptSendToEndpoints = interceptSendToEndpoints;
     }
 
-    @Deprecated
-    public PropertiesDefinition getProperties() {
-        return properties;
-    }
-
     @Override
     public GlobalOptionsDefinition getGlobalOptions() {
         return globalOptions;
-    }
-
-    /**
-     * Configuration of CamelContext properties such as limit of debug logging
-     * and other general options.
-     * 
-     * @deprecated Use {@link GlobalOptionsDefinition} instead.
-     */
-    @Deprecated
-    public void setProperties(PropertiesDefinition properties) {
-        this.properties = properties;
     }
 
     /**
@@ -764,7 +740,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      * <b>Note:</b> When setting auto startup <tt>false</tt> on {@link CamelContext} then that takes precedence
      * and <i>no</i> routes is started. You would need to start {@link CamelContext} explicit using
      * the {@link org.apache.camel.CamelContext#start()} method, to start the context, and then
-     * you would need to start the routes manually using {@link CamelContext#startRoute(String)}.
+     * you would need to start the routes manually using {@link org.apache.camel.spi.RouteController#startRoute(String)}.
      */
     public void setAutoStartup(String autoStartup) {
         this.autoStartup = autoStartup;
@@ -781,19 +757,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setShutdownEager(String shutdownEager) {
         this.shutdownEager = shutdownEager;
-    }
-
-    public String getRegisterEndpointIdsFromRoute() {
-        return registerEndpointIdsFromRoute;
-    }
-
-    /**
-     * Sets whether to register endpoints that has id attribute assigned in the Spring registry.
-     * <p/>
-     * This mode is by default false, but can be turned on for backwards compatibility.
-     */
-    public void setRegisterEndpointIdsFromRoute(String registerEndpointIdsFromRoute) {
-        this.registerEndpointIdsFromRoute = registerEndpointIdsFromRoute;
     }
 
     public String getUseMDCLogging() {
@@ -888,19 +851,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setThreadNamePattern(String threadNamePattern) {
         this.threadNamePattern = threadNamePattern;
-    }
-
-    @Deprecated
-    public Boolean getLazyLoadTypeConverters() {
-        return lazyLoadTypeConverters;
-    }
-
-    /**
-     * Sets whether type converters should be loaded lazy
-     */
-    @Deprecated
-    public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
-        this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }
 
     @Override

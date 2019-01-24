@@ -60,7 +60,6 @@ import org.osgi.framework.SynchronousBundleListener;
  * thread-safe.
  * 
  * @ThreadSafe
- * @version 
  * @since 1.4
  */
 public class BundleTracker implements BundleTrackerCustomizer {

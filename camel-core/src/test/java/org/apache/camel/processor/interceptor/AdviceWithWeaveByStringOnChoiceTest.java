@@ -19,14 +19,17 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
 /**
  * This test ensures non-regression for bug CAMEL-10322.
  */
 public class AdviceWithWeaveByStringOnChoiceTest extends ContextTestSupport {
 
+    @Test
     public void testWeaveByToStringShoultNotThrowUnsupportedOperationException() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString(".*mock:foo.*").replace().to("mock:bar");

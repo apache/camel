@@ -26,17 +26,10 @@ import org.apache.camel.Producer;
 /**
  * An {@link java.lang.reflect.InvocationHandler} which invokes a message
  * exchange on a camel {@link Endpoint}
- * 
- * @version
  */
 public class CamelInvocationHandler extends AbstractCamelInvocationHandler implements InvocationHandler {
     private final MethodInfoCache methodInfoCache;
     private final boolean binding;
-
-    @Deprecated
-    public CamelInvocationHandler(Endpoint endpoint, Producer producer, MethodInfoCache methodInfoCache) {
-        this(endpoint, false, producer, methodInfoCache);
-    }
 
     public CamelInvocationHandler(Endpoint endpoint, boolean binding, Producer producer, MethodInfoCache methodInfoCache) {
         super(endpoint, producer);

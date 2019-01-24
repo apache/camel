@@ -25,9 +25,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version
- */
 public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends CamelTestSupport {
 
     @Test
@@ -35,7 +32,7 @@ public class JmsRequestReplyExclusiveReplyToRemoveAddRouteTest extends CamelTest
         assertEquals("Hello A", template.requestBody("direct:start", "A"));
 
         // stop and remove route
-        context.stopRoute("start");
+        context.getRouteController().stopRoute("start");
         context.removeRoute("start");
 
         // add new route using same jms endpoint uri

@@ -16,22 +16,18 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultClaimCheckRepository;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.ClaimCheckRepository;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ClaimCheck EIP implementation.
@@ -41,9 +37,8 @@ import org.slf4j.LoggerFactory;
  * This guards against concurrent and thread-safe issues. For off-memory persistent storage of data, then use
  * any of the many Camel components that support persistent storage, and do not use this Claim Check EIP implementation.
  */
-public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcessor, IdAware, CamelContextAware {
+public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAware, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ClaimCheckProcessor.class);
     private CamelContext camelContext;
     private String id;
     private String operation;
@@ -103,10 +98,6 @@ public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcesso
         this.filter = filter;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // the repository is scoped per exchange
@@ -122,13 +113,13 @@ public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcesso
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
                 boolean addedNew = repo.add(key, copy);
                 if (addedNew) {
-                    LOG.debug("Add: {} -> {}", key, copy);
+                    log.debug("Add: {} -> {}", key, copy);
                 } else {
-                    LOG.debug("Override: {} -> {}", key, copy);
+                    log.debug("Override: {} -> {}", key, copy);
                 }
             } else if ("Get".equals(operation)) {
                 Exchange copy = repo.get(key);
-                LOG.debug("Get: {} -> {}", key, exchange);
+                log.debug("Get: {} -> {}", key, exchange);
                 if (copy != null) {
                     Exchange result = aggregationStrategy.aggregate(exchange, copy);
                     if (result != null) {
@@ -137,7 +128,7 @@ public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcesso
                 }
             } else if ("GetAndRemove".equals(operation)) {
                 Exchange copy = repo.getAndRemove(key);
-                LOG.debug("GetAndRemove: {} -> {}", key, exchange);
+                log.debug("GetAndRemove: {} -> {}", key, exchange);
                 if (copy != null) {
                     // prepare the exchanges for aggregation
                     ExchangeHelper.prepareAggregation(exchange, copy);
@@ -149,11 +140,11 @@ public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcesso
             } else if ("Push".equals(operation)) {
                 // copy exchange, and do not share the unit of work
                 Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);
-                LOG.debug("Push: {} -> {}", key, copy);
+                log.debug("Push: {} -> {}", key, copy);
                 repo.push(copy);
             } else if ("Pop".equals(operation)) {
                 Exchange copy = repo.pop();
-                LOG.debug("Pop: {} -> {}", key, exchange);
+                log.debug("Pop: {} -> {}", key, exchange);
                 if (copy != null) {
                     // prepare the exchanges for aggregation
                     ExchangeHelper.prepareAggregation(exchange, copy);
@@ -182,12 +173,12 @@ public class ClaimCheckProcessor extends ServiceSupport implements AsyncProcesso
             ((CamelContextAware) aggregationStrategy).setCamelContext(camelContext);
         }
 
-        ServiceHelper.startServices(aggregationStrategy);
+        ServiceHelper.startService(aggregationStrategy);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(aggregationStrategy);
+        ServiceHelper.stopService(aggregationStrategy);
     }
 
     @Override

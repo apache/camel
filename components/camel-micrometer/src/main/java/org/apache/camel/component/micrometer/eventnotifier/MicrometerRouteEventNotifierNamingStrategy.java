@@ -17,10 +17,12 @@
 package org.apache.camel.component.micrometer.eventnotifier;
 
 import java.util.function.Predicate;
+
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.CamelContext;
-import org.apache.camel.management.event.AbstractRouteEvent;
+import org.apache.camel.spi.CamelEvent.RouteEvent;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_ADDED;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_ROUTES_RUNNING;
@@ -49,6 +51,6 @@ public interface MicrometerRouteEventNotifierNamingStrategy {
         return Tags.of(
                 SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName(),
                 CAMEL_CONTEXT_TAG, camelContext.getName(),
-                EVENT_TYPE_TAG, AbstractRouteEvent.class.getSimpleName());
+                EVENT_TYPE_TAG, RouteEvent.class.getSimpleName());
     }
 }

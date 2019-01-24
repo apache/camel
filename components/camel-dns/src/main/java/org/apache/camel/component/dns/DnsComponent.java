@@ -19,7 +19,8 @@ package org.apache.camel.component.dns;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * This is a component for Camel to run DNS queries, using DNSJava.
@@ -67,10 +68,10 @@ import org.apache.camel.impl.UriEndpointComponent;
  * <p/>
  * </p>
  */
-public class DnsComponent extends UriEndpointComponent {
+@Component("dns")
+public class DnsComponent extends DefaultComponent {
 
     public DnsComponent() {
-        super(DnsEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

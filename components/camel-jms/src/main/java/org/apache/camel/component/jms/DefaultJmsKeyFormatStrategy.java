@@ -22,8 +22,6 @@ import org.apache.camel.util.StringHelper;
  * Default strategy that handles dots and hyphens.
  * <p/>
  * This can be used for sending keys containing package names that is common by Java frameworks.
- *
- * @version 
  */
 public class DefaultJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
 

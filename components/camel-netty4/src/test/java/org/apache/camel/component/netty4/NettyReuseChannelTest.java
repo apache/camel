@@ -26,9 +26,6 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class NettyReuseChannelTest extends BaseNettyTest {
 
     private final List<Channel> channels = new ArrayList<>();

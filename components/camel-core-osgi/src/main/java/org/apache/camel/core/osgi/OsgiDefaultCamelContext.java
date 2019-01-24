@@ -20,19 +20,18 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.LoadPropertiesException;
 import org.osgi.framework.BundleContext;
 
 public class OsgiDefaultCamelContext extends DefaultCamelContext {
 
     private final BundleContext bundleContext;
-    private final Registry registry;
 
     public OsgiDefaultCamelContext(BundleContext bundleContext) {
         this(bundleContext, new OsgiServiceRegistry(bundleContext));
@@ -41,7 +40,7 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
     public OsgiDefaultCamelContext(BundleContext bundleContext, Registry registry) {
         super(registry);
         this.bundleContext = bundleContext;
-        this.registry = registry;
+        setRegistry(OsgiCamelContextHelper.wrapRegistry(this, registry, bundleContext));
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
         // setup the application context classloader with the bundle classloader
         setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
@@ -50,15 +49,6 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
     @Override
     public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
         return BundleContextUtils.findComponents(bundleContext, this);
-    }
-
-    @Override
-    protected Registry createRegistry() {
-        if (registry != null) {
-            return OsgiCamelContextHelper.wrapRegistry(this, registry, bundleContext);
-        } else {
-            return OsgiCamelContextHelper.wrapRegistry(this, super.createRegistry(), bundleContext);
-        }
     }
 
     @Override

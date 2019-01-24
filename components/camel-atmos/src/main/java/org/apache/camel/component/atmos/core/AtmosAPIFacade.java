@@ -242,7 +242,7 @@ public final class AtmosAPIFacade {
                     //get the baos of the file
                     downloadSingleFile(atmosEntry.getPath().concat(entry.getFilename()), resultEntries);
                 } catch (AtmosException e) {
-                    LOG.warn("Cannot download from " + entry.getFilename());
+                    LOG.warn("Cannot download from {}", entry.getFilename());
                 }
             } else {
                 //iterate on folder

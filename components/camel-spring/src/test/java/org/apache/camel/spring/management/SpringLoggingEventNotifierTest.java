@@ -21,9 +21,6 @@ import org.apache.camel.management.LoggingEventNotifierTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringLoggingEventNotifierTest extends LoggingEventNotifierTest {
 
     @Override

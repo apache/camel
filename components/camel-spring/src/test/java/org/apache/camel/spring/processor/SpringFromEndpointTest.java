@@ -18,11 +18,9 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.FromEndpointTest;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringFromEndpointTest extends FromEndpointTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {

@@ -32,20 +32,20 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReloadStrategy;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Base class for main implementations to allow starting up a JVM with Camel embedded.
- *
- * @version 
  */
 public abstract class MainSupport extends ServiceSupport {
     protected static final Logger LOG = LoggerFactory.getLogger(MainSupport.class);
@@ -70,6 +70,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected boolean hangupInterceptorEnabled = true;
     protected int durationHitExitCode = DEFAULT_EXIT_CODE;
     protected ReloadStrategy reloadStrategy;
+    protected String propertyPlaceholderLocations;
 
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
@@ -177,7 +178,7 @@ public abstract class MainSupport extends ServiceSupport {
                 afterStop();
             } catch (Exception e) {
                 // however while running then just log errors
-                LOG.error("Failed: " + e, e);
+                LOG.error("Failed: {}", e, e);
             }
         }
     }
@@ -192,10 +193,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     /**
      * Hangup support is enabled by default.
-     *
-     * @deprecated is enabled by default now, so no longer need to call this method.
      */
-    @Deprecated
     public void enableHangupSupport() {
         hangupInterceptorEnabled = true;
     }
@@ -448,6 +446,18 @@ public abstract class MainSupport extends ServiceSupport {
         this.reloadStrategy = reloadStrategy;
     }
 
+    public String getPropertyPlaceholderLocations() {
+        return propertyPlaceholderLocations;
+    }
+
+    /**
+     * A list of locations to load properties. You can use comma to separate multiple locations.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    public void setPropertyPlaceholderLocations(String location) {
+        this.propertyPlaceholderLocations = location;
+    }
+
     public boolean isTrace() {
         return trace;
     }
@@ -525,7 +535,7 @@ public abstract class MainSupport extends ServiceSupport {
     public List<RouteDefinition> getRouteDefinitions() {
         List<RouteDefinition> answer = new ArrayList<>();
         for (CamelContext camelContext : camelContexts) {
-            answer.addAll(camelContext.getRouteDefinitions());
+            answer.addAll(camelContext.adapt(ModelCamelContext.class).getRouteDefinitions());
         }
         return answer;
     }
@@ -568,6 +578,10 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
+        if (propertyPlaceholderLocations != null) {
+            PropertiesComponent pc = camelContext.getPropertiesComponent();
+            pc.setLocation(propertyPlaceholderLocations);
+        }
         if (trace) {
             camelContext.setTracing(true);
         }
@@ -584,7 +598,7 @@ public abstract class MainSupport extends ServiceSupport {
             }
 
             // skip already managed services, for example if a route has been restarted
-            if (camelContext.getManagementStrategy().isManaged(managedObject, null)) {
+            if (camelContext.getManagementStrategy().isManaged(managedObject)) {
                 LOG.trace("The service is already managed: {}", reload);
                 return;
             }

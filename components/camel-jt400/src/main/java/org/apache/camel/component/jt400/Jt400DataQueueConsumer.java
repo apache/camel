@@ -24,7 +24,7 @@ import com.ibm.as400.access.KeyedDataQueueEntry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * A scheduled {@link org.apache.camel.Consumer} that polls a data queue for data

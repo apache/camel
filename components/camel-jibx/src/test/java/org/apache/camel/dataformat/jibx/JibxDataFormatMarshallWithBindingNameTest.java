@@ -35,9 +35,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 
-/**
- * @version
- */
 public class JibxDataFormatMarshallWithBindingNameTest extends CamelTestSupport {
     private static final String BINDING_NAME = "purchaseOrder-jibx";
 

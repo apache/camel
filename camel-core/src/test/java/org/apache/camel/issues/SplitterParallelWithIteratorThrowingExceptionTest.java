@@ -22,6 +22,7 @@ import java.util.function.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * Tests the issue stated in
@@ -29,6 +30,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
  */
 public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testIteratorThrowExceptionOnFirst() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(0);
         getMockEndpoint("mock:end").expectedMessageCount(0);
@@ -44,6 +46,7 @@ public class SplitterParallelWithIteratorThrowingExceptionTest extends ContextTe
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIteratorThrowExceptionOnSecond() throws Exception {
         getMockEndpoint("mock:line").expectedMessageCount(1);
         getMockEndpoint("mock:end").expectedMessageCount(0);

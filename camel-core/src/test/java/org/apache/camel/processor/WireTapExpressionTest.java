@@ -18,14 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Wire tap unit test
- *
- * @version 
  */
 public class WireTapExpressionTest extends ContextTestSupport {
 
+    @Test
     public void testWireTapExpression() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");

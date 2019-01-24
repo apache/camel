@@ -17,12 +17,10 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringCamelContextDependsOnTest extends SpringTestSupport {
 
     @Override
@@ -30,6 +28,7 @@ public class SpringCamelContextDependsOnTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextDependsOnTest.xml");
     }
 
+    @Test
     public void testDependsOn() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

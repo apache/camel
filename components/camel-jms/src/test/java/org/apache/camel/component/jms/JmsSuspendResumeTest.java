@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -27,9 +28,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsSuspendResumeTest extends CamelTestSupport {
 
     @Test
@@ -41,7 +39,7 @@ public class JmsSuspendResumeTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
 
         resetMocks();
         mock.expectedMessageCount(0);
@@ -56,7 +54,7 @@ public class JmsSuspendResumeTest extends CamelTestSupport {
         resetMocks();
         mock.expectedBodiesReceived("Bye World");
 
-        context.resumeRoute("foo");
+        context.getRouteController().resumeRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

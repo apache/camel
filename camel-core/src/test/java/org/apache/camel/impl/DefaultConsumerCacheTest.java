@@ -19,14 +19,13 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultConsumerCacheTest extends ContextTestSupport {
 
+    @Test
     public void testCacheConsumers() throws Exception {
-        ConsumerCache cache = new ConsumerCache(this, context);
+        DefaultConsumerCache cache = new DefaultConsumerCache(this, context, 0);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());
@@ -34,7 +33,7 @@ public class DefaultConsumerCacheTest extends ContextTestSupport {
         // test that we cache at most 1000 consumers to avoid it eating to much memory
         for (int i = 0; i < 1003; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
-            PollingConsumer p = cache.getConsumer(e);
+            PollingConsumer p = cache.acquirePollingConsumer(e);
             assertNotNull("the polling consumer should not be null", p);
         }
 

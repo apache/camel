@@ -18,12 +18,14 @@ package org.apache.camel.builder.xml;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class XPathContentBasedRouterTest extends ContextTestSupport {
 
+    @Test
     public void testXPathContentBasedRouter() throws Exception {
         getMockEndpoint("mock:english").expectedBodiesReceived("<hello/>");
         getMockEndpoint("mock:dutch").expectedBodiesReceived("<hallo/>");

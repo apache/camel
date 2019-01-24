@@ -1,0 +1,57 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.reifier;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.model.InterceptFromDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.SetHeaderDefinition;
+import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.ExpressionAdapter;
+
+class InterceptFromReifier extends InterceptReifier<InterceptFromDefinition> {
+
+    InterceptFromReifier(ProcessorDefinition<?> definition) {
+        super((InterceptFromDefinition) definition);
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        // insert a set header definition so we can set the intercepted endpoint uri as a header
+        // this allows us to use the same header for both the interceptFrom and interceptSendToEndpoint
+        SetHeaderDefinition headerDefinition = new SetHeaderDefinition(Exchange.INTERCEPTED_ENDPOINT, new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange, Class type) {
+                if (exchange.getFromEndpoint() != null) {
+                    return exchange.getFromEndpoint().getEndpointUri();
+                } else {
+                    return null;
+                }
+            }
+
+            public String toString() {
+                return "";
+            }
+        });
+        definition.getOutputs().add(0, headerDefinition);
+
+        return this.createChildProcessor(routeContext, true);
+    }
+
+
+}

@@ -54,7 +54,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
         // a scanStream=true is never finished
         mock.message(1).header(StreamConstants.STREAM_COMPLETE).isEqualTo(false);
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         FileOutputStream fos = new FileOutputStream(file);
         try {
@@ -82,7 +82,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
             fos.write("Hello\nWorld\n".getBytes());
             Thread.sleep(150);
 
-            context.startAllRoutes();
+            context.getRouteController().startAllRoutes();
 
             // roll-over file
             Thread.sleep(1500);
@@ -106,7 +106,7 @@ public class ScanStreamFileTest extends CamelTestSupport {
         FileOutputStream fos = refreshFile(null);
         try {
             fos.write("Hello\nthere\nWorld\n!\n".getBytes());
-            context.startAllRoutes();
+            context.getRouteController().startAllRoutes();
             // ensure it does not read the file again
             Thread.sleep(1000);
         } finally {

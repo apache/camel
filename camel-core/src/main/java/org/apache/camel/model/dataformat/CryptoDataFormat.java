@@ -18,6 +18,7 @@ package org.apache.camel.model.dataformat;
 
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,13 +29,11 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Crypto data format is used for encrypting and decrypting of messages using Java Cryptographic Extension.
- *
- * @version
  */
 @Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,security", title = "Crypto (Java Cryptographic Extension)")
 @XmlRootElement(name = "crypto")

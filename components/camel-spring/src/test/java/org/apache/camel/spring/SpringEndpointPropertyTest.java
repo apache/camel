@@ -17,12 +17,10 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringEndpointPropertyTest extends SpringTestSupport {
 
     @Override
@@ -32,6 +30,7 @@ public class SpringEndpointPropertyTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/SpringEndpointPropertyTest.xml");
     }
 
+    @Test
     public void testEndpointProperty() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(2);
         template.sendBody("ref:foo", "Hello World");

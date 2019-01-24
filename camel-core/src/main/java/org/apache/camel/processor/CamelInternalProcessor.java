@@ -31,11 +31,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
-import org.apache.camel.api.management.PerformanceCounter;
-import org.apache.camel.management.DelegatePerformanceCounter;
-import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
@@ -46,10 +44,12 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.OrderedComparator;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.ReactiveHelper;
+import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.util.StopWatch;
-import org.apache.camel.util.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,8 +82,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
-    private final List<CamelInternalProcessorAdvice> advices = new ArrayList<>();
+    private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
 
     public CamelInternalProcessor() {
     }
@@ -97,7 +96,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      *
      * @param advice  the advice to add
      */
-    public void addAdvice(CamelInternalProcessorAdvice advice) {
+    public void addAdvice(CamelInternalProcessorAdvice<?> advice) {
         advices.add(advice);
         // ensure advices are sorted so they are in the order we want
         advices.sort(OrderedComparator.get());
@@ -111,15 +110,16 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public <T> T getAdvice(Class<T> type) {
         for (CamelInternalProcessorAdvice task : advices) {
-            if (type.isInstance(task)) {
-                return type.cast(task);
+            Object advice = CamelInternalProcessorAdvice.unwrap(task);
+            if (type.isInstance(advice)) {
+                return type.cast(advice);
             }
         }
         return null;
     }
 
     @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
+    public boolean process(Exchange exchange, AsyncCallback ocallback) {
         // ----------------------------------------------------------
         // CAMEL END USER - READ ME FOR DEBUGGING TIPS
         // ----------------------------------------------------------
@@ -136,7 +136,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         if (processor == null || !continueProcessing(exchange)) {
             // no processor or we should not continue then we are done
-            callback.done(true);
+            ocallback.done(true);
             return true;
         }
 
@@ -150,23 +150,43 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 states[i] = state;
             } catch (Throwable e) {
                 exchange.setException(e);
-                callback.done(true);
+                ocallback.done(true);
                 return true;
             }
         }
 
         // create internal callback which will execute the advices in reverse order when done
-        callback = new InternalCallback(states, exchange, callback);
+        AsyncCallback callback = doneSync -> {
+            try {
+                for (int i = advices.size() - 1; i >= 0; i--) {
+                    CamelInternalProcessorAdvice task = advices.get(i);
+                    Object state = states[i];
+                    try {
+                        task.after(exchange, state);
+                    } catch (Throwable e) {
+                        exchange.setException(e);
+                        // allow all advices to complete even if there was an exception
+                    }
+                }
+            } finally {
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ START +++
+                // ----------------------------------------------------------
+                // callback must be called
+                ReactiveHelper.callback(ocallback);
+                // ----------------------------------------------------------
+                // CAMEL END USER - DEBUG ME HERE +++ END +++
+                // ----------------------------------------------------------
+            }
+        };
 
-        // UNIT_OF_WORK_PROCESS_SYNC is @deprecated and we should remove it from Camel 3.0
-        Object synchronous = exchange.removeProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC);
-        if (exchange.isTransacted() || synchronous != null) {
+        if (exchange.isTransacted()) {
             // must be synchronized for transacted exchanges
-            if (LOG.isTraceEnabled()) {
+            if (log.isTraceEnabled()) {
                 if (exchange.isTransacted()) {
-                    LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+                    log.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
                 } else {
-                    LOG.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+                    log.trace("Synchronous UnitOfWork Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
                 }
             }
             // ----------------------------------------------------------
@@ -195,76 +215,32 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ START +++
             // ----------------------------------------------------------
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            if (log.isTraceEnabled()) {
+                log.trace("Processing exchange for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             }
-            boolean sync = processor.process(exchange, async);
+            processor.process(exchange, async);
             // ----------------------------------------------------------
             // CAMEL END USER - DEBUG ME HERE +++ END +++
             // ----------------------------------------------------------
 
-            // execute any after processor work (in current thread, not in the callback)
-            if (uow != null) {
-                uow.afterProcess(processor, exchange, callback, sync);
-            }
+            ReactiveHelper.schedule(() -> {
+                // execute any after processor work (in current thread, not in the callback)
+                if (uow != null) {
+                    uow.afterProcess(processor, exchange, callback, false);
+                }
 
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Exchange processed and is continued routed {} for exchangeId: {} -> {}",
-                        new Object[]{sync ? "synchronously" : "asynchronously", exchange.getExchangeId(), exchange});
-            }
-            return sync;
+                if (log.isTraceEnabled()) {
+                    log.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
+                             exchange.getExchangeId(), exchange);
+                }
+            }, "CamelInternalProcessor - UnitOfWork - afterProcess - " + processor + " - " + exchange.getExchangeId());
+            return false;
         }
     }
 
     @Override
     public String toString() {
         return processor != null ? processor.toString() : super.toString();
-    }
-
-    /**
-     * Internal callback that executes the after advices.
-     */
-    private final class InternalCallback implements AsyncCallback {
-
-        private final Object[] states;
-        private final Exchange exchange;
-        private final AsyncCallback callback;
-
-        private InternalCallback(Object[] states, Exchange exchange, AsyncCallback callback) {
-            this.states = states;
-            this.exchange = exchange;
-            this.callback = callback;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public void done(boolean doneSync) {
-            // NOTE: if you are debugging Camel routes, then all the code in the for loop below is internal only
-            // so you can step straight to the finally block and invoke the callback
-
-            // we should call after in reverse order
-            try {
-                for (int i = advices.size() - 1; i >= 0; i--) {
-                    CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = states[i];
-                    try {
-                        task.after(exchange, state);
-                    } catch (Throwable e) {
-                        exchange.setException(e);
-                        // allow all advices to complete even if there was an exception
-                    }
-                }
-            } finally {
-                // ----------------------------------------------------------
-                // CAMEL END USER - DEBUG ME HERE +++ START +++
-                // ----------------------------------------------------------
-                // callback must be called
-                callback.done(doneSync);
-                // ----------------------------------------------------------
-                // CAMEL END USER - DEBUG ME HERE +++ END +++
-                // ----------------------------------------------------------
-            }
-        }
     }
 
     /**
@@ -275,7 +251,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
             if (doStop) {
-                LOG.debug("Exchange is marked to stop routing: {}", exchange);
+                log.debug("Exchange is marked to stop routing: {}", exchange);
                 return false;
             }
         }
@@ -284,7 +260,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         boolean forceShutdown = exchange.getContext().getShutdownStrategy().forceShutdown(this);
         if (forceShutdown) {
             String msg = "Run not allowed as ShutdownStrategy is forcing shutting down, will reject executing exchange: " + exchange;
-            LOG.debug(msg);
+            log.debug(msg);
             if (exchange.getException() == null) {
                 exchange.setException(new RejectedExecutionException(msg));
             }
@@ -325,113 +301,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     /**
-     * Advice for JMX instrumentation of the process being invoked.
-     * <p/>
-     * This advice keeps track of JMX metrics for performance statistics.
-     * <p/>
-     * The current implementation of this advice is only used for route level statistics. For processor levels
-     * they are still wrapped in the route processor chains.
-     */
-    public static class InstrumentationAdvice implements CamelInternalProcessorAdvice<StopWatch> {
-
-        private PerformanceCounter counter;
-        private String type;
-
-        public InstrumentationAdvice(String type) {
-            this.type = type;
-        }
-
-        public void setCounter(Object counter) {
-            ManagedPerformanceCounter mpc = null;
-            if (counter instanceof ManagedPerformanceCounter) {
-                mpc = (ManagedPerformanceCounter) counter;
-            }
-
-            if (this.counter instanceof DelegatePerformanceCounter) {
-                ((DelegatePerformanceCounter) this.counter).setCounter(mpc);
-            } else if (mpc != null) {
-                this.counter = mpc;
-            } else if (counter instanceof PerformanceCounter) {
-                this.counter = (PerformanceCounter) counter;
-            }
-        }
-
-        protected void beginTime(Exchange exchange) {
-            counter.processExchange(exchange);
-        }
-
-        protected void recordTime(Exchange exchange, long duration) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("{}Recording duration: {} millis for exchange: {}", new Object[]{type != null ? type + ": " : "", duration, exchange});
-            }
-
-            if (!exchange.isFailed() && exchange.getException() == null) {
-                counter.completedExchange(exchange, duration);
-            } else {
-                counter.failedExchange(exchange);
-            }
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        @Override
-        public StopWatch before(Exchange exchange) throws Exception {
-            // only record time if stats is enabled
-            StopWatch answer = counter != null && counter.isStatisticsEnabled() ? new StopWatch() : null;
-            if (answer != null) {
-                beginTime(exchange);
-            }
-            return answer;
-        }
-
-        @Override
-        public void after(Exchange exchange, StopWatch watch) throws Exception {
-            // record end time
-            if (watch != null) {
-                recordTime(exchange, watch.taken());
-            }
-        }
-    }
-
-    /**
-     * Advice to inject the current {@link RouteContext} into the {@link UnitOfWork} on the {@link Exchange}
-     *
-     * @deprecated this logic has been merged into {@link org.apache.camel.processor.CamelInternalProcessor.UnitOfWorkProcessorAdvice}
-     */
-    @Deprecated
-    public static class RouteContextAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
-
-        private final RouteContext routeContext;
-
-        public RouteContextAdvice(RouteContext routeContext) {
-            this.routeContext = routeContext;
-        }
-
-        @Override
-        public UnitOfWork before(Exchange exchange) throws Exception {
-            // push the current route context
-            final UnitOfWork unitOfWork = exchange.getUnitOfWork();
-            if (unitOfWork != null) {
-                unitOfWork.pushRouteContext(routeContext);
-            }
-            return unitOfWork;
-        }
-
-        @Override
-        public void after(Exchange exchange, UnitOfWork unitOfWork) throws Exception {
-            if (unitOfWork != null) {
-                unitOfWork.popRouteContext();
-            }
-        }
-    }
-
-    /**
      * Advice to keep the {@link InflightRepository} up to date.
      */
     public static class RouteInflightRepositoryAdvice implements CamelInternalProcessorAdvice {
@@ -461,6 +330,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public static class RoutePolicyAdvice implements CamelInternalProcessorAdvice {
 
+        private final Logger log = LoggerFactory.getLogger(getClass());
         private final List<RoutePolicy> routePolicies;
         private Route route;
 
@@ -495,7 +365,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                         policy.onExchangeBegin(route, exchange);
                     }
                 } catch (Exception e) {
-                    LOG.warn("Error occurred during onExchangeBegin on RoutePolicy: " + policy
+                    log.warn("Error occurred during onExchangeBegin on RoutePolicy: " + policy
                             + ". This exception will be ignored", e);
                 }
             }
@@ -516,7 +386,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                         policy.onExchangeDone(route, exchange);
                     }
                 } catch (Exception e) {
-                    LOG.warn("Error occurred during onExchangeDone on RoutePolicy: " + policy
+                    log.warn("Error occurred during onExchangeDone on RoutePolicy: " + policy
                             + ". This exception will be ignored", e);
                 }
             }
@@ -639,7 +509,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public UnitOfWorkProcessorAdvice(RouteContext routeContext) {
             this.routeContext = routeContext;
             if (routeContext != null) {
-                this.routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                RouteDefinition definition = (RouteDefinition) routeContext.getRoute();
+                this.routeId = definition.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
             }
         }
 
@@ -649,7 +520,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             // from this unit of work
             if (routeContext != null && exchange.getFromRouteId() == null) {
                 if (routeId == null) {
-                    routeId = routeContext.getRoute().idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
+                    RouteDefinition definition = (RouteDefinition) routeContext.getRoute();
+                    routeId = definition.idOrCreate(routeContext.getCamelContext().getNodeIdFactory());
                 }
                 exchange.setFromRouteId(routeId);
             }
@@ -840,6 +712,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
      */
     public static class DelayerAdvice implements CamelInternalProcessorAdvice {
 
+        private final Logger log = LoggerFactory.getLogger(getClass());
         private final long delay;
 
         public DelayerAdvice(long delay) {
@@ -849,10 +722,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public Object before(Exchange exchange) throws Exception {
             try {
-                LOG.trace("Sleeping for: {} millis", delay);
+                log.trace("Sleeping for: {} millis", delay);
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                LOG.debug("Sleep interrupted");
+                log.debug("Sleep interrupted");
                 Thread.currentThread().interrupt();
                 throw e;
             }

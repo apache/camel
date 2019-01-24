@@ -19,7 +19,6 @@ package org.apache.camel.component.avro;
 
 import java.io.IOException;
 
-
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.ipc.Requestor;
 import org.apache.avro.ipc.Transceiver;

@@ -18,9 +18,9 @@ package org.apache.camel.http.common;
 
 import java.util.Map;
 
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 
 public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent {
 
@@ -33,8 +33,7 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
         + " If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.")
     protected boolean allowJavaSerializedObject;
 
-    public HttpCommonComponent(Class<? extends HttpCommonEndpoint> endpointClass) {
-        super(endpointClass);
+    public HttpCommonComponent() {
     }
 
     /**
@@ -86,6 +85,16 @@ public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent 
      * @throws Exception can be thrown
      */
     public void disconnect(HttpConsumer consumer) throws Exception {
+    }
+
+    /**
+     * Checks whether the consumer is possible to connect to the endoint.
+     *
+     * @param consumer the consumer
+     * @throws Exception can be thrown
+     */
+    public boolean canConnect(HttpConsumer consumer) throws Exception {
+        return true;
     }
 
     @Override

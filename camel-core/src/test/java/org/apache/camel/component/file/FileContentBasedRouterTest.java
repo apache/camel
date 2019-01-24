@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileContentBasedRouterTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/cbr");
         super.setUp();
     }
@@ -37,6 +36,7 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/cbr", "Hello Copenhagen", "CamelFileName", "copenhagen.txt");
     }
 
+    @Test
     public void testRouteLondon() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
@@ -49,6 +49,7 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRouteParis() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:paris");
         mock.expectedMessageCount(1);
@@ -61,6 +62,7 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRouteOther() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:other");

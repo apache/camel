@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
@@ -45,9 +46,12 @@ import org.w3c.dom.Node;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
+import net.sf.saxon.om.AllElementsSpaceStrippingRule;
 import net.sf.saxon.om.DocumentInfo;
+import net.sf.saxon.om.IgnorableSpaceStrippingRule;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.SpaceStrippingRule;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
@@ -74,7 +78,7 @@ import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +87,6 @@ import org.slf4j.LoggerFactory;
  * Creates an XQuery builder.
  * <p/>
  * The XQueryExpression, as you would expect, can be executed repeatedly, as often as you want, in the same or in different threads.
- *
- * @version 
  */
 public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XQueryBuilder.class);
@@ -698,7 +700,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             LOG.debug("Initializing XQueryBuilder {}", this);
             if (configuration == null) {
                 configuration = new Configuration();
-                configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
+                configuration.getParseOptions().setSpaceStrippingRule(isStripsAllWhiteSpace() ? AllElementsSpaceStrippingRule.getInstance() : IgnorableSpaceStrippingRule.getInstance());
                 LOG.debug("Created new Configuration {}", configuration);
             } else {
                 LOG.debug("Using existing Configuration {}", configuration);
@@ -718,8 +720,13 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             for (Map.Entry<String, String> entry : entries) {
                 String prefix = entry.getKey();
                 String uri = entry.getValue();
-                staticQueryContext.declareNamespace(prefix, uri);
-                staticQueryContext.setInheritNamespaces(true);
+                // skip invalid prefix or uri according to XQuery spec
+                boolean invalid = "xml".equals(prefix) || "xmlns".equals(prefix);
+                if (!invalid) {
+                    LOG.debug("Declaring namespace [prefix: {}, uri: {}]", prefix, uri);
+                    staticQueryContext.declareNamespace(prefix, uri);
+                    staticQueryContext.setInheritNamespaces(true);
+                }
             }
             expression = createQueryExpression(staticQueryContext);
 

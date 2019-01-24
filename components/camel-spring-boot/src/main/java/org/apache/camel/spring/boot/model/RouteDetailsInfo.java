@@ -19,7 +19,7 @@ package org.apache.camel.spring.boot.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
-import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.ManagedCamelContext;
 
 /**
  * Container for exposing {@link org.apache.camel.Route} information
@@ -34,7 +34,7 @@ public class RouteDetailsInfo extends RouteInfo {
         super(route);
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-            this.routeDetails = new RouteDetails(camelContext.getManagedRoute(route.getId(), ManagedRouteMBean.class));
+            this.routeDetails = new RouteDetails(camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId()));
         }
     }
 

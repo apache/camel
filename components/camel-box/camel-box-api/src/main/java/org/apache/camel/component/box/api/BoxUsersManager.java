@@ -94,7 +94,7 @@ public class BoxUsersManager {
      */
     public List<BoxUser.Info> getAllEnterpriseOrExternalUsers(String filterTerm, String... fields) {
         try {
-            LOG.debug("Getting all enterprise users matching filterTerm=" + filterTerm);
+            LOG.debug("Getting all enterprise users matching filterTerm={}", filterTerm);
 
             List<BoxUser.Info> users = new ArrayList<>();
             Iterable<BoxUser.Info> iterable;
@@ -159,7 +159,7 @@ public class BoxUsersManager {
      */
     public BoxUser createAppUser(String name, CreateUserParams params) {
         try {
-            LOG.debug("Creating app user with name=" + name);
+            LOG.debug("Creating app user with name={}", name);
             if (name == null) {
                 throw new IllegalArgumentException("Parameter 'name' can not be null");
             }
@@ -184,7 +184,7 @@ public class BoxUsersManager {
      */
     public BoxUser.Info getUserInfo(String userId) {
         try {
-            LOG.debug("Getting info for user(id=" + userId + ")");
+            LOG.debug("Getting info for user(id={})", userId);
             if (userId == null) {
                 throw new IllegalArgumentException("Parameter 'userId' can not be null");
             }
@@ -209,7 +209,7 @@ public class BoxUsersManager {
      */
     public BoxUser updateUserInfo(String userId, BoxUser.Info info) {
         try {
-            LOG.debug("Updating info for user(id=" + userId + ")");
+            LOG.debug("Updating info for user(id={})", userId);
             if (userId == null) {
                 throw new IllegalArgumentException("Parameter 'userId' can not be null");
             }
@@ -290,7 +290,7 @@ public class BoxUsersManager {
      */
     public Collection<EmailAlias> getUserEmailAlias(String userId) {
         try {
-            LOG.debug("Get email aliases for user(id=" + userId + ")");
+            LOG.debug("Get email aliases for user(id={})", userId);
             if (userId == null) {
                 throw new IllegalArgumentException("Parameter 'userId' can not be null");
             }

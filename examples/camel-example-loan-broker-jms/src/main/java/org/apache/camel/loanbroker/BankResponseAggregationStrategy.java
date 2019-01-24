@@ -17,7 +17,7 @@
 package org.apache.camel.loanbroker;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 
 //START SNIPPET: aggregation
 public class BankResponseAggregationStrategy implements AggregationStrategy {

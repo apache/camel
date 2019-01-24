@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultUuidGenerator;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 
 public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiConsumerFactory {
 

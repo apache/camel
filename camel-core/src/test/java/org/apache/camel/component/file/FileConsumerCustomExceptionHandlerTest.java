@@ -27,6 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ExceptionHandler;
+import org.junit.Test;
 
 /**
  *
@@ -36,6 +37,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
     private MyReadLockStrategy myReadLockStrategy = new MyReadLockStrategy();
     private MyExceptionHandler myExceptionHandler = new MyExceptionHandler();
 
+    @Test
     public void testCustomExceptionHandler() throws Exception {
         myExceptionHandler.setTemplate(context.createProducerTemplate());
 

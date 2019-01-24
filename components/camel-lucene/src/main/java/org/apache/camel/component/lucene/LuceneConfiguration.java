@@ -35,9 +35,9 @@ public class LuceneConfiguration {
     private String authority;
     private Version luceneVersion = LuceneConstants.LUCENE_VERSION;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private LuceneOperation operation;
     @UriParam(name = "srcDir")
     private File sourceDirectory;
@@ -66,7 +66,7 @@ public class LuceneConfiguration {
         if (!isValidAuthority()) {
             throw new URISyntaxException(uri.toASCIIString(), 
                     "Incorrect URI syntax and/or Operation specified for the Lucene endpoint."
-                    + "Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\""); 
+                    + " Please specify the syntax as \"lucene:[Endpoint Name]:[Operation]?[Query]\"");
         }
         setHost(retrieveTokenFromAuthority("hostname"));
 

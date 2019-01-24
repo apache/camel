@@ -19,12 +19,11 @@ package org.apache.camel.model;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class StartingRoutesErrorReportedTest extends ContextTestSupport {
 
+    @Test
     public void testInvalidFrom() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -40,6 +39,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInvalidTo() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -56,6 +56,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMaskPassword() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -72,6 +73,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInvalidBean() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -90,6 +92,7 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testUnavailableDataFormatOnClasspath() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

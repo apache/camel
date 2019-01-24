@@ -20,13 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.processor.interceptor.Tracer;
+import org.junit.Test;
 
 /**
  * Tests to ensure a consistent return value when using the different ways of
  * configuring the RecipientList pattern
- *
- * @version 
  */
 public class RecipientListReturnValueTest extends ContextTestSupport {
 
@@ -37,10 +35,12 @@ public class RecipientListReturnValueTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testRecipientListWithRecipientList() throws Exception {
         doTestRecipientList("direct:recipientList");
     }
 
+    @Test
     public void testRecipientListWithBeanRef() throws Exception {
         doTestRecipientList("direct:beanRef");
     }
@@ -61,8 +61,6 @@ public class RecipientListReturnValueTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                getContext().addInterceptStrategy(new Tracer());
-                
                 from("direct:beanRef").bean("myBean", "route");
                 from("direct:recipientList").recipientList().method("myBean", "recipientList");
 

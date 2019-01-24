@@ -19,10 +19,8 @@ package org.apache.camel.component.properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class PropertiesEnvironmentVariableOverrideTest extends ContextTestSupport {
 
     
@@ -31,6 +29,7 @@ public class PropertiesEnvironmentVariableOverrideTest extends ContextTestSuppor
         return false;
     }
 
+    @Test
     public void testPropertiesComponentCacheDisabled() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setCache(false);

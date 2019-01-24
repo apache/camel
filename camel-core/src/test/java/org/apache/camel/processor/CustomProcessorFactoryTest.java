@@ -18,19 +18,17 @@ package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class CustomProcessorFactoryTest extends ContextTestSupport {
 
     @Override
@@ -44,6 +42,7 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     // END SNIPPET: e1
 
     // START SNIPPET: e2
+    @Test
     public void testAlterDefinitionUsingProcessorFactory() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("body was altered");
 
@@ -52,6 +51,7 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAlterDefinitionUsingProcessorFactoryWithChild() throws Exception {
         getMockEndpoint("mock:split").expectedBodiesReceived("body was altered", "body was altered");
         getMockEndpoint("mock:extra").expectedBodiesReceived("body was altered", "body was altered");
@@ -83,11 +83,11 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     // START SNIPPET: e3
     public static class MyFactory implements ProcessorFactory {
 
-        public Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition<?> definition, boolean mandatory) throws Exception {
+        public Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception {
             return null;
         }
 
-        public Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception {
+        public Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception {
             if (definition instanceof SplitDefinition) {
                 // add additional output to the splitter
                 SplitDefinition split = (SplitDefinition) definition;

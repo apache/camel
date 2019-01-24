@@ -174,7 +174,7 @@ public final class Olingo2AppImpl implements Olingo2App {
     @Override
     public void setServiceUri(String serviceUri) {
         if (serviceUri == null || serviceUri.isEmpty()) {
-            throw new IllegalArgumentException("serviceUri");
+            throw new IllegalArgumentException("serviceUri is not set");
         }
         this.serviceUri = serviceUri.endsWith(SEPARATOR) ? serviceUri.substring(0, serviceUri.length() - 1)
             : serviceUri;
@@ -1014,7 +1014,7 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         final StringBuilder absolutUri = new StringBuilder(serviceUri).append(SEPARATOR).append(resourcePath);
         if (queryParams != null && !queryParams.isEmpty()) {
-            absolutUri.append("/?");
+            absolutUri.append("?");
             int nParams = queryParams.size();
             int index = 0;
             for (Map.Entry<String, String> entry : queryParams.entrySet()) {

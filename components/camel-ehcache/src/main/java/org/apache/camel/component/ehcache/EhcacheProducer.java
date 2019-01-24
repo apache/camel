@@ -23,7 +23,7 @@ import java.util.Set;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
-import org.apache.camel.impl.HeaderSelectorProducer;
+import org.apache.camel.support.HeaderSelectorProducer;
 import org.ehcache.Cache;
 
 public class EhcacheProducer extends HeaderSelectorProducer {
@@ -52,7 +52,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(EhcacheConstants.ACTION_PUT)
     public void onPut(Message message) throws Exception {
-        cache.put(getKey(message), getValue(message, configuration.getValueType()));
+        cache.put(getKey(message), getValue(message, cache.getRuntimeConfiguration().getValueType()));
 
         setResult(message, true, null, null);
     }
@@ -66,7 +66,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(EhcacheConstants.ACTION_PUT_IF_ABSENT)
     public void onPutIfAbsent(Message message) throws Exception {
-        Object oldValue = cache.putIfAbsent(getKey(message), getValue(message, configuration.getValueType()));
+        Object oldValue = cache.putIfAbsent(getKey(message), getValue(message, cache.getRuntimeConfiguration().getValueType()));
 
         setResult(message, true, null, oldValue);
     }
@@ -113,7 +113,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
     public void onReplace(Message message) throws Exception {
         boolean success = true;
         Object oldValue = null;
-        Object value = getValue(message, configuration.getValueType());
+        Object value = getValue(message, cache.getRuntimeConfiguration().getValueType());
         Object valueToReplace = message.getHeader(EhcacheConstants.OLD_VALUE);
 
         if (valueToReplace == null) {
@@ -130,7 +130,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
     // ****************************
 
     private Object getKey(final Message message) throws Exception {
-        Object value = message.getHeader(EhcacheConstants.KEY, configuration.getKeyType());
+        Object value = message.getHeader(EhcacheConstants.KEY, cache.getRuntimeConfiguration().getKeyType());
         if (value == null) {
             value = configuration.getKey();
         }

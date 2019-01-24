@@ -18,7 +18,6 @@ package org.apache.camel.component.xmlsecurity.api;
 
 /**
  * Class representing the Encapsulated PKI Data of the XAdES specification.
- * 
  */
 public class XAdESEncapsulatedPKIData {
 

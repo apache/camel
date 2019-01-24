@@ -20,9 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.processor.ValidateRegExpTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-/**
- * @version 
- */
 public class SpringValidateRegExpTest extends ValidateRegExpTest {
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/validate.xml");

@@ -44,15 +44,13 @@ import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.OutHeaders;
-import org.apache.camel.Properties;
-import org.apache.camel.Property;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
@@ -237,7 +235,7 @@ public class BeanInfo {
                     // need to use arrayLength method from ObjectHelper as Camel's bean OGNL support is method invocation based
                     // and not for accessing fields. And hence we need to create a MethodInfo instance with a method to call
                     // and therefore use arrayLength from ObjectHelper to return the array length field.
-                    Method method = ObjectHelper.class.getMethod("arrayLength", Object[].class);
+                    Method method = org.apache.camel.util.ObjectHelper.class.getMethod("arrayLength", Object[].class);
                     ParameterInfo pi = new ParameterInfo(0, Object[].class, null, ExpressionBuilder.mandatoryBodyExpression(Object[].class, true));
                     List<ParameterInfo> lpi = new ArrayList<>(1);
                     lpi.add(pi);
@@ -325,7 +323,7 @@ public class BeanInfo {
         // get the target clazz as it could potentially have been enhanced by
         // CGLIB etc.
         clazz = getTargetClass(clazz);
-        ObjectHelper.notNull(clazz, "clazz", this);
+        org.apache.camel.util.ObjectHelper.notNull(clazz, "clazz", this);
 
         LOG.trace("Introspecting class: {}", clazz);
 
@@ -403,7 +401,7 @@ public class BeanInfo {
             // maybe the method overrides, and the method map keeps info of the source override we can use
             for (Map.Entry<Method, MethodInfo> methodEntry : methodMap.entrySet()) {
                 Method source = methodEntry.getKey();
-                if (ObjectHelper.isOverridingMethod(getType(), source, method, false)) {
+                if (org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), source, method, false)) {
                     answer = methodEntry.getValue();
                     break;
                 }
@@ -431,11 +429,11 @@ public class BeanInfo {
         List<ParameterInfo> bodyParameters = new ArrayList<>();
 
         boolean hasCustomAnnotation = false;
-        boolean hasHandlerAnnotation = ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
+        boolean hasHandlerAnnotation = org.apache.camel.util.ObjectHelper.hasAnnotation(method.getAnnotations(), Handler.class);
 
         int size = parameterTypes.length;
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Creating MethodInfo for class: {} method: {} having {} parameters", new Object[]{clazz, method, size});
+            LOG.trace("Creating MethodInfo for class: {} method: {} having {} parameters", clazz, method, size);
         }
 
         for (int i = 0; i < size; i++) {
@@ -448,7 +446,7 @@ public class BeanInfo {
             LOG.trace("Parameter #{}: {}", i, parameterInfo);
             parameters.add(parameterInfo);
             if (expression == null) {
-                boolean bodyAnnotation = ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
+                boolean bodyAnnotation = org.apache.camel.util.ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
                 LOG.trace("Parameter #{} has @Body annotation", i);
                 hasCustomAnnotation |= bodyAnnotation;
                 if (bodyParameters.isEmpty()) {
@@ -649,10 +647,8 @@ public class BeanInfo {
     private MethodInfo chooseMethodWithMatchingParameters(Exchange exchange, String parameters, Collection<MethodInfo> operationList)
         throws AmbiguousMethodCallException {
         // we have hardcoded parameters so need to match that with the given operations
-        Iterator<?> it = ObjectHelper.createIterator(parameters);
         int count = 0;
-        while (it.hasNext()) {
-            it.next();
+        for (String o : ObjectHelper.createIterable(parameters)) {
             count++;
         }
 
@@ -673,7 +669,7 @@ public class BeanInfo {
         List<MethodInfo> candidates = new ArrayList<>();
         MethodInfo fallbackCandidate = null;
         for (MethodInfo info : operations) {
-            it = ObjectHelper.createIterator(parameters, ",", false);
+            Iterator<?> it = ObjectHelper.createIterator(parameters, ",", false);
             int index = 0;
             boolean matches = true;
             while (it.hasNext()) {
@@ -878,7 +874,7 @@ public class BeanInfo {
     protected boolean isValidMethod(Class<?> clazz, Method method) {
         // must not be in the excluded list
         for (Method excluded : EXCLUDED_METHODS) {
-            if (ObjectHelper.isOverridingMethod(excluded, method)) {
+            if (org.apache.camel.util.ObjectHelper.isOverridingMethod(excluded, method)) {
                 // the method is overriding an excluded method so its not valid
                 return false;
             }
@@ -912,9 +908,9 @@ public class BeanInfo {
             Method alreadyRegisteredMethod = alreadyRegisteredMethodInfo.getMethod();
             Method proposedMethod = proposedMethodInfo.getMethod();
 
-            if (ObjectHelper.isOverridingMethod(getType(), proposedMethod, alreadyRegisteredMethod, false)) {
+            if (org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), proposedMethod, alreadyRegisteredMethod, false)) {
                 return alreadyRegisteredMethodInfo;
-            } else if (ObjectHelper.isOverridingMethod(getType(), alreadyRegisteredMethod, proposedMethod, false)) {
+            } else if (org.apache.camel.util.ObjectHelper.isOverridingMethod(getType(), alreadyRegisteredMethod, proposedMethod, false)) {
                 return proposedMethodInfo;
             }
         }
@@ -964,14 +960,9 @@ public class BeanInfo {
             return ExpressionBuilder.attachmentObjectsExpression();
         } else if (annotation instanceof Attachments) {
             return ExpressionBuilder.attachmentsExpression();
-        } else if (annotation instanceof Property) {
-            Property propertyAnnotation = (Property)annotation;
-            return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
         } else if (annotation instanceof ExchangeProperty) {
             ExchangeProperty propertyAnnotation = (ExchangeProperty)annotation;
             return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
-        } else if (annotation instanceof Properties) {
-            return ExpressionBuilder.exchangePropertiesExpression();
         } else if (annotation instanceof ExchangeProperties) {
             return ExpressionBuilder.exchangePropertiesExpression();
         } else if (annotation instanceof Header) {
@@ -1066,7 +1057,7 @@ public class BeanInfo {
 
         // match qualifier types which is used to select among overloaded methods
         String types = StringHelper.between(methodName, "(", ")");
-        if (ObjectHelper.isNotEmpty(types)) {
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(types)) {
             // we must qualify based on types to match method
             String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',');
             Class<?>[] parameterTypes = null;
@@ -1079,7 +1070,7 @@ public class BeanInfo {
                     Class<?> parameterType = parameterTypes[i];
 
                     String qualifyType = (String) it.next();
-                    if (ObjectHelper.isEmpty(qualifyType)) {
+                    if (org.apache.camel.util.ObjectHelper.isEmpty(qualifyType)) {
                         continue;
                     }
                     // trim the type

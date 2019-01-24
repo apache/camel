@@ -20,7 +20,6 @@ package org.apache.camel.component.crypto.cms.exception;
  * This exception is thrown if the verification of a SignedData signature fails
  * because the hash calculated over the content does not match to the value of
  * signed MessageDigest attribute value.
- * 
  */
 public class CryptoCmsSignatureInvalidContentHashException extends CryptoCmsSignatureException {
 

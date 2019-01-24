@@ -20,15 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class EventNotifierExchangeSentExampleTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = (DefaultCamelContext) super.createCamelContext();
+        context.init();
 
         // START SNIPPET: e1
         // add event notifier where we can log the times it took to process
@@ -39,6 +38,7 @@ public class EventNotifierExchangeSentExampleTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testExchangeSent() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

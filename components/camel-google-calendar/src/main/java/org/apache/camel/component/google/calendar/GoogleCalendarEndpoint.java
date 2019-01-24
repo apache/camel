@@ -29,15 +29,15 @@ import org.apache.camel.component.google.calendar.internal.GoogleCalendarConstan
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarPropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.component.AbstractApiEndpoint;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.AbstractApiEndpoint;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * The google-calendar component provides access to Google Calendar.
  */
 @UriEndpoint(firstVersion = "2.15.0", scheme = "google-calendar", title = "Google Calendar", syntax = "google-calendar:apiName/methodName",
-consumerClass = GoogleCalendarConsumer.class, consumerPrefix = "consumer", label = "api,cloud")
+             consumerPrefix = "consumer", label = "api,cloud")
 public class GoogleCalendarEndpoint extends AbstractApiEndpoint<GoogleCalendarApiName, GoogleCalendarConfiguration> {
 
     @UriParam

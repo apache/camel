@@ -28,7 +28,7 @@
 
     <route id="foo">
       <from uri="direct:start"/>
-      <to ref="foo"/>
+      <to uri="ref:foo"/>
       <to uri="mock:result"/>
     </route>
   </camelContext>

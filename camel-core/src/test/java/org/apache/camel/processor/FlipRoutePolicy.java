@@ -21,9 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.support.RoutePolicySupport;
 
-/**
- * @version 
- */
 public class FlipRoutePolicy extends RoutePolicySupport {
 
     private final String name1;
@@ -69,8 +66,8 @@ public class FlipRoutePolicy extends RoutePolicySupport {
         @Override
         public void run() {
             try {
-                context.stopRoute(stop);
-                context.startRoute(start);
+                context.getRouteController().stopRoute(stop);
+                context.getRouteController().startRoute(start);
             } catch (Exception e) {
                 // let the exception handle handle it, which is often just to log it
                 getExceptionHandler().handleException("Error flipping routes", e);

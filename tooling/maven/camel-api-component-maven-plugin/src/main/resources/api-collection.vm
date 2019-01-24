@@ -33,9 +33,9 @@ import ${componentPackage}.${componentConfig};
 import ${componentPackage}.${helper.getEndpointConfig($api.ProxyClass)};
 #end
 
-import org.apache.camel.util.component.ApiCollection;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodHelper;
+import org.apache.camel.support.component.ApiCollection;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodHelper;
 
 /**
  * Camel {@link ApiCollection} for $componentName

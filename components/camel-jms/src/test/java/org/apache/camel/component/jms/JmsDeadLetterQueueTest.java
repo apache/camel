@@ -25,12 +25,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * Unit test for using JMS as DLQ
- *
- * @version 
  */
 public class JmsDeadLetterQueueTest extends CamelTestSupport {
 

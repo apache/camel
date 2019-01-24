@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -23,12 +22,11 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class IdempotentConsumerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
@@ -38,6 +36,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -61,11 +60,12 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotSkiDuplicate() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                IdempotentRepository<String> repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+                IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 from("direct:start")
                     .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
@@ -92,17 +92,18 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNotSkiDuplicateWithFilter() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                IdempotentRepository<String> repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
+                IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
                 // START SNIPPET: e1
                 from("direct:start")
                     // instruct idempotent consumer to not skip duplicates as we will filter then our self
                     .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
-                    .filter(property(Exchange.DUPLICATE_MESSAGE).isEqualTo(true))
+                    .filter(exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(true))
                         // filter out duplicate messages by sending them to someplace else and then stop
                         .to("mock:duplicate")
                         .stop()
@@ -129,6 +130,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAddedDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -163,6 +165,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAddedDeadLetterChannelNotHandled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -197,6 +200,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAdded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -242,7 +246,8 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:start");

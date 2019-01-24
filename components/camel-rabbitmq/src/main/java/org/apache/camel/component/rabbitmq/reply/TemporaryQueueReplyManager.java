@@ -24,15 +24,12 @@ import com.rabbitmq.client.AMQP.Queue.DeclareOk;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
 /**
  * A {@link ReplyManager} when using temporary queues.
- *
- * @version 
  */
 public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
@@ -136,7 +133,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
          * Bind consumer to channel
          */
         private void start() throws IOException {
-            tag = channel.basicConsume(getReplyTo(), endpoint.isAutoAck(), this);
+            tag = channel.basicConsume(getReplyTo(), true, this);
         }
 
         /**

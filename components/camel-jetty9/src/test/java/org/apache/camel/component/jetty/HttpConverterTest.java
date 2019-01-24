@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.io.InputStream;
+
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,9 +29,6 @@ import org.apache.camel.http.common.HttpConverter;
 import org.apache.camel.http.common.HttpMessage;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpConverterTest extends BaseJettyTest {
 
     @Override

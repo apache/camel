@@ -35,17 +35,19 @@ import org.apache.camel.spi.UriPath;
  * To use a HTTP Servlet as entry for Camel routes when running in a servlet container.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "servlet", extendsScheme = "http", title = "Servlet",
-        syntax = "servlet:contextPath", consumerOnly = true, consumerClass = ServletConsumer.class, label = "http")
+        syntax = "servlet:contextPath", consumerOnly = true, label = "http")
 public class ServletEndpoint extends HttpCommonEndpoint {
 
     private HttpBinding binding;
 
-    @UriPath(label = "consumer") @Metadata(required = "true")
+    @UriPath(label = "consumer") @Metadata(required = true)
     private String contextPath;
     @UriParam(label = "consumer", defaultValue = "CamelServlet")
     private String servletName;
     @UriParam(label = "consumer,advanced")
     private boolean attachmentMultipartBinding;
+    @UriParam(label = "consumer,advanced")
+    private String fileNameExtWhitelist;
 
     public ServletEndpoint() {
     }
@@ -70,6 +72,7 @@ public class ServletEndpoint extends HttpCommonEndpoint {
             } else {
                 this.binding = new DefaultHttpBinding();
             }
+            this.binding.setFileNameExtWhitelist(getFileNameExtWhitelist());
             this.binding.setTransferException(isTransferException());
             if (getComponent() != null) {
                 this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
@@ -125,6 +128,19 @@ public class ServletEndpoint extends HttpCommonEndpoint {
      */
     public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
         this.attachmentMultipartBinding = attachmentMultipartBinding;
+    }
+
+    public String getFileNameExtWhitelist() {
+        return fileNameExtWhitelist;
+    }
+
+    /**
+     * Whitelist of accepted filename extensions for accepting uploaded files.
+     * <p/>
+     * Multiple extensions can be separated by comma, such as txt,xml.
+     */
+    public void setFileNameExtWhitelist(String fileNameExtWhitelist) {
+        this.fileNameExtWhitelist = fileNameExtWhitelist;
     }
 
     @Override

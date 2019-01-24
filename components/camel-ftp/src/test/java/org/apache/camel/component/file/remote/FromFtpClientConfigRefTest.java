@@ -26,9 +26,6 @@ import org.apache.commons.net.ftp.FTPClientConfig;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FromFtpClientConfigRefTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {

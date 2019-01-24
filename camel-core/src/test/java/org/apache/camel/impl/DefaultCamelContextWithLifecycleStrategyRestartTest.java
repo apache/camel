@@ -25,6 +25,7 @@ import org.apache.camel.Route;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.junit.Test;
 
 /**
  *
@@ -33,6 +34,7 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
 
     private MyStrategy strategy = new MyStrategy();
 
+    @Test
     public void testRestart() throws Exception {
         assertTrue(context.getStatus().isStarted());
         assertFalse(context.getStatus().isStopped());
@@ -65,11 +67,12 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRouteStopped() throws Exception {
-        assertTrue(context.getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteController().getRouteStatus("foo").isStarted());
         assertEquals(0, strategy.getRemoveCounter());
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         assertEquals(0, strategy.getRemoveCounter());
 
         context.removeRoute("foo");

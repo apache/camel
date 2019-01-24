@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.util.ObjectHelper;
 
 public final class ClusteredRouteFilters {
     private ClusteredRouteFilters() {
@@ -35,7 +35,7 @@ public final class ClusteredRouteFilters {
             try {
                 return route.isAutoStartup(camelContext);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }

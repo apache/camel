@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AbstractListAggregationStrategy;
+import org.junit.Test;
 
 /**
  *
@@ -30,6 +31,7 @@ import org.apache.camel.processor.aggregate.AbstractListAggregationStrategy;
 public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testCustomAggregationStrategy() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
@@ -38,7 +40,7 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
         template.sendBodyAndHeader("file:target/batch", "150", Exchange.FILE_NAME, "2.txt");
         template.sendBodyAndHeader("file:target/batch", "130", Exchange.FILE_NAME, "3.txt");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

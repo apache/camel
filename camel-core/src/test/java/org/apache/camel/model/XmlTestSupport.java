@@ -28,9 +28,6 @@ import org.apache.camel.model.rest.RestContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public abstract class XmlTestSupport extends TestSupport {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected JAXBContext jaxbContext;
@@ -58,7 +55,7 @@ public abstract class XmlTestSupport extends TestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         jaxbContext = createJaxbContext();
     }

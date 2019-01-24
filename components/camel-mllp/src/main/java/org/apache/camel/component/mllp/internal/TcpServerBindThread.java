@@ -24,7 +24,7 @@ import java.net.ServerSocket;
 
 import org.apache.camel.Route;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
-import org.apache.camel.impl.MDCUnitOfWork;
+import org.apache.camel.spi.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -57,13 +57,13 @@ public class TcpServerBindThread extends Thread {
      */
     @Override
     public void run() {
-        MDC.put(MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
+        MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
 
         Route route = consumer.getRoute();
         if (route != null) {
             String routeId = route.getId();
             if (routeId != null) {
-                MDC.put(MDCUnitOfWork.MDC_ROUTE_ID, route.getId());
+                MDC.put(UnitOfWork.MDC_ROUTE_ID, route.getId());
             }
         }
 

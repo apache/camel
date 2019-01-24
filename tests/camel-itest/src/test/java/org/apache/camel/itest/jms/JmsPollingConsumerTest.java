@@ -30,9 +30,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-/**
- * @version 
- */
 @ContextConfiguration
 public class JmsPollingConsumerTest extends AbstractJUnit4SpringContextTests {
 

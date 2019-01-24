@@ -39,7 +39,8 @@ import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.HttpHeaderHelper;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
@@ -53,8 +54,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Default strategy  to bind between Camel and CXF exchange for RESTful resources.
  *
- *
- * @version 
  */
 public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfRsBinding.class);
@@ -92,8 +91,10 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             
             if (response.getHeader(org.apache.cxf.message.Message.PROTOCOL_HEADERS) != null) {
                 Map<String, Object> headers = CastUtils.cast((Map<?, ?>)response.getHeader(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
-                cxfExchange.getOutMessage().putIfAbsent(org.apache.cxf.message.Message.PROTOCOL_HEADERS, 
+                if (!ObjectHelper.isEmpty(cxfExchange) && !ObjectHelper.isEmpty(cxfExchange.getOutMessage())) {
+                    cxfExchange.getOutMessage().putIfAbsent(org.apache.cxf.message.Message.PROTOCOL_HEADERS, 
                                                         new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
+                }
                 final Map<String, List<String>> cxfHeaders =
                     CastUtils.cast((Map<?, ?>) cxfExchange.getOutMessage().get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
                 
@@ -112,9 +113,11 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
             if (response.getHeader(Exchange.HTTP_RESPONSE_CODE) != null && !cxfExchange.containsKey(org.apache.cxf.message.Message.RESPONSE_CODE)) {
                 cxfExchange.put(org.apache.cxf.message.Message.RESPONSE_CODE, response.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class));
             }
-            if (response.getHeader(Exchange.CONTENT_TYPE) != null) {
-                cxfExchange.getOutMessage().putIfAbsent(org.apache.cxf.message.Message.PROTOCOL_HEADERS, 
+            if (response.getHeader(Exchange.CONTENT_TYPE) != null && !cxfExchange.containsKey(org.apache.cxf.message.Message.CONTENT_TYPE)) {
+                if (!ObjectHelper.isEmpty(cxfExchange) && !ObjectHelper.isEmpty(cxfExchange.getOutMessage())) {
+                    cxfExchange.getOutMessage().putIfAbsent(org.apache.cxf.message.Message.PROTOCOL_HEADERS, 
                                                         new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
+                }
                 final Map<String, List<String>> cxfHeaders =
                     CastUtils.cast((Map<?, ?>) cxfExchange.getOutMessage().get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
 

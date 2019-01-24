@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.HeadersMapFactory;
+import org.junit.Test;
 
 public class CustomHeadersMapFactoryRouteTest extends ContextTestSupport {
 
@@ -35,6 +36,7 @@ public class CustomHeadersMapFactoryRouteTest extends ContextTestSupport {
         return context;
     }
 
+    @Test
     public void testCustomHeaders() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", 123);
         getMockEndpoint("mock:result").expectedHeaderReceived("FOO", 456);

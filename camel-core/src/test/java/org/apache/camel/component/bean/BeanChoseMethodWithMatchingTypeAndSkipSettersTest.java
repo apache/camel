@@ -15,22 +15,21 @@
  * limitations under the License.
  */
 package org.apache.camel.component.bean;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTestSupport {
 
     private OrderServiceBean service = new OrderServiceBean();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/file/order");
         super.setUp();
@@ -50,6 +49,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         return context;
     }
 
+    @Test
     public void testSendCSVFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:queue:order");
         mock.expectedBodiesReceived("66554,123,456");
@@ -59,6 +59,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSendXMLData() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:queue:order");
         mock.expectedBodiesReceived("77889,667,457");

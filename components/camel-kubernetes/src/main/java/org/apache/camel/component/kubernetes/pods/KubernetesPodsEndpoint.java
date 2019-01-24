@@ -30,10 +30,8 @@ import org.slf4j.LoggerFactory;
  * and a consumer to consume pod events.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-pods", title = "Kubernetes Pods",
-    syntax = "kubernetes-pods:masterUrl", consumerClass = KubernetesPodsConsumer.class, label = "container,cloud,paas")
+    syntax = "kubernetes-pods:masterUrl", label = "container,cloud,paas")
 public class KubernetesPodsEndpoint extends AbstractKubernetesEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesPodsEndpoint.class);
 
     public KubernetesPodsEndpoint(String uri, KubernetesPodsComponent component, KubernetesConfiguration config) {
         super(uri, component, config);

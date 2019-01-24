@@ -30,9 +30,9 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(firstVersion = "2.22.0", scheme = "mybatis-bean", title = "MyBatis Bean", syntax = "mybatis-bean:beanName:methodName", producerOnly = true, label = "database,sql")
 public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String beanName;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String methodName;
 
     public MyBatisBeanEndpoint() {

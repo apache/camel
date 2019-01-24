@@ -61,6 +61,12 @@ public class SqsConfiguration implements Cloneable {
     private Integer defaultVisibilityTimeout;
     @UriParam(label = "consumer")
     private boolean extendMessageVisibility;
+    @UriParam(label = "consumer")
+    private String kmsMasterKeyId;
+    @UriParam(label = "consumer")
+    private Integer kmsDataKeyReusePeriodSeconds;
+    @UriParam(label = "consumer")
+    private boolean serverSideEncryptionEnabled;
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
     @UriParam(label = "advanced")
@@ -69,6 +75,9 @@ public class SqsConfiguration implements Cloneable {
     // producer properties
     @UriParam(label = "producer")
     private Integer delaySeconds;
+    // producer properties
+    @UriParam(label = "advanced")
+    private boolean delayQueue;
     @UriParam(label = "producer", enums = "useConstant,useExchangeId,usePropertyValue")
     private MessageGroupIdStrategy messageGroupIdStrategy;
     @UriParam(label = "producer", defaultValue = "useExchangeId", enums = "useExchangeId,useContentBasedDeduplication")
@@ -224,6 +233,17 @@ public class SqsConfiguration implements Cloneable {
         this.delaySeconds = delaySeconds;
     }
 
+    public boolean isDelayQueue() {
+        return delayQueue;
+    }
+
+    /**
+     * Define if you want to apply delaySeconds option to the queue or on single messages
+     */
+    public void setDelayQueue(boolean delayQueue) {
+        this.delayQueue = delayQueue;
+    }
+
     public Integer getMaximumMessageSize() {
         return maximumMessageSize;
     }
@@ -337,49 +357,84 @@ public class SqsConfiguration implements Cloneable {
         this.region = region;
     }
 
-    /**
-     * Allows you to use multiple threads to poll the sqs queue to increase throughput
-     */
     public int getConcurrentConsumers() {
         return concurrentConsumers;
     }
 
+    /**
+     * Allows you to use multiple threads to poll the sqs queue to increase throughput
+     */
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
 
-    /**
-     *  To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored.
-     *  This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes.
-     */
     public String getQueueUrl() {
         return queueUrl;
     }
 
+    /**
+     * To define the queueUrl explicitly. All other parameters, which would influence the queueUrl, are ignored.
+     * This parameter is intended to be used, to connect to a mock implementation of SQS, for testing purposes.
+     */
     public void setQueueUrl(String queueUrl) {
         this.queueUrl = queueUrl;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
     }
 
     /**
      * To define a proxy host when instantiating the SQS client
      */
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the SQS client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public String getKmsMasterKeyId() {
+        return kmsMasterKeyId;
+    }
+
+    /**
+     * The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK.
+     */
+    public void setKmsMasterKeyId(String kmsMasterKeyId) {
+        this.kmsMasterKeyId = kmsMasterKeyId;
+    }
+
+    public Integer getKmsDataKeyReusePeriodSeconds() {
+        return kmsDataKeyReusePeriodSeconds;
+    }
+
+    /**
+     * The length of time, in seconds, for which Amazon SQS can reuse a data key to encrypt or decrypt 
+     * messages before calling AWS KMS again. An integer representing seconds, between 60 seconds (1 minute) 
+     * and 86,400 seconds (24 hours). Default: 300 (5 minutes).
+     */
+    public void setKmsDataKeyReusePeriodSeconds(Integer kmsDataKeyReusePeriodSeconds) {
+        this.kmsDataKeyReusePeriodSeconds = kmsDataKeyReusePeriodSeconds;
+    }
+
+    public boolean isServerSideEncryptionEnabled() {
+        return serverSideEncryptionEnabled;
+    }
+
+    /**
+     * Define if Server Side Encryption is enabled or not on the queue
+     */
+    public void setServerSideEncryptionEnabled(boolean serverSideEncryptionEnabled) {
+        this.serverSideEncryptionEnabled = serverSideEncryptionEnabled;
     }
 
     /**

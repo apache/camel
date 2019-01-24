@@ -19,16 +19,22 @@ package org.apache.camel.model;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.VerbDefinition;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -138,6 +144,19 @@ public final class RouteDefinitionHelper {
                     });
                 }
                 customIds.add(id);
+            } else {
+                RestDefinition rest = route.getRestDefinition();
+                if (rest != null && route.isRest()) {
+                    VerbDefinition verb = findVerbDefinition(rest, route.getInputs().get(0).getUri());
+                    if (verb != null) {
+                        String id = verb.getId();
+                        if (verb.hasCustomIdAssigned() && ObjectHelper.isNotEmpty(id) && !customIds.contains(id)) {
+                            route.setId(id);
+                            customIds.add(id);
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -145,10 +164,11 @@ public final class RouteDefinitionHelper {
         for (final RouteDefinition route : routes) {
             if (route.getId() == null) {
                 // keep assigning id's until we find a free name
+                
                 boolean done = false;
                 String id = null;
                 while (!done) {
-                    id = context.getNodeIdFactory().createId(route);
+                    id = route.idOrCreate(context.getNodeIdFactory());
                     done = !customIds.contains(id);
                 }
                 route.setId(id);
@@ -162,7 +182,47 @@ public final class RouteDefinitionHelper {
                 route.setCustomId(false);
                 customIds.add(route.getId());
             }
+            RestDefinition rest = route.getRestDefinition();
+            if (rest != null && route.isRest()) {
+                VerbDefinition verb = findVerbDefinition(rest, route.getInputs().get(0).getUri());
+                if (verb != null) {
+                    String id = verb.idOrCreate(context.getNodeIdFactory());
+                    if (!verb.getUsedForGeneratingNodeId()) {
+                        id = route.getId();
+                    }
+                    verb.setRouteId(id);
+                }
+                List<FromDefinition> fromDefinitions = route.getInputs();
+                
+                if (ObjectHelper.isNotEmpty(fromDefinitions)) {
+                    FromDefinition fromDefinition = fromDefinitions.get(0);
+                    String endpointUri = fromDefinition.getEndpointUri();
+                    if (ObjectHelper.isNotEmpty(endpointUri)) {
+                        Map<String, Object> options = new HashMap<String, Object>();
+                        options.put("routeId", route.getId());
+                        endpointUri = URISupport.appendParametersToURI(endpointUri, options);
+                     
+                        // replace uri with new routeId
+                        fromDefinition.setUri(endpointUri);
+                        fromDefinitions.set(0, fromDefinition);
+                        route.setInputs(fromDefinitions);
+                    }
+                }
+            }
         }
+    }
+    
+    /**
+     * Find verb associated with the route by mapping uri
+     */
+    private static VerbDefinition findVerbDefinition(RestDefinition rest, String endpointUri) {
+        for (VerbDefinition verb : rest.getVerbs()) {
+            String verbUri = rest.buildFromUri(verb);
+            if (endpointUri.startsWith(verbUri)) {
+                return verb;
+            }
+        }
+        return null;
     }
 
     /**
@@ -379,7 +439,7 @@ public final class RouteDefinitionHelper {
             try {
                 ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, input);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }
@@ -391,10 +451,14 @@ public final class RouteDefinitionHelper {
             // let the route inherit the error handler builder from camel context if none already set
 
             // must clone to avoid side effects while building routes using multiple RouteBuilders
-            ErrorHandlerBuilder builder = context.getErrorHandlerBuilder();
+            ErrorHandlerFactory builder = context.getErrorHandlerFactory();
             if (builder != null) {
-                builder = builder.cloneBuilder();
-                route.setErrorHandlerBuilderIfNull(builder);
+                if (builder instanceof ErrorHandlerBuilder) {
+                    builder = ((ErrorHandlerBuilder) builder).cloneBuilder();
+                    route.setErrorHandlerBuilderIfNull(builder);
+                } else {
+                    throw new UnsupportedOperationException("The ErrorHandlerFactory must implement ErrorHandlerBuilder");
+                }
             }
         }
 
@@ -503,7 +567,7 @@ public final class RouteDefinitionHelper {
                     try {
                         pattern = context.resolvePropertyPlaceholders(intercept.getUri());
                     } catch (Exception e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
                     boolean isRefPattern = pattern.startsWith("ref*") || pattern.startsWith("ref:");
 
@@ -517,9 +581,6 @@ public final class RouteDefinitionHelper {
                                 // its a ref: so lookup the endpoint to get its url
                                 String ref = uri.substring(4);
                                 uri = CamelContextHelper.getMandatoryEndpoint(context, ref).getEndpointUri();
-                            } else if (input.getRef() != null) {
-                                // lookup the endpoint to get its url
-                                uri = CamelContextHelper.getMandatoryEndpoint(context, input.getRef()).getEndpointUri();
                             }
                         }
                         if (EndpointHelper.matchEndpoint(context, uri, pattern)) {
@@ -656,7 +717,7 @@ public final class RouteDefinitionHelper {
                     });
                 }
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -668,4 +729,15 @@ public final class RouteDefinitionHelper {
         }
     }
 
+    public static String getRouteMessage(String route) {
+        // ensure to sanitize uri's in the route so we do not show sensitive information such as passwords
+        route = URISupport.sanitizeUri(route);
+        // cut the route after 60 chars so it won't be too big in the message
+        // users just need to be able to identify the route so they know where to look
+        if (route.length() > 60) {
+            return route.substring(0, 60) + "...";
+        } else {
+            return route;
+        }
+    }
 }

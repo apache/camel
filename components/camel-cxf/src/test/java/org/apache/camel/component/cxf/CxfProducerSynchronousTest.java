@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -38,7 +37,7 @@ public class CxfProducerSynchronousTest extends CamelTestSupport {
     private static String afterThreadName;
 
     private String url = "cxf://" + SIMPLE_SERVER_ADDRESS
-                + "?serviceClass=org.apache.camel.component.cxf.HelloService&dataFormat=MESSAGE&synchronous=true";
+                + "?serviceClass=org.apache.camel.component.cxf.HelloService&dataFormat=RAW&synchronous=true";
     @Override
     public boolean isCreateCamelContextPerClass() {
         return true;

@@ -18,7 +18,6 @@
 package org.apache.camel.component.mllp.internal;
 
 import java.io.IOException;
-
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
@@ -27,8 +26,7 @@ import org.apache.camel.Route;
 import org.apache.camel.component.mllp.MllpInvalidMessageException;
 import org.apache.camel.component.mllp.MllpSocketException;
 import org.apache.camel.component.mllp.MllpTcpServerConsumer;
-import org.apache.camel.impl.MDCUnitOfWork;
-
+import org.apache.camel.spi.UnitOfWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -127,13 +125,13 @@ public class TcpSocketConsumerRunnable implements Runnable {
         running = true;
         String originalThreadName = Thread.currentThread().getName();
         Thread.currentThread().setName(createThreadName(clientSocket));
-        MDC.put(MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
+        MDC.put(UnitOfWork.MDC_CAMEL_CONTEXT_ID, consumer.getEndpoint().getCamelContext().getName());
 
         Route route = consumer.getRoute();
         if (route != null) {
             String routeId = route.getId();
             if (routeId != null) {
-                MDC.put(MDCUnitOfWork.MDC_ROUTE_ID, route.getId());
+                MDC.put(UnitOfWork.MDC_ROUTE_ID, route.getId());
             }
         }
 
@@ -207,8 +205,8 @@ public class TcpSocketConsumerRunnable implements Runnable {
             log.debug("{} for {} completed", this.getClass().getSimpleName(), combinedAddress);
 
             Thread.currentThread().setName(originalThreadName);
-            MDC.remove(MDCUnitOfWork.MDC_ROUTE_ID);
-            MDC.remove(MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID);
+            MDC.remove(UnitOfWork.MDC_ROUTE_ID);
+            MDC.remove(UnitOfWork.MDC_CAMEL_CONTEXT_ID);
 
             mllpBuffer.resetSocket(clientSocket);
         }

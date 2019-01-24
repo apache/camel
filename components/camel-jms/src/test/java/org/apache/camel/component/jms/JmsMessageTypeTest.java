@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -33,9 +34,6 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
 
-/**
- * @version 
- */
 public class JmsMessageTypeTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {

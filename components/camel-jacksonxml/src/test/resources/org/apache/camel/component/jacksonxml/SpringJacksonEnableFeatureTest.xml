@@ -33,7 +33,7 @@
 
     <route>
       <from uri="direct:in"/>
-      <marshal ref="jack"/>
+      <marshal><custom ref="jack"/></marshal>
     </route>
 
   </camelContext>

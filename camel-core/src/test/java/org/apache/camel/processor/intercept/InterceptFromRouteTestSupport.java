@@ -19,9 +19,6 @@ package org.apache.camel.processor.intercept;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 
-/**
- * @version 
- */
 public abstract class InterceptFromRouteTestSupport extends ContextTestSupport {
     protected MockEndpoint a;
     protected MockEndpoint b;
@@ -39,7 +36,7 @@ public abstract class InterceptFromRouteTestSupport extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         a = getMockEndpoint("mock:a");
         b = getMockEndpoint("mock:b");

@@ -17,15 +17,11 @@
 package org.apache.camel.component.paho;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PahoProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PahoProducer.class);
 
     public PahoProducer(PahoEndpoint endpoint) {
         super(endpoint);
@@ -44,7 +40,7 @@ public class PahoProducer extends DefaultProducer {
         message.setQos(qos);
         message.setRetained(retained);
 
-        LOG.debug("Publishing to topic: {}, qos: {}, retrained: {}", topic, qos, retained);
+        log.debug("Publishing to topic: {}, qos: {}, retrained: {}", topic, qos, retained);
         client.publish(topic, message);
     }
 

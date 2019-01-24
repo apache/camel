@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.greeter;
-
 import java.io.File;
+
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.CamelContext;

@@ -30,7 +30,7 @@ import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class NettyComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = "netty4-component")
+    @Bean(name = {"netty-component", "netty4-component"})
     @ConditionalOnMissingBean(NettyComponent.class)
     public NettyComponent configureNettyComponent() throws Exception {
         NettyComponent component = new NettyComponent();

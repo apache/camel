@@ -21,6 +21,9 @@ import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -39,72 +42,71 @@ import static org.apache.camel.maven.packaging.PackageOtherMojo.prepareOthers;
  *     <li>others</li>
  * </ul>
  * And for each of those generates extra descriptors and schema files for easier auto-discovery in Camel and tooling.
- *
- * @goal prepare-components
  */
+@Mojo(name = "prepare-components", threadSafe = true)
 public class PrepareComponentMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The output directory for generated components file
      *
-     * @parameter default-value="${project.build.directory}/generated/camel/components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/components")
     protected File componentOutDir;
 
     /**
      * The output directory for generated dataformats file
      *
-     * @parameter default-value="${project.build.directory}/generated/camel/dataformats"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/dataformats")
     protected File dataFormatOutDir;
 
     /**
      * The output directory for generated languages file
      *
-     * @parameter default-value="${project.build.directory}/generated/camel/languages"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/languages")
     protected File languageOutDir;
 
     /**
      * The output directory for generated others file
      *
-     * @parameter default-value="${project.build.directory}/generated/camel/others"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/others")
     protected File otherOutDir;
 
     /**
      * The output directory for generated schema file
      *
-     * @parameter default-value="${project.build.directory}/classes"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes")
     protected File schemaOutDir;
 
     /**
-     * Maven ProjectHelper.
+     * The project build directory
      *
-     * @component
-     * @readonly
      */
+    @Parameter(defaultValue = "${project.build.directory}")
+    protected File buildDir;
+
+    /**
+     * Maven ProjectHelper.
+     */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * build context to check changed files and mark them for refresh
      * (used for m2e compatibility)
-     * 
-     * @component
-     * @readonly
      */
+    @Component
     private BuildContext buildContext;
-    
+
     /**
      * Execute goal.
      *
@@ -113,10 +115,14 @@ public class PrepareComponentMojo extends AbstractMojo {
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareComponent(getLog(), project, projectHelper, componentOutDir, buildContext);
-        prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
-        prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir, buildContext);
-        prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
+        int count = 0;
+        count += prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);
+        count += prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
+        count += prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir, buildContext);
+        if (count == 0) {
+            // okay its not any of the above then its other
+            prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
+        }
     }
 
 }

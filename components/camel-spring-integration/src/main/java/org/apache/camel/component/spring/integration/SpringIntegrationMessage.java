@@ -18,22 +18,30 @@ package org.apache.camel.component.spring.integration;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.Exchange;
+import org.apache.camel.support.DefaultMessage;
+import org.springframework.messaging.Message;
 
 /**
  * The Message {@link DefaultMessage} implementation
  * for accessing the SpringIntegrationMessage
- *
- * @version 
  */
 public class SpringIntegrationMessage extends DefaultMessage {
     private org.springframework.messaging.Message<?> siMessage;
 
-    public SpringIntegrationMessage() {
+    public SpringIntegrationMessage(CamelContext camelContext) {
+        super(camelContext);
     }
 
-    public SpringIntegrationMessage(org.springframework.messaging.Message<?> message) {
+    public SpringIntegrationMessage(Exchange exchange, Message<?> message) {
+        super(exchange);
+        this.siMessage = message;
+    }
+
+    public SpringIntegrationMessage(CamelContext camelContext, Message<?> message) {
+        super(camelContext);
         this.siMessage = message;
     }
 
@@ -54,6 +62,11 @@ public class SpringIntegrationMessage extends DefaultMessage {
 
         if (that instanceof CamelContextAware) {
             this.setCamelContext(((CamelContextAware) that).getCamelContext());
+        }
+
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
         }
 
         setMessageId(that.getMessageId());
@@ -95,8 +108,7 @@ public class SpringIntegrationMessage extends DefaultMessage {
     @Override
     public SpringIntegrationMessage newInstance() {
         // create new empty message
-        SpringIntegrationMessage answer = new SpringIntegrationMessage();
-        answer.setCamelContext(getCamelContext());
+        SpringIntegrationMessage answer = new SpringIntegrationMessage(getCamelContext());
         return answer;
     }
 

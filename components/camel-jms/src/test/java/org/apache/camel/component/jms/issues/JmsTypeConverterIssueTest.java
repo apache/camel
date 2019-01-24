@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.issues;
 
 import java.io.File;
+
 import javax.jms.ConnectionFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -38,8 +39,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 /**
  * Unit test based on user forum issue.
- *
- * @version 
  */
 public class JmsTypeConverterIssueTest extends CamelTestSupport {
 

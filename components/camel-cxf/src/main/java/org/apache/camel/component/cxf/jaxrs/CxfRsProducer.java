@@ -47,9 +47,10 @@ import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.component.cxf.CxfOperationException;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
@@ -64,7 +65,7 @@ import org.slf4j.LoggerFactory;
  * JAXRS client, it will turn the normal Object invocation to a RESTful request
  * according to resource annotation.  Any response will be bound to Camel exchange.
  */
-public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
+public class CxfRsProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsProducer.class);
 
@@ -238,7 +239,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
             String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
             if (queryString != null) {
                 maps = getQueryParametersFromQueryString(queryString,
-                                                         IOHelper.getCharsetName(exchange));
+                                                         ExchangeHelper.getCharsetName(exchange));
             }
         }
         if (maps == null) {
@@ -266,7 +267,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
             if (requestURL != null && matrixStart > 0) {
                 matrixParam = requestURL.substring(matrixStart + 1, matrixEnd);
                 if (matrixParam != null) {
-                    maps = getMatrixParametersFromMatrixString(matrixParam, IOHelper.getCharsetName(exchange));
+                    maps = getMatrixParametersFromMatrixString(matrixParam, ExchangeHelper.getCharsetName(exchange));
                 }
             }
             if (maps != null) {
@@ -637,7 +638,7 @@ public class CxfRsProducer extends DefaultProducer implements AsyncProcessor {
             } else {
                 body = binding.bindCamelMessageBodyToRequestBody(inMessage, exchange);
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Request body = " + body);
+                    LOG.trace("Request body = {}", body);
                 }
             }
         }

@@ -40,20 +40,18 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using <a href="http://jackson.codehaus.org/">Jackson</a>
  * to marshal to and from XML.
  */
+@Dataformat("jacksonxml")
 public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(JacksonXMLDataFormat.class);
 
     private CamelContext camelContext;
     private XmlMapper xmlMapper;
@@ -471,7 +469,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing
             JaxbAnnotationModule module = new JaxbAnnotationModule();
-            LOG.info("Registering module: {}", module);
+            log.info("Registering module: {}", module);
             xmlMapper.registerModule(module);
         }
 
@@ -487,7 +485,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
         }
 
         if (enableFeatures != null) {
-            Iterator<Object> it = ObjectHelper.createIterator(enableFeatures);
+            Iterator<?> it = ObjectHelper.createIterator(enableFeatures);
             while (it.hasNext()) {
                 String enable = it.next().toString();
                 // it can be different kind
@@ -511,7 +509,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
             }
         }
         if (disableFeatures != null) {
-            Iterator<Object> it = ObjectHelper.createIterator(disableFeatures);
+            Iterator<?> it = ObjectHelper.createIterator(disableFeatures);
             while (it.hasNext()) {
                 String disable = it.next().toString();
                 // it can be different kind
@@ -537,34 +535,34 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
 
         if (modules != null) {
             for (Module module : modules) {
-                LOG.info("Registering module: {}", module);
+                log.info("Registering module: {}", module);
                 xmlMapper.registerModules(module);
             }
         }
         if (moduleClassNames != null) {
-            Iterable<Object> it = ObjectHelper.createIterable(moduleClassNames);
+            Iterable<?> it = ObjectHelper.createIterable(moduleClassNames);
             for (Object o : it) {
                 String name = o.toString();
                 Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
                 Module module = camelContext.getInjector().newInstance(clazz);
-                LOG.info("Registering module: {} -> {}", name, module);
+                log.info("Registering module: {} -> {}", name, module);
                 xmlMapper.registerModule(module);
             }
         }
         if (moduleRefs != null) {
-            Iterable<Object> it = ObjectHelper.createIterable(moduleRefs);
+            Iterable<?> it = ObjectHelper.createIterable(moduleRefs);
             for (Object o : it) {
                 String name = o.toString();
                 if (name.startsWith("#")) {
                     name = name.substring(1);
                 }
                 Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
-                LOG.info("Registering module: {} -> {}", name, module);
+                log.info("Registering module: {} -> {}", name, module);
                 xmlMapper.registerModule(module);
             }
         }
-        if (ObjectHelper.isNotEmpty(timezone)) {
-            LOG.debug("Setting timezone to XML Mapper: {}", timezone);
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(timezone)) {
+            log.debug("Setting timezone to XML Mapper: {}", timezone);
             xmlMapper.setTimeZone(timezone);
         }
     }

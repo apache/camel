@@ -21,12 +21,10 @@ import org.apache.camel.Route;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.support.RoutePolicySupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringRoutePoliciesTest extends SpringTestSupport {
 
     @Override
@@ -34,6 +32,7 @@ public class SpringRoutePoliciesTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringRoutePoliciesTest.xml");
     }
 
+    @Test
     public void testCustomPolicies() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

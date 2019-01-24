@@ -25,8 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default {@link UuidGenerator} that is based on the {@link ActiveMQUuidGenerator} but
- * is optimized for Camel usage to startup faster and avoid use local network binding to obtain a random number.
+ * Default {@link UuidGenerator} optimized for Camel usage.
  */
 public class DefaultUuidGenerator implements UuidGenerator {
 

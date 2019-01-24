@@ -24,18 +24,18 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * To send or receive emails using imap/pop3 or smtp protocols.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "imap,imaps,pop3,pop3s,smtp,smtps", title = "IMAP,IMAPS,POP3,POP3S,SMTP,SMTPS",
         syntax = "imap:host:port", alternativeSyntax = "imap:username:password@host:port",
-        consumerClass = MailConsumer.class, label = "mail")
+        label = "mail")
 public class MailEndpoint extends ScheduledPollEndpoint {
 
     @UriParam(optionalPrefix = "consumer.", defaultValue = "" + MailConsumer.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
@@ -59,33 +59,25 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     @UriParam(label = "consumer,advanced")
     private MailBoxPostProcessAction postProcessAction;
     @UriParam(label = "consumer,filter")
-    private IdempotentRepository<String> idempotentRepository;
+    private IdempotentRepository idempotentRepository;
     @UriParam(label = "consumer,filter", defaultValue = "true")
     private boolean idempotentRepositoryRemoveOnCommit = true;
     @UriParam(label = "consumer,advanced")
     private MailUidGenerator mailUidGenerator = new DefaultMailUidGenerator();
 
     public MailEndpoint() {
-        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
-        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
-        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
+        this(null, null, null);
+    }
+
+    public MailEndpoint(String endpointUri) {
+        this(endpointUri, null, new MailConfiguration());
     }
 
     public MailEndpoint(String uri, MailComponent component, MailConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
-    }
-
-    @Deprecated
-    public MailEndpoint(String endpointUri, MailConfiguration configuration) {
-        super(endpointUri);
-        this.configuration = configuration;
-        setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
-    }
-
-    public MailEndpoint(String endpointUri) {
-        this(endpointUri, new MailConfiguration());
+        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,
+        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
         setDelay(MailConsumer.DEFAULT_CONSUMER_DELAY);
     }
 
@@ -135,7 +127,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     public Exchange createExchange(Message message) {
         Exchange exchange = super.createExchange();
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(new MailMessage(message, getConfiguration().isMapMailMessage()));
+        exchange.setIn(new MailMessage(exchange, message, getConfiguration().isMapMailMessage()));
         return exchange;
     }
 
@@ -236,7 +228,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         this.postProcessAction = postProcessAction;
     }
 
-    public IdempotentRepository<String> getIdempotentRepository() {
+    public IdempotentRepository getIdempotentRepository() {
         return idempotentRepository;
     }
 
@@ -247,7 +239,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
      * <p/>
      * By default no repository is in use.
      */
-    public void setIdempotentRepository(IdempotentRepository<String> idempotentRepository) {
+    public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
     }
 

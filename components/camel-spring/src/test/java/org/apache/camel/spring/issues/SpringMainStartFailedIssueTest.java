@@ -20,9 +20,11 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.spring.Main;
+import org.junit.Test;
 
 public class SpringMainStartFailedIssueTest extends TestSupport {
 
+    @Test
     public void testStartupFailed() throws Exception {
         Main main = new Main();
 

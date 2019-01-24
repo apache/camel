@@ -40,7 +40,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * A Camel {@link Endpoint} that bridges the CDI events facility with Camel routes so that CDI events
@@ -105,7 +105,7 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
     private final BeanManager manager;
 
     CdiEventEndpoint(String endpointUri, Type type, Set<Annotation> qualifiers, BeanManager manager) {
-        super(endpointUri);
+        super(endpointUri, null);
         this.type = type;
         this.qualifiers = qualifiers;
         this.manager = manager;

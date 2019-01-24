@@ -16,9 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeProperty;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class BodyInAggregatingStrategy implements AggregationStrategy {
 

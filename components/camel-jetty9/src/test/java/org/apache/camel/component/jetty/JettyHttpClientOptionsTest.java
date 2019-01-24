@@ -16,11 +16,23 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http.HttpProducer;
+import org.apache.camel.component.http4.HttpProducer;
 import org.apache.camel.http.common.HttpCommonEndpoint;
+import org.apache.http.HttpConnection;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.protocol.HttpCoreContext;
 import org.eclipse.jetty.client.HttpClient;
 import org.junit.Test;
+
 
 /**
  * Unit test for http client options.
@@ -30,10 +42,27 @@ public class JettyHttpClientOptionsTest extends BaseJettyTest {
     @Test
     public void testCustomHttpBinding() throws Exception {
         // assert jetty was configured with our timeout
-        HttpCommonEndpoint jettyEndpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice?httpClient.soTimeout=5555", HttpCommonEndpoint.class);
+        HttpCommonEndpoint jettyEndpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice?socketTimeout=5555", HttpCommonEndpoint.class);
         assertNotNull("Jetty endpoint should not be null ", jettyEndpoint);
+        AtomicInteger soTimeout = new AtomicInteger();
         HttpProducer producer = (HttpProducer)jettyEndpoint.createProducer();
-        assertEquals("Get the wrong http client parameter", 5555, producer.getHttpClient().getParams().getSoTimeout());
+        HttpClientContext ctx = new HttpClientContext() {
+            @Override
+            public void setAttribute(String id, Object obj) {
+                if (obj instanceof HttpConnection) {
+                    HttpConnection con = (HttpConnection) obj;
+                    if (con.isOpen()) {
+                        int so = con.getSocketTimeout();
+                        if (so >= 0) {
+                            soTimeout.set(so);
+                        }
+                    }
+                }
+                super.setAttribute(id, obj);
+            }
+        };
+        HttpResponse response = producer.getHttpClient().execute(new HttpHost("localhost", getPort()), new HttpHead(), ctx);
+        assertEquals("Get the wrong http client parameter", 5555, soTimeout.get());
 
         // send and receive
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myservice", "Hello World");
@@ -49,12 +78,12 @@ public class JettyHttpClientOptionsTest extends BaseJettyTest {
         assertProxyAddress(producer.getClient(), "192.168.0.1", 9090);
 
         // setup the context properties
-        context.getProperties().put("http.proxyHost", "192.168.0.2");
-        context.getProperties().put("http.proxyPort", "8080");
+        context.getGlobalOptions().put("http.proxyHost", "192.168.0.2");
+        context.getGlobalOptions().put("http.proxyPort", "8080");
         jettyEndpoint = context.getEndpoint("jetty://http://localhost:{{port}}/proxy2/setting", HttpCommonEndpoint.class);
         producer = (JettyHttpProducer)jettyEndpoint.createProducer();
         assertProxyAddress(producer.getClient(), "192.168.0.2", 8080);
-        context.getProperties().clear();
+        context.getGlobalOptions().clear();
 
     }
 

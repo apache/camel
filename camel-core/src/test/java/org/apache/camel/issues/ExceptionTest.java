@@ -21,12 +21,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testExceptionWithoutHandler() throws Exception {
         MockEndpoint errorEndpoint = getMockEndpoint("mock:error");
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -45,6 +44,7 @@ public class ExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testExceptionWithHandler() throws Exception {
         MockEndpoint errorEndpoint = getMockEndpoint("mock:error");
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -64,6 +64,7 @@ public class ExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testExceptionWithLongHandler() throws Exception {
         MockEndpoint errorEndpoint = getMockEndpoint("mock:error");
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -83,6 +84,7 @@ public class ExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testLongRouteWithHandler() throws Exception {
         MockEndpoint errorEndpoint = getMockEndpoint("mock:error");
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");

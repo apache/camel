@@ -6,13 +6,12 @@ Marshalling is the opposite of unmarshalling, where a bean is marshalled into so
 == Options
 
 // eip options: START
-The Marshal EIP supports 2 options which are listed below:
+The Marshal EIP supports 1 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *dataFormatType* | *Required* The data format to be used |  | DataFormatDefinition
-| *ref* | *Deprecated* To refer to a custom data format to use as marshaller |  | String
 |===
 // eip options: END
 

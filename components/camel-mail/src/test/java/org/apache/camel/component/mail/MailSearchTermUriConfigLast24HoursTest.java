@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
-
 import java.util.Date;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -26,12 +26,14 @@ import javax.mail.internet.MimeMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
 public class MailSearchTermUriConfigLast24HoursTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         prepareMailbox();
         super.setUp();

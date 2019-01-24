@@ -18,14 +18,14 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test for intercepting sending to endpoint
- * 
- * @version 
  */
 public class InterceptSendToEndpointWithStopTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptSendToEndpointWithStop() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
@@ -37,6 +37,7 @@ public class InterceptSendToEndpointWithStopTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptSendToEndpointWithNoStop() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(1);

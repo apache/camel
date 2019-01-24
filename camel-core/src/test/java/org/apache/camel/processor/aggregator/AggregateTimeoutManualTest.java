@@ -20,14 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * To be run manually when testing the timeout aggregator
- *
- * @version 
  */
 public class AggregateTimeoutManualTest extends ContextTestSupport {
 
+    @Test
     public void testDisabled() throws Exception {
         // noop
     }

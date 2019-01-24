@@ -15,19 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.test.patterns;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class IsMockEndpointsFileTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/input");
         deleteDirectory("target/messages");
@@ -62,7 +60,7 @@ public class IsMockEndpointsFileTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("file:target/input")
                     .choice()
-                        .when(body(String.class).contains("Camel")).to("file:target/messages/camel")
+                        .when(bodyAs(String.class).contains("Camel")).to("file:target/messages/camel")
                         .otherwise().to("file:target/messages/others");
             }
         };

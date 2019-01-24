@@ -29,10 +29,10 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Performs a query, poll, insert, update or delete in a relational database using MyBatis.
  */
-@UriEndpoint(firstVersion = "2.7.0", scheme = "mybatis", title = "MyBatis", syntax = "mybatis:statement", consumerClass = MyBatisConsumer.class, label = "database,sql")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "mybatis", title = "MyBatis", syntax = "mybatis:statement", label = "database,sql")
 public class MyBatisEndpoint extends BaseMyBatisEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String statement;
     @UriParam(label = "producer")
     private StatementType statementType;

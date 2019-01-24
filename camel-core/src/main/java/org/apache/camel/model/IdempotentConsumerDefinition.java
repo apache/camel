@@ -23,13 +23,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Filters out duplicate messages
@@ -50,12 +46,12 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean removeOnFailure;
     @XmlTransient
-    private IdempotentRepository<?> idempotentRepository;
+    private IdempotentRepository idempotentRepository;
 
     public IdempotentConsumerDefinition() {
     }
 
-    public IdempotentConsumerDefinition(Expression messageIdExpression, IdempotentRepository<?> idempotentRepository) {
+    public IdempotentConsumerDefinition(Expression messageIdExpression, IdempotentRepository idempotentRepository) {
         super(messageIdExpression);
         this.idempotentRepository = idempotentRepository;
     }
@@ -63,6 +59,11 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
     @Override
     public String toString() {
         return "IdempotentConsumer[" + getExpression() + " -> " + getOutputs() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "idempotentConsumer";
     }
 
     @Override
@@ -90,7 +91,7 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
      * @param idempotentRepository the repository instance of idempotent
      * @return builder
      */
-    public IdempotentConsumerDefinition messageIdRepository(IdempotentRepository<?> idempotentRepository) {
+    public IdempotentConsumerDefinition messageIdRepository(IdempotentRepository idempotentRepository) {
         setMessageIdRepository(idempotentRepository);
         return this;
     }
@@ -176,11 +177,11 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.messageIdRepositoryRef = messageIdRepositoryRef;
     }
 
-    public IdempotentRepository<?> getMessageIdRepository() {
+    public IdempotentRepository getMessageIdRepository() {
         return idempotentRepository;
     }
 
-    public void setMessageIdRepository(IdempotentRepository<?> idempotentRepository) {
+    public void setMessageIdRepository(IdempotentRepository idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
     }
 
@@ -216,37 +217,4 @@ public class IdempotentConsumerDefinition extends ExpressionNode {
         this.completionEager = completionEager;
     }
 
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-
-        IdempotentRepository<String> idempotentRepository = resolveMessageIdRepository(routeContext);
-        ObjectHelper.notNull(idempotentRepository, "idempotentRepository", this);
-
-        Expression expression = getExpression().createExpression(routeContext);
-
-        // these boolean should be true by default
-        boolean eager = getEager() == null || getEager();
-        boolean duplicate = getSkipDuplicate() == null || getSkipDuplicate();
-        boolean remove = getRemoveOnFailure() == null || getRemoveOnFailure();
-
-        // these boolean should be false by default
-        boolean completionEager = getCompletionEager() != null && getCompletionEager();
-
-        return new IdempotentConsumer(expression, idempotentRepository, eager, completionEager, duplicate, remove, childProcessor);
-    }
-
-    /**
-     * Strategy method to resolve the {@link org.apache.camel.spi.IdempotentRepository} to use
-     *
-     * @param routeContext route context
-     * @return the repository
-     */
-    @SuppressWarnings("unchecked")
-    protected <T> IdempotentRepository<T> resolveMessageIdRepository(RouteContext routeContext) {
-        if (messageIdRepositoryRef != null) {
-            idempotentRepository = routeContext.mandatoryLookup(messageIdRepositoryRef, IdempotentRepository.class);
-        }
-        return (IdempotentRepository<T>)idempotentRepository;
-    }
 }

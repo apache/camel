@@ -44,6 +44,8 @@ import org.apache.camel.util.FileUtil;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.jboss.forge.roaster.Roaster;
@@ -52,51 +54,54 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
  * Performs route coverage reports after running Camel unit tests with camel-test modules
- *
- * @goal route-coverage
- * @threadSafe
  */
+@Mojo(name = "route-coverage", threadSafe = true)
 public class RouteCoverageMojo extends AbstractExecMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
-     * Whether to fail if a route was not fully covered
+     * Whether to fail if a route was not fully covered.
+     * 
+     * Note the option coverageThreshold can be used
+     * to set a minimum coverage threshold in percentage.
      *
      * @parameter property="camel.failOnError"
      *            default-value="false"
      */
+    @Parameter(property = "camel.failOnError", defaultValue = "false")
     private boolean failOnError;
 
     /**
-     * Whether to include test source code
+     * The minimum route coverage in percent when using failOnError.
      *
-     * @parameter property="camel.includeTest"
-     *            default-value="false"
+     * @parameter property="camel.coverageThreshold"
+     *            default-value="100"
      */
+    private byte coverageThreshold = 100;
+
+    /**
+     * Whether to include test source code
+     */
+    @Parameter(property = "camel.includeTest", defaultValue = "false")
     private boolean includeTest;
 
     /**
      * To filter the names of java and xml files to only include files matching any of the given list of patterns (wildcard and regular expression).
      * Multiple values can be separated by comma.
-     *
-     * @parameter property="camel.includes"
      */
+    @Parameter(property = "camel.includes")
     private String includes;
 
     /**
      * To filter the names of java and xml files to exclude files matching any of the given list of patterns (wildcard and regular expression).
      * Multiple values can be separated by comma.
-     *
-     * @parameter property="camel.excludes"
      */
+    @Parameter(property = "camel.excludes")
     private String excludes;
 
     /**
@@ -104,10 +109,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
      * By using route id's then its safer to match the route cover data with the route source code.
      * Anonymous routes are less safe to use for route coverage as its harder to know
      * exactly which route that was tested corresponds to which of the routes from the source code.
-     *
-     * @parameter property="camel.anonymousRoutes"
-     *            default-value="false"
      */
+    @Parameter(property = "camel.anonymousRoutes", defaultValue = "false")
     private boolean anonymousRoutes;
 
     // CHECKSTYLE:OFF
@@ -327,8 +330,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             sw.println("Route:\t" + routeId);
         }
         sw.println();
-        sw.println(String.format("%8s   %8s   %s", "Line #", "Count", "Route"));
-        sw.println(String.format("%8s   %8s   %s", "------", "-----", "-----"));
+        sw.println(String.format("%8s    %8s    %s", "Line #", "Count", "Route"));
+        sw.println(String.format("%8s    %8s    %s", "------", "-----", "-----"));
 
         int covered = 0;
         for (RouteCoverageNode node : model) {
@@ -336,18 +339,22 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                 covered++;
             }
             String pad = padString(node.getLevel());
-            sw.println(String.format("%8s   %8s   %s", node.getLineNumber(), node.getCount(), pad + node.getName()));
-        }
-
-        if (covered != model.size()) {
-            // okay here is a route that was not fully covered
-            notCovered.incrementAndGet();
+            sw.println(String.format("%8s    %8s    %s", node.getLineNumber(), node.getCount(), pad + node.getName()));
         }
 
         // calculate percentage of route coverage (must use double to have decimals)
         double percentage = ((double) covered / (double) model.size()) * 100;
+
+        boolean success = true;
+        if (covered != model.size() && percentage < coverageThreshold) {
+            // okay here is a route that was not fully covered
+            notCovered.incrementAndGet();
+            success = false;
+        }
+
         sw.println();
-        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format("%.1f", percentage) + "%)");
+        sw.println("Coverage: " + covered + " out of " + model.size() + " (" + String.format("%.1f", percentage) + "% / threshold " + coverageThreshold + ".0%)");
+        sw.println("Status: " + (success ? "Success" : "Failed"));
         sw.println();
 
         return bos.toString();

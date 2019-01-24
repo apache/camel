@@ -83,7 +83,7 @@ public class CdiOsgiIT {
     @Test
     public void testRouteStatus() {
         assertThat("Route status is incorrect!",
-            context.getRouteStatus("consumer-route"), equalTo(ServiceStatus.Started));
+            context.getRouteController().getRouteStatus("consumer-route"), equalTo(ServiceStatus.Started));
     }
 
     @Test

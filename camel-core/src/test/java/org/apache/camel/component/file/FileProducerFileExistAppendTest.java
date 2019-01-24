@@ -15,23 +15,23 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileProducerFileExistAppendTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/file");
         super.setUp();
     }
 
+    @Test
     public void testAppend() throws Exception {
         template.sendBodyAndHeader("file://target/file", "Hello World\n", Exchange.FILE_NAME, "hello.txt");
 
@@ -41,7 +41,7 @@ public class FileProducerFileExistAppendTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file://target/file?fileExist=Append", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
     }

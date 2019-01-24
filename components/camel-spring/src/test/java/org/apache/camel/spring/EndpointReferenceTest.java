@@ -23,19 +23,19 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spring.example.DummyBean;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class EndpointReferenceTest extends SpringTestSupport {
     protected static Object body = "<hello>world!</hello>";
 
+    @Test
     public void testContextToString() throws Exception {
         assertNotNull(context.toString());
     }
 
+    @Test
     public void testEndpointConfiguration() throws Exception {
         Endpoint endpoint = getMandatoryBean(Endpoint.class, "endpoint1");
 
@@ -60,6 +60,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
         return applicationContext.getBean("camel", SpringCamelContext.class);
     }
 
+    @Test
     public void testEndpointConfigurationAfterEnsuringThatTheStatementRouteBuilderWasCreated() throws Exception {
         String[] names = applicationContext.getBeanDefinitionNames();
         for (String name : names) {
@@ -69,6 +70,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
         testEndpointConfiguration();
     }
     
+    @Test
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
         CamelContext context = applicationContext.getBean("camel2", CamelContext.class);
         RouteContext routeContext = new DefaultRouteContext(context);

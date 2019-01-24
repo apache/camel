@@ -19,8 +19,8 @@ package org.apache.camel.component.dns;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.StringHelper;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Lookup;
 import org.xbill.DNS.Type;
@@ -37,7 +37,7 @@ public class DnsLookupProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         String dnsName = exchange.getIn().getHeader(DnsConstants.DNS_NAME, String.class);
-        ObjectHelper.notEmpty(dnsName, "Header " + DnsConstants.DNS_NAME);
+        StringHelper.notEmpty(dnsName, "Header " + DnsConstants.DNS_NAME);
 
         Object type = exchange.getIn().getHeader(DnsConstants.DNS_TYPE);
         Integer dnsType = null;

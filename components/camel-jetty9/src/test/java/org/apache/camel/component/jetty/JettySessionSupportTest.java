@@ -19,9 +19,6 @@ package org.apache.camel.component.jetty;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JettySessionSupportTest extends BaseJettyTest {
 
     @Override
@@ -44,6 +41,8 @@ public class JettySessionSupportTest extends BaseJettyTest {
             fail("Should have thrown an exception");
         } catch (IllegalStateException e) {
             assertEquals("Server has already been started. Cannot enabled sessionSupport on http:localhost:" + getPort(), e.getMessage());
+        } finally {
+            context.stop();
         }
     }
 

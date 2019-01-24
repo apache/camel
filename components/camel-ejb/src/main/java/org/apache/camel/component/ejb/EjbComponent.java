@@ -18,6 +18,7 @@ package org.apache.camel.component.ejb;
 
 import java.util.Map;
 import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -27,19 +28,18 @@ import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.annotations.Component;
 
 /**
  * EJB component to invoke EJBs like the {@link org.apache.camel.component.bean.BeanComponent}.
- *
- * @version 
  */
+@Component("ejb")
 public class EjbComponent extends BeanComponent {
 
     private Context context;
     private Properties properties;
 
     public EjbComponent() {
-        super(EjbEndpoint.class);
     }
 
     @Override

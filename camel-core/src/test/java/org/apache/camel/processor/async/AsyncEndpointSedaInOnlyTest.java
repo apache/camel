@@ -15,15 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.async;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointSedaInOnlyTest extends ContextTestSupport {
 
     private static String beforeThreadName;
@@ -32,11 +30,13 @@ public class AsyncEndpointSedaInOnlyTest extends ContextTestSupport {
     private static String route = "";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         route = "";
     }
 
+    @Test
     public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");

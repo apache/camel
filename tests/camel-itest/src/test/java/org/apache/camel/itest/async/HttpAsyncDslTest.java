@@ -26,15 +26,12 @@ import org.apache.camel.impl.StringDataFormat;
 import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class HttpAsyncDslTest extends CamelTestSupport {
 
     private static volatile String order = "";

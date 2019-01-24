@@ -23,14 +23,13 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RefInvalidTest extends ContextTestSupport {
 
     private SimpleRegistry registry = new SimpleRegistry();
 
+    @Test
     public void testOk() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -39,6 +38,7 @@ public class RefInvalidTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInvalid() throws Exception {
         try {
             template.sendBody("ref:xxx", "Hello World");

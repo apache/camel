@@ -23,7 +23,7 @@ import java.net.URLDecoder;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -41,7 +41,7 @@ public class SolrEndpoint extends DefaultEndpoint {
     private String scheme = "http://";
 
     @UriPath(description = "Hostname and port for the solr server")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String url;
     @UriParam(defaultValue = "" + SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE)
     private int streamingQueueSize = SolrConstants.DEFUALT_STREAMING_QUEUE_SIZE;

@@ -18,7 +18,9 @@ package org.apache.camel.component.kubernetes.secrets;
 
 import org.apache.camel.component.kubernetes.AbstractKubernetesComponent;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("kubernetes-secrets")
 public class KubernetesSecretsComponent extends AbstractKubernetesComponent {
 
     protected KubernetesSecretsEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {

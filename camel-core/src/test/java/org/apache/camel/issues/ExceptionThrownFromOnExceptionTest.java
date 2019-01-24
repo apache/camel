@@ -24,9 +24,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /*
- * @version 
  */
 public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
 
@@ -38,6 +38,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testExceptionThrownFromOnException() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -97,6 +98,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionAndHandled() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -158,6 +160,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -223,6 +226,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testExceptionThrownFromOnExceptionAndHandledWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -290,6 +294,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testNoExceptionThrownFromOnExceptionWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);
@@ -357,6 +362,7 @@ public class ExceptionThrownFromOnExceptionTest extends ContextTestSupport {
         assertEquals("Should only invoke onException once", 1, ON_EXCEPTION_RETRY.get());
     }
 
+    @Test
     public void testNoExceptionThrownFromOnExceptionAndHandledWithDeadLetterChannel() throws Exception {
         RETRY.set(0);
         ON_EXCEPTION_RETRY.set(0);

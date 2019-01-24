@@ -24,8 +24,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spring.util.CamelThreadPoolTaskScheduler;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -112,7 +112,7 @@ public class SpringScheduledPollConsumerScheduler extends ServiceSupport impleme
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notEmpty(cron, "cron", this);
+        StringHelper.notEmpty(cron, "cron", this);
 
         trigger = new CronTrigger(getCron(), getTimeZone());
 

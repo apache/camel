@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class SplitGroupSkipFirstTest extends ContextTestSupport {
 
+    @Test
     public void testSplitSkipFirst() throws Exception {
         getMockEndpoint("mock:group").expectedBodiesReceived("ABC\nDEF\nGHI", "JKL\nMN");
 
@@ -32,6 +34,7 @@ public class SplitGroupSkipFirstTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testSplitSkipFirstOnlyHeader() throws Exception {
         getMockEndpoint("mock:group").expectedBodiesReceived("");
 

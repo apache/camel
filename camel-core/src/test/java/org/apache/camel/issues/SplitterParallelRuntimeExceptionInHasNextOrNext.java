@@ -58,18 +58,6 @@ public class SplitterParallelRuntimeExceptionInHasNextOrNext extends ContextTest
             }
             assertMockEndpointsSatisfied();
         }
-        List<Thread> aggregatorThreads = getAggregatorThreads();
-        assertEquals(1, aggregatorThreads.size());
-    }
-
-    private List<Thread> getAggregatorThreads() {
-        List<Thread> result = new ArrayList<>();
-        for (Thread t : Thread.getAllStackTraces().keySet()) {
-            if (t.getName().endsWith("Splitter-AggregateTask")) {
-                result.add(t);
-            }
-        }
-        return result;
     }
 
     @Override

@@ -27,21 +27,17 @@ import org.apache.camel.component.atmos.integration.producer.AtmosMoveProducer;
 import org.apache.camel.component.atmos.integration.producer.AtmosPutProducer;
 import org.apache.camel.component.atmos.util.AtmosException;
 import org.apache.camel.component.atmos.util.AtmosOperation;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultEndpoint;
 
 import static org.apache.camel.component.atmos.util.AtmosConstants.POLL_CONSUMER_DELAY;
 
 /**
  * The atmos component is used for integrating with EMC's Atomos Storage.
  */
-@UriEndpoint(firstVersion = "2.15.0", scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation", consumerClass = AtmosScheduledPollConsumer.class, label = "file,cloud")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation", label = "file,cloud")
 public class AtmosEndpoint extends DefaultEndpoint {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(AtmosEndpoint.class);
 
     @UriParam
     private AtmosConfiguration configuration;
@@ -52,10 +48,6 @@ public class AtmosEndpoint extends DefaultEndpoint {
     public AtmosEndpoint(String uri, AtmosComponent component, AtmosConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-    }
-
-    public AtmosEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     public AtmosConfiguration getConfiguration() {
@@ -73,8 +65,8 @@ public class AtmosEndpoint extends DefaultEndpoint {
      * @throws Exception
      */
     public Producer createProducer() throws Exception {
-        LOG.debug("resolve producer atmos endpoint {" + configuration.getOperation().toString() + "}");
-        LOG.debug("resolve producer atmos attached client: " + configuration.getClient());
+        log.debug("resolve producer atmos endpoint {{}}", configuration.getOperation());
+        log.debug("resolve producer atmos attached client: {}", configuration.getClient());
         if (configuration.getOperation() == AtmosOperation.put) {
             return new AtmosPutProducer(this, configuration);
         } else if (this.configuration.getOperation() == AtmosOperation.del) {
@@ -96,8 +88,8 @@ public class AtmosEndpoint extends DefaultEndpoint {
      * @throws Exception
      */
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.debug("resolve consumer atmos endpoint {" + configuration.getOperation().toString() + "}");
-        LOG.debug("resolve consumer atmos attached client:" + configuration.getClient());
+        log.debug("resolve consumer atmos endpoint {{}}", configuration.getOperation());
+        log.debug("resolve consumer atmos attached client:{}", configuration.getClient());
 
         AtmosScheduledPollConsumer consumer;
         if (this.configuration.getOperation() == AtmosOperation.get) {

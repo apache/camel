@@ -19,6 +19,7 @@ package org.apache.camel.component.validator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -51,6 +52,7 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
             + "</Next>"
             + "</BroadcastMonitor>";
 
+    @Test
     public void testOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -67,6 +69,7 @@ public class ValidatorIllegalImportTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testIllegalImport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

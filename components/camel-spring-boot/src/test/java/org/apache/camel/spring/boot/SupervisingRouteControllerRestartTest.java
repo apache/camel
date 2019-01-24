@@ -71,9 +71,9 @@ public class SupervisingRouteControllerRestartTest {
         // Wait for the controller to start the routes
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
             // now its suspended by the policy
-            Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("foo"));
-            Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("bar"));
-            Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("dummy"));
+            Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("foo"));
+            Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("bar"));
+            Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("dummy"));
         });
 
         // restart the dummy route which should fail on first attempt
@@ -94,7 +94,7 @@ public class SupervisingRouteControllerRestartTest {
         // Wait for wile to give time to the controller to start the route
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             // now its suspended by the policy
-            Assert.assertEquals(ServiceStatus.Started, context.getRouteStatus("dummy"));
+            Assert.assertEquals(ServiceStatus.Started, context.getRouteController().getRouteStatus("dummy"));
             Assert.assertNotNull(context.getRoute("dummy").getRouteContext().getRouteController());
             Assert.assertFalse(controller.getBackOffContext("dummy").isPresent());
         });

@@ -43,16 +43,16 @@
         </route>
         <route>
             <from uri="direct:marshal"/>
-            <marshal ref="avro1"/>
+            <marshal><custom ref="avro1"/></marshal>
         </route>
         <route>
             <from uri="direct:unmarshalA"/>
-            <unmarshal ref="avro1"/>
+            <unmarshal><custom ref="avro1"/></unmarshal>
             <to uri="mock:reverse"/>
         </route>
         <route>
             <from uri="direct:unmarshalB"/>
-            <unmarshal ref="avro1"/>
+            <unmarshal><custom ref="avro1"/></unmarshal>
             <to uri="mock:reverse"/>
         </route>
     </camelContext>

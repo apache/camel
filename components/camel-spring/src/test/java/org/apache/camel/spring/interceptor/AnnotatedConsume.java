@@ -16,9 +16,6 @@
  */
 package org.apache.camel.spring.interceptor;
 
-/**
- * @version 
- */
 public interface AnnotatedConsume {
 
     void handleTitle(String title);

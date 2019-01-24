@@ -20,10 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends ContextTestSupport {
 
     private static int counter;
@@ -35,6 +33,7 @@ public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends Cont
         return jndi;
     }
 
+    @Test
     public void testAsyncEndpointOK() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -60,6 +59,7 @@ public class AsyncEndpointRecipientListFineGrainedErrorHandlingTest extends Cont
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAsyncEndpointERROR() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

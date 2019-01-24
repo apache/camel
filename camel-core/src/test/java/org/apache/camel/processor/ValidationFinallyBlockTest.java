@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.TryDefinition;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test finallyBlock
@@ -32,6 +33,7 @@ public class ValidationFinallyBlockTest extends ContextTestSupport {
     protected MockEndpoint invalidEndpoint;
     protected MockEndpoint allEndpoint;
 
+    @Test
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         invalidEndpoint.expectedMessageCount(0);
@@ -42,6 +44,7 @@ public class ValidationFinallyBlockTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, allEndpoint);
     }
 
+    @Test
     public void testInvalidMessage() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
         validEndpoint.expectedMessageCount(0);
@@ -53,7 +56,8 @@ public class ValidationFinallyBlockTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

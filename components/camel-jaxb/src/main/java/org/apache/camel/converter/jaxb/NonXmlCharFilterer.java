@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
  * href="http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char">range defined by
  * XML 1.0 spec</a>. <i>Filtering</i> here means replacement with space char.
  * 
- * 
  */
 class NonXmlCharFilterer {
     private static final Logger LOG = LoggerFactory.getLogger(FilteringXmlStreamWriter.class);

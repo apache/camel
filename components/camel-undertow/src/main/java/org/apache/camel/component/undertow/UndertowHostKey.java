@@ -24,6 +24,8 @@ import javax.net.ssl.SSLContext;
 public final class UndertowHostKey {
     private final String host;
     private final int port;
+
+    // SSLContext should not be part of the equals/hashCode contract
     private final SSLContext sslContext;
 
     public UndertowHostKey(String host, int port, SSLContext ssl) {
@@ -49,12 +51,8 @@ public final class UndertowHostKey {
         if (!(target instanceof UndertowHostKey)) {
             return false;
         }
-        UndertowHostKey targetKey = (UndertowHostKey)target;
+        UndertowHostKey targetKey = (UndertowHostKey) target;
         boolean answer = true;
-        if (this.sslContext != null || targetKey.sslContext != null) {
-            answer = this.sslContext != null && targetKey.sslContext != null
-                && this.sslContext.equals(targetKey.sslContext);
-        }
         return answer && this.host != null && targetKey.host != null
             && this.host.equals(targetKey.host) && this.port == targetKey.port;
     }
@@ -63,6 +61,6 @@ public final class UndertowHostKey {
     public int hashCode() {
         int answer = host.hashCode();
         answer = answer * 31 + Integer.hashCode(port);
-        return answer * 31 + (sslContext != null ? sslContext.hashCode() : 0);
+        return answer;
     }
 }

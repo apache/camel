@@ -19,7 +19,7 @@ package org.apache.camel.component.ignite;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.configuration.IgniteConfiguration;

@@ -21,9 +21,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorVmDifferentOptionsOnConsumerAndProducerTest extends AbstractVmTestSupport {
 
     @Test

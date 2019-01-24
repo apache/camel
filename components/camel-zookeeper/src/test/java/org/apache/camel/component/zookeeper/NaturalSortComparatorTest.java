@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.component.zookeeper.NaturalSortComparator.Order;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

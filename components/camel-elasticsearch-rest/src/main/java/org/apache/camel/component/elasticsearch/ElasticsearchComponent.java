@@ -24,14 +24,16 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 
 /**
  * Represents the component that manages {@link ElasticsearchEndpoint}.
  */
+@Component("elasticsearch-rest")
 public class ElasticsearchComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")

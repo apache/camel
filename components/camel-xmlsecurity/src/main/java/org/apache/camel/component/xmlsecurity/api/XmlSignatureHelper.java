@@ -52,6 +52,7 @@ import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
+
 import org.xml.sax.SAXException;
 
 import org.apache.camel.util.IOHelper;

@@ -42,7 +42,7 @@ public class Mina2ClientModeTcpTextlineDelimiterTest extends BaseMina2Test {
         Server server = new Server(getPort());
         server.startup();
         // start the camel route to connect to the server
-        context.startRoute("minaRoute");
+        context.getRouteController().startRoute("minaRoute");
         endpoint.assertIsSatisfied();
         server.shutdown();
     }

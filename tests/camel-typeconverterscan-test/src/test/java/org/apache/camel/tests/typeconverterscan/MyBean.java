@@ -18,9 +18,6 @@ package org.apache.camel.tests.typeconverterscan;
 
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
 public class MyBean {
     private String a;
     private String b;

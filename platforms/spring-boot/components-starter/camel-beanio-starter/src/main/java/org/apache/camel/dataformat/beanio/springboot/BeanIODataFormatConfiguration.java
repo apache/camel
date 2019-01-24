@@ -33,6 +33,11 @@ public class BeanIODataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the beanio data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The BeanIO mapping file. Is by default loaded from the classpath. You can
      * prefix with file:, http:, or classpath: to denote from where to load the
      * mapping file.

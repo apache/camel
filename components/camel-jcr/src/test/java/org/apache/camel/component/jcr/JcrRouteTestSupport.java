@@ -31,8 +31,6 @@ import org.junit.Before;
 
 /**
  * JcrRouteTestSupport
- * 
- * @version $Id$
  */
 public abstract class JcrRouteTestSupport extends CamelTestSupport {
 

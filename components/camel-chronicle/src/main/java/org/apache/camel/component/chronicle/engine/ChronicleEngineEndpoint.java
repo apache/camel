@@ -21,11 +21,11 @@ import net.openhft.chronicle.engine.tree.VanillaAssetTree;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The camel chronicle-engine component let you leverage the power of OpenHFT's <a href="https://github.com/OpenHFT/Chronicle-Engine">Chronicle-Engine</a>.
@@ -35,15 +35,14 @@ import org.apache.camel.spi.UriPath;
     scheme = "chronicle-engine",
     title = "Chronicle Engine",
     syntax = "chronicle-engine:addresses/path", 
-    consumerClass = ChronicleEngineConsumer.class, 
     label = "datagrid,cache")
 public class ChronicleEngineEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Engine addresses. Multiple addresses can be separated by comma.")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String addresses;
     @UriPath(description = "Engine path")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String path;
     @UriParam
     private ChronicleEngineConfiguration configuration;

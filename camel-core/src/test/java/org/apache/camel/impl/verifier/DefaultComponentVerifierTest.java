@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl.verifier;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +25,8 @@ import org.apache.camel.component.extension.ComponentVerifierExtension.Scope;
 import org.apache.camel.component.extension.ComponentVerifierExtension.VerificationError;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DefaultComponentVerifierTest extends ContextTestSupport {
     private ComponentVerifierExtension verifier;
@@ -36,7 +37,8 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         this.verifier = new TestVerifier();
@@ -46,6 +48,7 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
     // Tests
     // *************************************
 
+    @Test
     public void testParameters() throws Exception {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("timerName", "dummy");
@@ -55,6 +58,7 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
         Assert.assertEquals(Result.Status.OK, result.getStatus());
     }
 
+    @Test
     public void testParametersWithMissingMandatoryOptions() throws Exception {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("period", "1s");
@@ -67,6 +71,7 @@ public class DefaultComponentVerifierTest extends ContextTestSupport {
         Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("timerName"));
     }
 
+    @Test
     public void testParametersWithWrongOptions() throws Exception {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("timerName", "dummy");

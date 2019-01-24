@@ -16,25 +16,16 @@
  */
 package org.apache.camel.component.nats;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.Properties;
-import java.util.concurrent.TimeoutException;
-
-import javax.net.ssl.SSLContext;
+import java.time.Duration;
 
 import io.nats.client.Connection;
-import io.nats.client.ConnectionFactory;
+import io.nats.client.Connection.Status;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NatsProducer extends DefaultProducer {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(NatsProducer.class);
     
     private Connection connection;
     
@@ -52,7 +43,7 @@ public class NatsProducer extends DefaultProducer {
         NatsConfiguration config = getEndpoint().getNatsConfiguration();
         String body = exchange.getIn().getMandatoryBody(String.class);
 
-        LOG.debug("Publishing to topic: {}", config.getTopic());
+        log.debug("Publishing to topic: {}", config.getTopic());
         
         if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
             String replySubject = config.getReplySubject();
@@ -65,39 +56,27 @@ public class NatsProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.debug("Starting Nats Producer");
+        log.debug("Starting Nats Producer");
         
-        LOG.debug("Getting Nats Connection");
-        connection = getConnection();
+        log.debug("Getting Nats Connection");
+        connection = getEndpoint().getNatsConfiguration().getConnection() != null 
+            ? getEndpoint().getNatsConfiguration().getConnection() : getEndpoint().getConnection();
     }
 
     @Override
     protected void doStop() throws Exception {
+        log.debug("Stopping Nats Producer");
+        if (ObjectHelper.isEmpty(getEndpoint().getNatsConfiguration().getConnection())) {
+            log.debug("Closing Nats Connection");
+            if (connection != null && !connection.getStatus().equals(Status.CLOSED)) {
+                if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
+                    log.debug("Flushing Nats Connection");
+                    connection.flush(Duration.ofMillis(getEndpoint().getNatsConfiguration().getFlushTimeout()));
+                }
+                connection.close();
+            }
+        }
         super.doStop();
-        LOG.debug("Stopping Nats Producer");
-        
-        LOG.debug("Closing Nats Connection");
-        if (connection != null && !connection.isClosed()) {
-            if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
-                LOG.debug("Flushing Nats Connection");
-                connection.flush(getEndpoint().getNatsConfiguration().getFlushTimeout());
-            }
-            connection.close();
-        }
-    }
-
-    private Connection getConnection() throws TimeoutException, IOException, GeneralSecurityException {
-        Properties prop = getEndpoint().getNatsConfiguration().createProperties();
-        ConnectionFactory factory = new ConnectionFactory(prop);
-        if (getEndpoint().getNatsConfiguration().getSslContextParameters() != null && getEndpoint().getNatsConfiguration().isSecure()) {
-            SSLContext sslCtx = getEndpoint().getNatsConfiguration().getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()); 
-            factory.setSSLContext(sslCtx);
-            if (getEndpoint().getNatsConfiguration().isTlsDebug()) {
-                factory.setTlsDebug(getEndpoint().getNatsConfiguration().isTlsDebug());
-            }
-        }
-        connection = factory.createConnection();
-        return connection;
     }
 
 }

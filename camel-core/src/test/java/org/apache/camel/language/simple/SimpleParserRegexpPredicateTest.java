@@ -18,6 +18,7 @@ package org.apache.camel.language.simple;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Predicate;
+import org.junit.Test;
 
 /**
  * Unit test regexp function as the reg exp value should be template text only
@@ -25,10 +26,11 @@ import org.apache.camel.Predicate;
  */
 public class SimpleParserRegexpPredicateTest extends ExchangeTestSupport {
 
+    @Test
     public void testSimpleRegexp() throws Exception {
         exchange.getIn().setBody("12.34.5678");
 
-        SimplePredicateParser parser = new SimplePredicateParser("${body} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'", true);
+        SimplePredicateParser parser = new SimplePredicateParser("${body} regex '^\\d{2}\\.\\d{2}\\.\\d{4}$'", true, null);
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange));

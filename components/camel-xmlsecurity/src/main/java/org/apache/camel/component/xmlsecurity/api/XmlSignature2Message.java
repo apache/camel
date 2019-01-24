@@ -22,6 +22,7 @@ import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 
 import org.w3c.dom.Document;
+
 import org.apache.camel.Message;
 
 /**

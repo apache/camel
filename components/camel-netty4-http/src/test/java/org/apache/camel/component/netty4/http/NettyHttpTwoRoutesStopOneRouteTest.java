@@ -36,7 +36,7 @@ public class NettyHttpTwoRoutesStopOneRouteTest extends BaseNettyTest {
         assertMockEndpointsSatisfied();
 
         // stop foo route
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         resetMocks();
 

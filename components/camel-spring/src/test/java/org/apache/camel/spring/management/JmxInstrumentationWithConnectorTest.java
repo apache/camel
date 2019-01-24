@@ -19,6 +19,7 @@ package org.apache.camel.spring.management;
 import org.apache.camel.management.DefaultManagementAgent;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spring.EndpointReferenceTest;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,6 +30,7 @@ public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
         return true;
     }
 
+    @Test
     public void testJmxConfiguration() throws Exception {
         ManagementAgent agent = getMandatoryBean(DefaultManagementAgent.class, "agent");
         assertNotNull("SpringInstrumentationAgent must be configured for JMX support", agent);
@@ -41,6 +43,7 @@ public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/jmxInstrumentationWithConnector.xml");
     }
 
+    @Test
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
         // don't run the test in this method
     }

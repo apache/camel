@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>org.apache.camel</groupId>
 		<artifactId>components</artifactId>
-		<version>2.23.0-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>camel-influxdb</artifactId>
@@ -25,15 +25,13 @@
 	<description>Camel InfluxDB component</description>
 
 	<properties>
-		<camel.osgi.export.pkg>org.apache.camel.component.influxdb.*</camel.osgi.export.pkg>
-		<camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=influxdb</camel.osgi.export.service>
 	</properties>
 
 	<dependencies>
 
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-core</artifactId>
+			<artifactId>camel-support</artifactId>
 		</dependency>
 
 		<!-- InfluxDB driver dependency -->

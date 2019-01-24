@@ -42,14 +42,13 @@ public class CamelSjms2Test extends AbstractSpringBootTestSupport {
 //                .dependency("com.atomikos:transactions-api:3.9.3")
 //                .dependency("javax.transaction:javax.transaction-api:1.2")
 //                .disableJmx("org.apache.activemq:*")
+                .dependency("javax.json:javax.json-api")
                 .build();
     }
 
     @Test
     public void componentTests() throws Exception {
         this.runComponentTest(config);
-
-        // Unit tests can be enabled if required
         //this.runModuleUnitTestsIfEnabled(config);
     }
 

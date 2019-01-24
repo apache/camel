@@ -21,14 +21,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class NewProcessorAndServiceTest extends ContextTestSupport {
 
     private MyProcessor myProcessor;
 
+    @Test
     public void testNewProcessorAndService() throws Exception {
         String out = template.requestBody("direct:start", "Hello World", String.class);
         assertEquals("Bye World", out);

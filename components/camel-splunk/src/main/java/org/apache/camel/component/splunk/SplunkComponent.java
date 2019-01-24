@@ -19,19 +19,20 @@ package org.apache.camel.component.splunk;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Represents the component that manages {@link SplunkEndpoint}.
  */
-public class SplunkComponent extends UriEndpointComponent {
+@Component("splunk")
+public class SplunkComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private SplunkConfigurationFactory splunkConfigurationFactory = new DefaultSplunkConfigurationFactory();
 
     public SplunkComponent() {
-        super(SplunkEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

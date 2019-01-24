@@ -27,8 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.management.InstrumentationInterceptStrategy;
-import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -37,16 +35,15 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
-import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
+import org.apache.camel.processor.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.RedeliveryErrorHandler;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.OrderedComparator;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * DefaultChannel is the default {@link Channel}.
@@ -57,12 +54,8 @@ import org.slf4j.LoggerFactory;
  * With this {@link Channel} we can in the future implement better strategies for routing the
  * {@link Exchange} in the route graph, as we have a {@link Channel} between each and every node
  * in the graph.
- *
- * @version 
  */
 public class DefaultChannel extends CamelInternalProcessor implements ModelChannel {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultChannel.class);
 
     private final List<InterceptStrategy> interceptors = new ArrayList<>();
     private Processor errorHandler;
@@ -72,7 +65,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
     private Processor output;
     private ProcessorDefinition<?> definition;
     private ProcessorDefinition<?> childDefinition;
-    private InstrumentationProcessor instrumentationProcessor;
+    private ManagementInterceptStrategy.InstrumentationProcessor<?> instrumentationProcessor;
     private CamelContext camelContext;
     private RouteContext routeContext;
 
@@ -157,14 +150,14 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
     protected void doStart() throws Exception {
         // the output has now been created, so assign the output as the processor
         setProcessor(getOutput());
-        ServiceHelper.startServices(errorHandler, output);
+        ServiceHelper.startService(errorHandler, output);
     }
 
     @Override
     protected void doStop() throws Exception {
         if (!isContextScoped()) {
             // only stop services if not context scoped (as context scoped is reused by others)
-            ServiceHelper.stopServices(output, errorHandler);
+            ServiceHelper.stopService(output, errorHandler);
         }
     }
 
@@ -183,7 +176,6 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     public void initChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
         this.routeContext = routeContext;
         this.definition = outputDefinition;
@@ -200,7 +192,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // the definition to wrap should be the fine grained,
         // so if a child is set then use it, if not then its the original output used
         ProcessorDefinition<?> targetOutputDef = childDefinition != null ? childDefinition : outputDefinition;
-        LOG.debug("Initialize channel for target: '{}'", targetOutputDef);
+        log.debug("Initialize channel for target: '{}'", targetOutputDef);
 
         // fix parent/child relationship. This will be the case of the routes has been
         // defined using XML DSL or end user may have manually assembled a route from the model.
@@ -217,35 +209,25 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
         // setup instrumentation processor for management (jmx)
         // this is later used in postInitChannel as we need to setup the error handler later as well
-        InterceptStrategy managed = routeContext.getManagedInterceptStrategy();
-        if (managed instanceof InstrumentationInterceptStrategy) {
-            InstrumentationInterceptStrategy iis = (InstrumentationInterceptStrategy) managed;
-            instrumentationProcessor = new InstrumentationProcessor(targetOutputDef.getShortName(), target);
-            iis.prepareProcessor(targetOutputDef, target, instrumentationProcessor);
+        ManagementInterceptStrategy managed = routeContext.getManagementInterceptStrategy();
+        if (managed != null) {
+            instrumentationProcessor = managed.createProcessor(targetOutputDef, target);
         }
 
-        // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to tracer the backlog)
-        InterceptStrategy tracer = getOrCreateBacklogTracer();
-        camelContext.addService(tracer);
-        if (tracer instanceof BacklogTracer) {
-            BacklogTracer backlogTracer = (BacklogTracer) tracer;
-
-            RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
-            boolean first = false;
-            if (route != null && !route.getOutputs().isEmpty()) {
-                first = route.getOutputs().get(0) == definition;
-            }
-
-            addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, route, first));
-
-            // add debugger as well so we have both tracing and debugging out of the box
-            InterceptStrategy debugger = getOrCreateBacklogDebugger();
-            camelContext.addService(debugger);
-            if (debugger instanceof BacklogDebugger) {
-                BacklogDebugger backlogDebugger = (BacklogDebugger) debugger;
-                addAdvice(new BacklogDebuggerAdvice(backlogDebugger, target, targetOutputDef));
-            }
+        // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to trace the backlog)
+        BacklogTracer tracer = getOrCreateBacklogTracer();
+        camelContext.setExtension(BacklogTracer.class, tracer);
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
+        boolean first = false;
+        if (route != null && !route.getOutputs().isEmpty()) {
+            first = route.getOutputs().get(0) == definition;
         }
+        addAdvice(new BacklogTracerAdvice(tracer, targetOutputDef, route, first));
+
+        // add debugger as well so we have both tracing and debugging out of the box
+        BacklogDebugger debugger = getOrCreateBacklogDebugger();
+        camelContext.addService(debugger);
+        addAdvice(new BacklogDebuggerAdvice(debugger, target, targetOutputDef));
 
         if (routeContext.isMessageHistory()) {
             // add message history advice
@@ -253,54 +235,21 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
         }
 
-        // the regular tracer is not a task on internalProcessor as this is not really needed
-        // end users have to explicit enable the tracer to use it, and then its okay if we wrap
-        // the processors (but by default tracer is disabled, and therefore we do not wrap processors)
-        tracer = getOrCreateTracer();
-        if (tracer != null) {
-            camelContext.addService(tracer);
-            TraceInterceptor trace = (TraceInterceptor) tracer.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
-            // trace interceptor need to have a reference to route context so we at runtime can enable/disable tracing on-the-fly
-            trace.setRouteContext(routeContext);
-            target = trace;
-        }
-
         // sort interceptors according to ordered
         interceptors.sort(OrderedComparator.get());
-        // then reverse list so the first will be wrapped last, as it would then be first being invoked
+        // reverse list so the first will be wrapped last, as it would then be first being invoked
         Collections.reverse(interceptors);
         // wrap the output with the configured interceptors
         for (InterceptStrategy strategy : interceptors) {
             next = target == nextProcessor ? null : nextProcessor;
-            // skip tracer as we did the specially beforehand and it could potentially be added as an interceptor strategy
-            if (strategy instanceof Tracer) {
-                continue;
-            }
-            // skip stream caching as it must be wrapped as outer most, which we do later
-            if (strategy instanceof StreamCaching) {
-                continue;
-            }
             // use the fine grained definition (eg the child if available). Its always possible to get back to the parent
             Processor wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, next);
             if (!(wrapped instanceof AsyncProcessor)) {
-                LOG.warn("Interceptor: " + strategy + " at: " + outputDefinition + " does not return an AsyncProcessor instance."
+                log.warn("Interceptor: " + strategy + " at: " + outputDefinition + " does not return an AsyncProcessor instance."
                         + " This causes the asynchronous routing engine to not work as optimal as possible."
                         + " See more details at the InterceptStrategy javadoc."
                         + " Camel will use a bridge to adapt the interceptor to the asynchronous routing engine,"
                         + " but its not the most optimal solution. Please consider changing your interceptor to comply.");
-
-                // use a bridge and wrap again which allows us to adapt and leverage the asynchronous routing engine anyway
-                // however its not the most optimal solution, but we can still run.
-                InterceptorToAsyncProcessorBridge bridge = new InterceptorToAsyncProcessorBridge(target);
-                wrapped = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, bridge, next);
-                // Avoid the stack overflow
-                if (!wrapped.equals(bridge)) {
-                    bridge.setTarget(wrapped);
-                } else {
-                    // Just skip the wrapped processor
-                    bridge.setTarget(null);
-                }
-                wrapped = bridge;
             }
             if (!(wrapped instanceof WrapProcessor)) {
                 // wrap the target so it becomes a service and we can manage its lifecycle
@@ -332,84 +281,52 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
                 if (redeliveryPossible) {
                     // okay we can redeliver then we need to change the output in the error handler
                     // to use us which we then wrap the call so we can capture before/after for redeliveries as well
+                    Processor currentOutput = ((RedeliveryErrorHandler) errorHandler).getOutput();
+                    instrumentationProcessor.setProcessor(currentOutput);
                     ((RedeliveryErrorHandler) errorHandler).changeOutput(instrumentationProcessor);
                 }
             }
             if (!redeliveryPossible) {
                 // optimise to use advice as we cannot redeliver
-                addAdvice(instrumentationProcessor);
+                addAdvice(CamelInternalProcessorAdvice.wrap(instrumentationProcessor));
             }
         }
     }
 
-    private InterceptStrategy getOrCreateTracer() {
-        // only use tracer if explicit enabled
-        if (camelContext.isTracing() != null && !camelContext.isTracing()) {
-            return null;
+    private BacklogTracer getOrCreateBacklogTracer() {
+        BacklogTracer tracer = null;
+        if (camelContext.getRegistry() != null) {
+            // lookup in registry
+            Map<String, BacklogTracer> map = camelContext.getRegistry().findByTypeWithName(BacklogTracer.class);
+            if (map.size() == 1) {
+                tracer = map.values().iterator().next();
+            }
         }
-
-        InterceptStrategy tracer = Tracer.getTracer(camelContext);
         if (tracer == null) {
-            if (camelContext.getRegistry() != null) {
-                // lookup in registry
-                Map<String, Tracer> map = camelContext.getRegistry().findByTypeWithName(Tracer.class);
-                if (map.size() == 1) {
-                    tracer = map.values().iterator().next();
-                }
-            }
-            if (tracer == null) {
-                // fallback to use the default tracer
-                tracer = camelContext.getDefaultTracer();
-
-                // configure and use any trace formatter if any exists
-                Map<String, TraceFormatter> formatters = camelContext.getRegistry().findByTypeWithName(TraceFormatter.class);
-                if (formatters.size() == 1) {
-                    TraceFormatter formatter = formatters.values().iterator().next();
-                    if (tracer instanceof Tracer) {
-                        ((Tracer) tracer).setFormatter(formatter);
-                    }
-                }
-            }
+            tracer = camelContext.getExtension(BacklogTracer.class);
         }
-
+        if (tracer == null) {
+            tracer = BacklogTracer.createTracer(camelContext);
+        }
         return tracer;
     }
 
-    private InterceptStrategy getOrCreateBacklogTracer() {
-        InterceptStrategy tracer = BacklogTracer.getBacklogTracer(camelContext);
-        if (tracer == null) {
-            if (camelContext.getRegistry() != null) {
-                // lookup in registry
-                Map<String, BacklogTracer> map = camelContext.getRegistry().findByTypeWithName(BacklogTracer.class);
-                if (map.size() == 1) {
-                    tracer = map.values().iterator().next();
-                }
-            }
-            if (tracer == null) {
-                // fallback to use the default tracer
-                tracer = camelContext.getDefaultBacklogTracer();
+    private BacklogDebugger getOrCreateBacklogDebugger() {
+        BacklogDebugger debugger = null;
+        if (camelContext.getRegistry() != null) {
+            // lookup in registry
+            Map<String, BacklogDebugger> map = camelContext.getRegistry().findByTypeWithName(BacklogDebugger.class);
+            if (map.size() == 1) {
+                debugger = map.values().iterator().next();
             }
         }
-
-        return tracer;
-    }
-
-    private InterceptStrategy getOrCreateBacklogDebugger() {
-        InterceptStrategy debugger = BacklogDebugger.getBacklogDebugger(camelContext);
         if (debugger == null) {
-            if (camelContext.getRegistry() != null) {
-                // lookup in registry
-                Map<String, BacklogDebugger> map = camelContext.getRegistry().findByTypeWithName(BacklogDebugger.class);
-                if (map.size() == 1) {
-                    debugger = map.values().iterator().next();
-                }
-            }
-            if (debugger == null) {
-                // fallback to use the default debugger
-                debugger = camelContext.getDefaultBacklogDebugger();
-            }
+            debugger = camelContext.hasService(BacklogDebugger.class);
         }
-
+        if (debugger == null) {
+            // fallback to use the default debugger
+            debugger = BacklogDebugger.createDebugger(camelContext);
+        }
         return debugger;
     }
 

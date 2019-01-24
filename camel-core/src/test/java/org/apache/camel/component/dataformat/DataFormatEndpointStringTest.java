@@ -22,9 +22,11 @@ import java.io.InputStream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class DataFormatEndpointStringTest extends ContextTestSupport {
 
+    @Test
     public void testUnmarshalUTF8() throws Exception {
         // NOTE: Here we can use a MockEndpoint as we unmarshal the inputstream to String
 

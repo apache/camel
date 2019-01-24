@@ -22,12 +22,11 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
+import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
 
+    @Test
     public void testDisruptorVmTimeoutWithAnotherDisruptorVm() throws Exception {
         try {
             template2.requestBody("disruptor-vm:start1?timeout=4000", "Hello");
@@ -39,6 +38,7 @@ public class DisruptorVmTimeoutIssueTest extends AbstractVmTestSupport {
         }
     }
 
+    @Test
     public void testDisruptorVmTimeoutWithProcessor() throws Exception {
         try {
             template2.requestBody("disruptor-vm:start2?timeout=4000", "Hello");

@@ -16,31 +16,59 @@
  */
 package org.apache.camel.component.slack;
 
-import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.direct.DirectEndpoint;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+
 import org.junit.Test;
 
-public class SlackProducerTest extends CamelBlueprintTestSupport {
+public class SlackProducerTest extends CamelTestSupport {
 
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "OSGI-INF/blueprint/blueprint.xml";
-    }
+    @EndpointInject(uri = "mock:errors")
+    MockEndpoint errors;
+
+    @EndpointInject(uri = "direct:test")
+    DirectEndpoint test;
+
+    @EndpointInject(uri = "direct:error")
+    DirectEndpoint error;
 
     @Test
     public void testSlackMessage() throws Exception {
-        getMockEndpoint("mock:errors").expectedMessageCount(0);
+        errors.expectedMessageCount(0);
 
-        template.sendBody("direct:test", "Hello from Camel!");
+        template.sendBody(test, "Hello from Camel!");
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testSlackError() throws Exception {
-        getMockEndpoint("mock:errors").expectedMessageCount(1);
+        errors.expectedMessageCount(1);
 
-        template.sendBody("direct:error", "Error from Camel!");
+        template.sendBody(error, "Error from Camel!");
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                SlackComponent slack = new SlackComponent();
+                slack.setWebhookUrl(System.getProperty("SLACK_HOOK", "https://hooks.slack.com/services/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"));
+                context.addComponent("slack", slack);
+
+                onException(Exception.class).handled(true).to(errors);
+
+                final String slacUser =  System.getProperty("SLACK_USER", "CamelTest");
+                from(test).to(String.format("slack:#general?iconEmoji=:camel:&username=%s", slacUser));
+
+                from(error).to(String.format("slack:#badchannel?iconEmoji=:camel:&username=%s", slack));
+            }
+        };
     }
 }

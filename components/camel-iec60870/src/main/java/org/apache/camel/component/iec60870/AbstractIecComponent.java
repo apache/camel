@@ -25,14 +25,10 @@ import static java.util.Objects.requireNonNull;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.iec60870.client.ClientOptions;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.eclipse.neoscada.protocol.iec60870.ProtocolOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractIecComponent.class);
 
     private final Map<ConnectionId, T1> connections = new HashMap<>();
 
@@ -40,13 +36,12 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
     private T2 defaultConnectionOptions;
 
-    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions, final Class<? extends Endpoint> endpointClass) {
+    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions) {
         this.connectionOptionsClazz = connectionOptionsClazz;
         this.defaultConnectionOptions = defaultConnectionOptions;
     }
 
-    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions, final CamelContext context,
-                                final Class<? extends Endpoint> endpointClass) {
+    public AbstractIecComponent(final Class<T2> connectionOptionsClazz, final T2 defaultConnectionOptions, final CamelContext context) {
         super(context);
         this.connectionOptionsClazz = connectionOptionsClazz;
         this.defaultConnectionOptions = defaultConnectionOptions;
@@ -76,7 +71,7 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
     @Override
     protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
 
-        LOG.info("Create endpoint - uri: {}, remaining: {}, parameters: {}", uri, remaining, parameters);
+        log.info("Create endpoint - uri: {}, remaining: {}, parameters: {}", uri, remaining, parameters);
 
         final T1 connection = lookupConnection(uri, parameters);
         final ObjectAddress address = parseAddress(uri);
@@ -126,7 +121,7 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
     private T1 lookupConnection(final String fullUri, final Map<String, Object> parameters) throws Exception {
 
-        LOG.debug("parse connection - '{}'", fullUri);
+        log.debug("parse connection - '{}'", fullUri);
 
         if (fullUri == null || fullUri.isEmpty()) {
             throw new IllegalArgumentException("Invalid URI: " + fullUri);
@@ -134,18 +129,18 @@ public abstract class AbstractIecComponent<T1, T2 extends BaseOptions<T2>> exten
 
         final ConnectionId id = parseConnectionId(fullUri, parameters);
 
-        LOG.debug("parse connection - fullUri: {} -> {}", fullUri, id);
+        log.debug("parse connection - fullUri: {} -> {}", fullUri, id);
 
         synchronized (this) {
-            LOG.debug("Locating connection - {}", id);
+            log.debug("Locating connection - {}", id);
 
             T1 connection = this.connections.get(id);
 
-            LOG.debug("Result - {} -> {}", id, connection);
+            log.debug("Result - {} -> {}", id, connection);
 
             if (connection == null) {
                 final T2 options = parseOptions(id, parameters);
-                LOG.debug("Creating new connection: {}", options);
+                log.debug("Creating new connection: {}", options);
 
                 connection = createConnection(id, options);
                 this.connections.put(id, connection);

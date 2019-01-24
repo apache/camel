@@ -19,7 +19,7 @@ package org.apache.camel.component.beanstalk.processors;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 
 abstract class DefaultCommand implements Command {
     protected final BeanstalkEndpoint endpoint;

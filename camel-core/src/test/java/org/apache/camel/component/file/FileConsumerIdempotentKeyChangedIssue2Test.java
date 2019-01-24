@@ -22,17 +22,19 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSupport {
 
     private Endpoint endpoint;
 
+    @Test
     public void testFile() throws Exception {
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader(endpoint, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        context.startAllRoutes();
+        context.getRouteController().startAllRoutes();
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matches(5, TimeUnit.SECONDS);

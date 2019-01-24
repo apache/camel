@@ -16,18 +16,15 @@
  */
 package org.apache.camel.component.aws.xray;
 
-import java.lang.invoke.MethodHandles;
 import java.net.URI;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.ServiceLoader;
 import java.util.Set;
 
 import com.amazonaws.xray.AWSXRay;
-import com.amazonaws.xray.AWSXRayRecorder;
 import com.amazonaws.xray.entities.Entity;
 import com.amazonaws.xray.entities.Segment;
 import com.amazonaws.xray.entities.Subsegment;
@@ -37,19 +34,21 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +76,6 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     // Note that the Entity itself is not serializable, so don't share this object among different VMs!
     public static final String XRAY_TRACE_ENTITY = "Camel-AWS-XRay-Trace-Entity";
 
-    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static Map<String, SegmentDecorator> decorators = new HashMap<>();
 
@@ -96,7 +94,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
             // Add segment decorator only if no existing decorator for the component exists yet or if we have have a
             // derived one. This allows custom decorators to be added if they extend the standard decorators
             if (existing == null || existing.getClass().isInstance(d)) {
-                LOG.trace("Adding segment decorator {}", d.getComponent());
+                Logger log = LoggerFactory.getLogger(XRayTracer.class);
+                log.trace("Adding segment decorator {}", d.getComponent());
                 decorators.put(d.getComponent(), d);
             }
         });
@@ -113,7 +112,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     }
 
     @Override
-    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         init(camelContext);
         return new XRayRoutePolicy(routeId);
     }
@@ -128,13 +127,13 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         }
 
         if (null == tracingStrategy) {
-            LOG.info("No tracing strategy available. Defaulting to no-op strategy");
+            log.info("No tracing strategy available. Defaulting to no-op strategy");
             tracingStrategy = new NoopTracingStrategy();
         }
 
         camelContext.addInterceptStrategy(tracingStrategy);
 
-        LOG.debug("Starting XRay tracer");
+        log.debug("Starting XRay tracer");
     }
 
     @Override
@@ -144,7 +143,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         ServiceHelper.stopAndShutdownService(eventNotifier);
 
         camelContext.getRoutePolicyFactories().remove(this);
-        LOG.debug("XRay tracer stopped");
+        log.debug("XRay tracer stopped");
     }
 
     /**
@@ -155,11 +154,11 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     public void init(CamelContext camelContext) {
         if (!camelContext.hasService(this)) {
             try {
-                LOG.debug("Initializing XRay tracer");
+                log.debug("Initializing XRay tracer");
                 // start this service eager so we init before Camel is starting up
                 camelContext.addService(this, true, true);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }
@@ -218,7 +217,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         if (!excludePatterns.isEmpty()) {
             for (String pattern : excludePatterns) {
                 if (pattern.equals(routeId)) {
-                    LOG.debug("Ignoring route with ID {}", routeId);
+                    log.debug("Ignoring route with ID {}", routeId);
                     return true;
                 }
             }
@@ -234,6 +233,14 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
         return sd;
     }
 
+    protected Entity getTraceEntityFromExchange(Exchange exchange) {
+        Entity entity = exchange.getIn().getHeader(XRAY_TRACE_ENTITY, Entity.class);
+        if (entity == null) {
+            entity = (Entity) exchange.getProperty(CURRENT_SEGMENT);
+        }
+        return entity;
+    }
+
     /**
      * Custom camel event handler that will create a new {@link Subsegment XRay subsegment} in case
      * the current exchange is forwarded via <code>.to(someEndpoint)</code> to some endpoint and
@@ -245,8 +252,8 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
      * information collected by AWS XRay will not be available within that new thread!
      * <p/>
      * As  {@link ExchangeSendingEvent} and {@link ExchangeSentEvent} both are executed within the
-     * invoking thread (in contrast to {@link org.apache.camel.management.event.ExchangeCreatedEvent
-     * ExchangeCreatedEvent} and {@link org.apache.camel.management.event.ExchangeCompletedEvent
+     * invoking thread (in contrast to {@link org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent
+     * ExchangeCreatedEvent} and {@link org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent
      * ExchangeCompletedEvent} which both run in the context of the spawned thread), adding further
      * subsegments by this {@link org.apache.camel.spi.EventNotifier EventNotifier} implementation
      * should be safe.
@@ -254,75 +261,73 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
     private final class XRayEventNotifier extends EventNotifierSupport {
 
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
 
             if (event instanceof ExchangeSendingEvent) {
                 ExchangeSendingEvent ese = (ExchangeSendingEvent) event;
-                LOG.trace("-> {} - target: {} (routeId: {})",
+                log.trace("-> {} - target: {} (routeId: {})",
                         event.getClass().getSimpleName(), ese.getEndpoint(),
                         ese.getExchange().getFromRouteId());
-
-                if (Thread.currentThread().getName().contains("Multicast")) {
-                    // copy the segment from the exchange to the thread (local) context
-                    Segment segment = (Segment) ese.getExchange().getProperty(CURRENT_SEGMENT);
-                    LOG.trace("Copying over segment {}/{} from exchange received from {} to exchange processing {}",
-                            segment.getId(), segment.getName(), ese.getExchange().getFromEndpoint(),
-                            ese.getEndpoint());
-                    AWSXRay.setTraceEntity(segment);
-                }
 
                 SegmentDecorator sd = getSegmentDecorator(ese.getEndpoint());
                 if (!sd.newSegment()) {
                     return;
                 }
 
-                if (AWSXRay.getCurrentSegmentOptional().isPresent()) {
+                Entity entity = getTraceEntityFromExchange(ese.getExchange());
+                if (entity != null) {
+                    AWSXRay.setTraceEntity(entity);
                     // AWS XRay does only allow a certain set of characters to appear within a name
                     // Allowed characters: a-z, A-Z, 0-9, _, ., :, /, %, &, #, =, +, \, -, @
                     String name = sd.getOperationName(ese.getExchange(), ese.getEndpoint());
                     if (sd.getComponent() != null) {
                         name = sd.getComponent() + ":" + name;
                     }
+                    name = sanitizeName(name);
                     try {
-                        Subsegment subsegment = AWSXRay.beginSubsegment(sanitizeName(name));
+                        Subsegment subsegment = AWSXRay.beginSubsegment(name);
                         sd.pre(subsegment, ese.getExchange(), ese.getEndpoint());
-                        LOG.trace("Creating new subsegment with ID {} and name {}",
-                                subsegment.getId(), subsegment.getName());
+                        log.trace("Creating new subsegment with ID {} and name {} (parent {}, references: {})",
+                                subsegment.getId(), subsegment.getName(),
+                                subsegment.getParentSegment().getId(), subsegment.getParentSegment().getReferenceCount());
+                        ese.getExchange().setProperty(CURRENT_SEGMENT, subsegment);
                     } catch (AlreadyEmittedException aeEx) {
-                        LOG.warn("Ignoring starting of subsegment " + name + " as its parent segment"
+                        log.warn("Ignoring starting of subsegment " + name + " as its parent segment"
                                 + " was already emitted to AWS.");
                     }
                 } else {
-                    LOG.trace("Ignoring creation of XRay subsegment as no segment exists in the current thread");
+                    log.trace("Ignoring creation of XRay subsegment as no segment exists in the current thread");
                 }
 
             } else if (event instanceof ExchangeSentEvent) {
                 ExchangeSentEvent ese = (ExchangeSentEvent) event;
-                LOG.trace("-> {} - target: {} (routeId: {})",
+                log.trace("-> {} - target: {} (routeId: {})",
                         event.getClass().getSimpleName(), ese.getEndpoint(), ese.getExchange().getFromRouteId());
 
-                SegmentDecorator sd = getSegmentDecorator(ese.getEndpoint());
-
-                if (AWSXRay.getCurrentSubsegmentOptional().isPresent()) {
-                    String name = sd.getOperationName(ese.getExchange(), ese.getEndpoint());
+                Entity entity = getTraceEntityFromExchange(ese.getExchange());
+                if (entity instanceof Subsegment) {
+                    AWSXRay.setTraceEntity(entity);
+                    SegmentDecorator sd = getSegmentDecorator(ese.getEndpoint());
                     try {
-                        Subsegment subsegment = AWSXRay.getCurrentSubsegment();
+                        Subsegment subsegment = (Subsegment) entity;
                         sd.post(subsegment, ese.getExchange(), ese.getEndpoint());
                         subsegment.close();
-                        LOG.trace("Closing down subsegment with ID {} and name {}",
+                        log.trace("Closing down subsegment with ID {} and name {}",
                                 subsegment.getId(), subsegment.getName());
+                        log.trace("Setting trace entity for exchange {} to {}", ese.getExchange(), subsegment.getParent());
+                        ese.getExchange().setProperty(CURRENT_SEGMENT, subsegment.getParent());
                     } catch (AlreadyEmittedException aeEx) {
-                        LOG.warn("Ignoring close of subsegment " + name
+                        log.warn("Ignoring close of subsegment " + entity.getName()
                                 + " as its parent segment was already emitted to AWS");
                     }
                 }
             } else {
-                LOG.trace("Received event {} from source {}", event, event.getSource());
+                log.trace("Received event {} from source {}", event, event.getSource());
             }
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             // listen for either when an exchange invoked an other endpoint
             return event instanceof ExchangeSendingEvent
                     || event instanceof ExchangeSentEvent;
@@ -364,7 +369,10 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 return;
             }
 
-            LOG.trace("=> RoutePolicy-Begin: Route: {} - RouteId: {}", routeId, route.getId());
+            log.trace("=> RoutePolicy-Begin: Route: {} - RouteId: {}", routeId, route.getId());
+
+            Entity entity = getTraceEntityFromExchange(exchange);
+            boolean createSegment = entity == null || !Objects.equals(entity.getName(), routeId);
 
             TraceID traceID;
             if (exchange.getIn().getHeaders().containsKey(XRAY_TRACE_ID)) {
@@ -374,43 +382,27 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 exchange.getIn().setHeader(XRAY_TRACE_ID, traceID.toString());
             }
 
-            // copy over any available trace entity (i.e. Segment) from the old thread to the new one
-            // according to AWS XRay documentation on multithreading:
-
-            // https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-java-multithreading.html
-            //
-            // > If you use multiple threads to handle incoming requests, you can pass the current segment or subsegment
-            // > to the new thread and provide it to the global recorder. This ensures that the information recorded
-            // > within the new thread is associated with the same segment as the rest of the information recorded about
-            // > that request.
-            Entity entity = null;
-            if (exchange.getIn().getHeaders().containsKey(XRAY_TRACE_ENTITY)) {
-                entity = exchange.getIn().getHeader(XRAY_TRACE_ENTITY, Entity.class);
-            }
-
-            if (null != entity) {
-                AWSXRayRecorder recorder = AWSXRay.getGlobalRecorder();
-                recorder.setTraceEntity(entity);
-            }
+            AWSXRay.setTraceEntity(entity);
 
             SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
-            Optional<Segment> curSegment = AWSXRay.getCurrentSegmentOptional();
-            if (!curSegment.isPresent()) {
+            if (createSegment) {
                 Segment segment = AWSXRay.beginSegment(sanitizeName(route.getId()));
+                segment.setParent(entity);
                 segment.setTraceId(traceID);
                 sd.pre(segment, exchange, route.getEndpoint());
-                LOG.trace("Created new XRay segment {} with name {}",
-                        segment.getId(), segment.getName());
+                log.trace("Created new XRay segment {} with name {}", segment.getId(), segment.getName());
                 exchange.setProperty(CURRENT_SEGMENT, segment);
             } else {
-                String segmentName = curSegment.get().getId();
+                String segmentName = entity.getId();
                 try {
                     Subsegment subsegment = AWSXRay.beginSubsegment(route.getId());
                     sd.pre(subsegment, exchange, route.getEndpoint());
-                    LOG.trace("Created new XRay subsegment {} with name {}",
-                            subsegment.getId(), subsegment.getName());
+                    log.trace("Creating new subsegment with ID {} and name {} (parent {}, references: {})",
+                            subsegment.getId(), subsegment.getName(),
+                            subsegment.getParentSegment().getId(), subsegment.getParentSegment().getReferenceCount());
+                    exchange.setProperty(CURRENT_SEGMENT, subsegment);
                 } catch (AlreadyEmittedException aeEx) {
-                    LOG.warn("Ignoring opening of subsegment " + route.getId() + " as its parent segment "
+                    log.warn("Ignoring opening of subsegment " + route.getId() + " as its parent segment "
                             + segmentName + " was already emitted before.");
                 }
             }
@@ -423,27 +415,24 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                 return;
             }
 
-            LOG.trace("=> RoutePolicy-Done: Route: {} - RouteId: {}", routeId, route.getId());
+            log.trace("=> RoutePolicy-Done: Route: {} - RouteId: {}", routeId, route.getId());
 
+            Entity entity = getTraceEntityFromExchange(exchange);
+            AWSXRay.setTraceEntity(entity);
             try {
                 SegmentDecorator sd = getSegmentDecorator(route.getEndpoint());
-                Optional<Segment> curSegment = AWSXRay.getCurrentSegmentOptional();
-                Optional<Subsegment> curSubSegment = AWSXRay.getCurrentSubsegmentOptional();
-                if (curSubSegment.isPresent()) {
-                    Subsegment subsegment = curSubSegment.get();
-                    sd.post(subsegment, exchange, route.getEndpoint());
-                    subsegment.close();
-                    LOG.trace("Closing down Subsegment {} with name {}",
-                            subsegment.getId(), subsegment.getName());
-                } else if (curSegment.isPresent()) {
-                    Segment segment = curSegment.get();
-                    sd.post(segment, exchange, route.getEndpoint());
-                    segment.close();
-                    LOG.trace("Closing down Segment {} with name {}",
-                            segment.getId(), segment.getName());
-                }
+                sd.post(entity, exchange, route.getEndpoint());
+                entity.close();
+                log.trace("Closing down (sub)segment {} with name {} (parent {}, references: {})",
+                        entity.getId(), entity.getName(),
+                        entity.getParentSegment().getId(), entity.getParentSegment().getReferenceCount());
+                exchange.setProperty(CURRENT_SEGMENT, entity.getParent());
             } catch (AlreadyEmittedException aeEx) {
-                LOG.warn("Ignoring closing of (sub)segment " + route.getId() + " as the segment was already emitted.");
+                log.warn("Ignoring closing of (sub)segment {} as the segment was already emitted.", route.getId());
+            } catch (Exception e) {
+                log.warn("Error closing entity");
+            } finally {
+                AWSXRay.setTraceEntity(null);
             }
         }
 

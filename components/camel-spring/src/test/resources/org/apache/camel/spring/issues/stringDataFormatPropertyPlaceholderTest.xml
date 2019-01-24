@@ -35,7 +35,7 @@
     <route>
       <from uri="direct:marshal"/>
       <!-- using a bean id -->
-      <marshal ref="xs"/>
+      <marshal><custom ref="xs"/></marshal>
       <to uri="mock:marshal"/>
     </route>
 

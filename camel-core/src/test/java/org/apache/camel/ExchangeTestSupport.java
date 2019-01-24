@@ -16,13 +16,11 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 
 /**
  * A base class for a test which requires a {@link CamelContext} and
  * a populated {@link Exchange}
- *
- * @version 
  */
 public abstract class ExchangeTestSupport extends ContextTestSupport {
     protected Exchange exchange;
@@ -48,7 +46,7 @@ public abstract class ExchangeTestSupport extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    public void setUp() throws Exception {
         super.setUp();
         exchange = createExchange();
         assertNotNull("No exchange created!", exchange);

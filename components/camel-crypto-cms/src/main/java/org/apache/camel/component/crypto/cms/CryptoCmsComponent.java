@@ -34,16 +34,14 @@ import org.apache.camel.component.crypto.cms.sig.SignedDataCreator;
 import org.apache.camel.component.crypto.cms.sig.SignedDataCreatorConfiguration;
 import org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration;
 import org.apache.camel.component.crypto.cms.sig.SignedDataVerifierFromHeader;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class CryptoCmsComponent extends UriEndpointComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CryptoCmsComponent.class);
+@Component("crypto-cms")
+public class CryptoCmsComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
     private SignedDataVerifierConfiguration signedDataVerifierConfiguration;
@@ -52,11 +50,10 @@ public class CryptoCmsComponent extends UriEndpointComponent {
     private EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration;
 
     public CryptoCmsComponent() {
-        super(CryptoCmsEndpoint.class);
     }
 
     public CryptoCmsComponent(CamelContext context) {
-        super(context, CryptoCmsEndpoint.class);
+        super(context);
     }
 
     @Override
@@ -111,7 +108,7 @@ public class CryptoCmsComponent extends UriEndpointComponent {
             processor = new EnvelopedDataDecryptor(config);
         } else {
             String error = "Endpoint uri " + uri + " is wrong configured. Operation " + scheme + " is not supported. Supported operations are: sign, verify, encrypt, decrypt";
-            LOG.error(error);
+            log.error(error);
             throw new IllegalStateException(error);
         }
         CryptoCmsEndpoint endpoint = new CryptoCmsEndpoint(uri, this, processor);
@@ -153,7 +150,7 @@ public class CryptoCmsComponent extends UriEndpointComponent {
     @Override
     protected void doStart() throws Exception { // NOPMD
         if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            LOG.debug("Adding BouncyCastleProvider as security provider");
+            log.debug("Adding BouncyCastleProvider as security provider");
             Security.addProvider(new BouncyCastleProvider());
         }
         super.doStart();

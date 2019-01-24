@@ -23,9 +23,6 @@ import org.junit.Test;
 
 import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
 
-/**
- * @version 
- */
 public class GroovySetFixedHeaderTest extends CamelTestSupport {
 
     @Test

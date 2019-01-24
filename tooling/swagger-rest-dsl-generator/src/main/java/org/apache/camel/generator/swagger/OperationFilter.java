@@ -18,7 +18,7 @@ package org.apache.camel.generator.swagger;
 
 import java.util.Arrays;
 
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 
 class OperationFilter {
 
@@ -38,7 +38,7 @@ class OperationFilter {
 
         if (includes != null) {
             String[] patterns = includes.split(",");
-            match = Arrays.stream(patterns).anyMatch(pattern -> EndpointHelper.matchPattern(name, pattern));
+            match = Arrays.stream(patterns).anyMatch(pattern -> PatternHelper.matchPattern(name, pattern));
         }
         return match;
     }

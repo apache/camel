@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.AbstractTwitterEndpoint;
 import org.apache.camel.component.twitter.streaming.AbstractStreamingConsumerHandler;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * Provides a scheduled polling consumer as well as event based consumer for streaming.

@@ -23,11 +23,11 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
@@ -38,7 +38,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private DataSource dataSource;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String dataSourceName;
     @UriParam
     private int readSize;
@@ -90,7 +90,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Name of DataSource to lookup in the Registry.
+     * Name of DataSource to lookup in the Registry. If the name is dataSource or default, then Camel
+     * will attempt to lookup a default DataSource from the registry, meaning if there is a only
+     * one instance of DataSource found, then this DataSource will be used.
      */
     public void setDataSourceName(String dataSourceName) {
         this.dataSourceName = dataSourceName;

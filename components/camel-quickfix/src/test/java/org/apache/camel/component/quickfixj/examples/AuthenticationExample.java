@@ -27,10 +27,8 @@ import org.apache.camel.component.quickfixj.QuickfixjEndpoint;
 import org.apache.camel.component.quickfixj.QuickfixjEventCategory;
 import org.apache.camel.component.quickfixj.examples.util.CountDownLatchDecrementer;
 import org.apache.camel.impl.DefaultCamelContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import quickfix.FieldNotFound;
 import quickfix.Message;
 import quickfix.RejectLogon;
@@ -41,7 +39,6 @@ import quickfix.field.RawDataLength;
 /**
  * This example demonstrates several features of the QuickFIX/J component. It uses
  * QFJ session events to synchronize application behavior (e.g., Session logon).
- * 
  */
 public class AuthenticationExample {
     private static final Logger LOG = LoggerFactory.getLogger(AuthenticationExample.class);

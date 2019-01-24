@@ -27,8 +27,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.linkedin.api.LinkedInException;
 import org.apache.camel.component.linkedin.api.model.Error;
 import org.apache.camel.component.linkedin.internal.LinkedInApiName;
-import org.apache.camel.util.component.AbstractApiConsumer;
-import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.support.component.AbstractApiConsumer;
+import org.apache.camel.support.component.ApiMethod;
 
 /**
  * The LinkedIn consumer.

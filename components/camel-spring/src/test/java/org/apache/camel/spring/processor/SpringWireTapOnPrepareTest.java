@@ -21,9 +21,6 @@ import org.apache.camel.processor.WireTapOnPrepareTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringWireTapOnPrepareTest extends WireTapOnPrepareTest {
 
     protected CamelContext createCamelContext() throws Exception {

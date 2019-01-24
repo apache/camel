@@ -30,11 +30,11 @@ public class TelegramConfiguration {
     public static final String ENDPOINT_TYPE_BOTS = "bots";
 
     @UriPath(description = "The endpoint type. Currently, only the 'bots' type is supported.", enums = ENDPOINT_TYPE_BOTS)
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String type;
 
     @UriPath(label = "security", description = "The authorization token for using the bot (ask the BotFather), eg. 654321531:HGF_dTra456323dHuOedsE343211fqr3t-H.")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String authorizationToken;
 
     @UriParam(description = "The identifier of the chat that will receive the produced messages. Chat ids can be first obtained from incoming messages "

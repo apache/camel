@@ -26,25 +26,22 @@ import javax.validation.ValidatorFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link CMEndpoint}s.
  */
-public class CMComponent extends UriEndpointComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CMComponent.class);
+@Component("cm-sms")
+public class CMComponent extends DefaultComponent {
 
     private Validator validator;
 
     public CMComponent() {
-        super(CMEndpoint.class);
     }
 
     public CMComponent(final CamelContext context) {
-        super(context, CMEndpoint.class);
+        super(context);
     }
 
     @Override
@@ -55,7 +52,7 @@ public class CMComponent extends UriEndpointComponent {
         setProperties(config, parameters);
 
         // Validate configuration
-        LOG.debug("Validating uri based configuration");
+        log.debug("Validating uri based configuration");
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations = getValidator().validate(config);
         if (constraintViolations.size() > 0) {
             final StringBuffer msg = new StringBuffer();

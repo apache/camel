@@ -21,14 +21,13 @@ import java.net.URL;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 import static org.apache.camel.builder.xml.XsltBuilder.xslt;
 
-/**
- * @version 
- */
 public class XsltTest extends ContextTestSupport {
 
+    @Test
     public void testXslt() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");

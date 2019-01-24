@@ -31,15 +31,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Experimental;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.cluster.CamelClusterService;
 import org.apache.camel.impl.DefaultRouteController;
+import org.apache.camel.meta.Experimental;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.cluster.ClusterServiceHelper;
+import org.apache.camel.support.cluster.ClusterServiceSelectors;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -292,7 +296,8 @@ public class ClusteredRouteController extends DefaultRouteController {
 
     private final class PolicyFactory implements RoutePolicyFactory {
         @Override
-        public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+        public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode node) {
+            RouteDefinition route = (RouteDefinition) node;
             // All the filter have to be match to include the route in the
             // clustering set-up
             if (filters.stream().allMatch(filter -> filter.test(camelContext, routeId, route))) {
@@ -321,7 +326,7 @@ public class ClusteredRouteController extends DefaultRouteController {
 
                     return policy;
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
 

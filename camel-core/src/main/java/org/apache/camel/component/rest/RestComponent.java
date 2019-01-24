@@ -24,25 +24,24 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
-import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.model.rest.RestConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
  * Rest component.
  */
+@org.apache.camel.spi.annotations.Component("rest")
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class RestComponent extends DefaultComponent implements VerifiableComponent {
+public class RestComponent extends DefaultComponent {
 
     @Metadata(label = "common")
     private String componentName;
@@ -101,14 +100,14 @@ public class RestComponent extends DefaultComponent implements VerifiableCompone
             throw new IllegalArgumentException("Invalid syntax. Must be rest:method:path[:uriTemplate] where uriTemplate is optional");
         }
 
-        String method = ObjectHelper.before(remaining, ":");
-        String s = ObjectHelper.after(remaining, ":");
+        String method = StringHelper.before(remaining, ":");
+        String s = StringHelper.after(remaining, ":");
 
         String path;
         String uriTemplate;
         if (s != null && s.contains(":")) {
-            path = ObjectHelper.before(s, ":");
-            uriTemplate = ObjectHelper.after(s, ":");
+            path = StringHelper.before(s, ":");
+            uriTemplate = StringHelper.after(s, ":");
         } else {
             path = s;
             uriTemplate = null;
@@ -240,8 +239,7 @@ public class RestComponent extends DefaultComponent implements VerifiableCompone
         }
     }
 
-    @Override
-    public ComponentVerifier getVerifier() {
+    public ComponentVerifierExtension getVerifier() {
         return (scope, parameters) -> getExtension(ComponentVerifierExtension.class).orElseThrow(UnsupportedOperationException::new).verify(scope, parameters);
     }
 }

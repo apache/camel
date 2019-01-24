@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,39 +28,33 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.management.event.AbstractExchangeEvent;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.Breakpoint;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The default implementation of the {@link Debugger}.
- *
- * @version 
  */
-public class DefaultDebugger implements Debugger, CamelContextAware {
+public class DefaultDebugger extends ServiceSupport implements Debugger, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultDebugger.class);
     private final EventNotifier debugEventNotifier = new DebugEventNotifier();
     private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<>();
     private final int maxConcurrentSingleSteps = 1;
     private final Map<String, Breakpoint> singleSteps = new HashMap<>(maxConcurrentSingleSteps);
     private CamelContext camelContext;
-    private boolean useTracer = true;
 
     /**
      * Holder class for breakpoint and the associated conditions
@@ -105,15 +98,6 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         this.camelContext = camelContext;
     }
 
-    public boolean isUseTracer() {
-        return useTracer;
-    }
-
-    public void setUseTracer(boolean useTracer) {
-        this.useTracer = useTracer;
-    }
-
-    @Override
     public void addBreakpoint(Breakpoint breakpoint) {
         breakpoints.add(new BreakpointConditions(breakpoint));
     }
@@ -148,17 +132,17 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
             }
 
             @Override
-            public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+            public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
                 breakpoint.beforeProcess(exchange, processor, definition);
             }
 
             @Override
-            public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
+            public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
                 breakpoint.afterProcess(exchange, processor, definition, timeTaken);
             }
 
             @Override
-            public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition) {
+            public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
                 if (event instanceof ExchangeCreatedEvent) {
                     exchange.getContext().getDebugger().startSingleStepExchange(exchange.getExchangeId(), this);
                 } else if (event instanceof ExchangeCompletedEvent) {
@@ -225,7 +209,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     @Override
-    public boolean beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+    public boolean beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
         // is the exchange in single step mode?
         Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
         if (singleStep != null) {
@@ -249,7 +233,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     @Override
-    public boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
+    public boolean afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
         // is the exchange in single step mode?
         Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
         if (singleStep != null) {
@@ -273,7 +257,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     @Override
-    public boolean onEvent(Exchange exchange, EventObject event) {
+    public boolean onEvent(Exchange exchange, ExchangeEvent event) {
         // is the exchange in single step mode?
         Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
         if (singleStep != null) {
@@ -296,24 +280,24 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return match;
     }
 
-    protected void onBeforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, Breakpoint breakpoint) {
+    protected void onBeforeProcess(Exchange exchange, Processor processor, NamedNode definition, Breakpoint breakpoint) {
         try {
             breakpoint.beforeProcess(exchange, processor, definition);
         } catch (Throwable e) {
-            LOG.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
         }
     }
 
-    protected void onAfterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken, Breakpoint breakpoint) {
+    protected void onAfterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken, Breakpoint breakpoint) {
         try {
             breakpoint.afterProcess(exchange, processor, definition, timeTaken);
         } catch (Throwable e) {
-            LOG.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected void onEvent(Exchange exchange, EventObject event, Breakpoint breakpoint) {
+    protected void onEvent(Exchange exchange, ExchangeEvent event, Breakpoint breakpoint) {
         ProcessorDefinition<?> definition = null;
 
         // try to get the last known definition
@@ -328,11 +312,11 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         try {
             breakpoint.onEvent(exchange, event, definition);
         } catch (Throwable e) {
-            LOG.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
+            log.warn("Exception occurred in breakpoint: " + breakpoint + ". This exception will be ignored.", e);
         }
     }
 
-    private boolean matchConditions(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, BreakpointConditions breakpoint) {
+    private boolean matchConditions(Exchange exchange, Processor processor, NamedNode definition, BreakpointConditions breakpoint) {
         for (Condition condition : breakpoint.getConditions()) {
             if (!condition.matchProcess(exchange, processor, definition)) {
                 return false;
@@ -342,7 +326,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return true;
     }
 
-    private boolean matchConditions(Exchange exchange, EventObject event, BreakpointConditions breakpoint) {
+    private boolean matchConditions(Exchange exchange, ExchangeEvent event, BreakpointConditions breakpoint) {
         for (Condition condition : breakpoint.getConditions()) {
             if (!condition.matchEvent(exchange, event)) {
                 return false;
@@ -354,31 +338,23 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
 
     @Override
     public void start() throws Exception {
+        super.start();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
         // register our event notifier
         ServiceHelper.startService(debugEventNotifier);
         camelContext.getManagementStrategy().addEventNotifier(debugEventNotifier);
-
-        if (isUseTracer()) {
-            Tracer tracer = Tracer.getTracer(camelContext);
-            if (tracer == null) {
-                // tracer is disabled so enable it silently so we can leverage it to trace the Exchanges for us
-                tracer = Tracer.createTracer(camelContext);
-                tracer.setLogLevel(LoggingLevel.OFF);
-                camelContext.addService(tracer);
-                camelContext.addInterceptStrategy(tracer);
-            }
-            // make sure tracer is enabled so the debugger can leverage the tracer for debugging purposes
-            tracer.setEnabled(true);
-        }
     }
 
     @Override
-    public void stop() throws Exception {
+    protected void doStop() throws Exception {
         breakpoints.clear();
         singleSteps.clear();
-        ServiceHelper.stopServices(debugEventNotifier);
+        ServiceHelper.stopService(debugEventNotifier);
     }
 
     @Override
@@ -394,10 +370,10 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         }
 
         @Override
-        public void notify(EventObject event) throws Exception {
-            AbstractExchangeEvent aee = (AbstractExchangeEvent) event;
+        public void notify(CamelEvent event) throws Exception {
+            ExchangeEvent aee = (ExchangeEvent) event;
             Exchange exchange = aee.getExchange();
-            onEvent(exchange, event);
+            onEvent(exchange, aee);
 
             if (event instanceof ExchangeCompletedEvent) {
                 // fail safe to ensure we remove single steps when the Exchange is complete
@@ -406,18 +382,8 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
-            return event instanceof AbstractExchangeEvent;
-        }
-
-        @Override
-        protected void doStart() throws Exception {
-            // noop
-        }
-
-        @Override
-        protected void doStop() throws Exception {
-            // noop
+        public boolean isEnabled(CamelEvent event) {
+            return event instanceof ExchangeEvent;
         }
     }
 

@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <name>Camel :: DNS</name>
@@ -32,15 +32,11 @@
   <packaging>jar</packaging>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.dns*
-    </camel.osgi.export.pkg>
 
     <camel.osgi.import.pkg>
       !org.apache.camel.component.dns*,
       *
     </camel.osgi.import.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=dns</camel.osgi.export.service>
   </properties>
 
   <dependencies>

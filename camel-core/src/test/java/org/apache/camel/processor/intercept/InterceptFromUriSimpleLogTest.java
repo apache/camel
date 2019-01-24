@@ -18,12 +18,14 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Testing http://camel.apache.org/dsl.html
  */
 public class InterceptFromUriSimpleLogTest extends ContextTestSupport {
 
+    @Test
     public void testInterceptLog() throws Exception {
         getMockEndpoint("mock:first").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);

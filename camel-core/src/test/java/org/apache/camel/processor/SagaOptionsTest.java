@@ -22,9 +22,11 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.saga.InMemorySagaService;
+import org.junit.Test;
 
 public class SagaOptionsTest extends ContextTestSupport {
 
+    @Test
     public void testHeaderForwardedToComplete() throws Exception {
 
         MockEndpoint complete = getMockEndpoint("mock:complete");
@@ -38,6 +40,7 @@ public class SagaOptionsTest extends ContextTestSupport {
         complete.assertIsSatisfied();
     }
 
+    @Test
     public void testHeaderForwardedToCompensate() throws Exception {
 
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
@@ -56,6 +59,7 @@ public class SagaOptionsTest extends ContextTestSupport {
         compensate.assertIsSatisfied();
     }
 
+    @Test
     public void testRouteDoesNotHangOnOptionError() throws Exception {
         try {
             template.sendBody("direct:wrong-expression", "Hello");

@@ -18,17 +18,14 @@ package org.apache.camel.converter.soap.name;
 
 import javax.xml.namespace.QName;
 
-
 import com.example.customerservice.CustomerService;
 import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
 import com.example.customerservice.multipart.MultiPartCustomerService;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.junit.Assert;
 import org.junit.Test;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

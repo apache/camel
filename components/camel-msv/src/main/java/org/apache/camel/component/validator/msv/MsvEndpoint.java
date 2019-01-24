@@ -20,8 +20,9 @@ import javax.xml.XMLConstants;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.validator.ValidatorEndpoint;
-import org.apache.camel.processor.validation.ValidatingProcessor;
+
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
 
 /**
@@ -38,8 +39,6 @@ public class MsvEndpoint extends ValidatorEndpoint {
     protected void configureValidator(ValidatingProcessor validator) throws Exception {
         super.configureValidator(validator);
         validator.setSchemaLanguage(XMLConstants.RELAXNG_NS_URI);
-        // must use Dom for Msv to work
-        validator.setUseDom(true);
     }
 
     @Override

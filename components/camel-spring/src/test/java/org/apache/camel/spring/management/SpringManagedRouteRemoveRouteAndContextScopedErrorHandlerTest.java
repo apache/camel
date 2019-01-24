@@ -21,9 +21,6 @@ import org.apache.camel.management.ManagedRouteRemoveRouteAndContextScopedErrorH
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringManagedRouteRemoveRouteAndContextScopedErrorHandlerTest extends ManagedRouteRemoveRouteAndContextScopedErrorHandlerTest {
 
     @Override

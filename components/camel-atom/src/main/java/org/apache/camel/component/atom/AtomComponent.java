@@ -22,15 +22,16 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.URISupport;
 
 /**
  * To consume Atom RSS feeds.
  */
+@Component("atom")
 public class AtomComponent extends FeedComponent {
 
     public AtomComponent() {
-        super(AtomEndpoint.class);
     }
 
     @Override

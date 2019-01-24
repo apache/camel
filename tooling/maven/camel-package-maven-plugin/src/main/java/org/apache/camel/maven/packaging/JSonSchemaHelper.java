@@ -154,6 +154,23 @@ public final class JSonSchemaHelper {
         return null;
     }
 
+    public static String getPropertyDescriptionValue(List<Map<String, String>> rows, String name) {
+        for (Map<String, String> row : rows) {
+            String description = null;
+            boolean found = false;
+            if (row.containsKey("name")) {
+                found = name.equals(row.get("name"));
+            }
+            if (row.containsKey("description")) {
+                description = row.get("description");
+            }
+            if (found) {
+                return description;
+            }
+        }
+        return null;
+    }
+
     public static String getPropertyJavaType(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             String javaType = null;

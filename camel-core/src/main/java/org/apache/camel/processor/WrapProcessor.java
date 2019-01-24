@@ -19,12 +19,11 @@ package org.apache.camel.processor;
 import java.util.List;
 
 import org.apache.camel.Processor;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A processor which ensures wrapping processors is having lifecycle handled.
- *
- * @version 
  */
 public class WrapProcessor extends DelegateAsyncProcessor {
     private final Processor wrapped;

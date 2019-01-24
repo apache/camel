@@ -18,6 +18,7 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport {
 
@@ -26,6 +27,7 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
         return false;
     }
 
+    @Test
     public void testFunction() throws Exception {
         System.setProperty("FOO", "mock:foo");
 
@@ -52,6 +54,7 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
         System.clearProperty("FOO");
     }
 
+    @Test
     public void testFunctionGetOrElse() throws Exception {
         System.setProperty("FOO2", "mock:foo");
 

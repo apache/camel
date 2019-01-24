@@ -32,11 +32,11 @@ import org.apache.camel.component.thrift.generated.Operation;
 import org.apache.camel.component.thrift.generated.Work;
 import org.apache.camel.component.thrift.impl.CalculatorSyncServerImpl;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TSSLTransportFactory;
@@ -59,8 +59,8 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
     private static final int THRIFT_TEST_NUM1 = 12;
     private static final int THRIFT_TEST_NUM2 = 13;
     
-    private static final String TRUST_STORE_PATH = "src/test/resources/certs/truststore.jks";
-    private static final String KEY_STORE_PATH = "src/test/resources/certs/keystore.jks";
+    private static final String TRUST_STORE_SOURCE = "file:src/test/resources/certs/truststore.jks";
+    private static final String KEY_STORE_SOURCE = "file:src/test/resources/certs/keystore.jks";
     private static final String SECURITY_STORE_PASSWORD = "camelinaction";
     private static final int THRIFT_CLIENT_TIMEOUT = 2000;
     
@@ -71,7 +71,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
         
         TSSLTransportFactory.TSSLTransportParameters sslParams = new TSSLTransportFactory.TSSLTransportParameters();
         
-        sslParams.setKeyStore(KEY_STORE_PATH, SECURITY_STORE_PASSWORD);
+        sslParams.setKeyStore(KEY_STORE_SOURCE, SECURITY_STORE_PASSWORD);
         serverTransport = TSSLTransportFactory.getServerSocket(THRIFT_TEST_PORT, THRIFT_CLIENT_TIMEOUT, InetAddress.getByName("localhost"), sslParams);
         TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
         args.processor(processor);
@@ -101,7 +101,7 @@ public class ThriftProducerSecurityTest extends CamelTestSupport {
         SSLContextParameters sslParameters = new SSLContextParameters();
         
         KeyStoreParameters keyStoreParams = new KeyStoreParameters();
-        keyStoreParams.setResource(TRUST_STORE_PATH);
+        keyStoreParams.setResource(TRUST_STORE_SOURCE);
         keyStoreParams.setPassword(SECURITY_STORE_PASSWORD);
         
         TrustManagersParameters trustManagerParams = new TrustManagersParameters();

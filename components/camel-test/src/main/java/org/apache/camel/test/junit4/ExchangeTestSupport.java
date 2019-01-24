@@ -18,14 +18,12 @@ package org.apache.camel.test.junit4;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.junit.Before;
 
 /**
  * A base class for a test which requires a {@link org.apache.camel.CamelContext} and
  * a populated {@link Exchange}
- *
- * @version 
  */
 public abstract class ExchangeTestSupport extends CamelTestSupport {
     protected Exchange exchange;

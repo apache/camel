@@ -18,12 +18,8 @@ package org.apache.camel.test.patterns;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class IsMockEndpointsTest extends CamelTestSupport {
 
     @Override

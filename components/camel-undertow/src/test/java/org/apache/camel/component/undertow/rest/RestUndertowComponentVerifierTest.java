@@ -19,8 +19,8 @@ package org.apache.camel.component.undertow.rest;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.rest.RestComponent;
 import org.apache.camel.component.undertow.BaseUndertowTest;
 import org.junit.Assert;
@@ -30,7 +30,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
     @Test
     public void testParameters() throws Exception {
         RestComponent component = context().getComponent("rest", RestComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("componentName", "undertow");
@@ -38,15 +38,15 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         parameters.put("path", "verify");
         parameters.put("method", "GET");
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.OK, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
     public void testMissingRestParameters() throws Exception {
         RestComponent component = context.getComponent("rest", RestComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("componentName", "undertow");
@@ -57,11 +57,11 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         // is delegated to the transport component
         parameters.put("tcpNoDelay", true);
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
         Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
     }
@@ -69,7 +69,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
     @Test
     public void testWrongComponentParameters() throws Exception {
         RestComponent component = context.getComponent("rest", RestComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("componentName", "undertow");
@@ -81,11 +81,11 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         // is delegated to the transport component
         parameters.put("nonExistingOption", true);
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.UNKNOWN_PARAMETER, result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER, result.getErrors().get(0).getCode());
         Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("nonExistingOption"));
     }
@@ -93,7 +93,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
     @Test
     public void testConnectivity() throws Exception {
         RestComponent component = context().getComponent("rest", RestComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("componentName", "undertow");
@@ -101,9 +101,9 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         parameters.put("path", "verify");
         parameters.put("method", "GET");
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.OK, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Override

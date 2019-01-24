@@ -52,7 +52,7 @@ import org.apache.camel.component.docker.DockerEndpoint;
 import org.apache.camel.component.docker.DockerHelper;
 import org.apache.camel.component.docker.DockerOperation;
 import org.apache.camel.component.docker.exception.DockerException;
-import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -215,15 +215,12 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
             // If request included a response, set as body
             if (result != null) {
                 exchange.getIn().setBody(result);
-
-                return true;
             }
         } catch (DockerException | InterruptedException | IOException e) {
             log.error(e.getMessage(), e);
-
-            return false;
         }
 
+        callback.done(false);
         return false;
     }
 
@@ -487,7 +484,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
      */
     private ExecStartCmd executeExecStartRequest(DockerClient client, Message message) {
 
-        LOGGER.debug("Executing Docker Exec Create Request");
+        LOGGER.debug("Executing Docker Exec Start Request");
 
         String execId = DockerHelper.getProperty(DockerConstants.DOCKER_EXEC_ID, configuration, message, String.class);
 

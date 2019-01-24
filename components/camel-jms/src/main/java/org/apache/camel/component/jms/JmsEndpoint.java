@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -41,18 +42,16 @@ import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.support.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -69,16 +68,16 @@ import org.springframework.util.ErrorHandler;
  * This component uses Spring JMS and supports JMS 1.1 and 2.0 API.
  */
 @ManagedResource(description = "Managed JMS Endpoint")
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", consumerClass = JmsConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jms", title = "JMS", syntax = "jms:destinationType:destinationName", label = "messaging")
 public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
     private boolean pubSubDomain;
     private JmsBinding binding;
     @UriPath(defaultValue = "queue", enums = "queue,topic,temp-queue,temp-topic", description = "The kind of destination to use")
     private String destinationType;
     @UriPath(description = "Name of the queue or topic to use as destination")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String destinationName;
     private Destination destination;
     @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
@@ -108,9 +107,8 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
     }
 
-    @SuppressWarnings("deprecation")
     public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destinationName, boolean pubSubDomain) {
-        super(UnsafeUriCharactersEncoder.encode(endpointUri));
+        super(UnsafeUriCharactersEncoder.encode(endpointUri), null);
         this.binding = binding;
         this.configuration = configuration;
         this.destinationName = destinationName;
@@ -290,7 +288,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        JmsPollingConsumer answer = new JmsPollingConsumer(this);
+        JmsPollingConsumer answer = new JmsPollingConsumer(this, createInOnlyTemplate());
         configurePollingConsumer(answer);
         return answer;
     }
@@ -304,7 +302,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
 
     public Exchange createExchange(Message message, Session session) {
         Exchange exchange = createExchange(getExchangePattern());
-        exchange.setIn(new JmsMessage(message, session, getBinding()));
+        exchange.setIn(new JmsMessage(exchange, message, session, getBinding()));
         return exchange;
     }
 
@@ -791,12 +789,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
-    @Deprecated
-    public boolean isTransactedInOut() {
-        return getConfiguration().isTransactedInOut();
-    }
-
-    @ManagedAttribute
     public boolean isUseMessageIDAsCorrelationID() {
         return getConfiguration().isUseMessageIDAsCorrelationID();
     }
@@ -1038,12 +1030,6 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     @ManagedAttribute
     public void setTransacted(boolean consumerTransacted) {
         getConfiguration().setTransacted(consumerTransacted);
-    }
-
-    @ManagedAttribute
-    @Deprecated
-    public void setTransactedInOut(boolean transactedInOut) {
-        getConfiguration().setTransactedInOut(transactedInOut);
     }
 
     @ManagedAttribute

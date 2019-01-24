@@ -24,7 +24,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "camel.supervising.controller")
 public class SupervisingRouteControllerConfiguration {
     /**
-     * Global option to enable/disable this ${@link org.apache.camel.spi.RouteController}, default is false.
+     * Global option to enable/disable this org.apache.camel.spi.RouteController, default is false.
      */
     private boolean enabled;
 

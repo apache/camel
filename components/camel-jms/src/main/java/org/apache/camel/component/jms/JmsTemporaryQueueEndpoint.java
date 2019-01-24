@@ -26,8 +26,6 @@ import javax.jms.TemporaryQueue;
  * for working with a {@link TemporaryQueue}
  * <p/>
  * <b>Important:</b> Need to be really careful to always use the same Connection otherwise the destination goes stale
- *
- * @version 
  */
 public class JmsTemporaryQueueEndpoint extends JmsQueueEndpoint implements DestinationEndpoint {
     private Destination jmsDestination;

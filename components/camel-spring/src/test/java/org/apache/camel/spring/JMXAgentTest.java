@@ -15,19 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
-
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.junit.After;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Test that verifies JMX properties can be configured via Spring.
- *
- * @version 
  */
 public class JMXAgentTest extends DefaultJMXAgentTest {
 
@@ -39,7 +37,8 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (clientConnector != null) {
             try {
                 clientConnector.close();

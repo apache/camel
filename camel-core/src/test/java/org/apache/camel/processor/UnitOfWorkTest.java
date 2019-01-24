@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -24,10 +23,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class UnitOfWorkTest extends ContextTestSupport {
     protected Synchronization synchronization;
     protected Exchange completed;
@@ -37,6 +35,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
     protected Object foo;
     protected Object baz;
 
+    @Test
     public void testSuccess() throws Exception {
         sendMessage();
 
@@ -49,6 +48,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
         log.info("Received completed: " + completed);
     }
 
+    @Test
     public void testFail() throws Exception {
         sendMessage();
 
@@ -61,6 +61,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
         log.info("Received fail: " + failed);
     }
 
+    @Test
     public void testException() throws Exception {
         sendMessage();
 
@@ -74,7 +75,8 @@ public class UnitOfWorkTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         synchronization = new Synchronization() {
             public void onComplete(Exchange exchange) {
                 completed = exchange;

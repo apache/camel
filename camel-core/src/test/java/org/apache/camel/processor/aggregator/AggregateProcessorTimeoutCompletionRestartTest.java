@@ -19,21 +19,21 @@ package org.apache.camel.processor.aggregator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.camel.AggregationStrategy;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * To test CAMEL-4037 that a restart of aggregator can re-initialize the timeout map
- *
- * @version 
  */
 public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestSupport {
 
@@ -45,17 +45,19 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         executorService = Executors.newSingleThreadExecutor();
     }
 
+    @Test
     public void testAggregateProcessorTimeoutRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
@@ -93,12 +95,13 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.shutdown();
     }
 
+    @Test
     public void testAggregateProcessorTimeoutExpressionRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A+B");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 
@@ -138,12 +141,13 @@ public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestS
         ap.shutdown();
     }
 
+    @Test
     public void testAggregateProcessorTwoTimeoutExpressionRestart() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("C+D", "A+B");
         mock.expectedPropertyReceived(Exchange.AGGREGATED_COMPLETED_BY, "timeout");
 
-        Processor done = new SendProcessor(context.getEndpoint("mock:result"));
+        AsyncProcessor done = new SendProcessor(context.getEndpoint("mock:result"));
         Expression corr = header("id");
         AggregationStrategy as = new BodyInAggregatingStrategy();
 

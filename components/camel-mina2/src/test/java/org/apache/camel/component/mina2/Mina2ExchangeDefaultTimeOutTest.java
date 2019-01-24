@@ -24,8 +24,6 @@ import org.junit.Test;
 
 /**
  * To test timeout.
- *
- * @version 
  */
 public class Mina2ExchangeDefaultTimeOutTest extends BaseMina2Test {
 

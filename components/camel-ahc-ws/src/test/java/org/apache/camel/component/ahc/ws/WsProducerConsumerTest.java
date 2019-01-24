@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ahc.ws;
-
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -26,6 +25,8 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -60,12 +61,14 @@ public class WsProducerConsumerTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         startTestServer();
         super.setUp();
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         stopTestServer();
@@ -93,9 +96,9 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         resetMocks();
 
         log.info("Restarting bar route");
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         Thread.sleep(500);
-        context.startRoute("bar");
+        context.getRouteController().startRoute("bar");
 
         mock.expectedBodiesReceived(TEST_MESSAGE);
 
@@ -116,9 +119,9 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         resetMocks();
 
         log.info("Restarting foo route");
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         Thread.sleep(500);
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         mock.expectedBodiesReceived(TEST_MESSAGE);
 

@@ -18,14 +18,13 @@ package org.apache.camel.language.mvel;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
 
 /**
- * An <a href="http://mvel.codehaus.org/">MVEL</a> {@link Language} plugin
- * 
- * @version 
+ * An <a href="http://mvel.codehaus.org/">MVEL</a> {@link org.apache.camel.spi.Language} plugin
  */
+@Language("mvel")
 public class MvelLanguage extends LanguageSupport {
 
     public Predicate createPredicate(String expression) {

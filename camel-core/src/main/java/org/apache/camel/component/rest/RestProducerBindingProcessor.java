@@ -24,14 +24,14 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.DelegateAsyncProcessor;
-import org.apache.camel.processor.MarshalProcessor;
-import org.apache.camel.processor.UnmarshalProcessor;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.processor.MarshalProcessor;
+import org.apache.camel.support.processor.UnmarshalProcessor;
 import org.apache.camel.processor.binding.BindingException;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 
 /**
  * A {@link org.apache.camel.Processor} that binds the REST producer request and reply messages
@@ -110,12 +110,12 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
         if (xmlUnmarshal instanceof CamelContextAware) {
             ((CamelContextAware) xmlUnmarshal).setCamelContext(camelContext);
         }
-        ServiceHelper.startServices(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
+        ServiceHelper.startService(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
+        ServiceHelper.stopService(jsonMarshal, jsonUnmarshal, xmlMarshal, xmlUnmarshal);
     }
 
     @Override

@@ -19,11 +19,8 @@ package org.apache.camel.itest.async;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 
-/**
- * @version 
- */
 public class MyAsyncComponent extends DefaultComponent {
 
     @Override

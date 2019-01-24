@@ -20,9 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class QuartzSuspendRouteTest extends BaseQuartzTest {
 
     @Test
@@ -32,7 +29,7 @@ public class QuartzSuspendRouteTest extends BaseQuartzTest {
 
         assertMockEndpointsSatisfied();
 
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
 
         int size = mock.getReceivedCounter();
 
@@ -46,7 +43,7 @@ public class QuartzSuspendRouteTest extends BaseQuartzTest {
         resetMocks();
         mock.expectedMinimumMessageCount(1);
 
-        context.resumeRoute("foo");
+        context.getRouteController().resumeRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

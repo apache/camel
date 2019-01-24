@@ -96,7 +96,7 @@ public class CamelRouteDetails {
         if (lineNumberEnd != null ? !lineNumberEnd.equals(that.lineNumberEnd) : that.lineNumberEnd != null) {
             return false;
         }
-        if (!className.equals(that.className)) {
+        if (className != null ? !className.equals(that.className) : that.className != null) {
             return false;
         }
         if (methodName != null ? !methodName.equals(that.methodName) : that.methodName != null) {
@@ -113,7 +113,7 @@ public class CamelRouteDetails {
         int result = fileName.hashCode();
         result = 31 * result + (lineNumber != null ? lineNumber.hashCode() : 0);
         result = 31 * result + (lineNumberEnd != null ? lineNumberEnd.hashCode() : 0);
-        result = 31 * result + className.hashCode();
+        result = 31 * result + (className != null ? className.hashCode() : 0);
         result = 31 * result + (methodName != null ? methodName.hashCode() : 0);
         result = 31 * result + (routeId != null ? routeId.hashCode() : 0);
         return result;

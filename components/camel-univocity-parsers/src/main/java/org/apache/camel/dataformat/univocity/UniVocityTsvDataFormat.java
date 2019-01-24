@@ -23,10 +23,12 @@ import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 import com.univocity.parsers.tsv.TsvWriter;
 import com.univocity.parsers.tsv.TsvWriterSettings;
+import org.apache.camel.spi.annotations.Dataformat;
 
 /**
  * This class is the data format that uses the TSV uniVocity parser.
  */
+@Dataformat("univocity-tsv")
 public class UniVocityTsvDataFormat extends AbstractUniVocityDataFormat<TsvFormat, TsvWriterSettings, TsvWriter, TsvParserSettings, TsvParser, UniVocityTsvDataFormat> {
     protected Character escapeChar;
 

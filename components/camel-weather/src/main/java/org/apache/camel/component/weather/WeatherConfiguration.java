@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.commons.httpclient.HttpConnectionManager;
 
 import static org.apache.camel.component.weather.WeatherLanguage.en;
@@ -39,9 +39,11 @@ public class WeatherConfiguration {
     private final WeatherComponent component;
     private final WeatherQuery weatherQuery;
 
-    @UriPath(description = "The name value is not used.") @Metadata(required = "true")
+    @UriPath(description = "The name value is not used.")
+    @Metadata(required = true)
     private String name;
-    @UriParam @Metadata(required = "true")
+    @UriParam
+    @Metadata(required = true)
     private String appid;
     @UriParam
     private WeatherApi weatherApi;
@@ -90,11 +92,17 @@ public class WeatherConfiguration {
     private String proxyAuthHost;
     @UriParam(label = "advanced")
     private HttpConnectionManager httpConnectionManager;
+    @UriParam(label = "security")
+    @Metadata(required = true)
+    private String geolocationAccessKey;
+    @UriParam(label = "security")
+    @Metadata(required = true)
+    private String geolocationRequestHostIP;
 
     public WeatherConfiguration(WeatherComponent component) {
         this.component = notNull(component, "component");
         weatherQuery = new WeatherQuery(this);
-        FreeGeoIpGeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider(component);
+        FreeGeoIpGeoLocationProvider geoLocationProvider = new FreeGeoIpGeoLocationProvider(component, geolocationAccessKey);
         weatherQuery.setGeoLocationProvider(geoLocationProvider);
     }
 
@@ -103,8 +111,10 @@ public class WeatherConfiguration {
     }
 
     /**
-     * If null, the current weather will be returned, else use values of 5, 7, 14 days.
-     * Only the numeric value for the forecast period is actually parsed, so spelling, capitalisation of the time period is up to you (its ignored)
+     * If null, the current weather will be returned, else use values of 5, 7,
+     * 14 days. Only the numeric value for the forecast period is actually
+     * parsed, so spelling, capitalisation of the time period is up to you (its
+     * ignored)
      */
     public void setPeriod(String period) {
         notNull(period, "period");
@@ -154,11 +164,14 @@ public class WeatherConfiguration {
     }
 
     /**
-     * If null Camel will try and determine your current location using the geolocation of your ip address,
-     * else specify the city,country. For well known city names, Open Weather Map will determine the best fit,
-     * but multiple results may be returned. Hence specifying and country as well will return more accurate data.
-     * If you specify "current" as the location then the component will try to get the current latitude and longitude
-     * and use that to get the weather details. You can use lat and lon options instead of location.
+     * If null Camel will try and determine your current location using the
+     * geolocation of your ip address, else specify the city,country. For well
+     * known city names, Open Weather Map will determine the best fit, but
+     * multiple results may be returned. Hence specifying and country as well
+     * will return more accurate data. If you specify "current" as the location
+     * then the component will try to get the current latitude and longitude and
+     * use that to get the weather details. You can use lat and lon options
+     * instead of location.
      */
     public void setLocation(String location) {
         this.location = location;
@@ -169,7 +182,8 @@ public class WeatherConfiguration {
     }
 
     /**
-     * To store the weather result in this header instead of the message body. This is useable if you want to keep current message body as-is.
+     * To store the weather result in this header instead of the message body.
+     * This is useable if you want to keep current message body as-is.
      */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
@@ -180,8 +194,8 @@ public class WeatherConfiguration {
     }
 
     /**
-     * Latitude of location. You can use lat and lon options instead of location.
-     * For boxed queries this is the bottom latitude.
+     * Latitude of location. You can use lat and lon options instead of
+     * location. For boxed queries this is the bottom latitude.
      */
     public void setLat(String lat) {
         this.lat = lat;
@@ -192,13 +206,13 @@ public class WeatherConfiguration {
     }
 
     /**
-     * Longitude of location. You can use lat and lon options instead of location.
-     * For boxed queries this is the left longtitude.
+     * Longitude of location. You can use lat and lon options instead of
+     * location. For boxed queries this is the left longtitude.
      */
     public void setLon(String lon) {
         this.lon = lon;
     }
-    
+
     /**
      * APPID ID used to authenticate the user connected to the API Server
      */
@@ -234,8 +248,8 @@ public class WeatherConfiguration {
     }
 
     /**
-     * For boxed queries this is the right longtitude. Needs to be used
-     * in combination with topLat and zoom.
+     * For boxed queries this is the right longtitude. Needs to be used in
+     * combination with topLat and zoom.
      */
     public void setRightLon(String rightLon) {
         this.rightLon = rightLon;
@@ -246,8 +260,8 @@ public class WeatherConfiguration {
     }
 
     /**
-     * For boxed queries this is the top latitude. Needs to be used
-     * in combination with rightLon and zoom.
+     * For boxed queries this is the top latitude. Needs to be used in
+     * combination with rightLon and zoom.
      */
     public void setTopLat(String topLat) {
         this.topLat = topLat;
@@ -258,8 +272,8 @@ public class WeatherConfiguration {
     }
 
     /**
-     * For boxed queries this is the zoom. Needs to be used
-     * in combination with rightLon and topLat.
+     * For boxed queries this is the zoom. Needs to be used in combination with
+     * rightLon and topLat.
      */
     public void setZoom(Integer zoom) {
         this.zoom = zoom;
@@ -377,7 +391,7 @@ public class WeatherConfiguration {
         }
         Iterator<?> it = ObjectHelper.createIterator(id);
         while (it.hasNext()) {
-            String myId = (String) it.next();
+            String myId = (String)it.next();
             ids.add(myId);
         }
     }
@@ -406,5 +420,28 @@ public class WeatherConfiguration {
      */
     public void setWeatherApi(WeatherApi weatherApi) {
         this.weatherApi = weatherApi;
+    }
+
+    public String getGeolocationAccessKey() {
+        return geolocationAccessKey;
+    }
+
+    /**
+     * The geolocation service now needs an accessKey to be used
+     */
+    public void setGeolocationAccessKey(String geolocationAccessKey) {
+        this.geolocationAccessKey = geolocationAccessKey;
+    }
+
+    public String getGeolocationRequestHostIP() {
+        return geolocationRequestHostIP;
+    }
+
+    /**
+     * The geolocation service now needs to specify the IP associated to the
+     * accessKey you're using
+     */
+    public void setGeolocationRequestHostIP(String geolocationRequestHostIP) {
+        this.geolocationRequestHostIP = geolocationRequestHostIP;
     }
 }

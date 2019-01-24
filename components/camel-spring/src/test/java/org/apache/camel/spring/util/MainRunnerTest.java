@@ -17,12 +17,11 @@
 package org.apache.camel.spring.util;
 
 import org.apache.camel.TestSupport;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MainRunnerTest extends TestSupport {
 
+    @Test
     public void testMainRunner() throws Exception {
         MainRunner runner = new MainRunner();
         runner.setDelay(10);

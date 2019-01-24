@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jetty;
-
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerFactory;
@@ -26,6 +26,8 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class JettyEnableJmxTest extends BaseJettyTest {
@@ -37,6 +39,7 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     private MBeanServerConnection mbsc;
 
     @Override
+    @After
     public void tearDown() throws Exception {
         releaseMBeanServers();
         mbsc = null;
@@ -45,6 +48,7 @@ public class JettyEnableJmxTest extends BaseJettyTest {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         enableJMX();
         releaseMBeanServers();
@@ -86,18 +90,18 @@ public class JettyEnableJmxTest extends BaseJettyTest {
         Set<ObjectName> s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 2 Jetty Server: " + s, 2, s.size());
         
-        context.stopRoute("route0");
+        context.getRouteController().stopRoute("route0");
         
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 1 Jetty Server: " + s, 1, s.size());
         
-        context.stopRoute("route2");
-        context.stopRoute("route3");
+        context.getRouteController().stopRoute("route2");
+        context.getRouteController().stopRoute("route3");
         
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 1 Jetty Server: " + s, 1, s.size());
         
-        context.stopRoute("route1");
+        context.getRouteController().stopRoute("route1");
         
         s = mbsc.queryNames(new ObjectName("org.eclipse.jetty.server:type=server,*"), null);
         assertEquals("Could not find 0 Jetty Server: " + s, 0, s.size());

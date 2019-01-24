@@ -28,11 +28,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.ServicePoolAware;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.spi.CamelLogger;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.core.future.CloseFuture;
@@ -60,10 +59,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Producer} implementation for MINA
- *
- * @version
  */
-public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
+public class Mina2Producer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Mina2Producer.class);
     private final ResponseHandler handler;
@@ -111,7 +108,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     public boolean isSingleton() {
         // the producer should not be singleton otherwise cannot use concurrent producers and safely
         // use request/reply with correct correlation
-        return false;
+        return !sync;
     }
 
     @Override
@@ -124,7 +121,6 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected void doProcess(Exchange exchange) throws Exception {
         if (session == null && !lazySessionCreation) {
             throw new IllegalStateException("Not started yet!");
@@ -135,7 +131,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
         // set the exchange encoding property
         if (getEndpoint().getConfiguration().getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, IOConverter.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
+            exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(getEndpoint().getConfiguration().getCharsetName()));
         }
 
         Object body = Mina2PayloadHelper.getIn(getEndpoint(), exchange);
@@ -408,7 +404,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             codecFactory = new Mina2UdpProtocolCodecFactory(this.getEndpoint().getCamelContext());
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("{}: Using CodecFactory: {}", new Object[]{type, codecFactory});
+                LOG.debug("{}: Using CodecFactory: {}", type, codecFactory);
             }
         }
 

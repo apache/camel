@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 public class KubernetesConfiguration implements Cloneable {
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String masterUrl;
 
     @Deprecated

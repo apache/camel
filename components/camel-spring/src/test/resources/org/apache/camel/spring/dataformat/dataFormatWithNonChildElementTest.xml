@@ -33,14 +33,14 @@
         <route>
             <from uri="direct:marshal"/>
             <!-- using a bean id -->
-            <marshal ref="xs"/>
+            <marshal><custom ref="xs"/></marshal>
             <to uri="mock:marshal"/>
         </route>
 
         <route>
             <from uri="direct:unmarshal"/>
             <!-- using a bean id -->
-            <unmarshal ref="xs"/>
+            <unmarshal><custom ref="xs"/></unmarshal>
             <to uri="mock:unmarshal"/>
         </route>
     </camelContext>

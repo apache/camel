@@ -19,7 +19,14 @@ package org.apache.camel.parser.helper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
+
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
@@ -44,6 +51,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *   String columnNumber = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
  *   String columnNumberEnd = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER_END);
  * </pre>
+ * Mind that start and end numbers are the same for single-level XML tags.
  */
 public final class XmlLineNumberParser {
 
@@ -80,11 +88,13 @@ public final class XmlLineNumberParser {
         final Document doc;
         SAXParser parser;
         final SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         parser = factory.newSAXParser();
         final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         // turn off validator and loading external dtd
         dbf.setValidating(false);
         dbf.setNamespaceAware(true);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
         dbf.setFeature("http://xml.org/sax/features/namespaces", false);
         dbf.setFeature("http://xml.org/sax/features/validation", false);
         dbf.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
@@ -99,6 +109,8 @@ public final class XmlLineNumberParser {
         final DefaultHandler handler = new DefaultHandler() {
             private Locator locator;
             private boolean found;
+            private final Map<String, String> localNs = new HashMap<>();
+            private final Map<String, String> anonymousNs = new LinkedHashMap<>();
 
             @Override
             public void setDocumentLocator(final Locator locator) {
@@ -130,15 +142,50 @@ public final class XmlLineNumberParser {
                     if (forceNamespace != null) {
                         el = doc.createElementNS(forceNamespace, qName);
                     } else {
-                        el = doc.createElement(qName);
+                        String ns = null;
+                        // are we using namespace prefixes
+                        int pos = qName.indexOf(':');
+                        if (pos > 0) {
+                            if (attributes != null) {
+                                String prefix = qName.substring(0, pos);
+                                ns = attributes.getValue("xmlns:" + prefix);
+                                if (ns != null) {
+                                    localNs.put(prefix, ns);
+                                } else {
+                                    ns = localNs.get(prefix);
+                                }
+                            }
+                        } else {
+                            // maybe there is an anonymous namespace (xmlns)
+                            if (attributes != null) {
+                                ns = attributes.getValue("xmlns");
+                                if (ns != null) {
+                                    anonymousNs.put(qName, ns);
+                                } else if (!anonymousNs.isEmpty()) {
+                                    // grab latest anonymous namespace to use as the namespace as
+                                    // this child tag should use the parents+ namespace
+                                    List<String> values = new ArrayList<>(anonymousNs.values());
+                                    ns = values.get(values.size() - 1);
+                                }
+                            }
+                        }
+                        if (ns != null) {
+                            el = doc.createElementNS(ns, qName);
+                        } else {
+                            el = doc.createElement(qName);
+                        }
                     }
 
-                    for (int i = 0; i < attributes.getLength(); i++) {
-                        el.setAttribute(attributes.getQName(i), attributes.getValue(i));
+                    if (attributes != null) {
+                        for (int i = 0; i < attributes.getLength(); i++) {
+                            el.setAttribute(attributes.getQName(i), attributes.getValue(i));
+                        }
                     }
 
-                    el.setUserData(LINE_NUMBER, String.valueOf(this.locator.getLineNumber()), null);
-                    el.setUserData(COLUMN_NUMBER, String.valueOf(this.locator.getColumnNumber()), null);
+                    String ln = String.valueOf(this.locator.getLineNumber());
+                    String cn = String.valueOf(this.locator.getColumnNumber());
+                    el.setUserData(LINE_NUMBER, ln, null);
+                    el.setUserData(COLUMN_NUMBER, cn, null);
                     elementStack.push(el);
                 }
             }
@@ -161,9 +208,13 @@ public final class XmlLineNumberParser {
                         parentEl.appendChild(closedEl);
                     }
 
-                    closedEl.setUserData(LINE_NUMBER_END, String.valueOf(this.locator.getLineNumber()), null);
-                    closedEl.setUserData(COLUMN_NUMBER_END, String.valueOf(this.locator.getColumnNumber()), null);
+                    String ln = String.valueOf(this.locator.getLineNumber());
+                    String cn = String.valueOf(this.locator.getColumnNumber());
+                    closedEl.setUserData(LINE_NUMBER_END, ln, null);
+                    closedEl.setUserData(COLUMN_NUMBER_END, cn, null);
                 }
+
+                anonymousNs.remove(qName);
             }
 
             @Override

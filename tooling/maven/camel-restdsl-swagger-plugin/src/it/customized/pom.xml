@@ -53,6 +53,7 @@
               <className>MyRestRoute</className>
               <indent>\t</indent>
               <destinationGenerator>com.example.MyDestinationGenerator</destinationGenerator>
+              <apiContextPath>/api-docs</apiContextPath>
             </configuration>
           </execution>
         </executions>
@@ -65,6 +66,26 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-swagger-rest-dsl-generator</artifactId>
       <version>@project.version@</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>@project.version@</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-swagger-java</artifactId>
+      <version>@project.version@</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.threeten</groupId>
+      <artifactId>threetenbp</artifactId>
+      <version>1.3.7</version>
     </dependency>
   </dependencies>
 </project>

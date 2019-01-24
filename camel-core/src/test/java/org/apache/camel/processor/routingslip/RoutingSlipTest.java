@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class RoutingSlipTest extends ContextTestSupport {
 
     protected static final String ANSWER = "answer";
     protected static final String ROUTING_SLIP_HEADER = "myHeader";
 
+    @Test
     public void testUpdatingOfRoutingSlipAllDefaults()
         throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
@@ -41,6 +43,7 @@ public class RoutingSlipTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUpdatingOfRoutingSlipHeaderSet() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
@@ -55,6 +58,7 @@ public class RoutingSlipTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testUpdatingOfRoutingSlipHeaderAndDelimiterSet() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
@@ -69,6 +73,7 @@ public class RoutingSlipTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testBodyExpression() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
@@ -83,6 +88,7 @@ public class RoutingSlipTest extends ContextTestSupport {
 
     }
 
+    @Test
     public void testMessagePassingThrough() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);
@@ -92,6 +98,7 @@ public class RoutingSlipTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testEmptyRoutingSlip() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);
@@ -101,6 +108,7 @@ public class RoutingSlipTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNoRoutingSlip() throws Exception {
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);

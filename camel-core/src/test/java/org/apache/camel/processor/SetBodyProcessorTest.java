@@ -23,13 +23,12 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class SetBodyProcessorTest extends ContextTestSupport {
 
+    @Test
     public void testSetBody() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
         foo.expectedBodiesReceived("World");
@@ -63,6 +62,7 @@ public class SetBodyProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testSetBodyWithHeader() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:test");
         result.expectedBodiesReceived("bbb");
@@ -83,7 +83,7 @@ public class SetBodyProcessorTest extends ContextTestSupport {
                     .to("mock:result");
                 
                 from("direct:start2")
-                    .setBody(simple("header.text.replace('a','b')")).to("mock:test");
+                    .setBody(simple("${header.text.replace('a','b')}")).to("mock:test");
             }
         };
     }

@@ -20,14 +20,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Processor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Routes the message to a sequence of processors.
- *
- * @version
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "pipeline")
@@ -38,11 +34,13 @@ public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {
     }
 
     @Override
+    public String getShortName() {
+        return "pipeline";
+    }
+
+    @Override
     public String getLabel() {
         return "pipeline";
     }
 
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, true);
-    }
 }

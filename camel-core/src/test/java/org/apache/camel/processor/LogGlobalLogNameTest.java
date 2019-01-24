@@ -19,9 +19,6 @@ package org.apache.camel.processor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
-/**
- * @version 
- */
 public class LogGlobalLogNameTest extends LogProcessorTest {
 
     @Override

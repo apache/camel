@@ -20,13 +20,12 @@ import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class DataSetTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(20);
 
+    @Test
     public void testDataSet() throws Exception {
         // data set will itself set its assertions so we should just
         // assert that all mocks is ok

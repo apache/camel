@@ -16,10 +16,10 @@
  */
 
 package org.apache.camel.component.avro;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,6 +28,7 @@ public class AvroNettySpringProducerTest extends AvroNettyProducerTest {
     private AbstractApplicationContext applicationContext;
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         IOHelper.close(applicationContext);
@@ -36,7 +37,7 @@ public class AvroNettySpringProducerTest extends AvroNettyProducerTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/avro/avro-netty-producer.xml");
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     @Override

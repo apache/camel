@@ -23,9 +23,8 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 
-/**
- * @version 
- */
+import static org.apache.camel.TypeConverter.MISS_VALUE;
+
 @Converter
 public final class JettyConverter {
 
@@ -44,7 +43,7 @@ public final class JettyConverter {
         if (value != null) {
             // should not try to convert Request as its not possible
             if (Request.class.isAssignableFrom(value.getClass())) {
-                return (T) Void.TYPE;
+                return (T) MISS_VALUE;
             }
         }
 

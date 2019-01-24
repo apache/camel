@@ -98,7 +98,7 @@ the templates.
 ----
 public void configure() { 
     ... 
-    Policy requried = bean(SpringTransactionPolicy.class, "PROPAGATION_REQUIRED")); 
+    Policy required = bean(SpringTransactionPolicy.class, "PROPAGATION_REQUIRED")); 
     Policy requirenew = bean(SpringTransactionPolicy.class, "PROPAGATION_REQUIRES_NEW")); 
     ... 
 }

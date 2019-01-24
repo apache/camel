@@ -21,9 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpSimpleConsumeDirectoryParseWithAbsoluteDepthNoStepwiseTest extends FtpServerTestSupport {
 
     @Test
@@ -44,7 +41,7 @@ public class FtpSimpleConsumeDirectoryParseWithAbsoluteDepthNoStepwiseTest exten
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

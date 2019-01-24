@@ -58,7 +58,7 @@ public class NettyConsumerClientModeTest extends BaseNettyTest {
             startNettyServer();
             MockEndpoint receive = context.getEndpoint("mock:receive", MockEndpoint.class);
             receive.expectedBodiesReceived("Bye Willem");
-            context.startRoute("client");
+            context.getRouteController().startRoute("client");
             receive.assertIsSatisfied();
         } finally {
             shutdownServer();

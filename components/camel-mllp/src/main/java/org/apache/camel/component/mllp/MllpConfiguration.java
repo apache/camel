@@ -25,7 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mllp.internal.Hl7Util;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,7 +249,7 @@ public class MllpConfiguration implements Cloneable {
     }
 
     public Charset getCharset(Exchange exchange) {
-        String exchangeCharsetName = IOHelper.getCharsetName(exchange, false);
+        String exchangeCharsetName = ExchangeHelper.getCharsetName(exchange, false);
         if (exchangeCharsetName != null && !exchangeCharsetName.isEmpty()) {
             try {
                 if (Charset.isSupported(exchangeCharsetName)) {
@@ -265,7 +265,7 @@ public class MllpConfiguration implements Cloneable {
     }
 
     public Charset getCharset(Exchange exchange, byte[] hl7Bytes) {
-        String exchangeCharsetName = IOHelper.getCharsetName(exchange, false);
+        String exchangeCharsetName = ExchangeHelper.getCharsetName(exchange, false);
         if (exchangeCharsetName != null && !exchangeCharsetName.isEmpty()) {
             try {
                 if (Charset.isSupported(exchangeCharsetName)) {

@@ -82,7 +82,7 @@ public class MyBatisShutdownAllTasksTest extends MyBatisTestSupport {
 
     @Test
     public void testShutdownAllTasks() throws Exception {
-        context.startRoute("route1");
+        context.getRouteController().startRoute("route1");
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);

@@ -20,12 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class NotAllowRedeliveryWhileStoppingTest extends ContextTestSupport {
 
+    @Test
     public void testRedelivery() throws Exception {
         StopWatch watch = new StopWatch();
 

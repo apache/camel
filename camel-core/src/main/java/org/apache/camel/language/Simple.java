@@ -25,8 +25,6 @@ import java.lang.annotation.Target;
 /**
  * Used to inject a simple expression into a field, property, method or parameter when using
  * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>.
- *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

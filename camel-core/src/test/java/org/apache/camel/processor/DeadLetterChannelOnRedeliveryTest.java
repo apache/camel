@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for testing possibility to modify exchange before redelivering
@@ -29,6 +30,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
 
     static int counter;
 
+    @Test
     public void testOnExceptionAlterMessageBeforeRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World3");
@@ -38,6 +40,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionAlterMessageWithHeadersBeforeRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World3");
@@ -49,7 +52,8 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         counter = 0;
     }

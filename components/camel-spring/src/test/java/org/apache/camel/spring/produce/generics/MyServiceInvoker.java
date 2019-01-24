@@ -17,7 +17,6 @@
 package org.apache.camel.spring.produce.generics;
 
 import org.apache.camel.Produce;
-
 import org.springframework.stereotype.Component;
 
 @Component

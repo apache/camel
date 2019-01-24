@@ -27,9 +27,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.ParameterMappingStrategy;
 import org.apache.camel.component.bean.RegistryBean;
 
-/**
- * @version 
- */
 public class RmiRegistryBean extends RegistryBean {
 
     private final Registry registry;

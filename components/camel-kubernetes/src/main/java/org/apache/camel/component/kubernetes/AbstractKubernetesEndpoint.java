@@ -20,17 +20,13 @@ import java.util.concurrent.ExecutorService;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
 
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The base kubernetes endpoint allows to work with Kubernetes PaaS.
  */
 public abstract class AbstractKubernetesEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractKubernetesEndpoint.class);
 
     @UriParam
     private KubernetesConfiguration configuration;

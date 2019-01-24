@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.validation.NoXmlBodyValidationException;
+import org.apache.camel.support.processor.validation.SchemaValidationException;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test of ValidatingProcessor.
@@ -26,12 +27,12 @@ import org.apache.camel.processor.validation.NoXmlBodyValidationException;
 public class ValidatingDomProcessorTest extends ValidatingProcessorTest {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
-        validating.setUseDom(true);
-        assertEquals(true, validating.isUseDom());
     }
 
+    @Test
     public void testNonWellFormedXml() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         mock.expectedMessageCount(1);
@@ -45,8 +46,7 @@ public class ValidatingDomProcessorTest extends ValidatingProcessorTest {
             template.sendBody("direct:start", xml);
             fail("Should have thrown a RuntimeCamelException");
         } catch (CamelExecutionException e) {
-            // cannot be converted to DOM
-            assertIsInstanceOf(NoXmlBodyValidationException.class, e.getCause());
+            assertIsInstanceOf(SchemaValidationException.class, e.getCause());
         }
 
         assertMockEndpointsSatisfied();

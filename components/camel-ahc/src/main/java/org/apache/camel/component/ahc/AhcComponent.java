@@ -22,27 +22,25 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.AsyncHttpClientConfig;
 import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.asynchttpclient.Realm;
 import org.asynchttpclient.Realm.Builder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *  To call external HTTP services using <a href="http://github.com/sonatype/async-http-client">Async Http Client</a>
  */
+@Component("ahc")
 public class AhcComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(AhcComponent.class);
     
     private static final String CLIENT_CONFIG_PREFIX = "clientConfig.";
     private static final String CLIENT_REALM_CONFIG_PREFIX = "clientConfig.realm.";
@@ -61,7 +59,6 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     private boolean allowJavaSerializedObject;
 
     public AhcComponent() {
-        super(AhcEndpoint.class);
     }
 
     @Override
@@ -89,12 +86,12 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
                     ? new DefaultAsyncHttpClientConfig.Builder() : AhcComponent.cloneConfig(endpoint.getClientConfig());
             
             if (endpoint.getClient() != null) {
-                LOG.warn("The user explicitly set an AsyncHttpClient instance on the component or "
+                log.warn("The user explicitly set an AsyncHttpClient instance on the component or "
                          + "endpoint, but this endpoint URI contains client configuration parameters.  "
                          + "Are you sure that this is what was intended?  The AsyncHttpClient will be used"
                          + " and the URI parameters will be ignored.");
             } else if (endpoint.getClientConfig() != null) {
-                LOG.warn("The user explicitly set an AsyncHttpClientConfig instance on the component or "
+                log.warn("The user explicitly set an AsyncHttpClientConfig instance on the component or "
                          + "endpoint, but this endpoint URI contains client configuration parameters.  "
                          + "Are you sure that this is what was intended?  The URI parameters will be applied"
                          + " to a clone of the supplied AsyncHttpClientConfig in order to prevent unintended modification"
@@ -191,7 +188,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
     }
 
     /**
-     * Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry.
+     * Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry.
      * Note that configuring this option will override any SSL/TLS configuration options provided through the
      * clientConfig option at the endpoint or component level.
      */

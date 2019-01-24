@@ -30,8 +30,6 @@ import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComp
 
 /**
  * See MR-170
- *
- * @version 
  */
 @Ignore
 public class JmsHammerTest extends CamelTestSupport {

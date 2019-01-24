@@ -23,12 +23,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.junit.Test;
 
 /**
  *
  */
 public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
 
+    @Test
     public void testPropertyInjectAnnotationOne() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -37,6 +39,7 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertyInjectAnnotationTwo() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("WorldWorldWorld");
 
@@ -45,6 +48,7 @@ public class PropertyInjectAnnotationParameterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testPropertyInjectAnnotationThree() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Goodbye World");
 

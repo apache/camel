@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,20 +22,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport {
 
     private String body = "Hello World this file will NOT be moved";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/movefile");
         super.setUp();
     }
 
+    @Test
     public void testPollFileAndShouldNotBeMoved() throws Exception {
         template.sendBodyAndHeader("file://target/movefile", body, Exchange.FILE_NAME, "hello.txt");
 

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.log;
-
 import java.io.StringWriter;
 
 import org.apache.camel.ContextTestSupport;
@@ -27,11 +26,14 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.WriterAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.junit.Before;
+import org.junit.Test;
 
 public class LogBodyWithNewLineTest extends ContextTestSupport {
 
     private StringWriter writer;
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         writer = new StringWriter();
@@ -56,6 +58,7 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
         ctx.updateLoggers();
     }
 
+    @Test
     public void testNoSkip() throws Exception {
         String body = "1" + LS + "2" + LS + "3";
 
@@ -66,6 +69,7 @@ public class LogBodyWithNewLineTest extends ContextTestSupport {
         assertTrue(writer.toString().contains(body));
     }
 
+    @Test
     public void testSkip() throws Exception {
         String body = "1" + LS + "2" + LS + "3";
 

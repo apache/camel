@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.ftp;
-
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,6 +27,7 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -86,6 +86,7 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
         ftpServer.start();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         ftpServer.stop();

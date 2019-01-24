@@ -30,6 +30,8 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.TypeConverter.MISS_VALUE;
+
 /**
  * Default converters for {@link ExecResult}. For details how to extend the
  * converters check out <a
@@ -96,7 +98,7 @@ public final class ExecResultConverter {
         } else {
             // use Void to indicate we cannot convert it
             // (prevents Camel from using a fallback converter which may convert a String from the instance name)  
-            return (T) Void.TYPE;
+            return (T) MISS_VALUE;
         }
     }
 

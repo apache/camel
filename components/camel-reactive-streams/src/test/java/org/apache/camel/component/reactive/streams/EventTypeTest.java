@@ -17,7 +17,6 @@
 package org.apache.camel.component.reactive.streams;
 
 import io.reactivex.Flowable;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

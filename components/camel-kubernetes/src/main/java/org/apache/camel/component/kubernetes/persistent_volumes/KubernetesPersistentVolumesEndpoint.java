@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
     syntax = "kubernetes-persistent-volumes:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesPersistentVolumesEndpoint extends AbstractKubernetesEndpoint {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesPersistentVolumesEndpoint.class);
-
     public KubernetesPersistentVolumesEndpoint(String uri, KubernetesPersistentVolumesComponent component, KubernetesConfiguration config) {
         super(uri, component, config);
     }

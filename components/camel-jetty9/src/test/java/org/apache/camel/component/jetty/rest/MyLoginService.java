@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty.rest;
 
 import java.security.Principal;
+
 import javax.security.auth.Subject;
 import javax.servlet.ServletRequest;
 

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow;
-
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 

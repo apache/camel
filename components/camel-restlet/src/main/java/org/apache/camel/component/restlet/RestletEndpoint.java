@@ -17,7 +17,6 @@
 package org.apache.camel.component.restlet;
 
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.AsyncEndpoint;
@@ -28,21 +27,21 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.http.common.cookie.CookieHandler;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.restlet.data.Method;
 
 /**
  * Component for consuming and producing Restful resources using Restlet.
  */
 @UriEndpoint(firstVersion = "2.0.0", scheme = "restlet", title = "Restlet", syntax = "restlet:protocol:host:port/uriPattern",
-        consumerClass = RestletConsumer.class, label = "rest", lenientProperties = true)
+        label = "rest", lenientProperties = true)
 public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";
@@ -50,11 +49,11 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
     private static final int DEFAULT_SOCKET_TIMEOUT = 30000;
     private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
 
-    @UriPath(enums = "http,https") @Metadata(required = "true")
+    @UriPath(enums = "http,https") @Metadata(required = true)
     private String protocol = DEFAULT_PROTOCOL;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host = DEFAULT_HOST;
-    @UriPath(defaultValue = "80") @Metadata(required = "true")
+    @UriPath(defaultValue = "80") @Metadata(required = true)
     private int port = DEFAULT_PORT;
     @UriPath
     private String uriPattern;
@@ -66,9 +65,6 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
     private Method restletMethod = Method.GET;
     @UriParam(label = "consumer", javaType = "java.lang.String")
     private Method[] restletMethods;
-    @UriParam(label = "consumer,advanced")
-    @Deprecated
-    private List<String> restletUriPatterns;
     @UriParam(label = "security")
     private Map<String, String> restletRealm;
     @UriParam(label = "advanced")
@@ -266,21 +262,6 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
 
     public Method[] getRestletMethods() {
         return restletMethods;
-    }
-
-    /**
-     * Specify one ore more URI templates to be serviced by a restlet consumer endpoint, using the # notation to
-     * reference a List<String> in the Camel Registry.
-     * If a URI pattern has been defined in the endpoint URI, both the URI pattern defined in the endpoint and the restletUriPatterns option will be honored.
-     */
-    @Deprecated
-    public void setRestletUriPatterns(List<String> restletUriPatterns) {
-        this.restletUriPatterns = restletUriPatterns;
-    }
-
-    @Deprecated
-    public List<String> getRestletUriPatterns() {
-        return restletUriPatterns;
     }
 
     public boolean isThrowExceptionOnFailure() {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+import org.junit.Before;
 
 /**
  * Using the default error handler = DeadLetterChannel to unit test that this works out of the box
@@ -23,7 +24,8 @@ package org.apache.camel.spring.interceptor;
 public class TransactionalClientDataSourceWithDefaultErrorHandlerTest extends TransactionalClientDataSourceTest {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         useTransactionErrorHandler = false;
     }

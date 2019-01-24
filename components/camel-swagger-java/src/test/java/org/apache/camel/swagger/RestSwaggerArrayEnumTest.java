@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class RestSwaggerArrayEnumTest {
 
     @Test
-    public void shouldGenerateEnumValuesForArraysAndNonArrays() {
+    public void shouldGenerateEnumValuesForArraysAndNonArrays() throws Exception {
         final RestSwaggerReader reader = new RestSwaggerReader();
 
         final RestDefinition restDefinition = new RestDefinition();

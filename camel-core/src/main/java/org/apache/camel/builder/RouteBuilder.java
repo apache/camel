@@ -23,11 +23,8 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -40,16 +37,16 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is
  * used to build {@link org.apache.camel.impl.DefaultRoute} instances in a {@link CamelContext} for smart routing.
- *
- * @version 
  */
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder {
     protected Logger log = LoggerFactory.getLogger(getClass());
@@ -246,17 +243,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception is thrown if property with key not found or error converting to the given type.
      */
     public <T> T propertyInject(String key, Class<T> type) throws Exception {
-        ObjectHelper.notEmpty(key, "key");
+        StringHelper.notEmpty(key, "key");
         ObjectHelper.notNull(type, "Class type");
 
         // the properties component is mandatory
-        Component component = getContext().hasComponent("properties");
-        if (component == null) {
-            throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                + " in CamelContext to support property placeholders in expressions");
-        }
-        PropertiesComponent pc = getContext().getTypeConverter()
-            .mandatoryConvertTo(PropertiesComponent.class, component);
+        PropertiesComponent pc = getContext().getPropertiesComponent();
         // enclose key with {{ }} to force parsing
         Object value = pc.parseUri(pc.getPrefixToken() + key + pc.getSuffixToken());
 
@@ -367,17 +358,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return getRouteCollection().onCompletion();
     }
     
-    // Properties
-    // -----------------------------------------------------------------------
-    public ModelCamelContext getContext() {
-        ModelCamelContext context = super.getContext();
-        if (context == null) {
-            context = createContainer();
-            setContext(context);
-        }
-        return context;
-    }
-
     public void addRoutesToCamelContext(CamelContext context) throws Exception {
         // must configure routes before rests
         configureRoutes((ModelCamelContext) context);
@@ -446,18 +426,17 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     @Override
     public void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder) {
         super.setErrorHandlerBuilder(errorHandlerBuilder);
-        getRouteCollection().setErrorHandlerBuilder(getErrorHandlerBuilder());
+        getRouteCollection().setErrorHandlerFactory(getErrorHandlerBuilder());
     }
 
     // Implementation methods
     // -----------------------------------------------------------------------
-    @SuppressWarnings("deprecation")
     protected void checkInitialized() throws Exception {
         if (initialized.compareAndSet(false, true)) {
             // Set the CamelContext ErrorHandler here
             ModelCamelContext camelContext = getContext();
-            if (camelContext.getErrorHandlerBuilder() != null) {
-                setErrorHandlerBuilder(camelContext.getErrorHandlerBuilder());
+            if (camelContext.getErrorHandlerFactory() instanceof ErrorHandlerBuilder) {
+                setErrorHandlerBuilder((ErrorHandlerBuilder) camelContext.getErrorHandlerFactory());
             }
             configure();
             // mark all route definitions as custom prepared because
@@ -570,33 +549,12 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         return this.routeCollection;
     }
 
-    /**
-     * Factory method
-     *
-     * @return the CamelContext
-     */
-    protected ModelCamelContext createContainer() {
-        return new DefaultCamelContext();
-    }
-
     protected void configureRest(RestDefinition rest) {
         // noop
     }
 
     protected void configureRoute(RouteDefinition route) {
         // noop
-    }
-
-    /**
-     * Adds a collection of routes to this context
-     *
-     * @param routes the routes
-     * @throws Exception if the routes could not be created for whatever reason
-     * @deprecated will be removed in Camel 3.0. Instead use {@link #includeRoutes(org.apache.camel.RoutesBuilder) includeRoutes} instead.
-     */
-    @Deprecated
-    protected void addRoutes(RoutesBuilder routes) throws Exception {
-        includeRoutes(routes);
     }
 
 }

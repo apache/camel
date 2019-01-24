@@ -22,9 +22,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version
- */
 @Ignore("Must be online")
 public class RssUriEncodingIssueTest extends CamelTestSupport {
 

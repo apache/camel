@@ -19,19 +19,18 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RecipientListExchangePropertyAggregationStrategyTest extends ContextTestSupport {
 
     private final MyAggregationStrategy strategy = new MyAggregationStrategy();
 
+    @Test
     public void testRecipientExchangeProperty() throws Exception {
         getMockEndpoint("mock:a").expectedPropertyReceived(Exchange.RECIPIENT_LIST_ENDPOINT, "direct://a");
         getMockEndpoint("mock:a").expectedPropertyReceived(Exchange.TO_ENDPOINT, "mock://a");

@@ -38,10 +38,10 @@ import com.notnoop.apns.utils.FixedCertificates;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.apns.factory.ApnsServiceFactory;
-import org.apache.camel.util.jsse.KeyManagersParameters;
-import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.TrustManagersParameters;
+import org.apache.camel.support.jsse.KeyManagersParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 
 public final class ApnsUtils {
 

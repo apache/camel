@@ -50,7 +50,7 @@
                 <exception>java.lang.Exception</exception>
                 <!-- but we can override the profile and log retry attempts at WARN level -->
                 <redeliveryPolicy logRetryAttempted="true" retryAttemptedLogLevel="WARN"/>
-                <to ref="dead"/>
+                <to uri="ref:dead"/>
             </onException>
             <throwException ref="damn"/>
         </route>

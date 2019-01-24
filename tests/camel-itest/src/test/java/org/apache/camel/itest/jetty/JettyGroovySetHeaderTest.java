@@ -24,9 +24,6 @@ import org.junit.Test;
 
 import static org.apache.camel.language.groovy.GroovyLanguage.groovy;
 
-/**
- * @version 
- */
 public class JettyGroovySetHeaderTest extends CamelTestSupport {
 
     private int port;

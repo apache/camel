@@ -18,9 +18,6 @@ package org.apache.camel.example;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringDataFormatWithMarshalAndUnmarshalUsingRefTest extends SpringDataFormatTest {
 
     protected ClassPathXmlApplicationContext createApplicationContext() {

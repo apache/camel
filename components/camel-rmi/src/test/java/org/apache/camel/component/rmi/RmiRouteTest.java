@@ -23,12 +23,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RmiRouteTest extends RmiRouteTestSupport {
 
     protected int getStartPort() {

@@ -28,44 +28,35 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.ExchangeIdempotentRepository;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * An implementation of the <a
  * href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
  * <p/>
- * This implementation supports idempotent repositories implemented as
- * <ul>
- *     <li>IdempotentRepository</li>
- *     <li>ExchangeIdempotentRepository</li>
- * </ul>
+ * This implementation supports idempotent repositories implemented as {@link org.apache.camel.spi.IdempotentRepository}.
  *
  * @see org.apache.camel.spi.IdempotentRepository
- * @see org.apache.camel.spi.ExchangeIdempotentRepository
  */
-public class IdempotentConsumer extends ServiceSupport implements CamelContextAware, AsyncProcessor, Navigate<Processor>, IdAware {
-    private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
+public class IdempotentConsumer extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, IdAware {
+
     private CamelContext camelContext;
     private String id;
     private final Expression messageIdExpression;
     private final AsyncProcessor processor;
-    private final IdempotentRepository<String> idempotentRepository;
+    private final IdempotentRepository idempotentRepository;
     private final boolean eager;
     private final boolean completionEager;
     private final boolean skipDuplicate;
     private final boolean removeOnFailure;
     private final AtomicLong duplicateMessageCount = new AtomicLong();
 
-    public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository<String> idempotentRepository,
+    public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository,
                               boolean eager, boolean completionEager, boolean skipDuplicate, boolean removeOnFailure, Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
@@ -99,10 +90,6 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
         this.id = id;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final AsyncCallback target;
 
@@ -124,18 +111,10 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
             boolean newKey;
             if (eager) {
                 // add the key to the repository
-                if (idempotentRepository instanceof ExchangeIdempotentRepository) {
-                    newKey = ((ExchangeIdempotentRepository<String>) idempotentRepository).add(exchange, messageId);
-                } else {
-                    newKey = idempotentRepository.add(messageId);
-                }
+                newKey = idempotentRepository.add(exchange, messageId);
             } else {
                 // check if we already have the key
-                if (idempotentRepository instanceof ExchangeIdempotentRepository) {
-                    newKey = !((ExchangeIdempotentRepository<String>) idempotentRepository).contains(exchange, messageId);
-                } else {
-                    newKey = !idempotentRepository.contains(messageId);
-                }
+                newKey = !idempotentRepository.contains(exchange, messageId);
             }
 
             if (!newKey) {
@@ -147,7 +126,7 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
 
                 if (skipDuplicate) {
                     // if we should skip duplicate then we are done
-                    LOG.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
+                    log.debug("Ignoring duplicate message with id: {} for exchange: {}", messageId, exchange);
                     callback.done(true);
                     return true;
                 }
@@ -188,7 +167,7 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
         return messageIdExpression;
     }
 
-    public IdempotentRepository<String> getIdempotentRepository() {
+    public IdempotentRepository getIdempotentRepository() {
         return idempotentRepository;
     }
 
@@ -208,11 +187,11 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
         if (!camelContext.hasService(idempotentRepository)) {
             camelContext.addService(idempotentRepository);
         }
-        ServiceHelper.startServices(processor, idempotentRepository);
+        ServiceHelper.startService(processor, idempotentRepository);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(processor, idempotentRepository);
+        ServiceHelper.stopService(processor, idempotentRepository);
     }
 
     @Override

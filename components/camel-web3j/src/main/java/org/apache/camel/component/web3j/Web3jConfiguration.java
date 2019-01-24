@@ -126,6 +126,34 @@ public class Web3jConfiguration implements Cloneable {
     @UriParam(label = "common")
     private boolean fullTransactionObjects;
 
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean quorumAPI;
+
+    @UriParam(label = "common")
+    private List<String>  privateFor;
+
+
+    public List<String> getPrivateFor() {
+        return privateFor;
+    }
+    /**
+     *  A transaction privateFor nodes with public keys in a Quorum network
+     */
+    public void setPrivateFor(List<String> privateFor) {
+        this.privateFor = privateFor;
+    }
+
+
+    public boolean isQuorumAPI() {
+        return quorumAPI;
+    }
+    /**
+     *  If true, this will support Quorum API.
+     */
+    public void setQuorumAPI(boolean quorumAPI) {
+        this.quorumAPI = quorumAPI;
+    }
+
     public Web3j getWeb3j() {
         return web3j;
     }

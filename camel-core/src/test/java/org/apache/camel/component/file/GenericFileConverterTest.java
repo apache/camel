@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -26,14 +25,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class GenericFileConverterTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/gf");
         super.setUp();
     }
@@ -43,6 +42,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testToFile() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -63,6 +63,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -84,6 +85,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToBytes() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -105,6 +107,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToSerializable() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -126,6 +129,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToInputStream() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -147,6 +151,7 @@ public class GenericFileConverterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToFileInputStream() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

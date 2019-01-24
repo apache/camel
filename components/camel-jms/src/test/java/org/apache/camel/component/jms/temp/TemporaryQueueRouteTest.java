@@ -27,9 +27,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class TemporaryQueueRouteTest extends CamelTestSupport {
     protected String endpointUri = "activemq:temp-queue:cheese";
 

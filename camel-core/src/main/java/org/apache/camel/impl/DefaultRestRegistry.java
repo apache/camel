@@ -28,6 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
@@ -37,7 +38,7 @@ import org.apache.camel.component.rest.RestEndpoint;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.support.LifecycleStrategySupport;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 public class DefaultRestRegistry extends ServiceSupport implements StaticService, RestRegistry, CamelContextAware {
@@ -102,7 +103,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                     apiProducer = restApiEndpoint.createProducer();
                     camelContext.addService(apiProducer, true);
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
         }
@@ -115,7 +116,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                 String json = dummy.hasOut() ? dummy.getOut().getBody(String.class) : dummy.getIn().getBody(String.class);
                 return json;
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

@@ -17,12 +17,10 @@
 package org.apache.camel.component.properties;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringBuilderRefPropertyInjectTest extends SpringTestSupport {
 
     @Override
@@ -30,6 +28,7 @@ public class SpringBuilderRefPropertyInjectTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringBuilderRefPropertyInjectTest.xml");
     }
 
+    @Test
     public void testPropertyInject() throws Exception {
         getMockEndpoint("{{result}}").expectedBodiesReceived("Hello Camel");
 

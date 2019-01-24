@@ -19,8 +19,6 @@ package org.apache.camel.spring.bind;
 /**
  * An example Bean with no annotations or interfaces to test out the Bean
  * Camel binding
- *
- * @version 
  */
 // START SNIPPET: e1
 public class ExampleBean {

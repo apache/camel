@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ignite.compute;
 
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -24,7 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.ignite.AbstractIgniteEndpoint;
 import org.apache.camel.component.ignite.ClusterGroupExpression;
-import org.apache.camel.component.ignite.IgniteComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -42,13 +40,13 @@ import org.apache.ignite.IgniteCompute;
 @UriEndpoint(firstVersion = "2.17.0", scheme = "ignite-compute", title = "Ignite Compute", syntax = "ignite-compute:endpointId", label = "nosql,cache,compute", producerOnly = true)
 public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String endpointId;
 
     @UriParam(label = "producer")
     private ClusterGroupExpression clusterGroupExpression;
 
-    @UriParam(label = "producer") @Metadata(required = "true")
+    @UriParam(label = "producer") @Metadata(required = true)
     private IgniteComputeExecutionType executionType;
 
     @UriParam(label = "producer")
@@ -59,11 +57,6 @@ public class IgniteComputeEndpoint extends AbstractIgniteEndpoint {
 
     @UriParam(label = "producer")
     private Long timeoutMillis;
-
-    @Deprecated
-    public IgniteComputeEndpoint(String uri, URI remainingUri, Map<String, Object> parameters, IgniteComponent igniteComponent) throws ClassNotFoundException {
-        super(uri, igniteComponent);
-    }
 
     public IgniteComputeEndpoint(String uri, String remaining, Map<String, Object> parameters, IgniteComputeComponent igniteComponent) throws ClassNotFoundException {
         super(uri, igniteComponent);

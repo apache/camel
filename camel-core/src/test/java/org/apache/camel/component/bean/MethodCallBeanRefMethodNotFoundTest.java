@@ -20,10 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MethodCallBeanRefMethodNotFoundTest extends ContextTestSupport {
 
     @Override
@@ -33,6 +31,7 @@ public class MethodCallBeanRefMethodNotFoundTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testMethodCallBeanRefMethodNotFound() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

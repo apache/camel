@@ -24,10 +24,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.model.TransactedDefinition;
+import org.apache.camel.reifier.TransactedReifier;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
-import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +81,7 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
             if (policyRef != null) {
                 final TransactedDefinition transactedDefinition = new TransactedDefinition();
                 transactedDefinition.setRef(policyRef);
-                final Policy policy = transactedDefinition.resolvePolicy(routeContext);
+                final Policy policy = TransactedReifier.resolvePolicy(routeContext, transactedDefinition);
                 if (policy != null) {
                     if (!(policy instanceof JtaTransactionPolicy)) {
                         throw new RuntimeCamelException("The configured policy '" + policyRef + "' is of type '"
@@ -119,7 +121,7 @@ public class JtaTransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilde
         ObjectHelper.notNull(transactionPolicy, "transactionPolicy", this);
 
         final CamelContext camelContext = routeContext.getCamelContext();
-        final Map<String, String> properties = camelContext.getProperties();
+        final Map<String, String> properties = camelContext.getGlobalOptions();
         if ((properties != null) && properties.containsKey(ROLLBACK_LOGGING_LEVEL_PROPERTY)) {
             rollbackLoggingLevel = LoggingLevel.valueOf(properties.get(ROLLBACK_LOGGING_LEVEL_PROPERTY));
         }

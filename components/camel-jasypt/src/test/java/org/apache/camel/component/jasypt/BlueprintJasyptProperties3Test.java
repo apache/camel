@@ -19,9 +19,6 @@ package org.apache.camel.component.jasypt;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class BlueprintJasyptProperties3Test extends CamelBlueprintTestSupport {
 
     @Test

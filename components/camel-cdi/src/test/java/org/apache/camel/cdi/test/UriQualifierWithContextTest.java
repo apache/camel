@@ -24,7 +24,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.ContextName;
-import org.apache.camel.cdi.Mock;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.cdi.bean.FirstCamelContextBean;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -43,11 +42,11 @@ import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 public class UriQualifierWithContextTest {
 
     @Inject
-    @Uri(value = "mock:outbound", context = "first")
+    @Uri(value = "mock:outbound") @ContextName("first")
     private MockEndpoint outbound;
 
     @Inject
-    @Uri(value = "direct:inbound", context = "first")
+    @Uri(value = "direct:inbound") @ContextName("first")
     private ProducerTemplate inbound;
 
     @Deployment
@@ -76,11 +75,11 @@ public class UriQualifierWithContextTest {
 class UriWithContextRoute extends RouteBuilder {
 
     @Inject
-    @Uri(value = "direct:inbound", context = "first")
+    @Uri(value = "direct:inbound") @ContextName("first")
     Endpoint inbound;
 
     @Inject
-    @Mock(value = "mock:outbound", context = "first")
+    @Uri(value = "mock:outbound") @ContextName("first")
     MockEndpoint outbound;
 
     @Override

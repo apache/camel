@@ -24,15 +24,12 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.RecoverableAggregationRepository;
-import org.apache.camel.support.ServiceSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.support.service.ServiceSupport;
 
 public class CaffeineAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
-    private static final Logger LOG = LoggerFactory.getLogger(CaffeineAggregationRepository.class);
 
     private CamelContext camelContext;
     private Cache<String, DefaultExchangeHolder> cache;
@@ -126,7 +123,7 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
 
     @Override
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
-        LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+        log.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
 
         final DefaultExchangeHolder oldHolder = cache.getIfPresent(key);
         final DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
@@ -143,13 +140,13 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
 
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
-        LOG.trace("Removing an exchange with ID {} for key {} ", exchange.getExchangeId(), key);
+        log.trace("Removing an exchange with ID {} for key {}", exchange.getExchangeId(), key);
         cache.invalidate(key);
     }
 
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
-        LOG.trace("Confirming an exchange with ID {}.", exchangeId);
+        log.trace("Confirming an exchange with ID {}.", exchangeId);
         cache.invalidate(exchangeId);
     }
 
@@ -162,15 +159,15 @@ public class CaffeineAggregationRepository extends ServiceSupport implements Rec
 
     @Override
     public Set<String> scan(CamelContext camelContext) {
-        LOG.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
+        log.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
         Set<String> scanned = Collections.unmodifiableSet(getKeys());
-        LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
+        log.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
         return scanned;
     }
 
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
-        LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
+        log.trace("Recovering an Exchange with ID {}.", exchangeId);
         return useRecovery ? unmarshallExchange(camelContext, cache.getIfPresent(exchangeId)) : null;
     }
 

@@ -20,9 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class RoutingSlipIgnoreInvalidEndpointsTest extends ContextTestSupport {
     
+    @Test
     public void testEndpointResolvedFailedWithIgnoreInvalidEndpoints() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hello World");
@@ -34,6 +36,7 @@ public class RoutingSlipIgnoreInvalidEndpointsTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testEndpointResolvedFailedWithoutIgnoreInvalidEndpoints() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);

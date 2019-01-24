@@ -42,9 +42,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.jvnet.mock_javamail.Mailbox;
 
-/**
- * @version 
- */
 public class MimeMessageConsumeTest extends CamelTestSupport {
     private String body = "hello world!";
 

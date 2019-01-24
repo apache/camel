@@ -60,12 +60,13 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
         }
     }
 
-    public ApplicationPkcs7SignatureEntity(String charset,
+    public ApplicationPkcs7SignatureEntity(byte[] signature,
+                                           String charset,
                                            String contentTransferEncoding,
-                                           byte[] signature,
                                            boolean isMainBody)
             throws HttpException {
-        this.signature = signature;
+        this.signature = Args.notNull(signature, "signature");
+        
         ContentType contentType = ContentType
                 .parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset));
         setContentType(contentType.toString());

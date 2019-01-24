@@ -18,6 +18,7 @@ package org.apache.camel.component.mail;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.internet.MimeMultipart;

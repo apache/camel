@@ -18,9 +18,11 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class BeanInvokeSingleMethodNoBodyTest extends ContextTestSupport {
 
+    @Test
     public void testBeanInvokeSingleMethodNoBody() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello");
 

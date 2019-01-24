@@ -63,7 +63,7 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE_NO_ACK + "?threadPoolSize=1&exchangeType=direct&username=cameltest&password=cameltest"
             + "&autoAck=false&autoDelete=false&durable=false&queue=q5&routingKey=" + ROUTING_KEY
             + "&transferException=true&requestTimeout=" + TIMEOUT_MS
-            + "&queueArgs=#queueArgs")
+            + "&args=#args")
     private Endpoint noAutoAckEndpoint;
 
     @EndpointInject(uri = "mock:result")
@@ -73,9 +73,9 @@ public class RabbitMQInOutIntTest extends AbstractRabbitMQIntTest {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
-        HashMap<String, Object> queueArgs = new HashMap<>();
-        queueArgs.put("x-expires", 60000);
-        jndi.bind("queueArgs", queueArgs);
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("queue.x-expires", 60000);
+        jndi.bind("args", args);
 
         return jndi;
     }

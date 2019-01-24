@@ -18,7 +18,7 @@ package org.apache.camel.component.crypto;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.crypto.processor.DigitalSignatureProcessor;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 /**
  * <code>DigitalSignatureProducer</code>
  */

@@ -23,11 +23,13 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.FileUtil;
+import org.junit.Test;
 
 public class GenericFileMessageTest extends ContextTestSupport {
 
     private CamelContext camelContext = new DefaultCamelContext();
 
+    @Test
     public void testGenericMessageToStringConversion() throws Exception {
         GenericFileMessage<File> message = new GenericFileMessage<>(camelContext);
         assertStringContains(message.toString(), "org.apache.camel.component.file.GenericFileMessage@");
@@ -39,6 +41,7 @@ public class GenericFileMessageTest extends ContextTestSupport {
         assertEquals(FileUtil.isWindows() ? "target\\test.txt" : "target/test.txt", message.toString());
     }
     
+    @Test
     public void testGenericFileContentType() throws Exception {
         GenericFile<File> file = new GenericFile<>(true);
         file.setEndpointPath("target");

@@ -19,9 +19,11 @@ package org.apache.camel.processor.onexception;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.junit.Test;
 
 public class OnExceptionRouteIdTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionRouteId() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:foo").expectedMessageCount(1);

@@ -18,12 +18,14 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSupport {
 
+    @Test
     public void testBadFirstMessage() throws Exception {
         // bad messages is ignored
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
@@ -36,6 +38,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBadSecondMessage() throws Exception {
         // bad messages is ignored
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
@@ -48,6 +51,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBadThirdMessage() throws Exception {
         // bad messages is ignored
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");
@@ -60,6 +64,7 @@ public class ResequenceStreamIgnoreInvalidExchangesTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBadForthMessage() throws Exception {
         // bad messages is ignored
         getMockEndpoint("mock:result").expectedBodiesReceived("B", "C", "D");

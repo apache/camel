@@ -26,15 +26,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AggregateConcurrentPerCorrelationKeyTest extends ContextTestSupport {
 
     private final int size = 200;
     private final String uri = "direct:start";
 
+    @Test
     public void testAggregateConcurrentPerCorrelationKey() throws Exception {
         ExecutorService service = Executors.newFixedThreadPool(20);
         List<Callable<Object>> tasks = new ArrayList<>();

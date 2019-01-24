@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -38,7 +39,7 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "inputType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeDefinition> {
-    @XmlAttribute @Metadata(required = "true")
+    @XmlAttribute @Metadata(required = true)
     private String urn;
     @XmlAttribute  @Metadata(defaultValue = "false")
     private Boolean validate = false;
@@ -89,6 +90,11 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
     @Override
     public String toString() {
         return "inputType[" + urn + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "inputType";
     }
 
     @Override

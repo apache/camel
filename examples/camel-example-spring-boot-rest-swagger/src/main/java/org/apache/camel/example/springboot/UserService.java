@@ -20,7 +20,6 @@ import java.util.Collection;
 
 /**
  * Service interface for managing users.
- * 
  */
 public interface UserService {
 

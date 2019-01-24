@@ -23,19 +23,17 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link MongoDbEndpoint}.
  */
+@Component("mongodb,mongodb3")
 public class MongoDbComponent extends DefaultComponent {
 
     public static final Set<MongoDbOperation> WRITE_OPERATIONS = new HashSet<>(Arrays.asList(MongoDbOperation.insert, MongoDbOperation.save, MongoDbOperation.update,
                                                                                              MongoDbOperation.remove));
-    private static final Logger LOG = LoggerFactory.getLogger(MongoDbComponent.class);
-
     public MongoDbComponent() {
         this(null);
     }

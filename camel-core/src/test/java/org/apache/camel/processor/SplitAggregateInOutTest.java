@@ -16,24 +16,23 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class SplitAggregateInOutTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SplitAggregateInOutTest.class);
 
     private String expectedBody = "Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]";
 
+    @Test
     public void testSplitAndAggregateInOut() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(expectedBody);

@@ -29,14 +29,14 @@ import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
@@ -48,16 +48,16 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * The jpa component enables you to store and retrieve Java objects from databases using JPA.
  */
-@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", consumerClass = JpaConsumer.class, label = "database,sql")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "jpa", title = "JPA", syntax = "jpa:entityType", label = "database,sql")
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
     private Expression producerExpression;
 
-    @UriPath(description = "Entity class name") @Metadata(required = "true")
+    @UriPath(description = "Entity class name") @Metadata(required = true)
     private Class<?> entityType;
-    @UriParam(defaultValue = "camel") @Metadata(required = "true")
+    @UriParam(defaultValue = "camel") @Metadata(required = true)
     private String persistenceUnit = "camel";
     @UriParam(defaultValue = "true")
     private boolean joinTransaction = true;
@@ -111,37 +111,12 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     public JpaEndpoint() {
     }
 
-    /**
-     * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
-     */
-    @Deprecated
-    public JpaEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
-        entityManagerFactory = component.getEntityManagerFactory();
-        transactionManager = component.getTransactionManager();
-    }
-
-    /**
-     * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
-     */
-    @Deprecated
-    public JpaEndpoint(String endpointUri, EntityManagerFactory entityManagerFactory) {
-        super(endpointUri);
-        this.entityManagerFactory = entityManagerFactory;
-    }
-
-    /**
-     * @deprecated use {@link JpaEndpoint#JpaEndpoint(String, JpaComponent)} instead
-     */
-    @Deprecated
-    public JpaEndpoint(String endpointUri, EntityManagerFactory entityManagerFactory, PlatformTransactionManager transactionManager) {
-        super(endpointUri);
-        this.entityManagerFactory = entityManagerFactory;
-        this.transactionManager = transactionManager;
+        if (component != null) {
+            entityManagerFactory = component.getEntityManagerFactory();
+            transactionManager = component.getTransactionManager();
+        }
     }
 
     @Override
@@ -388,7 +363,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     /**
      * If set to true, then Camel will use the EntityManager from the header
-     * JpaConstants.ENTITYMANAGER instead of the configured entity manager on the component/endpoint.
+     * JpaConstants.ENTITY_MANAGER instead of the configured entity manager on the component/endpoint.
      * This allows end users to control which entity manager will be in use.
      */
     public void setUsePassedInEntityManager(boolean usePassedIn) {

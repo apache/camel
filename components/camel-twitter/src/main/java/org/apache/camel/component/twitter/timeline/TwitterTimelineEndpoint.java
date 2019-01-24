@@ -33,11 +33,11 @@ import org.apache.camel.spi.UriPath;
  * The Twitter Timeline component consumes twitter timeline or update the status of specific user.
  */
 @UriEndpoint(firstVersion = "2.10.0", scheme = "twitter-timeline", title = "Twitter Timeline", syntax = "twitter-timeline:timelineType",
-    consumerClass = AbstractStatusConsumerHandler.class, label = "api,social")
+    label = "api,social")
 public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
 
     @UriPath(description = "The timeline type to produce/consume.")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private TimelineType timelineType;
     @UriParam(description = "The username when using timelineType=user")
     private String user;

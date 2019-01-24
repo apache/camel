@@ -22,9 +22,6 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpProducerRootFileExistFailTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {

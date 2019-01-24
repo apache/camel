@@ -19,9 +19,11 @@ package org.apache.camel.processor.enricher;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class PollEnricherNoResourceTest extends ContextTestSupport {
 
+    @Test
     public void testNoResourceA() throws Exception {
         // there should be no message body
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -33,6 +35,7 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testResourceA() throws Exception {
         template.sendBody("seda:foo", "Bye World");
 
@@ -47,6 +50,7 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testResourceB() throws Exception {
         template.sendBody("seda:bar", "Bye World");
 

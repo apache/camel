@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
@@ -37,7 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -47,37 +46,34 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.language.MethodCallExpression;
-import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.TokenPairExpressionIterator;
-import org.apache.camel.support.TokenXMLExpressionIterator;
-import org.apache.camel.support.XMLTokenExpressionIterator;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.GroupIterator;
+import org.apache.camel.support.GroupTokenIterator;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.GroupIterator;
-import org.apache.camel.util.GroupTokenIterator;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.Scanner;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
- *
- * @version
  */
 public final class ExpressionBuilder {
 
@@ -233,7 +229,7 @@ public final class ExpressionBuilder {
                     String text = simpleExpression(typeName).evaluate(exchange, String.class);
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
 
                 String text = simpleExpression(headerName).evaluate(exchange, String.class);
@@ -590,28 +586,6 @@ public final class ExpressionBuilder {
      *
      * @param propertyName the name of the property the expression will return
      * @return an expression object which will return the property value
-     * @deprecated use {@link #exchangePropertyExpression(String)} instead
-     */
-    @Deprecated
-    public static Expression propertyExpression(final String propertyName) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                String text = simpleExpression(propertyName).evaluate(exchange, String.class);
-                return exchange.getProperty(text);
-            }
-
-            @Override
-            public String toString() {
-                return "exchangeProperty(" + propertyName + ")";
-            }
-        };
-    }
-
-    /**
-     * Returns an expression for the property value of exchange with the given name
-     *
-     * @param propertyName the name of the property the expression will return
-     * @return an expression object which will return the property value
      */
     public static Expression exchangePropertyExpression(final String propertyName) {
         return new ExpressionAdapter() {
@@ -641,17 +615,6 @@ public final class ExpressionBuilder {
                     return exchange.getProperty(text);
                 }
             });
-    }
-
-    /**
-     * Returns an expression for the properties of exchange
-     *
-     * @return an expression object which will return the properties
-     * @deprecated use {@link #exchangeExceptionExpression()} instead
-     */
-    @Deprecated
-    public static Expression propertiesExpression() {
-        return exchangeExceptionExpression();
     }
 
     /**
@@ -859,7 +822,7 @@ public final class ExpressionBuilder {
                     }
                 }
 
-                throw ObjectHelper.wrapCamelExecutionException(exchange, new ClassNotFoundException("Cannot find type " + text));
+                throw CamelExecutionException.wrapCamelExecutionException(exchange, new ClassNotFoundException("Cannot find type " + text));
             }
 
             @Override
@@ -1111,7 +1074,7 @@ public final class ExpressionBuilder {
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 return exchange.getIn().getBody(type);
             }
@@ -1135,7 +1098,7 @@ public final class ExpressionBuilder {
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 Object body = exchange.getIn().getBody(type);
                 if (body != null) {
@@ -1169,12 +1132,12 @@ public final class ExpressionBuilder {
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 try {
                     return exchange.getIn().getMandatoryBody(type);
                 } catch (InvalidPayloadException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
             }
 
@@ -1197,13 +1160,13 @@ public final class ExpressionBuilder {
                 try {
                     type = exchange.getContext().getClassResolver().resolveMandatoryClass(text);
                 } catch (ClassNotFoundException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 Object body;
                 try {
                     body = exchange.getIn().getMandatoryBody(type);
                 } catch (InvalidPayloadException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
                 // ognl is able to evaluate method name if it contains nested functions
                 // so we should not eager evaluate ognl as a string
@@ -1293,7 +1256,7 @@ public final class ExpressionBuilder {
                 try {
                     return exchange.getIn().getMandatoryBody(type);
                 } catch (InvalidPayloadException e) {
-                    throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                    throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                 }
             }
 
@@ -1558,8 +1521,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(token).evaluate(exchange, String.class);
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = ObjectHelper.getScanner(exchange, value);
-                scanner.useDelimiter(text);
+                Scanner scanner = ExchangeHelper.getScanner(exchange, value, text);
                 return scanner;
             }
 
@@ -1605,17 +1567,17 @@ public final class ExpressionBuilder {
      * Returns an {@link TokenXMLExpressionIterator} expression
      */
     public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
-        ObjectHelper.notEmpty(tagName, "tagName");
+        StringHelper.notEmpty(tagName, "tagName");
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode) {
-        ObjectHelper.notEmpty(path, "path");
+        StringHelper.notEmpty(path, "path");
         return new XMLTokenExpressionIterator(path, mode);
     }
 
     public static Expression tokenizeXMLAwareExpression(String path, char mode, int group) {
-        ObjectHelper.notEmpty(path, "path");
+        StringHelper.notEmpty(path, "path");
         return new XMLTokenExpressionIterator(path, mode, group);
     }
 
@@ -1625,18 +1587,16 @@ public final class ExpressionBuilder {
      */
     public static Expression regexTokenizeExpression(final Expression expression,
                                                      final String regexTokenizer) {
-        final Pattern pattern = Pattern.compile(regexTokenizer);
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = ObjectHelper.getScanner(exchange, value);
-                scanner.useDelimiter(pattern);
+                Scanner scanner = ExchangeHelper.getScanner(exchange, value, regexTokenizer);
                 return scanner;
             }
 
             @Override
             public String toString() {
-                return "regexTokenize(" + expression + ", " + pattern.pattern() + ")";
+                return "regexTokenize(" + expression + ", " + regexTokenizer + ")";
             }
         };
     }
@@ -1698,7 +1658,7 @@ public final class ExpressionBuilder {
                 // evaluate expression as iterator
                 Iterator<?> it = expression.evaluate(exchange, Iterator.class);
                 ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
-                return new SkipIterator(exchange, it, skip);
+                return new SkipIterator(it, skip);
             }
 
             @Override
@@ -1930,7 +1890,7 @@ public final class ExpressionBuilder {
                         long value = exchange.getContext().getTypeConverter().mandatoryConvertTo(long.class, exchange, offsetMatcher.group(2).trim());
                         offsets.add(offsetMatcher.group(1).equals("+") ? value : -value);
                     } catch (NoTypeConversionAvailableException e) {
-                        throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                        throw CamelExecutionException.wrapCamelExecutionException(exchange, e);
                     }
                 }
 
@@ -2034,14 +1994,17 @@ public final class ExpressionBuilder {
         };
     }
 
+    @Deprecated
     public static Expression beanExpression(final Class<?> beanType, final String methodName) {
         return BeanLanguage.bean(beanType, methodName);
     }
 
+    @Deprecated
     public static Expression beanExpression(final Object bean, final String methodName) {
         return BeanLanguage.bean(bean, methodName);
     }
 
+    @Deprecated
     public static Expression beanExpression(final String beanRef, final String methodName) {
         String expression = methodName != null ? beanRef + "." + methodName : beanRef;
         return beanExpression(expression);
@@ -2052,7 +2015,9 @@ public final class ExpressionBuilder {
      *
      * @param uri endpoint uri to send the exchange to
      * @return an expression object which will return the OUT body
+     * @deprecated not in use, and not available in XML DSL
      */
+    @Deprecated
     public static Expression toExpression(final String uri) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -2069,7 +2034,7 @@ public final class ExpressionBuilder {
                     producer.process(exchange);
                     producer.stop();
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
 
                 // return the OUT body, but check for exchange pattern
@@ -2299,21 +2264,17 @@ public final class ExpressionBuilder {
                     if (text2 != null) {
                         // the properties component is optional as we got locations
                         // getComponent will create a new component if none already exists
-                        Component component = exchange.getContext().getComponent("properties");
-                        PropertiesComponent pc = exchange.getContext().getTypeConverter()
-                            .mandatoryConvertTo(PropertiesComponent.class, component);
+                        PropertiesComponent pc = exchange.getContext().getPropertiesComponent(true);
                         // enclose key with {{ }} to force parsing
                         String[] paths = text2.split(",");
                         return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken(), paths);
                     } else {
                         // the properties component is mandatory if no locations provided
-                        Component component = exchange.getContext().hasComponent("properties");
-                        if (component == null) {
+                        PropertiesComponent pc = exchange.getContext().getPropertiesComponent(false);
+                        if (pc == null) {
                             throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
                                 + " in CamelContext to support property placeholders in expressions");
                         }
-                        PropertiesComponent pc = exchange.getContext().getTypeConverter()
-                            .mandatoryConvertTo(PropertiesComponent.class, component);
                         // enclose key with {{ }} to force parsing
                         return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken());
                     }
@@ -2322,7 +2283,7 @@ public final class ExpressionBuilder {
                     if (defaultValue != null) {
                         return defaultValue;
                     }
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
 
@@ -2449,7 +2410,7 @@ public final class ExpressionBuilder {
                                 def.setMaxChars(maxChars);
                             }
                         } catch (Exception e) {
-                            throw ObjectHelper.wrapRuntimeCamelException(e);
+                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
                         }
                         formatter = def;
                     }
@@ -2508,7 +2469,7 @@ public final class ExpressionBuilder {
                 return null;
             }
             // the remainder is the rest of the ognl without the key
-            String remainder = ObjectHelper.after(ognl, key + keySuffix);
+            String remainder = StringHelper.after(ognl, key + keySuffix);
             return new MethodCallExpression(property, remainder).evaluate(exchange);
         }
 

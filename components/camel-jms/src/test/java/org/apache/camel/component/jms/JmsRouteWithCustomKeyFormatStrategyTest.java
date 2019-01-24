@@ -22,8 +22,6 @@ import org.apache.camel.util.StringHelper;
 
 /**
  * With the passthrough option
- *
- * @version 
  */
 public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 

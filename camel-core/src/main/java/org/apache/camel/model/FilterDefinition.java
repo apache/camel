@@ -21,17 +21,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Filter out messages based using a predicate
- *
- * @version 
  */
 @Metadata(label = "eip,routing") @AsPredicate
 @XmlRootElement(name = "filter")
@@ -55,22 +50,15 @@ public class FilterDefinition extends ExpressionNode {
     }
     
     @Override
+    public String getShortName() {
+        return "filter";
+    }
+
+    @Override
     public String getLabel() {
         return "filter[" + getExpression() + "]";
     }
     
-    @Override
-    public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
-        return createFilterProcessor(routeContext);
-    }
-    
-    @Override
-    protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
-        // filter EIP should have child outputs
-        Processor childProcessor = this.createChildProcessor(routeContext, true);
-        return new FilterProcessor(createPredicate(routeContext), childProcessor);
-    }
-
     /**
      * Expression to determine if the message should be filtered or not. If the expression returns an empty value or <tt>false</tt>
      * then the message is filtered (dropped), otherwise the message is continued being routed.

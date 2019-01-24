@@ -34,20 +34,19 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.processor.ConvertBodyProcessor;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.Synchronization;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
 
 /**
  * Template (named like Spring's TransactionTemplate & JmsTemplate
  * et al) for working with Camel and sending {@link Message} instances in an
  * {@link Exchange} to an {@link Endpoint}.
- *
- * @version 
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
     private final CamelContext camelContext;
@@ -127,29 +126,41 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public Exchange send(String endpointUri, Processor processor) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        return send(endpoint, processor);
+        return send(endpoint, null, processor, null);
     }
 
     public Exchange send(String endpointUri, ExchangePattern pattern, Processor processor) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        return send(endpoint, pattern, processor);
+        return send(endpoint, pattern, processor, null);
     }
 
     public Exchange send(Endpoint endpoint, Exchange exchange) {
-        getProducerCache().send(endpoint, exchange);
-        return exchange;
+        return send(endpoint, exchange, null);
     }
 
     public Exchange send(Endpoint endpoint, Processor processor) {
-        return getProducerCache().send(endpoint, processor);
+        return send(endpoint, null, processor, null);
     }
 
     public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) {
-        return getProducerCache().send(endpoint, pattern, processor);
+        return send(endpoint, pattern, processor, null);
     }
 
     public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor, Processor resultProcessor) {
-        return getProducerCache().send(endpoint, pattern, processor, resultProcessor);
+        Exchange exchange = pattern != null ? endpoint.createExchange(pattern) : endpoint.createExchange();
+        if (processor != null) {
+            try {
+                processor.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+                return exchange;
+            }
+        }
+        return send(endpoint, exchange, resultProcessor);
+    }
+
+    public Exchange send(Endpoint endpoint, Exchange exchange, Processor resultProcessor) {
+        return getProducerCache().send(endpoint, exchange, resultProcessor);
     }
 
     public Object sendBody(Endpoint endpoint, ExchangePattern pattern, Object body) {
@@ -297,20 +308,20 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
     }
 
-    public Exchange request(String endpoint, Processor processor) throws CamelExecutionException {
-        return send(endpoint, ExchangePattern.InOut, processor);
+    public Exchange request(String endpointUri, Processor processor) throws CamelExecutionException {
+        return send(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, processor, null);
     }
 
-    public Object requestBody(String endpoint, Object body) throws CamelExecutionException {
-        return sendBody(endpoint, ExchangePattern.InOut, body);
+    public Object requestBody(String endpointUri, Object body) throws CamelExecutionException {
+        return sendBody(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, body);
     }
 
-    public Object requestBodyAndHeader(String endpoint, Object body, String header, Object headerValue) throws CamelExecutionException {
-        return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
+    public Object requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue) throws CamelExecutionException {
+        return sendBodyAndHeader(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, body, header, headerValue);
     }
 
     public Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) {
-        return requestBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
+        return sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, body, headers);
     }
 
     public Object requestBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
@@ -318,47 +329,48 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public Object requestBodyAndHeaders(final Object body, final Map<String, Object> headers) {
-        return sendBodyAndHeaders(getDefaultEndpoint(), ExchangePattern.InOut, body, headers);
+        return sendBodyAndHeaders(getMandatoryDefaultEndpoint(), ExchangePattern.InOut, body, headers);
     }
 
     public <T> T requestBody(Object body, Class<T> type) {
-        Exchange exchange = producerCache.send(getMandatoryDefaultEndpoint(), ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
-        Object answer = extractResultBody(exchange);
-        return camelContext.getTypeConverter().convertTo(type, answer);
+        return requestBody(getMandatoryDefaultEndpoint(), body, type);
     }
 
     public <T> T requestBody(Endpoint endpoint, Object body, Class<T> type) {
-        Exchange exchange = producerCache.send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
+        Exchange exchange = send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBody(String endpointUri, Object body, Class<T> type) {
-        Exchange exchange = producerCache.send(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
+        Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
+        Exchange exchange = send(endpoint, ExchangePattern.InOut, createSetBodyProcessor(body), createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type) {
-        Exchange exchange = producerCache.send(endpoint, ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue), createConvertBodyProcessor(type));
+        Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue), createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type) {
-        Exchange exchange = producerCache.send(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue), createConvertBodyProcessor(type));
+        Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
+        Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaderProcessor(body, header, headerValue), createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type) {
-        Exchange exchange = producerCache.send(resolveMandatoryEndpoint(endpointUri), ExchangePattern.InOut, createBodyAndHeaders(body, headers), createConvertBodyProcessor(type));
+        Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
+        Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers), createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
 
     public <T> T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type) {
-        Exchange exchange = producerCache.send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers), createConvertBodyProcessor(type));
+        Exchange exchange = send(endpoint, ExchangePattern.InOut, createBodyAndHeaders(body, headers), createConvertBodyProcessor(type));
         Object answer = extractResultBody(exchange);
         return camelContext.getTypeConverter().convertTo(type, answer);
     }
@@ -393,14 +405,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     // Properties
     // -----------------------------------------------------------------------
 
-    /**
-     * @deprecated use {@link #getCamelContext()}
-     */
-    @Deprecated
-    public CamelContext getContext() {
-        return getCamelContext();
-    }
-
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -418,14 +422,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
      */
     public void setDefaultEndpointUri(String endpointUri) {
         setDefaultEndpoint(getCamelContext().getEndpoint(endpointUri));
-    }
-
-    /**
-     * @deprecated use {@link CamelContext#getEndpoint(String, Class)}
-     */
-    @Deprecated
-    public <T extends Endpoint> T getResolvedEndpoint(String endpointUri, Class<T> expectedClass) {
-        return camelContext.getEndpoint(endpointUri, expectedClass);
     }
 
     // Implementation methods
@@ -684,7 +680,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 });
     }
 
-    private ProducerCache getProducerCache() {
+    private org.apache.camel.spi.ProducerCache getProducerCache() {
         if (!isStarted()) {
             throw new IllegalStateException("ProducerTemplate has not been started");
         }
@@ -718,11 +714,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            if (maximumCacheSize > 0) {
-                producerCache = new ProducerCache(this, camelContext, maximumCacheSize);
-            } else {
-                producerCache = new ProducerCache(this, camelContext);
-            }
+            producerCache = new DefaultProducerCache(this, camelContext, maximumCacheSize);
             producerCache.setEventNotifierEnabled(isEventNotifierEnabled());
         }
 

@@ -32,9 +32,7 @@ import org.apache.camel.component.sql.ResultSetIteratorCompletion;
 import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.component.sql.SqlOutputType;
 import org.apache.camel.component.sql.SqlPrepareStatementStrategy;
-import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultProducer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -51,7 +49,6 @@ import static org.springframework.jdbc.support.JdbcUtils.closeStatement;
 
 public class ElsqlProducer extends DefaultProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ElsqlProducer.class);
     private final ElSql elSql;
     private final String elSqlName;
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -81,7 +78,7 @@ public class ElsqlProducer extends DefaultProducer {
 
         final SqlParameterSource param = new ElsqlSqlMapSource(exchange, data);
         final String sql = elSql.getSql(elSqlName, new SpringSqlParams(param));
-        LOG.debug("ElsqlProducer @{} using sql: {}", elSqlName, sql);
+        log.debug("ElsqlProducer @{} using sql: {}", elSqlName, sql);
 
         // special for processing stream list (batch not supported)
         final SqlOutputType outputType = getEndpoint().getOutputType();

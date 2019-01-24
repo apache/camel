@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test to verify continuing using same thread on the consumer side.
@@ -29,6 +30,7 @@ public class DirectShouldUseSameThreadTest extends ContextTestSupport {
 
     private static long id;
 
+    @Test
     public void testUseSameThread() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

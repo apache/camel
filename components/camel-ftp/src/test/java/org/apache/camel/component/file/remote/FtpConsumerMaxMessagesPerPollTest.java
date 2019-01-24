@@ -22,9 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
@@ -41,7 +38,7 @@ public class FtpConsumerMaxMessagesPerPollTest extends FtpServerTestSupport {
     @Test
     public void testMaxMessagesPerPoll() throws Exception {
         // start route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World", "Godday World");

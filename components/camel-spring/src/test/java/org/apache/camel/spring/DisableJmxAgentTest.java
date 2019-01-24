@@ -18,13 +18,13 @@ package org.apache.camel.spring;
 
 import javax.management.ObjectName;
 
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Test that verifies JMX can be disabled via Spring.
  * 
- * @version 
  *
  */
 public class DisableJmxAgentTest extends DefaultJMXAgentTest {
@@ -35,12 +35,13 @@ public class DisableJmxAgentTest extends DefaultJMXAgentTest {
     }
    
     @Override
+    @Test
     public void testQueryMbeans() throws Exception {
         // whats the numbers before, because the JVM can have left overs when unit testing
         int before = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 
         // start route should enlist the consumer to JMX if JMX was enabled
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         int after = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 

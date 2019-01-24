@@ -23,18 +23,19 @@ import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.util.HashMap;
 
-import junit.framework.TestCase;
 import org.apache.camel.AlreadyStoppedException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ValidationException;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Unit test for DefaultExceptionPolicy 
  */
-public class DefaultExceptionPolicyStrategyTest extends TestCase {
+public class DefaultExceptionPolicyStrategyTest extends Assert {
 
     private DefaultExceptionPolicyStrategy strategy;
     private HashMap<ExceptionPolicyKey, OnExceptionDefinition> policies;
@@ -74,24 +75,28 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         policies.put(new ExceptionPolicyKey(null, ConnectException.class, null), type3);
     }
 
+    @Test
     public void testDirectMatch1() {
         setupPolicies();
         OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new CamelExchangeException("", null));
         assertEquals(type1, result);
     }
 
+    @Test
     public void testDirectMatch2() {
         setupPolicies();
         OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new Exception(""));
         assertEquals(type2, result);
     }
 
+    @Test
     public void testDirectMatch3() {
         setupPolicies();
         OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new IOException(""));
         assertEquals(type3, result);
     }
 
+    @Test
     public void testClosetMatch3() {
         setupPolicies();
         OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new ConnectException(""));
@@ -104,6 +109,7 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         assertEquals(type3, result);
     }
 
+    @Test
     public void testClosetMatch2() {
         setupPolicies();
         OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new ClassCastException(""));
@@ -116,6 +122,7 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         assertEquals(type2, result);
     }
 
+    @Test
     public void testClosetMatch1() {
         setupPolicies();
         OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new ValidationException(null, ""));
@@ -125,18 +132,21 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         assertEquals(type1, result);
     }
 
+    @Test
     public void testNoMatch1ThenMatchingJustException() {
         setupPolicies();
         OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new AlreadyStoppedException());
         assertEquals(type2, result);
     }
 
+    @Test
     public void testNoMatch1ThenNull() {
         setupPoliciesNoTopLevelException();
         OnExceptionDefinition result = strategy.getExceptionPolicy(policies, null, new AlreadyStoppedException());
         assertNull("Should not find an exception policy to use", result);
     }
 
+    @Test
     public void testCausedBy() {
         setupPoliciesCausedBy();
 
@@ -146,6 +156,7 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         assertEquals(type1, result);
     }
 
+    @Test
     public void testCausedByWrapped() {
         setupPoliciesCausedBy();
 
@@ -155,6 +166,7 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         assertEquals(type1, result);
     }
 
+    @Test
     public void testCausedByNotConnected() {
         setupPoliciesCausedBy();
 
@@ -164,6 +176,7 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         assertEquals(type3, result);
     }
 
+    @Test
     public void testCausedByOtherIO() {
         setupPoliciesCausedBy();
 

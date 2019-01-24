@@ -19,7 +19,7 @@ package org.apache.camel.component.hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 public class HazelcastDefaultConsumer extends DefaultConsumer {
 

@@ -15,24 +15,24 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/eagerdelete");
         super.setUp();
         template.sendBodyAndHeader("file://target/eagerdelete", "Hello World", Exchange.FILE_NAME, "world.txt");
     }
 
+    @Test
     public void testEagerDeleteTargetFileTrue() throws Exception {
         template.sendBodyAndHeader("file://target/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=true",
                 "Bye World", Exchange.FILE_NAME, "world.txt");
@@ -42,6 +42,7 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
+    @Test
     public void testEagerDeleteTargetFileFalse() throws Exception {
         template.sendBodyAndHeader("file://target/eagerdelete?tempFileName=inprogress-${file:name}&eagerDeleteTargetFile=false",
                 "Bye World", Exchange.FILE_NAME, "world.txt");
@@ -51,6 +52,7 @@ public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, file));
     }
 
+    @Test
     public void testEagerDeleteTargetFileDefault() throws Exception {
         template.sendBodyAndHeader("file://target/eagerdelete?tempFileName=inprogress-${file:name}",
                 "Bye World", Exchange.FILE_NAME, "world.txt");

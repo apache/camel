@@ -25,16 +25,17 @@ import org.apache.camel.component.as2.api.AS2Charset;
 import org.apache.camel.component.as2.api.AS2Constants;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2ServerManager;
+import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.InvalidAS2NameException;
-import org.apache.camel.component.as2.api.Util;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptions;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationOptionsParser;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
@@ -55,14 +56,19 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     private final String as2Version;
     private final String serverFQDN;
+    private AS2SignatureAlgorithm signingAlgorithm;
     private Certificate[] signingCertificateChain;
     private PrivateKey signingPrivateKey;
+    private PrivateKey decryptingPrivateKey;
 
-    public ResponseMDN(String as2Version, String serverFQDN, Certificate[] signingCertificateChain, PrivateKey signingPrivateKey) {
+    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, 
+                       Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
+        this.signingAlgorithm = signingAlgorithm;
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;
+        this.decryptingPrivateKey = decryptingPrivateKey;
     }
 
     @Override
@@ -73,7 +79,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             // RFC4130 - 7.6 - Status codes in the 200 range SHOULD also be used when an entity is returned
             // (a signed receipt in a multipart/signed content type or an unsigned
             // receipt in a multipart/report)
-            LOG.debug("MDN not return due to response status code: " + statusCode);
+            LOG.debug("MDN not return due to response status code: {}", statusCode);
             return;
         }
 
@@ -85,7 +91,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             LOG.debug("MDN not returned due to null request");
             throw new HttpException("request missing from HTTP context");
         }
-        LOG.debug("Processing MDN for request: " + request);
+        LOG.debug("Processing MDN for request: {}", request);
 
         if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_NOTIFICATION_TO) == null) {
             // no receipt requested by sender
@@ -97,7 +103,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         String boundary = EntityUtils.createBoundaryValue();
         DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                 request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true);
+                AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey);
 
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
                 .parseDispositionNotificationOptions(
@@ -139,7 +145,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             /* AS2-From header */
             String as2From = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_TO);
             try {
-                Util.validateAS2Name(as2From);
+                AS2Utils.validateAS2Name(as2From);
             } catch (InvalidAS2NameException e) {
                 throw new HttpException("Invalid AS-From name", e);
             }
@@ -148,7 +154,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             /* AS2-To header */
             String as2To = HttpMessageUtils.getHeaderValue(request, AS2Header.AS2_FROM);
             try {
-                Util.validateAS2Name(as2To);
+                AS2Utils.validateAS2Name(as2To);
             } catch (InvalidAS2NameException e) {
                 throw new HttpException("Invalid AS-To name", e);
             }
@@ -156,12 +162,12 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
             /* Message-Id header*/
             // RFC4130 - 7.3 -  A Message-ID header is added to support message reconciliation
-            response.addHeader(AS2Header.MESSAGE_ID, Util.createMessageId(serverFQDN));
+            response.addHeader(AS2Header.MESSAGE_ID, AS2Utils.createMessageId(serverFQDN));
 
             AS2SignedDataGenerator gen = null;
             if (dispositionNotificationOptions.getSignedReceiptProtocol() != null && signingCertificateChain != null
                     && signingPrivateKey != null) {
-                gen = SigningUtils.createSigningGenerator(signingCertificateChain, signingPrivateKey);
+                gen = SigningUtils.createSigningGenerator(signingAlgorithm, signingCertificateChain, signingPrivateKey);
             }
 
             if (gen != null) {
@@ -182,7 +188,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             }
         }
 
-        LOG.debug(Util.printMessage(response));
+        LOG.debug(AS2Utils.printMessage(response));
     }
 
 }

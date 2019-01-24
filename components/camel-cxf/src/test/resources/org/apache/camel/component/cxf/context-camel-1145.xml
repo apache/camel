@@ -23,7 +23,7 @@
        xmlns:jaxws="http://cxf.apache.org/jaxws"
        xmlns:http="http://cxf.apache.org/transports/http/configuration"
        xmlns:httpj="http://cxf.apache.org/transports/http-jetty/configuration"
-       
+
        xsi:schemaLocation="
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
@@ -34,29 +34,15 @@
 	   http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <camel:camelContext id="camelJiraContext">        
+    <camel:camelContext id="camelJiraContext">
         <camel:jmxAgent id="agent" disabled="true" />
         <camel:routeBuilder ref="routeBuilder" />
     </camel:camelContext>
 
-	<bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
-		<property name="enabled" value="true"/>
-    	<property name="traceExceptions" value="true"/>
-    	<property name="traceInterceptors" value="true"/>
-    	<property name="logLevel" value="INFO"/>
-	</bean>
-	
-	<bean id="traceFormatter" class="org.apache.camel.processor.interceptor.DefaultTraceFormatter">
-    	<property name="showBody" value="true"/>
-    	<property name="showBodyType" value="true"/>
-    	<property name="showProperties" value="true"/>
-    	<property name="showHeaders" value="true"/>
-	</bean>
-
-    <bean id="producerTemplate" 
-        factory-bean="camelJiraContext"
-        factory-method="createProducerTemplate">
+    <bean id="producerTemplate"
+          factory-bean="camelJiraContext"
+          factory-method="createProducerTemplate">
     </bean>
-  
-  	<bean id="routeBuilder" class="org.apache.camel.component.cxf.RouteBuilderCxfTracer"/>
+
+    <bean id="routeBuilder" class="org.apache.camel.component.cxf.RouteBuilderCxfTracer"/>
 </beans>

@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.curator.framework.CuratorFramework;
 import org.junit.After;
 import org.junit.Before;
@@ -89,17 +89,17 @@ public class MasterEndpointFailoverTest {
             }
         });
         // Need to start at less one consumerContext to enable the vm queue for producerContext
-        ServiceHelper.startServices(consumerContext1);
-        ServiceHelper.startServices(producerContext);
+        ServiceHelper.startService(consumerContext1);
+        ServiceHelper.startService(producerContext);
         result1Endpoint = consumerContext1.getEndpoint("mock:result1", MockEndpoint.class);
         result2Endpoint = consumerContext2.getEndpoint("mock:result2", MockEndpoint.class);
     }
 
     @After
     public void afterRun() throws Exception {
-        ServiceHelper.stopServices(consumerContext1);
-        ServiceHelper.stopServices(consumerContext2);
-        ServiceHelper.stopServices(producerContext);
+        ServiceHelper.stopService(consumerContext1);
+        ServiceHelper.stopService(consumerContext2);
+        ServiceHelper.stopService(producerContext);
         zkClientBean.destroy();
         serverFactoryBean.destroy();
     }
@@ -108,11 +108,11 @@ public class MasterEndpointFailoverTest {
     public void testEndpoint() throws Exception {
         System.out.println("Starting consumerContext1");
 
-        ServiceHelper.startServices(consumerContext1);
+        ServiceHelper.startService(consumerContext1);
         assertMessageReceived(result1Endpoint, result2Endpoint);
 
         System.out.println("Starting consumerContext2");
-        ServiceHelper.startServices(consumerContext2);
+        ServiceHelper.startService(consumerContext2);
         assertMessageReceivedLoop(result1Endpoint, result2Endpoint, 3);
 
         System.out.println("Stopping consumerContext1");

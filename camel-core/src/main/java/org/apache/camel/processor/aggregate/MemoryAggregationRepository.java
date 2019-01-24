@@ -24,14 +24,12 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * A memory based {@link org.apache.camel.spi.AggregationRepository} which stores {@link Exchange}s in memory only.
  *
  * Supports both optimistic locking and non-optimistic locking modes. Defaults to non-optimistic locking mode.
- *
- * @version 
  */
 public class MemoryAggregationRepository extends ServiceSupport implements OptimisticLockingAggregationRepository {
     private final ConcurrentMap<String, Exchange> cache = new ConcurrentHashMap<>();

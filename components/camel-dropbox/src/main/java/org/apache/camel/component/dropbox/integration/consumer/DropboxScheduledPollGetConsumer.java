@@ -59,7 +59,7 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Downloaded: {}", result.toString());
+            LOG.debug("Downloaded: {}", result);
         }
 
         try {

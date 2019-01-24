@@ -17,7 +17,6 @@
 package org.apache.camel.component.rabbitmq.reply;
 
 import com.rabbitmq.client.AMQP;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
@@ -25,8 +24,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link ReplyHandler} to handle processing replies when using temporary queues.
- *
- * @version 
  */
 public class TemporaryQueueReplyHandler implements ReplyHandler {
 

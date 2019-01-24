@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.23.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hl7</artifactId>
@@ -32,14 +32,9 @@
     <description>Camel HL7 support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.component.hl7.*</camel.osgi.export.pkg>
         <camel.osgi.import.before.defaults>
             org.apache.mina.*;version="[2,3)"
         </camel.osgi.import.before.defaults>
-        <camel.osgi.export.service>
-          org.apache.camel.spi.LanguageResolver;language=terser,
-          org.apache.camel.spi.DataFormatResolver;dataformat=hl7
-        </camel.osgi.export.service>
     </properties>
 
     <dependencies>

@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 public class DummyConsumer extends DefaultConsumer {
 

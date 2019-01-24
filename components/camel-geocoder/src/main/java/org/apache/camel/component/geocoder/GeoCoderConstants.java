@@ -28,6 +28,7 @@ public final class GeoCoderConstants {
     public static final String CITY = "CamelGeoCoderCity";
     public static final String COUNTRY_LONG = "CamelGeoCoderCountryLong";
     public static final String COUNTRY_SHORT = "CamelGeoCoderCountryShort";
+    public static final String POSTAL_CODE = "CamelGeoCoderPostalCode";
 
     private GeoCoderConstants() {
     }

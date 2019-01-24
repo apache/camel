@@ -17,7 +17,7 @@
 package org.apache.camel.component.atomix.client;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 public abstract class AbstractAtomixClientConsumer<E extends AbstractAtomixClientEndpoint> extends DefaultConsumer {
     protected AbstractAtomixClientConsumer(E endpoint, Processor processor) {

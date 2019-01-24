@@ -50,9 +50,6 @@ import org.springframework.util.ErrorHandler;
 
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 
-/**
- * @version
- */
 @UriParams
 public class JmsConfiguration implements Cloneable {
 
@@ -236,13 +233,13 @@ public class JmsConfiguration implements Cloneable {
     private boolean mapJmsMessage = true;
     @UriParam(defaultValue = "true", label = "advanced",
             description = "When sending, specifies whether message IDs should be added. This is just an hint to the JMS broker." 
-                    + "If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, " 
-                    + "the message ID must be set to its normal unique value")
+                    + " If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, "
+                    + "the message ID must be set to its normal unique value.")
     private boolean messageIdEnabled = true;
     @UriParam(defaultValue = "true", label = "advanced",
             description = "Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS broker."
-                    + "If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint " 
-                    + "the timestamp must be set to its normal value")
+                    + " If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint "
+                    + "the timestamp must be set to its normal value.")
     private boolean messageTimestampEnabled = true;
     @UriParam(defaultValue = "" + Message.DEFAULT_PRIORITY, enums = "1,2,3,4,5,6,7,8,9", label = "producer",
             description = "Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest)."
@@ -252,8 +249,6 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "transaction",
             description = "Specifies whether to use transacted mode")
     private boolean transacted;
-    @Deprecated
-    private boolean transactedInOut;
     @UriParam(defaultValue = "true", label = "transaction,advanced",
             description = "If true, Camel will create a JmsTransactionManager, if there is no transactionManager injected when option transacted=true.")
     private boolean lazyCreateTransactionManager = true;
@@ -655,18 +650,13 @@ public class JmsConfiguration implements Cloneable {
                 jmsTemplate.setTimeToLive(ttl);
             }
 
-            jmsTemplate.setSessionTransacted(isTransactedInOut());
-            if (isTransactedInOut()) {
-                jmsTemplate.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
+            if (acknowledgementMode >= 0) {
+                jmsTemplate.setSessionAcknowledgeMode(acknowledgementMode);
+            } else if (acknowledgementModeName != null) {
+                jmsTemplate.setSessionAcknowledgeModeName(acknowledgementModeName);
             } else {
-                if (acknowledgementMode >= 0) {
-                    jmsTemplate.setSessionAcknowledgeMode(acknowledgementMode);
-                } else if (acknowledgementModeName != null) {
-                    jmsTemplate.setSessionAcknowledgeModeName(acknowledgementModeName);
-                } else {
-                    // default to AUTO
-                    jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
-                }
+                // default to AUTO
+                jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
             }
         }
         return answer;
@@ -1315,7 +1305,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Specifies whether timestamps should be enabled by default on sending messages. This is just an hint to the JMS Broker.
-     * If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint, the timestamp must be set to its normal value
+     * If the JMS provider accepts this hint, these messages must have the timestamp set to zero; if the provider ignores the hint, the timestamp must be set to its normal value.
      */
     public void setMessageTimestampEnabled(boolean messageTimestampEnabled) {
         this.messageTimestampEnabled = messageTimestampEnabled;
@@ -1357,21 +1347,6 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setTransacted(boolean consumerTransacted) {
         this.transacted = consumerTransacted;
-    }
-
-    /**
-     * Should InOut operations (request reply) default to using transacted mode?
-     * <p>
-     * By default this is false as you need to commit the outgoing request before you can consume the input
-     */
-    @Deprecated
-    public boolean isTransactedInOut() {
-        return transactedInOut;
-    }
-
-    @Deprecated
-    public void setTransactedInOut(boolean transactedInOut) {
-        this.transactedInOut = transactedInOut;
     }
 
     public boolean isLazyCreateTransactionManager() {

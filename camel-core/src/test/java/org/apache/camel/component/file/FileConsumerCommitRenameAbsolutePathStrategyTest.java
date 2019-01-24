@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for the FileRenameStrategy using move options with absolute paths
@@ -31,7 +32,8 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
     private String base;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/done");
         deleteDirectory("target/reports");
         // use current dir as base as aboslute path
@@ -39,6 +41,7 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
         super.setUp();
     }
 
+    @Test
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");

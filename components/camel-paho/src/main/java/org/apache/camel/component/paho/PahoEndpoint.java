@@ -23,11 +23,11 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
@@ -35,20 +35,16 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Component for communicating with MQTT M2M message brokers using Eclipse Paho MQTT Client.
  */
-@UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", consumerClass = PahoConsumer.class, label = "messaging,iot", syntax = "paho:topic")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "paho", title = "Paho", label = "messaging,iot", syntax = "paho:topic")
 public class PahoEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PahoEndpoint.class);
 
     // Configuration members
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topic;
     @UriParam
     private String clientId = "camel-" + System.nanoTime();
@@ -68,7 +64,8 @@ public class PahoEndpoint extends DefaultEndpoint {
     private String userName; 
     @UriParam @Metadata(secret = true)
     private String password; 
-    
+    @UriParam(defaultValue = "true")
+    private boolean resolveMqttConnectOptions = true; 
 
     // Collaboration members
     @UriParam
@@ -135,13 +132,16 @@ public class PahoEndpoint extends DefaultEndpoint {
         if (connectOptions != null) {
             return connectOptions;
         }
-        Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
-        if (connectOptions.size() == 1) {
-            LOG.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
-            return connectOptions.iterator().next();
-        } else if (connectOptions.size() > 1) {
-            LOG.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
-                     + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
+        
+        if (resolveMqttConnectOptions) {
+            Set<MqttConnectOptions> connectOptions = getCamelContext().getRegistry().findByType(MqttConnectOptions.class);
+            if (connectOptions.size() == 1) {
+                log.info("Single MqttConnectOptions instance found in the registry. It will be used by the endpoint.");
+                return connectOptions.iterator().next();
+            } else if (connectOptions.size() > 1) {
+                log.warn("Found {} instances of the MqttConnectOptions in the registry. None of these will be used by the endpoint. "
+                         + "Please use 'connectOptions' endpoint option to select one.", connectOptions.size());
+            }
         }
         
         MqttConnectOptions options = new MqttConnectOptions();
@@ -304,6 +304,18 @@ public class PahoEndpoint extends DefaultEndpoint {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public synchronized boolean isResolveMqttConnectOptions() {
+        return resolveMqttConnectOptions;
+    }
+
+    /**
+     * Define if you don't want to resolve the MQTT Connect Options from registry
+     * @param resolveMqttConnectOptions
+     */
+    public synchronized void setResolveMqttConnectOptions(boolean resolveMqttConnectOptions) {
+        this.resolveMqttConnectOptions = resolveMqttConnectOptions;
     }
 
 }

@@ -19,7 +19,7 @@ package org.apache.camel.component.netty4.http;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultMessage;
 
 /**
  * Netty HTTP based {@link org.apache.camel.Message}.

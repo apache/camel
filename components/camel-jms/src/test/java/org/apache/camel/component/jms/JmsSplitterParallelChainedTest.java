@@ -28,8 +28,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 /**
  * Test that chained request/reply over JMS works in parallel mode with the splitter EIP.
- *
- * @version 
  */
 public class JmsSplitterParallelChainedTest extends CamelTestSupport {
 

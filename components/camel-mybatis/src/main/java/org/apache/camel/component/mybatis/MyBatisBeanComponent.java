@@ -19,9 +19,11 @@ package org.apache.camel.component.mybatis;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
+@Component("mybatis-bean")
 public class MyBatisBeanComponent extends MyBatisComponent {
 
     @Override

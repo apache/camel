@@ -18,14 +18,12 @@ package org.apache.camel.spring.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.AggregationStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A simple aggregator which just appends the message bodies together
- *
- * @version 
  */
 public class MyAggregator implements AggregationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(MyAggregator.class);

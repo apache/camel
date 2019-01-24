@@ -17,11 +17,9 @@
 package org.apache.camel.component.google.calendar.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.google.calendar.GoogleCalendarClientFactory;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The google-calendar component provides access to Google Calendar.
@@ -35,15 +33,22 @@ public class GoogleCalendarComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the google-calendar component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private GoogleCalendarConfigurationNestedConfiguration configuration;
     /**
      * To use the GoogleCalendarClientFactory as factory for creating the
-     * client. Will by default use BatchGoogleCalendarClientFactory
+     * client. Will by default use BatchGoogleCalendarClientFactory. The option
+     * is a
+     * org.apache.camel.component.google.calendar.GoogleCalendarClientFactory
+     * type.
      */
-    @NestedConfigurationProperty
-    private GoogleCalendarClientFactory clientFactory;
+    private String clientFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -60,11 +65,11 @@ public class GoogleCalendarComponentConfiguration
         this.configuration = configuration;
     }
 
-    public GoogleCalendarClientFactory getClientFactory() {
+    public String getClientFactory() {
         return clientFactory;
     }
 
-    public void setClientFactory(GoogleCalendarClientFactory clientFactory) {
+    public void setClientFactory(String clientFactory) {
         this.clientFactory = clientFactory;
     }
 
@@ -112,7 +117,7 @@ public class GoogleCalendarComponentConfiguration
         private String refreshToken;
         /**
          * Google calendar application name. Example would be
-         * "camel-google-calendar/1.0"
+         * camel-google-calendar/1.0
          */
         private String applicationName;
         /**

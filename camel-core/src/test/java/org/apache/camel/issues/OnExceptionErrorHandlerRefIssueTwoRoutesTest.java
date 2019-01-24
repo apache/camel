@@ -21,12 +21,14 @@ import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *
  */
 public class OnExceptionErrorHandlerRefIssueTwoRoutesTest extends ContextTestSupport {
 
+    @Test
     public void testOnExceptionErrorHandlerRef() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:handled").expectedMessageCount(1);
@@ -37,6 +39,7 @@ public class OnExceptionErrorHandlerRefIssueTwoRoutesTest extends ContextTestSup
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOnExceptionErrorHandlerRefFoo() throws Exception {
         getMockEndpoint("mock:a").expectedMessageCount(0);
         getMockEndpoint("mock:handled").expectedMessageCount(0);

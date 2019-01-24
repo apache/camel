@@ -27,8 +27,6 @@ import org.apache.camel.util.FileUtil;
 
 /**
  * A helper for unit testing with Apache ActiveMQ as embedded JMS broker.
- *
- * @version
  */
 public final class CamelJmsTestHelper {
 

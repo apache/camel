@@ -34,7 +34,7 @@ public class CamelTestWatcher extends TestWatcher {
 
     @Override
     protected void finished(Description description) {
-        watch.stop();
+        watch.taken();
     }
 
     public long timeTaken() {

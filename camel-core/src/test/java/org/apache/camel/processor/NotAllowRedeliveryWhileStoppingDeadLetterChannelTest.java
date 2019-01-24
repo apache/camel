@@ -23,12 +23,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends ContextTestSupport {
 
+    @Test
     public void testRedelivery() throws Exception {
         StopWatch watch = new StopWatch();
 
@@ -41,7 +40,7 @@ public class NotAllowRedeliveryWhileStoppingDeadLetterChannelTest extends Contex
 
         Thread.sleep(500);
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         // we should reject the task and stop quickly
         assertTrue("Should stop quickly: " + watch.taken(), watch.taken() < 5000);

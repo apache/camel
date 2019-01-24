@@ -17,8 +17,8 @@
 package org.apache.camel.impl.cloud;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NamedNode;
 import org.apache.camel.cloud.ServiceRegistry;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class ServiceRegistrationRoutePolicyFactory implements RoutePolicyFactory
     }
 
     @Override
-    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+    public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
         return new ServiceRegistrationRoutePolicy(serviceRegistry, serviceRegistrySelector);
     }
 }

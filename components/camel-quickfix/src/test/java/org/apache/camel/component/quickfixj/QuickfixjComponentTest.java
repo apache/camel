@@ -38,8 +38,8 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,6 +63,7 @@ import quickfix.field.Subject;
 import quickfix.field.TargetCompID;
 import quickfix.fix44.Email;
 import quickfix.mina.ProtocolFactory;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -412,7 +413,7 @@ public class QuickfixjComponentTest {
         
         // FIX message to send
         Email email = new Email(new EmailThreadID("ID"), new EmailType(EmailType.NEW), new Subject("Test"));
-        Exchange exchange = producer.createExchange(ExchangePattern.InOnly);
+        Exchange exchange = producer.getEndpoint().createExchange(ExchangePattern.InOnly);
         exchange.getIn().setBody(email);
         
         producer.process(exchange);            

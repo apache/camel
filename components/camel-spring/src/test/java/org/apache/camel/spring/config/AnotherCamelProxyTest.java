@@ -16,17 +16,15 @@
  */
 package org.apache.camel.spring.config;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.util.IOHelper;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
-public class AnotherCamelProxyTest extends TestCase {
+public class AnotherCamelProxyTest extends Assert {
 
+    @Test
     public void testAnotherCamelProxy() throws Exception {
         // START SNIPPET: e1
         AbstractApplicationContext ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/AnotherCamelProxyTest.xml");

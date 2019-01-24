@@ -22,7 +22,6 @@ import org.bouncycastle.openpgp.PGPSecretKey;
 /**
  * Helper class which groups secret, private key and User ID.
  * 
- * 
  */
 public class PGPSecretKeyAndPrivateKeyAndUserId {
 

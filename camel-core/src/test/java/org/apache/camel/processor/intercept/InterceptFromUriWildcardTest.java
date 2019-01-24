@@ -19,12 +19,14 @@ package org.apache.camel.processor.intercept;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Testing http://camel.apache.org/dsl.html
  */
 public class InterceptFromUriWildcardTest extends ContextTestSupport {
 
+    @Test
     public void testNoIntercept() throws Exception {
         getMockEndpoint("mock:intercept").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -34,6 +36,7 @@ public class InterceptFromUriWildcardTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptFoo() throws Exception {
         getMockEndpoint("mock:intercept").expectedMessageCount(1);
         getMockEndpoint("mock:intercept").expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "seda://foo");
@@ -44,6 +47,7 @@ public class InterceptFromUriWildcardTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInterceptBar() throws Exception {
         getMockEndpoint("mock:intercept").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(1);

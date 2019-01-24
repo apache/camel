@@ -33,16 +33,16 @@ import org.apache.camel.component.twilio.internal.TwilioConstants;
 import org.apache.camel.component.twilio.internal.TwilioPropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.component.AbstractApiEndpoint;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.component.AbstractApiEndpoint;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * The Twilio component allows you to interact with the Twilio REST APIs using Twilio Java SDK.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "twilio", title = "Twilio", syntax = "twilio:apiName/methodName",
-    consumerClass = TwilioConsumer.class, label = "api,messaging,cloud")
+    label = "api,messaging,cloud")
 public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioConfiguration> {
 
     protected static final Map<String, String> EXECUTOR_METHOD_MAP;

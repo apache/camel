@@ -23,11 +23,12 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hazelcast.HazelcastDefaultComponent;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.spi.annotations.Component;
 
+@Component("hazelcast-list")
 public class HazelcastListComponent extends HazelcastDefaultComponent {
 
     public HazelcastListComponent() {
-        super();
     }
 
     public HazelcastListComponent(final CamelContext context) {

@@ -24,11 +24,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.CommonBindyTest;
 import org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order;
-import org.apache.camel.processor.interceptor.Tracer;
+
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -79,12 +78,6 @@ public class BindySimpleCsvMarshallPositionModifiedTest extends CommonBindyTest 
     public static class ContextConfig extends RouteBuilder {
 
         public void configure() {
-
-            Tracer tracer = new Tracer();
-            tracer.setLogLevel(LoggingLevel.ERROR);
-            tracer.setLogName("org.apache.camel.bindy");
-
-            getContext().addInterceptStrategy(tracer);
 
             BindyCsvDataFormat csvBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
             csvBindyDataFormat.setLocale("en");

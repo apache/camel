@@ -25,11 +25,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.cxf.blueprint.BlueprintSupport;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Defines the <a href="http://camel.apache.org/cxfrs.html">CXF RS Component</a> 
  */
+@Component("cxfrs")
 public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSLContextParametersAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsComponent.class);
@@ -45,11 +47,10 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
     private boolean useGlobalSslContextParameters;
 
     public CxfRsComponent() {
-        super(CxfRsEndpoint.class);
     }
     
     public CxfRsComponent(CamelContext context) {
-        super(context, CxfRsEndpoint.class);
+        super(context);
     }
 
     @Override

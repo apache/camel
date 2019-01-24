@@ -73,8 +73,8 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureInvalidKeyException;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureNoKeyException;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
-import org.apache.camel.processor.validation.DefaultValidationErrorHandler;
-import org.apache.camel.processor.validation.ValidatorErrorHandler;
+import org.apache.camel.support.processor.validation.DefaultValidationErrorHandler;
+import org.apache.camel.support.processor.validation.ValidatorErrorHandler;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -536,7 +536,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             // should not happen because has been checked before
             throw new IllegalStateException("No element found for element ID " + elementId);
         }
-        LOG.debug("Sibling element of the detached XML Signature with reference URI {}: {}  {} ",
+        LOG.debug("Sibling element of the detached XML Signature with reference URI {}: {}  {}",
                 new Object[] {referenceUri, el.getLocalName(), el.getNamespaceURI() });
         Element result = getParentElement(el);
         if (result != null) {

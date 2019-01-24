@@ -17,12 +17,10 @@
 package org.apache.camel.spring.issues;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringPropertyPlaceholderIssueTest extends SpringTestSupport {
 
     @Override
@@ -30,6 +28,7 @@ public class SpringPropertyPlaceholderIssueTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/SpringPropertyPlaceholderIssueTest.xml");
     }
 
+    @Test
     public void testSpring() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

@@ -45,16 +45,16 @@
     <endpoint id="from1" uri="jetty://http://localhost:${CxfRsProducerHeaderTest.1}/CxfRsProducerHeaderTest?matchOnUriPrefix=true"/>
     <route>
        <from uri="direct://http"/>
-       <to ref="to1"/>
+       <to uri="ref:to1"/>
     </route>
     
     <route>
        <from uri="direct://http2"/>
-       <to ref="to2"/>
+       <to uri="ref:to2"/>
     </route>
     
     <route>
-       <from ref="from1"/>
+       <from uri="ref:from1"/>
        <process ref="httpProcessor" />
     </route>
   </camelContext>

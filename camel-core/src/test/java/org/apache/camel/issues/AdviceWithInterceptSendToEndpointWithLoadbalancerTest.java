@@ -19,6 +19,8 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
 public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends ContextTestSupport {
 
@@ -27,6 +29,7 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Conte
         return false;
     }
 
+    @Test
     public void testInterceptSendToEndpoint() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -38,7 +41,7 @@ public class AdviceWithInterceptSendToEndpointWithLoadbalancerTest extends Conte
         });
 
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new RouteBuilder() {
+        RouteReifier.adviceWith(route, context, new RouteBuilder() {
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:end1")
                     .skipSendToOriginalEndpoint()

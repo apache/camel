@@ -20,7 +20,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,13 +37,15 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Experimental;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupListener;
-import org.apache.camel.management.event.CamelContextStartedEvent;
+import org.apache.camel.meta.Experimental;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteController;
@@ -541,11 +542,11 @@ public class SupervisingRouteController extends DefaultRouteController {
         }
 
         public RouteDefinition getDefinition() {
-            return this.route.getRouteContext().getRoute();
+            return (RouteDefinition) this.route.getRouteContext().getRoute();
         }
 
         public ServiceStatus getStatus() {
-            return getContext().getCamelContext().getRouteStatus(getId());
+            return getContext().getCamelContext().getRouteController().getRouteStatus(getId());
         }
 
         public int getInitializationOrder() {
@@ -597,7 +598,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         private final RoutePolicy policy = new ManagedRoutePolicy();
 
         @Override
-        public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+        public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, NamedNode route) {
             return policy;
         }
     }
@@ -618,7 +619,7 @@ public class SupervisingRouteController extends DefaultRouteController {
 
         @Override
         public void onInit(Route route) {
-            final String autoStartup = route.getRouteContext().getRoute().getAutoStartup();
+            final String autoStartup = ((RouteDefinition) route.getRouteContext().getRoute()).getAutoStartup();
             if (ObjectHelper.equalIgnoreCase("false", autoStartup)) {
                 LOGGER.info("Route {} won't be supervised (reason: has explicit auto-startup flag set to false)", route.getId());
                 return;
@@ -692,12 +693,12 @@ public class SupervisingRouteController extends DefaultRouteController {
 
     private class CamelContextStartupListener extends EventNotifierSupport implements StartupListener {
         @Override
-        public void notify(EventObject event) throws Exception {
+        public void notify(CamelEvent event) throws Exception {
             onCamelContextStarted();
         }
 
         @Override
-        public boolean isEnabled(EventObject event) {
+        public boolean isEnabled(CamelEvent event) {
             return event instanceof CamelContextStartedEvent;
         }
 

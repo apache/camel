@@ -18,12 +18,12 @@ package org.apache.camel.converter.dozer;
 
 import java.util.Arrays;
 
+import com.github.dozermapper.core.Mapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.converter.dozer.dto.AddressDTO;
 import org.apache.camel.converter.dozer.dto.CustomerDTO;
 import org.apache.camel.converter.dozer.model.Address;
 import org.apache.camel.converter.dozer.service.Customer;
-import org.dozer.Mapper;
 
 public final class DozerTestArtifactsFactory {
 

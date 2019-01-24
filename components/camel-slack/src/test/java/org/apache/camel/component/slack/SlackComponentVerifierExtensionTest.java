@@ -36,7 +36,7 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testParameters() throws Exception {
+    public void testParametersWebhook() throws Exception {
         Component component = context().getComponent("slack");
 
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
@@ -48,9 +48,51 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
 
         Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
+    
+    @Test
+    public void testParametersToken() throws Exception {
+        Component component = context().getComponent("slack");
+
+        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("token", "l");
+
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+    }
+    
+    @Test
+    public void testParametersEmpty() throws Exception {
+        Component component = context().getComponent("slack");
+
+        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+
+        Map<String, Object> parameters = new HashMap<>();
+
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+    }
+    
+    @Test
+    public void testParametersWebhookUrlTokenBoth() throws Exception {
+        Component component = context().getComponent("slack");
+
+        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("token", "l");
+        parameters.put("webhookUrl", "l");
+
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
+
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+    }
 
     @Test
-    public void testConnectivity() throws Exception {
+    public void testConnectivityWebhook() throws Exception {
         Component component = context().getComponent("slack");
         ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
@@ -62,4 +104,16 @@ public class SlackComponentVerifierExtensionTest extends CamelTestSupport {
         Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
     }
 
+    @Test
+    public void testConnectivityToken() throws Exception {
+        Component component = context().getComponent("slack");
+        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("token", "l");
+
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
+
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+    }
 }

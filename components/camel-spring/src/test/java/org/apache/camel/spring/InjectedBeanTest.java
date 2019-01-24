@@ -15,16 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class InjectedBeanTest extends SpringTestSupport {
     protected InjectedBean bean;
 
+    @Test
     public void testInjectionPoints() throws Exception {
         log.info("getFieldInjectedEndpoint()         = " + bean.getFieldInjectedEndpoint());
         log.info("getPropertyInjectedEndpoint()      = " + bean.getPropertyInjectedEndpoint());
@@ -51,11 +50,13 @@ public class InjectedBeanTest extends SpringTestSupport {
         assertNotNull("No PollingConsumer injected for getPropertyInjectedPollingConsumer()", bean.getPropertyInjectedPollingConsumer());
     }
 
+    @Test
     public void testSendAndReceive() throws Exception {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         bean = getMandatoryBean(InjectedBean.class, "injectedBean");
     }

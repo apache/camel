@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -23,12 +22,12 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Concurreny test for idempotent consumer
- *
- * @version 
  */
 public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
@@ -39,6 +38,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -61,6 +61,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAddedDeadLetterChannel() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -95,6 +96,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFailedExchangesNotAdded() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -128,6 +130,7 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
     /**
      * A multithreaded test for IdempotentConsumer filter
      */
+    @Test
     public void testThreadedIdempotentConsumer() throws Exception {
         final int loopCount = 100;
         final int threadCount = 10;
@@ -186,7 +189,8 @@ public class IdempotentConsumerConcurrentTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         startEndpoint = resolveMandatoryEndpoint("direct:start");

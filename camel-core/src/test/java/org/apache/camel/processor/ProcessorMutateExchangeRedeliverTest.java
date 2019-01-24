@@ -21,6 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -29,6 +30,7 @@ public class ProcessorMutateExchangeRedeliverTest extends ContextTestSupport {
 
     private static int counter;
 
+    @Test
     public void testRedeliverA() throws Exception {
         counter = 0;
 
@@ -44,6 +46,7 @@ public class ProcessorMutateExchangeRedeliverTest extends ContextTestSupport {
         assertEquals(1 + 3, counter); // first call + 3 redeliveries
     }
 
+    @Test
     public void testRedeliverB() throws Exception {
         counter = 0;
 

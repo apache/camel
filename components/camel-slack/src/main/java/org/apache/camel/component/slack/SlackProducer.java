@@ -24,8 +24,8 @@ import java.util.Map;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.slack.helper.SlackMessage;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -64,7 +64,7 @@ public class SlackProducer extends DefaultProducer {
         slackMessage.setIconEmoji(slackEndpoint.getIconEmoji());
 
         // use charset from exchange or fallback to the default charset
-        String charset = IOHelper.getCharsetName(exchange, true);
+        String charset = ExchangeHelper.getCharsetName(exchange, true);
 
         // Set the post body
         String json = asJson(slackMessage);

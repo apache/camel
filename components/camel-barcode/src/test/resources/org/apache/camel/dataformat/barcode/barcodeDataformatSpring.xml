@@ -39,31 +39,31 @@
 
     <route>
       <from uri="direct:code1"/>
-      <marshal ref="code1"/>
+      <marshal><custom ref="code1"/></marshal>
       <to uri="file:target/out"/>
     </route>
     
     <route>
       <from uri="direct:code2"/>
-      <marshal ref="code2"/>
+      <marshal><custom ref="code2"/></marshal>
       <to uri="file:target/out"/>
     </route>
     
      <route>
       <from uri="direct:code3"/>
-      <marshal ref="code3"/>
+      <marshal><custom ref="code3"/></marshal>
       <to uri="file:target/out"/>
     </route>
     
      <route>
       <from uri="direct:code4"/>
-      <marshal ref="code4"/>
+      <marshal><custom ref="code4"/></marshal>
       <to uri="file:target/out"/>
     </route>
 
      <route>
       <from uri="direct:code5"/>
-      <marshal ref="code5"/>
+      <marshal><custom ref="code5"/></marshal>
       <to uri="file:target/out"/>
     </route>
 
@@ -77,7 +77,7 @@
     
     <route>
       <from uri="direct:unmarshal"/>
-      <unmarshal ref="code1"/>
+      <unmarshal><custom ref="code1"/></unmarshal>
       <to uri="log:Out"/>
       <to uri="mock:out"/>
     </route>

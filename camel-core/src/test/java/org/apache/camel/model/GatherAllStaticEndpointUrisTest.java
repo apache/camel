@@ -20,9 +20,11 @@ import java.util.Set;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class GatherAllStaticEndpointUrisTest extends ContextTestSupport {
 
+    @Test
     public void testGatherAllStaticEndpointUris() throws Exception {
         RouteDefinition route = context.getRouteDefinition("foo");
         Set<String> uris = RouteDefinitionHelper.gatherAllStaticEndpointUris(context, route, true, true);

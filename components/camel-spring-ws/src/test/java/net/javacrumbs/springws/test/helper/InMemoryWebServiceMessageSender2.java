@@ -23,7 +23,6 @@ import org.springframework.ws.transport.WebServiceMessageReceiver;
  * This class allows to spring to set the property webServiceMessageReceiver from
  * the bean context. 
  * We have to use use the package net.javacrumbs.springws.test.helper to get it work
- * 
  */
 public class InMemoryWebServiceMessageSender2 extends InMemoryWebServiceMessageSender {
 

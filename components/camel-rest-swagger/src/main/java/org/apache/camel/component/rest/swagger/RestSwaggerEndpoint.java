@@ -49,14 +49,14 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -87,14 +87,14 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         description = "API basePath, for example \"`/v2`\". Default is unset, if set overrides the value present in"
             + " Swagger specification and in the component configuration.",
         defaultValue = "", label = "producer")
-    @Metadata(required = "false")
+    @Metadata(required = false)
     private String basePath;
 
     @UriParam(description = "Name of the Camel component that will perform the requests. The compnent must be present"
         + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
         + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Overrides"
         + " component configuration.", label = "producer")
-    @Metadata(required = "false")
+    @Metadata(required = false)
     private String componentName;
 
     @UriParam(
@@ -114,7 +114,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
     private String host;
 
     @UriPath(description = "ID of the operation from the Swagger specification.", label = "producer")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String operationId;
 
     @UriParam(description = "What payload type this component is producing. For example `application/json`"
@@ -329,10 +329,12 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             parameters.put("host", host);
         }
 
+        final RestSwaggerComponent component = component();
+
         // what we consume is what the API defined by Swagger specification
         // produces
         final String determinedConsumes = determineOption(swagger.getProduces(), operation.getProduces(),
-            component().getConsumes(), consumes);
+            component.getConsumes(), consumes);
 
         if (isNotEmpty(determinedConsumes)) {
             parameters.put("consumes", determinedConsumes);
@@ -341,7 +343,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         // what we produce is what the API defined by Swagger specification
         // consumes
         final String determinedProducers = determineOption(swagger.getConsumes(), operation.getConsumes(),
-            component().getProduces(), produces);
+            component.getProduces(), produces);
 
         if (isNotEmpty(determinedProducers)) {
             parameters.put("produces", determinedProducers);
@@ -351,6 +353,26 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             .map(this::queryParameter).collect(Collectors.joining("&"));
         if (isNotEmpty(queryParameters)) {
             parameters.put("queryParameters", queryParameters);
+        }
+
+        // pass properties that might be applied if the delegate component is created, i.e. if it's not
+        // present in the Camel Context already
+        final Map<String, Object> componentParameters = new HashMap<>();
+
+        if (component.isUseGlobalSslContextParameters()) {
+            // by default it's false
+            componentParameters.put("useGlobalSslContextParameters", component.isUseGlobalSslContextParameters());
+        }
+        if (component.getSslContextParameters() != null) {
+            componentParameters.put("sslContextParameters", component.getSslContextParameters());
+        }
+
+        if (!componentParameters.isEmpty()) {
+            final Map<Object, Object> nestedParameters = new HashMap<>();
+            nestedParameters.put("component", componentParameters);
+
+            // we're trying to set RestEndpoint.parameters['component']
+            parameters.put("parameters", nestedParameters);
         }
 
         return parameters;

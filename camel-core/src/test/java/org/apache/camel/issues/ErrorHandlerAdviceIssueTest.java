@@ -19,17 +19,18 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
 /**
  * Based on user form issue
- *
- * @version 
  */
 public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
 
+    @Test
     public void testErrorHandlerAdvice() throws Exception {
         RouteDefinition foo = context.getRouteDefinition("foo");
-        foo.adviceWith(context, new RouteBuilder() {
+        RouteReifier.adviceWith(foo, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("seda:*")
@@ -39,7 +40,7 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         });
 
         RouteDefinition error = context.getRouteDefinition("error");
-        error.adviceWith(context, new RouteBuilder() {
+        RouteReifier.adviceWith(error, context, new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("file:*")
@@ -53,7 +54,7 @@ public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
         // should be intercepted
         getMockEndpoint("mock:foo").expectedMessageCount(0);
 
-        context.stopRoute("timer");
+        context.getRouteController().stopRoute("timer");
 
         template.sendBody("direct:start", "Hello World");
 

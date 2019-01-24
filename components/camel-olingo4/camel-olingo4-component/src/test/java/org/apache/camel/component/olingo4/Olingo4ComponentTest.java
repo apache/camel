@@ -78,50 +78,50 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         final Map<String, Object> headers = new HashMap<>();
 
         // Read metadata ($metadata) object
-        final Edm metadata = (Edm)requestBodyAndHeaders("direct://readmetadata", null, headers);
+        final Edm metadata = (Edm)requestBodyAndHeaders("direct:readmetadata", null, headers);
         assertNotNull(metadata);
         assertEquals(1, metadata.getSchemas().size());
 
         // Read service document object
-        final ClientServiceDocument document = (ClientServiceDocument)requestBodyAndHeaders("direct://readdocument", null, headers);
+        final ClientServiceDocument document = (ClientServiceDocument)requestBodyAndHeaders("direct:readdocument", null, headers);
 
         assertNotNull(document);
         assertTrue(document.getEntitySets().size() > 1);
         LOG.info("Service document has {} entity sets", document.getEntitySets().size());
 
         // Read entity set of the People object
-        final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders("direct://readentities", null, headers);
+        final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders("direct:readentities", null, headers);
         assertNotNull(entities);
         assertEquals(5, entities.getEntities().size());
 
         // Read object count with query options passed through header
-        final Long count = (Long)requestBodyAndHeaders("direct://readcount", null, headers);
+        final Long count = (Long)requestBodyAndHeaders("direct:readcount", null, headers);
         assertEquals(20, count.intValue());
 
-        final ClientPrimitiveValue value = (ClientPrimitiveValue)requestBodyAndHeaders("direct://readvalue", null, headers);
-        LOG.info("Client value \"{}\" has type {}", value.toString(), value.getTypeName());
+        final ClientPrimitiveValue value = (ClientPrimitiveValue)requestBodyAndHeaders("direct:readvalue", null, headers);
+        LOG.info("Client value \"{}\" has type {}", value, value.getTypeName());
         assertEquals("Male", value.asPrimitive().toString());
 
-        final ClientPrimitiveValue singleProperty = (ClientPrimitiveValue)requestBodyAndHeaders("direct://readsingleprop", null, headers);
+        final ClientPrimitiveValue singleProperty = (ClientPrimitiveValue)requestBodyAndHeaders("direct:readsingleprop", null, headers);
         assertTrue(singleProperty.isPrimitive());
         assertEquals("San Francisco International Airport", singleProperty.toString());
 
-        final ClientComplexValue complexProperty = (ClientComplexValue)requestBodyAndHeaders("direct://readcomplexprop", null, headers);
+        final ClientComplexValue complexProperty = (ClientComplexValue)requestBodyAndHeaders("direct:readcomplexprop", null, headers);
         assertTrue(complexProperty.isComplex());
         assertEquals("San Francisco", complexProperty.get("City").getComplexValue().get("Name").getValue().toString());
 
-        final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct://readentitybyid", null, headers);
+        final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct:readentitybyid", null, headers);
         assertNotNull(entity);
         assertEquals("Russell", entity.getProperty("FirstName").getValue().toString());
 
-        final ClientEntity unbFuncReturn = (ClientEntity)requestBodyAndHeaders("direct://callunboundfunction", null, headers);
+        final ClientEntity unbFuncReturn = (ClientEntity)requestBodyAndHeaders("direct:callunboundfunction", null, headers);
         assertNotNull(unbFuncReturn);
     }
     
     @Test
     public void testReadWithFilter() {
         // Read entity set with filter of the Airports object
-        final ClientEntitySet entities = (ClientEntitySet)requestBody("direct://readwithfilter", null);
+        final ClientEntitySet entities = (ClientEntitySet)requestBody("direct:readwithfilter", null);
         
         assertNotNull(entities);
         assertEquals(1, entities.getEntities().size());
@@ -131,7 +131,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     public void testCreateUpdateDelete() throws Exception {
         final ClientEntity clientEntity = createEntity();
 
-        ClientEntity entity = requestBody("direct://create-entity", clientEntity);
+        ClientEntity entity = requestBody("direct:create-entity", clientEntity);
         assertNotNull(entity);
         assertEquals("Lewis", entity.getProperty("FirstName").getValue().toString());
         assertEquals("", entity.getProperty("MiddleName").getValue().toString());
@@ -139,20 +139,20 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         // update
         clientEntity.getProperties().add(objFactory.newPrimitiveProperty("MiddleName", objFactory.newPrimitiveValueBuilder().buildString("Lewis")));
 
-        HttpStatusCode status = requestBody("direct://update-entity", clientEntity);
+        HttpStatusCode status = requestBody("direct:update-entity", clientEntity);
         assertNotNull("Update status", status);
         assertEquals("Update status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
         LOG.info("Update entity status: {}", status);
 
         // delete
-        status = requestBody("direct://delete-entity", null);
+        status = requestBody("direct:delete-entity", null);
         assertNotNull("Delete status", status);
         assertEquals("Delete status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
         LOG.info("Delete status: {}", status);
 
         // check for delete
         try {
-            requestBody("direct://read-deleted-entity", null);
+            requestBody("direct:read-deleted-entity", null);
         } catch (CamelExecutionException e) {
             assertEquals("Resource Not Found [HTTP/1.1 404 Not Found]", e.getCause().getMessage());
         }
@@ -160,7 +160,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
 
     @Test
     public void testCreateUpdateDeleteFromJson() throws Exception {
-        ClientEntity entity = requestBody("direct://create-entity", TEST_CREATE_JSON);
+        ClientEntity entity = requestBody("direct:create-entity", TEST_CREATE_JSON);
         assertNotNull(entity);
         assertEquals("Lewis", entity.getProperty("FirstName").getValue().toString());
         assertEquals("Black", entity.getProperty("LastName").getValue().toString());
@@ -168,20 +168,20 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         assertEquals("", entity.getProperty("MiddleName").getValue().toString());
 
         // update
-        HttpStatusCode status = requestBody("direct://update-entity", TEST_UPDATE_JSON);
+        HttpStatusCode status = requestBody("direct:update-entity", TEST_UPDATE_JSON);
         assertNotNull("Update status", status);
         assertEquals("Update status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
         LOG.info("Update entity status: {}", status);
 
         // delete
-        status = requestBody("direct://delete-entity", null);
+        status = requestBody("direct:delete-entity", null);
         assertNotNull("Delete status", status);
         assertEquals("Delete status", HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
         LOG.info("Delete status: {}", status);
 
         // check for delete
         try {
-            requestBody("direct://read-deleted-entity", null);
+            requestBody("direct:read-deleted-entity", null);
         } catch (CamelExecutionException e) {
             assertEquals("Resource Not Found [HTTP/1.1 404 Not Found]", e.getCause().getMessage());
         }
@@ -232,7 +232,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         batchParts.add(Olingo4BatchQueryRequest.resourcePath(TEST_CREATE_PEOPLE).resourceUri(TEST_SERVICE_BASE_URL).build());
 
         // execute batch request
-        final List<Olingo4BatchResponse> responseParts = requestBody("direct://batch", batchParts);
+        final List<Olingo4BatchResponse> responseParts = requestBody("direct:batch", batchParts);
         assertNotNull("Batch response", responseParts);
         assertEquals("Batch responses expected", 8, responseParts.size());
 
@@ -275,7 +275,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     @Test
     public void testEndpointHttpHeaders() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
-        final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct://read-etag", null, headers);
+        final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct:read-etag", null, headers);
         
         MockEndpoint mockEndpoint = getMockEndpoint("mock:check-etag-header");
         mockEndpoint.expectedMessageCount(1);
@@ -287,11 +287,11 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         Map<String, String> endpointHttpHeaders = new HashMap<>();
         endpointHttpHeaders.put("If-Match", entity.getETag());
         headers.put("CamelOlingo4.endpointHttpHeaders", endpointHttpHeaders);
-        requestBodyAndHeaders("direct://delete-with-etag", null, headers);
+        requestBodyAndHeaders("direct:delete-with-etag", null, headers);
         
         // check for deleted entity with ETag
         try {
-            requestBody("direct://read-etag", null);
+            requestBody("direct:read-etag", null);
         } catch (CamelExecutionException e) {
             assertStringContains(e.getCause().getMessage(), "The request resource is not found.");
         }
@@ -302,44 +302,44 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // test routes for read
-                from("direct://readmetadata").to("olingo4://read/$metadata");
+                from("direct:readmetadata").to("olingo4://read/$metadata");
 
-                from("direct://readdocument").to("olingo4://read/");
+                from("direct:readdocument").to("olingo4://read/");
 
-                from("direct://readentities").to("olingo4://read/People?$top=5&$orderby=FirstName asc");
+                from("direct:readentities").to("olingo4://read/People?$top=5&$orderby=FirstName asc");
 
-                from("direct://readcount").to("olingo4://read/People/$count");
+                from("direct:readcount").to("olingo4://read/People/$count");
 
-                from("direct://readvalue").to("olingo4://read/People('russellwhyte')/Gender/$value");
+                from("direct:readvalue").to("olingo4://read/People('russellwhyte')/Gender/$value");
 
-                from("direct://readsingleprop").to("olingo4://read/Airports('KSFO')/Name");
+                from("direct:readsingleprop").to("olingo4://read/Airports('KSFO')/Name");
 
-                from("direct://readcomplexprop").to("olingo4://read/Airports('KSFO')/Location");
+                from("direct:readcomplexprop").to("olingo4://read/Airports('KSFO')/Location");
 
-                from("direct://readentitybyid").to("olingo4://read/People('russellwhyte')");
+                from("direct:readentitybyid").to("olingo4://read/People('russellwhyte')");
                 
-                from("direct://readwithfilter").to("olingo4://read/Airports?$filter=Name eq 'San Francisco International Airport'");
+                from("direct:readwithfilter").to("olingo4://read/Airports?$filter=Name eq 'San Francisco International Airport'");
 
-                from("direct://callunboundfunction").to("olingo4://read/GetNearestAirport(lat=33,lon=-118)");
+                from("direct:callunboundfunction").to("olingo4://read/GetNearestAirport(lat=33,lon=-118)");
 
                 // test route for create individual entity
-                from("direct://create-entity").to("olingo4://create/People");
+                from("direct:create-entity").to("olingo4://create/People");
 
                 // test route for update
-                from("direct://update-entity").to("olingo4://update/People('lewisblack')");
+                from("direct:update-entity").to("olingo4://update/People('lewisblack')");
 
                 // test route for delete
-                from("direct://delete-entity").to("olingo4://delete/People('lewisblack')");
+                from("direct:delete-entity").to("olingo4://delete/People('lewisblack')");
 
                 // test route for delete
-                from("direct://read-deleted-entity").to("olingo4://delete/People('lewisblack')");
+                from("direct:read-deleted-entity").to("olingo4://delete/People('lewisblack')");
 
                 // test route for batch
-                from("direct://batch").to("olingo4://batch");
+                from("direct:batch").to("olingo4://batch");
                 
-                from("direct://read-etag").to("olingo4://read/Airlines('AA')").to("mock:check-etag-header");
+                from("direct:read-etag").to("olingo4://read/Airlines('AA')").to("mock:check-etag-header");
                 
-                from("direct://delete-with-etag").to("olingo4://delete/Airlines('AA')");
+                from("direct:delete-with-etag").to("olingo4://delete/Airlines('AA')");
             }
         };
     }

@@ -25,8 +25,6 @@ import org.junit.Test;
 
 /**
  * Unit test for using http client SO timeout
- *
- * @version 
  */
 public class HttpProducerSOTimeoutTest extends BaseJettyTest {
 
@@ -35,7 +33,7 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        String out = template.requestBody("http://localhost:{{port}}/myservice?httpClient.soTimeout=5000", null, String.class);
+        String out = template.requestBody("http://localhost:{{port}}/myservice?socketTimeout=5000", null, String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -48,7 +46,7 @@ public class HttpProducerSOTimeoutTest extends BaseJettyTest {
 
         try {
             // we use a timeout of 1 second
-            template.requestBody("http://localhost:{{port}}/myservice?httpClient.soTimeout=1000", null, String.class);
+            template.requestBody("http://localhost:{{port}}/myservice?socketTimeout=1000", null, String.class);
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
             assertIsInstanceOf(SocketTimeoutException.class, e.getCause());

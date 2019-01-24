@@ -19,14 +19,14 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Delayer while shutting down so its interrupted and will also stop.
- *
- * @version 
  */
 public class DelayerWhileShutdownTest extends ContextTestSupport {
 
+    @Test
     public void testSendingMessageGetsDelayed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Short delay");

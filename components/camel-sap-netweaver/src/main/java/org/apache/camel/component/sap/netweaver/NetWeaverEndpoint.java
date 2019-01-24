@@ -20,11 +20,11 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "sap-netweaver", title = "SAP NetWeaver", syntax = "sap-netweaver:url", producerOnly = true, label = "sap")
 public class NetWeaverEndpoint extends DefaultEndpoint {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String url;
     @UriParam(defaultValue = "true")
     private boolean json = true;
@@ -40,9 +40,9 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
     private boolean jsonAsMap = true;
     @UriParam(defaultValue = "true")
     private boolean flatternMap = true;
-    @UriParam @Metadata(required = "true", secret = true)
+    @UriParam @Metadata(required = true, secret = true)
     private String username;
-    @UriParam @Metadata(required = "true", secret = true)
+    @UriParam @Metadata(required = true, secret = true)
     private String password;
 
     public NetWeaverEndpoint(String endpointUri, Component component) {

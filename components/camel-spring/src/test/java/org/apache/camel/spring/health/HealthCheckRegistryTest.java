@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.impl.health.RegistryRepository;
 import org.apache.camel.impl.health.RoutePerformanceCounterEvaluators;
@@ -35,7 +36,7 @@ public class HealthCheckRegistryTest {
     @Test
     public void testRepositories() {
         CamelContext context = createContext("org/apache/camel/spring/health/HealthCheckRegistryTest.xml");
-        Collection<HealthCheckRepository> repos = context.getHealthCheckRegistry().getRepositories();
+        Collection<HealthCheckRepository> repos = HealthCheckRegistry.get(context).getRepositories();
 
         Assert.assertNotNull(repos);
         Assert.assertEquals(2, repos.size());

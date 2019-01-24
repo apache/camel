@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriParams;
 @UriParams
 public class CMConfiguration {
 
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     @NotNull
     private String productToken;
     @UriParam

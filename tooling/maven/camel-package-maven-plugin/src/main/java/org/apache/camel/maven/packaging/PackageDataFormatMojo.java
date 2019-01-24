@@ -31,11 +31,13 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -46,49 +48,39 @@ import static org.apache.camel.maven.packaging.PackageHelper.parseAsMap;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
- *
- * @goal generate-dataformats-list
  */
+@Mojo(name = "generate-dataformats-list", threadSafe = true)
 public class PackageDataFormatMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The output directory for generated dataformats file
-     *
-     * @parameter default-value="${project.build.directory}/generated/camel/dataformats"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/dataformats")
     protected File dataFormatOutDir;
 
     /**
      * The output directory for generated dataformats file
-     *
-     * @parameter default-value="${project.build.directory}/classes"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes")
     protected File schemaOutDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * build context to check changed files and mark them for refresh (used for
      * m2e compatibility)
-     * 
-     * @component
-     * @readonly
      */
+    @Component
     private BuildContext buildContext;
 
     /**
@@ -102,7 +94,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
     }
 
-    public static void prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir,
+    public static int prepareDataFormat(Log log, MavenProject project, MavenProjectHelper projectHelper, File dataFormatOutDir,
                                          File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
         File camelMetaDir = new File(dataFormatOutDir, "META-INF/services/org/apache/camel/");
@@ -114,31 +106,26 @@ public class PackageDataFormatMojo extends AbstractMojo {
         }
 
         if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/dataformat")) {
-            return;
+            return 0;
         }
 
         Map<String, String> javaTypes = new HashMap<>();
 
         StringBuilder buffer = new StringBuilder();
         int count = 0;
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/dataformat");
 
-            if (f.exists() && f.isDirectory()) {
-                File[] files = f.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        String javaType = readClassFromCamelResource(file, buffer, buildContext);
-                        if (!file.isDirectory() && file.getName().charAt(0) != '.') {
-                            count++;
-                        }
-                        if (javaType != null) {
-                            javaTypes.put(file.getName(), javaType);
-                        }
+        File f = new File(project.getBasedir(), "target/classes");
+        f = new File(f, "META-INF/services/org/apache/camel/dataformat");
+        if (f.exists() && f.isDirectory()) {
+            File[] files = f.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    String javaType = readClassFromCamelResource(file, buffer, buildContext);
+                    if (!file.isDirectory() && file.getName().charAt(0) != '.') {
+                        count++;
+                    }
+                    if (javaType != null) {
+                        javaTypes.put(file.getName(), javaType);
                     }
                 }
             }
@@ -173,7 +160,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 String json = loadText(is);
 
                                 DataFormatModel dataFormatModel = extractDataFormatModel(project, json, modelName, name, javaType);
-                                log.debug("Model " + dataFormatModel);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Model: " + dataFormatModel);
+                                }
 
                                 // build json schema for the data format
                                 String properties = after(json, "  \"properties\": {");
@@ -183,7 +172,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 properties = prepareJsonProperties(name, properties);
 
                                 String schema = createParameterJsonSchema(dataFormatModel, properties);
-                                log.debug("JSon schema\n" + schema);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("JSon schema:\n" + schema);
+                                }
 
                                 // write this to the directory
                                 File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
@@ -193,6 +184,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 OutputStream fos = buildContext.newFileOutputStream(out);
                                 fos.write(schema.getBytes());
                                 fos.close();
+
+                                buildContext.refresh(out);
+
                                 if (log.isDebugEnabled()) {
                                     log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
                                 }
@@ -233,7 +227,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                     // are the content the same?
                     if (existing.equals(properties)) {
                         log.debug("No dataformat changes detected");
-                        return;
+                        return count;
                     }
                 } catch (IOException e) {
                     // ignore
@@ -247,12 +241,16 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
                 log.info("Generated " + outFile + " containing " + count + " Camel " + (count > 1 ? "dataformats: " : "dataformat: ") + names);
 
+                buildContext.refresh(outFile);
+
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
             }
         } else {
             log.debug("No META-INF/services/org/apache/camel/dataformat directory found. Are you sure you have created a Camel data format?");
         }
+
+        return count;
     }
 
     private static DataFormatModel extractDataFormatModel(MavenProject project, String json, String modelName, String name, String javaType) throws Exception {

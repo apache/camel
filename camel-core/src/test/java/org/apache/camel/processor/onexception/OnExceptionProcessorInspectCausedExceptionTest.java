@@ -20,12 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test for using a processor to peek the caused exception
  */
 public class OnExceptionProcessorInspectCausedExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testInspectExceptionByProcessor() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:myerror").expectedMessageCount(1);

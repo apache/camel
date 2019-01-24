@@ -19,15 +19,16 @@ package org.apache.camel.component.pgevent;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link PgEventEndpoint}.
  */
-public class PgEventComponent extends UriEndpointComponent {
+@Component("pgevent")
+public class PgEventComponent extends DefaultComponent {
 
     public PgEventComponent() {
-        super(PgEventEndpoint.class);
     }
 
     @Override

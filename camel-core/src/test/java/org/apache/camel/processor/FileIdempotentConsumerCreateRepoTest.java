@@ -26,7 +26,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.apache.camel.processor.idempotent.FileIdempotentRepository.fileIdempotentRepository;
+import static org.apache.camel.support.processor.idempotent.FileIdempotentRepository.fileIdempotentRepository;
 
 public class FileIdempotentConsumerCreateRepoTest extends Assert {
 
@@ -49,7 +49,7 @@ public class FileIdempotentConsumerCreateRepoTest extends Assert {
 
     private void assertStoreExists(File store) throws Exception {
         // Given
-        IdempotentRepository<String> repo = fileIdempotentRepository(store);
+        IdempotentRepository repo = fileIdempotentRepository(store);
 
         // must start repo
         repo.start();

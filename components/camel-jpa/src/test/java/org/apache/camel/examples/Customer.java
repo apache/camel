@@ -24,9 +24,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Version;
 
-/**
- * @version 
- */
 @Entity
 @NamedQuery(name = "findAllCustomersWithName",
 query = "SELECT c FROM Customer c WHERE c.name LIKE :custName ")

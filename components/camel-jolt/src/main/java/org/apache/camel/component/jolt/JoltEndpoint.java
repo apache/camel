@@ -80,7 +80,7 @@ public class JoltEndpoint extends ResourceEndpoint {
         if (transform == null) {
             if (log.isDebugEnabled()) {
                 String path = getResourceUri();
-                log.debug("Jolt content read from resource {} with resourceUri: {} for endpoint {}", new Object[]{getResourceUri(), path, getEndpointUri()});
+                log.debug("Jolt content read from resource {} with resourceUri: {} for endpoint {}", getResourceUri(), path, getEndpointUri());
             }
 
             // Sortr does not require a spec

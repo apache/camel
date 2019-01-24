@@ -49,10 +49,11 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -113,7 +114,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         // strip query parameters from the uri
         String s = request.uri();
         if (s.contains("?")) {
-            s = ObjectHelper.before(s, "?");
+            s = StringHelper.before(s, "?");
         }
 
         // we want the full path for the url, as the client may provide the url in the HTTP headers as absolute or relative, eg
@@ -184,7 +185,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
         // add uri parameters as headers to the Camel message
         if (request.uri().contains("?")) {
-            String query = ObjectHelper.after(request.uri(), "?");
+            String query = StringHelper.after(request.uri(), "?");
             Map<String, Object> uriParameters = URISupport.parseQuery(query, false, true);
 
             for (Map.Entry<String, Object> entry : uriParameters.entrySet()) {
@@ -219,7 +220,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             } finally {
                 buffer.release();
             }
-            if (ObjectHelper.isNotEmpty(body)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(body)) {
                 for (String param : body.split("&")) {
                     String[] pair = param.split("=", 2);
                     if (pair.length == 2) {

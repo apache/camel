@@ -23,8 +23,6 @@ import org.apache.camel.Processor;
 
 /**
  * A strategy for load balancing across a number of {@link Processor} instances
- *
- * @version 
  */
 public interface LoadBalancer extends AsyncProcessor {
 
@@ -33,19 +31,19 @@ public interface LoadBalancer extends AsyncProcessor {
      *
      * @param processor the processor to be added to the load balancer
      */
-    void addProcessor(Processor processor);
+    void addProcessor(AsyncProcessor processor);
 
     /**
      * Removes the given processor from the load balancer
      *
      * @param processor the processor to be removed from the load balancer
      */
-    void removeProcessor(Processor processor);
+    void removeProcessor(AsyncProcessor processor);
 
     /**
      * Returns the current processors available to this load balancer
      *
      * @return the processors available
      */
-    List<Processor> getProcessors();
+    List<AsyncProcessor> getProcessors();
 }

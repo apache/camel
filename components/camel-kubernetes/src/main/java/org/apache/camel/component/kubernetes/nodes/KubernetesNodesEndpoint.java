@@ -30,10 +30,8 @@ import org.slf4j.LoggerFactory;
  * and a consumer to consume node events.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-nodes", title = "Kubernetes Nodes",
-    syntax = "kubernetes-nodes:masterUrl", consumerClass = KubernetesNodesConsumer.class, label = "container,cloud,paas")
+    syntax = "kubernetes-nodes:masterUrl", label = "container,cloud,paas")
 public class KubernetesNodesEndpoint extends AbstractKubernetesEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KubernetesNodesEndpoint.class);
 
     public KubernetesNodesEndpoint(String uri, KubernetesNodesComponent component, KubernetesConfiguration config) {
         super(uri, component, config);

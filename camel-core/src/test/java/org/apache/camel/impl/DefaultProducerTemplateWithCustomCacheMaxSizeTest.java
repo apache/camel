@@ -21,10 +21,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTestSupport {
 
     @Override
@@ -34,6 +32,7 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         return context;
     }
 
+    @Test
     public void testCacheProducers() throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
 
@@ -55,23 +54,25 @@ public class DefaultProducerTemplateWithCustomCacheMaxSizeTest extends ContextTe
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
     }
 
+    @Test
     public void testInvalidSizeABC() {
         context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "ABC");
         try {
             context.createProducerTemplate();
             fail("Should have thrown an exception");
         } catch (Exception e) {
-            assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: ABC", e.getMessage());
+            assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: ABC", e.getCause().getMessage());
         }
     }
 
+    @Test
     public void testInvalidSizeZero() {
         context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "0");
         try {
             context.createProducerTemplate();
             fail("Should have thrown an exception");
         } catch (Exception e) {
-            assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: 0", e.getMessage());
+            assertEquals("Property CamelMaximumCachePoolSize must be a positive number, was: 0", e.getCause().getMessage());
         }
     }
 }

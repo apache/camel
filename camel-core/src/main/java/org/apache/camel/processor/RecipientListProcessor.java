@@ -24,19 +24,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AggregationStrategy;
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ProducerCache;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.impl.DefaultProducerCache;
+import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,13 +56,11 @@ import org.slf4j.LoggerFactory;
  * lookup endpoints and create producers which should act as the processors for the multicast processors which
  * runs under the hood. Also this implementation supports the asynchronous routing engine which makes the code
  * more trickier.
- *
- * @version 
  */
 public class RecipientListProcessor extends MulticastProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RecipientListProcessor.class);
-    private final Iterator<Object> iter;
+    private final Iterator<?> iter;
     private boolean ignoreInvalidEndpoints;
     private ProducerCache producerCache;
 
@@ -72,7 +73,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     static final class RecipientProcessorExchangePair implements ProcessorExchangePair {
         private final int index;
         private final Endpoint endpoint;
-        private final Producer producer;
+        private final AsyncProducer producer;
         private Processor prepared;
         private final Exchange exchange;
         private final ProducerCache producerCache;
@@ -84,7 +85,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             this.index = index;
             this.producerCache = producerCache;
             this.endpoint = endpoint;
-            this.producer = producer;
+            this.producer = AsyncProcessorConverterHelper.convert(producer);
             this.prepared = prepared;
             this.exchange = exchange;
             this.pattern = pattern;
@@ -138,36 +139,26 @@ public class RecipientListProcessor extends MulticastProcessor {
 
     }
 
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<Object> iter) {
+    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter) {
         super(camelContext, null);
         this.producerCache = producerCache;
         this.iter = iter;
     }
 
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<Object> iter, AggregationStrategy aggregationStrategy) {
+    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy) {
         super(camelContext, null, aggregationStrategy);
         this.producerCache = producerCache;
         this.iter = iter;
     }
 
-    @Deprecated
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<Object> iter, AggregationStrategy aggregationStrategy,
-                                  boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
-                                  boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork) {
-        super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
-                streaming, stopOnException, timeout, onPrepare, shareUnitOfWork, false);
-        this.producerCache = producerCache;
-        this.iter = iter;
-    }
-
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<Object> iter, AggregationStrategy aggregationStrategy,
+    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy,
                                   boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
                                   boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate) {
         this(camelContext, producerCache, iter, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
              shareUnitOfWork, parallelAggregate, false);
     }
 
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<Object> iter, AggregationStrategy aggregationStrategy,
+    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy,
                                   boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException,
                                   long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate, boolean stopOnAggregateException) {
         super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
@@ -202,8 +193,8 @@ public class RecipientListProcessor extends MulticastProcessor {
                 producer = producerCache.acquireProducer(endpoint);
             } catch (Exception e) {
                 if (isIgnoreInvalidEndpoints()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Endpoint uri is invalid: " + recipient + ". This exception will be ignored.", e);
                     }
                     continue;
                 } else {
@@ -275,7 +266,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     protected void doStart() throws Exception {
         super.doStart();
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, getCamelContext());
+            producerCache = new DefaultProducerCache(this, getCamelContext(), 0);
         }
         ServiceHelper.startService(producerCache);
     }

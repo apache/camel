@@ -20,6 +20,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -30,9 +31,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version
- */
 public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupport {
 
     private final int size = 100;
@@ -48,7 +46,7 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
                 @Override
                 public void run() {
                     String reply = template.requestBody("direct:start", "" + num, String.class);
-                    log.info("Sent {} expecting reply 'Hello {}' got --> {}", new Object[]{num, num, reply});
+                    log.info("Sent {} expecting reply 'Hello {}' got --> {}", num, num, reply);
                     assertNotNull(reply);
                     assertEquals("Hello " + num, reply);
                     latch.countDown();
@@ -61,7 +59,7 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
         // if any of the assertions above fails then the latch will not get decremented 
         assertTrue("All assertions outside the main thread above should have passed", latch.await(3, TimeUnit.SECONDS));
 
-        long delta = watch.stop();
+        long delta = watch.taken();
         log.info("Took {} millis", delta);
 
         // just sleep a bit before shutting down

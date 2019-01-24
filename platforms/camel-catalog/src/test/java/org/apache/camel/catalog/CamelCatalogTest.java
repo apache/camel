@@ -71,7 +71,6 @@ public class CamelCatalogTest {
     public void testFindLanguageNames() throws Exception {
         List<String> names = catalog.findLanguageNames();
 
-        assertTrue(names.contains("el"));
         assertTrue(names.contains("simple"));
         assertTrue(names.contains("spel"));
         assertTrue(names.contains("xpath"));
@@ -83,11 +82,9 @@ public class CamelCatalogTest {
     public void testFindOtherNames() throws Exception {
         List<String> names = catalog.findOtherNames();
 
-        assertTrue(names.contains("eclipse"));
         assertTrue(names.contains("hystrix"));
         assertTrue(names.contains("leveldb"));
         assertTrue(names.contains("kura"));
-        assertTrue(names.contains("servletlistener"));
         assertTrue(names.contains("swagger-java"));
         assertTrue(names.contains("test-spring"));
 
@@ -308,20 +305,6 @@ public class CamelCatalogTest {
         String uri = catalog.asEndpointUri("rest", map, true);
 
         assertEquals("rest:get:api:user/{id}", uri);
-    }
-
-    @Test
-    public void testAsEndpointUriJson() throws Exception {
-        String json = loadText(CamelCatalogTest.class.getClassLoader().getResourceAsStream("sample.json"));
-        String uri = catalog.asEndpointUri("ftp", json, true);
-        assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
-    }
-
-    @Test
-    public void testAsEndpointUriJsonPrettyJson() throws Exception {
-        String json = loadText(CamelCatalogTest.class.getClassLoader().getResourceAsStream("sample-pretty.json"));
-        String uri = catalog.asEndpointUri("ftp", json, true);
-        assertEquals("ftp:someserver:21/foo?connectTimeout=5000", uri);
     }
 
     @Test
@@ -976,21 +959,21 @@ public class CamelCatalogTest {
 
     @Test
     public void testSimpleExpression() throws Exception {
-        SimpleValidationResult result = catalog.validateSimpleExpression(null, "${body}");
+        LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "${body}");
         assertTrue(result.isSuccess());
-        assertEquals("${body}", result.getSimple());
+        assertEquals("${body}", result.getText());
 
-        result = catalog.validateSimpleExpression(null, "${body");
+        result = catalog.validateLanguageExpression(null, "simple", "${body");
         assertFalse(result.isSuccess());
-        assertEquals("${body", result.getSimple());
+        assertEquals("${body", result.getText());
         LOG.info(result.getError());
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 5"));
         assertEquals("expected symbol functionEnd but was eol", result.getShortError());
         assertEquals(5, result.getIndex());
 
-        result = catalog.validateSimpleExpression(null, "${bodyxxx}");
+        result = catalog.validateLanguageExpression(null, "simple", "${bodyxxx}");
         assertFalse(result.isSuccess());
-        assertEquals("${bodyxxx}", result.getSimple());
+        assertEquals("${bodyxxx}", result.getText());
         LOG.info(result.getError());
         assertEquals("Valid syntax: ${body.OGNL} was: bodyxxx", result.getShortError());
         assertEquals(0, result.getIndex());
@@ -998,13 +981,13 @@ public class CamelCatalogTest {
 
     @Test
     public void testSimplePredicate() throws Exception {
-        SimpleValidationResult result = catalog.validateSimplePredicate(null, "${body} == 'abc'");
+        LanguageValidationResult result = catalog.validateLanguagePredicate(null,  "simple","${body} == 'abc'");
         assertTrue(result.isSuccess());
-        assertEquals("${body} == 'abc'", result.getSimple());
+        assertEquals("${body} == 'abc'", result.getText());
 
-        result = catalog.validateSimplePredicate(null, "${body} > ${header.size");
+        result = catalog.validateLanguagePredicate(null, "simple", "${body} > ${header.size");
         assertFalse(result.isSuccess());
-        assertEquals("${body} > ${header.size", result.getSimple());
+        assertEquals("${body} > ${header.size", result.getText());
         LOG.info(result.getError());
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 22"));
         assertEquals("expected symbol functionEnd but was eol", result.getShortError());
@@ -1012,14 +995,14 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testSimplePredicatePlaceholder() throws Exception {
-        SimpleValidationResult result = catalog.validateSimplePredicate(null, "${body} contains '{{danger}}'");
+    public void testPredicatePlaceholder() throws Exception {
+        LanguageValidationResult result = catalog.validateLanguagePredicate(null,  "simple","${body} contains '{{danger}}'");
         assertTrue(result.isSuccess());
-        assertEquals("${body} contains '{{danger}}'", result.getSimple());
+        assertEquals("${body} contains '{{danger}}'", result.getText());
 
-        result = catalog.validateSimplePredicate(null, "${bdy} contains '{{danger}}'");
+        result = catalog.validateLanguagePredicate(null, "simple", "${bdy} contains '{{danger}}'");
         assertFalse(result.isSuccess());
-        assertEquals("${bdy} contains '{{danger}}'", result.getSimple());
+        assertEquals("${bdy} contains '{{danger}}'", result.getText());
         LOG.info(result.getError());
         assertTrue(result.getError().startsWith("Unknown function: bdy at location 0"));
         assertTrue(result.getError().contains("'{{danger}}'"));
@@ -1133,13 +1116,9 @@ public class CamelCatalogTest {
 
     @Test
     public void testValidateEndpointTwitterSpecial() throws Exception {
-        String uri = "twitter://search?{{%s}}&keywords=java";
+        String uri = "twitter-search://java?{{%s}}";
 
         EndpointValidationResult result = catalog.validateEndpointProperties(uri);
-        assertTrue(result.isSuccess());
-
-        uri = "twitter://search?{{%s}}";
-        result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess());
     }
 
@@ -1177,6 +1156,17 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
 
         assertEquals("delete", result.getNotProducerOnly().iterator().next());
+    }
+
+    @Test
+    public void testNetty4Http4DynamicToIssue() throws Exception {
+        String uri = "netty4-http:http://10.192.1.10:8080/client/alerts/summary?throwExceptionOnFailure=false";
+        Map<String, String> params = catalog.endpointProperties(uri);
+        params.remove("path");
+        params.remove("throwExceptionOnFailure");
+
+        String resolved = catalog.asEndpointUri("netty4-http", params, false);
+        assertEquals("netty4-http:http:10.192.1.10:8080", resolved);
     }
 
     @Test

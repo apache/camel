@@ -19,13 +19,12 @@ package org.apache.camel;
 import java.util.Date;
 
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class CamelExceptionsTest extends ContextTestSupport {
 
+    @Test
     public void testExpectedBodyTypeException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -34,6 +33,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertEquals(Integer.class, e.getExpectedBodyType());
     }
 
+    @Test
     public void testExpressionEvaluationException() {
         Expression exp = ExpressionBuilder.constantExpression("foo");
         Exchange exchange = new DefaultExchange(context);
@@ -44,6 +44,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNotNull(e.getCause());
     }
 
+    @Test
     public void testFailedToCreateConsumerException() {
         Endpoint endpoint = context.getEndpoint("seda:foo");
         FailedToCreateConsumerException e = new FailedToCreateConsumerException(endpoint, new IllegalArgumentException("Damn"));
@@ -52,6 +53,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNotNull(e.getCause());
     }
 
+    @Test
     public void testFailedToCreateProducerException() {
         Endpoint endpoint = context.getEndpoint("seda:foo");
         FailedToCreateProducerException e = new FailedToCreateProducerException(endpoint, new IllegalArgumentException("Damn"));
@@ -60,6 +62,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNotNull(e.getCause());
     }
 
+    @Test
     public void testInvalidPayloadRuntimeException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -76,6 +79,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertEquals(Integer.class, e3.getType());
     }
 
+    @Test
     public void testRuntimeTransformException() {
         RuntimeTransformException e = new RuntimeTransformException("Forced");
         assertEquals("Forced", e.getMessage());
@@ -90,6 +94,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNotNull(e3.getCause());
     }
     
+    @Test
     public void testRuntimeExpressionException() {
         RuntimeExpressionException e = new RuntimeExpressionException("Forced");
         assertEquals("Forced", e.getMessage());
@@ -104,6 +109,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNotNull(e3.getCause());
     }
 
+    @Test
     public void testRollbackExchangeException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -116,6 +122,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertSame(exchange, e2.getExchange());
     }
 
+    @Test
     public void testValidationException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -128,6 +135,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertSame(exchange, e2.getExchange());
     }
 
+    @Test
     public void testNoSuchBeanException() {
         NoSuchBeanException e = new NoSuchBeanException("foo");
         assertEquals("foo", e.getName());
@@ -138,6 +146,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNotNull(e2.getCause());
     }
 
+    @Test
     public void testCamelExecutionException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -152,6 +161,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNotNull(e2.getCause());
     }
 
+    @Test
     public void testCamelException() {
         CamelException e = new CamelException();
         assertNull(e.getCause());
@@ -169,6 +179,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNotNull(e4.getMessage());
     }
 
+    @Test
     public void testServiceStatus() {
         assertTrue(ServiceStatus.Started.isStarted());
         assertFalse(ServiceStatus.Starting.isStarted());
@@ -192,6 +203,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertFalse(ServiceStatus.Stopping.isStoppable());
     }
 
+    @Test
     public void testRuntimeExchangeException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -204,11 +216,11 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNull(e2.getExchange());
     }
 
+    @Test
     public void testExchangePattern() {
         assertTrue(ExchangePattern.InOnly.isInCapable());
         assertTrue(ExchangePattern.InOptionalOut.isInCapable());
         assertTrue(ExchangePattern.InOut.isInCapable());
-        assertFalse(ExchangePattern.RobustOutOnly.isInCapable());
 
         assertFalse(ExchangePattern.InOnly.isFaultCapable());
         assertTrue(ExchangePattern.InOptionalOut.isFaultCapable());
@@ -229,6 +241,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testInvalidPayloadException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -237,6 +250,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertEquals(Integer.class, e.getType());
     }
 
+    @Test
     public void testExchangeTimedOutException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -245,17 +259,20 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertEquals(5000, e.getTimeout());
     }
 
+    @Test
     public void testExpressionIllegalSyntaxException() {
         ExpressionIllegalSyntaxException e = new ExpressionIllegalSyntaxException("foo");
         assertEquals("foo", e.getExpression());
     }
 
+    @Test
     public void testNoFactoryAvailableException() {
         NoFactoryAvailableException e = new NoFactoryAvailableException("killer", new IllegalArgumentException("Damn"));
         assertNotNull(e.getCause());
         assertEquals("killer", e.getUri());
     }
 
+    @Test
     public void testCamelExchangeException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -264,6 +281,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertSame(exchange, e.getExchange());
     }
 
+    @Test
     public void testNoSuchHeaderException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -273,6 +291,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertSame(exchange, e.getExchange());
     }
     
+    @Test
     public void testNoSuchPropertyException() {
         Exchange exchange = new DefaultExchange(context);
 
@@ -282,18 +301,21 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertSame(exchange, e.getExchange());
     }
 
+    @Test
     public void testRuntimeCamelException() {
         RuntimeCamelException e = new RuntimeCamelException();
         assertNull(e.getMessage());
         assertNull(e.getCause());
     }
 
+    @Test
     public void testFailedToStartRouteException() {
         FailedToStartRouteException e = new FailedToStartRouteException(new IllegalArgumentException("Forced"));
         assertNotNull(e.getMessage());
         assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
     }
 
+    @Test
     public void testNoTypeConversionAvailableException() {
         NoTypeConversionAvailableException e = new NoTypeConversionAvailableException("foo", Date.class);
         assertEquals("foo", e.getValue());
@@ -306,6 +328,7 @@ public class CamelExceptionsTest extends ContextTestSupport {
         assertNull(null, e2.getFromType());
     }
 
+    @Test
     public void testResolveEndpointFailedException() {
         ResolveEndpointFailedException e = new ResolveEndpointFailedException("foo:bar");
         assertEquals("foo:bar", e.getUri());

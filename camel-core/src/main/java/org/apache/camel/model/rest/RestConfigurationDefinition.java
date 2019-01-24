@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,7 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * To configure rest
@@ -281,7 +283,7 @@ public class RestConfigurationDefinition {
      * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
      * <p/>
      * The pattern <tt>#name#</tt> refers to the CamelContext name, to match on the current CamelContext only.
-     * For any other value, the pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
+     * For any other value, the pattern uses the rules from {@link PatternHelper#matchPattern(String, String)}
      *
      * @param apiContextIdPattern  the pattern
      */
@@ -588,7 +590,13 @@ public class RestConfigurationDefinition {
     /**
      * Sets an CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
      * <p/>
-     * The pattern uses the rules from {@link org.apache.camel.util.EndpointHelper#matchPattern(String, String)}
+     * The pattern uses the following rules are applied in this order:
+     * <ul>
+     * <li>exact match, returns true</li>
+     * <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     * <li>regular expression match, returns true</li>
+     * <li>otherwise returns false</li>
+     * </ul>
      */
     public RestConfigurationDefinition apiContextIdPattern(String pattern) {
         setApiContextIdPattern(pattern);
@@ -832,7 +840,7 @@ public class RestConfigurationDefinition {
             answer.setContextPath(CamelContextHelper.parseText(context, contextPath));
         }
         if (hostNameResolver != null) {
-            answer.setRestHostNameResolver(hostNameResolver.name());
+            answer.setHostNameResolver(hostNameResolver.name());
         }
         if (bindingMode != null) {
             answer.setBindingMode(bindingMode.name());

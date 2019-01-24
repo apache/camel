@@ -18,8 +18,6 @@ package org.apache.camel.component.jms;
 
 /**
  * A strategy that does not do any encoding or decoding, eg. the keys is passed through as is.
- *
- * @version 
  */
 public class PassThroughJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
 

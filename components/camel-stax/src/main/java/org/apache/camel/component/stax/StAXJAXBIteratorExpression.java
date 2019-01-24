@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -33,7 +34,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.util.LRUSoftCache;
+import org.apache.camel.support.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.stax.StAXUtil.getTagName;

@@ -38,13 +38,13 @@ import org.apache.camel.cdi.bean.FirstCamelContextRoute;
 import org.apache.camel.cdi.bean.SecondCamelContextBean;
 import org.apache.camel.cdi.bean.UriEndpointRoute;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.event.AbstractExchangeEvent;
-import org.apache.camel.management.event.CamelContextStartedEvent;
-import org.apache.camel.management.event.CamelContextStartingEvent;
-import org.apache.camel.management.event.ExchangeCompletedEvent;
-import org.apache.camel.management.event.ExchangeCreatedEvent;
-import org.apache.camel.management.event.ExchangeSendingEvent;
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSendingEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
@@ -118,8 +118,8 @@ public class MultiContextEventNotifierTest {
         events.add(CamelContextStartedEvent.class);
     }
 
-    private void onAnyExchangeEvent(@Observes AbstractExchangeEvent event, @Named("anyContext") List<Class> events) {
-        events.add(event.getClass());
+    private void onAnyExchangeEvent(@Observes ExchangeEvent event, @Named("anyContext") List<Class> events) {
+        events.add(event.getClass().getInterfaces()[0]);
     }
 
 
@@ -131,8 +131,8 @@ public class MultiContextEventNotifierTest {
         events.add(CamelContextStartedEvent.class);
     }
 
-    private void onDefaultExchangeEvent(@Observes @Default AbstractExchangeEvent event, @Named("defaultContext") List<Class> events) {
-        events.add(event.getClass());
+    private void onDefaultExchangeEvent(@Observes @Default ExchangeEvent event, @Named("defaultContext") List<Class> events) {
+        events.add(event.getClass().getInterfaces()[0]);
     }
 
 
@@ -144,8 +144,8 @@ public class MultiContextEventNotifierTest {
         events.add(CamelContextStartedEvent.class);
     }
 
-    private void onFirstExchangeEvent(@Observes @ContextName("first") AbstractExchangeEvent event, @ContextName("first") List<Class> events) {
-        events.add(event.getClass());
+    private void onFirstExchangeEvent(@Observes @ContextName("first") ExchangeEvent event, @ContextName("first") List<Class> events) {
+        events.add(event.getClass().getInterfaces()[0]);
     }
 
 
@@ -157,8 +157,8 @@ public class MultiContextEventNotifierTest {
         events.add(CamelContextStartedEvent.class);
     }
 
-    private void onSecondExchangeEvent(@Observes @ContextName("second") AbstractExchangeEvent event, @ContextName("second") List<Class> events) {
-        events.add(event.getClass());
+    private void onSecondExchangeEvent(@Observes @ContextName("second") ExchangeEvent event, @ContextName("second") List<Class> events) {
+        events.add(event.getClass().getInterfaces()[0]);
     }
 
     @Deployment
@@ -190,7 +190,7 @@ public class MultiContextEventNotifierTest {
             }
         });
 
-        secondCamelContext.startAllRoutes();
+        secondCamelContext.getRouteController().startAllRoutes();
 
         assertThat("Events fired for any contexts are incorrect", anyEvents,
             everyItem(

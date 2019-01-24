@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.Map;
+
 import javax.xml.namespace.QName;
 
 /**

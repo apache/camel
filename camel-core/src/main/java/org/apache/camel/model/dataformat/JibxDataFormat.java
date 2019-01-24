@@ -23,11 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * JiBX data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
@@ -91,7 +91,7 @@ public class JibxDataFormat extends DataFormatDefinition {
             try {
                 unmarshallClass = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(unmarshallTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

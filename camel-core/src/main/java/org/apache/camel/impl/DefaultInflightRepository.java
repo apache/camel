@@ -28,22 +28,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
-import org.apache.camel.support.ServiceSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * Default {@link org.apache.camel.spi.InflightRepository}.
- *
- * @version 
  */
 public class DefaultInflightRepository extends ServiceSupport implements InflightRepository {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
     private final ConcurrentMap<String, Exchange> inflight = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<>();
 
@@ -71,11 +65,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
     public int size() {
         return inflight.size();
-    }
-
-    @Deprecated
-    public int size(Endpoint endpoint) {
-        return 0;
     }
 
     @Override
@@ -178,9 +167,9 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
     protected void doStop() throws Exception {
         int count = size();
         if (count > 0) {
-            LOG.warn("Shutting down while there are still {} inflight exchanges.", count);
+            log.warn("Shutting down while there are still {} inflight exchanges.", count);
         } else {
-            LOG.debug("Shutting down with no inflight exchanges.");
+            log.debug("Shutting down with no inflight exchanges.");
         }
         routeCount.clear();
     }
@@ -249,11 +238,6 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         public String getFromRouteId() {
             return exchange.getFromRouteId();
-        }
-
-        @Override
-        public String getRouteId() {
-            return getAtRouteId();
         }
 
         @Override

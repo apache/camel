@@ -17,10 +17,10 @@
 
 package org.apache.camel.spring.processor;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 /**
@@ -28,6 +28,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringXPathHeaderTest extends ContextTestSupport {
 
+    @Test
     public void testChoiceWithHeaderSelectCamel() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:camel");
         mock.expectedBodiesReceived("<name>King</name>");
@@ -38,6 +39,7 @@ public class SpringXPathHeaderTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testChoiceWithNoHeaderSelectDonkey() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:donkey");
         mock.expectedBodiesReceived("<name>Kong</name>");
@@ -47,6 +49,7 @@ public class SpringXPathHeaderTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testChoiceWithNoHeaderSelectOther() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:other");
         mock.expectedBodiesReceived("<name>Other</name>");

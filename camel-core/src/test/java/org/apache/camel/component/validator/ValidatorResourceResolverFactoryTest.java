@@ -31,6 +31,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.junit.Assert;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
@@ -38,6 +39,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
 
     private JndiRegistry registry;
 
+    @Test
     public void testConfigurationOnEndpoint() throws Exception {
         // ensure that validator from test method "testConfigurationOnComponent"
         // is unbind
@@ -49,6 +51,7 @@ public class ValidatorResourceResolverFactoryTest extends ContextTestSupport {
         execute(directStart, endpointUri);
     }
 
+    @Test
     public void testConfigurationOnComponent() throws Exception {
         // set resource resolver factory on component
         ValidatorComponent validatorComponent = new ValidatorComponent();

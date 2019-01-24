@@ -32,7 +32,6 @@ import org.apache.camel.http.common.HttpConsumer;
  * REVISIT
  * we might be able to get rid of this servlet by overriding some of the binding
  * code that is executed between the servlet and the consumer.
- * 
  */
 public class CamelWebSocketServlet extends CamelHttpTransportServlet {
     private static final long serialVersionUID = 1764707448550670635L;

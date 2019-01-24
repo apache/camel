@@ -22,7 +22,7 @@ import java.util.Map;
 import com.sun.syndication.feed.synd.SyndEntry;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEndpoint;
-import org.apache.camel.util.LRUCacheFactory;
+import org.apache.camel.support.LRUCacheFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

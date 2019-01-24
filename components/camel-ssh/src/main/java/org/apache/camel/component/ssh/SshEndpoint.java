@@ -19,7 +19,7 @@ package org.apache.camel.component.ssh;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * The ssh component enables access to SSH servers such that you can send an SSH
  * command, and process the response.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port", alternativeSyntax = "ssh:username:password@host:port", consumerClass = SshConsumer.class, label = "file")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "ssh", title = "SSH", syntax = "ssh:host:port", alternativeSyntax = "ssh:username:password@host:port", label = "file")
 public class SshEndpoint extends ScheduledPollEndpoint {
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -177,6 +177,30 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
     public void setFailOnUnknownHost(boolean failOnUnknownHost) {
         getConfiguration().setFailOnUnknownHost(failOnUnknownHost);
+    }
+    
+    public String getChannelType() {
+        return getConfiguration().getChannelType();
+    }
+
+    public void setChannelType(String channelType) {
+        getConfiguration().setChannelType(channelType);
+    }
+    
+    public String getShellPrompt() {
+        return getConfiguration().getShellPrompt();
+    }
+
+    public void setShellPrompt(String shellPrompt) {
+        getConfiguration().setShellPrompt(shellPrompt);
+    }
+    
+    public long getSleepForShellPrompt() {
+        return getConfiguration().getSleepForShellPrompt();
+    }
+
+    public void setSleepForShellPrompt(long sleepForShellPrompt) {
+        getConfiguration().setSleepForShellPrompt(sleepForShellPrompt);
     }
 
 }

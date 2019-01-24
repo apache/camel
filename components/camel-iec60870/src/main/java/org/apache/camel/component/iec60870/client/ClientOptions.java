@@ -40,6 +40,13 @@ public class ClientOptions extends BaseOptions<ClientOptions> {
     @UriParam(label = "data", defaultValue = "true")
     private boolean ignoreBackgroundScan;
 
+    // dummy for doc generation
+    /**
+     * Whether to include the source address
+     */
+    @UriParam(label = "data", defaultValue = "true")
+    private boolean causeSourceAddress;
+
     public ClientOptions() {
         this.dataModuleOptions = new DataModuleOptions.Builder();
     }

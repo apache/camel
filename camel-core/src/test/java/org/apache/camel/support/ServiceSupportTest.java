@@ -17,10 +17,9 @@
 package org.apache.camel.support;
 
 import org.apache.camel.TestSupport;
+import org.apache.camel.support.service.ServiceSupport;
+import org.junit.Test;
 
-/**
- * @version
- */
 public class ServiceSupportTest extends TestSupport {
 
     private static class MyService extends ServiceSupport {
@@ -32,6 +31,7 @@ public class ServiceSupportTest extends TestSupport {
         }
     }
 
+    @Test
     public void testServiceSupport() throws Exception {
         MyService service = new MyService();
         service.start();
@@ -49,6 +49,7 @@ public class ServiceSupportTest extends TestSupport {
         assertEquals(false, service.isStarting());
     }
 
+    @Test
     public void testServiceSupportIsRunAllowed() throws Exception {
         MyService service = new MyService();
         assertEquals(false, service.isRunAllowed());
@@ -91,6 +92,7 @@ public class ServiceSupportTest extends TestSupport {
         }
     }
 
+    @Test
     public void testServiceSupportShutdown() throws Exception {
         MyShutdownService service = new MyShutdownService();
         service.start();
@@ -111,6 +113,7 @@ public class ServiceSupportTest extends TestSupport {
         assertEquals(true, service.isShutdown());
     }
 
+    @Test
     public void testExceptionOnStart() throws Exception {
         ServiceSupportTestExOnStart service = new ServiceSupportTestExOnStart();
         // forced not being stopped at start
@@ -130,7 +133,7 @@ public class ServiceSupportTest extends TestSupport {
 
         public ServiceSupportTestExOnStart() {
             // just for testing force it to not be stopped
-            stopped.set(false);
+            status = -1;
         }
 
         @Override

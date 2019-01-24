@@ -24,9 +24,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SftpSimpleConsumeStreamingTest extends SftpServerTestSupport {
 
     @Test
@@ -45,7 +42,7 @@ public class SftpSimpleConsumeStreamingTest extends SftpServerTestSupport {
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.expectedBodiesReceived(expected);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
         GenericFile<?> remoteFile = mock.getExchanges().get(0).getIn().getBody(GenericFile.class);

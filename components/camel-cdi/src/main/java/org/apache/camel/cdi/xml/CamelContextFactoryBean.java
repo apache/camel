@@ -53,7 +53,6 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
-import org.apache.camel.model.PropertiesDefinition;
 import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
@@ -131,10 +130,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @XmlAttribute
     private ShutdownRunningTask shutdownRunningTask;
 
-    @Deprecated
-    @XmlAttribute
-    private Boolean lazyLoadTypeConverters;
-
     @XmlAttribute
     private Boolean loadTypeConverters;
 
@@ -146,9 +141,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     @XmlAttribute
     private LoggingLevel typeConverterExistsLoggingLevel;
-
-    @XmlElement(name = "properties")
-    private PropertiesDefinition properties;
 
     @XmlElement(name = "globalOptions")
     private GlobalOptionsDefinition globalOptions;
@@ -455,14 +447,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         this.interceptSendToEndpoints = interceptSendToEndpoints;
     }
 
-    public PropertiesDefinition getProperties() {
-        return properties;
-    }
-
-    public void setProperties(PropertiesDefinition properties) {
-        this.properties = properties;
-    }
-
     public GlobalOptionsDefinition getGlobalOptions() {
         return globalOptions;
     }
@@ -663,16 +647,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setThreadNamePattern(String threadNamePattern) {
         this.threadNamePattern = threadNamePattern;
-    }
-
-    @Deprecated
-    public Boolean getLazyLoadTypeConverters() {
-        return lazyLoadTypeConverters;
-    }
-
-    @Deprecated
-    public void setLazyLoadTypeConverters(Boolean lazyLoadTypeConverters) {
-        this.lazyLoadTypeConverters = lazyLoadTypeConverters;
     }
 
     @Override

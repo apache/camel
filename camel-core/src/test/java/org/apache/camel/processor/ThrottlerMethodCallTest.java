@@ -24,10 +24,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.StopWatch;
+import org.junit.Test;
 
-/**
- * @version
- */
 public class ThrottlerMethodCallTest extends ContextTestSupport {
     private static final int INTERVAL = 100;
     protected int messageCount = 10;
@@ -48,6 +46,7 @@ public class ThrottlerMethodCallTest extends ContextTestSupport {
         return 3;
     }
 
+    @Test
     public void testConfigurationWithMethodCallExpression() throws Exception {
         if (!canTest()) {
             return;

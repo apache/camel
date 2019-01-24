@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
@@ -26,10 +25,9 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class PipelineTest extends ContextTestSupport {
     
     /**
@@ -65,6 +63,7 @@ public class PipelineTest extends ContextTestSupport {
 
     protected MockEndpoint resultEndpoint;
 
+    @Test
     public void testSendMessageThroughAPipeline() throws Exception {
         resultEndpoint.expectedBodiesReceived(4);
 
@@ -83,6 +82,7 @@ public class PipelineTest extends ContextTestSupport {
     }
 
     
+    @Test
     public void testResultsReturned() throws Exception {
         Exchange exchange = template.request("direct:b", new Processor() {
             public void process(Exchange exchange) {
@@ -99,6 +99,7 @@ public class PipelineTest extends ContextTestSupport {
      * 
      * @throws Exception
      */
+    @Test
     public void testFaultStopsPipeline() throws Exception {
         Exchange exchange = template.request("direct:c", new Processor() {
             public void process(Exchange exchange) {
@@ -112,6 +113,7 @@ public class PipelineTest extends ContextTestSupport {
         assertEquals(2, exchange.getOut().getHeader("copy-counter"));        
     }
 
+    @Test
     public void testOnlyProperties() {
         Exchange exchange = template.request("direct:b", new Processor() {
             public void process(Exchange exchange) {
@@ -123,6 +125,7 @@ public class PipelineTest extends ContextTestSupport {
         assertEquals(3, exchange.getOut().getHeader("copy-counter"));  
     }
     
+    @Test
     public void testCopyInOutExchange() {
         Exchange exchange = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) {
@@ -142,7 +145,8 @@ public class PipelineTest extends ContextTestSupport {
     }
     
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         resultEndpoint = getMockEndpoint("mock:result");
     }

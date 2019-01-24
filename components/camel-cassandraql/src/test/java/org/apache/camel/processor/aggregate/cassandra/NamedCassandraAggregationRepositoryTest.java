@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.cassandra.BaseCassandraTest;
 import org.apache.camel.component.cassandra.CassandraUnitUtils;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.cassandraunit.CassandraCQLUnit;
 import org.junit.After;
 import org.junit.Before;

@@ -21,10 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class OnCompletionContainsTest extends ContextTestSupport {
 
     class SimpleSynchronizationAdapter extends SynchronizationAdapter {
@@ -47,6 +45,7 @@ public class OnCompletionContainsTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testOnCompletionContainsTest() throws Exception {
         getMockEndpoint("mock:sync").expectedBodiesReceived("C", "B", "B", "A", "Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");

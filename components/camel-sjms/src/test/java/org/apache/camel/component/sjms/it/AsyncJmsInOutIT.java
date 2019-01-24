@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.util.StopWatch;
-
 import org.junit.Test;
 
 /**
@@ -47,7 +46,7 @@ public class AsyncJmsInOutIT extends JmsTestSupport {
         // just in case we run on slow boxes
         assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
 
-        log.info("Took " + watch.stop() + " ms. to process 100 messages request/reply over JMS");
+        log.info("Took " + watch.taken() + " ms. to process 100 messages request/reply over JMS");
     }
 
     @Override

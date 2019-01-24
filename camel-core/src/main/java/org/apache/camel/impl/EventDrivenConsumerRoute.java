@@ -29,17 +29,15 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 
 /**
  * A {@link DefaultRoute} which starts with an
  * <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>
  * <p/>
  * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route,
- * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
- * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
- *
- * @version 
+ * such as starting and stopping using the {@link org.apache.camel.spi.RouteController#startRoute(String)}
+ * and {@link org.apache.camel.spi.RouteController#stopRoute(String)} methods.
  */
 public class EventDrivenConsumerRoute extends DefaultRoute {
     private final Processor processor;
@@ -113,7 +111,7 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
                 if (proc instanceof IdAware) {
                     id = ((IdAware) proc).getId();
                 }
-                if (EndpointHelper.matchPattern(id, pattern)) {
+                if (PatternHelper.matchPattern(id, pattern)) {
                     match.add(proc);
                 }
                 if (proc instanceof Navigate) {

@@ -18,9 +18,11 @@ package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class SedaSimpleSizeTest extends ContextTestSupport {
 
+    @Test
     public void testSedaSize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("0", "1", "2");
 

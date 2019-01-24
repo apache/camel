@@ -19,7 +19,6 @@ package org.apache.camel.issues;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,23 +26,26 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  *
  */
-public class StopRouteFromRouteTest extends TestCase {
+public class StopRouteFromRouteTest extends Assert {
 
     final CountDownLatch latch = new CountDownLatch(1);
 
     // START SNIPPET: e1
+    @Test
     public void testStopRouteFromRoute() throws Exception {
         // create camel, add routes, and start camel
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(createMyRoutes());
         context.start();
 
-        assertTrue("Route myRoute should be started", context.getRouteStatus("myRoute").isStarted());
-        assertTrue("Route bar should be started", context.getRouteStatus("bar").isStarted());
+        assertTrue("Route myRoute should be started", context.getRouteController().getRouteStatus("myRoute").isStarted());
+        assertTrue("Route bar should be started", context.getRouteController().getRouteStatus("bar").isStarted());
 
         // setup mock expectations for unit test
         MockEndpoint start = context.getEndpoint("mock:start", MockEndpoint.class);
@@ -59,8 +61,8 @@ public class StopRouteFromRouteTest extends TestCase {
         latch.await(5, TimeUnit.SECONDS);
 
         // the route should now be stopped
-        assertTrue("Route myRoute should be stopped", context.getRouteStatus("myRoute").isStopped());
-        assertTrue("Route bar should be started", context.getRouteStatus("bar").isStarted());
+        assertTrue("Route myRoute should be stopped", context.getRouteController().getRouteStatus("myRoute").isStopped());
+        assertTrue("Route bar should be started", context.getRouteController().getRouteStatus("bar").isStarted());
 
         // stop camel
         context.stop();
@@ -90,7 +92,7 @@ public class StopRouteFromRouteTest extends TestCase {
                                     @Override
                                     public void run() {
                                         try {
-                                            exchange.getContext().stopRoute("myRoute");
+                                            exchange.getContext().getRouteController().stopRoute("myRoute");
                                         } catch (Exception e) {
                                             // ignore
                                         } finally {

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.bean;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 
 public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
 
@@ -53,6 +55,11 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         return delegate.process(exchange, callback);
     }
 
+    @Override
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        return delegate.processAsync(exchange);
+    }
+
     public Processor getProcessor() {
         return delegate.getProcessor();
     }
@@ -69,12 +76,12 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         return delegate.getMethod();
     }
 
-    public boolean isMultiParameterArray() {
-        return delegate.isMultiParameterArray();
+    public Boolean getCache() {
+        return delegate.getCache();
     }
 
-    public void setMultiParameterArray(boolean mpArray) {
-        delegate.setMultiParameterArray(mpArray);
+    public void setCache(Boolean cache) {
+        delegate.setCache(cache);
     }
 
     public void setMethod(String method) {

@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.quartz;
-
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy;
+import org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
@@ -31,6 +30,8 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -69,6 +70,7 @@ public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
         };
     }
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("res");
@@ -77,6 +79,7 @@ public class FtpCronScheduledRoutePolicyTest extends CamelTestSupport {
         ftpServer.start();
     }
 
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         ftpServer.stop();

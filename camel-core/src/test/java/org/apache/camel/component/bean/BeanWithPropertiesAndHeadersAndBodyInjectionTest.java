@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.util.Map;
+
 import javax.naming.Context;
 
 import org.apache.camel.Body;
@@ -27,14 +28,13 @@ import org.apache.camel.Headers;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         Exchange out = template.send("direct:in", new Processor() {
             public void process(Exchange exchange) throws Exception {

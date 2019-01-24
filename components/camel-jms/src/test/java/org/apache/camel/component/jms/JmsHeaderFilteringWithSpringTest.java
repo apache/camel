@@ -22,10 +22,6 @@ import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- *
- * @version 
- */
 public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
     
     private ClassPathXmlApplicationContext applicationContext;
@@ -33,7 +29,7 @@ public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {   
         applicationContext = createApplicationContext();
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }    
     
     private ClassPathXmlApplicationContext createApplicationContext() {

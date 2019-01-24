@@ -18,8 +18,8 @@ package org.apache.camel.component.disruptor;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ServiceHelper;
 import org.junit.Test;
 
 /**
@@ -35,8 +35,8 @@ public class DisruptorConsumerSuspendResumeTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
-        assertEquals("Started", context.getRouteStatus("bar").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("bar").name());
 
         // suspend bar consumer (not the route)
         final DisruptorConsumer consumer = (DisruptorConsumer)context.getRoute("bar").getConsumer();

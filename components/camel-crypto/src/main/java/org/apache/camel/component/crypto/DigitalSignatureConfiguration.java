@@ -30,16 +30,16 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 
 @UriParams
 public class DigitalSignatureConfiguration implements Cloneable, CamelContextAware {
 
     private CamelContext context;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private CryptoOperation cryptoOperation;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
     @UriParam(secret = true)
     private PrivateKey privateKey;

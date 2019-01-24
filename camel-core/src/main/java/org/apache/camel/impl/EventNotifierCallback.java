@@ -19,7 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.EventHelper;
+import org.apache.camel.support.EventHelper;
 import org.apache.camel.util.StopWatch;
 
 /**

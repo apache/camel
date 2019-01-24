@@ -21,18 +21,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class RedeliveryErrorHandlerNonBlockedDelayTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryErrorHandlerNonBlockedDelayTest.class);
 
     private static volatile int attempt;
 
+    @Test
     public void testRedelivery() throws Exception {
         MockEndpoint before = getMockEndpoint("mock:result");
         before.expectedBodiesReceived("Hello World", "Hello Camel");

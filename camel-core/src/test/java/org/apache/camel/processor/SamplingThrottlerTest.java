@@ -30,12 +30,11 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class SamplingThrottlerTest extends ContextTestSupport {
 
+    @Test
     public void testSamplingFromExchangeStream() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(15).create();
 
@@ -52,6 +51,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
     }
 
+    @Test
     public void testBurstySampling() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
@@ -74,6 +74,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         validateDroppedExchanges(sentExchanges, mock.getReceivedCounter());
     }
 
+    @Test
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(3);
@@ -97,6 +98,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         executor.shutdownNow();
     }
 
+    @Test
     public void testSamplingUsingMessageFrequency() throws Exception {
         long totalMessages = 100;
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -110,6 +112,7 @@ public class SamplingThrottlerTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
     
+    @Test
     public void testSamplingUsingMessageFrequencyViaDSL() throws Exception {
         long totalMessages = 50;
         MockEndpoint mock = getMockEndpoint("mock:result");

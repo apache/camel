@@ -18,9 +18,6 @@ package org.apache.camel.component.language;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class LanguageResourceLoadScriptFromClasspathTest extends LanguageLoadScriptFromClasspathTest {
 
     @Override

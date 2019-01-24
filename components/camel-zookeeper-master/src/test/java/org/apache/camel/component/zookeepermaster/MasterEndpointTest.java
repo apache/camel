@@ -26,7 +26,7 @@ import org.apache.camel.Route;
 import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -71,7 +71,7 @@ public class MasterEndpointTest extends AbstractJUnit4SpringContextTests {
     public void afterRun() throws Exception {
         lastServerBean = zkServerBean;
         lastClientBean = zkClientBean;
-        ServiceHelper.stopServices(camelContext);
+        ServiceHelper.stopService(camelContext);
     }
 
     @AfterClass

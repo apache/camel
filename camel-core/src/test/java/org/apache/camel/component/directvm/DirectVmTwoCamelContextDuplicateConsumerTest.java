@@ -20,12 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Test;
 
 /**
  *
  */
 public class DirectVmTwoCamelContextDuplicateConsumerTest extends AbstractDirectVmTestSupport {
 
+    @Test
     public void testThirdClash() throws Exception {
         CamelContext third = new DefaultCamelContext();
         third.addRoutes(createRouteBuilderForThirdContext());

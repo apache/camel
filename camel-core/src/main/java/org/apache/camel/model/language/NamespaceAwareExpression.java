@@ -17,6 +17,7 @@
 package org.apache.camel.model.language;
 
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -29,8 +30,6 @@ import org.apache.camel.spi.NamespaceAware;
 /**
  * A useful base class for any expression which may be namespace or XML content aware
  * such as {@link XPathExpression} or {@link XQueryExpression}
- *
- * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class NamespaceAwareExpression extends ExpressionDefinition implements NamespaceAware {

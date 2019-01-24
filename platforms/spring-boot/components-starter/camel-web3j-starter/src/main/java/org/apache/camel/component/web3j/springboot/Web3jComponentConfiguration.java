@@ -36,6 +36,11 @@ public class Web3jComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the web3j component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Default configuration
      */
     private Web3jConfigurationNestedConfiguration configuration;
@@ -66,6 +71,14 @@ public class Web3jComponentConfiguration
 
     public static class Web3jConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.web3j.Web3jConfiguration.class;
+        /**
+         * A transaction privateFor nodes with public keys in a Quorum network
+         */
+        private List privateFor;
+        /**
+         * If true, this will support Quorum API.
+         */
+        private Boolean quorumAPI = false;
         /**
          * The preconfigured Web3j object.
          */
@@ -189,6 +202,22 @@ public class Web3jComponentConfiguration
          * Operation to use.
          */
         private String operation = "transaction";
+
+        public List getPrivateFor() {
+            return privateFor;
+        }
+
+        public void setPrivateFor(List privateFor) {
+            this.privateFor = privateFor;
+        }
+
+        public Boolean getQuorumAPI() {
+            return quorumAPI;
+        }
+
+        public void setQuorumAPI(Boolean quorumAPI) {
+            this.quorumAPI = quorumAPI;
+        }
 
         public Web3j getWeb3j() {
             return web3j;

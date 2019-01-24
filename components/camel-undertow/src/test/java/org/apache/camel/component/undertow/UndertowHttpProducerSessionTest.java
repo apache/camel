@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;

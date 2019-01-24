@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-/**
- * @version 
- */
 public class MyFooBean {
 
     public String hello(String s) {

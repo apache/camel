@@ -20,6 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test for consuming from an absolute path at root
@@ -30,6 +31,7 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
 
     private String base = "/tmp/mytemp";
 
+    @Test
     public void testDummy() {
         // noop
     }
@@ -37,7 +39,7 @@ public class FileConsumerAbsoluteRootPathDefaultMoveTest extends ContextTestSupp
     public void xxxTestConsumeFromAbsolutePath() throws Exception {
         deleteDirectory(base);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");

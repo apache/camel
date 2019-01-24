@@ -33,8 +33,6 @@ import org.junit.Test;
 
 /**
  * Tests duplicate delivery via mqtt consumer.
- * 
- * @version
  */
 public class MQTTDuplicatesTest extends MQTTBaseTest {
 

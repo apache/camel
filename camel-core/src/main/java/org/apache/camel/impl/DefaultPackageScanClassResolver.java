@@ -45,9 +45,9 @@ import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
 import org.apache.camel.impl.scan.CompositePackageScanFilter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,11 +115,6 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
     public Set<ClassLoader> getClassLoaders() {
         // return a new set to avoid any concurrency issues in other runtimes such as OSGi
         return Collections.unmodifiableSet(new LinkedHashSet<>(classLoaders));
-    }
-
-    public void setClassLoaders(Set<ClassLoader> classLoaders) {
-        // add all the class loaders
-        this.classLoaders.addAll(classLoaders);
     }
 
     public Set<Class<?>> findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
@@ -220,7 +215,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
                 log.trace("No URLs returned by classloader");
             }
         } catch (IOException ioe) {
-            log.warn("Cannot read package: " + packageName, ioe);
+            log.warn("Cannot read package: {}", packageName, ioe);
             return;
         }
 
@@ -300,7 +295,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
                 }
             } catch (IOException e) {
                 // use debug logging to avoid being to noisy in logs
-                log.debug("Cannot read entries in url: " + url, e);
+                log.debug("Cannot read entries in url: {}", url, e);
             }
         }
     }
@@ -472,7 +467,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
             boolean found = false;
             for (ClassLoader classLoader : set) {
                 if (log.isTraceEnabled()) {
-                    log.trace("Testing for class {} matches criteria [{}] using classloader: {}", new Object[]{externalName, test, classLoader});
+                    log.trace("Testing for class {} matches criteria [{}] using classloader: {}", externalName, test, classLoader);
                 }
                 try {
                     Class<?> type = classLoader.loadClass(externalName);

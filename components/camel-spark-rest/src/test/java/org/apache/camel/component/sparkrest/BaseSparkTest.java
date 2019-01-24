@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.sparkrest;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 
 public abstract class BaseSparkTest extends CamelTestSupport {
 
@@ -29,6 +29,7 @@ public abstract class BaseSparkTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         port = AvailablePortFinder.getNextAvailable(25500);
         super.setUp();

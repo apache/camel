@@ -18,23 +18,27 @@ package org.apache.camel.component.jbpm;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.kie.api.runtime.manager.RuntimeEngine;
-import org.kie.remote.client.api.RemoteRestRuntimeEngineBuilder;
-import org.kie.services.client.api.RemoteRuntimeEngineFactory;
+import org.apache.camel.support.DefaultEndpoint;
+import org.kie.server.client.KieServicesClient;
+import org.kie.server.client.KieServicesConfiguration;
+import org.kie.server.client.KieServicesFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The jbpm component provides integration with jBPM (Business Process Management).
+ * The jbpm component provides integration with jBPM (Business Process
+ * Management).
  */
-@UriEndpoint(firstVersion = "2.6.0", scheme = "jbpm", title = "JBPM", syntax = "jbpm:connectionURL", producerOnly = true, label = "process")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "jbpm", title = "JBPM", syntax = "jbpm:connectionURL", label = "process")
 public class JBPMEndpoint extends DefaultEndpoint {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(JBPMEndpoint.class);
 
@@ -47,35 +51,25 @@ public class JBPMEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        RemoteRestRuntimeEngineBuilder engineBuilder = RemoteRuntimeEngineFactory.newRestBuilder();
-        if (configuration.getUserName() != null) {
-            engineBuilder.addUserName(configuration.getUserName());
-        }
-        if (configuration.getPassword() != null) {
-            engineBuilder.addPassword(configuration.getPassword());
-        }
-        if (configuration.getDeploymentId() != null) {
-            engineBuilder.addDeploymentId(configuration.getDeploymentId());
-        }
-        if (configuration.getConnectionURL() != null) {
-            engineBuilder.addUrl(configuration.getConnectionURL());
-        }
-        if (configuration.getProcessInstanceId() != null) {
-            engineBuilder.addProcessInstanceId(configuration.getProcessInstanceId());
-        }
+        KieServicesConfiguration kieConfiguration = KieServicesFactory.newRestConfiguration(configuration.getConnectionURL().toExternalForm(), configuration.getUserName(),
+                                                                                            configuration.getPassword());
+
         if (configuration.getTimeout() != null) {
-            engineBuilder.addTimeout(configuration.getTimeout());
+            kieConfiguration.setTimeout(configuration.getTimeout());
         }
         if (configuration.getExtraJaxbClasses() != null) {
-            engineBuilder.addExtraJaxbClasses(configuration.getExtraJaxbClasses());
+            List<Class<?>> classes = Arrays.asList(configuration.getExtraJaxbClasses());
+            kieConfiguration.addExtraClasses(new LinkedHashSet<>(classes));
         }
-        RuntimeEngine runtimeEngine = engineBuilder.build();
 
-        return new JBPMProducer(this, runtimeEngine);
+        KieServicesClient kieServerClient = KieServicesFactory.newKieServicesClient(kieConfiguration);
+        LOGGER.debug("JBPM Producer created with KieServerClient configured for {}", configuration.getConnectionURL());
+        return new JBPMProducer(this, kieServerClient);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Consumer not supported for " + getClass().getSimpleName() + " endpoint");
+        LOGGER.debug("JBPM Consumer created and configured for deployment {}", configuration.getDeploymentId());
+        return new JBPMConsumer(this, processor);
     }
 
     public boolean isSingleton() {

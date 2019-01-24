@@ -22,12 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class SplitterNoStopOnExceptionTest extends ContextTestSupport {
 
+    @Test
     public void testSplitNoStopOnExceptionOk() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("Hello World", "Bye World", "Hi World");
@@ -37,6 +36,7 @@ public class SplitterNoStopOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitNoStopOnExceptionStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         // we do not stop so we split to completion and thus we receive 3 messages

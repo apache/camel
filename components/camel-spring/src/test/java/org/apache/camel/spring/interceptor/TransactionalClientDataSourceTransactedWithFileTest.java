@@ -15,26 +15,26 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version 
- */
 public class TransactionalClientDataSourceTransactedWithFileTest extends TransactionClientDataSourceSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/transacted");
         super.setUp();
     }
 
+    @Test
     public void testTransactionSuccess() throws Exception {
         template.sendBodyAndHeader("file://target/transacted/okay", "Hello World", Exchange.FILE_NAME, "okay.txt");
 
@@ -45,6 +45,7 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
         });
     }
 
+    @Test
     public void testTransactionRollback() throws Exception {
         template.sendBodyAndHeader("file://target/transacted/fail", "Hello World", Exchange.FILE_NAME, "fail.txt");
 

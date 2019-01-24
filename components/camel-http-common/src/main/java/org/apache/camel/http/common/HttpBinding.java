@@ -217,4 +217,18 @@ public interface HttpBinding {
      */
     void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody);
 
+    /**
+     * Whitelist of accepted filename extensions for accepting uploaded files.
+     * <p/>
+     * Multiple extensions can be separated by comma, such as txt,xml.
+     */
+    String getFileNameExtWhitelist();
+
+    /**
+     * Whitelist of accepted filename extensions for accepting uploaded files.
+     * <p/>
+     * Multiple extensions can be separated by comma, such as txt,xml.
+     */
+    void setFileNameExtWhitelist(String fileNameExtWhitelist);
+
 }

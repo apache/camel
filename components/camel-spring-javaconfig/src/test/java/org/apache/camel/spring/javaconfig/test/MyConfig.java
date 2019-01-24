@@ -19,9 +19,6 @@ package org.apache.camel.spring.javaconfig.test;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @version 
- */
 @Configuration
 public class MyConfig {
 

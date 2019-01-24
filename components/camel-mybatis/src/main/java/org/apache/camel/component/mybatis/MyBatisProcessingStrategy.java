@@ -22,8 +22,6 @@ import org.apache.camel.Exchange;
 
 /**
  * Processing strategy for dealing with MyBatis when consuming.
- *
- * @version 
  */
 public interface MyBatisProcessingStrategy {
 

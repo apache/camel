@@ -19,12 +19,14 @@ package org.apache.camel.model;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class ProcessDefinitionSetBodyTest extends ContextTestSupport {
 
     private static final String SUPPLIER_MESSAGE = "Hello from a Supplier!";
     private static final String FUNCTION_MESSAGE = "Hello from a Function!";
 
+    @Test
     public void testProcessDefinitionSetBody() throws InterruptedException {
 
         MockEndpoint functionMock1 = getMockEndpoint("mock:supplierOutput");

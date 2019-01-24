@@ -16,18 +16,17 @@
  */
 package org.apache.camel.itest.standalone;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * @version 
- */
-public class CamelContextStandaloneTest extends TestCase {
+public class CamelContextStandaloneTest extends Assert {
 
+    @Test
     public void testStandalone() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {

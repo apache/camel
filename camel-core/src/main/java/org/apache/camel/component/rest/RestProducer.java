@@ -33,17 +33,17 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CollectionStringBuffer;
-import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -231,13 +231,13 @@ public class RestProducer extends DefaultAsyncProducer {
         // create binding processor (returns null if binding is not in use)
         binding = createBindingProcessor();
 
-        ServiceHelper.startServices(binding, producer);
+        ServiceHelper.startService(binding, producer);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopServices(producer, binding);
+        ServiceHelper.stopService(producer, binding);
     }
 
     protected AsyncProcessor createBindingProcessor() throws Exception {
@@ -406,7 +406,7 @@ public class RestProducer extends DefaultAsyncProducer {
                         }
                         String value = inMessage.getHeader(key, String.class);
                         if (value != null) {
-                            params.put(key, value);
+                            params.put(entry.getKey(), value);
                         } else if (!optional) {
                             // value is null and parameter is not optional
                             params.put(entry.getKey(), entry.getValue());

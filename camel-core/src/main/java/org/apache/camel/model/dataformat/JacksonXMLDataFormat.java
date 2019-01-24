@@ -23,16 +23,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
- *
- * @version
  */
 @Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,xml", title = "JacksonXML")
 @XmlRootElement(name = "jacksonxml")
@@ -142,7 +140,7 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     /**
      * If you want to marshal a pojo to JSON, and the pojo has some fields with
      * null values. And you want to skip these null values, you can set this
-     * option to <tt>NOT_NULL</tt>
+     * option to <tt>NON_NULL</tt>
      */
     public void setInclude(String include) {
         this.include = include;
@@ -284,14 +282,14 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
             try {
                 unmarshalType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(unmarshalTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         if (collectionType == null && collectionTypeName != null) {
             try {
                 collectionType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(collectionTypeName);
             } catch (ClassNotFoundException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

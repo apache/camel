@@ -19,6 +19,8 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
 /**
  *
@@ -37,8 +39,9 @@ public class AdviceWithUrlIssueTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testProducerWithDifferentUri() throws Exception {
-        context.getRouteDefinition("sedaroute").adviceWith(context, new Advice());
+        RouteReifier.adviceWith(context.getRouteDefinition("sedaroute"), context, new Advice());
 
         getMockEndpoint("mock:target").expectedMessageCount(0);
         getMockEndpoint("mock:target2").expectedMessageCount(1);
@@ -48,8 +51,9 @@ public class AdviceWithUrlIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testProducerWithSameUri() throws Exception {
-        context.getRouteDefinition("sedaroute").adviceWith(context, new Advice());
+        RouteReifier.adviceWith(context.getRouteDefinition("sedaroute"), context, new Advice());
 
         getMockEndpoint("mock:target").expectedMessageCount(0);
         getMockEndpoint("mock:target2").expectedMessageCount(1);

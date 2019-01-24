@@ -30,7 +30,6 @@ import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.util.URISupport;
 import org.apache.cxf.transport.http.HTTPException;
-
 import org.junit.Test;
 
 public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {

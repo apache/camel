@@ -19,9 +19,11 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ClaimCheckOperation;
+import org.junit.Test;
 
 public class ClaimCheckEipGetAndRemoveSetTest extends ContextTestSupport {
 
+    @Test
     public void testGetAndRemoveSet() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");

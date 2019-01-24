@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  *
@@ -37,6 +38,7 @@ public class SplitRefCustomExpressionTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testSplitCustomExpression() throws Exception {
         getMockEndpoint("mock:split").expectedBodiesReceived("A", "B", "C");
 

@@ -22,7 +22,7 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-solr</artifactId>
@@ -31,18 +31,14 @@
   <description>Camel Solr Support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.solr.*;${camel.osgi.version}
-    </camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=solr</camel.osgi.export.service>
     <java.awt.headless>true</java.awt.headless>
-    <solr-test-framework-jetty-version>9.3.20.v20170531</solr-test-framework-jetty-version>
+    <solr-test-framework-jetty-version>9.4.11.v20180605</solr-test-framework-jetty-version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.solr</groupId>

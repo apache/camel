@@ -19,16 +19,16 @@ package org.apache.camel.impl;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
     // TODO: We should have a JMX test of this as well
 
+    @Test
     public void testAutoStartupFalseContextStart() throws Exception {
-        DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
+        DefaultCamelContext camel = new DefaultCamelContext(false);
+        camel.setRegistry(new SimpleRegistry());
         camel.disableJMX();
         camel.setAutoStartup(false);
 
@@ -42,12 +42,12 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
         assertEquals(true, camel.isStarted());
         assertEquals(1, camel.getRoutes().size());
-        assertEquals(true, camel.getRouteStatus("foo").isStopped());
+        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStopped());
 
         // now start all routes
-        camel.startAllRoutes();
+        camel.getRouteController().startAllRoutes();
 
-        assertEquals(true, camel.getRouteStatus("foo").isStarted());
+        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // and now its started we can test that it works by sending in a message to the route
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
@@ -60,8 +60,10 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         camel.stop();
     }
 
+    @Test
     public void testAutoStartupFalseRouteStart() throws Exception {
-        DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
+        DefaultCamelContext camel = new DefaultCamelContext(false);
+        camel.setRegistry(new SimpleRegistry());
         camel.disableJMX();
         camel.setAutoStartup(false);
 
@@ -75,12 +77,12 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
         assertEquals(true, camel.isStarted());
         assertEquals(1, camel.getRoutes().size());
-        assertEquals(true, camel.getRouteStatus("foo").isStopped());
+        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStopped());
 
         // now start the routes
         camel.startRoute("foo");
 
-        assertEquals(true, camel.getRouteStatus("foo").isStarted());
+        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // and now its started we can test that it works by sending in a message to the route
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
@@ -93,8 +95,10 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         camel.stop();
     }
 
+    @Test
     public void testAutoStartupTrue() throws Exception {
-        DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
+        DefaultCamelContext camel = new DefaultCamelContext(false);
+        camel.setRegistry(new SimpleRegistry());
         camel.disableJMX();
         camel.setAutoStartup(true);
 
@@ -108,7 +112,7 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
         assertEquals(true, camel.isStarted());
         assertEquals(1, camel.getRoutes().size());
-        assertEquals(true, camel.getRouteStatus("foo").isStarted());
+        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
@@ -120,8 +124,10 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         camel.stop();
     }
 
+    @Test
     public void testAutoStartupFalseRouteOverride() throws Exception {
-        DefaultCamelContext camel = new DefaultCamelContext(new SimpleRegistry());
+        DefaultCamelContext camel = new DefaultCamelContext(false);
+        camel.setRegistry(new SimpleRegistry());
         camel.disableJMX();
         camel.setAutoStartup(false);
 
@@ -137,13 +143,13 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
         assertEquals(true, camel.isStarted());
         assertEquals(1, camel.getRoutes().size());
-        assertEquals(true, camel.getRouteStatus("foo").isStopped());
-        assertEquals(false, camel.getRouteStatus("foo").isStarted());
+        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStopped());
+        assertEquals(false, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // now start all the routes
-        camel.startAllRoutes();
+        camel.getRouteController().startAllRoutes();
 
-        assertEquals(true, camel.getRouteStatus("foo").isStarted());
+        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);

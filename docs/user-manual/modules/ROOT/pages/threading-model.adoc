@@ -1,0 +1,244 @@
+[[ThreadingModel-ThreadingModel]]
+=== Threading Model
+
+*Available as of Camel 2.3*
+
+The threading model in Camel is based on leveraging the JDK concurrency
+API which provides thread pools, named `ExecutorService`.
+
+Camel leverages thread pools in the following places:
+
+* several link:eip.html[EIP] patterns supports using thread pools for
+concurrency
+* link:seda.html[SEDA] component for asynchronous connectivity
+* link:async.html[Threads DSL] in the Camel route
+* link:servicepool.html[ServicePool] for pooling services
+* And some component provide thread pools by nature such as
+link:jms.html[JMS], link:jetty.html[Jetty]
+
+[[ThreadingModel-Threadpoolprofiles]]
+==== Thread pool profiles
+
+By default when a thread pool is to be created then its based on the
+default thread pool profile which is:
+
+[source,java]
+--------------------------------------------------------------------------------------------------------
+    <threadPoolProfile id="defaultThreadPoolProfile" defaultProfile="true"
+                       poolSize="10" maxPoolSize="20" maxQueueSize="1000" allowCoreThreadTimeOut="false"
+                       rejectedPolicy="CallerRuns"/>
+--------------------------------------------------------------------------------------------------------
+
+What that means is that for example when you use
+link:multicast.html[Multicast] with `parallelProcessing=true` enabled,
+then it would create a thread pool based on the profile above. The
+`rejectedPolicy` has four options:
+`Abort, CallerRuns, Discard, DiscardOldest` which corresponds to the
+same four options provided out of the box in the JDK.
+*Notice:* option allowCoreThreadTimeOut is a new option from *Camel
+2.15* onwards.
+
+You can define as many thread pool profiles as you like. But there must
+only *one* default profile. A custom thread pool profile will inherit
+from the default profile. Which means that any option you do not
+explicit define will fallback and use the option from the default
+profile.
+
+You can use `-1` in maxQueueSize to indicate a unbounded queue.
+
+In Java DSL you can configure the default thread pool profile from the
+`ExecutorServiceStrategy`/`ExecutorServiceManager` which you access from
+`CamelContext`.
+
+[[ThreadingModel-Usingthreadpoolprofiles]]
+==== Using thread pool profiles
+
+Suppose you want to use a custom thread pool profile for a Multicast EIP
+pattern in a Camel route you can do it using the `executorServiceRef`
+attribute as shown:
+
+[source,java]
+---------------------------------------------------------------------------
+<camelContext ...>
+    ...
+    <threadPoolProfile id="fooProfile" 
+                       poolSize="20" maxPoolSize="50" maxQueueSize="-1"/>
+    ...
+
+    <route>
+       ...
+       <multicast strategyRef="myStrategy" executorServiceRef="fooProfile">
+          ...
+       </multicast>
+      ...
+    <route>
+</camelContext>
+---------------------------------------------------------------------------
+
+What Camel will do at runtime is to lookup in the
+link:registry.html[Registry] for a `ExecutorService` with the id =
+fooProfile. If none found it will fallback and see if there is a
+`ThreadPoolProfile` defined with that id. And in this example there is
+and so the profile is used for creating a new `ExecutorService` which is
+handed back to the link:multicast.html[Multicast] EIP to use in the
+route.
+
+[[ThreadingModel-Createcustomthreadpool]]
+==== Create custom thread pool
+
+You can also use the <threadPool/> tag in Spring XML to create a
+specific thread pool (eg `ExecutorService`). Notice that any options you
+do not explicit define, will have Camel to use the default thread pool
+profile as fallback. For example if you omit setting the `maxQueueSize`
+then Camel will fallback and use the value from the default thread pool
+profiles, which by default is 1000.
+
+[[ThreadingModel-Management]]
+==== Management
+
+All the thread pools that Camel creates are managed and thus you can see
+them in JConsole under the `threadpools` category.
+
+[[ThreadingModel-ExecutorServiceStrategy]]
+==== ExecutorServiceStrategy
+
+*Available as of Camel 2.3 to 2.8.x* +
+ Camel provides a pluggable strategy to hook in your own thread pool
+provider, for example from a WorkManager in a J2EE server etc. +
+ See the `org.apache.camel.spi.ExecutorServiceStrategy` interface which
+you should implement and hook into the WorkManager.
+
+See
+link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
+configuration of CamelContext using Spring] for how to configure it.
+
+You can configure it on the `CamelContext` from Java DSL using the
+getter/setter.
+
+[[ThreadingModel-ExecutorServiceManager]]
+==== ExecutorServiceManager
+
+*Available as of Camel 2.9*
+
+In camel 2.9.0 the `ExecutorServiceManager` replaces the
+`ExecutorServiceStrategy`. It is renamed to manager as is not only
+provides a strategy for thread pool creation but also keeps track of
+thread pools and thread pool profiles.
+
+To hook in custom thread pool providers (e.g. for J2EE servers) a
+`ThreadPoolFactory` interface can be implemented. The implementation can
+be set in the `ExecutorServiceManager`. The Factory interface is much
+simpler then the former `ExecutorServiceStrategy` and makes the job of
+integrators much easier.
+
+See
+link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
+configuration of CamelContext using Spring] for how to configure it.
+
+[[ThreadingModel-Customizingthreadnames]]
+==== Customizing thread names
+
+On the `ExecutorServiceStrategy`/`ExecutorServiceManager` you can
+configure the thread name pattern using the `setThreadNamePattern`
+method, which defines the thread names used when a thread pool creates a
+thread.
+
+The default pattern is for:
+
+* *Camel 2.9.x or older:*
+`Camel (${camelId}) thread #${counter} - ${name`}
+* *Camel 2.10 onwards:* `Camel (#camelId#) thread ##counter# - #name#`
+
+Notice we renamed the tokens from Camel 2.10 onwards to not clash with
+tokens by the link:using-propertyplaceholder.html[Property Placeholder].
+
+In the pattern you can use the following placeholders
+
+* $\{camelId} *Camel 2.6:* is the link:camelcontext.html[CamelContext]
+name
+* $\{counter} is a unique incrementing counter.
+* $\{name} is the regular thread name.
+* $\{longName} is the long thread name which can includes endpoint
+parameters etc.
+
+Notice the pattern name has changed from Camel 2.10 onwards, use #name#
+instead.
+
+In Camel 2.11 onwards its easier to set the thread name pattern on the
+CamelContext using the threadNamePattern attribute in the XML files as
+shown below:
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------
+  <camelContext xmlns="http://camel.apache.org/schema/spring" threadNamePattern="Riding the thread #counter#">
+    <route>
+      <from uri="seda:start"/>
+      <to uri="log:result"/>
+      <to uri="mock:result"/>
+    </route>
+  </camelContext>
+--------------------------------------------------------------------------------------------------------------
+
+[[ThreadingModel-Componentdevelopers]]
+==== Component developers
+
+If you develop your own Camel component and are in need of a thread
+pool, then its advised to use the
+`ExecutorServiceStrategy`/`ExecutorServiceManager` to create the thread
+pool you need.
+
+[[ThreadingModel-Shutdown]]
+==== Shutdown
+
+All thread pools created by Camel will be properly shutdown when
+`CamelContext` shutdowns which ensures no leaks in the pools in case you
+run in a server environment with hot deployments and the likes.
+
+The `ExecutorServiceManager` has APIs for shutting down thread pools
+graceful and aggressively. Its encourage to use this API for creating
+and shutting down thread pools.
+
+From *Camel 2.11* onwards Camel the graceful
+`shutdownGraceful(executorService)` method from `ExecutorServiceManager`
+will shutdown graceful at first, until a timeout value is hit. After
+that it shutdown aggressively, again using the timeout value to wait for
+the operation to complete. This means you can wait at most 2 x timeout
+for shutting down the thread pool. +
+ The timeout value is by default `10000` millis. You can configure a
+custom value on the `ExecutorServiceManager` if needed. During shutdown
+Camel will log every 2nd second at INFO level progress of shutting down
+the thread pool. For example in case a shutdown takes a while, then
+there is activity in the logs.
+
+The APIs on `ExecutorServiceManager` that is related to shutting down a
+thread pool is as follows:
+
+[width="100%",cols="25%,75%",options="header"]
+|===
+|Method |Description
+
+|shutdown |Marks the thread pool as shutdown, eg just as calling
+`ExecutorService.shutdown()` method
+
+|shutdownNow |Forces the thread pool to shutdown now, eg just as calling
+`ExecutorService.shutdownNow()` method
+
+|shutdownGraceful |*Camel 2.11:* Marks the thread pool as shutdown, and graceful shutdown
+the pool, by waiting for tasks to complete. A default timeout value of
+10 sec is used, before 
+ shutdown becomes aggressive using `shutdownNow`, to force threads to
+shutdown.
+
+|shutdownGraceful(timeout) |*Camel 2.11:* As above but with custom timeout value
+
+|awaitTermination |*Camel 2.11:* To wait graceful for the termination of a thread pool (eg
+to wait for its tasks to complete). Will wait until all tasks is
+completed or a timeout value is hit.
+|===
+
+[[ThreadingModel-SeeAlso]]
+==== See Also
+
+* link:architecture.html[Architecture]
+* link:async.html[Async]
+

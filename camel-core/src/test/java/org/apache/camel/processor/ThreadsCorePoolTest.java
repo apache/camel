@@ -20,15 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ThreadsCorePoolTest extends ContextTestSupport {
 
     private String beforeThreadName;
     private volatile String afterThreadName;
 
+    @Test
     public void testThreadsCorePool() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
@@ -41,6 +40,7 @@ public class ThreadsCorePoolTest extends ContextTestSupport {
         assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
+    @Test
     public void testThreadsCorePoolBuilder() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

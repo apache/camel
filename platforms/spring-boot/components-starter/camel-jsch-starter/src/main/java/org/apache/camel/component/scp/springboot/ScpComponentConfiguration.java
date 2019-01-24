@@ -32,6 +32,11 @@ public class ScpComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the scp component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * JSCH is verbose logging out of the box. Therefore we turn the logging
      * down to DEBUG logging by default. But setting this option to true turns
      * on the verbose logging again.

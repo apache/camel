@@ -22,7 +22,6 @@ import com.amazonaws.services.s3.model.CreateBucketRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -31,11 +30,11 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.s3.client.S3ClientFactory;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * The aws-s3 component is used for storing and retrieving objecct from Amazon
  * S3 Storage Service.
  */
-@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketNameOrArn", consumerClass = S3Consumer.class, label = "cloud,file")
+@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketNameOrArn", label = "cloud,file")
 public class S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
@@ -54,7 +53,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     private AmazonS3 s3Client;
 
     @UriPath(description = "Bucket name or ARN")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String bucketNameOrArn; // to support component docs
     @UriParam
     private S3Configuration configuration;
@@ -62,12 +61,6 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     private int maxMessagesPerPoll = 10;
     @UriParam(label = "consumer", defaultValue = "60")
     private int maxConnections = 50 + maxMessagesPerPoll;
-
-    @Deprecated
-    public S3Endpoint(String uri, CamelContext context, S3Configuration configuration) {
-        super(uri, context);
-        this.configuration = configuration;
-    }
 
     public S3Endpoint(String uri, Component comp, S3Configuration configuration) {
         super(uri, comp);

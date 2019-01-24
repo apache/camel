@@ -17,10 +17,10 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.util.jsse.KeyManagersParameters;
-import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.TrustManagersParameters;
+import org.apache.camel.support.jsse.KeyManagersParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 
 public class FileToFtpsExplicitSSLWithClientAuthAndSSLContextParametersTest extends FileToFtpsExplicitSSLWithClientAuthTest {
 

@@ -20,15 +20,16 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
+@Component("google-bigquery")
 public class GoogleBigQueryComponent extends DefaultComponent {
     private String projectId;
     private String datasetId;
     private GoogleBigQueryConnectionFactory connectionFactory;
 
     public GoogleBigQueryComponent() {
-        super();
     }
 
     public GoogleBigQueryComponent(CamelContext camelContext) {

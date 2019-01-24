@@ -20,9 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 
-/**
- * @version 
- */
 public class ScriptLanguageResolver implements LanguageResolver {
 
     public Language resolveLanguage(String name, CamelContext context) {

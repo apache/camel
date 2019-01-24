@@ -30,7 +30,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.cloud.DiscoverableService;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceRegistry;
-import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -44,7 +44,6 @@ import org.apache.camel.spi.UriPath;
     firstVersion = "2.22.0",
     scheme = "service",
     syntax = "service:serviceName:delegateUri",
-    consumerClass = ServiceConsumer.class,
     consumerOnly = true,
     title = "Service",
     lenientProperties = true,
@@ -56,7 +55,7 @@ public class ServiceEndpoint extends DefaultEndpoint implements DelegateEndpoint
     private final ServiceDefinition serviceDefinition;
 
     @UriPath(description = "The endpoint uri to expose as service")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final String delegateUri;
 
     public ServiceEndpoint(String uri, ServiceComponent component, ServiceRegistry serviceRegistry, Map<String, String> serviceParameters, String delegateUri) {

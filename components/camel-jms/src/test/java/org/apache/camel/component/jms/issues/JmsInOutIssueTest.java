@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.issues;
 
 import java.util.concurrent.Future;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -30,9 +31,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsInOutIssueTest extends CamelTestSupport {
 
     @Test

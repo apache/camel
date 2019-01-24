@@ -25,8 +25,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To use the specified language in Camel expressions or predicates.
- *
- * @version 
  */
 @Metadata(label = "language,core", title = "Language")
 @XmlRootElement(name = "language")

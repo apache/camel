@@ -19,17 +19,15 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.util.StopWatch;
 
 /**
  * A debug interceptor to notify {@link Debugger} with {@link Exchange}s being processed.
- *
- * @version 
  */
 public class Debug implements InterceptStrategy {
 
@@ -39,7 +37,7 @@ public class Debug implements InterceptStrategy {
         this.debugger = debugger;
     }
 
-    public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,
+    public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
                                                  final Processor target, final Processor nextTarget) throws Exception {
         return new DelegateAsyncProcessor(target) {
             @Override

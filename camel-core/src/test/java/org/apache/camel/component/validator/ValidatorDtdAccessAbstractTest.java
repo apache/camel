@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
-
 import java.net.UnknownHostException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.validation.SchemaReader;
+import org.apache.camel.support.processor.validation.SchemaReader;
+import org.junit.Before;
 
 public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport {
     
@@ -50,7 +50,8 @@ public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport 
     
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);

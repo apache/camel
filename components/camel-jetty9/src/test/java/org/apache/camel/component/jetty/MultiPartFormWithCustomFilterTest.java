@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.File;
 import java.io.IOException;
+
 import javax.activation.DataHandler;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -54,7 +55,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
     @Test
     public void testSendMultiPartForm() throws Exception {
         HttpClient httpclient = new HttpClient();
-        File file = new File("src/main/resources/META-INF/NOTICE.txt");
+        File file = new File("src/test/resources/log4j2.properties");
         PostMethod httppost = new PostMethod("http://localhost:" + getPort() + "/test");
         Part[] parts = {
             new StringPart("comment", "A binary file of some kind"),
@@ -77,7 +78,7 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
     public void testSendMultiPartFormOverrideEnableMultpartFilterFalse() throws Exception {
         HttpClient httpclient = new HttpClient();
 
-        File file = new File("src/main/resources/META-INF/NOTICE.txt");
+        File file = new File("src/test/resources/log4j2.properties");
 
         PostMethod httppost = new PostMethod("http://localhost:" + getPort() + "/test2");
         Part[] parts = {
@@ -108,21 +109,21 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 // Set the jetty temp directory which store the file for multi part form
                 // camel-jetty will clean up the file after it handled the request.
                 // The option works rightly from Camel 2.4.0
-                getContext().getProperties().put("CamelJettyTempDir", "target");
+                getContext().getGlobalOptions().put("CamelJettyTempDir", "target");
                 
                 from("jetty://http://localhost:{{port}}/test?multipartFilterRef=myMultipartFilter").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         assertEquals("Get a wrong attachement size", 2, in.getAttachments().size());
                         // The file name is attachment id
-                        DataHandler data = in.getAttachment("NOTICE.txt");
+                        DataHandler data = in.getAttachment("log4j2.properties");
 
-                        assertNotNull("Should get the DataHandle NOTICE.txt", data);
+                        assertNotNull("Should get the DataHandle log4j2.properties", data);
                         // This assert is wrong, but the correct content-type (application/octet-stream)
                         // will not be returned until Jetty makes it available - currently the content-type
                         // returned is just the default for FileDataHandler (for the implentation being used)
                         //assertEquals("Get a wrong content type", "text/plain", data.getContentType());
-                        assertEquals("Got the wrong name", "NOTICE.txt", data.getName());
+                        assertEquals("Got the wrong name", "log4j2.properties", data.getName());
 
                         assertTrue("We should get the data from the DataHandle", data.getDataSource()
                             .getInputStream().available() > 0);
@@ -138,9 +139,9 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                     public void process(Exchange exchange) throws Exception {
                         Message in = exchange.getIn();
                         assertEquals("Get a wrong attachement size", 2, in.getAttachments().size());
-                        DataHandler data = in.getAttachment("NOTICE.txt");
+                        DataHandler data = in.getAttachment("log4j2.properties");
 
-                        assertNotNull("Should get the DataHandle NOTICE.txt", data);
+                        assertNotNull("Should get the DataHandle log4j2.properties", data);
                         // The other form date can be get from the message header
                         exchange.getOut().setBody(in.getHeader("comment"));
                     }

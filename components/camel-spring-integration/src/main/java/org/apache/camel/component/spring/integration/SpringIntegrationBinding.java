@@ -23,8 +23,6 @@ import org.springframework.messaging.support.GenericMessage;
 
 /**
  * The helper class for Mapping between the Spring Integration message and the Camel Message.
- *
- * @version 
  */
 public final class SpringIntegrationBinding {
 

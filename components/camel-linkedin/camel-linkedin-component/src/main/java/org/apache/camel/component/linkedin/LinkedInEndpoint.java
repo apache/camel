@@ -37,9 +37,9 @@ import org.apache.camel.component.linkedin.internal.LinkedInConstants;
 import org.apache.camel.component.linkedin.internal.LinkedInPropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.component.AbstractApiEndpoint;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.AbstractApiEndpoint;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxrs.client.AbstractClient;
@@ -52,7 +52,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
  * The linkedin component is used for retrieving LinkedIn user profiles, connections, companies, groups, posts, etc.
  */
 @UriEndpoint(firstVersion = "2.14.0", scheme = "linkedin", title = "Linkedin", syntax = "linkedin:apiName/methodName", label = "api,cloud,social",
-        consumerClass = LinkedInConsumer.class, lenientProperties = true)
+        lenientProperties = true)
 public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, LinkedInConfiguration> {
 
     protected static final String FIELDS_OPTION = "fields";
@@ -163,7 +163,7 @@ public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, Linke
             try {
                 WebClient.client(resourceProxy).close();
             } catch (Exception e) {
-                log.warn("Error closing LinkedIn REST proxy: " + e.getMessage(), e);
+                log.warn("Error closing LinkedIn REST proxy: {}", e.getMessage(), e);
             }
             resourceProxy = null;
         }

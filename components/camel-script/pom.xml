@@ -23,19 +23,15 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.23.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-script</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Script</name>
+    <name>Camel :: Script (deprecated)</name>
     <description>Camel Script support</description>
 
     <properties>
-        <camel.osgi.export.pkg>
-        	org.apache.camel.builder.script.*;${camel.osgi.version},
-        	org.apache.camel.script.osgi.*
-        </camel.osgi.export.pkg>
         <camel.osgi.import.pkg>
             !org.apache.camel.builder.script.*,
             !org.apache.camel.script.osgi.*,
@@ -80,14 +76,14 @@
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-all</artifactId>
+            <artifactId>groovy</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-jsr223</artifactId>
             <scope>test</scope>
-        </dependency>		
+        </dependency>
         <dependency>
             <groupId>org.jruby</groupId>
             <artifactId>jruby-complete</artifactId>

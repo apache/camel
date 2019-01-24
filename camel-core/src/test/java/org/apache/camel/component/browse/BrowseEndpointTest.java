@@ -18,10 +18,8 @@ package org.apache.camel.component.browse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class BrowseEndpointTest extends ContextTestSupport {
 
     @Override
@@ -29,6 +27,7 @@ public class BrowseEndpointTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testBrowseEndpointDefaultConstructor() throws Exception {
         final BrowseEndpoint be = new BrowseEndpoint();
         be.setCamelContext(context);
@@ -47,6 +46,7 @@ public class BrowseEndpointTest extends ContextTestSupport {
         assertEquals(1, be.getExchanges().size());
     }
 
+    @Test
     public void testBrowseEndpointUriConstructor() throws Exception {
         final BrowseEndpoint be = new BrowseEndpoint("browse://foo", context.getComponent("browse"));
 

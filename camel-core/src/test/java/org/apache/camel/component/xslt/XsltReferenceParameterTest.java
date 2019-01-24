@@ -22,11 +22,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XsltBuilder;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.ProcessorEndpoint;
+import org.apache.camel.support.jndi.JndiContext;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  *
@@ -41,6 +42,7 @@ public class XsltReferenceParameterTest extends TestSupport {
 
     private XsltBuilder builder1;
 
+    @Before
     public void setUp() throws Exception {
         JndiRegistry registry = new JndiRegistry(new JndiContext());
         RouteBuilder builder = createRouteBuilder();
@@ -60,10 +62,12 @@ public class XsltReferenceParameterTest extends TestSupport {
         builder1 = (XsltBuilder)pep1.getProcessor();
     }
 
+    @Test
     public void testConverterReference() {
         assertSame(testConverter, builder1.getConverter());
     }
 
+    @Test
     public void testTransformerFactoryReference() {
         assertSame(testTransformerFactory, builder1.getConverter().getTransformerFactory());
     }

@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the
@@ -36,6 +37,7 @@ public class FileConsumerIdleMessageTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testConsumeIdleMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);

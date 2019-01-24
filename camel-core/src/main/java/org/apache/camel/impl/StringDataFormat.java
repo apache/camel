@@ -23,15 +23,16 @@ import java.io.OutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * The text based <a href="http://camel.apache.org/data-format.html">data format</a> supporting
  * charset encoding.
- *
- * @version 
  */
-public class StringDataFormat extends org.apache.camel.support.ServiceSupport implements DataFormat, DataFormatName {
+@Dataformat("string")
+public class StringDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
     private String charset;
 

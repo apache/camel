@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.message.Message;
@@ -33,8 +33,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The default CXF header filter strategy.
- * 
- * @version 
  */
 public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(CxfHeaderFilterStrategy.class);
@@ -132,7 +130,7 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
             messageHeaderfilter.filter(direction, (List<Header>)value);
         } catch (Throwable t) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Failed to cast value to Header<List> due to " + t.toString(), t);
+                LOG.debug("Failed to cast value to Header<List> due to {}", t.toString(), t);
             }
         }
         

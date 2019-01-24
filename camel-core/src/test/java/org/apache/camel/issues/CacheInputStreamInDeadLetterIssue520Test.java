@@ -27,20 +27,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport {
     private int count;
 
+    @Test
     public void testSendingInputStream() throws Exception {
         InputStream message = new ByteArrayInputStream("<hello>Willem</hello>".getBytes());
         sendingMessage(message);
     }
 
+    @Test
     public void testSendingReader() throws Exception {
         StringReader message = new StringReader("<hello>Willem</hello>");
         sendingMessage(message);
     }
 
+    @Test
     public void testSendingSource() throws Exception {
         StreamSource message = new StreamSource(new StringReader("<hello>Willem</hello>"));
         sendingMessage(message);

@@ -19,12 +19,10 @@ package org.apache.camel.processor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -32,28 +30,25 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ShutdownAware;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
- *
- * @version 
  */
-public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable, ShutdownAware, IdAware, CamelContextAware {
-    private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
+public class WireTapProcessor extends AsyncProcessorSupport implements Traceable, ShutdownAware, IdAware, CamelContextAware {
+
     private String id;
     private CamelContext camelContext;
     private final SendDynamicProcessor dynamicProcessor;
@@ -130,10 +125,6 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         return dynamicProcessor.getEndpointUtilizationStatistics();
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
             throw new IllegalStateException("WireTapProcessor has not been started: " + this);
@@ -152,19 +143,15 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
         final Exchange wireTapExchange = target;
 
         // send the exchange to the destination using an executor service
-        executorService.submit(new Callable<Exchange>() {
-            public Exchange call() throws Exception {
-                taskCount.increment();
-                try {
-                    LOG.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
-                    processor.process(wireTapExchange);
-                } catch (Throwable e) {
-                    LOG.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", e);
-                } finally {
-                    taskCount.decrement();
+        executorService.submit(() -> {
+            taskCount.increment();
+            log.debug(">>>> (wiretap) {} {}", uri, wireTapExchange);
+            AsyncProcessorConverterHelper.convert(processor).process(wireTapExchange, doneSync -> {
+                if (wireTapExchange.getException() != null) {
+                    log.warn("Error occurred during processing " + wireTapExchange + " wiretap to " + uri + ". This exception will be ignored.", wireTapExchange.getException());
                 }
-                return wireTapExchange;
-            }
+                taskCount.decrement();
+            });
         });
 
         // continue routing this synchronously
@@ -196,7 +183,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
                 try {
                     processor.process(answer);
                 } catch (Exception e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
             }
         }
@@ -217,7 +204,7 @@ public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, 
             try {
                 onPrepare.process(answer);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 

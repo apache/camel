@@ -89,10 +89,10 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
                 port1 = getPort();
                 port2 = getNextPort();
 
-                from("netty4:tcp://localhost:" + port1 + "?decoder=#length-decoder&sync=false")
+                from("netty4:tcp://localhost:" + port1 + "?decoders=#length-decoder&sync=false")
                         .process(processor);
 
-                from("netty4:tcp://localhost:" + port2 + "?decoder=#length-decoder2&sync=false")
+                from("netty4:tcp://localhost:" + port2 + "?decoders=#length-decoder2&sync=false")
                         .process(processor)
                         .to("mock:result");
             }

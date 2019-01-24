@@ -19,7 +19,7 @@ package org.apache.camel.component.mongodb3;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 /**
  * The MongoDb consumer.

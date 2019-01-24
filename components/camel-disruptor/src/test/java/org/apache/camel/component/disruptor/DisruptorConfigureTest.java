@@ -21,9 +21,6 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorConfigureTest extends CamelTestSupport {
     @Test
     public void testSizeConfigured() throws Exception {

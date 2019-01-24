@@ -16,19 +16,19 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 
 /**
- * An {@link org.apache.camel.processor.aggregate.AggregationStrategy} which just uses the original exchange
+ * An {@link AggregationStrategy} which just uses the original exchange
  * which can be needed when you want to preserve the original Exchange. For example when splitting an {@link Exchange}
  * and then you may want to keep routing using the original {@link Exchange}.
  *
  * @see org.apache.camel.processor.Splitter
- * @version 
  */
 public class UseOriginalAggregationStrategy implements AggregationStrategy {
 
-    private Exchange original;
+    private final Exchange original;
     private final boolean propagateException;
 
     public UseOriginalAggregationStrategy() {
@@ -36,12 +36,19 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
     }
 
     public UseOriginalAggregationStrategy(boolean propagateException) {
-        this.propagateException = propagateException;
+        this(null, propagateException);
     }
 
     public UseOriginalAggregationStrategy(Exchange original, boolean propagateException) {
         this.original = original;
         this.propagateException = propagateException;
+    }
+
+    /**
+     * Creates a new instance as a clone of this strategy with the new given original.
+     */
+    public UseOriginalAggregationStrategy newInstance(Exchange original) {
+        return new UseOriginalAggregationStrategy(original, propagateException);
     }
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
@@ -70,10 +77,6 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
 
     public Exchange getOriginal() {
         return original;
-    }
-
-    public void setOriginal(Exchange original) {
-        this.original = original;
     }
 
     @Override

@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.rest;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -37,11 +38,13 @@ public class SpringFromRestDuplicateTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // must override as there is no valid spring xml file
         createApplicationContext();
     }
 
+    @Test
     public void testDuplicate() throws Exception {
         // noop
     }

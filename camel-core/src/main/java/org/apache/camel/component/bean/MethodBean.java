@@ -21,8 +21,6 @@ import java.lang.reflect.Method;
 
 /**
  * Represents a {@link Serializable} version of a {@link Method}
- *
- * @version 
  */
 public class MethodBean implements Serializable {
     private static final long serialVersionUID = -789408217201706532L;

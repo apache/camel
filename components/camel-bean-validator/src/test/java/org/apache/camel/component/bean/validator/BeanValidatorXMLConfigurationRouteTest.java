@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.bean.validator;
 
-/**
- * @version 
- */
 public class BeanValidatorXMLConfigurationRouteTest extends BeanValidatorRouteTest {
     
     Car createCar(String manufacturer, String licencePlate) {

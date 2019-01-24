@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class AtomixSetConsumer extends AbstractAtomixClientConsumer<AtomixSetEndpoint> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixSetConsumer.class);
 
     private final List<Listener<DistributedSet.ValueEvent<Object>>> listeners;
     private final String resourceName;
@@ -56,7 +55,7 @@ final class AtomixSetConsumer extends AbstractAtomixClientConsumer<AtomixSetEndp
             .join();
 
 
-        LOGGER.debug("Subscribe to events for set: {}", resourceName);
+        log.debug("Subscribe to events for set: {}", resourceName);
         this.listeners.add(this.set.onAdd(this::onEvent).join());
         this.listeners.add(this.set.onRemove(this::onEvent).join());
     }

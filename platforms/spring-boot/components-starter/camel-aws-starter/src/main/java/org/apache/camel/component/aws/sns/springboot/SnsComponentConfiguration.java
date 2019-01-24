@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.sns.springboot;
 
 import javax.annotation.Generated;
 import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sqs.AmazonSQS;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -33,6 +34,11 @@ public class SnsComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the aws-sns component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * The AWS SNS default configuration
      */
@@ -133,9 +139,31 @@ public class SnsComponentConfiguration
          * The message structure to use such as json
          */
         private String messageStructure;
+        /**
+         * To define a proxy host when instantiating the SNS client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the SNS client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which SNS client needs to work
+         */
         private String region;
+        /**
+         * An SQS Client to use as bridge between SNS and SQS
+         */
+        private AmazonSQS amazonSQSClient;
+        /**
+         * The queueUrl to subscribe to
+         */
+        private String queueUrl;
+        /**
+         * Define if the subscription between SNS Topic and SQS must be done or
+         * not
+         */
+        private Boolean subscribeSNStoSQS = false;
 
         public String getSubject() {
             return subject;
@@ -223,6 +251,30 @@ public class SnsComponentConfiguration
 
         public void setRegion(String region) {
             this.region = region;
+        }
+
+        public AmazonSQS getAmazonSQSClient() {
+            return amazonSQSClient;
+        }
+
+        public void setAmazonSQSClient(AmazonSQS amazonSQSClient) {
+            this.amazonSQSClient = amazonSQSClient;
+        }
+
+        public String getQueueUrl() {
+            return queueUrl;
+        }
+
+        public void setQueueUrl(String queueUrl) {
+            this.queueUrl = queueUrl;
+        }
+
+        public Boolean getSubscribeSNStoSQS() {
+            return subscribeSNStoSQS;
+        }
+
+        public void setSubscribeSNStoSQS(Boolean subscribeSNStoSQS) {
+            this.subscribeSNStoSQS = subscribeSNStoSQS;
         }
     }
 }

@@ -18,9 +18,6 @@ package org.apache.camel.processor.onexception;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class DoCatchDirectRecipientListStreamingTest extends DoCatchDirectRecipientListTest {
 
     @Override

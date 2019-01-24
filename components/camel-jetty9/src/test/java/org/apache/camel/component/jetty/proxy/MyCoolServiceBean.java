@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jetty.proxy;
 
-/**
- * @version 
- */
 public class MyCoolServiceBean implements MyCoolService {
 
     public String hello(String name) throws MyAppException {

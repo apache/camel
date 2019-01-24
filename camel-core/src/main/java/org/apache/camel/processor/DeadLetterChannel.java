@@ -22,15 +22,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.spi.CamelLogger;
 
 /**
  * Implements a <a
  * href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
  * Channel</a> after attempting to redeliver the message using the
  * {@link RedeliveryPolicy}
- *
- * @version 
  */
 public class DeadLetterChannel extends RedeliveryErrorHandler {
 

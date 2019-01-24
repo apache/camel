@@ -24,8 +24,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To use Spring Expression Language (SpEL) in Camel expressions or predicates.
- *
- * @version 
  */
 @Metadata(firstVersion = "2.7.0", label = "language,spring", title = "SpEL")
 @XmlRootElement(name = "spel")

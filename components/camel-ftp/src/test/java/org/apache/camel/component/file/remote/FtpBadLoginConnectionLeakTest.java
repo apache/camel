@@ -22,6 +22,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.net.SocketFactory;
 
 import org.apache.camel.builder.RouteBuilder;

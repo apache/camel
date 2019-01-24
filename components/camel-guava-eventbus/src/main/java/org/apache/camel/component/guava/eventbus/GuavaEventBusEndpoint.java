@@ -23,16 +23,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The guava-eventbus component provides integration bridge between Camel and Google Guava EventBus.
  */
-@UriEndpoint(firstVersion = "2.10.0", scheme = "guava-eventbus", title = "Guava EventBus", syntax = "guava-eventbus:eventBusRef", consumerClass = GuavaEventBusConsumer.class, label = "eventbus")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "guava-eventbus", title = "Guava EventBus", syntax = "guava-eventbus:eventBusRef", label = "eventbus")
 public class GuavaEventBusEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
     private EventBus eventBus;

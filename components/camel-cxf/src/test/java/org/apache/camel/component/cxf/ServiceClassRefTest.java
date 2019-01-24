@@ -26,8 +26,6 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Unit test to verify using '#' notation to reference serviceClass.
- * 
- * @version 
  */
 @ContextConfiguration
 public class ServiceClassRefTest extends AbstractJUnit4SpringContextTests {

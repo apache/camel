@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for the file sort by expression with nested groups
@@ -29,7 +30,8 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
     private String fileUrl = "file://target/filesorter/";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/filesorter");
         super.setUp();
     }
@@ -53,6 +55,7 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
             Exchange.FILE_NAME, "dublin.txt");
     }
 
+    @Test
     public void testSortNestedFiles() throws Exception {
         prepareFolder("a");
 
@@ -71,6 +74,7 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSortNestedFilesReverse() throws Exception {
         prepareFolder("b");
 

@@ -33,6 +33,11 @@ public class BoonDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the boon data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Class name of the java type to use when unarmshalling
      */
     private String unmarshalTypeName;

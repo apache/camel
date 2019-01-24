@@ -35,16 +35,16 @@ public class JGroupsSharedChannelTest extends CamelTestSupport {
 
     @Test
     public void testStopStartProducer() throws Exception {
-        context().stopRoute(PRODUCER_ROUTE);
-        context().startRoute(PRODUCER_ROUTE);
+        context().getRouteController().stopRoute(PRODUCER_ROUTE);
+        context().getRouteController().startRoute(PRODUCER_ROUTE);
         testSendReceive();
     }
 
     @Test
     public void testStopStartConsumer() throws Exception {
-        context().stopRoute(CONSUMER_ROUTE);
+        context().getRouteController().stopRoute(CONSUMER_ROUTE);
         template().sendBody(DIRECT_PRODUCER, TEST_MESSAGE);
-        context().startRoute(CONSUMER_ROUTE);
+        context().getRouteController().startRoute(CONSUMER_ROUTE);
         testSendReceive();
     }
 

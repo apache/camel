@@ -17,7 +17,7 @@
 package org.apache.camel.component.box.internal;
 
 import org.apache.camel.component.box.BoxConfiguration;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 /**
  * Singleton {@link ApiMethodPropertiesHelper} for Box component.

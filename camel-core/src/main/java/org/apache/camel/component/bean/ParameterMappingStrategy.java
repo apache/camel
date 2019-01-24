@@ -20,8 +20,6 @@ import org.apache.camel.Expression;
 
 /**
  * A strategy for creating a default parameter expression for a given type
- *
- * @version 
  */
 public interface ParameterMappingStrategy {
 

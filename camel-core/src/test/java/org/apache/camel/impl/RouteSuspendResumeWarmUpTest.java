@@ -20,23 +20,22 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RouteSuspendResumeWarmUpTest extends ContextTestSupport {
 
     private MyService service = new MyService();
 
+    @Test
     public void testRouteSuspendResumeWarmUpTest() throws Exception {
         assertEquals("start", service.getState());
 
-        context.suspendRoute("foo");
+        context.getRouteController().resumeRoute("foo");
         // should keep this state as we are only suspending the consumer
         assertEquals("start", service.getState());
 
-        context.resumeRoute("foo");
+        context.getRouteController().resumeRoute("foo");
         // should keep this state as we are only suspending the consumer
         assertEquals("start", service.getState());
 

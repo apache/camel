@@ -55,7 +55,7 @@ public abstract class SplunkDataWriter implements DataWriter {
     }
 
     protected synchronized void doWrite(String event) throws IOException {
-        LOG.debug("writing event to splunk:" + event);
+        LOG.debug("writing event to splunk:{}", event);
         OutputStream ostream = socket.getOutputStream();
         Writer writer = new OutputStreamWriter(ostream, StandardCharsets.UTF_8);
         writer.write(event);

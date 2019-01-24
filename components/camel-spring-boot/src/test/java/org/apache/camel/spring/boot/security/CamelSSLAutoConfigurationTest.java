@@ -17,7 +17,7 @@
 package org.apache.camel.spring.boot.security;
 
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.util.jsse.GlobalSSLContextParametersSupplier;
+import org.apache.camel.support.jsse.GlobalSSLContextParametersSupplier;
 import org.junit.Test;
 
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -29,7 +29,6 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Testing the ssl configuration
  */
-
 public class CamelSSLAutoConfigurationTest {
     @Test
     public void checkSSLPropertiesPresent() {

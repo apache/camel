@@ -19,7 +19,9 @@ package org.apache.camel.component.http4.cloud;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.cloud.ServiceExpressionFactory;
+import org.apache.camel.spi.annotations.CloudServiceFactory;
 
+@CloudServiceFactory("http4-service-expression,https4-service-expression")
 public class Http4ServiceExpressionFactory implements ServiceExpressionFactory {
     @Override
     public Expression newInstance(CamelContext camelContext) throws Exception {

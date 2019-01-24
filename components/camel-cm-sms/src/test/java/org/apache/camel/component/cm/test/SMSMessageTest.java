@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cm.test;
-
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;

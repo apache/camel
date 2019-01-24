@@ -17,56 +17,33 @@
 package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 
 public class WeightedRandomLoadBalancer extends WeightedLoadBalancer {
-    private final Random rnd = new Random();
-    private final int distributionRatioSum;
-    private int runtimeRatioSum;
 
     public WeightedRandomLoadBalancer(List<Integer> distributionRatioList) {
         super(distributionRatioList);
-        int sum = 0;
-        for (Integer distributionRatio : distributionRatioList) {
-            sum += distributionRatio;
-        }
-        distributionRatioSum = sum;
-        runtimeRatioSum = distributionRatioSum;
     }
     
     @Override
-    protected Processor chooseProcessor(List<Processor> processors, Exchange exchange) {        
-        int index = selectProcessIndex();
-        lastIndex = index;
-        return processors.get(index);
-    }
-    
-    public int selectProcessIndex() {
-        if (runtimeRatioSum == 0) { // every processor is exhausted, reload for a new distribution round
-            for (DistributionRatio distributionRatio : getRuntimeRatios()) {
-                int weight = distributionRatio.getDistributionWeight();
-                distributionRatio.setRuntimeWeight(weight);
-            }
-            runtimeRatioSum = distributionRatioSum;
-        }
-
-        DistributionRatio selected = null;
-        int randomWeight = rnd.nextInt(runtimeRatioSum);
+    protected synchronized AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
+        int randomWeight = ThreadLocalRandom.current().nextInt(runtimeRatioSum);
         int choiceWeight = 0;
-        for (DistributionRatio distributionRatio : getRuntimeRatios()) {
-            choiceWeight += distributionRatio.getRuntimeWeight();
+        int index = 0;
+        while (true) {
+            DistributionRatio ratio = getRatios().get(index);
+            choiceWeight += ratio.getRuntimeWeight();
             if (randomWeight < choiceWeight) {
-                selected = distributionRatio;
-                break;
+                ratio.decrement();
+                decrementSum();
+                lastIndex = index;
+                return processors[index];
             }
+            index++;
         }
-        
-        selected.setRuntimeWeight(selected.getRuntimeWeight() - 1);
-        runtimeRatioSum--;
-
-        return selected.getProcessorPosition();
     }
+
 }

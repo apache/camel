@@ -22,7 +22,7 @@ import java.io.Reader;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.support.DefaultConsumer;
 
 public class WsConsumer extends DefaultConsumer {
 

@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.enricher;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 public class EnricherTest extends ContextTestSupport {
 
@@ -30,7 +31,8 @@ public class EnricherTest extends ContextTestSupport {
     protected MockEndpoint mock;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         mock = getMockEndpoint("mock:mock");
     }
@@ -39,6 +41,7 @@ public class EnricherTest extends ContextTestSupport {
     //  InOnly routes
     // -------------------------------------------------------------
 
+    @Test
     public void testEnrichInOnly() throws InterruptedException {
         mock.expectedBodiesReceived("test:blah");
         mock.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://mock");
@@ -46,6 +49,7 @@ public class EnricherTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testEnrichFaultInOnly() throws InterruptedException {
         mock.expectedMessageCount(0);
         Exchange exchange = template.send("direct:enricher-test-3", new Processor() {
@@ -61,6 +65,7 @@ public class EnricherTest extends ContextTestSupport {
         assertNull(exchange.getException());
     }
 
+    @Test
     public void testEnrichErrorInOnly() throws InterruptedException {
         mock.expectedMessageCount(0);
         Exchange exchange = template.send("direct:enricher-test-4", new Processor() {
@@ -78,11 +83,13 @@ public class EnricherTest extends ContextTestSupport {
     //  InOut routes
     // -------------------------------------------------------------
 
+    @Test
     public void testEnrichInOut() throws InterruptedException {
         String result = (String) template.sendBody("direct:enricher-test-5", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
     }
 
+    @Test
     public void testEnrichInOutPlusHeader() throws InterruptedException {
         Exchange exchange = template.send("direct:enricher-test-5", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) {
@@ -96,6 +103,7 @@ public class EnricherTest extends ContextTestSupport {
         assertNull(exchange.getException());
     }
 
+    @Test
     public void testEnrichFaultInOut() throws InterruptedException {
         Exchange exchange = template.send("direct:enricher-test-7", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) {
@@ -108,6 +116,7 @@ public class EnricherTest extends ContextTestSupport {
         assertNull(exchange.getException());
     }
 
+    @Test
     public void testEnrichErrorInOut() throws InterruptedException {
         Exchange exchange = template.send("direct:enricher-test-8", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) {

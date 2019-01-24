@@ -26,7 +26,7 @@ import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.springboot.HystrixConfigurationDefinitionCommon;
 import org.apache.camel.model.springboot.HystrixConfigurationDefinitionProperties;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

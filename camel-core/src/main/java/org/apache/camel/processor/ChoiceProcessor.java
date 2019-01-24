@@ -27,12 +27,9 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.service.ServiceHelper;
 
 import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
@@ -40,11 +37,9 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * Implements a Choice structure where one or more predicates are used which if
  * they are true their processors are used, with a default otherwise clause used
  * if none match.
- * 
- * @version 
  */
-public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
-    private static final Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
+public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware {
+
     private String id;
     private final List<FilterProcessor> filters;
     private final Processor otherwise;
@@ -53,10 +48,6 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
     public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
         this.filters = filters;
         this.otherwise = otherwise;
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
@@ -103,7 +94,7 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
             }
 
             // check for error if so we should break out
-            if (!continueProcessing(exchange, "so breaking out of choice", LOG)) {
+            if (!continueProcessing(exchange, "so breaking out of choice", log)) {
                 break;
             }
 
@@ -199,11 +190,11 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(filters, otherwise);
+        ServiceHelper.startService(filters, otherwise);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(otherwise, filters);
+        ServiceHelper.stopService(otherwise, filters);
     }
 
 }

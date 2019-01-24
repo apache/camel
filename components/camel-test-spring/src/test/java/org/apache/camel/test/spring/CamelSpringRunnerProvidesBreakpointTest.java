@@ -17,9 +17,9 @@
 package org.apache.camel.test.spring;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.BreakpointSupport;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
 
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class CamelSpringRunnerProvidesBreakpointTest
         private boolean breakpointHit;
 
         @Override
-        public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
+        public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
             breakpointHit = true;
         }
 

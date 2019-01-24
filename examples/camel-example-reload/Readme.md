@@ -9,7 +9,7 @@ the route on-the-fly.
 
 The reload only applies to Camel routes, eg the `<route>` elements inside `<camelContext>`.
 For changes to Spring or OSGi Blueprint `<bean>`s or Java code, then alternative reload strategies
-can be used. For example Spring Boot has a live reload tool, which you can try with the `camel-example-spring-boot-live-reload` example. OSGi Blueprint can be reloaded using Karaf container where you can run the `dev:watch *` command and
+can be used. OSGi Blueprint can be reloaded using Karaf container where you can run the `dev:watch *` command and
 then rebuild your code with `mvn install` which triggers Karaf to redeploy the bundle when the SNAPSHOT jar is updated in the local Maven repository.
 
 ### How to try

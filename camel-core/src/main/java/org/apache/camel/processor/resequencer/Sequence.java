@@ -23,8 +23,6 @@ import java.util.TreeSet;
  * successors and immediate predecessors of a given element in the sequence.
  * Successors and predecessors are calculated by using a
  * {@link SequenceElementComparator}.
- * 
- * @version 
  */
 public class Sequence<E> extends TreeSet<E> {
 

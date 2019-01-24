@@ -36,9 +36,6 @@ import org.restlet.representation.StringRepresentation;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assume.assumeThat;
 
-/**
- * @version
- */
 public class RestletSetBodyTest extends RestletTestSupport {
     protected static int portNum2 =  AvailablePortFinder.getNextAvailable(4000);
 

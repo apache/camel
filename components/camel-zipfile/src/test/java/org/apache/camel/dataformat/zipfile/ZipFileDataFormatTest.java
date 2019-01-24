@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.zipfile;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,6 +39,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.camel.Exchange.FILE_NAME;
@@ -235,6 +235,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory(TEST_DIR);
         super.setUp();
@@ -275,7 +276,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:zip").marshal(zip).to("mock:zip");
                 from("direct:unzip").unmarshal(zip).to("mock:unzip");
                 from("direct:unzipWithEmptyDirectory").unmarshal(zip)
-                                        .split(body(Iterator.class))
+                                        .split(bodyAs(Iterator.class))
                                         .streaming()
                                         //.to("file:hello_out?autoCreate=true")
                                         .process(new Processor() {

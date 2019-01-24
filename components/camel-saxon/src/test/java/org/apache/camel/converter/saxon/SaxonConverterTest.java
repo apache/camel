@@ -32,11 +32,10 @@ import org.w3c.dom.NodeList;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.xpath.XPathEvaluator;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
 import org.apache.camel.builder.xml.DefaultNamespaceContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;

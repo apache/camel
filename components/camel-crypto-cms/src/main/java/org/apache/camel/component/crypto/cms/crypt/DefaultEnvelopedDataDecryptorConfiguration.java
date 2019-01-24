@@ -35,7 +35,7 @@ import org.apache.camel.component.crypto.cms.common.DefaultCryptoCmsUnMarshaller
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 
 /**
  * The defualt implementation fetches the private key and certificate from a

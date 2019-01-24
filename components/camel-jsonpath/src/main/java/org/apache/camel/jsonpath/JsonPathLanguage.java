@@ -19,8 +19,10 @@ package org.apache.camel.jsonpath;
 import com.jayway.jsonpath.Option;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
 
+@Language("jsonpath")
 public class JsonPathLanguage extends LanguageSupport {
 
     private Class<?> resultType;

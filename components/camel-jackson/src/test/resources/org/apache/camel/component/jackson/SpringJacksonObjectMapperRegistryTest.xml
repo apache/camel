@@ -34,12 +34,12 @@
 
     <route>
       <from uri="direct:in"/>
-      <marshal ref="jack"/>
+      <marshal><custom ref="jack"/></marshal>
     </route>
 
     <route>
       <from uri="direct:back"/>
-      <unmarshal ref="jack"/>
+      <unmarshal><custom ref="jack"/></unmarshal>
       <to uri="mock:reverse"/>
     </route>
 

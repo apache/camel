@@ -1,0 +1,60 @@
+[[ServicePool-ServicePool]]
+=== Service Pool
+
+*Available as of Camel 2.0*
+
+Camel supports pluggable pools for services. At this time of write we
+have pools for:
+
+* Producer
+
+The default producer service pool is
+`org.apache.camel.impl.DefaultProducerServicePool` and is used by
+default in Camel for pooling Producer.
+
+The need for pooling Producer is only apparent in some
+link:components.html[Components] in Camel to support thread safe
+producers and support concurrency. And using pooling we can improve
+performance as we do not have the overhead of creating, starting and
+stopping the Producer at each invocation. So where is it needed then?
+Well these components uses pooled producers:
+
+* link:ftp2-component.adoc[FTP]
+* link:mina-component.adoc[Mina]
+
+[[ServicePool-Usage]]
+==== Usage
+
+By default Camel uses a shared
+`org.apache.camel.impl.DefaultProducerServicePool` provided by
+`CamelContext`. This default pool will pool up till 100 producers per
+link:endpoint.html[Endpoint]. So if you have 6 endpoints there can be up
+till 6 x 100 in total in the pool, where each distinct
+link:endpoint.html[Endpoint] have a limit of up till 100 producers.
+
+[[ServicePool-Pluggableproducerpooling]]
+==== Pluggable producer pooling
+
+Camel supports using a 3rd part pool implementation. What is needed is
+to implement an adapter by implementing the
+`org.apache.camel.spi.ServicePool` interface and define the generic as
+`Endpoint` as the key and `Producer` as the service.
+
+Then set your custom pooling on the `CamelContext` with the
+`setProducerServicePool` method.
+
+[[ServicePool-Developingpooleableproducers]]
+==== Developing pooleable producers
+
+The producer service pool identify a producer as being pool capable if
+the producer implements the marker interface
+`org.apache.camel.ServicePoolAware`. +
+ As the producer will be pooled and thus long lived, your producer
+should be able to automatic safely recover lost connection. Usually you
+implement logic that re connects if needed.
+
+[[ServicePool-SeeAlso]]
+==== See Also
+
+* link:architecture.adoc[Architecture]
+

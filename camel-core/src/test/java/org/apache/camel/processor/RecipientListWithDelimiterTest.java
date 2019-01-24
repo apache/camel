@@ -19,10 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RecipientListWithDelimiterTest extends ContextTestSupport {
 
     @Override
@@ -30,6 +28,7 @@ public class RecipientListWithDelimiterTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testRecipientList() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -52,6 +51,7 @@ public class RecipientListWithDelimiterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRecipientListWithDelimiterDisabled() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -69,6 +69,7 @@ public class RecipientListWithDelimiterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRecipientListWithTokenizer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

@@ -16,10 +16,9 @@
  */
 package org.apache.camel.model;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -27,28 +26,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.camel.Processor;
-import org.apache.camel.ThreadPoolRejectedPolicy;
-import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
-import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.ThreadsProcessor;
-import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 /**
  * Specifies that all steps after this node are processed asynchronously
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "threads")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
-
-    // TODO: Camel 3.0 Should extend NoOutputDefinition
+public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition> implements ExecutorServiceAwareDefinition<ThreadsDefinition> {
 
     @XmlTransient
     private ExecutorService executorService;
@@ -79,89 +67,8 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // the threads name
-        String name = getThreadName() != null ? getThreadName() : "Threads";
-        // prefer any explicit configured executor service
-        boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, true);
-        ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, name, this, false);
-
-        // resolve what rejected policy to use
-        ThreadPoolRejectedPolicy policy = resolveRejectedPolicy(routeContext);
-        if (policy == null) {
-            if (callerRunsWhenRejected == null || callerRunsWhenRejected) {
-                // should use caller runs by default if not configured
-                policy = ThreadPoolRejectedPolicy.CallerRuns;
-            } else {
-                policy = ThreadPoolRejectedPolicy.Abort;
-            }
-        }
-        log.debug("Using ThreadPoolRejectedPolicy: {}", policy);
-
-        // if no explicit then create from the options
-        if (threadPool == null) {
-            ExecutorServiceManager manager = routeContext.getCamelContext().getExecutorServiceManager();
-            // create the thread pool using a builder
-            ThreadPoolProfile profile = new ThreadPoolProfileBuilder(name)
-                    .poolSize(getPoolSize())
-                    .maxPoolSize(getMaxPoolSize())
-                    .keepAliveTime(getKeepAliveTime(), getTimeUnit())
-                    .maxQueueSize(getMaxQueueSize())
-                    .rejectedPolicy(policy)
-                    .allowCoreThreadTimeOut(getAllowCoreThreadTimeOut())
-                    .build();
-            threadPool = manager.newThreadPool(this, name, profile);
-            shutdownThreadPool = true;
-        } else {
-            if (getThreadName() != null && !getThreadName().equals("Threads")) {
-                throw new IllegalArgumentException("ThreadName and executorServiceRef options cannot be used together.");
-            }
-            if (getPoolSize() != null) {
-                throw new IllegalArgumentException("PoolSize and executorServiceRef options cannot be used together.");
-            }
-            if (getMaxPoolSize() != null) {
-                throw new IllegalArgumentException("MaxPoolSize and executorServiceRef options cannot be used together.");
-            }
-            if (getKeepAliveTime() != null) {
-                throw new IllegalArgumentException("KeepAliveTime and executorServiceRef options cannot be used together.");
-            }
-            if (getTimeUnit() != null) {
-                throw new IllegalArgumentException("TimeUnit and executorServiceRef options cannot be used together.");
-            }
-            if (getMaxQueueSize() != null) {
-                throw new IllegalArgumentException("MaxQueueSize and executorServiceRef options cannot be used together.");
-            }
-            if (getRejectedPolicy() != null) {
-                throw new IllegalArgumentException("RejectedPolicy and executorServiceRef options cannot be used together.");
-            }
-            if (getAllowCoreThreadTimeOut() != null) {
-                throw new IllegalArgumentException("AllowCoreThreadTimeOut and executorServiceRef options cannot be used together.");
-            }
-        }
-
-        ThreadsProcessor thread = new ThreadsProcessor(routeContext.getCamelContext(), threadPool, shutdownThreadPool, policy);
-
-        List<Processor> pipe = new ArrayList<>(2);
-        pipe.add(thread);
-        pipe.add(createChildProcessor(routeContext, true));
-        // wrap in nested pipeline so this appears as one processor
-        // (recipient list definition does this as well)
-        return new Pipeline(routeContext.getCamelContext(), pipe) {
-            @Override
-            public String toString() {
-                return "Threads[" + getOutputs() + "]";
-            }
-        };
-    }
-
-    protected ThreadPoolRejectedPolicy resolveRejectedPolicy(RouteContext routeContext) {
-        if (getExecutorServiceRef() != null && getRejectedPolicy() == null) {
-            ThreadPoolProfile threadPoolProfile = routeContext.getCamelContext().getExecutorServiceManager().getThreadPoolProfile(getExecutorServiceRef());
-            if (threadPoolProfile != null) {
-                return threadPoolProfile.getRejectedPolicy();
-            }
-        }
-        return getRejectedPolicy();
+    public String getShortName() {
+        return "threads";
     }
 
     @Override

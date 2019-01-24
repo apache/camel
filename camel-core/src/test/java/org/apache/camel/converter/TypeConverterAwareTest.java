@@ -17,10 +17,8 @@
 package org.apache.camel.converter;
 
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class TypeConverterAwareTest extends ContextTestSupport {
 
     @Override
@@ -28,6 +26,7 @@ public class TypeConverterAwareTest extends ContextTestSupport {
         return true;
     }
 
+    @Test
     public void testPurchaseOrderConverter() throws Exception {
         byte[] data = "##START##AKC4433   179       3##END##".getBytes();
         PurchaseOrder order = context.getTypeConverter().convertTo(PurchaseOrder.class, data);

@@ -21,14 +21,13 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
 
     private ExecutorService myPool;
 
+    @Test
     public void testAggregateShutdownDefaultThreadPoolTest() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
 
@@ -38,11 +37,11 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         resetMocks();
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("D+E+F");
 
@@ -55,6 +54,7 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
         context.stop();
     }
 
+    @Test
     public void testAggregateShutdownCustomThreadPoolTest() throws Exception {
         assertEquals(false, myPool.isShutdown());
 
@@ -67,12 +67,12 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         assertEquals(false, myPool.isShutdown());
 
-        context.stopRoute("bar");
+        context.getRouteController().stopRoute("bar");
         assertEquals(false, myPool.isShutdown());
 
         resetMocks();
 
-        context.startRoute("bar");
+        context.getRouteController().startRoute("bar");
         assertEquals(false, myPool.isShutdown());
 
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("D+E+F");

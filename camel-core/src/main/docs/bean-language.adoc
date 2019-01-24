@@ -24,14 +24,13 @@ annotate the bean to extract headers or other expressions such as
 === Bean Options
 
 // language options: START
-The Bean method language supports 5 options, which are listed below.
+The Bean method language supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| bean |  | String | *Deprecated* Either a reference or a class name of the bean to use
 | ref |  | String | Reference to bean to lookup in the registry
 | method |  | String | Name of method to call
 | beanType |  | String | Class name of the bean to use

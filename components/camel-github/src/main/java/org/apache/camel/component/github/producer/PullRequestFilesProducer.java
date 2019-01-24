@@ -41,7 +41,7 @@ public class PullRequestFilesProducer extends AbstractGitHubProducer {
         Registry registry = endpoint.getCamelContext().getRegistry();
         Object service = registry.lookupByName(GitHubConstants.GITHUB_PULL_REQUEST_SERVICE);
         if (service != null) {
-            LOG.debug("Using PullRequestService found in registry " + service.getClass().getCanonicalName());
+            LOG.debug("Using PullRequestService found in registry {}", service.getClass().getCanonicalName());
             pullRequestService = (PullRequestService) service;
         } else {
             pullRequestService = new PullRequestService();

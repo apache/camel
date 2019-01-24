@@ -32,11 +32,11 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.component.ApiCollection;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodHelper;
-import org.apache.camel.util.component.ApiName;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.component.ApiCollection;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodHelper;
+import org.apache.camel.support.component.ApiName;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.doxia.siterenderer.RenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;

@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.model.ModelHelper;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -30,6 +31,7 @@ public class DumpModelAsXmlPlaceholdersTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/DumpModelAsXmlPlaceholdersTest.xml");
     }
 
+    @Test
     public void testDumpModelAsXml() throws Exception {
         assertEquals("Gouda", context.getRoutes().get(0).getId());
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("Gouda"));

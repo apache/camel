@@ -28,8 +28,6 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * To use a custom data format implementation that does not come out of the box from Apache Camel.
- *
- * @version
  */
 @Metadata(label = "dataformat,transformation", title = "Custom")
 @XmlRootElement(name = "customDataFormat")

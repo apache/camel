@@ -20,15 +20,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Processor;
-import org.apache.camel.processor.FinallyProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Path traversed when a try, catch, finally block exits
- *
- * @version 
  */
 @Metadata(label = "error")
 @XmlRootElement(name = "doFinally")
@@ -41,18 +36,13 @@ public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
     }
     
     @Override
-    public String getLabel() {
+    public String getShortName() {
         return "doFinally";
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // parent must be a try
-        if (!(getParent() instanceof TryDefinition)) {
-            throw new IllegalArgumentException("This doFinally should have a doTry as its parent on " + this);
-        }
-
-        // do finally does mandate a child processor
-        return new FinallyProcessor(this.createChildProcessor(routeContext, false));
+    public String getLabel() {
+        return "doFinally";
     }
+
 }

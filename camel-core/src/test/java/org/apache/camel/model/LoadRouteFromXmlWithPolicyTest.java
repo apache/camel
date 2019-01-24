@@ -20,14 +20,13 @@ import java.io.InputStream;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
 
     @Override
@@ -42,6 +41,7 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testLoadRouteFromXmlWitPolicy() throws Exception {
         InputStream is = getClass().getResourceAsStream("barPolicyRoute.xml");
         RoutesDefinition routes = context.loadRoutesDefinition(is);
@@ -81,7 +81,7 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
         }
 
         public void beforeWrap(RouteContext routeContext,
-                               ProcessorDefinition<?> definition) {
+                               NamedNode definition) {
             // no need to modify the route
         }
 

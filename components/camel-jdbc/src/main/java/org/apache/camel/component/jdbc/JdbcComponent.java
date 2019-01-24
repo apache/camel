@@ -17,27 +17,20 @@
 package org.apache.camel.component.jdbc;
 
 import java.util.Map;
+import java.util.Set;
 import javax.sql.DataSource;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.IntrospectionSupport;
 
-/**
- * @version
- */
-public class JdbcComponent extends UriEndpointComponent {
+@Component("jdbc")
+public class JdbcComponent extends DefaultComponent {
+
     private DataSource dataSource;
-
-    public JdbcComponent() {
-        super(JdbcEndpoint.class);
-    }
-
-    public JdbcComponent(CamelContext context) {
-        super(context, JdbcEndpoint.class);
-    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -49,7 +42,23 @@ public class JdbcComponent extends UriEndpointComponent {
             dataSource = this.dataSource;
             dataSourceRef = "component";
         } else {
-            dataSource = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, DataSource.class);
+            DataSource target = CamelContextHelper.lookup(getCamelContext(), remaining, DataSource.class);
+            if (target == null && !isDefaultDataSourceName(remaining)) {
+                throw new NoSuchBeanException(remaining, DataSource.class.getName());
+            } else if (target == null) {
+                // check if the registry contains a single instance of DataSource
+                Set<DataSource> dataSources = getCamelContext().getRegistry().findByType(DataSource.class);
+                if (dataSources.size() > 1) {
+                    throw new IllegalArgumentException("Multiple DataSources found in the registry and no explicit configuration provided");
+                } else if (dataSources.size() == 1) {
+                    target = dataSources.stream().findFirst().orElse(null);
+                }
+                if (target == null) {
+                    throw new IllegalArgumentException("No default DataSource found in the registry");
+                }
+                log.debug("Using default DataSource discovered from registry: {}", target);
+            }
+            dataSource = target;
             dataSourceRef = remaining;
         }
 
@@ -68,5 +77,9 @@ public class JdbcComponent extends UriEndpointComponent {
      */
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    private static boolean isDefaultDataSourceName(String remaining) {
+        return "dataSource".equalsIgnoreCase(remaining) || "default".equalsIgnoreCase(remaining);
     }
 }

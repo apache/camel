@@ -37,7 +37,7 @@ import org.apache.camel.dataformat.bindy.annotation.OneToMany;
 import org.apache.camel.dataformat.bindy.annotation.Section;
 import org.apache.camel.dataformat.bindy.format.FormatException;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,6 +75,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean allowEmptyStream;
     private boolean quotingEscaped;
     private boolean endWithLineBreak;
+    private boolean removeQuotes;
 
     public BindyCsvFactory(Class<?> type) throws Exception {
         super(type);
@@ -201,7 +202,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     private int setDataFieldValue(CamelContext camelContext, Map<String, Object> model, int line, int pos, int counterMandatoryFields, String data, DataField dataField) throws Exception {
-        ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field: " + data + ", line: " + line);
+        org.apache.camel.util.ObjectHelper.notNull(dataField, "No position " + pos + " defined for the field: " + data + ", line: " + line);
 
         if (dataField.trim()) {
             data = data.trim();
@@ -223,7 +224,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         field.setAccessible(true);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Pos: {}, Data: {}, Field type: {}", new Object[]{pos, data, field.getType()});
+            LOG.debug("Pos: {}, Data: {}, Field type: {}", pos, data, field.getType());
         }
 
         // Create format object to format the field
@@ -299,7 +300,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         Map<Integer, List<String>> results = new HashMap<>();
 
         // Check if separator exists
-        ObjectHelper.notNull(this.separator, "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
+        org.apache.camel.util.ObjectHelper.notNull(this.separator, "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
 
         char separator = ConverterUtils.getCharDelimiter(this.getSeparator());
 
@@ -418,14 +419,14 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     v.add(l.get(idx));
                     index.put(ii, idx);
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value: {}, pos: {}, at: {}", new Object[]{l.get(idx), ii, idx});
+                        LOG.debug("Value: {}, pos: {}, at: {}", l.get(idx), ii, idx);
                     }
                 } else {
                     v.add(l.get(0));
                     index.put(ii, 0);
                     ++idxSize;
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value: {}, pos: {}, at index: {}", new Object[]{l.get(0), ii, 0});
+                        LOG.debug("Value: {}, pos: {}, at index: {}", l.get(0), ii, 0);
                     }
                 }
             }
@@ -471,7 +472,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Object value = field.get(obj);
 
                     // If the field value is empty, populate it with the default value
-                    if (ObjectHelper.isNotEmpty(datafield.defaultValue()) && ObjectHelper.isEmpty(value)) {
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(datafield.defaultValue()) && org.apache.camel.util.ObjectHelper.isEmpty(value)) {
                         value = datafield.defaultValue();
                     }
 
@@ -486,7 +487,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     }
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", new Object[]{value, datafield.pos(), result});
+                        LOG.debug("Value to be formatted: {}, position: {}, and its formatted value: {}", value, datafield.pos(), result);
                     }
 
                 } else {
@@ -620,18 +621,18 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     // Get skipFirstLine parameter
                     skipFirstLine = record.skipFirstLine();
-                    LOG.debug("Skip First Line parameter of the CSV: {}" + skipFirstLine);
+                    LOG.debug("Skip First Line parameter of the CSV: {}", skipFirstLine);
 
                     // Get skipFirstLine parameter
                     skipField = record.skipField();
-                    LOG.debug("Skip Field parameter of the CSV: {}" + skipField);
+                    LOG.debug("Skip Field parameter of the CSV: {}", skipField);
 
                     // Get generateHeaderColumnNames parameter
                     generateHeaderColumnNames = record.generateHeaderColumns();
                     LOG.debug("Generate header column names parameter of the CSV: {}", generateHeaderColumnNames);
 
                     // Get Separator parameter
-                    ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation");
+                    org.apache.camel.util.ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation");
                     separator = record.separator();
                     LOG.debug("Separator defined for the CSV: {}", separator);
 
@@ -643,7 +644,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     messageOrdered = record.isOrdered();
                     LOG.debug("Must CSV record be ordered: {}", messageOrdered);
 
-                    if (ObjectHelper.isNotEmpty(record.quote())) {
+                    if (org.apache.camel.util.ObjectHelper.isNotEmpty(record.quote())) {
                         quote = record.quote();
                         LOG.debug("Quoting columns with: {}", quote);
                     }
@@ -656,20 +657,23 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     
                     // Get allowEmptyStream parameter
                     allowEmptyStream = record.allowEmptyStream();
-                    LOG.debug("Allow empty stream parameter of the CSV: {}" + allowEmptyStream);
+                    LOG.debug("Allow empty stream parameter of the CSV: {}", allowEmptyStream);
                     
                     // Get quotingEscaped parameter
                     quotingEscaped = record.quotingEscaped();
-                    LOG.debug("Escape quote character flag of the CSV: {}" + quotingEscaped);
+                    LOG.debug("Escape quote character flag of the CSV: {}", quotingEscaped);
                     
                     // Get endWithLineBreak parameter
                     endWithLineBreak = record.endWithLineBreak();
-                    LOG.debug("End with line break: {}" + endWithLineBreak);
+                    LOG.debug("End with line break: {}", endWithLineBreak);
+
+                    removeQuotes = record.removeQuotes();
+                    LOG.debug("Remove quotes: {}", removeQuotes);
                 }
 
                 if (section != null) {
                     // BigIntegerFormatFactory if section number is not null
-                    ObjectHelper.notNull(section.number(), "No number has been defined for the section");
+                    org.apache.camel.util.ObjectHelper.notNull(section.number(), "No number has been defined for the section");
 
                     // Get section number and add it to the sections
                     sections.put(cl.getName(), section.number());
@@ -751,6 +755,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     public String getQuote() {
         return quote;
+    }
+
+    public Boolean getRemoveQuotes() {
+        return removeQuotes;
     }
 
     public int getMaxpos() {

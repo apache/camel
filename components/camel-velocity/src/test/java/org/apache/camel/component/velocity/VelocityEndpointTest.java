@@ -18,9 +18,6 @@ package org.apache.camel.component.velocity;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class VelocityEndpointTest extends VelocityTest {
 
     protected RouteBuilder createRouteBuilder() {

@@ -41,6 +41,7 @@ import org.apache.camel.itest.springboot.ITestConfigBuilder;
 import org.apache.camel.itest.springboot.arquillian.SpringBootZipExporterImpl;
 import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.se.api.ClassPath;
+import org.jboss.arquillian.core.spi.InvocationException;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Configuration;
@@ -132,7 +133,7 @@ public final class ArquillianPackager {
         }
         if (version == null) {
             // It is missing when launching from IDE
-            List<MavenResolvedArtifact> resolved = Arrays.asList(resolver(config).loadPomFromFile("pom.xml").importRuntimeDependencies().resolve().withoutTransitivity().asResolvedArtifact());
+            List<MavenResolvedArtifact> resolved = Arrays.asList(resolver(config).loadPomFromFile("pom.xml").importCompileAndRuntimeDependencies().resolve().withoutTransitivity().asResolvedArtifact());
             for (MavenResolvedArtifact dep : resolved) {
                 if (dep.getCoordinate().getGroupId().equals("org.apache.camel")) {
                     version = dep.getCoordinate().getVersion();
@@ -346,6 +347,9 @@ public final class ArquillianPackager {
         ignore.add("xml-apis:xml-apis-ext");
         ignore.add("org.jboss.logging");
         ignore.add("org.jboss.marshalling");
+        ignore.add("org.jgroups:jgroups-raft");
+        ignore.add("net.sourceforge.htmlunit:htmlunit");
+
 
         Map<String, Map<String, String>> status = new TreeMap<>();
         Set<String> mismatches = new TreeSet<>();
@@ -396,7 +400,7 @@ public final class ArquillianPackager {
         if (message.length() > 0) {
             String alert = "Library version mismatch found.\n" + message;
             if (FAIL_ON_RELATED_LIBRARY_MISMATCH) {
-                throw new RuntimeException(alert);
+                throw new InvocationException(new RuntimeException(alert));
             } else {
                 debug(alert);
             }
@@ -459,7 +463,7 @@ public final class ArquillianPackager {
             }
 
             if (FAIL_ON_TEST_LIBRARY_MISMATCH) {
-                throw new RuntimeException(message.toString());
+                throw new InvocationException(new RuntimeException(message.toString()));
             } else {
                 debug(message.toString());
             }
@@ -667,10 +671,10 @@ public final class ArquillianPackager {
 
                 final URLPackageScanner.Callback callback = new URLPackageScanner.Callback() {
                     @Override
-                    public void classFound(String className) {
+                    public void classFound(String className, Asset asset) {
                         ArchivePath classNamePath = AssetUtil.getFullPathForClassResource(className);
 
-                        Asset asset = new ClassLoaderAsset(classNamePath.get().substring(1), classLoader);
+                        asset = new ClassLoaderAsset(classNamePath.get().substring(1), classLoader);
                         ArchivePath location = new BasicPath(CLASSES_FOLDER + "/", classNamePath);
                         ark.add(asset, location);
                     }

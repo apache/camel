@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * To test that using polling consumer with file will not keep scheduled file consumer keep running
@@ -29,7 +30,8 @@ import org.apache.camel.PollingConsumer;
 public class FilePollingConsumerTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/enrich");
         super.setUp();
     }
@@ -39,6 +41,7 @@ public class FilePollingConsumerTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testPollingConsumer() throws Exception {
         template.sendBodyAndHeader("file:target/enrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
 

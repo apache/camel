@@ -18,9 +18,6 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class FileConsumerPreMoveCopyAndDeleteOnRenameFailFalseTest extends FileConsumerPreMoveTest {
 
     @Override

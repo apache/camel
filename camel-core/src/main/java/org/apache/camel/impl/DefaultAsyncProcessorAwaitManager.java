@@ -25,21 +25,19 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
-import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ExchangeFormatter;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.ReactiveHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements AsyncProcessorAwaitManager {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultAsyncProcessorAwaitManager.class);
 
     private final AsyncProcessorAwaitManager.Statistics statistics = new UtilizationStatistics();
     private final AtomicLong blockedCounter = new AtomicLong();
@@ -63,9 +61,34 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         this.exchangeFormatter = formatter;
     }
 
-    @Override
+    /**
+     * Calls the async version of the processor's process method and waits
+     * for it to complete before returning. This can be used by {@link AsyncProcessor}
+     * objects to implement their sync version of the process method.
+     * <p/>
+     * <b>Important:</b> This method is discouraged to be used, as its better to invoke the asynchronous
+     * {@link AsyncProcessor#process(org.apache.camel.Exchange, org.apache.camel.AsyncCallback)} method, whenever possible.
+     *
+     * @param processor the processor
+     * @param exchange  the exchange
+     * @throws Exception can be thrown if waiting is interrupted
+     */
+    public void process(final AsyncProcessor processor, final Exchange exchange) {
+        CountDownLatch latch = new CountDownLatch(1);
+        processor.process(exchange, doneSync -> countDown(exchange, latch));
+        if (latch.getCount() > 0) {
+            await(exchange, latch);
+        }
+    }
+
     public void await(Exchange exchange, CountDownLatch latch) {
-        LOG.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
+        // Early exit for pending reactive queued work
+        do {
+            if (latch.getCount() <= 0) {
+                return;
+            }
+        } while (ReactiveHelper.executeFromQueue());
+        log.trace("Waiting for asynchronous callback before continuing for exchangeId: {} -> {}",
                 exchange.getExchangeId(), exchange);
         try {
             if (statistics.isStatisticsEnabled()) {
@@ -73,11 +96,11 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             }
             inflight.put(exchange, new AwaitThreadEntry(Thread.currentThread(), exchange, latch));
             latch.await();
-            LOG.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
+            log.trace("Asynchronous callback received, will continue routing exchangeId: {} -> {}",
                     exchange.getExchangeId(), exchange);
 
         } catch (InterruptedException e) {
-            LOG.trace("Interrupted while waiting for callback, will continue routing exchangeId: {} -> {}",
+            log.trace("Interrupted while waiting for callback, will continue routing exchangeId: {} -> {}",
                     exchange.getExchangeId(), exchange);
             exchange.setException(e);
         } finally {
@@ -102,9 +125,8 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         }
     }
 
-    @Override
     public void countDown(Exchange exchange, CountDownLatch latch) {
-        LOG.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
+        log.trace("Asynchronous callback received for exchangeId: {}", exchange.getExchangeId());
         latch.countDown();
     }
 
@@ -152,10 +174,10 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                 if (routeStackTrace != null) {
                     sb.append(routeStackTrace);
                 }
-                LOG.warn(sb.toString());
+                log.warn(sb.toString());
 
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             } finally {
                 if (statistics.isStatisticsEnabled()) {
                     interruptedCounter.incrementAndGet();
@@ -189,7 +211,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         Collection<AwaitThread> threads = browse();
         int count = threads.size();
         if (count > 0) {
-            LOG.warn("Shutting down while there are still {} inflight threads currently blocked.", count);
+            log.warn("Shutting down while there are still {} inflight threads currently blocked.", count);
 
             StringBuilder sb = new StringBuilder();
             for (AwaitThread entry : threads) {
@@ -197,19 +219,19 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
             }
 
             if (isInterruptThreadsWhileStopping()) {
-                LOG.warn("The following threads are blocked and will be interrupted so the threads are released:\n" + sb.toString());
+                log.warn("The following threads are blocked and will be interrupted so the threads are released:\n{}", sb);
                 for (AwaitThread entry : threads) {
                     try {
                         interrupt(entry.getExchange());
                     } catch (Throwable e) {
-                        LOG.warn("Error while interrupting thread: " + entry.getBlockedThread().getName() + ". This exception is ignored.", e);
+                        log.warn("Error while interrupting thread: " + entry.getBlockedThread().getName() + ". This exception is ignored.", e);
                     }
                 }
             } else {
-                LOG.warn("The following threads are blocked, and may reside in the JVM:\n" + sb.toString());
+                log.warn("The following threads are blocked, and may reside in the JVM:\n{}", sb);
             }
         } else {
-            LOG.debug("Shutting down with no inflight threads.");
+            log.debug("Shutting down with no inflight threads.");
         }
 
         inflight.clear();

@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -53,14 +54,14 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.converter.stream.CachedOutputStream;
-import org.apache.camel.impl.DefaultExchangeHolder;
+import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,8 +78,6 @@ import static org.apache.camel.component.jms.JmsMessageType.Text;
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link JmsMessage}
  * to and from a JMS {@link Message}
- *
- * @version 
  */
 public class JmsBinding {
     private static final Logger LOG = LoggerFactory.getLogger(JmsBinding.class);
@@ -147,6 +146,9 @@ public class JmsBinding {
                 if (payload instanceof DefaultExchangeHolder) {
                     DefaultExchangeHolder holder = (DefaultExchangeHolder) payload;
                     DefaultExchangeHolder.unmarshal(exchange, holder);
+                    // enrich with JMS headers also as otherwise they will get lost when use the transferExchange option.
+                    Map<String, Object> jmsHeaders = extractHeadersFromJms(message, exchange);
+                    exchange.getIn().getHeaders().putAll(jmsHeaders);
                     return exchange.getIn().getBody();
                 } else {
                     return objectMessage.getObject();
@@ -337,7 +339,7 @@ public class JmsBinding {
                 // create jms message containing the caused exception
                 answer = createJmsMessage(cause, session);
             } else {
-                ObjectHelper.notNull(camelMessage, "message");
+                org.apache.camel.util.ObjectHelper.notNull(camelMessage, "message");
                 // create regular jms message using the camel message body
                 answer = createJmsMessage(exchange, camelMessage, session, exchange.getContext());
                 appendJmsProperties(answer, exchange, camelMessage);
@@ -407,7 +409,7 @@ public class JmsBinding {
                 Iterator it = ObjectHelper.createIterator(endpoint.getConfiguration().getAllowAdditionalHeaders());
                 while (it.hasNext()) {
                     String pattern = (String) it.next();
-                    if (EndpointHelper.matchPattern(headerName, pattern)) {
+                    if (PatternHelper.matchPattern(headerName, pattern)) {
                         LOG.debug("Header {} allowed as additional header despite not being valid according to the JMS specification", headerName);
                         value = headerValue;
                         break;
@@ -570,7 +572,7 @@ public class JmsBinding {
         if (body != null && LOG.isWarnEnabled()) {
             LOG.warn("Cannot determine specific JmsMessage type to use from body class."
                     + " Will use generic JmsMessage."
-                    + " Body class: " + ObjectHelper.classCanonicalName(body)
+                    + " Body class: " + org.apache.camel.util.ObjectHelper.classCanonicalName(body)
                     + ". If you want to send a POJO then your class might need to implement java.io.Serializable"
                     + ", or you can force a specific type by setting the jmsMessageType option on the JMS endpoint.");
         }

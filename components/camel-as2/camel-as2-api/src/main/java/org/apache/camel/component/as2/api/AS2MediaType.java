@@ -27,6 +27,14 @@ public interface AS2MediaType {
      */
     public static final String APPLICATION_PKCS7_SIGNATURE = "application/pkcs7-signature; name=smime.p7s; smime-type=signed-data";
     /**
+     * Media Type for Application PKCS7 Enveloped Data
+     */
+    public static final String APPLICATION_PKCS7_MIME_ENVELOPED = "application/pkcs7-mime; smime-type=enveloped-data; name=smime.p7m";
+    /**
+     * Media Type for Application PKCS7 Compressed Data
+     */
+    public static final String APPLICATION_PKCS7_MIME_COMPRESSED = "application/pkcs7-mime; smime-type=compressed-data; name=smime.p7z";
+    /**
      * Media Type for Text/Plain Data
      */
     public static final String TEXT_PLAIN = "text/plain";

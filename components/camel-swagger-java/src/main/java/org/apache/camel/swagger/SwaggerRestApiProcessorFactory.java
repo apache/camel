@@ -56,6 +56,14 @@ public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
                 }
             }
         }
+        // and include the default scheme as well if not explicit configured
+        if (!options.containsKey("schemes") && !options.containsKey("schemas")) {
+            // NOTE schemas is a typo but kept for backwards compatible
+            String scheme = configuration.getScheme();
+            if (scheme != null) {
+                options.put("schemes", scheme);
+            }
+        }
         // and context path is the base.path
         String path = configuration.getContextPath();
         if (path != null) {

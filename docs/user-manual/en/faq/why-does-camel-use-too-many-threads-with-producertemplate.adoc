@@ -1,0 +1,29 @@
+[[WhydoesCamelusetoomanythreadswithProducerTemplate-WhydoesCamelusetoomanythreadswithProducerTemplate]]
+=== Why does Camel use too many threads with `ProducerTemplate`?
+
+A common reason is creating a new `ProducerTemplate` inside a `Processor` or
+link:../bean-integration.adoc[bean method invocation].
+
+You are not meant to create a `ProducerTemplate` for each message
+invocation; you are meant to create a single instance on startup and
+keep it around.
+
+Also when you have finished using the `ProducerTemplate` you should call
+the `stop()` method to close down all the resources it has been using.
+
+It's better to either explicitly create one on startup or get your IoC
+container (link:../spring.adoc[Spring] or link:../guice.adoc[Guice]) to inject
+it into your `Processor` or bean then it can take care of creating it and
+destroying all the resources when you have finished with it.
+
+For instance using link:../spring.adoc[Spring] you can define a template
+and have Spring handle the lifecycle of it:
+
+[source,java]
+----
+    <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+        <template id="template"/>
+    </camelContext>
+----
+
+Then you can refer to the ProducerTemplate with the id `template`.

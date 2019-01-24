@@ -21,12 +21,10 @@ import java.io.IOException;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.HapiContext;
-
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v21.message.ACK;
 import ca.uhn.hl7v2.model.v21.message.ADR_A19;
 import ca.uhn.hl7v2.model.v21.message.ADT_A01;
-
 import ca.uhn.hl7v2.model.v21.message.ADT_A02;
 import ca.uhn.hl7v2.model.v21.message.ADT_A03;
 import ca.uhn.hl7v2.model.v21.message.ADT_A04;
@@ -68,8 +66,6 @@ import ca.uhn.hl7v2.parser.DefaultModelClassFactory;
 import ca.uhn.hl7v2.parser.ParserConfiguration;
 import ca.uhn.hl7v2.parser.UnexpectedSegmentBehaviourEnum;
 import ca.uhn.hl7v2.validation.impl.ValidationContextFactory;
-
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConversionException;

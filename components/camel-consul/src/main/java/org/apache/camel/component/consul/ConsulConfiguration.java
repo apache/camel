@@ -17,7 +17,6 @@
 package org.apache.camel.component.consul;
 
 import com.orbitz.consul.Consul;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;

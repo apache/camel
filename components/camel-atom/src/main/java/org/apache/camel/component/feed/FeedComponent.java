@@ -18,16 +18,14 @@ package org.apache.camel.component.feed;
 
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * A base class for feed (atom, RSS) components.
  */
-public abstract class FeedComponent extends UriEndpointComponent {
+public abstract class FeedComponent extends DefaultComponent {
 
-    public FeedComponent(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
+    public FeedComponent() {
     }
 
     protected abstract FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception;

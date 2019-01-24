@@ -34,6 +34,11 @@ public class MiloClientComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the milo-client component. This
+     * is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * All default options for client
      */
     private MiloClientConfigurationNestedConfiguration defaultConfiguration;
@@ -112,7 +117,6 @@ public class MiloClientComponentConfiguration
 
     public static class MiloClientConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.milo.client.MiloClientConfiguration.class;
-        private String endpointUri;
         /**
          * An alternative discovery URI
          */
@@ -188,14 +192,6 @@ public class MiloClientComponentConfiguration
          * endpoint URI.
          */
         private Boolean overrideHost = false;
-
-        public String getEndpointUri() {
-            return endpointUri;
-        }
-
-        public void setEndpointUri(String endpointUri) {
-            this.endpointUri = endpointUri;
-        }
 
         public String getDiscoveryEndpointUri() {
             return discoveryEndpointUri;

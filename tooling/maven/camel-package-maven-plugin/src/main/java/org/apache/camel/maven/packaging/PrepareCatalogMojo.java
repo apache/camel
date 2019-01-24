@@ -38,6 +38,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.asciidoctor.Asciidoctor;
@@ -48,9 +51,8 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 /**
  * Prepares the camel catalog to include component, data format, and eip descriptors,
  * and generates a report.
- *
- * @goal prepare-catalog
  */
+@Mojo(name = "prepare-catalog", threadSafe = true)
 public class PrepareCatalogMojo extends AbstractMojo {
 
     public static final int BUFFER_SIZE = 128 * 1024;
@@ -66,124 +68,105 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * Whether to validate if the components, data formats, and languages are properly documented and have all the needed details.
-     *
-     * @parameter default-value="true"
      */
+    @Parameter(defaultValue = "true")
     protected Boolean validate;
 
     /**
      * The output directory for components catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/components")
     protected File componentsOutDir;
 
     /**
      * The output directory for dataformats catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/dataformats"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/dataformats")
     protected File dataFormatsOutDir;
 
     /**
      * The output directory for languages catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/languages"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/languages")
     protected File languagesOutDir;
 
     /**
      * The output directory for others catalog
      *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/others"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/others")
     protected File othersOutDir;
 
     /**
      * The output directory for documents catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/docs"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/docs")
     protected File documentsOutDir;
 
     /**
      * The output directory for models catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/models"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/models")
     protected File modelsOutDir;
 
     /**
      * The output directory for archetypes catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/archetypes"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/archetypes")
     protected File archetypesOutDir;
 
     /**
      * The output directory for XML schemas catalog
-     *
-     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/schemas"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/schemas")
     protected File schemasOutDir;
 
     /**
      * The components directory where all the Apache Camel components are
-     *
-     * @parameter default-value="${project.build.directory}/../../../components"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components")
     protected File componentsDir;
 
     /**
      * The camel-core directory where camel-core components are
-     *
-     * @parameter default-value="${project.build.directory}/../../../camel-core"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../camel-core")
     protected File coreDir;
 
     /**
      * The directory where the camel-spring XML models are
-     *
-     * @parameter default-value="${project.build.directory}/../../../components/camel-spring"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring")
     protected File springDir;
 
     /**
      * The archetypes directory where all the Apache Camel Maven archetypes are
-     *
-     * @parameter default-value="${project.build.directory}/../../../archetypes"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../archetypes")
     protected File archetypesDir;
 
     /**
      * The directory where the camel-spring XML schema are
-     *
-     * @parameter default-value="${project.build.directory}/../../../components/camel-spring/target/schema"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring/target/schema")
     protected File springSchemaDir;
 
     /**
      * The directory where the camel-blueprint XML schema are
-     *
-     * @parameter default-value="${project.build.directory}/../../../components/camel-blueprint/target/schema"
      */
+    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-blueprint/target/schema")
     protected File blueprintSchemaDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
@@ -357,6 +340,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-box-component/target/classes");
                         } else if ("camel-servicenow".equals(dir.getName())) {
                             target = new File(dir, "camel-servicenow-component/target/classes");
+                        } else if ("camel-fhir".equals(dir.getName())) {
+                            target = new File(dir, "camel-fhir-component/target/classes");
+                        } else {
+                            // this module must be active with a source folder
+                            File src = new File(dir, "src");
+                            boolean active = src.isDirectory() && src.exists();
+                            if (!active) {
+                                continue;
+                            }
                         }
 
                         int before = componentFiles.size();
@@ -369,7 +361,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         if (before != after && before2 == after2) {
                             missingComponents.add(dir);
                         }
-
                     }
                 }
             }
@@ -551,9 +542,18 @@ public class PrepareCatalogMojo extends AbstractMojo {
             File[] dataFormats = componentsDir.listFiles();
             if (dataFormats != null) {
                 for (File dir : dataFormats) {
+                    // special for this as the data format is in the sub dir
+                    if (dir.isDirectory() && "camel-fhir".equals(dir.getName())) {
+                        dir = new File(dir, "camel-fhir-component");
+                    }
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
-                        findDataFormatFilesRecursive(target, jsonFiles, dataFormatFiles, new CamelDataFormatsFileFilter());
+                        // this module must be active with a source folder
+                        File src = new File(dir, "src");
+                        boolean active = src.isDirectory() && src.exists();
+                        if (active) {
+                            findDataFormatFilesRecursive(target, jsonFiles, dataFormatFiles, new CamelDataFormatsFileFilter());
+                        }
                     }
                 }
             }
@@ -671,7 +671,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (File dir : languages) {
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
-                        findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
+                        // this module must be active with a source folder
+                        File src = new File(dir, "src");
+                        boolean active = src.isDirectory() && src.exists();
+                        if (active) {
+                            findLanguageFilesRecursive(target, jsonFiles, languageFiles, new CamelLanguagesFileFilter());
+                        }
                     }
                 }
             }
@@ -801,14 +806,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         || "camel-olingo2".equals(dir.getName())
                         || "camel-olingo4".equals(dir.getName())
                         || "camel-servicenow".equals(dir.getName())
-                        || "camel-salesforce".equals(dir.getName());
+                        || "camel-salesforce".equals(dir.getName())
+                        || "camel-fhir".equals(dir.getName());
                     if (special || special2) {
                         continue;
                     }
 
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
-                        findOtherFilesRecursive(target, jsonFiles, otherFiles, new CamelOthersFileFilter());
+                        if (target.exists()) {
+                            // this module must be active with a source folder
+                            File src = new File(dir, "src");
+                            boolean active = src.isDirectory() && src.exists();
+                            if (active) {
+                                findOtherFilesRecursive(target, jsonFiles, otherFiles, new CamelOthersFileFilter());
+                            }
+                        }
                     }
                 }
             }
@@ -967,7 +980,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         File target = new File(dir, "src/main/docs");
 
                         // special for these as they are in sub dir
-                        if ("camel-as3".equals(dir.getName())) {
+                        if ("camel-as2".equals(dir.getName())) {
                             target = new File(dir, "camel-as2-component/src/main/docs");
                         } else if ("camel-salesforce".equals(dir.getName())) {
                             target = new File(dir, "camel-salesforce-component/src/main/docs");
@@ -981,6 +994,15 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-box-component/src/main/docs");
                         } else if ("camel-servicenow".equals(dir.getName())) {
                             target = new File(dir, "camel-servicenow-component/src/main/docs");
+                        } else if ("camel-fhir".equals(dir.getName())) {
+                            target = new File(dir, "camel-fhir-component/src/main/docs");
+                        } else {
+                            // this module must be active with a source folder
+                            File src = new File(dir, "src");
+                            boolean active = src.isDirectory() && src.exists();
+                            if (!active) {
+                                continue;
+                            }
                         }
 
                         int before = adocFiles.size();

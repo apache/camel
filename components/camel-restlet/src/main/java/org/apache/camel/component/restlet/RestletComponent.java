@@ -32,7 +32,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.restlet.converter.RestletConverter;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -40,10 +39,13 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.RestProducerFactoryHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.restlet.Component;
 import org.restlet.Restlet;
@@ -52,16 +54,13 @@ import org.restlet.data.Method;
 import org.restlet.engine.Engine;
 import org.restlet.security.ChallengeAuthenticator;
 import org.restlet.security.MapVerifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A Camel component embedded Restlet that produces and consumes exchanges.
- *
- * @version
  */
+@org.apache.camel.spi.annotations.Component("restlet")
 public class RestletComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware, HeaderFilterStrategyAware {
-    private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
+
     private static final Object LOCK = new Object();
 
     private final Map<String, RestletHost> restletHostRegistry = new HashMap<>();
@@ -111,6 +110,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "filter", description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
+    private SSLContextParameters sslContextParameters;
 
     public RestletComponent() {
         this(new Component());
@@ -190,7 +190,11 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         }
 
         if (result.getSslContextParameters() == null) {
-            result.setSslContextParameters(retrieveGlobalSslContextParameters());
+            if (sslContextParameters == null) {
+                result.setSslContextParameters(retrieveGlobalSslContextParameters());
+            } else {
+                result.setSslContextParameters(sslContextParameters);
+            }
         }
 
         // any additional query parameters from parameters then we need to include them as well
@@ -248,12 +252,6 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         if (endpoint.getUriPattern() != null && endpoint.getUriPattern().length() > 0) {
             attachUriPatternToRestlet(offsetPath, endpoint.getUriPattern(), endpoint, consumer.getRestlet());
         }
-
-        if (endpoint.getRestletUriPatterns() != null) {
-            for (String uriPattern : endpoint.getRestletUriPatterns()) {
-                attachUriPatternToRestlet(offsetPath, uriPattern, endpoint, consumer.getRestlet());
-            }
-        }
     }
 
     public void disconnect(RestletConsumer consumer) throws Exception {
@@ -266,15 +264,6 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
             MethodBasedRouter methodRouter = getMethodRouter(pattern, false);
             if (methodRouter != null) {
                 routesToRemove.add(methodRouter);
-            }
-        }
-
-        if (endpoint.getRestletUriPatterns() != null) {
-            for (String uriPattern : endpoint.getRestletUriPatterns()) {
-                MethodBasedRouter methodRouter = getMethodRouter(uriPattern, false);
-                if (methodRouter != null) {
-                    routesToRemove.add(methodRouter);
-                }
             }
         }
 
@@ -291,8 +280,8 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
                 router.removeRoute(method);
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Detached restlet uriPattern: {} method: {}", router.getUriPattern(),
+            if (log.isDebugEnabled()) {
+                log.debug("Detached restlet uriPattern: {} method: {}", router.getUriPattern(),
                           endpoint.getRestletMethod());
             }
 
@@ -312,7 +301,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
             MethodBasedRouter result = routers.get(uriPattern);
             if (result == null && addIfEmpty) {
                 result = new MethodBasedRouter(uriPattern);
-                LOG.debug("Added method based router: {}", result);
+                log.debug("Added method based router: {}", result);
                 routers.put(uriPattern, result);
             }
             return result;
@@ -329,7 +318,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
                 host.configure(endpoint, component);
 
                 restletHostRegistry.put(key, host);
-                LOG.debug("Added host: {}", key);
+                log.debug("Added host: {}", key);
                 host.start();
             }
         }
@@ -405,7 +394,7 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
             guard.setVerifier(verifier);
             guard.setNext(target);
             target = guard;
-            LOG.debug("Target has been set to guard: {}", guard);
+            log.debug("Target has been set to guard: {}", guard);
         }
 
         List<Method> methods = new ArrayList<>();
@@ -417,24 +406,24 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         }
         for (Method method : methods) {
             router.addRoute(method, target);
-            LOG.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
+            log.debug("Attached restlet uriPattern: {} method: {}", uriPattern, method);
         }
 
         if (!router.hasBeenAttached()) {
             component.getDefaultHost().attach(
                     offsetPath == null ? uriPattern : offsetPath + uriPattern, router);
-            LOG.debug("Attached methodRouter uriPattern: {}", uriPattern);
+            log.debug("Attached methodRouter uriPattern: {}", uriPattern);
         }
 
         if (!router.isStarted()) {
             router.start();
-            LOG.debug("Started methodRouter uriPattern: {}", uriPattern);
+            log.debug("Started methodRouter uriPattern: {}", uriPattern);
         }
     }
 
     private void deAttachUriPatternFromRestlet(String uriPattern, RestletEndpoint endpoint, Restlet target) throws Exception {
         component.getDefaultHost().detach(target);
-        LOG.debug("De-attached methodRouter uriPattern: {}", uriPattern);
+        log.debug("De-attached methodRouter uriPattern: {}", uriPattern);
     }
 
     public Boolean getControllerDaemon() {
@@ -697,6 +686,11 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         this.useGlobalSslContextParameters = useGlobalSslContextParameters;
     }
 
+    @Metadata(description = "To configure security using SSLContextParameters", label = "security")
+    public void setSslContextParameters(final SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
@@ -745,11 +739,11 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
 
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+            if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                 host = "0.0.0.0";
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                 host = HostUtils.getLocalHostName();
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                 host = HostUtils.getLocalIp();
             }
         }
@@ -851,6 +845,11 @@ public class RestletComponent extends DefaultComponent implements RestConsumerFa
         } else {
             url += "?restletMethod=" + restletMethod;
         }
+
+        // there are cases where we might end up here without component being created beforehand
+        // we need to abide by the component properties specified in the parameters when creating
+        // the component
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
 
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {

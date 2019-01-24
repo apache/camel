@@ -21,30 +21,31 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.SSLContextParametersAware;
+import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.camel.component.file.remote.strategy.FtpProcessStrategyFactory;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
  * FTP Secure (FTP over SSL/TLS) Component.
  * <p/>
  * If desired, the JVM property <tt>-Djavax.net.debug=all</tt> can be used to see wire-level SSL details.
- * 
- * @version 
  */
+@Component("ftps")
+@FileProcessStrategy(FtpProcessStrategyFactory.class)
 public class FtpsComponent extends FtpComponent implements SSLContextParametersAware {
 
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
 
     public FtpsComponent() {
-        setEndpointClass(FtpsEndpoint.class);
     }
 
     public FtpsComponent(CamelContext context) {
         super(context);
-        setEndpointClass(FtpsEndpoint.class);
     }
 
     @Override

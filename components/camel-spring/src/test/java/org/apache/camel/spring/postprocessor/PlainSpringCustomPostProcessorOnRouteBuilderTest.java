@@ -16,15 +16,14 @@
  */
 package org.apache.camel.spring.postprocessor;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
-public class PlainSpringCustomPostProcessorOnRouteBuilderTest extends TestCase {
+public class PlainSpringCustomPostProcessorOnRouteBuilderTest extends Assert {
 
+    @Test
     public void testShouldProcessAnnotatedFields() {
 
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:/org/apache/camel/spring/postprocessor/plainSpringCustomPostProcessorOnRouteBuilderTest.xml");

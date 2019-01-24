@@ -22,15 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.iec60870.ObjectAddress;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultMessage;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.Value;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ClientConsumer extends DefaultConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ClientConsumer.class);
 
     private final ClientConnection connection;
     private final ClientEndpoint endpoint;
@@ -60,7 +56,7 @@ public class ClientConsumer extends DefaultConsumer {
             exchange.setIn(mapMessage(value));
             getAsyncProcessor().process(exchange);
         } catch (final Exception e) {
-            LOG.debug("Failed to process message", e);
+            log.debug("Failed to process message", e);
         }
     }
 

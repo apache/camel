@@ -54,10 +54,10 @@
     </dataFormats>
 
     <route>
-      <from ref="minaSyslog"/>
-      <unmarshal ref="mySyslog"/>
+      <from uri="ref:minaSyslog"/>
+      <unmarshal><custom ref="mySyslog"/></unmarshal>
       <to uri="mock:stop1"/>
-      <marshal ref="mySyslog"/>
+      <marshal><custom ref="mySyslog"/></marshal>
       <to uri="mock:stop2"/>
     </route>
 

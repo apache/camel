@@ -28,6 +28,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -40,7 +42,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -60,90 +61,71 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 /**
  * Generate BOM by flattening the current project's dependency management section and applying exclusions.
- *
- * @goal generate
- * @phase validate
  */
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.VALIDATE, threadSafe = true)
 public class BomGeneratorMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
     /**
      * The source pom template file.
-     *
-     * @parameter default-value="${basedir}/pom.xml"
      */
+    @Parameter(defaultValue = "${basedir}/pom.xml")
     protected File sourcePom;
 
     /**
      * The pom file.
-     *
-     * @parameter default-value="${project.build.directory}/${project.name}-pom.xml"
      */
+    @Parameter(defaultValue = "${project.build.directory}/${project.name}-pom.xml")
     protected File targetPom;
 
 
     /**
      * The user configuration
-     *
-     * @parameter
-     * @readonly
      */
+    @Parameter(readonly = true)
     protected DependencySet dependencies;
 
     /**
      * The conflict checks configured by the user
-     *
-     * @parameter
-     * @readonly
      */
+    @Parameter(readonly = true)
     protected ExternalBomConflictCheckSet checkConflicts;
 
     /**
      * Used to look up Artifacts in the remote repository.
-     *
-     * @component role="org.apache.maven.artifact.factory.ArtifactFactory"
-     * @required
-     * @readonly
      */
+    @Component
     protected ArtifactFactory artifactFactory;
 
     /**
      * Used to look up Artifacts in the remote repository.
-     *
-     * @component role="org.apache.maven.artifact.resolver.ArtifactResolver"
-     * @required
-     * @readonly
      */
+    @Component
     protected ArtifactResolver artifactResolver;
 
     /**
      * List of Remote Repositories used by the resolver
-     *
-     * @parameter property="project.remoteArtifactRepositories"
-     * @readonly
-     * @required
      */
+    @Parameter(property = "project.remoteArtifactRepositories", readonly = true, required = true)
     protected List remoteRepositories;
 
     /**
      * Location of the local repository.
-     *
-     * @parameter property="localRepository"
-     * @readonly
-     * @required
      */
+    @Parameter(property = "localRepository", readonly = true, required = true)
     protected ArtifactRepository localRepository;
 
     @Override
@@ -204,7 +186,9 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private Document loadBasePom() throws Exception {
-        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        DocumentBuilder builder = dbf.newDocumentBuilder();
         Document pom = builder.parse(sourcePom);
 
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -235,7 +219,9 @@ public class BomGeneratorMojo extends AbstractMojo {
             emptyNode.getParentNode().removeChild(emptyNode);
         }
 
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        Transformer transformer = transformerFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
@@ -284,7 +270,6 @@ public class BomGeneratorMojo extends AbstractMojo {
 
 
     private void overwriteDependencyManagement(Document pom, List<Dependency> dependencies) throws Exception {
-
         XPath xpath = XPathFactory.newInstance().newXPath();
         XPathExpression expr = xpath.compile("/project/dependencyManagement/dependencies");
 
@@ -429,6 +414,10 @@ public class BomGeneratorMojo extends AbstractMojo {
                 String prop = version.substring(start + 2, end);
                 String resolved = project.getProperties().getProperty(prop);
                 if (resolved != null) {
+                    // may contain yet another placeholder
+                    if (resolved.contains("${")) {
+                        resolved = resolveVersion(project, resolved);
+                    }
                     version = version.substring(0, start) + resolved + version.substring(end + 1);
                 }
             }

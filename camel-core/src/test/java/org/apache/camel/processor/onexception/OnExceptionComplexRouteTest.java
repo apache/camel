@@ -15,15 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.onexception;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 public class OnExceptionComplexRouteTest extends ContextTestSupport {
 
     protected MyServiceBean myServiceBean;
 
+    @Test
     public void testNoError() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -33,6 +35,7 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNoError2() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(1);
@@ -42,6 +45,7 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFunctionalError() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
@@ -52,6 +56,7 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFunctionalError2() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:handled").expectedMessageCount(1);
@@ -62,6 +67,7 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTechnicalError() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:tech.error").expectedMessageCount(1);
@@ -72,6 +78,7 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testTechnicalError2() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(0);
         getMockEndpoint("mock:tech.error").expectedMessageCount(1);
@@ -83,7 +90,8 @@ public class OnExceptionComplexRouteTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         myServiceBean = new MyServiceBean();
         super.setUp();
     }

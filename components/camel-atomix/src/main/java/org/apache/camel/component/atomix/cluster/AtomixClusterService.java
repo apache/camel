@@ -23,13 +23,10 @@ import io.atomix.catalyst.transport.Address;
 import io.atomix.catalyst.transport.Transport;
 import io.atomix.copycat.server.storage.StorageLevel;
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.cluster.AbstractCamelClusterService;
+import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class AtomixClusterService extends AbstractCamelClusterService<AtomixClusterView> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AtomixClusterService.class);
 
     private Address address;
     private AtomixClusterConfiguration configuration;
@@ -144,7 +141,7 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
         super.doStop();
 
         if (atomix != null) {
-            LOGGER.debug("Leaving atomix cluster replica {}", atomix);
+            log.debug("Leaving atomix cluster replica {}", atomix);
             atomix.leave().join();
         }
     }
@@ -164,13 +161,13 @@ public final class AtomixClusterService extends AbstractCamelClusterService<Atom
             atomix = AtomixClusterHelper.createReplica(getCamelContext(), address, configuration);
 
             if (ObjectHelper.isNotEmpty(configuration.getNodes())) {
-                LOGGER.debug("Bootstrap cluster on address {} for nodes: {}", address, configuration.getNodes());
+                log.debug("Bootstrap cluster on address {} for nodes: {}", address, configuration.getNodes());
                 this.atomix.bootstrap(configuration.getNodes()).join();
-                LOGGER.debug("Bootstrap cluster done");
+                log.debug("Bootstrap cluster done");
             } else {
-                LOGGER.debug("Bootstrap cluster on address {}", address, configuration.getNodes());
+                log.debug("Bootstrap cluster on address {}", address, configuration.getNodes());
                 this.atomix.bootstrap().join();
-                LOGGER.debug("Bootstrap cluster done");
+                log.debug("Bootstrap cluster done");
             }
         }
 

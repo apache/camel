@@ -24,11 +24,12 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 import org.ehcache.CacheManager;
 import org.ehcache.config.CacheConfiguration;
 import org.ehcache.config.Configuration;
@@ -40,6 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link DefaultComponent}.
  */
+@Component("ehcache")
 public class EhcacheComponent extends DefaultComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheComponent.class);
 

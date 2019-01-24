@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.ignite.IgniteConstants;
 import org.apache.camel.component.ignite.IgniteHelper;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.util.MessageHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.MessageHelper;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteMessaging;
 
@@ -61,8 +61,8 @@ public class IgniteMessagingProducer extends DefaultAsyncProducer {
         }
 
         IgniteHelper.maybePropagateIncomingBody(endpoint, in, out);
-
-        return true;
+        callback.done(false);
+        return false;
     }
 
     private String topicFor(Exchange exchange) {

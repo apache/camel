@@ -32,20 +32,6 @@ public class CxfRsBlueprintEndpoint extends CxfRsEndpoint {
     private BlueprintContainer blueprintContainer;
     private BundleContext bundleContext;
     private BlueprintCamelContext blueprintCamelContext;
-    
-    @Deprecated 
-    /**
-     * It will be removed in Camel 3.0
-     * @param comp
-     * @param bean
-     */
-    public CxfRsBlueprintEndpoint(Component comp, AbstractJAXRSFactoryBean bean) {
-        super(bean.getAddress(), comp);
-        this.bean = bean;
-        BlueprintSupport support = (BlueprintSupport)bean;
-        setBlueprintContainer(support.getBlueprintContainer());
-        setBundleContext(support.getBundleContext());
-    }
 
     public CxfRsBlueprintEndpoint(Component comp, String uri, AbstractJAXRSFactoryBean bean) {
         super(uri, comp);

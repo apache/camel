@@ -15,10 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.test;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 
 public class TestFileTest extends ContextTestSupport {
 
@@ -28,12 +29,14 @@ public class TestFileTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/testme");
         super.setUp();
     }
 
     @Ignore
+    @Test
     public void testFile() throws Exception {
         template.sendBody("file:target/testme", "Hello World");
 

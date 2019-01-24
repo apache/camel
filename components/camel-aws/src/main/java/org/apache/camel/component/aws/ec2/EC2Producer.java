@@ -48,11 +48,9 @@ import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
 
@@ -61,8 +59,6 @@ import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageFo
  * <a href="http://aws.amazon.com/ec2/">AWS EC2</a>
  */
 public class EC2Producer extends DefaultProducer {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(EC2Producer.class);
     
     private transient String ec2ProducerToString;
 
@@ -199,10 +195,10 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.runInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Run Instances command returned the error code {}", ase.getErrorCode());
+            log.trace("Run Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Creating and running instances with ami [{}] and instance type {}", ami, instanceType.toString());
+        log.trace("Creating and running instances with ami [{}] and instance type {}", ami, instanceType);
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
@@ -220,10 +216,10 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.startInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Start Instances command returned the error code {}", ase.getErrorCode());
+            log.trace("Start Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Starting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+        log.trace("Starting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result);        
     }
@@ -241,10 +237,10 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.stopInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Stop Instances command returned the error code {}", ase.getErrorCode());
+            log.trace("Stop Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Stopping instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+        log.trace("Stopping instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result);        
     }
@@ -262,10 +258,10 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.terminateInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Terminate Instances command returned the error code {}", ase.getErrorCode());
+            log.trace("Terminate Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Terminating instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+        log.trace("Terminating instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result);        
     }
@@ -281,7 +277,7 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.describeInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Describe Instances command returned the error code {}", ase.getErrorCode());
+            log.trace("Describe Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -299,7 +295,7 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.describeInstanceStatus(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Describe Instances Status command returned the error code {}", ase.getErrorCode());
+            log.trace("Describe Instances Status command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
@@ -316,10 +312,10 @@ public class EC2Producer extends DefaultProducer {
             throw new IllegalArgumentException("Instances Ids must be specified");
         }
         try {
-            LOG.trace("Rebooting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+            log.trace("Rebooting instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
             ec2Client.rebootInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Reboot Instances command returned the error code {}", ase.getErrorCode());
+            log.trace("Reboot Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
     }
@@ -337,10 +333,10 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.monitorInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Monitor Instances command returned the error code {}", ase.getErrorCode());
+            log.trace("Monitor Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Start Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+        log.trace("Start Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result); 
     }
@@ -358,10 +354,10 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.unmonitorInstances(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Unmonitor Instances command returned the error code {}", ase.getErrorCode());
+            log.trace("Unmonitor Instances command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
+        log.trace("Stop Monitoring instances with Ids [{}] ", Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result); 
     }
@@ -386,10 +382,10 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.createTags(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Create tags command returned the error code {}", ase.getErrorCode());
+            log.trace("Create tags command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
+        log.trace("Created tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result); 
     }
@@ -414,10 +410,10 @@ public class EC2Producer extends DefaultProducer {
         try {
             result = ec2Client.deleteTags(request);
         } catch (AmazonServiceException ase) {
-            LOG.trace("Delete tags command returned the error code {}", ase.getErrorCode());
+            log.trace("Delete tags command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
-        LOG.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
+        log.trace("Delete tags [{}] on resources with Ids [{}] ", Arrays.toString(tags.toArray()), Arrays.toString(instanceIds.toArray()));
         Message message = getMessageForResponse(exchange);
         message.setBody(result); 
     }

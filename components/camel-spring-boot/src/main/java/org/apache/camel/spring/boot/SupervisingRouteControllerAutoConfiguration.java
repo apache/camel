@@ -71,7 +71,7 @@ public class SupervisingRouteControllerAutoConfiguration {
                 // Mark this route as excluded from supervisor
                 controller.addFilter(new SupervisingRouteControllerFilters.BlackList(entry.getKey()));
             } else {
-                // configure teh route
+                // configure the route
                 controller.setBackOff(entry.getKey(), configureBackOff(defaultBackOff, cfg.getBackOff()));
             }
         }

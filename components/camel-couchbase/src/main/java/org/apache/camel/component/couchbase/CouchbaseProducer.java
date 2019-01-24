@@ -26,7 +26,7 @@ import net.spy.memcached.ReplicateTo;
 import net.spy.memcached.internal.OperationFuture;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_DELETE;
 import static org.apache.camel.component.couchbase.CouchbaseConstants.COUCHBASE_GET;

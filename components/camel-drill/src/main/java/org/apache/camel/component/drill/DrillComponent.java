@@ -20,20 +20,21 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link DrillEndpoint}. It holds the
  * list of named direct endpoints.
  */
-public class DrillComponent extends UriEndpointComponent {
+@Component("drill")
+public class DrillComponent extends DefaultComponent {
 
     public DrillComponent() {
-        super(DrillEndpoint.class);
     }
 
     public DrillComponent(final CamelContext context) {
-        super(context, DrillEndpoint.class);
+        super(context);
     }
 
     @Override

@@ -19,14 +19,10 @@ package org.apache.camel.component.metrics;
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.metrics.MetricsConstants.HEADER_GAUGE_SUBJECT;
 
 public class GaugeProducer extends AbstractMetricsProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GaugeProducer.class);
 
     public GaugeProducer(MetricsEndpoint endpoint) {
         super(endpoint);
@@ -40,7 +36,7 @@ public class GaugeProducer extends AbstractMetricsProducer {
             if (endpoint.getSubject() != null) {
                 endpoint.getRegistry().register(endpoint.getMetricsName(), new CamelMetricsGauge(endpoint.getSubject()));
             } else {
-                LOG.info("No subject found for Gauge \"{}\". Ignoring...", endpoint.getMetricsName());
+                log.info("No subject found for Gauge \"{}\". Ignoring...", endpoint.getMetricsName());
             }
         }
     }
@@ -60,7 +56,7 @@ public class GaugeProducer extends AbstractMetricsProducer {
             if (finalSubject != null) {
                 registry.register(metricsName, new CamelMetricsGauge(finalSubject));
             } else {
-                LOG.info("No subject found for Gauge \"{}\". Ignoring...", metricsName);
+                log.info("No subject found for Gauge \"{}\". Ignoring...", metricsName);
             }
         }
     }

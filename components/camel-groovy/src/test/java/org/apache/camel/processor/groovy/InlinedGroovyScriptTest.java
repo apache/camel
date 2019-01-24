@@ -21,9 +21,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class InlinedGroovyScriptTest extends CamelSpringTestSupport {
 
     @Override

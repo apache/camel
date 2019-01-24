@@ -21,9 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.LoadBalancerDefinition;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Round robin load balancer
@@ -37,11 +35,6 @@ import org.apache.camel.spi.RouteContext;
 public class RoundRobinLoadBalancerDefinition extends LoadBalancerDefinition {
 
     public RoundRobinLoadBalancerDefinition() {
-    }
-
-    @Override
-    protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        return new org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer();
     }
 
     @Override

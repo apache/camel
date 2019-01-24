@@ -24,8 +24,8 @@ import io.micrometer.core.instrument.Tags;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.spi.Language;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_METRIC_NAME;
@@ -84,7 +84,8 @@ public abstract class AbstractMicrometerProducer<T extends Meter> extends Defaul
 
     protected <C> C simple(Exchange exchange, String expression, Class<C> clazz) {
         if (expression != null) {
-            Expression simple = SimpleLanguage.simple(expression);
+            Language language = exchange.getContext().resolveLanguage("simple");
+            Expression simple = language.createExpression(expression);
             if (simple != null) {
                 return simple.evaluate(exchange, clazz);
             }

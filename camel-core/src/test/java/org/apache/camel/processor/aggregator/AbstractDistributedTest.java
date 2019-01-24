@@ -22,16 +22,17 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.support.service.ServiceHelper;
+import org.junit.After;
+import org.junit.Before;
 
-/**
- * @version
- */
 public abstract class AbstractDistributedTest extends ContextTestSupport {
 
     protected CamelContext context2;
     protected ProducerTemplate template2;
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         context.setUseMDCLogging(true);
@@ -39,12 +40,13 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
         context2 = new DefaultCamelContext();
         context2.setUseMDCLogging(true);
         template2 = context2.createProducerTemplate();
-        ServiceHelper.startServices(template2, context2);
+        ServiceHelper.startService(template2, context2);
 
         // add routes after CamelContext has been started
-        context2.addRoutes(createRouteBuilder2());
+        context2.adapt(ModelCamelContext.class).addRoutes(createRouteBuilder2());
     }
 
+    @After
     public void tearDown() throws Exception {
         ServiceHelper.stopAndShutdownServices(context2, template2);
 

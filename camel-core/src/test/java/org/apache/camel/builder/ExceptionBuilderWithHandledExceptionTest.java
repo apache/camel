@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  * Unit test to test exception configuration
@@ -34,6 +35,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
     private static final String RESULT_QUEUE = "mock:result";
     private static final String ERROR_QUEUE = "mock:error";
 
+    @Test
     public void testHandledException() throws Exception {
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
         result.expectedMessageCount(0);
@@ -45,6 +47,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Test
     public void testHandledExceptionWithExpression() throws Exception {
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
         result.expectedMessageCount(0);
@@ -56,6 +59,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Test
     public void testUnhandledException() throws Exception {
         MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
         result.expectedMessageCount(0);

@@ -38,7 +38,7 @@ import javax.xml.datatype.DatatypeFactory;
 import org.apache.camel.component.jmx.jaxb.NotificationEventType;
 import org.apache.camel.component.jmx.jaxb.ObjectFactory;
 import org.apache.camel.component.jmx.jaxb.ObjectNamesType;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -171,7 +171,7 @@ public class NotificationXmlFormatter extends ServiceSupport {
             LOG.info("Creating JAXBContext with contextPath: " + contextPath + " and classloader: " + cl);
             return JAXBContext.newInstance(contextPath, cl);
         } catch (Exception e) {
-            LOG.info("Creating JAXBContext with contextPath: " + contextPath);
+            LOG.info("Creating JAXBContext with contextPath: {}", contextPath);
             return JAXBContext.newInstance(contextPath);
         }
     }

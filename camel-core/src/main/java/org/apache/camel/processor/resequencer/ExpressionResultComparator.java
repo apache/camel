@@ -22,13 +22,11 @@ import org.apache.camel.Expression;
 /**
  * A {@link SequenceElementComparator} that compares {@link Exchange}s based on
  * the result of an expression evaluation.
- * 
- * @version 
  */
 public interface ExpressionResultComparator extends SequenceElementComparator<Exchange> {
 
     /**
-     * Set the expression sed for comparing {@link Exchange}s.
+     * Set the expression used for comparing {@link Exchange}s.
      * 
      * @param expression the expression
      */

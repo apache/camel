@@ -21,12 +21,14 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Based on user forum issue
  */
 public class SimpleOgnlMapIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSimpleOgnlIssueKing() throws Exception {
         getMockEndpoint("mock:king").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
@@ -38,6 +40,7 @@ public class SimpleOgnlMapIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSimpleOgnlIssueOther() throws Exception {
         getMockEndpoint("mock:king").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);

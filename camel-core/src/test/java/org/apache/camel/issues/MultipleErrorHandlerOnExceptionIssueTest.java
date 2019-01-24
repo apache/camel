@@ -21,12 +21,14 @@ import java.io.IOException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class MultipleErrorHandlerOnExceptionIssueTest extends ContextTestSupport {
 
+    @Test
     public void testMultipleErrorHandlerOnExceptionA() throws Exception {
         getMockEndpoint("mock:handled").expectedMessageCount(1);
         getMockEndpoint("mock:a").expectedMessageCount(1);
@@ -39,6 +41,7 @@ public class MultipleErrorHandlerOnExceptionIssueTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMultipleErrorHandlerOnExceptionB() throws Exception {
         getMockEndpoint("mock:handled").expectedMessageCount(0);
         getMockEndpoint("mock:a").expectedMessageCount(0);

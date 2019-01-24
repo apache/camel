@@ -23,14 +23,13 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class DynamicRouterExchangeHeadersTest extends ContextTestSupport {
 
     private static List<String> bodies = new ArrayList<>();
 
+    @Test
     public void testDynamicRouter() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:a").expectedHeaderReceived("invoked", 1);

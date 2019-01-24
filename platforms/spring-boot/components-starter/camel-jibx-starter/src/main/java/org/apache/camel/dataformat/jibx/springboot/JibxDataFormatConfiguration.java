@@ -33,6 +33,11 @@ public class JibxDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the jibx data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Class name to use when unmarshalling from XML to Java.
      */
     private String unmarshallClass;

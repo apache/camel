@@ -17,10 +17,8 @@
 package org.apache.camel.component.apns.springboot;
 
 import javax.annotation.Generated;
-import com.notnoop.apns.ApnsService;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * For sending notifications to Apple iOS devices.
@@ -34,12 +32,16 @@ public class ApnsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the apns component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The ApnsService to use. The
      * org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to
-     * build a ApnsService
+     * build a ApnsService. The option is a com.notnoop.apns.ApnsService type.
      */
-    @NestedConfigurationProperty
-    private ApnsService apnsService;
+    private String apnsService;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -47,11 +49,11 @@ public class ApnsComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public ApnsService getApnsService() {
+    public String getApnsService() {
         return apnsService;
     }
 
-    public void setApnsService(ApnsService apnsService) {
+    public void setApnsService(String apnsService) {
         this.apnsService = apnsService;
     }
 

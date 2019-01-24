@@ -33,6 +33,11 @@ public class FtpsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the ftps component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Enable usage of global SSL context parameters.
      */
     private Boolean useGlobalSslContextParameters = false;

@@ -24,7 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneEndpoint;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -70,7 +70,7 @@ public class DomainProducer extends AbstractKeystoneProducer {
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
-        ObjectHelper.notEmpty(id, "Domain ID");
+        StringHelper.notEmpty(id, "Domain ID");
         final Domain out = osV3Client.identity().domains().get(id);
         exchange.getIn().setBody(out);
     }
@@ -90,7 +90,7 @@ public class DomainProducer extends AbstractKeystoneProducer {
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
-        ObjectHelper.notEmpty(id, "Domain ID");
+        StringHelper.notEmpty(id, "Domain ID");
         final ActionResponse response = osV3Client.identity().domains().delete(id);
         checkFailure(response, msg, "Delete domain" + id);
     }
@@ -101,7 +101,7 @@ public class DomainProducer extends AbstractKeystoneProducer {
             Map headers = message.getHeaders();
             DomainBuilder builder = Builders.domain();
 
-            ObjectHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
+            StringHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
             builder.name(message.getHeader(OpenstackConstants.NAME, String.class));
 
             if (headers.containsKey(KeystoneConstants.DESCRIPTION)) {

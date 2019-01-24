@@ -20,12 +20,12 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
 @ManagedResource(description = "SpringCache based message id repository")
-public class SpringCacheIdempotentRepository extends ServiceSupport implements IdempotentRepository<Object> {
+public class SpringCacheIdempotentRepository extends ServiceSupport implements IdempotentRepository {
     private final CacheManager manager;
     private final String cacheName;
     private Cache cache;
@@ -38,19 +38,19 @@ public class SpringCacheIdempotentRepository extends ServiceSupport implements I
 
     @Override
     @ManagedOperation(description = "Adds the key to the store")
-    public boolean add(Object key) {
+    public boolean add(String key) {
         return cache.putIfAbsent(key, true) == null;
     }
 
     @Override
     @ManagedOperation(description = "Does the store contain the given key")
-    public boolean contains(Object key) {
+    public boolean contains(String key) {
         return cache.get(key) != null;
     }
 
     @Override
     @ManagedOperation(description = "Remove the key from the store")
-    public boolean remove(Object key) {
+    public boolean remove(String key) {
         cache.evict(key);
         return true;
     }
@@ -67,7 +67,7 @@ public class SpringCacheIdempotentRepository extends ServiceSupport implements I
     }
 
     @Override
-    public boolean confirm(Object key) {
+    public boolean confirm(String key) {
         return true;
     }
 

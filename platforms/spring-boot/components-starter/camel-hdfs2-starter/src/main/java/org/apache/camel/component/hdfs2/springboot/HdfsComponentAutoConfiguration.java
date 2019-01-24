@@ -30,7 +30,7 @@ import org.apache.camel.spring.boot.util.CamelPropertiesHelper;
 import org.apache.camel.spring.boot.util.ConditionalOnCamelContextAndAutoConfigurationBeans;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.spring.boot.util.HierarchicalPropertiesEvaluator;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class HdfsComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = "hdfs2-component")
+    @Bean(name = {"hdfs-component", "hdfs2-component"})
     @ConditionalOnMissingBean(HdfsComponent.class)
     public HdfsComponent configureHdfsComponent() throws Exception {
         HdfsComponent component = new HdfsComponent();

@@ -22,7 +22,6 @@ import java.util.List;
 import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.Delimiters;
 import io.netty.util.CharsetUtil;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 

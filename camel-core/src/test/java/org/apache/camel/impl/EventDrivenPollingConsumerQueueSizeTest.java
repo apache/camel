@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
-
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
@@ -27,18 +26,26 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.EventDrivenPollingConsumer;
+import org.apache.camel.support.service.ServiceHelper;
+import org.junit.Before;
+import org.junit.Test;
 
 public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport {
 
     private String uri = "my:foo?pollingConsumerQueueSize=10&pollingConsumerBlockWhenFull=false";
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
         context.addComponent("my", new MyQueueComponent());
     }
 
+    @Test
     public void testQueueSize() throws Exception {
         // must start context as we do not use route builder that auto-start
         context.start();

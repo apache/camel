@@ -32,11 +32,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StatefulService;
+import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.mbean.RouteError;
+import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.spi.RouteError;
-import org.apache.camel.util.ObjectHelper;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -114,12 +115,12 @@ public class CamelRoutesEndpoint {
             throw new IllegalArgumentException("Read only: route dump is not permitted in read-only mode");
         }
 
-        RouteDefinition route = camelContext.getRouteDefinition(id);
+        RouteDefinition route = camelContext.adapt(ModelCamelContext.class).getRouteDefinition(id);
         if (route != null) {
             try {
                 return ModelHelper.dumpModelAsXml(camelContext, route);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
         return null;
@@ -159,7 +160,7 @@ public class CamelRoutesEndpoint {
 
     private void resetRoute(String id) {
         try {
-            ManagedRouteMBean managedRouteMBean = camelContext.getManagedRoute(id, ManagedRouteMBean.class);
+            ManagedRouteMBean managedRouteMBean = camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(id);
             if (managedRouteMBean != null) {
                 managedRouteMBean.reset(true);
             }
@@ -283,7 +284,7 @@ public class CamelRoutesEndpoint {
             super(route);
 
             if (camelContext.getManagementStrategy().getManagementAgent() != null) {
-                this.routeDetails = new RouteDetails(camelContext.getManagedRoute(route.getId(), ManagedRouteMBean.class));
+                this.routeDetails = new RouteDetails(camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId()));
             }
         }
 

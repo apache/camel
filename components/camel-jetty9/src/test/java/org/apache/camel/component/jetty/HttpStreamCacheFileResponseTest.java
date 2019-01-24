@@ -24,9 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpStreamCacheFileResponseTest extends BaseJettyTest {
 
     private String body = "12345678901234567890123456789012345678901234567890";

@@ -23,15 +23,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class PendingExchangesShutdownGracefulTest extends ContextTestSupport {
 
     private static String foo = "";
     private static CountDownLatch latch = new CountDownLatch(1);
 
+    @Test
     public void testShutdownGraceful() throws Exception {
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);
 
@@ -56,7 +55,7 @@ public class PendingExchangesShutdownGracefulTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo").to("mock:foo").delay(500).process(new Processor() {
+                from("seda:foo").to("mock:foo").delay(500).syncDelayed().process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         foo = foo + exchange.getIn().getBody(String.class);
                         latch.countDown();

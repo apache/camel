@@ -18,15 +18,17 @@ package org.apache.camel.component.vm;
 
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class VmMultipleConsumersRemoteRouteTest extends TestCase {
+public class VmMultipleConsumersRemoteRouteTest extends Assert {
 
+    @Test
     public void testVmMultipleConsumersRemoteRoute() throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
         ProducerTemplate producerTemplate = camelContext.createProducerTemplate();
@@ -51,7 +53,7 @@ public class VmMultipleConsumersRemoteRouteTest extends TestCase {
 
         // this test actually removes the route... so in effect we have one route consuming
         // a "multipleConsumer" seda queue
-        camelContext.stopRoute("route2");
+        camelContext.getRouteController().stopRoute("route2");
         camelContext.removeRoute("route2");
 
         MockEndpoint mock1 = (MockEndpoint) camelContext.getEndpoint("mock:route1");

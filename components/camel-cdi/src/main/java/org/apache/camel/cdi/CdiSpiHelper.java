@@ -31,6 +31,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static java.security.AccessController.doPrivileged;
@@ -43,12 +44,14 @@ import static java.util.stream.Collectors.toSet;
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedConstructor;
 import javax.enterprise.inject.spi.AnnotatedField;
+import javax.enterprise.inject.spi.AnnotatedMember;
 import javax.enterprise.inject.spi.AnnotatedMethod;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.Nonbinding;
 
+import org.apache.camel.CamelContext;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 
@@ -220,5 +223,52 @@ final class CdiSpiHelper {
                 },
                 StringJoiner::merge)
             .toString();
+    }
+
+    /**
+     * Wraps creation of a {@link CamelContext} with the current thread context ClassLoader
+     * set with the ClassLoader associated to the {@link Annotated} java class.
+     */
+    static <T extends CamelContext> T createCamelContextWithTCCL(Supplier<T> supplier, Annotated annotated) {
+        ClassLoader oldTccl = Thread.currentThread().getContextClassLoader();
+        try {
+            ClassLoader classLoader = getClassLoader(annotated);
+            Thread.currentThread().setContextClassLoader(classLoader);
+            return supplier.get();
+        } finally {
+            Thread.currentThread().setContextClassLoader(oldTccl);
+        }
+    }
+
+    private static ClassLoader getClassLoader(Annotated annotated) {
+        // Try to find a ClassLoader associated with the class containing AnnotatedMember
+        if (annotated instanceof AnnotatedMember) {
+            AnnotatedMember annotatedMember = (AnnotatedMember) annotated;
+            AnnotatedType type = annotatedMember.getDeclaringType();
+            return type.getJavaClass().getClassLoader();
+        }
+
+        // Try to find a ClassLoader associated with the annotated class
+        if (annotated instanceof AnnotatedType) {
+            AnnotatedType type = (AnnotatedType) annotated;
+            return type.getJavaClass().getClassLoader();
+        }
+
+        if (annotated instanceof SyntheticAnnotated) {
+            SyntheticAnnotated syntheticAnnotated = (SyntheticAnnotated) annotated;
+            Class<?> javaClass = syntheticAnnotated.getJavaClass();
+            if (javaClass != null) {
+                return javaClass.getClassLoader();
+            }
+        }
+
+        // Fallback to TCCL if available
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+        if (tccl != null) {
+            return tccl;
+        }
+
+        // If no TCCL is available, use the ClassLoader of this class
+        return CdiSpiHelper.class.getClassLoader();
     }
 }

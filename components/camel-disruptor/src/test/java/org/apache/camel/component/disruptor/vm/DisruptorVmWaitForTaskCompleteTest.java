@@ -21,12 +21,11 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.vm.AbstractVmTestSupport;
+import org.junit.Test;
 
-/**
- * @version
- */
 public class DisruptorVmWaitForTaskCompleteTest extends AbstractVmTestSupport {
 
+    @Test
     public void testInOut() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -36,6 +35,7 @@ public class DisruptorVmWaitForTaskCompleteTest extends AbstractVmTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

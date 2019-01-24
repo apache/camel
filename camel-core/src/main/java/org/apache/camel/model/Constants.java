@@ -18,8 +18,6 @@ package org.apache.camel.model;
 
 /**
  * Various constants.
- *
- * @version 
  */
 public final class Constants {
 
@@ -36,8 +34,6 @@ public final class Constants {
         + "org.apache.camel.model.validator";
 
     public static final String PLACEHOLDER_QNAME = "http://camel.apache.org/schema/placeholder";
-
-    public static final String CUSTOM_LOG_MASK_REF = "CamelCustomLogMask";
 
     private Constants() {
     }

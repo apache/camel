@@ -18,7 +18,6 @@ package org.apache.camel.component.log;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.Constants;
 import org.apache.camel.spi.MaskingFormatter;
 import org.apache.camel.spring.SpringCamelContext;
 import org.junit.Assert;
@@ -26,15 +25,12 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringLogMaskTest {
 
     @Test
     public void testLogMask() throws Exception {
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
-        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext);
+        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         context.start();
         MockEndpoint mock = context.getEndpoint("mock:mask", MockEndpoint.class);
         ProducerTemplate template = context.createProducerTemplate();
@@ -47,7 +43,7 @@ public class SpringLogMaskTest {
     @Test
     public void testLogMaskDisabled() throws Exception {
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogMaskTest-context.xml");
-        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext);
+        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
         context.start();
         MockEndpoint mock = context.getEndpoint("mock:no-mask", MockEndpoint.class);
         ProducerTemplate template = context.createProducerTemplate();
@@ -60,8 +56,8 @@ public class SpringLogMaskTest {
     @Test
     public void testCustomLogMask() throws Exception {
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringCustomLogMaskTest-context.xml");
-        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext);
-        MockMaskingFormatter customFormatter = applicationContext.getBean(Constants.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
+        SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, true);
+        MockMaskingFormatter customFormatter = applicationContext.getBean(MaskingFormatter.CUSTOM_LOG_MASK_REF, MockMaskingFormatter.class);
         context.start();
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBodyAndHeader("direct:mock", "password=passw0rd@", "headerPassword", "#header-password$");

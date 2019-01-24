@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,10 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileMarkerFileRecursiveFilterDeleteOldLockFilesTest extends ContextTestSupport {
 
     @Override
@@ -37,11 +35,13 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesTest extends Context
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/oldlock");
         super.setUp();
     }
 
+    @Test
     public void testDeleteOldLockOnStartup() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -59,7 +59,7 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesTest extends Context
         template.sendBodyAndHeader("file:target/oldlock/bar", "Davs World", Exchange.FILE_NAME, "davs.txt");
 
         // start the route
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

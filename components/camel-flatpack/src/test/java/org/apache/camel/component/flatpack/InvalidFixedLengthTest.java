@@ -24,9 +24,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.util.Assert;
 
-/**
- * @version
- */
 @ContextConfiguration
 public class InvalidFixedLengthTest extends AbstractJUnit4SpringContextTests {
 

@@ -15,18 +15,17 @@
  * limitations under the License.
  */
 package org.apache.camel.component.dataset;
-
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ListDataSetProducerTest extends ContextTestSupport {
     protected ListDataSet dataSet = new ListDataSet();
 
@@ -34,12 +33,14 @@ public class ListDataSetProducerTest extends ContextTestSupport {
     final String dataSetName = "foo";
     final String dataSetUri = "dataset://" + dataSetName;
 
+    @Test
     public void testDefaultListDataSet() throws Exception {
         template.sendBodyAndHeader(dataSetUri, "<hello>world!</hello>", Exchange.DATASET_INDEX, 0);
 
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
         int messageCount = 10;
         getMockEndpoint(dataSetUri).expectedMessageCount(messageCount);
@@ -53,6 +54,7 @@ public class ListDataSetProducerTest extends ContextTestSupport {
     }
 
     @Override
+    @Before
     public void setUp() throws Exception {
         List<Object> bodies = new LinkedList<>();
         bodies.add("<hello>world!</hello>");

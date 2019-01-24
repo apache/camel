@@ -28,7 +28,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.TransactedDefinition;
-import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public final class AdviceWithTasks {
                 // make sure the processor which id isn't be set is matched.
                 return true;
             }
-            return EndpointHelper.matchPattern(processor.getId(), id);
+            return PatternHelper.matchPattern(processor.getId(), id);
         }
     }
 
@@ -93,7 +93,7 @@ public final class AdviceWithTasks {
         }
 
         public boolean match(ProcessorDefinition<?> processor) {
-            return EndpointHelper.matchPattern(processor.toString(), toString);
+            return PatternHelper.matchPattern(processor.toString(), toString);
         }
     }
 
@@ -115,7 +115,7 @@ public final class AdviceWithTasks {
         public boolean match(ProcessorDefinition<?> processor) {
             if (processor instanceof EndpointRequiredDefinition) {
                 String uri = ((EndpointRequiredDefinition) processor).getEndpointUri();
-                return EndpointHelper.matchPattern(uri, toUri);
+                return PatternHelper.matchPattern(uri, toUri);
             }
             return false;
         }
@@ -391,9 +391,8 @@ public final class AdviceWithTasks {
         return new AdviceWithTask() {
             public void task() throws Exception {
                 FromDefinition from = route.getInputs().get(0);
-                LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getUriOrRef(), uri);
+                LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getUri(), uri);
                 from.setEndpoint(null);
-                from.setRef(null);
                 from.setUri(uri);
             }
         };
@@ -403,8 +402,7 @@ public final class AdviceWithTasks {
         return new AdviceWithTask() {
             public void task() throws Exception {
                 FromDefinition from = route.getInputs().get(0);
-                LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getUriOrRef(), endpoint.getEndpointUri());
-                from.setRef(null);
+                LOG.info("AdviceWith replace input from [{}] --> [{}]", from.getUri(), endpoint.getEndpointUri());
                 from.setUri(null);
                 from.setEndpoint(endpoint);
             }

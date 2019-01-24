@@ -21,14 +21,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
 /**
  *
  */
 public class AdviceWithTwoRoutesOnExceptionIssueTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceWith() throws Exception {
-        context.getRouteDefinition("a").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("a"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:a").skipSendToOriginalEndpoint()
@@ -36,7 +39,7 @@ public class AdviceWithTwoRoutesOnExceptionIssueTest extends ContextTestSupport 
             }
         });
 
-        context.getRouteDefinition("b").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("b"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:b").skipSendToOriginalEndpoint()

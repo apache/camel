@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms;
 
 import java.io.File;
 import java.util.Map;
+
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -25,19 +26,18 @@ import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.Topic;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.sjms.jms.JmsBinding;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
-import org.apache.camel.impl.DefaultMessage;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with JMS
- *
- * @version
  */
 public class SjmsMessage extends DefaultMessage {
     private static final Logger LOG = LoggerFactory.getLogger(SjmsMessage.class);
@@ -45,7 +45,8 @@ public class SjmsMessage extends DefaultMessage {
     private Session jmsSession;
     private JmsBinding binding;
 
-    public SjmsMessage(Message jmsMessage, Session jmsSession, JmsBinding binding) {
+    public SjmsMessage(Exchange exchange, Message jmsMessage, Session jmsSession, JmsBinding binding) {
+        super(exchange);
         setJmsMessage(jmsMessage);
         setJmsSession(jmsSession);
         setBinding(binding);
@@ -86,6 +87,11 @@ public class SjmsMessage extends DefaultMessage {
         }
         if (copyMessageId) {
             setMessageId(that.getMessageId());
+        }
+
+        // cover over exchange if none has been assigned
+        if (getExchange() == null) {
+            setExchange(that.getExchange());
         }
 
         // copy body and fault flag
@@ -204,7 +210,7 @@ public class SjmsMessage extends DefaultMessage {
 
     @Override
     public SjmsMessage newInstance() {
-        SjmsMessage answer = new SjmsMessage(null, null, binding);
+        SjmsMessage answer = new SjmsMessage(null, null, null, binding);
         answer.setCamelContext(getCamelContext());
         return answer;
     }

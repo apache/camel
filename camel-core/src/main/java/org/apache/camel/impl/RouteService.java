@@ -39,31 +39,26 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.ChildServiceSupport;
-import org.apache.camel.util.EventHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.MDC;
 
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
+import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
+import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
 
 /**
  * Represents the runtime objects for a given {@link RouteDefinition} so that it can be stopped independently
  * of other routes
- *
- * @version 
  */
 public class RouteService extends ChildServiceSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RouteService.class);
-
-    private final DefaultCamelContext camelContext;
+    private final AbstractCamelContext camelContext;
     private final RouteDefinition routeDefinition;
     private final List<RouteContext> routeContexts;
     private final List<Route> routes;
@@ -73,7 +68,7 @@ public class RouteService extends ChildServiceSupport {
     private final AtomicBoolean warmUpDone = new AtomicBoolean(false);
     private final AtomicBoolean endpointDone = new AtomicBoolean(false);
 
-    public RouteService(DefaultCamelContext camelContext, RouteDefinition routeDefinition, List<RouteContext> routeContexts, List<Route> routes) {
+    public RouteService(AbstractCamelContext camelContext, RouteDefinition routeDefinition, List<RouteContext> routeContexts, List<Route> routes) {
         this.camelContext = camelContext;
         this.routeDefinition = routeDefinition;
         this.routeContexts = routeContexts;
@@ -144,7 +139,7 @@ public class RouteService extends ChildServiceSupport {
         try {
             doWarmUp();
         } catch (Exception e) {
-            throw new FailedToCreateRouteException(routeDefinition.getId(), routeDefinition.toString(), e);
+            throw new FailedToCreateRouteException(routeDefinition.getId(), RouteDefinitionHelper.getRouteMessage(routeDefinition.toString()), e);
         }
     }
 
@@ -165,7 +160,7 @@ public class RouteService extends ChildServiceSupport {
                     // warm up the route first
                     route.warmUp();
 
-                    LOG.debug("Starting services on route: {}", route.getId());
+                    log.debug("Starting services on route: {}", route.getId());
                     List<Service> services = route.getServices();
 
                     // callback that we are staring these services
@@ -250,7 +245,7 @@ public class RouteService extends ChildServiceSupport {
         
         for (Route route : routes) {
             try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-                LOG.debug("Stopping services on route: {}", route.getId());
+                log.debug("Stopping services on route: {}", route.getId());
 
                 // gather list of services to stop as we need to start child services as well
                 Set<Service> services = gatherChildServices(route, true);
@@ -262,7 +257,7 @@ public class RouteService extends ChildServiceSupport {
                 if (isShutdownCamelContext) {
                     ServiceHelper.stopAndShutdownServices(route);
                 } else {
-                    ServiceHelper.stopServices(route);
+                    ServiceHelper.stopService(route);
                 }
 
                 // invoke callbacks on route policy
@@ -286,7 +281,7 @@ public class RouteService extends ChildServiceSupport {
     protected void doShutdown() throws Exception {
         for (Route route : routes) {
             try (MDCHelper mdcHelper = new MDCHelper(route.getId())) {
-                LOG.debug("Shutting down services on route: {}", route.getId());
+                log.debug("Shutting down services on route: {}", route.getId());
 
                 // gather list of services to stop as we need to start child services as well
                 Set<Service> services = gatherChildServices(route, true);
@@ -363,7 +358,7 @@ public class RouteService extends ChildServiceSupport {
 
     protected void startChildService(Route route, List<Service> services) throws Exception {
         for (Service service : services) {
-            LOG.debug("Starting child service on route: {} -> {}", route.getId(), service);
+            log.debug("Starting child service on route: {} -> {}", route.getId(), service);
             for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
                 strategy.onServiceAdd(camelContext, service, route);
             }
@@ -374,11 +369,12 @@ public class RouteService extends ChildServiceSupport {
 
     protected void stopChildService(Route route, Set<Service> services, boolean shutdown) throws Exception {
         for (Service service : services) {
-            LOG.debug("{} child service on route: {} -> {}", new Object[]{shutdown ? "Shutting down" : "Stopping", route.getId(), service});
+            log.debug("{} child service on route: {} -> {}", shutdown ? "Shutting down" : "Stopping", route.getId(), service);
             if (service instanceof ErrorHandler) {
                 // special for error handlers
                 for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-                    strategy.onErrorHandlerRemove(route.getRouteContext(), (Processor) service, route.getRouteContext().getRoute().getErrorHandlerBuilder());
+                    RouteDefinition definition = (RouteDefinition) route.getRouteContext().getRoute();
+                    strategy.onErrorHandlerRemove(route.getRouteContext(), (Processor) service, definition.getErrorHandlerBuilder());
                 }
             } else {
                 for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
@@ -442,7 +438,8 @@ public class RouteService extends ChildServiceSupport {
      * Gather all other kind of route scoped services from the given route, except error handler
      */
     private void doGetRouteScopedServices(List<Service> services, Route route) {
-        for (ProcessorDefinition<?> output : route.getRouteContext().getRoute().getOutputs()) {
+        RouteDefinition definition = (RouteDefinition) route.getRouteContext().getRoute();
+        for (ProcessorDefinition<?> output : definition.getOutputs()) {
             if (output instanceof OnExceptionDefinition) {
                 OnExceptionDefinition onExceptionDefinition = (OnExceptionDefinition) output;
                 if (onExceptionDefinition.isRouteScoped()) {

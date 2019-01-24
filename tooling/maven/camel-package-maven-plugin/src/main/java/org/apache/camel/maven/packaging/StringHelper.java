@@ -182,4 +182,19 @@ public final class StringHelper {
             return sb.toString();
         }
     }
+
+    /**
+     * Returns the base class name, i.e. without package and generic related
+     * information.
+     * 
+     * @param className The class name which base class is to be computed.
+     * @return the base class name, i.e. without package and generic related
+     *         information.
+     */
+    public static String getClassShortName(String className) {
+        if (className != null) {
+            return className.replaceAll("<.*>", "").replaceAll(".*[.]([^.]+)", "$1");
+        }
+        return className;
+    }
 }

@@ -17,10 +17,8 @@
 package org.apache.camel.component.splunk.springboot;
 
 import javax.annotation.Generated;
-import org.apache.camel.component.splunk.SplunkConfigurationFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The splunk component allows to publish or search for events in Splunk.
@@ -34,10 +32,15 @@ public class SplunkComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use the SplunkConfigurationFactory
+     * Whether to enable auto configuration of the splunk component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private SplunkConfigurationFactory splunkConfigurationFactory;
+    private Boolean enabled;
+    /**
+     * To use the SplunkConfigurationFactory. The option is a
+     * org.apache.camel.component.splunk.SplunkConfigurationFactory type.
+     */
+    private String splunkConfigurationFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -45,12 +48,11 @@ public class SplunkComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public SplunkConfigurationFactory getSplunkConfigurationFactory() {
+    public String getSplunkConfigurationFactory() {
         return splunkConfigurationFactory;
     }
 
-    public void setSplunkConfigurationFactory(
-            SplunkConfigurationFactory splunkConfigurationFactory) {
+    public void setSplunkConfigurationFactory(String splunkConfigurationFactory) {
         this.splunkConfigurationFactory = splunkConfigurationFactory;
     }
 

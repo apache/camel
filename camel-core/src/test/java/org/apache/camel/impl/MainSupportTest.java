@@ -22,10 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MainSupportTest extends ContextTestSupport {
 
     private class MyMainSupport extends MainSupport {
@@ -39,16 +37,19 @@ public class MainSupportTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testMainSupport() throws Exception {
         MyMainSupport my = new MyMainSupport();
         my.run(new String[]{"-d", "1"});
     }
 
+    @Test
     public void testMainSupportMaxMessages() throws Exception {
         MyMainSupport my = new MyMainSupport();
         my.run(new String[]{"-d", "1", "-dm", "2"});
     }
 
+    @Test
     public void testMainSupportHelp() throws Exception {
         MyMainSupport my = new MyMainSupport();
         my.run(new String[]{"-h"});

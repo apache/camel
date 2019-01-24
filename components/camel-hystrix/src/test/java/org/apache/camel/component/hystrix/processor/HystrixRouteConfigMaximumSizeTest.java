@@ -37,7 +37,7 @@ public class HystrixRouteConfigMaximumSizeTest extends CamelTestSupport {
     @Test
     public void testGroupKeyAndThreadPoolKeyConfigFlagsDoNotScrapHystrixConfiguration() throws Exception {
         // dummy route
-        RouteBuilder rb = new RouteBuilder() {
+        RouteBuilder rb = new RouteBuilder(context) {
             @Override
             public void configure() throws Exception {
                 from("direct:foo")

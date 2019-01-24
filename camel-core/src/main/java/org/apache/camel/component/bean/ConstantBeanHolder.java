@@ -18,13 +18,11 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A constant (singleton) bean implementation of {@link BeanHolder}
- *
- * @version 
  */
 public class ConstantBeanHolder implements BeanHolder {
     private final Object bean;

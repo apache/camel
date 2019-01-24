@@ -21,7 +21,6 @@ import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.sshd.common.keyprovider.KeyPairProvider;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The ssh component enables access to SSH servers such that you can send an SSH
@@ -35,6 +34,11 @@ public class SshComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the ssh component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * To use the shared SSH configuration
      */
@@ -65,10 +69,10 @@ public class SshComponentConfiguration
     private String pollCommand;
     /**
      * Sets the KeyPairProvider reference to use when connecting using
-     * Certificates to the remote SSH Server.
+     * Certificates to the remote SSH Server. The option is a
+     * org.apache.sshd.common.keyprovider.KeyPairProvider type.
      */
-    @NestedConfigurationProperty
-    private KeyPairProvider keyPairProvider;
+    private String keyPairProvider;
     /**
      * Sets the key type to pass to the KeyPairProvider as part of
      * authentication. KeyPairProvider.loadKey(...) will be passed this value.
@@ -91,6 +95,21 @@ public class SshComponentConfiguration
      * depends on keyType setting.
      */
     private String certResource;
+    /**
+     * Sets the channel type to pass to the Channel as part of command
+     * execution. Defaults to exec.
+     */
+    private String channelType;
+    /**
+     * Sets the shellPrompt to be dropped when response is read after command
+     * execution
+     */
+    private String shellPrompt;
+    /**
+     * Sets the sleep period in milliseconds to wait reading response from shell
+     * prompt. Defaults to 100 milliseconds.
+     */
+    private Long sleepForShellPrompt;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -147,11 +166,11 @@ public class SshComponentConfiguration
         this.pollCommand = pollCommand;
     }
 
-    public KeyPairProvider getKeyPairProvider() {
+    public String getKeyPairProvider() {
         return keyPairProvider;
     }
 
-    public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
+    public void setKeyPairProvider(String keyPairProvider) {
         this.keyPairProvider = keyPairProvider;
     }
 
@@ -190,6 +209,30 @@ public class SshComponentConfiguration
         this.certResource = certResource;
     }
 
+    public String getChannelType() {
+        return channelType;
+    }
+
+    public void setChannelType(String channelType) {
+        this.channelType = channelType;
+    }
+
+    public String getShellPrompt() {
+        return shellPrompt;
+    }
+
+    public void setShellPrompt(String shellPrompt) {
+        this.shellPrompt = shellPrompt;
+    }
+
+    public Long getSleepForShellPrompt() {
+        return sleepForShellPrompt;
+    }
+
+    public void setSleepForShellPrompt(Long sleepForShellPrompt) {
+        this.sleepForShellPrompt = sleepForShellPrompt;
+    }
+
     public Boolean getResolvePropertyPlaceholders() {
         return resolvePropertyPlaceholders;
     }
@@ -203,69 +246,42 @@ public class SshComponentConfiguration
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.ssh.SshConfiguration.class;
         /**
          * Sets the username to use in logging into the remote SSH server.
-         * 
-         * @param usernameString
-         *            representing login username.
          */
         private String username;
         /**
          * Sets the hostname of the remote SSH server.
-         * 
-         * @param hostString
-         *            representing hostname of SSH server.
          */
         private String host;
         /**
          * Sets the port number for the remote SSH server.
-         * 
-         * @param portint
-         *            representing port number on remote host. Defaults to 22.
          */
         private Integer port = 22;
         /**
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
-         * 
-         * @param passwordString
-         *            representing password for username at remote host.
          */
         private String password;
         /**
          * Sets the command string to send to the remote SSH server during every
          * poll cycle. Only works with camel-ssh component being used as a
-         * consumer, i.e. from("ssh://...") You may need to end your command
-         * with a newline, and that must be URL encoded %0A
-         * 
-         * @param pollCommandString
-         *            representing the command to send.
+         * consumer, i.e. from(ssh://...) You may need to end your command with
+         * a newline, and that must be URL encoded %0A
          */
         private String pollCommand;
         /**
          * Sets the KeyPairProvider reference to use when connecting using
          * Certificates to the remote SSH Server.
-         * 
-         * @param keyPairProviderKeyPairProvider
-         *            reference to use in authenticating. If set to 'null', then
-         *            will attempt to connect using username/password settings.
-         * @see KeyPairProvider
          */
         private KeyPairProvider keyPairProvider;
         /**
          * Sets the key type to pass to the KeyPairProvider as part of
          * authentication. KeyPairProvider.loadKey(...) will be passed this
-         * value. Defaults to "ssh-rsa".
-         * 
-         * @param keyTypeString
-         *            defining the type of KeyPair to use for authentication.
-         * @see KeyPairProvider
+         * value. Defaults to ssh-rsa.
          */
         private String keyType = "ssh-rsa";
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
-         * 
-         * @param timeoutlong
-         *            milliseconds to wait.
          */
         private Long timeout = 30000L;
         /**
@@ -276,28 +292,34 @@ public class SshComponentConfiguration
         private String certFilename;
         /**
          * Sets the resource path of the certificate to use for Authentication.
-         * Will use {@link ResourceHelperKeyPairProvider} to resolve file based
+         * Will use ResourceHelperKeyPairProvider to resolve file based
          * certificate, and depends on keyType setting.
-         * 
-         * @param certResourceString
-         *            file, classpath, or http url for the certificate
          */
         private String certResource;
         /**
          * Sets the resource path for a known_hosts file
-         * 
-         * @param knownHostsString
-         *            file, classpath, or http url for the certificate
          */
         private String knownHostsResource;
         /**
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
-         * 
-         * @param boolean boolean flag, whether a connection to an unknown host
-         *        should fail
          */
         private Boolean failOnUnknownHost = false;
+        /**
+         * Sets the channel type to pass to the Channel as part of command
+         * execution. Defaults to exec.
+         */
+        private String channelType = "exec";
+        /**
+         * Sets the shellPrompt to be dropped when response is read after
+         * command execution
+         */
+        private String shellPrompt;
+        /**
+         * Sets the sleep period in milliseconds to wait reading response from
+         * shell prompt. Defaults to 100 milliseconds.
+         */
+        private Long sleepForShellPrompt = 100L;
 
         public String getUsername() {
             return username;
@@ -396,6 +418,30 @@ public class SshComponentConfiguration
 
         public void setFailOnUnknownHost(Boolean failOnUnknownHost) {
             this.failOnUnknownHost = failOnUnknownHost;
+        }
+
+        public String getChannelType() {
+            return channelType;
+        }
+
+        public void setChannelType(String channelType) {
+            this.channelType = channelType;
+        }
+
+        public String getShellPrompt() {
+            return shellPrompt;
+        }
+
+        public void setShellPrompt(String shellPrompt) {
+            this.shellPrompt = shellPrompt;
+        }
+
+        public Long getSleepForShellPrompt() {
+            return sleepForShellPrompt;
+        }
+
+        public void setSleepForShellPrompt(Long sleepForShellPrompt) {
+            this.sleepForShellPrompt = sleepForShellPrompt;
         }
     }
 }

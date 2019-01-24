@@ -25,14 +25,13 @@
   <parent>
     <groupId>org.apache.camel.example</groupId>
     <artifactId>examples</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-example-artemis-amqp-blueprint</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel :: Example :: ActiveMQ Artemis AMQP :: Blueprint</name>
-  <description>Demonstrates ActiveMQ Artemis using Camel's AMQP component. The example includes a JUnit showcasing how
-    to embed for testing an AMQP enabled Artemis broker.
+  <name>Camel :: Example :: ActiveMQ Artemis :: AMQP</name>
+  <description>Demonstrates ActiveMQ Artemis using Camel's AMQP component. 
   </description>
 
   <properties>
@@ -118,10 +117,9 @@
     </dependency>
 
   </dependencies>
-
+  
   <build>
     <plugins>
-
       <!-- to generate the MANIFEST-FILE of the bundle -->
       <plugin>
         <groupId>org.apache.felix</groupId>
@@ -173,8 +171,8 @@
     </plugins>
   </build>
 
-  <!-- to run the test you need to enable this profile:  mvn test -P itest -->
   <profiles>
+    <!-- to run the test you need to enable this profile:  mvn test -P itest -->
     <profile>
       <id>itest</id>
       <build>
@@ -189,6 +187,58 @@
                 <include>**/*IntTest*</include>
               </includes>
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    
+    <profile>
+      <id>artemis</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>download-artemis-broker</id>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.apache.activemq</groupId>
+                      <artifactId>apache-artemis</artifactId>
+                      <version>${activemq-artemis-version}</version>
+                      <classifier>bin</classifier>
+                      <type>zip</type>
+                      <overWrite>false</overWrite>
+                      <outputDirectory>${project.build.directory}/</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                  <overWriteReleases>false</overWriteReleases>
+                  <overWriteSnapshots>true</overWriteSnapshots>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-maven-plugin</artifactId>
+            <version>${activemq-artemis-version}</version>
+            <executions>
+              <execution>
+                <id>create</id>
+                <goals>
+                  <goal>create</goal>
+                </goals>
+                <configuration>
+                  <home>${project.build.directory}/apache-artemis-${activemq-artemis-version}</home>
+                  <instance>${project.build.directory}/artemis-instance</instance>
+                </configuration>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

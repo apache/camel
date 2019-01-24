@@ -39,9 +39,11 @@ package org.apache.camel.component.crypto.cms.crypt;
  * <li>password based encryption: the content-encryption key is encrypted with
  * key-encryption key derived from a password. The RecipientInfo is using a key
  * derivation algorithm like PBKDF2 as specified by <a href =
- * http://www.ietf.org/rfc/rfc2898.txt" target="_blank">RFC 2898</a> (PKCS#5)
- * and a key encryption algorithm like PWRI-KEK as specified by <a href =
- * http://www.ietf.org/rfc/rfc3211.txt" target="_blank">RFC 3211</a>.
+ * "http://www.ietf.org/rfc/rfc2898.txt" target="_blank"
+ * rel="noopener noreferrer">RFC 2898</a> (PKCS#5) and a key encryption
+ * algorithm like PWRI-KEK as specified by <a href =
+ * "http://www.ietf.org/rfc/rfc3211.txt" target="_blank"
+ * rel="noopener noreferrer">RFC 3211</a>.
  * <li>any other technique: based on private, user defined key management
  * techniques
  * </ul>

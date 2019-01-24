@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpSession;
 
 import org.apache.camel.Exchange;
@@ -40,9 +41,6 @@ import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class HttpRouteTest extends BaseJettyTest {
     protected static final String POST_MESSAGE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?> "
         + "<test>Hello World</test>";

@@ -23,9 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class RestRestletPostJsonPojoListTest extends RestletTestSupport {
 
     @Test
@@ -61,7 +58,7 @@ public class RestRestletPostJsonPojoListTest extends RestletTestSupport {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").typeList(UserPojo.class)
+                    .post("new").type(UserPojo[].class)
                         .to("mock:input");
             }
         };

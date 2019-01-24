@@ -119,7 +119,7 @@ public class DigitalOceanBlockStoragesProducer extends DigitalOceanProducer {
         }
 
         volume = getEndpoint().getDigitalOceanClient().createVolume(volume);
-        LOG.trace("Volume created {} ", volume);
+        LOG.trace("Volume created {}", volume);
         exchange.getOut().setBody(volume);
     }
 

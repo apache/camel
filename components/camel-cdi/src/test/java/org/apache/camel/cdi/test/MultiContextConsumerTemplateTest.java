@@ -88,7 +88,7 @@ public class MultiContextConsumerTemplateTest {
     @Test
     @InSequence(1)
     public void configureCamelContexts() throws Exception {
-        secondCamelContext.startAllRoutes();
+        secondCamelContext.getRouteController().startAllRoutes();
     }
 
     @Test

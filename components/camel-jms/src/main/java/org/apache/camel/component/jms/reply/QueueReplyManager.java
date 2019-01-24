@@ -35,8 +35,6 @@ import org.springframework.jms.support.destination.DestinationResolver;
 
 /**
  * A {@link ReplyManager} when using regular queues.
- *
- * @version 
  */
 public class QueueReplyManager extends ReplyManagerSupport {
 

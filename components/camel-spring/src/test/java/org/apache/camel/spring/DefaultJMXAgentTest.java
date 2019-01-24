@@ -15,15 +15,18 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
-
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -31,8 +34,6 @@ import static org.awaitility.Awaitility.await;
 
 /**
  * Test that verifies JMX is enabled by default.
- *
- * @version 
  */
 public class DefaultJMXAgentTest extends SpringTestSupport {
 
@@ -44,7 +45,8 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         releaseMBeanServers();
         super.setUp();
 
@@ -55,7 +57,8 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         try {
             releaseMBeanServers();
         } finally {
@@ -72,12 +75,13 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
         }
     }
 
+    @Test
     public void testQueryMbeans() throws Exception {
         // whats the numbers before, because the JVM can have left overs when unit testing
         int before = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 
         // start route should enlist the consumer to JMX
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         int after = mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=consumers,*"), null).size();
 

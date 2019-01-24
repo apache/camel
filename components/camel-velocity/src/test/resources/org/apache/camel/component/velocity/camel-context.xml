@@ -27,12 +27,12 @@
     <route>
 	   	<from uri="direct:start"/>
 	    <filter>
-	   		<method bean="fruitFilter" method="isApple"/>
+	   		<method ref="fruitFilter" method="isApple"/>
         	<to uri="velocity:org/apache/camel/component/velocity/AppleTemplate.vm" />        	
         	<to uri="mock:result" />
 	    </filter>
 	    <filter>
-	   		<method bean="fruitFilter" method="isOrange"/>
+	   		<method ref="fruitFilter" method="isOrange"/>
         	<to uri="velocity:org/apache/camel/component/velocity/OrangeTemplate.vm" />    	    
     	    <to uri="mock:result" />
 	    </filter>

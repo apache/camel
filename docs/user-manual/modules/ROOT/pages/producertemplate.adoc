@@ -1,0 +1,103 @@
+[[ProducerTemplate-ProducerTemplate]]
+=== ProducerTemplate
+
+The ProducerTemplate interface allows you to send message exchanges to
+endpoints in a variety of different ways to make it easy to work with
+Camel link:endpoint.adoc[Endpoint] instances from Java code.
+
+It can be configured with a default endpoint if you just want to send
+lots of messages to the same endpoint; or you can specify an
+link:endpoint.adoc[Endpoint] or uri as the first parameter.
+
+The `sendBody()` method allows you to send any object to an endpoint
+easily.
+
+[source,java]
+----
+ProducerTemplate template = exchange.getContext().createProducerTemplate();
+
+// send to default endpoint
+template.sendBody("<hello>world!</hello>");
+
+// send to a specific queue
+template.sendBody("activemq:MyQueue", "<hello>world!</hello>");
+
+// send with a body and header
+template.sendBodyAndHeader("activemq:MyQueue",
+   "<hello>world!</hello>",
+   "CustomerRating", "Gold");
+----
+
+You can also supply an `Exchange` or a `Processor` to customize the exchange.
+
+
+[[ProducerTemplate-requestmethods]]
+==== `request*()` methods
+
+The `send*()` methods use the default Message Exchange Pattern (InOnly,
+InOut etc) as the endpoint. If you want to explicitly perform a
+request/response (InOut) you can use the `request*()` methods instead of
+the `send*()` methods.
+
+E.g. let's invoke an endpoint and get the response:
+
+[source,java]
+----
+Object response = template.requestBody("<hello/>");
+
+// you can cast the response directly
+String ret = template.requestBody("<hello/>", String.class);
+
+// or specify the endpoint directly
+String ret = template.requestBody("cxf:bean:HelloWorldService", "<hello/>", String.class);
+----
+
+
+[[ProducerTemplate-Fluentinterface]]
+==== Fluent interface
+
+*Available as of Camel 2.18.0*
+
+The FluentProducerTemplate provides a fluent syntax to
+ProducerTemplate.
+
+Examples:
+
+*Set headers and body*
+
+[source,java]
+----
+Integer result = FluentProducerTemplate.on(context)
+    .withHeader("key-1", "value-1")
+    .withHeader("key-2", "value-2")
+    .withBody("Hello")
+    .to("direct:inout")
+    .request(Integer.class);
+----
+
+*Use a processor*
+
+[source,java]
+----
+Integer result = FluentProducerTemplate.on(context)
+    .withProcessor(exchange -> exchange.getIn().setBody("Hello World"))
+    .to("direct:exception")
+    .request(Integer.class);
+----
+
+*Customize template*
+
+[source,java]
+----
+Object result = FluentProducerTemplate.on(context)
+    .withTemplateCustomizer(
+        template -> {
+            template.setExecutorService(myExecutor);
+            template.setMaximumCacheSize(10);
+        }
+    )
+    .withBody("the body")
+    .to("direct:start")
+    .request();
+ 
+----

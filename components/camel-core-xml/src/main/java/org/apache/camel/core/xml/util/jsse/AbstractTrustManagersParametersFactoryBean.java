@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.jsse.TrustManagersParameters;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractTrustManagersParametersFactoryBean extends AbstractJsseUtilFactoryBean<TrustManagersParameters> {

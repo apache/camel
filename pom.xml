@@ -21,14 +21,14 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>19</version>
+    <version>21</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel</artifactId>
-  <version>2.23.0-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel build POM</description>
@@ -36,12 +36,10 @@
   <inceptionYear>2007</inceptionYear>
 
   <prerequisites>
-    <maven>3.3.3</maven>
+    <maven>3.5.0</maven>
   </prerequisites>
 
   <properties>
-    <!-- enforce to require using at least this maven version -->
-    <maven-enforcer-require-maven-version>3.2.5</maven-enforcer-require-maven-version>
 
     <!-- unify the encoding for all the modules -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -51,9 +49,9 @@
     <jdk.version>1.8</jdk.version>
     <compiler.fork>false</compiler.fork>
 
-    <maven-compiler-plugin-version>3.7.0</maven-compiler-plugin-version>
+    <maven-compiler-plugin-version>3.8.0</maven-compiler-plugin-version>
     <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
-    <maven-surefire-plugin-version>2.22.0</maven-surefire-plugin-version>
+    <maven-surefire-plugin-version>2.22.1</maven-surefire-plugin-version>
     <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
     <surefire.version>${maven-surefire-plugin-version}</surefire.version>
 
@@ -62,8 +60,8 @@
     <jaxb-version>2.3.0</jaxb-version>
     <errorprone-version>2.5</errorprone-version>
     <mycila-license-version>3.0</mycila-license-version>
-    <gmavenplus-plugin-version>1.5</gmavenplus-plugin-version>
-    <groovy-version>2.4.15</groovy-version>
+    <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
+    <groovy-version>2.5.5</groovy-version>
   </properties>
 
   <mailingLists>
@@ -142,17 +140,24 @@
 
   <modules>
     <module>parent</module>
+    <module>tooling-bundle</module>
     <module>etc</module>
     <module>bom</module>
     <module>buildingtools</module>
+    <module>camel-util</module>
+    <module>camel-api</module>
+    <module>camel-management-api</module>
+    <module>camel-management-impl</module>
+    <module>camel-support</module>
+    <module>camel-base</module>
     <module>camel-core</module>
     <module>components</module>
     <module>archetypes</module>
     <module>tooling</module>
     <module>platforms</module>
-    <module>connectors</module>
     <module>tests</module>
     <module>examples</module>
+    <module>docs</module>
   </modules>
 
   <scm>
@@ -164,30 +169,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-
-    <!-- enforce maven version -->
-    <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-enforcer-plugin</artifactId>
-          <version>1.4.1</version>
-          <executions>
-            <execution>
-              <id>enforce-maven</id>
-              <goals>
-                <goal>enforce</goal>
-              </goals>
-              <configuration>
-                <rules>
-                  <requireMavenVersion>
-                    <version>${maven-enforcer-require-maven-version}</version>
-                  </requireMavenVersion>
-                </rules>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-    </plugins>
 
     <pluginManagement>
       <plugins>
@@ -252,6 +233,7 @@
                 <exclude>**/readme-examples.mvel</exclude>
                 <exclude>**/readme-languages.mvel</exclude>
                 <exclude>**/readme-others.mvel</exclude>
+                <exclude>**/spring-boot-auto-configure-options.mvel</exclude>
                 <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
                 <!-- cxf does not handle comments here -->
                 <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
@@ -267,14 +249,12 @@
                 <exclude>**/npm-shrinkwrap.json</exclude>
                 <exclude>**/package.json</exclude>
                 <exclude>**/user-manual/**</exclude>
-                <!-- camel connector -->
-                <exclude>**/camel-connector.json</exclude>
-                <exclude>**/camel-connector-schema.json</exclude>
-                <exclude>**/src/main/resources/META-INF/MANIFEST.MF</exclude>
                 <!-- examples -->
                 <exclude>**/fabric8/*.yaml</exclude>
                 <exclude>**/src/main/resources/consul/services.json</exclude>
                 <exclude>**/src/main/resources/data/*.json</exclude>
+                <exclude>**/src/main/data/*.patient</exclude>
+                <exclude>**/src/main/data/*.csv</exclude>
                 <!-- generated files -->
                 <exclude>**/target/**/*</exclude>
                 <exclude>**/eclipse-classes/**/*</exclude>
@@ -295,8 +275,9 @@
                 <exclude>**/file-sig-api.txt</exclude>
                 <exclude>**/Tasks__c.java</exclude>
                 <exclude>**/additional-spring-configuration-metadata.json</exclude>
-		<exclude>**/*.proto</exclude>
-		<exclude>**/src/revapi/ignore.json</exclude>
+                <exclude>**/*.proto</exclude>
+                <exclude>**/src/revapi/ignore.json</exclude>
+                <exclude>**/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension</exclude>
                 <!-- Maven Wrapper -->
                 <exclude>.mvn/**/*</exclude>
               </excludes>
@@ -306,7 +287,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <!-- see http://jira.codehaus.org/browse/MRELEASE-812 -->
+          <!-- see https://issues.apache.org/jira/browse/MRELEASE-812 -->
           <version>2.4.2</version>
           <dependencies>
             <dependency>
@@ -326,6 +307,17 @@
             <arguments>-Prelease,apache-release,enable-schemagen,apt,sourcecheck,hibernate</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>process-resource-bundles</id>
+              <phase>disabled</phase>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -554,35 +546,6 @@
               <systemPath>${java.home}/../lib/tools.jar</systemPath>
               </dependency>
             </dependencies>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>integration</id>
-      <!--The profile for running the unit and integration test -->
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <version>${maven-surefire-plugin-version}</version>
-            <configuration>
-              <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-              <childDelegation>false</childDelegation>
-              <useFile>true</useFile>
-              <failIfNoTests>false</failIfNoTests>
-              <runOrder>alphabetical</runOrder>
-              <systemPropertyVariables>
-                <derby.stream.error.file>target/derby.log</derby.stream.error.file>
-                <java.awt.headless>${java.awt.headless}</java.awt.headless>
-              </systemPropertyVariables>
-              <includes>
-                <include>**/*Test.*</include>
-                <include>**/*IntegrationTest.*</include>
-              </includes>
-            </configuration>
           </plugin>
         </plugins>
       </build>

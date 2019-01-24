@@ -26,8 +26,6 @@ import org.junit.Test;
 /**
  * Simulate network issues by using a custom poll strategy to force exceptions
  * occurring during poll.
- *
- * @version 
  */
 public class FromFtpSimulateNetworkIssueRecoverTest extends FtpServerTestSupport {
 

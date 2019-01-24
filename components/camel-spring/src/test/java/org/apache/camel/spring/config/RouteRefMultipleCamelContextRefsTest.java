@@ -16,22 +16,21 @@
  */
 package org.apache.camel.spring.config;
 
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
-public class RouteRefMultipleCamelContextRefsTest extends TestCase {
+public class RouteRefMultipleCamelContextRefsTest extends Assert {
 
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteRefMultipleCamelContextRefsTest.xml");
     }
 
+    @Test
     public void testSpringTwoCamelContextDirectEndpoint() throws Exception {
         AbstractXmlApplicationContext ac = createApplicationContext();
         ac.start();

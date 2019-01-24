@@ -33,9 +33,8 @@
         <route>
             <from uri="direct:start"/>
             <!-- use the custom thread pool in the camel route -->
-            <threads executorServiceRef="myPool">
-                <to uri="mock:result"/>
-            </threads>
+            <threads executorServiceRef="myPool"/>
+            <to uri="mock:result"/>
         </route>
         
     </camelContext>

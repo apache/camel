@@ -22,17 +22,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-/**
- * @version
- */
 public class MDCOnCompletionOnCompletionTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCOnCompletionOnCompletionTest.class);
 
+    @Test
     public void testMDC() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);

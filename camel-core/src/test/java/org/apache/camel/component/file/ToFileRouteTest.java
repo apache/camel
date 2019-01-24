@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * For documentation how to write files using the FileProducer.
@@ -29,6 +30,7 @@ import org.apache.camel.impl.JndiRegistry;
 public class ToFileRouteTest extends ContextTestSupport {
 
     // START SNIPPET: e1
+    @Test
     public void testToFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

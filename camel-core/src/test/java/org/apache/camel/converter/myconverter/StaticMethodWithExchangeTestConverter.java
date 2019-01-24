@@ -19,14 +19,14 @@ package org.apache.camel.converter.myconverter;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.MyBean;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 @Converter
 public class StaticMethodWithExchangeTestConverter {
 
     @Converter
     public MyBean fromString(String text, Exchange exchange) {
-        String[] values = ObjectHelper.splitOnCharacter(text, ":", 2);
+        String[] values = StringHelper.splitOnCharacter(text, ":", 2);
         return new MyBean(Integer.parseInt(values[0]), exchange.getProperty("prefix", String.class) + values[1]);
     }
 }

@@ -31,7 +31,8 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -130,7 +131,7 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
                 executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "FileWatcherStrategy");
                 executorService.submit(task);
             } catch (IOException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }

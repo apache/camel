@@ -22,23 +22,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.gora.utils.GoraUtils;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.query.Query;
 import org.apache.gora.query.Result;
 import org.apache.gora.store.DataStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of Camel-Gora {@link Consumer}.
  */
 public class GoraConsumer extends ScheduledPollConsumer {
-
-    /**
-     * logger
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(GoraConsumer.class);
 
     /**
      * GORA datastore
@@ -94,7 +87,7 @@ public class GoraConsumer extends ScheduledPollConsumer {
         //proceed with query
         final Result result = query.execute();
 
-        LOG.trace("Processing exchange [{}]...", exchange);
+        log.trace("Processing exchange [{}]...", exchange);
 
         try {
             getProcessor().process(exchange);

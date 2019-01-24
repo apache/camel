@@ -16,17 +16,15 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSupport {
 
     private static int counter;
@@ -39,6 +37,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         return jndi;
     }
 
+    @Test
     public void testRecipientListOk() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -62,6 +61,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testRecipientListErrorAggregate() throws Exception {
         counter = 0;
         tries = 0;
@@ -95,6 +95,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         assertEquals(3, tries);
     }
 
+    @Test
     public void testRecipientListError() throws Exception {
         counter = 0;
 
@@ -127,6 +128,7 @@ public class RecipientListFineGrainedErrorHandlingTest extends ContextTestSuppor
         assertEquals(3, counter);
     }
 
+    @Test
     public void testRecipientListAsBeanError() throws Exception {
         counter = 0;
 

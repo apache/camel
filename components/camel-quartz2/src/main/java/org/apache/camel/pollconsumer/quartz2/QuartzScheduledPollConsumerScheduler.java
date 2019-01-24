@@ -22,12 +22,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.component.quartz2.QuartzConstants;
 import org.apache.camel.component.quartz2.QuartzHelper;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
@@ -40,8 +41,6 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A quartz based {@link ScheduledPollConsumerScheduler} which uses a
@@ -49,7 +48,6 @@ import org.slf4j.LoggerFactory;
  */
 public class QuartzScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler, NonManagedService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerScheduler.class);
     private Scheduler quartzScheduler;
     private CamelContext camelContext;
     private String routeId;
@@ -82,11 +80,11 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     @Override
     public void unscheduleTask() {
         if (trigger != null) {
-            LOG.debug("Unscheduling trigger: {}", trigger.getKey());
+            log.debug("Unscheduling trigger: {}", trigger.getKey());
             try {
                 quartzScheduler.unscheduleJob(trigger.getKey());
             } catch (SchedulerException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }
@@ -157,7 +155,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notEmpty(cron, "cron", this);
+        StringHelper.notEmpty(cron, "cron", this);
 
         if (quartzScheduler == null) {
             // get the scheduler form the quartz component
@@ -199,12 +197,12 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
                 .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
                 .build();
 
-            LOG.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
+            log.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
             quartzScheduler.scheduleJob(job, trigger);
         } else {
             checkTriggerIsNonConflicting(existingTrigger);
 
-            LOG.debug("Trigger with key {} is already present in scheduler. Only updating it.", triggerKey);
+            log.debug("Trigger with key {} is already present in scheduler. Only updating it.", triggerKey);
             job = quartzScheduler.getJobDetail(existingTrigger.getJobKey());
             JobDataMap jobData = job.getJobDataMap();
             jobData.put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, getCron());
@@ -212,7 +210,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
             // store additional information on job such as camel context etc
             QuartzHelper.updateJobDataMap(getCamelContext(), job, null);
-            LOG.debug("Updated jobData map to {}", jobData);
+            log.debug("Updated jobData map to {}", jobData);
 
             trigger = existingTrigger.getTriggerBuilder()
                 .withSchedule(CronScheduleBuilder.cronSchedule(getCron()).inTimeZone(getTimeZone()))
@@ -220,11 +218,11 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
             // Reschedule job if trigger settings were changed
             if (hasTriggerChanged(existingTrigger, trigger)) {
-                LOG.debug("Re-scheduling job: {} with trigger: {}", job, trigger.getKey());
+                log.debug("Re-scheduling job: {} with trigger: {}", job, trigger.getKey());
                 quartzScheduler.rescheduleJob(triggerKey, trigger);
             } else {
                 // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
-                LOG.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
+                log.debug("Scheduling job: {} with trigger: {}", job, trigger.getKey());
                 try {
                     // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
                     quartzScheduler.scheduleJob(job, trigger);
@@ -243,8 +241,8 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
             }
         }
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+        if (log.isInfoEnabled()) {
+            log.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
                 new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
                     job.getJobClass().getSimpleName(), trigger.getNextFireTime()});
         }
@@ -253,7 +251,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     @Override
     protected void doStop() throws Exception {
         if (trigger != null) {
-            LOG.debug("Unscheduling trigger: {}", trigger.getKey());
+            log.debug("Unscheduling trigger: {}", trigger.getKey());
             quartzScheduler.unscheduleJob(trigger.getKey());
         }
     }

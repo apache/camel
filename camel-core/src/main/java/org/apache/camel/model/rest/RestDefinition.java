@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -31,6 +32,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -39,9 +41,10 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
-import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -84,6 +87,11 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<>();
+
+    @Override
+    public String getShortName() {
+        return "rest";
+    }
 
     @Override
     public String getLabel() {
@@ -296,16 +304,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return addVerb("head", uri);
     }
 
-    @Deprecated
-    public RestDefinition options() {
-        return addVerb("options", null);
-    }
-
-    @Deprecated
-    public RestDefinition options(String uri) {
-        return addVerb("options", uri);
-    }
-
     public RestDefinition verb(String verb) {
         return addVerb(verb, null);
     }
@@ -458,25 +456,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    /**
-     * @param classType the canonical class name for the array passed as input
-     *
-     * @deprecated as of 2.19.0. Replaced wtih {@link #type(Class)} with {@code []} appended to canonical class name
-     * , e.g. {@code type(MyClass[].class}
-     */
-    @Deprecated
-    public RestDefinition typeList(Class<?> classType) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        // list should end with [] to indicate array
-        verb.setType(classType.getCanonicalName() + "[]");
-        return this;
-    }
-
     public RestDefinition outType(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -485,25 +464,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setOutType(classType.getCanonicalName());
-        return this;
-    }
-
-    /**
-     * @param classType the canonical class name for the array passed as output
-     *
-     * @deprecated as of 2.19.0. Replaced wtih {@link #outType(Class)} with {@code []} appended to canonical class name
-     * , e.g. {@code outType(MyClass[].class}
-     */
-    @Deprecated
-    public RestDefinition outTypeList(Class<?> classType) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        // list should end with [] to indicate array
-        verb.setOutType(classType.getCanonicalName() + "[]");
         return this;
     }
 
@@ -651,6 +611,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         verb.setRoute(route);
         return route;
     }
+    
+    /**
+     * Build the from endpoint uri for the verb
+     */
+    public String buildFromUri(VerbDefinition verb) {
+        return "rest:" + verb.asVerb() + ":" + buildUri(verb);
+    }
 
     // Implementation
     //-------------------------------------------------------------------------
@@ -670,8 +637,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             answer = new PutVerbDefinition();
         } else if ("patch".equals(verb)) {
             answer = new PatchVerbDefinition();
-        } else if ("options".equals(verb)) {
-            answer = new OptionsVerbDefinition();
         } else {
             answer = new VerbDefinition();
             answer.setMethod(verb);
@@ -778,7 +743,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             try {
                 query = URISupport.createQueryString(options);
             } catch (URISyntaxException e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
             from = from + "?" + query;
         }
@@ -792,6 +757,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return answer;
     }
 
+    @SuppressWarnings("rawtypes")
     private void addRouteDefinition(CamelContext camelContext, List<RouteDefinition> answer, String component) {
         for (VerbDefinition verb : getVerbs()) {
             // either the verb has a singular to or a embedded route
@@ -811,7 +777,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     ProcessorDefinitionHelper.resolvePropertyPlaceholders(camelContext, param);
                 }
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
 
             // add the binding
@@ -870,7 +836,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             route.setRestBindingDefinition(binding);
 
             // create the from endpoint uri which is using the rest component
-            String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
+            String from = buildFromUri(verb);
 
             // append options
             Map<String, Object> options = new HashMap<>();
@@ -895,23 +861,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             if (outType != null) {
                 options.put("outType", outType);
             }
-            // if no route id has been set, then use the verb id as route id
-            if (!route.hasCustomIdAssigned()) {
-                // use id of verb as route id
-                String id = verb.getId();
-                if (id != null) {
-                    route.setId(id);
-                }
-            }
 
-            String routeId = verb.idOrCreate(camelContext.getNodeIdFactory());
-
-            if (!verb.getUsedForGeneratingNodeId()) {
-                routeId = route.idOrCreate(camelContext.getNodeIdFactory());
-            }
-
-            verb.setRouteId(routeId);
-            options.put("routeId", routeId);
             if (component != null && !component.isEmpty()) {
                 options.put("componentName", component);
             }
@@ -934,7 +884,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 try {
                     query = URISupport.createQueryString(options);
                 } catch (URISyntaxException e) {
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
                 from = from + "?" + query;
             }
@@ -959,7 +909,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     try {
                         a = camelContext.resolvePropertyPlaceholders(a);
                     } catch (Exception e) {
-                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                        throw RuntimeCamelException.wrapRuntimeCamelException(e);
                     }
                     if (a.startsWith("{") && a.endsWith("}")) {
                         String key = a.substring(1, a.length() - 1);
@@ -968,12 +918,12 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                         for (RestOperationParamDefinition param : verb.getParams()) {
                             // name is mandatory
                             String name = param.getName();
-                            ObjectHelper.notEmpty(name, "parameter name");
+                            StringHelper.notEmpty(name, "parameter name");
                             // need to resolve property placeholders first
                             try {
                                 name = camelContext.resolvePropertyPlaceholders(name);
                             } catch (Exception e) {
-                                throw ObjectHelper.wrapRuntimeCamelException(e);
+                                throw RuntimeCamelException.wrapRuntimeCamelException(e);
                             }
                             if (name.equalsIgnoreCase(key)) {
                                 param.type(RestParamType.path);
@@ -1005,7 +955,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
             // the route should be from this rest endpoint
             route.fromRest(from);
-            route.routeId(routeId);
             route.setRestDefinition(this);
             answer.add(route);
         }

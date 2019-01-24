@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-flatpack</artifactId>
@@ -32,14 +32,6 @@
   <description>Camel FlatPack support</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.component.flatpack.*,
-      org.apache.camel.dataformat.flatpack.*
-    </camel.osgi.export.pkg>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=flatpack,
-      org.apache.camel.spi.DataFormatResolver;dataformat=flatpack
-    </camel.osgi.export.service>
   </properties>
 
   <dependencies>

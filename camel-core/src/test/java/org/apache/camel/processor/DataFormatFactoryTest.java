@@ -22,12 +22,14 @@ import org.apache.camel.impl.SerializationDataFormat;
 import org.apache.camel.impl.StringDataFormat;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
+import org.junit.Test;
 
 public class DataFormatFactoryTest extends ContextTestSupport {
     private static final DataFormat STRING_DF = new StringDataFormat("US-ASCII");
     private static final DataFormatFactory STRING_DFF = () -> new StringDataFormat("UTF-8");
     private static final DataFormat SERIALIZATION_DF = new SerializationDataFormat();
 
+    @Test
     public void testDataFormatResolveOrCreate() throws Exception {
         assertSame(STRING_DF, context.resolveDataFormat("string"));
         assertNotSame(STRING_DF, context.createDataFormat("string"));

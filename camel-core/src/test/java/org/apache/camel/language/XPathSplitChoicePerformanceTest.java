@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.language;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +27,9 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.slf4j.Logger;
 
 /**
@@ -45,11 +46,13 @@ public class XPathSplitChoicePerformanceTest extends ContextTestSupport {
     private final StopWatch watch = new StopWatch();
 
     @Override
+    @Before
     public void setUp() throws Exception {
         createDataFile(log, size);
         super.setUp();
     }
 
+    @Test
     public void testDummy() {
         // this is a manual test
     }

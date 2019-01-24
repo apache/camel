@@ -17,6 +17,7 @@
 package org.apache.camel.language;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,6 +28,7 @@ public class SpringSimpleExpressionTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/SpringSimpleExpressionTest.xml");
     }
 
+    @Test
     public void testSimpleWhenString() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("correct");
 
@@ -35,6 +37,7 @@ public class SpringSimpleExpressionTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSimpleOtherwiseString() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("incorrect");
 

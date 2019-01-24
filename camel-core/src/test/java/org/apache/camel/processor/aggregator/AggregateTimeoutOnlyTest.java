@@ -20,14 +20,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
 /**
  * Unit test to verify that aggregate by timeout only also works.
- * 
- * @version 
  */
 public class AggregateTimeoutOnlyTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateTimeoutOnly() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         // by default the use latest aggregation strategy is used so we get message 9

@@ -18,9 +18,6 @@ package org.apache.camel.component.jetty.javabody;
 
 import java.io.Serializable;
 
-/**
- * @version 
- */
 public class MyCoolBean implements Serializable {
 
     private static final long serialVersionUID = 1L;

@@ -18,23 +18,24 @@ package org.apache.camel.impl;
 
 import java.util.Map;
 
-import junit.framework.TestCase;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
+import org.junit.Assert;
+import org.junit.Test;
 
-/**
- * @version 
- */
-public class HeaderFilterStrategyComponentTest extends TestCase {
+public class HeaderFilterStrategyComponentTest extends Assert {
 
     private static class MyComponent extends HeaderFilterStrategyComponent {
 
         MyComponent(Class<? extends Endpoint> endpointClass) {
-            super(endpointClass);
+            super();
         }
 
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -67,6 +68,7 @@ public class HeaderFilterStrategyComponentTest extends TestCase {
         }
     }
 
+    @Test
     public void testHeaderFilterStrategyComponent() {
         MyComponent comp = new MyComponent(MyEndpoint.class);
         assertNull(comp.getHeaderFilterStrategy());
@@ -77,6 +79,7 @@ public class HeaderFilterStrategyComponentTest extends TestCase {
         assertSame(strategy, comp.getHeaderFilterStrategy());
     }
 
+    @Test
     public void testHeaderFilterStrategyAware() {
         MyComponent comp = new MyComponent(MyEndpoint.class);
         assertNull(comp.getHeaderFilterStrategy());

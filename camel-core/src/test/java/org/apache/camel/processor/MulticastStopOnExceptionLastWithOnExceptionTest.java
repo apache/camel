@@ -17,12 +17,11 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MulticastStopOnExceptionLastWithOnExceptionTest extends MulticastStopOnExceptionWithOnExceptionTest {
 
+    @Test
     public void testMulticastStopOnExceptionStop() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:baz").expectedBodiesReceived("Kaboom");

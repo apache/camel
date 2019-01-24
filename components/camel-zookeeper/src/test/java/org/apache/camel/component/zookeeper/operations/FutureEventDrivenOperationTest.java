@@ -19,8 +19,8 @@ package org.apache.camel.component.zookeeper.operations;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.data.Stat;
-
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 

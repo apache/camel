@@ -25,24 +25,27 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
     private ExecutorService service; 
     
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // use a pool with 2 concurrent tasks so we cannot run too fast
         service = Executors.newFixedThreadPool(2);
         super.setUp();
     }
     
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         super.tearDown();
         service.shutdownNow();
     }
 
+    @Test
     public void testMulticastParallelStopOnExceptionOk() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello");
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello");
@@ -54,6 +57,7 @@ public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testMulticastParalllelStopOnExceptionStop() throws Exception {
         // we run in parallel so we may get 0 or 1 messages
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(0);
@@ -67,7 +71,7 @@ public class MulticastParallelStopOnExceptionTest extends ContextTestSupport {
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException cause = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(cause.getMessage().startsWith("Parallel processing failed for number "));
+            assertTrue(cause.getMessage().startsWith("Multicast processing failed for number "));
             assertEquals("Forced", cause.getCause().getMessage());
 
             String body = cause.getExchange().getIn().getBody(String.class);

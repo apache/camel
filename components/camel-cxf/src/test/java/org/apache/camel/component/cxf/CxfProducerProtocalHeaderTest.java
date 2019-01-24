@@ -28,9 +28,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * 
- */
 public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
     private static int port = AvailablePortFinder.getNextAvailable();
     private static final String RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"

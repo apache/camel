@@ -19,10 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
 
     // ignore the test
@@ -34,6 +32,7 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Test
     public void testThreadsCoreBeZero() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
@@ -51,6 +50,7 @@ public class ThreadsZeroInCoreAndMaxPoolTest extends ContextTestSupport {
     }
 
      
+    @Test
     public void testThreadsCoreAndMaxPoolBuilder() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 

@@ -34,6 +34,11 @@ public class MQComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-mq component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS MQ default configuration
      */
     private MQConfigurationNestedConfiguration configuration;
@@ -117,8 +122,17 @@ public class MQComponentConfiguration
          * listBrokers,createBroker,deleteBroker
          */
         private MQOperations operation;
+        /**
+         * To define a proxy host when instantiating the MQ client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the MQ client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which MQ client needs to work
+         */
         private String region;
 
         public AmazonMQ getAmazonMqClient() {

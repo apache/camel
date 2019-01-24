@@ -161,10 +161,10 @@ public class IgniteEventsTest extends AbstractIgniteTest {
     @After
     public void stopAllRoutes() throws Exception {
         for (Route route : context.getRoutes()) {
-            if (context.getRouteStatus(route.getId()) != ServiceStatus.Started) {
+            if (context.getRouteController().getRouteStatus(route.getId()) != ServiceStatus.Started) {
                 return;
             }
-            context.stopRoute(route.getId());
+            context.getRouteController().stopRoute(route.getId());
         }
         resetMocks();
     }

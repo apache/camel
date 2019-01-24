@@ -19,11 +19,13 @@ package org.apache.camel.component.jsonvalidator;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * The JSON Schema Validator Component is for validating JSON against a schema.
  */
+@Component("json-validator")
 public class JsonValidatorComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

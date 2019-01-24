@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
-
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit test for the how FileProducer writing absolute files
@@ -30,7 +31,8 @@ public class FilerProducerAbsoluteTest extends ContextTestSupport {
     private String path;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         File dir = new File("target/reports/absolute");
         path = dir.getAbsolutePath();
         deleteDirectory(dir);
@@ -38,6 +40,7 @@ public class FilerProducerAbsoluteTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Test
     public void testProduceAbsoluteFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

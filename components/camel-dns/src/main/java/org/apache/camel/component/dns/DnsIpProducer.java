@@ -20,8 +20,8 @@ import java.net.InetAddress;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A producer to conduct IP address lookup from the host name.
@@ -35,7 +35,7 @@ public class DnsIpProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         String domain = exchange.getIn().getHeader(DnsConstants.DNS_DOMAIN, String.class);
-        ObjectHelper.notEmpty(domain, "Header " + DnsConstants.DNS_DOMAIN);
+        StringHelper.notEmpty(domain, "Header " + DnsConstants.DNS_DOMAIN);
 
         InetAddress address = InetAddress.getByName(domain);
         exchange.getIn().setBody(address);

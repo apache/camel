@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -26,9 +27,7 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.IntrospectionSupport;
 
 /**
  * Balances message processing among a number of nodes
@@ -70,22 +69,26 @@ public class LoadBalancerDefinition extends IdentifiedType implements OtherAttri
     /**
      * Maximum number of outputs, as some load balancers only support 1 processor
      */
-    protected int getMaximumNumberOfOutputs() {
+    public int getMaximumNumberOfOutputs() {
         return Integer.MAX_VALUE;
     }
 
     /**
      * Allows derived classes to customize the load balancer
      */
-    protected void configureLoadBalancer(LoadBalancer loadBalancer) {
+    public void configureLoadBalancer(LoadBalancer loadBalancer) {
     }
 
-    public LoadBalancer getLoadBalancer(RouteContext routeContext) {
+    public LoadBalancer getLoadBalancer() {
         return loadBalancer;
     }
 
     public void setLoadBalancer(LoadBalancer loadBalancer) {
         this.loadBalancer = loadBalancer;
+    }
+
+    public String getLoadBalancerTypeName() {
+        return loadBalancerTypeName;
     }
 
     @Override
@@ -96,25 +99,6 @@ public class LoadBalancerDefinition extends IdentifiedType implements OtherAttri
     @Override
     public void setOtherAttributes(Map<QName, Object> otherAttributes) {
         this.otherAttributes = otherAttributes;
-    }
-
-    /**
-     * Factory method to create the load balancer from the loadBalancerTypeName
-     */
-    protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
-        ObjectHelper.notEmpty(loadBalancerTypeName, "loadBalancerTypeName", this);
-
-        LoadBalancer answer = null;
-        if (loadBalancerTypeName != null) {
-            Class<?> type = routeContext.getCamelContext().getClassResolver().resolveClass(loadBalancerTypeName, LoadBalancer.class);
-            if (type == null) {
-                throw new IllegalArgumentException("Cannot find class: " + loadBalancerTypeName + " in the classpath");
-            }
-            answer = (LoadBalancer) routeContext.getCamelContext().getInjector().newInstance(type);
-            configureLoadBalancer(answer);
-        }
-
-        return answer;
     }
 
     @Override

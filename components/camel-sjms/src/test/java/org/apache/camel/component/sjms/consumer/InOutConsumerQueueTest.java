@@ -20,12 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
-
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class InOutConsumerQueueTest extends JmsTestSupport {
 
     @Test

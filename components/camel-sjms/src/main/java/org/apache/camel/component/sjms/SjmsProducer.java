@@ -26,10 +26,10 @@ import javax.jms.Session;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.commons.pool.BasePoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
@@ -190,8 +190,10 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         void release(MessageProducerResources producer) throws Exception;
     }
 
-    protected class NOOPReleaseProducerCallback implements ReleaseProducerCallback {
-        public void release(MessageProducerResources producer) throws Exception { /* no-op */ }
+    protected class CloseProducerCallback implements ReleaseProducerCallback {
+        public void release(MessageProducerResources producer) throws Exception {
+            producer.getMessageProducer().close();
+        }
     }
 
     protected class ReturnProducerCallback implements ReleaseProducerCallback {
@@ -209,15 +211,15 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         }
 
         try {
-            MessageProducerResources producer = null;
-            ReleaseProducerCallback releaseProducerCallback = null;
+            final MessageProducerResources producer;
+            final ReleaseProducerCallback releaseProducerCallback;
             if (isEndpointTransacted() && isSharedJMSSession()) {
                 Session session = exchange.getIn().getHeader(SjmsConstants.JMS_SESSION, Session.class);
                 if (session != null && session.getTransacted()) {
                     // Join existing transacted session - Synchronization must have been added
                     // by the session initiator
                     producer = doCreateProducerModel(session);
-                    releaseProducerCallback = new NOOPReleaseProducerCallback();
+                    releaseProducerCallback = new CloseProducerCallback();
                 } else {
                     // Propagate JMS session and register Synchronization as an initiator
                     producer = getProducers().borrowObject();
@@ -240,15 +242,13 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                     if (log.isDebugEnabled()) {
                         log.debug("  Sending message asynchronously: {}", exchange.getIn().getBody());
                     }
-                    final MessageProducerResources finalProducer = producer;
-                    final ReleaseProducerCallback finalrpc = releaseProducerCallback;
                     getExecutor().execute(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                sendMessage(exchange, callback, finalProducer, finalrpc);
+                                sendMessage(exchange, callback, producer, releaseProducerCallback);
                             } catch (Exception e) {
-                                ObjectHelper.wrapRuntimeCamelException(e);
+                                RuntimeCamelException.wrapRuntimeCamelException(e);
                             }
                         }
                     });
@@ -264,7 +264,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
                 log.debug("Processing Exchange.id:{}", exchange.getExchangeId() + " - FAILED");
             }
             if (log.isDebugEnabled()) {
-                log.trace("Exception: " + e.getLocalizedMessage(), e);
+                log.trace("Exception: {}", e.getLocalizedMessage(), e);
             }
             exchange.setException(e);
         }

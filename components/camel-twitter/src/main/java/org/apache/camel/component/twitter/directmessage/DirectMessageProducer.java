@@ -20,8 +20,10 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+
+import twitter4j.User;
 
 /**
  * Produces text as a direct message.
@@ -49,7 +51,8 @@ public class DirectMessageProducer extends DefaultProducer {
             throw new CamelExchangeException("Username not configured on TwitterEndpoint", exchange);
         } else {
             log.debug("Sending to: {} message: {}", toUsername, text);
-            endpoint.getProperties().getTwitter().sendDirectMessage(toUsername, text);
+            User userStatus = endpoint.getProperties().getTwitter().showUser(toUsername);
+            endpoint.getProperties().getTwitter().sendDirectMessage(userStatus.getId(), text);
         }
     }
 

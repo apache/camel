@@ -45,11 +45,11 @@
 
         <route>
             <from uri="direct:start"/>
-            <to ref="httpEndpoint"/>
+            <to uri="ref:httpEndpoint"/>
         </route>
 
         <route id="jetty">
-            <from ref="jettyEndpoint"/>
+            <from uri="ref:jettyEndpoint"/>
             <transform><simple>Bye ${body}</simple></transform>
         </route>
         

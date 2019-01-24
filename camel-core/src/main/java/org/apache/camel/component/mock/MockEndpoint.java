@@ -44,22 +44,20 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ExpressionComparator;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.ExpressionComparator;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The mock component is used for testing routes and mediation rules using mocks.
@@ -89,12 +87,10 @@ import org.slf4j.LoggerFactory;
  * <b>Important:</b> If using {@link #expectedMessageCount(int)} and also {@link #expectedBodiesReceived(java.util.List)} or
  * {@link #expectedHeaderReceived(String, Object)} then the latter overrides the number of expected message based on the
  * number of values provided in the bodies/headers.
- *
- * @version 
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "mock", title = "Mock", syntax = "mock:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
+
     // must be volatile so changes is visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
     protected volatile Processor reporter;
@@ -115,7 +111,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     private volatile int counter;
 
-    @UriPath(description = "Name of mock endpoint") @Metadata(required = "true")
+    @UriPath(description = "Name of mock endpoint") @Metadata(required = true)
     private String name;
     @UriParam(label = "producer", defaultValue = "-1")
     private int expectedCount;
@@ -136,19 +132,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean copyOnExchange = true;
 
+    public MockEndpoint() {
+        init();
+    }
+
     public MockEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
         init();
-    }
-
-    @Deprecated
-    public MockEndpoint(String endpointUri) {
-        super(endpointUri);
-        init();
-    }
-
-    public MockEndpoint() {
-        this(null);
     }
 
     /**
@@ -305,7 +295,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     public void reset() {
-        init();
+        doInit();
     }
 
 
@@ -380,12 +370,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      *                should wait for the test to be true
      */
     public void assertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
-        LOG.info("Asserting: {} is satisfied", this);
+        log.info("Asserting: {} is satisfied", this);
         doAssertIsSatisfied(timeoutForEmptyEndpoints);
         if (assertPeriod > 0) {
             // if an assert period was set then re-assert again to ensure the assertion is still valid
             Thread.sleep(assertPeriod);
-            LOG.info("Re-asserting: {} is satisfied after {} millis", this, assertPeriod);
+            log.info("Re-asserting: {} is satisfied after {} millis", this, assertPeriod);
             // do not use timeout when we re-assert
             doAssertIsSatisfied(0);
         }
@@ -394,7 +384,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     protected void doAssertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
         if (expectedCount == 0) {
             if (timeoutForEmptyEndpoints > 0) {
-                LOG.debug("Sleeping for: {} millis to check there really are no messages received", timeoutForEmptyEndpoints);
+                log.debug("Sleeping for: {} millis to check there really are no messages received", timeoutForEmptyEndpoints);
                 Thread.sleep(timeoutForEmptyEndpoints);
             }
             assertEquals("Received message count", expectedCount, getReceivedCounter());
@@ -418,7 +408,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         for (Throwable failure : failures) {
             if (failure != null) {
-                LOG.error("Caught on " + getEndpointUri() + " Exception: " + failure, failure);
+                log.error("Caught on " + getEndpointUri() + " Exception: " + failure, failure);
                 fail("Failed due to caught exception: " + failure);
             }
         }
@@ -434,7 +424,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             // did not throw expected error... fail!
             failed = true;
         } catch (AssertionError e) {
-            LOG.info("Caught expected failure: " + e);
+            log.info("Caught expected failure: {}", e);
         }
         if (failed) {
             // fail() throws the AssertionError to indicate the test failed. 
@@ -455,7 +445,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             // did not throw expected error... fail!
             failed = true;
         } catch (AssertionError e) {
-            LOG.info("Caught expected failure: " + e);
+            log.info("Caught expected failure: {}", e);
         }
         if (failed) { 
             // fail() throws the AssertionError to indicate the test failed. 
@@ -517,6 +507,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedHeaderReceived(final String name, final Object value) {
+        if (expectedMinimumCount == -1) {
+            expectedMinimumMessageCount(1);
+        }
         if (expectedHeaderValues == null) {
             expectedHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             // we just wants to expects to be called once
@@ -723,7 +716,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
 
         if (actualValue instanceof Expression) {
-            Class clazz = Object.class;
+            Class<?> clazz = Object.class;
             if (expectedValue != null) {
                 clazz = expectedValue.getClass();
             }
@@ -1142,14 +1135,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     /**
-     * @deprecated use {@link #setResultMinimumWaitTime(long)}
-     */
-    @Deprecated
-    public void setMinimumResultWaitTime(long resultMinimumWaitTime) {
-        setResultMinimumWaitTime(resultMinimumWaitTime);
-    }
-
-    /**
      * Specifies the expected number of message exchanges that should be
      * received by this endpoint.
      * <p/>
@@ -1293,7 +1278,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    private void init() {
+    protected void doInit() {
         expectedCount = -1;
         counter = 0;
         defaultProcessor = null;
@@ -1383,12 +1368,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
 
         // let counter be 0 index-based in the logs
-        if (LOG.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             String msg = getEndpointUri() + " >>>> " + counter + " : " + copy + " with body: " + actualBody;
             if (copy.getIn().hasHeaders()) {
                 msg += " and headers:" + copy.getIn().getHeaders();
             }
-            LOG.debug(msg);
+            log.debug(msg);
         }
 
         // record timestamp when exchange was received
@@ -1454,7 +1439,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         StopWatch watch = new StopWatch();
         waitForCompleteLatch(resultWaitTime);
         long delta = watch.taken();
-        LOG.debug("Took {} millis to complete latch", delta);
+        log.debug("Took {} millis to complete latch", delta);
 
         if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {
             fail("Expected minimum " + resultMinimumWaitTime
@@ -1467,7 +1452,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         long waitTime = timeout == 0 ? 10000L : timeout;
 
         // now let's wait for the results
-        LOG.debug("Waiting on the latch for: {} millis", timeout);
+        log.debug("Waiting on the latch for: {} millis", timeout);
         latch.await(waitTime, TimeUnit.MILLISECONDS);
     }
 
@@ -1484,11 +1469,11 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     protected void fail(Object message) {
-        if (LOG.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             List<Exchange> list = getReceivedExchanges();
             int index = 0;
             for (Exchange exchange : list) {
-                LOG.debug("{} failed and received[{}]: {}", new Object[]{getEndpointUri(), ++index, exchange});
+                log.debug("{} failed and received[{}]: {}", getEndpointUri(), ++index, exchange);
             }
         }
         throw new AssertionError(getEndpointUri() + " " + message);

@@ -21,9 +21,6 @@ import org.apache.camel.processor.aggregator.AggregateExpressionTimeoutTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringAggregateExpressionTimeoutTest extends AggregateExpressionTimeoutTest {
 
     protected CamelContext createCamelContext() throws Exception {

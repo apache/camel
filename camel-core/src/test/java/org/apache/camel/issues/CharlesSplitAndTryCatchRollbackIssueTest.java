@@ -24,12 +24,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSplitWithTryCatchAndRollbackOK() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");
@@ -44,6 +43,7 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitWithTryCatchAndRollbackILE() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");
@@ -58,6 +58,7 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitWithTryCatchAndRollbackException() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");
@@ -72,7 +73,7 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException ee = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(ee.getMessage().startsWith("Sequential processing failed for number 2."));
+            assertTrue(ee.getMessage().startsWith("Multicast processing failed for number 2."));
             RollbackExchangeException re = assertIsInstanceOf(RollbackExchangeException.class, ee.getCause());
             assertTrue(re.getMessage().startsWith("Intended rollback"));
         }
@@ -80,6 +81,7 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testSplitWithTryCatchAndRollbacILEAndException() throws Exception {
         MockEndpoint split = getMockEndpoint("mock:split");
         MockEndpoint ile = getMockEndpoint("mock:ile");
@@ -94,7 +96,7 @@ public class CharlesSplitAndTryCatchRollbackIssueTest extends ContextTestSupport
             fail("Should thrown an exception");
         } catch (CamelExecutionException e) {
             CamelExchangeException ee = assertIsInstanceOf(CamelExchangeException.class, e.getCause());
-            assertTrue(ee.getMessage().startsWith("Sequential processing failed for number 3."));
+            assertTrue(ee.getMessage().startsWith("Multicast processing failed for number 3."));
             RollbackExchangeException re = assertIsInstanceOf(RollbackExchangeException.class, ee.getCause());
             assertTrue(re.getMessage().startsWith("Intended rollback"));
         }

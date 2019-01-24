@@ -32,6 +32,11 @@ public class AtmosComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the atmos component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The token id to pass to the Atmos client
      */
     private String fullTokenId;

@@ -23,6 +23,7 @@ import java.io.InputStream;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 public class BeanWithInputStreamBodyTest extends ContextTestSupport {
 
@@ -38,6 +39,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testBeanWithInputStreamBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -58,6 +60,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testBeanWithInputStreamBodyMethod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -78,6 +81,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToBeanWithInputStreamBody() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -98,6 +102,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToBeanWithInputStreamBodyMethod() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -118,6 +123,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testToBeanWithInputStreamBodyMethodOGNL() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

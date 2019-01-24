@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -37,9 +38,6 @@ import org.springframework.jms.core.MessageCreator;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
 
     private static volatile String tempName;

@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 public class MQConfiguration implements Cloneable {
 
     @UriPath(description = "Logical name")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String label;
     @UriParam(label = "producer")
     private AmazonMQ amazonMqClient;
@@ -37,7 +37,7 @@ public class MQConfiguration implements Cloneable {
     @UriParam(label = "producer", secret = true)
     private String secretKey;
     @UriParam(label = "producer")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private MQOperations operation;
     @UriParam(label = "producer")
     private String proxyHost;
@@ -90,35 +90,35 @@ public class MQConfiguration implements Cloneable {
         this.operation = operation;
     }
 
-    /**
-     * To define a proxy host when instantiating the MQ client
-     */
     public String getProxyHost() {
         return proxyHost;
     }
 
+    /**
+     * To define a proxy host when instantiating the MQ client
+     */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
     }
 
     /**
      * To define a proxy port when instantiating the MQ client
      */
-    public Integer getProxyPort() {
-        return proxyPort;
-    }
-
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
+    }
+
+    public String getRegion() {
+        return region;
     }
 
     /**
      * The region in which MQ client needs to work
      */
-    public String getRegion() {
-        return region;
-    }
-
     public void setRegion(String region) {
         this.region = region;
     }

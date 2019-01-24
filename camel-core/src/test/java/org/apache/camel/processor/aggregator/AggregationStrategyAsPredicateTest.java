@@ -16,18 +16,17 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
-/**
- *
- */
 public class AggregationStrategyAsPredicateTest extends ContextTestSupport {
 
+    @Test
     public void testAggregateCompletionAware() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:aggregated");
         result.expectedBodiesReceived("A+B+C", "X+Y+ZZZZ");

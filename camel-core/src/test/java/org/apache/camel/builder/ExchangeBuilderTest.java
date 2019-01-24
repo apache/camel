@@ -16,15 +16,15 @@
  */
 package org.apache.camel.builder;
 
-import junit.framework.TestCase;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Assert;
+import org.junit.Test;
 
 
-public class ExchangeBuilderTest extends TestCase {
+public class ExchangeBuilderTest extends Assert {
     private static final DefaultCamelContext CONTEXT = new DefaultCamelContext();
     private static final String BODY = "Message Body";
     private static final String KEY = "Header key";
@@ -32,6 +32,7 @@ public class ExchangeBuilderTest extends TestCase {
     private static final String PROPERTY_KEY = "Property key";
     private static final String PROPERTY_VALUE = "Property value";
 
+    @Test
     public void testBuildAnExchangeWithDefaultPattern() {
         Exchange exchange = new DefaultExchange(CONTEXT);
         Exchange builtExchange = ExchangeBuilder.anExchange(CONTEXT).build();
@@ -40,18 +41,19 @@ public class ExchangeBuilderTest extends TestCase {
     }
 
 
+    @Test
     public void testBuildAnExchangeWithBodyHeaderAndPattern() throws Exception {
 
         Exchange exchange = ExchangeBuilder.anExchange(CONTEXT)
                 .withBody(BODY)
                 .withHeader(KEY, VALUE)
                 .withProperty(PROPERTY_KEY, PROPERTY_VALUE)
-                .withPattern(ExchangePattern.OutIn)
+                .withPattern(ExchangePattern.InOut)
                 .build();
 
         assertEquals(exchange.getIn().getBody(), BODY);
         assertEquals(exchange.getIn().getHeader(KEY), VALUE);
-        assertEquals(exchange.getPattern(), ExchangePattern.OutIn);
+        assertEquals(exchange.getPattern(), ExchangePattern.InOut);
         assertEquals(exchange.getProperty(PROPERTY_KEY), PROPERTY_VALUE);
     }
 

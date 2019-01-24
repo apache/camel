@@ -22,17 +22,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Rejectable;
-import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.concurrent.Rejectable;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 /**
  * Threads processor that leverage a thread pool for continue processing the {@link Exchange}s
@@ -57,9 +53,8 @@ import org.slf4j.LoggerFactory;
  * will not be free to process a new exchange, as its processing the current exchange.</li>
  * </ul>
  */
-public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
+public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ThreadsProcessor.class);
     private String id;
     private final CamelContext camelContext;
     private final ExecutorService executorService;
@@ -80,7 +75,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
 
         @Override
         public void run() {
-            LOG.trace("Continue routing exchange {}", exchange);
+            log.trace("Continue routing exchange {}", exchange);
             if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
             }
@@ -91,7 +86,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         public void reject() {
             // reject should mark the exchange with an rejected exception and mark not to route anymore
             exchange.setException(new RejectedExecutionException());
-            LOG.trace("Rejected routing exchange {}", exchange);
+            log.trace("Rejected routing exchange {}", exchange);
             if (shutdown.get()) {
                 exchange.setException(new RejectedExecutionException("ThreadsProcessor is not running."));
             }
@@ -114,10 +109,6 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         this.rejectedPolicy = rejectedPolicy;
     }
 
-    public void process(final Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (shutdown.get()) {
             throw new IllegalStateException("ThreadsProcessor is not running.");
@@ -126,7 +117,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         // we cannot execute this asynchronously for transacted exchanges, as the transaction manager doesn't support
         // using different threads in the same transaction
         if (exchange.isTransacted()) {
-            LOG.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
+            log.trace("Transacted Exchange must be routed synchronously for exchangeId: {} -> {}", exchange.getExchangeId(), exchange);
             callback.done(true);
             return true;
         }
@@ -134,7 +125,7 @@ public class ThreadsProcessor extends ServiceSupport implements AsyncProcessor, 
         try {
             // process the call in asynchronous mode
             ProcessCall call = new ProcessCall(exchange, callback, false);
-            LOG.trace("Submitting task {}", call);
+            log.trace("Submitting task {}", call);
             executorService.submit(call);
             // tell Camel routing engine we continue routing asynchronous
             return false;

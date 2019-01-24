@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.support.DefaultThreadPoolFactory;
+import org.junit.Test;
 
 /**
  *
@@ -34,10 +36,13 @@ public class CustomThreadPoolFactoryTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getExecutorServiceManager().setThreadPoolFactory(factory);
+        DefaultExecutorServiceManager executorServiceManager = new DefaultExecutorServiceManager(context);
+        executorServiceManager.setThreadPoolFactory(factory);
+        context.setExecutorServiceManager(executorServiceManager);
         return context;
     }
 
+    @Test
     public void testCustomThreadPoolFactory() {
         context.getExecutorServiceManager().newSingleThreadExecutor(this, "foo");
         assertTrue("Should use custom thread pool factory", factory.isInvoked());

@@ -18,6 +18,7 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  * Unit test for intercepting sending to endpoint with multiple routes
@@ -29,6 +30,7 @@ public class InterceptSendToEndpointMultipleRoutesTest extends ContextTestSuppor
         return false;
     }
 
+    @Test
     public void testInterceptEndpoint() throws Exception {
         // NOTE: each of these routes must extend our base route class
 

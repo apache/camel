@@ -20,14 +20,12 @@ import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.List;
+
 import javax.enterprise.inject.spi.BeanManager;
 
-import org.apache.camel.management.event.RouteAddedEvent;
-import org.apache.camel.management.event.RouteRemovedEvent;
-import org.apache.camel.management.event.RouteStartedEvent;
-import org.apache.camel.management.event.RouteStoppedEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.RouteEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -45,17 +43,11 @@ final class CdiEventNotifier extends EventNotifierSupport {
     }
 
     @Override
-    public void notify(EventObject event) {
+    public void notify(CamelEvent event) {
         String id = null;
 
-        if (event instanceof RouteAddedEvent) {
-            id = ((RouteAddedEvent) event).getRoute().getId();
-        } else if (event instanceof RouteStartedEvent) {
-            id = ((RouteStartedEvent) event).getRoute().getId();
-        } else if (event instanceof RouteStoppedEvent) {
-            id = ((RouteStoppedEvent) event).getRoute().getId();
-        } else if (event instanceof RouteRemovedEvent) {
-            id = ((RouteRemovedEvent) event).getRoute().getId();
+        if (event instanceof RouteEvent) {
+            id = ((RouteEvent) event).getRoute().getId();
         }
 
         if (isNotEmpty(id)) {
@@ -69,7 +61,7 @@ final class CdiEventNotifier extends EventNotifierSupport {
     }
 
     @Override
-    public boolean isEnabled(EventObject event) {
+    public boolean isEnabled(CamelEvent event) {
         return true;
     }
 }

@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
+import org.junit.Test;
 
 /**
  *
@@ -37,6 +38,7 @@ public class LanguageCamelContextAwareTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testLanguageCamelContextAware() throws Exception {
         Language lan = context.resolveLanguage("my");
         assertNotNull(lan);

@@ -26,7 +26,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.atmosphere.websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class WebsocketProducer extends DefaultProducer {
             || message instanceof Reader || message instanceof InputStream)) {
             // fallback to use String
             if (LOG.isInfoEnabled()) {
-                LOG.info("Using String for unexpected message type {} ", message.getClass());
+                LOG.info("Using String for unexpected message type {}", message.getClass());
             }
             message = in.getBody(String.class);    
         }

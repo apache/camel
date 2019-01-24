@@ -21,11 +21,12 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
 
 /**
  * A language for header expressions.
  */
+@org.apache.camel.spi.annotations.Language("header")
 public class HeaderLanguage implements Language, IsSingleton {
 
     public static Expression header(String headerName) {        

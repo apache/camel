@@ -18,14 +18,13 @@ package org.apache.camel.language.ognl;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+import org.apache.camel.spi.annotations.Language;
 import org.apache.camel.support.LanguageSupport;
 
 /**
- * An <a href="http://www.ognl.org/">OGNL</a> {@link Language} plugin
- *
- * @version 
+ * An <a href="http://www.ognl.org/">OGNL</a> {@link org.apache.camel.spi.Language} plugin
  */
+@Language("ognl")
 public class OgnlLanguage extends LanguageSupport {
 
     public Predicate createPredicate(String expression) {

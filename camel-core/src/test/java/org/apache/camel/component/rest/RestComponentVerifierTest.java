@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -29,12 +28,13 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.DefaultComponent;
 import org.junit.Assert;
+import org.junit.Test;
 
 public class RestComponentVerifierTest extends ContextTestSupport {
     @Override
@@ -45,9 +45,10 @@ public class RestComponentVerifierTest extends ContextTestSupport {
         return registry;
     }
 
+    @Test
     public void testParameters() throws Exception {
         RestComponent component = context.getComponent("rest", RestComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("componentName", "rest-component");
@@ -59,14 +60,15 @@ public class RestComponentVerifierTest extends ContextTestSupport {
         // is delegated to the underlying component
         parameters.put("authProxy", "http://localhost:8080");
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.OK, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
+    @Test
     public void testMissingParameters() throws Exception {
         RestComponent component = context.getComponent("rest", RestComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("componentName", "rest-component");
@@ -77,11 +79,11 @@ public class RestComponentVerifierTest extends ContextTestSupport {
         // is delegated to the underlying component
         parameters.put("authProxy", "http://localhost:8080");
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
         Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
     }

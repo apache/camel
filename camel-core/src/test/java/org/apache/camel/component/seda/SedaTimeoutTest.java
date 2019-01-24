@@ -23,18 +23,18 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class SedaTimeoutTest extends ContextTestSupport {
     private int timeout = 100;
 
+    @Test
     public void testSedaNoTimeout() throws Exception {
         Future<String> out = template.asyncRequestBody("seda:foo", "World", String.class);
         assertEquals("Bye World", out.get());
     }
 
+    @Test
     public void testSedaTimeout() throws Exception {
         Future<String> out = template.asyncRequestBody("seda:foo?timeout=" + timeout, "World", String.class);
         try {
@@ -50,8 +50,9 @@ public class SedaTimeoutTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testSedaTimeoutWithStoppedRoute() throws Exception {
-        context.stopRoute("seda");
+        context.getRouteController().stopRoute("seda");
         timeout = 500;
         testSedaTimeout();
     }

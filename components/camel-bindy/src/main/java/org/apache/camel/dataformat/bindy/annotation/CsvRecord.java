@@ -107,4 +107,9 @@ public @interface CsvRecord {
      */
     boolean endWithLineBreak() default true;
 
+    /**
+     * The remove quotes parameter flags if unmarshalling should try to remove quotes for each field
+     */
+    boolean removeQuotes() default true;
+
 }

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.io.IOException;
 
 import org.apache.camel.CamelException;
@@ -25,6 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FailOverLoadBalanceMultipleExceptionTest extends ContextTestSupport {
 
@@ -33,7 +34,8 @@ public class FailOverLoadBalanceMultipleExceptionTest extends ContextTestSupport
     protected MockEndpoint z;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");
@@ -65,6 +67,7 @@ public class FailOverLoadBalanceMultipleExceptionTest extends ContextTestSupport
         };
     }
 
+    @Test
     public void testMultipledException() throws Exception {
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);

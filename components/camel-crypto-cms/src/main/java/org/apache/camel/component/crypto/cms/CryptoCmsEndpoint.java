@@ -23,11 +23,11 @@ import org.apache.camel.component.crypto.cms.crypt.DefaultEnvelopedDataDecryptor
 import org.apache.camel.component.crypto.cms.crypt.EnvelopedDataEncryptorConfiguration;
 import org.apache.camel.component.crypto.cms.sig.DefaultSignedDataVerifierConfiguration;
 import org.apache.camel.component.crypto.cms.sig.SignedDataCreatorConfiguration;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * The crypto cms component is used for encrypting data in CMS Enveloped Data
@@ -39,10 +39,10 @@ public class CryptoCmsEndpoint extends DefaultEndpoint {
     private final Processor processor;
 
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private CryptoOperation cryptoOperation;
     @UriPath
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String name;
 
     // to include different kind of configuration params

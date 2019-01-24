@@ -31,6 +31,7 @@ import org.apache.camel.component.exec.impl.ProvokeExceptionExecCommandExecutor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -401,7 +402,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
      */
     @Test
     public void testExecJavaProcessWithThrownExecException() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveByToString(".*java.*").replace().to("exec:java?commandExecutor=#executorMock");

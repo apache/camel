@@ -20,15 +20,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AdviceWithTwoRoutesTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceWithA() throws Exception {
         RouteDefinition route = context.getRouteDefinition("a");
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock://a")
@@ -45,9 +45,10 @@ public class AdviceWithTwoRoutesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithB() throws Exception {
         RouteDefinition route = context.getRouteDefinition("b");
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock://b")
@@ -64,9 +65,10 @@ public class AdviceWithTwoRoutesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithAB() throws Exception {
         RouteDefinition route = context.getRouteDefinition("a");
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock://a")
@@ -76,7 +78,7 @@ public class AdviceWithTwoRoutesTest extends ContextTestSupport {
         });
 
         route = context.getRouteDefinition("b");
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock://b")

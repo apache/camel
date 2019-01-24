@@ -37,7 +37,7 @@ import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.apache.commons.net.ftp.FTP;
@@ -128,6 +128,14 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), "Server refused connection");
                 }
             } catch (Exception e) {
+                if (client.isConnected()) {
+                    log.trace("Disconnecting due to exception during connect");
+                    try {
+                        client.disconnect(); // ensures socket is closed
+                    } catch (IOException ignore) {
+                        log.trace("Ignore exception during disconnect: {}", ignore.getMessage());
+                    }
+                }
                 // check if we are interrupted so we can break out
                 if (Thread.currentThread().isInterrupted()) {
                     throw new GenericFileOperationFailedException("Interrupted during connecting", new InterruptedException("Interrupted during connecting"));
@@ -184,7 +192,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             boolean login;
             if (username != null) {
                 if (account != null) {
-                    log.trace("Attempting to login user: {} using password: ******** and account: {}", new Object[]{username, account});
+                    log.trace("Attempting to login user: {} using password: ******** and account: {}", username, account);
                     login = client.login(username, configuration.getPassword(), account);
                 } else {
                     log.trace("Attempting to login user: {} using password: ********", username);
@@ -363,7 +371,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         boolean answer;
         try {
             log.trace("retrieveFile({})", name);
-            if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
                 // local work directory is configured so we should store file content as files in this local directory
                 answer = retrieveFileToFileInLocalWorkDirectory(name, exchange, endpoint.isResumeDownload());
             } else {
@@ -400,7 +408,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         boolean result;
         try {
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
-            ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
+            org.apache.camel.util.ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             
             String remoteName = name;
             String currentDir = null;
@@ -460,7 +468,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             // use relative filename in local work directory
             GenericFile<FTPFile> target = (GenericFile<FTPFile>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
-            ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
+            org.apache.camel.util.ObjectHelper.notNull(target, "Exchange should have the " + FileComponent.FILE_EXCHANGE_FILE + " set");
             String relativeName = target.getRelativeFilePath();
 
             temp = new File(local, relativeName + ".inprogress");
@@ -646,7 +654,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 throw new GenericFileOperationFailedException("File already exist: " + name + ". Cannot write new file.");
             } else if (existFile && endpoint.getFileExist() == GenericFileExist.Move) {
                 // move any existing file first
-                doMoveExistingFile(name, targetName);
+                this.endpoint.getMoveExistingFileStrategy().moveExistingFile(endpoint, this, targetName);
             }
         }
 
@@ -696,7 +704,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
             // after storing file, we may set chmod on the file
             String chmod = endpoint.getConfiguration().getChmod();
-            if (ObjectHelper.isNotEmpty(chmod)) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(chmod)) {
                 log.debug("Setting chmod: {} on file: {}", chmod, targetName);
                 String command = "chmod " + chmod + " " + targetName;
                 log.trace("Client sendSiteCommand: {}", command);
@@ -712,61 +720,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } finally {
             IOHelper.close(is, "store: " + name, log);
-        }
-    }
-
-    /**
-     * Moves any existing file due fileExists=Move is in use.
-     */
-    private void doMoveExistingFile(String name, String targetName) throws GenericFileOperationFailedException {
-        // need to evaluate using a dummy and simulate the file first, to have access to all the file attributes
-        // create a dummy exchange as Exchange is needed for expression evaluation
-        // we support only the following 3 tokens.
-        Exchange dummy = endpoint.createExchange();
-        // we only support relative paths for the ftp component, so dont provide any parent
-        String parent = null;
-        String onlyName = FileUtil.stripPath(targetName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME, targetName);
-        dummy.getIn().setHeader(Exchange.FILE_NAME_ONLY, onlyName);
-        dummy.getIn().setHeader(Exchange.FILE_PARENT, parent);
-
-        String to = endpoint.getMoveExisting().evaluate(dummy, String.class);
-        // we only support relative paths for the ftp component, so strip any leading paths
-        to = FileUtil.stripLeadingSeparator(to);
-        // normalize accordingly to configuration
-        to = endpoint.getConfiguration().normalizePath(to);
-        if (ObjectHelper.isEmpty(to)) {
-            throw new GenericFileOperationFailedException("moveExisting evaluated as empty String, cannot move existing file: " + name);
-        }
-
-        // do we have a sub directory
-        String dir = FileUtil.onlyPath(to);
-        if (dir != null) {
-            // ensure directory exists
-            buildDirectory(dir, false);
-        }
-
-        // deal if there already exists a file
-        if (existsFile(to)) {
-            if (endpoint.isEagerDeleteTargetFile()) {
-                log.trace("Deleting existing file: {}", to);
-                boolean result;
-                try {
-                    result = client.deleteFile(to);
-                    if (!result) {
-                        throw new GenericFileOperationFailedException("Cannot delete file: " + to);
-                    }
-                } catch (IOException e) {
-                    throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), "Cannot delete file: " + to, e);
-                }
-            } else {
-                throw new GenericFileOperationFailedException("Cannot moved existing file from: " + name + " to: " + to + " as there already exists a file: " + to);
-            }
-        }
-
-        log.trace("Moving existing file: {} to: {}", name, to);
-        if (!renameFile(targetName, to)) {
-            throw new GenericFileOperationFailedException("Cannot rename file from: " + name + " to: " + to);
         }
     }
 
@@ -828,7 +781,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         log.trace("changeCurrentDirectory({})", path);
-        if (ObjectHelper.isEmpty(path)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
             return;
         }
 
@@ -865,7 +818,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     private void doChangeDirectory(String path) {
-        if (path == null || ".".equals(path) || ObjectHelper.isEmpty(path)) {
+        if (path == null || ".".equals(path) || org.apache.camel.util.ObjectHelper.isEmpty(path)) {
             return;
         }
 
@@ -916,7 +869,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         clientActivityListener.onScanningForFiles(endpoint.remoteServerInformation(), path);
 
         // use current directory if path not given
-        if (ObjectHelper.isEmpty(path)) {
+        if (org.apache.camel.util.ObjectHelper.isEmpty(path)) {
             path = ".";
         }
 
@@ -979,6 +932,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         return success;
+    }
+    
+    public FTPClient getClient() {
+        return client;
     }
 
 }

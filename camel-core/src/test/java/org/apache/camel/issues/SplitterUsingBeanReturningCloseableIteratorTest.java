@@ -25,10 +25,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTestSupport {
 
     @Override
@@ -44,6 +42,7 @@ public class SplitterUsingBeanReturningCloseableIteratorTest extends ContextTest
         }
     }
 
+    @Test
     public void testCloseableIterator() throws Exception {
         try {
             template.sendBody("direct:start", "Hello,World");

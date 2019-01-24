@@ -16,9 +16,12 @@
  */
 package org.apache.camel.language.simple;
 
+import org.apache.camel.spi.annotations.Language;
+
 /**
  *
  */
+@Language("file")
 public class FileLanguage extends SimpleLanguage {
 
     public FileLanguage() {

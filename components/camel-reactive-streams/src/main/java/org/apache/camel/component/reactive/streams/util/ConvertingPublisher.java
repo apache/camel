@@ -81,7 +81,7 @@ public class ConvertingPublisher<R> implements Publisher<R> {
                 try {
                     r = converter.apply(ex);
                 } catch (TypeConversionException e) {
-                    LOG.warn("Unable to convert body to the specified type: " + type.getName(), e);
+                    LOG.warn("Unable to convert body to the specified type: {}", type.getName(), e);
                     r = null;
                 }
 

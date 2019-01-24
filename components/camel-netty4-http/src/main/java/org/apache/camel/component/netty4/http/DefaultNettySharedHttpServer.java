@@ -21,12 +21,12 @@ import java.util.regex.Matcher;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.netty4.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty4.http.handlers.HttpServerMultiplexChannelHandler;
-import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
     private NettySharedHttpServerBootstrapConfiguration configuration;
     private HttpServerConsumerChannelFactory channelFactory;
     private HttpServerBootstrapFactory bootstrapFactory;
-    private ClassResolver classResolver;
+    private CamelContext camelContext;
     private boolean startServer = true;
     private String threadPattern = DEFAULT_PATTERN;
 
@@ -52,8 +52,8 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         this.configuration = configuration;
     }
 
-    public void setClassResolver(ClassResolver classResolver) {
-        this.classResolver = classResolver;
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public int getPort() {
@@ -104,7 +104,7 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         channelFactory = new HttpServerMultiplexChannelHandler();
         channelFactory.init(configuration.getPort());
 
-        ChannelInitializer<Channel> pipelineFactory = new HttpServerSharedInitializerFactory(configuration, channelFactory, classResolver);
+        ChannelInitializer<Channel> pipelineFactory = new HttpServerSharedInitializerFactory(configuration, channelFactory, camelContext);
 
         // thread factory and pattern
         String port = Matcher.quoteReplacement("" + configuration.getPort());
@@ -116,17 +116,17 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         bootstrapFactory = new HttpServerBootstrapFactory(channelFactory, false);
         bootstrapFactory.init(tf, configuration, pipelineFactory);
 
-        ServiceHelper.startServices(channelFactory);
+        ServiceHelper.startService(channelFactory);
 
         if (startServer) {
             LOG.info("Starting NettySharedHttpServer on {}:{}", configuration.getHost(), configuration.getPort());
-            ServiceHelper.startServices(bootstrapFactory);
+            ServiceHelper.startService(bootstrapFactory);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         LOG.info("Stopping NettySharedHttpServer on {}:{}", configuration.getHost(), configuration.getPort());
-        ServiceHelper.stopServices(bootstrapFactory, channelFactory);
+        ServiceHelper.stopService(bootstrapFactory, channelFactory);
     }
 }

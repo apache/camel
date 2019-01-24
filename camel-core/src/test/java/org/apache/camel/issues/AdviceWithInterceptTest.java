@@ -19,16 +19,16 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AdviceWithInterceptTest extends ContextTestSupport {
 
+    @Test
     public void testAdviceIntercept() throws Exception {
         getMockEndpoint("mock:advice").expectedMessageCount(1);
 
-        context.getRouteDefinition("main").adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("main"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 weaveAddFirst().to("direct:advice");

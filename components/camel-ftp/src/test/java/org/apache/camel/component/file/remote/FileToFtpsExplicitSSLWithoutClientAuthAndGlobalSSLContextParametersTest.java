@@ -18,9 +18,9 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.TrustManagersParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 
 public class FileToFtpsExplicitSSLWithoutClientAuthAndGlobalSSLContextParametersTest extends FileToFtpsExplicitSSLWithoutClientAuthTest {
 

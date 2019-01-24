@@ -18,20 +18,19 @@ package org.apache.camel.model;
 
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.xml.TimeUnitAdapter;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 
 /**
  * To configure thread pools
- *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "threadPoolProfile")
@@ -56,6 +55,11 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     private ThreadPoolRejectedPolicy rejectedPolicy;
 
     public ThreadPoolProfileDefinition() {
+    }
+
+    @Override
+    public String getShortName() {
+        return "threadPoolProfile";
     }
 
     @Override

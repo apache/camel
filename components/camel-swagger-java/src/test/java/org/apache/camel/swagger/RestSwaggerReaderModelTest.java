@@ -56,7 +56,7 @@ public class RestSwaggerReaderModelTest extends CamelTestSupport {
                         .param().name("body").type(RestParamType.body).description("The user to update or create").endParam()
                         .to("bean:userService?method=updateUser")
 
-                    .get("/findAll").description("Find all users").outTypeList(User.class)
+                    .get("/findAll").description("Find all users").outType(User[].class)
                         .responseMessage().message("All the found users").endResponseMessage()
                         .to("bean:userService?method=listUsers");
             }

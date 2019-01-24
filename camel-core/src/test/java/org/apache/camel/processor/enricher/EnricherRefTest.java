@@ -20,17 +20,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class EnricherRefTest extends ContextTestSupport {
 
-    @SuppressWarnings("deprecation")
-    private MockEndpoint cool = new MockEndpoint("mock:cool");
+    private MockEndpoint cool = new MockEndpoint("mock:cool", new MockComponent(context));
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -40,6 +38,7 @@ public class EnricherRefTest extends ContextTestSupport {
         return jndi;
     }
 
+    @Test
     public void testEnrichRef() throws Exception {
         cool.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -61,7 +60,7 @@ public class EnricherRefTest extends ContextTestSupport {
             public void configure() throws Exception {
                 cool.setCamelContext(context);
 
-                from("direct:start").enrichRef("cool", "agg");
+                from("direct:start").enrich().simple("ref:cool").aggregationStrategyRef("agg");
             }
         };
     }

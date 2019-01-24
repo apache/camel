@@ -34,9 +34,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * @version 
- */
 public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     
     protected JpaEndpoint endpoint;
@@ -121,7 +118,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
         consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange e) {
                 receivedExchange = e;
-                assertNotNull(e.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class));
+                assertNotNull(e.getIn().getHeader(JpaConstants.ENTITY_MANAGER, EntityManager.class));
                 latch.countDown();
             }
         });

@@ -31,10 +31,10 @@ import org.apache.camel.spi.UriPath;
 public class DropboxConfiguration {
 
     //specific dropbox operation for the component
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private DropboxOperation operation;
     //dropbox auth options
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = true)
     private String accessToken;
     //local path to put files
     @UriParam

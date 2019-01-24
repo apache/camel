@@ -31,7 +31,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route startupOrder="1" shutdownRunningTask="CompleteCurrentTaskOnly">
-            <from uri="file:target/pending?initialDelay=0&amp;delay=10"/>
+            <from uri="file:target/pending?initialDelay=0&amp;delay=10&amp;synchronous=true"/>
             <delay><constant>1000</constant></delay>
             <to uri="seda:foo"/>
         </route>

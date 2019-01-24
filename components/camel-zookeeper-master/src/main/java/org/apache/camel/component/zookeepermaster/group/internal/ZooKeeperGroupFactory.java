@@ -23,8 +23,6 @@ import org.apache.camel.component.zookeepermaster.group.GroupFactory;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
 import org.apache.curator.framework.CuratorFramework;
 
-/**
- */
 public class ZooKeeperGroupFactory implements GroupFactory {
 
     private CuratorFramework curator;

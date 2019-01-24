@@ -24,9 +24,6 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FtpSimpleConsumeStreamingWithMultipleFilesTest extends FtpServerTestSupport {
 
     @Test
@@ -49,7 +46,7 @@ public class FtpSimpleConsumeStreamingWithMultipleFilesTest extends FtpServerTes
         mock.expectedMessageCount(2);
         mock.expectedBodiesReceivedInAnyOrder(expected, expected2);
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 

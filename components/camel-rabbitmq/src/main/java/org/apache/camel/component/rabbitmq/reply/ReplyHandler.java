@@ -21,8 +21,6 @@ import com.rabbitmq.client.AMQP;
 
 /**
  * Handles a reply.
- *
- * @version 
  */
 public interface ReplyHandler {
 

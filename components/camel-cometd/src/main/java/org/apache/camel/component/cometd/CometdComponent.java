@@ -27,9 +27,10 @@ import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.cometd.bayeux.server.BayeuxServer;
 import org.cometd.bayeux.server.SecurityPolicy;
 import org.cometd.server.BayeuxServerImpl;
@@ -51,7 +52,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Component for Jetty Cometd
  */
-public class CometdComponent extends UriEndpointComponent implements SSLContextParametersAware {
+@Component("cometd,cometds")
+public class CometdComponent extends DefaultComponent implements SSLContextParametersAware {
     private static final Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
 
     private final Map<String, ConnectorRef> connectors = new LinkedHashMap<>();
@@ -95,7 +97,6 @@ public class CometdComponent extends UriEndpointComponent implements SSLContextP
     }
 
     public CometdComponent() {
-        super(CometdEndpoint.class);
     }
 
     @Override

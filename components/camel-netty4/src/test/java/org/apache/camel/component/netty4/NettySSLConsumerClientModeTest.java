@@ -48,7 +48,6 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslHandler;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -84,7 +83,7 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
             startNettyServer();
             MockEndpoint receive = context.getEndpoint("mock:receive", MockEndpoint.class);
             receive.expectedBodiesReceived("Bye Willem");
-            context.startRoute("sslclient");
+            context.getRouteController().startRoute("sslclient");
             receive.assertIsSatisfied();
         } finally {
             shutdownServer();
@@ -97,7 +96,7 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4:tcp://localhost:{{port}}?textline=true&clientMode=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf").id("sslclient")
+                from("netty4:tcp://localhost:{{port}}?textline=true&clientMode=true&ssl=true&passphrase=changeit&keyStoreResource=#ksf&trustStoreResource=#tsf").id("sslclient")
                 .process(new Processor() {
                     public void process(final Exchange exchange) {
                         String body = exchange.getIn().getBody(String.class);

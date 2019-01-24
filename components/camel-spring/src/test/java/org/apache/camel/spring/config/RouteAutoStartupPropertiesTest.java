@@ -15,32 +15,31 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.config;
-
-import junit.framework.TestCase;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.IOHelper;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
-public class RouteAutoStartupPropertiesTest extends TestCase {
+public class RouteAutoStartupPropertiesTest extends Assert {
 
     private AbstractXmlApplicationContext ac;
 
+    @Test
     public void testAutoStartupFalse() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteAutoStartupFalseTest.xml");
 
         SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
 
-        assertEquals(false, camel.getRouteStatus("foo").isStarted());
+        assertEquals(false, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // now starting route manually
         camel.startRoute("foo");
-        assertEquals(true, camel.getRouteStatus("foo").isStarted());
+        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // and now we can send a message to the route and see that it works
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
@@ -54,12 +53,13 @@ public class RouteAutoStartupPropertiesTest extends TestCase {
         mock.assertIsSatisfied();
     }
 
+    @Test
     public void testAutoStartupTrue() throws Exception {
         ac = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/RouteAutoStartupTrueTest.xml");
 
         SpringCamelContext camel = ac.getBeansOfType(SpringCamelContext.class).values().iterator().next();
 
-        assertEquals(true, camel.getRouteStatus("bar").isStarted());
+        assertEquals(true, camel.getRouteController().getRouteStatus("bar").isStarted());
 
         // and now we can send a message to the route and see that it works
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
@@ -73,9 +73,9 @@ public class RouteAutoStartupPropertiesTest extends TestCase {
         mock.assertIsSatisfied();
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         IOHelper.close(ac);
-        super.tearDown();
+
     }
 }

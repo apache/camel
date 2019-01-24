@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,27 +24,30 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.async.MyAsyncComponent;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AsyncLoopTest extends ContextTestSupport {
     
     private static final String BASE_PAYLOAD = "<Hello n='4'/>";
     MockEndpoint resultEndpoint;
 
+    @Test
     public void testCounterLoop() throws Exception {
         performLoopTest("direct:a", 8);
     }
 
+    @Test
     public void testExpressionLoop() throws Exception {
         performLoopTest("direct:b", 6);
     }
 
+    @Test
     public void testExpressionClauseLoop() throws Exception {
         performLoopTest("direct:c", 4);
     }
 
+    @Test
     public void testLoopAsBlock() throws Exception {
         MockEndpoint lastEndpoint = resolveMandatoryEndpoint("mock:last", MockEndpoint.class);
         lastEndpoint.expectedMessageCount(1);
@@ -54,6 +56,7 @@ public class AsyncLoopTest extends ContextTestSupport {
         lastEndpoint.assertIsSatisfied();
     }
 
+    @Test
     public void testLoopWithInvalidExpression() throws Exception {
         try {
             performLoopTest("direct:b", 4, "invalid");
@@ -63,6 +66,7 @@ public class AsyncLoopTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testLoopProperties() throws Exception {
         MockEndpoint lastEndpoint = resolveMandatoryEndpoint("mock:last", MockEndpoint.class);
         lastEndpoint.expectedMessageCount(1);
@@ -88,7 +92,8 @@ public class AsyncLoopTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);

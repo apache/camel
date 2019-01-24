@@ -24,18 +24,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSupport {
 
     private MyEndpoint myendpoint;
     private volatile String order = "";
 
+    @Test
     public void testEndpointMustBeStartedBeforeProducer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -51,6 +50,7 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
         assertEquals("EndpointProducer", order);
     }
 
+    @Test
     public void testEndpointMustBeStartedBeforeConsumer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -66,6 +66,7 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
         assertEquals("EndpointConsumer", order);
     }
 
+    @Test
     public void testEndpointMustBeStartedBeforeConsumerAndProducer() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -82,6 +83,7 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
         assertEquals("EndpointProducerConsumer", order);
     }
 
+    @Test
     public void testEndpointStartedOnceAndOnlyStoppedOnShutdown() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -98,11 +100,11 @@ public class EndpointMustBeStartedBeforeSendProcessorTest extends ContextTestSup
         assertEquals("EndpointProducerConsumer", order);
         order = "";
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         assertEquals("StopConsumerStopProducer", order);
 
         order = "";
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         assertEquals("ProducerConsumer", order);
 
         order = "";

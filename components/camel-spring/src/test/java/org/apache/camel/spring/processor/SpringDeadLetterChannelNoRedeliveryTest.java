@@ -21,9 +21,6 @@ import org.apache.camel.processor.DeadLetterChannelNoRedeliveryTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringDeadLetterChannelNoRedeliveryTest extends DeadLetterChannelNoRedeliveryTest {
 
     protected CamelContext createCamelContext() throws Exception {

@@ -30,9 +30,9 @@
     <cxf:cxfEndpoint id="routerEndpoint"
                      address="http://localhost:${CXFTestSupport.port1}/FileToCxfMessageDataFormatTest/router"
                      serviceClass="org.apache.camel.component.cxf.HelloService">
-        <!-- use MESSAGE data format -->
+        <!-- use RAW data format -->
         <cxf:properties>
-            <entry key="dataFormat" value="MESSAGE"/>
+            <entry key="dataFormat" value="RAW"/>
         </cxf:properties>
     </cxf:cxfEndpoint>
 

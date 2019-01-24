@@ -37,6 +37,11 @@ public class GangliaComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the ganglia component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * To use the shared configuration
      */
     private GangliaConfigurationNestedConfiguration configuration;

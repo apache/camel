@@ -18,8 +18,6 @@ package org.apache.camel.component.mybatis;
 
 /**
  * MyBatis constants.
- *
- * @version 
  */
 public final class MyBatisConstants {
 

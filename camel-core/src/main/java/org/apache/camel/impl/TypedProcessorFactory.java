@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ProcessorFactory;
@@ -29,7 +30,7 @@ public class TypedProcessorFactory<T extends ProcessorDefinition<T>> implements 
     }
 
     @Override
-    public Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition<?> definition, boolean mandatory) throws Exception {
+    public Processor createChildProcessor(RouteContext routeContext, NamedNode definition, boolean mandatory) throws Exception {
         if (definition != null && type.isInstance(definition)) {
             return doCreateChildProcessor(routeContext, type.cast(definition), mandatory);
         }
@@ -38,7 +39,7 @@ public class TypedProcessorFactory<T extends ProcessorDefinition<T>> implements 
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception {
+    public Processor createProcessor(RouteContext routeContext, NamedNode definition) throws Exception {
         if (definition != null && type.isInstance(definition)) {
             return doCreateProcessor(routeContext, type.cast(definition));
         }

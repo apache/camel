@@ -15,20 +15,21 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.enricher;
-
 import java.io.File;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Before;
 import org.junit.Test;
 
 public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupport {
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         deleteDirectory("target/enrich");
         deleteDirectory("target/enrichdata");
         super.setUp();

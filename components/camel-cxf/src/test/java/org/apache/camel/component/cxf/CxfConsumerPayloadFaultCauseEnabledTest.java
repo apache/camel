@@ -41,7 +41,6 @@ import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -49,8 +48,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode with the exception cause returned
- * 
- * @version 
  */
 public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelTestSupport {
     protected static final QName SERVICE_QNAME = new QName("http://camel.apache.org/wsdl-first", "PersonService");
@@ -111,6 +108,6 @@ public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 }

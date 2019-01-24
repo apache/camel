@@ -25,13 +25,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ContextErrorHandlerTest extends ContextTestSupport {
 
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         setUseRouteBuilder(false);
         super.setUp();
         RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
@@ -39,7 +41,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         redeliveryPolicy.setUseExponentialBackOff(true);
         DeadLetterChannelBuilder deadLetterChannelBuilder = new DeadLetterChannelBuilder("mock:error");
         deadLetterChannelBuilder.setRedeliveryPolicy(redeliveryPolicy);
-        context.setErrorHandlerBuilder(deadLetterChannelBuilder);
+        context.setErrorHandlerFactory(deadLetterChannelBuilder);
     }
 
     protected void startCamelContext() throws Exception {
@@ -58,11 +60,12 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         return answer;
     }
 
+    @Test
     public void testOverloadingTheDefaultErrorHandler() throws Exception {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                errorHandler(loggingErrorHandler("FOO.BAR"));
+                errorHandler(deadLetterChannel("log:FOO.BAR"));
                 from("seda:a").to("seda:b");
             }
         };
@@ -77,12 +80,13 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             Processor processor = consumerRoute.getProcessor();
 
             Channel channel = unwrapChannel(processor);
-            assertIsInstanceOf(LoggingErrorHandler.class, channel.getErrorHandler());
+            assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
             log.debug("Found sendProcessor: " + sendProcessor);
         }
     }
 
+    @Test
     public void testGetTheDefaultErrorHandlerFromContext() throws Exception {
 
         RouteBuilder builder = new RouteBuilder() {

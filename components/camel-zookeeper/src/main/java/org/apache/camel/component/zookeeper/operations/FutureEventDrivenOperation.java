@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zookeeper.operations;
 
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -69,7 +70,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
             if (b.length() > 0) {
                 b.setLength(b.length() - 2);
             }
-            LOG.trace(String.format("Recieved event of type %s did not match any watched types %s", received, awaitedTypes));
+            LOG.trace(String.format("Recieved event of type %s did not match any watched types %s", received, Arrays.toString(awaitedTypes)));
         }
     }
 

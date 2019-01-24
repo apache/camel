@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 
 /**
  * Factory for {@link StreamResultHandler}
- *
- * @version 
  */
 public class StreamResultHandlerFactory implements ResultHandlerFactory {
 

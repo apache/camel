@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.zookeeper.cloud;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -34,6 +33,7 @@ import org.apache.curator.x.discovery.ServiceDiscovery;
 import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.apache.curator.x.discovery.ServiceInstance;
 import org.apache.curator.x.discovery.details.JsonInstanceSerializer;
+import org.junit.After;
 import org.junit.Test;
 
 public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupport {
@@ -75,6 +75,7 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -113,7 +114,7 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
         assertTrue(discovery.queryForInstances(SERVICE_NAME).isEmpty());
 
         // let start the route
-        context().startRoute(SERVICE_ID);
+        context().getRouteController().startRoute(SERVICE_ID);
 
         // check that service has been registered
         Collection<ServiceInstance<ZooKeeperServiceRegistry.MetaData>> services = discovery.queryForInstances(SERVICE_NAME);
@@ -132,7 +133,7 @@ public abstract class ZooKeeperServiceRegistrationTestBase extends CamelTestSupp
         );
 
         // let stop the route
-        context().stopRoute(SERVICE_ID);
+        context().getRouteController().stopRoute(SERVICE_ID);
 
         // the service should be removed once the route is stopped
         assertTrue(discovery.queryForInstances(SERVICE_NAME).isEmpty());

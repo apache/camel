@@ -18,25 +18,22 @@ package org.apache.camel.impl;
 
 import java.util.Map;
 
+import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.ServicePoolAware;
 import org.apache.camel.ShutdownableService;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This is an endpoint when sending to it, is intercepted and is routed in a detour
- *
- * @version 
  */
 public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
 
@@ -73,10 +70,6 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
         return delegate.getEndpointUri();
     }
 
-    public EndpointConfiguration getEndpointConfiguration() {
-        return delegate.getEndpointConfiguration();
-    }
-
     public String getEndpointKey() {
         return delegate.getEndpointKey();
     }
@@ -89,22 +82,18 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
         return delegate.createExchange(pattern);
     }
 
-    @Deprecated
-    public Exchange createExchange(Exchange exchange) {
-        return delegate.createExchange(exchange);
-    }
-
     public CamelContext getCamelContext() {
         return delegate.getCamelContext();
     }
 
     public Producer createProducer() throws Exception {
-        Producer producer = delegate.createProducer();
-        if (producer instanceof ServicePoolAware) {
-            return new InterceptSendToEndpointServicePoolProcessor(this, delegate, producer, skip);
-        } else {
-            return new InterceptSendToEndpointProcessor(this, delegate, producer, skip);
-        }
+        return createAsyncProducer();
+    }
+
+    @Override
+    public AsyncProducer createAsyncProducer() throws Exception {
+        AsyncProducer producer = delegate.createAsyncProducer();
+        return new InterceptSendToEndpointProcessor(this, delegate, producer, skip);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -132,11 +121,11 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
     }
 
     public void start() throws Exception {
-        ServiceHelper.startServices(detour, delegate);
+        ServiceHelper.startService(detour, delegate);
     }
 
     public void stop() throws Exception {
-        ServiceHelper.stopServices(delegate, detour);
+        ServiceHelper.stopService(delegate, detour);
     }
 
     @Override

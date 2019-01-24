@@ -18,9 +18,11 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class CorrectRouteIdTest extends ContextTestSupport {
 
+    @Test
     public void testCorrectRouteId() throws Exception {
         getMockEndpoint("mock:foo").expectedHeaderReceived("foo", "foo");
         getMockEndpoint("mock:bar").expectedHeaderReceived("bar", "bar");
@@ -37,18 +39,18 @@ public class CorrectRouteIdTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:foo").routeId("foo")
-                    .setHeader("foo").simple("routeId")
+                    .setHeader("foo").simple("${routeId}")
                     .to("mock:foo")
                     .to("seda:bar")
                     .to("mock:result");
 
                 from("seda:bar").routeId("bar")
-                    .setHeader("bar").simple("routeId")
+                    .setHeader("bar").simple("${routeId}")
                     .to("mock:bar")
                     .to("direct:baz");
 
                 from("direct:baz").routeId("baz")
-                    .setHeader("baz").simple("routeId")
+                    .setHeader("baz").simple("${routeId}")
                     .to("mock:baz");
             }
         };

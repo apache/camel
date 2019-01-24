@@ -26,13 +26,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- * @version 
- */
 public class HttpPollingConsumerTest extends BaseHttpTest {
 
     private HttpServer localServer;
+    private String user = "camel";
+    private String password = "password";
     
     @Before
     @Override
@@ -57,6 +55,22 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
         if (localServer != null) {
             localServer.stop();
         }
+    }
+    
+    @Test
+    public void basicAuthenticationShouldSuccess() throws Exception {
+        String body = consumer.receiveBody("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/?authUsername=" + user + "&authPassword=" 
+            + password, String.class);
+        assertEquals(getExpectedContent(), body); 
+        
+    }
+    
+    @Test
+    public void basicAuthenticationPreemptiveShouldSuccess() throws Exception {
+                
+        String body = consumer.receiveBody("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/?authUsername=" + user + "&authPassword=" 
+                + password + "&authenticationPreemptive=true", String.class);        
+        assertEquals(getExpectedContent(), body);
     }
     
     @Test

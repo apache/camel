@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Function;
 
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ClassResolver;
@@ -79,7 +80,12 @@ public class DefaultFactoryFinder implements FactoryFinder {
         final String prefix = propertyPrefix != null ? propertyPrefix : "";
         final String classKey = prefix + key;
 
-        return addToClassMap(classKey, () -> newInstance(doFindFactoryProperties(key), prefix));
+        return addToClassMap(classKey, new ClassSupplier() {
+            @Override
+            public Class<?> get() throws ClassNotFoundException, IOException {
+                return DefaultFactoryFinder.this.newInstance(DefaultFactoryFinder.this.doFindFactoryProperties(key), prefix);
+            }
+        });
     }
 
     @Override
@@ -160,15 +166,18 @@ public class DefaultFactoryFinder implements FactoryFinder {
      */
     protected Class<?> addToClassMap(String key, ClassSupplier mappingFunction) throws ClassNotFoundException, IOException {
         try {
-            return classMap.computeIfAbsent(key, (String classKey) -> {
-                try {
-                    return mappingFunction.get();
-                } catch (ClassNotFoundException e) {
-                    throw new WrappedRuntimeException(e);
-                } catch (NoFactoryAvailableException e) {
-                    throw new WrappedRuntimeException(e);
-                } catch (IOException e) {
-                    throw new WrappedRuntimeException(e);
+            return classMap.computeIfAbsent(key, new Function<String, Class<?>>() {
+                @Override
+                public Class<?> apply(String classKey) {
+                    try {
+                        return mappingFunction.get();
+                    } catch (ClassNotFoundException e) {
+                        throw new WrappedRuntimeException(e);
+                    } catch (NoFactoryAvailableException e) {
+                        throw new WrappedRuntimeException(e);
+                    } catch (IOException e) {
+                        throw new WrappedRuntimeException(e);
+                    }
                 }
             });
         } catch (WrappedRuntimeException e) {

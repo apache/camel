@@ -21,7 +21,7 @@ import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.support.ResourceHelper;
 
 public final class SqlHelper {
 

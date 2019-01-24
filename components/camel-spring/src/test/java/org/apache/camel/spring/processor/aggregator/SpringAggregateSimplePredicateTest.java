@@ -21,9 +21,6 @@ import org.apache.camel.processor.aggregator.AggregateSimplePredicateTest;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringAggregateSimplePredicateTest extends AggregateSimplePredicateTest {
 
     protected CamelContext createCamelContext() throws Exception {

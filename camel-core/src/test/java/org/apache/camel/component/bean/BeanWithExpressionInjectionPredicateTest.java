@@ -21,14 +21,13 @@ import javax.naming.Context;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.Simple;
-import org.apache.camel.util.jndi.JndiContext;
+import org.apache.camel.support.jndi.JndiContext;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class BeanWithExpressionInjectionPredicateTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
 
+    @Test
     public void testSendMessage() throws Exception {
         template.sendBody("direct:in", "Hello");
 
@@ -36,6 +35,7 @@ public class BeanWithExpressionInjectionPredicateTest extends ContextTestSupport
         assertEquals(false, myBean.foo);
     }
 
+    @Test
     public void testSendMessageWithFoo() throws Exception {
         template.sendBodyAndHeader("direct:in", "Hello", "foo", 123);
 

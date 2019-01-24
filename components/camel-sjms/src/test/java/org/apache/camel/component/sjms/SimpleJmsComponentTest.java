@@ -19,7 +19,6 @@ package org.apache.camel.component.sjms;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 public class SimpleJmsComponentTest extends CamelTestSupport {

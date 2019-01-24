@@ -24,9 +24,6 @@ import org.apache.camel.component.file.remote.SftpEndpoint;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SftpConsumerAutoCreateTest extends SftpServerTestSupport {
 
     protected String getFtpUrl() {

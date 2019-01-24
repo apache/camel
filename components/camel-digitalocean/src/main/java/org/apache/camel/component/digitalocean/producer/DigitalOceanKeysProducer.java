@@ -94,7 +94,7 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
             throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
         }
 
-        LOG.trace("Delete Key {} ", delete);
+        LOG.trace("Delete Key {}", delete);
         exchange.getOut().setBody(delete);
     }
 
@@ -120,7 +120,7 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         }
 
         key = getEndpoint().getDigitalOceanClient().createKey(key);
-        LOG.trace("Key created {} ", key);
+        LOG.trace("Key created {}", key);
         exchange.getOut().setBody(key);
 
     }

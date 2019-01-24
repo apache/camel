@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jgroups;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
+import org.junit.After;
 import org.junit.Test;
 
 import static org.apache.camel.component.jgroups.JGroupsEndpoint.HEADER_JGROUPS_ORIGINAL_MESSAGE;
@@ -61,6 +61,7 @@ public class JGroupsConsumerTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         channel.close();
         super.tearDown();

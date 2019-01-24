@@ -39,7 +39,7 @@ import org.springframework.util.SocketUtils;
 
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = { RestDslPostTest.class })
+@SpringBootTest
 public class RestDslPostTest extends Assert {
 
     static final int PORT = SocketUtils.findAvailableTcpPort(20000);

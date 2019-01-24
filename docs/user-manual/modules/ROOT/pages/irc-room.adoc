@@ -1,0 +1,24 @@
+[[IRCRoom-IRC]]
+=== IRC
+
+You can hang out on IRC in the `#apache-camel` room at freenode with other
+Apache Camel developers and users.
+
+[[IRCRoom-UsinganIRCclient]]
+==== Using an IRC client
+
+Here are the connection details.
+
+[width="100%",cols="50%,50%",]
+|========================
+|server |irc.freenode.net
+|port |6667
+|room |#apache-camel
+|========================
+
+[[IRCRoom-GitterRoom]]
+==== Gitter Room
+
+Apache Camel is also on Gitter in the
+https://gitter.im/apache/apache-camel[apache/apache-camel] room which
+you can access from a web browser.

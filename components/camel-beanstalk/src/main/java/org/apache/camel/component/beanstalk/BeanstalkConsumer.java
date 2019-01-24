@@ -31,10 +31,8 @@ import org.apache.camel.component.beanstalk.processors.BuryCommand;
 import org.apache.camel.component.beanstalk.processors.Command;
 import org.apache.camel.component.beanstalk.processors.DeleteCommand;
 import org.apache.camel.component.beanstalk.processors.ReleaseCommand;
-import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.spi.Synchronization;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
  * PollingConsumer to read Beanstalk jobs.
@@ -53,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * The reaction on failures is configurable: possible variants are "bury", "release" or "delete"
  */
 public class BeanstalkConsumer extends ScheduledPollConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(BeanstalkConsumer.class);
+
     private static final String[] STATS_KEY_STR = new String[]{"tube", "state"};
     private static final String[] STATS_KEY_INT = new String[]{"age", "time-left", "timeouts", "releases", "buries", "kicks"};
 
@@ -86,8 +84,8 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
                     return null;
                 }
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(String.format("Received job ID %d (data length %d)", job.getJobId(), job.getData().length));
+                if (log.isDebugEnabled()) {
+                    log.debug(String.format("Received job ID %d (data length %d)", job.getJobId(), job.getData().length));
                 }
 
                 final Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOnly);
@@ -222,7 +220,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
             try {
                 executor.submit(new RunCommand(successCommand, exchange)).get();
             } catch (Exception e) {
-                LOG.error(String.format("Could not run completion of exchange %s", exchange), e);
+                log.error(String.format("Could not run completion of exchange %s", exchange), e);
             }
         }
 
@@ -231,7 +229,7 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
             try {
                 executor.submit(new RunCommand(failureCommand, exchange)).get();
             } catch (Exception e) {
-                LOG.error(String.format("%s could not run failure of exchange %s", failureCommand.getClass().getName(), exchange), e);
+                log.error(String.format("%s could not run failure of exchange %s", failureCommand.getClass().getName(), exchange), e);
             }
         }
 
@@ -250,12 +248,12 @@ public class BeanstalkConsumer extends ScheduledPollConsumer {
                     try {
                         command.act(client, exchange);
                     } catch (BeanstalkException e) {
-                        LOG.warn(String.format("Post-processing %s of exchange %s failed, retrying.", command.getClass().getName(), exchange), e);
+                        log.warn(String.format("Post-processing %s of exchange %s failed, retrying.", command.getClass().getName(), exchange), e);
                         resetClient();
                         command.act(client, exchange);
                     }
                 } catch (final Exception e) {
-                    LOG.error(String.format("%s could not post-process exchange %s", command.getClass().getName(), exchange), e);
+                    log.error(String.format("%s could not post-process exchange %s", command.getClass().getName(), exchange), e);
                     exchange.setException(e);
                 }
             }

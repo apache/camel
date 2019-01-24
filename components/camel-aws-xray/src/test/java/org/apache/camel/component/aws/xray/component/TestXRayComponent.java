@@ -20,12 +20,11 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 
 public class TestXRayComponent extends DefaultComponent {
 
     public TestXRayComponent() {
-        super();
     }
 
     public TestXRayComponent(final CamelContext context) {

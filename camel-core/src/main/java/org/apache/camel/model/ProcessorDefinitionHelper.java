@@ -25,15 +25,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.NamedNode;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -143,12 +146,12 @@ public final class ProcessorDefinitionHelper {
      * @param node the node
      * @return the route, or <tt>null</tt> if not possible to find
      */
-    public static RouteDefinition getRoute(ProcessorDefinition<?> node) {
+    public static RouteDefinition getRoute(NamedNode node) {
         if (node == null) {
             return null;
         }
 
-        ProcessorDefinition<?> def = node;
+        ProcessorDefinition<?> def = (ProcessorDefinition) node;
         // drill to the top
         while (def != null && def.getParent() != null) {
             def = def.getParent();
@@ -168,7 +171,7 @@ public final class ProcessorDefinitionHelper {
      * @param node the node
      * @return the route id, or <tt>null</tt> if not possible to find
      */
-    public static String getRouteId(ProcessorDefinition<?> node) {
+    public static String getRouteId(NamedNode node) {
         RouteDefinition route = getRoute(node);
         return route != null ? route.getId() : null;
     }
@@ -652,24 +655,6 @@ public final class ProcessorDefinitionHelper {
      * Inspects the given definition and resolves any property placeholders from its properties.
      * <p/>
      * This implementation will check all the getter/setter pairs on this instance and for all the values
-     * (which is a String type) will be property placeholder resolved.
-     *
-     * @param routeContext the route context
-     * @param definition   the definition
-     * @throws Exception is thrown if property placeholders was used and there was an error resolving them
-     * @see org.apache.camel.CamelContext#resolvePropertyPlaceholders(String)
-     * @see org.apache.camel.component.properties.PropertiesComponent
-     * @deprecated use {@link #resolvePropertyPlaceholders(org.apache.camel.CamelContext, Object)}
-     */
-    @Deprecated
-    public static void resolvePropertyPlaceholders(RouteContext routeContext, Object definition) throws Exception {
-        resolvePropertyPlaceholders(routeContext.getCamelContext(), definition);
-    }
-
-    /**
-     * Inspects the given definition and resolves any property placeholders from its properties.
-     * <p/>
-     * This implementation will check all the getter/setter pairs on this instance and for all the values
      * (which is a String type) will be property placeholder resolved. The definition should implement {@link OtherAttributesAware}
      *
      * @param camelContext the Camel context
@@ -698,7 +683,7 @@ public final class ProcessorDefinitionHelper {
                     Object value = other.getOtherAttributes().get(key);
                     if (value instanceof String) {
                         // enforce a properties component to be created if none existed
-                        CamelContextHelper.lookupPropertiesComponent(camelContext, true);
+                        camelContext.getPropertiesComponent(true);
 
                         // value must be enclosed with placeholder tokens
                         String s = (String) value;
@@ -741,7 +726,7 @@ public final class ProcessorDefinitionHelper {
                         }
                         changedProperties.put(name, value);
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, text});
+                            LOG.debug("Changed property [{}] from: {} to: {}", name, value, text);
                         }
                     }
                 }
@@ -779,14 +764,14 @@ public final class ProcessorDefinitionHelper {
 
                     // is the value a known field (currently we only support constants from Exchange.class)
                     if (text.startsWith("Exchange.")) {
-                        String field = ObjectHelper.after(text, "Exchange.");
+                        String field = StringHelper.after(text, "Exchange.");
                         String constant = ObjectHelper.lookupConstantFieldValue(Exchange.class, field);
                         if (constant != null) {
                             // invoke setter as the text has changed
                             IntrospectionSupport.setProperty(definition, name, constant);
                             changedProperties.put(name, value);
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Changed property [{}] from: {} to: {}", new Object[]{name, value, constant});
+                                LOG.debug("Changed property [{}] from: {} to: {}", name, value, constant);
                             }
                         } else {
                             throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");

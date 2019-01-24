@@ -17,6 +17,7 @@
 package org.apache.camel.example.cdi.metrics;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
@@ -34,7 +35,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.metrics.MetricsConstants;
-import org.apache.camel.management.event.CamelContextStartedEvent;
+import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 
 /**
  * This example registers the following meters into the Metrics registry:

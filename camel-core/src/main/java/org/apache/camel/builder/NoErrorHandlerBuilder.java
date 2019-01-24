@@ -19,7 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.DelegateAsyncProcessor;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -28,8 +28,6 @@ import org.apache.camel.spi.RouteContext;
  * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a> should be used
  * if you are unsure; however it can be useful sometimes to disable an error handler inside a complex route
  * so that exceptions bubble up to the parent {@link Processor}
- *
- * @version 
  */
 public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 

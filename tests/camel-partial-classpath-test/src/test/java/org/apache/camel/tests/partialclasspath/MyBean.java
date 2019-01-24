@@ -18,9 +18,6 @@ package org.apache.camel.tests.partialclasspath;
 
 import org.apache.camel.util.ObjectHelper;
 
-/**
- * @version 
- */
 public class MyBean {
     private String a;
     private String b;

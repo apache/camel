@@ -16,17 +16,24 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Map;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultEndpoint;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MultipleConsumersSupportTest extends ContextTestSupport {
 
     @Override
@@ -34,6 +41,7 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testNotMultipleConsumersSupport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -57,11 +65,13 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testYesMultipleConsumersSupport() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 MyOtherEndpoint my = new MyOtherEndpoint();
+                my.setCamelContext(context);
 
                 from(my).to("mock:a");
                 from(my).to("mock:b");

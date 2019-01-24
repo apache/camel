@@ -20,8 +20,8 @@ import java.nio.channels.UnresolvedAddressException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,30 +29,30 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
     @Test
     public void testParameters() throws Exception {
         UndertowComponent component = context().getComponent("undertow", UndertowComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpURI", "http://localhost:" + getPort());
         parameters.put("tcpNoDelay", "true");
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.OK, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
     public void testMissingParameters() throws Exception {
         UndertowComponent component = context.getComponent("undertow", UndertowComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("tcpNoDelay", "true");
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
         Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
         Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("httpURI"));
     }
@@ -60,34 +60,34 @@ public class UndertowComponentVerifierTest extends BaseUndertowTest {
     @Test
     public void testConnectivity() throws Exception {
         UndertowComponent component = context().getComponent("undertow", UndertowComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpURI", "http://localhost:" + getPort());
         parameters.put("tcpNoDelay", "true");
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.OK, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
     public void testConnectivityError() throws Exception {
         UndertowComponent component = context().getComponent("undertow", UndertowComponent.class);
-        ComponentVerifier verifier = component.getVerifier();
+        ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpURI", "http://no-host:" + getPort());
 
-        ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.CONNECTIVITY, parameters);
+        ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(1, result.getErrors().size());
 
-        ComponentVerifier.VerificationError error = result.getErrors().get(0);
+        ComponentVerifierExtension.VerificationError error = result.getErrors().get(0);
 
-        Assert.assertEquals(ComponentVerifier.VerificationError.StandardCode.EXCEPTION, error.getCode());
-        Assert.assertTrue(error.getDetail(ComponentVerifier.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof UnresolvedAddressException);
+        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, error.getCode());
+        Assert.assertTrue(error.getDetail(ComponentVerifierExtension.VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE) instanceof UnresolvedAddressException);
     }
 
     @Override

@@ -25,7 +25,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
@@ -33,9 +34,11 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
-public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
+@Component("spark-rest")
+public class SparkComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
     private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
 
@@ -64,10 +67,6 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
     @Metadata(label = "advanced")
     private SparkBinding sparkBinding = new DefaultSparkBinding();
-
-    public SparkComponent() {
-        super(SparkEndpoint.class);
-    }
 
     public int getPort() {
         return port;
@@ -206,8 +205,8 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             throw new IllegalArgumentException("Invalid syntax. Must be spark-rest:verb:path");
         }
 
-        String verb = ObjectHelper.before(remaining, ":");
-        String path = ObjectHelper.after(remaining, ":");
+        String verb = StringHelper.before(remaining, ":");
+        String path = StringHelper.after(remaining, ":");
 
         answer.setVerb(verb);
         answer.setPath(path);
@@ -238,11 +237,11 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
             RestConfiguration config = getCamelContext().getRestConfiguration("spark-rest", true);
             host = config.getHost();
             if (ObjectHelper.isEmpty(host)) {
-                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+                if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                     host = "0.0.0.0";
-                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                     host = HostUtils.getLocalHostName();
-                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                     host = HostUtils.getLocalIp();
                 }
             }

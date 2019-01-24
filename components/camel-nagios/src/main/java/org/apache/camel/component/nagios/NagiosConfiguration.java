@@ -20,7 +20,6 @@ import java.net.URI;
 
 import com.googlecode.jsendnsca.NagiosSettings;
 import com.googlecode.jsendnsca.encryption.Encryption;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -28,17 +27,14 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.StringHelper;
 
-/**
- * @version 
- */
 @UriParams
 public class NagiosConfiguration implements Cloneable {
 
     private transient NagiosSettings nagiosSettings;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String host;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private int port;
     @UriParam(defaultValue = "5000")
     private int connectionTimeout = 5000;

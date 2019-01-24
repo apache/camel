@@ -81,7 +81,7 @@ public class DisruptorBufferingTest extends CamelTestSupport {
         mockEndpoint.assertIsSatisfied(200);
 
         // Stop route and make sure all exchanges have been flushed.
-        context.stopRoute("bar1");
+        context.getRouteController().stopRoute("bar1");
         mockEndpoint.expectedMessageCount(3);
         mockEndpoint.assertIsSatisfied();
 

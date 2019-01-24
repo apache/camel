@@ -43,8 +43,9 @@ import org.apache.camel.Headers;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -267,11 +268,11 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         // type of the return type
         // due type erasure, so we have to gather it based on a String
         // representation
-        String name = ObjectHelper.between(type.toString(), "<", ">");
+        String name = StringHelper.between(type.toString(), "<", ">");
         if (name != null) {
             if (name.contains("<")) {
                 // we only need the outer type
-                name = ObjectHelper.before(name, "<");
+                name = StringHelper.before(name, "<");
             }
             return context.getClassResolver().resolveMandatoryClass(name);
         } else {
@@ -280,7 +281,6 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         }
     }
 
-    @SuppressWarnings("deprecation")
     protected static synchronized ExecutorService getExecutorService(CamelContext context) {
         // CamelContext will shutdown thread pool when it shutdown so we can
         // lazy create it on demand
@@ -288,9 +288,12 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
         // re-create it (its a shared static instance)
         if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
             // try to lookup a pool first based on id/profile
-            executorService = context.getExecutorServiceStrategy().lookup(CamelInvocationHandler.class, "CamelInvocationHandler", "CamelInvocationHandler");
+            executorService = context.getRegistry().lookupByNameAndType("CamelInvocationHandler", ExecutorService.class);
             if (executorService == null) {
-                executorService = context.getExecutorServiceStrategy().newDefaultThreadPool(CamelInvocationHandler.class, "CamelInvocationHandler");
+                executorService = context.getExecutorServiceManager().newThreadPool(CamelInvocationHandler.class, "CamelInvocationHandler", "CamelInvocationHandler");
+            }
+            if (executorService == null) {
+                executorService = context.getExecutorServiceManager().newDefaultThreadPool(CamelInvocationHandler.class, "CamelInvocationHandler");
             }
         }
         return executorService;

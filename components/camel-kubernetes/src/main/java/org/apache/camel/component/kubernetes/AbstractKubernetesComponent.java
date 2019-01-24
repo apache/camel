@@ -19,7 +19,7 @@ package org.apache.camel.component.kubernetes;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 public abstract class AbstractKubernetesComponent extends DefaultComponent {

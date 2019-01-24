@@ -18,12 +18,11 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class ThrottlerNullEvalTest extends ContextTestSupport {
 
+    @Test
     public void testFirstNullEvalTest() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
         getMockEndpoint("mock:dead").expectedBodiesReceived("Kaboom");
@@ -35,6 +34,7 @@ public class ThrottlerNullEvalTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testFirstNoHeaderTest() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Bye World");
         getMockEndpoint("mock:dead").expectedBodiesReceived("Kaboom");
@@ -46,6 +46,7 @@ public class ThrottlerNullEvalTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNullEvalTest() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Kaboom", "Bye World");
 
@@ -56,6 +57,7 @@ public class ThrottlerNullEvalTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testNoHeaderTest() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Kaboom", "Bye World");
 

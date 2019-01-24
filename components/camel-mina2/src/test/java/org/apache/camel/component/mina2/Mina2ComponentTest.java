@@ -22,8 +22,6 @@ import org.junit.Test;
 
 /**
  * For testing various minor holes that hasn't been covered by other unit tests.
- *
- * @version 
  */
 public class Mina2ComponentTest extends CamelTestSupport {
 

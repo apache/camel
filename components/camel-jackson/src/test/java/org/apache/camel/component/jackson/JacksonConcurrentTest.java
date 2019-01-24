@@ -25,9 +25,6 @@ import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JacksonConcurrentTest extends CamelTestSupport {
 
     @Test

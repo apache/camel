@@ -32,9 +32,9 @@
         <correlationExpression>
           <constant>1</constant>
         </correlationExpression>
-        <to uri="log:result"/>
-        <to uri="mock:result"/>
       </throttle>
+      <to uri="log:result"/>
+      <to uri="mock:result"/>
     </route>
     
     <route errorHandlerRef="dlc">
@@ -44,9 +44,9 @@
         <correlationExpression>
           <constant>2</constant>
         </correlationExpression>        
-        <to uri="log:result"/>
-        <to uri="mock:result2"/>
       </throttle>
+      <to uri="log:result"/>
+      <to uri="mock:result2"/>
     </route>
     
     <route errorHandlerRef="dlc">
@@ -56,9 +56,48 @@
         <correlationExpression>
           <header>key</header>
         </correlationExpression>
-        <to uri="log:result"/>
-        <to uri="mock:resultdynamic"/>
       </throttle>
+      <to uri="log:result"/>
+      <to uri="mock:resultdynamic"/>
+    </route>
+    
+    <route errorHandlerRef="dlc">
+      <from uri="seda:ga"/>
+      <!-- throttle 3 messages per 1 sec -->
+      <throttle timePeriodMillis="1000">
+        <constant>3</constant>
+        <correlationExpression>
+          <header>key</header>
+        </correlationExpression>
+      </throttle>
+      <to uri="log:gresult"/>
+      <to uri="mock:gresult"/>
+    </route>
+    
+    <route errorHandlerRef="dlc">
+      <from uri="direct:ga"/>
+      <!-- throttle 5 messages per 0.5 sec -->
+      <throttle timePeriodMillis="500">
+        <constant>5</constant>
+        <correlationExpression>
+          <header>key</header>
+        </correlationExpression>
+      </throttle>
+      <to uri="log:gresult"/>
+      <to uri="mock:gresult"/>
+    </route>
+    
+    <route errorHandlerRef="dlc">
+      <from uri="direct:gexpressionHeader"/>
+      <throttle timePeriodMillis="500">
+        <!-- use a header to determine how many messages to throttle per 0.5 sec -->
+        <header>throttleValue</header>
+        <correlationExpression>
+          <header>key</header>
+        </correlationExpression>
+      </throttle>
+      <to uri="log:gresult"/>
+      <to uri="mock:gresult"/>
     </route>
 
   </camelContext>

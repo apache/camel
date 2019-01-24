@@ -30,8 +30,6 @@ import static org.junit.Assert.assertEquals;
  * <p/>
  * We use Spring Testing for unit test, eg we extend AbstractJUnit4SpringContextTests
  * that is a Spring class.
- * 
- * @version 
  */
 @ContextConfiguration
 public class JmsToHttpTXTest extends AbstractJUnit4SpringContextTests {

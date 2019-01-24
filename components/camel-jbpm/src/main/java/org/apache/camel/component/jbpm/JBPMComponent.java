@@ -20,13 +20,19 @@ import java.net.URL;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
+@Component("jbpm")
 public class JBPMComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JBPMConfiguration configuration = new JBPMConfiguration();
-        configuration.setConnectionURL(new URL(remaining));
+        if (remaining.startsWith("events")) {
+            configuration.setEventListenerType(remaining.split(":")[1]);
+        } else {        
+            configuration.setConnectionURL(new URL(remaining));
+        }
         setProperties(configuration, parameters);
         return new JBPMEndpoint(uri, this, configuration);
     }

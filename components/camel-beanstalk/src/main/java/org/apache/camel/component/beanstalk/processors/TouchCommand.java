@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.component.beanstalk.BeanstalkEndpoint;
 import org.apache.camel.component.beanstalk.Headers;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

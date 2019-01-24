@@ -22,7 +22,6 @@ import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -32,9 +31,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
-
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
@@ -44,9 +41,6 @@ import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.support.converter.SimpleMessageConverter;
 import org.springframework.util.ErrorHandler;
 
-/**
- * @version 
- */
 public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
     private final Processor failProcessor = new Processor() {
@@ -257,7 +251,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertTrue(endpoint.getConfiguration().isLazyCreateTransactionManager());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testDefaultEndpointOptions() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo", JmsEndpoint.class);
@@ -352,12 +345,10 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertFalse(endpoint.isTransacted());
         assertFalse(endpoint.isTransferExchange());
         assertFalse(endpoint.isTransferException());
-        assertFalse(endpoint.isTransactedInOut());
         assertFalse(endpoint.isTransferException());
         assertFalse(endpoint.isFormatDateHeadersToIso8601());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testSettingEndpointOptions() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo", JmsEndpoint.class);
@@ -480,9 +471,6 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         endpoint.setTransacted(true);
         assertTrue(endpoint.isTransacted());
-
-        endpoint.setTransactedInOut(true);
-        assertTrue(endpoint.isTransactedInOut());
 
         endpoint.setTransferExchange(true);
         assertTrue(endpoint.isTransferExchange());

@@ -23,9 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
-/**
- * @version 
- */
 @Converter
 public final class StaticDummyFallbackConverter {
 

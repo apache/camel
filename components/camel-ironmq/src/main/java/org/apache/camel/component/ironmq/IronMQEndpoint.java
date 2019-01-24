@@ -27,19 +27,16 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultScheduledPollConsumerScheduler;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
+import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * The ironmq provides integration with <a href="https://www.iron.io/">IronMQ</a> an elastic and durable hosted message queue as a service.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ", consumerClass = IronMQConsumer.class, label = "cloud,messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ", label = "cloud,messaging")
 public class IronMQEndpoint extends ScheduledPollEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(IronMQEndpoint.class);
 
     @UriParam
     private IronMQConfiguration configuration;
@@ -123,7 +120,7 @@ public class IronMQEndpoint extends ScheduledPollEndpoint {
             cloud = new Cloud(configuration.getIronMQCloud());
         } catch (MalformedURLException e) {
             cloud = Cloud.ironAWSUSEast;
-            LOG.warn("Unable to parse ironMQCloud {} will use {}", configuration.getIronMQCloud(), cloud.getHost());
+            log.warn("Unable to parse ironMQCloud {} will use {}", configuration.getIronMQCloud(), cloud.getHost());
         }
         client = new Client(configuration.getProjectId(), configuration.getToken(), cloud);
         return client;

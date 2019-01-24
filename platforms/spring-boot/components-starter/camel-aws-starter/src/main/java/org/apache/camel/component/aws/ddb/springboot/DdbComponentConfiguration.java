@@ -36,6 +36,11 @@ public class DdbComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the aws-ddb component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The AWS DDB default configuration
      */
     private DdbConfigurationNestedConfiguration configuration;
@@ -145,8 +150,17 @@ public class DdbComponentConfiguration
          * Attribute type when creating table
          */
         private String keyAttributeType;
+        /**
+         * To define a proxy host when instantiating the DDB client
+         */
         private String proxyHost;
+        /**
+         * To define a proxy port when instantiating the DDB client
+         */
         private Integer proxyPort;
+        /**
+         * The region in which DDB client needs to work
+         */
         private String region;
 
         public String getAccessKey() {

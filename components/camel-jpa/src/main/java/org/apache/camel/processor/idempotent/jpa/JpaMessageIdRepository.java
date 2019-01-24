@@ -19,6 +19,7 @@ package org.apache.camel.processor.idempotent.jpa;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -29,10 +30,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.spi.ExchangeIdempotentRepository;
-import org.apache.camel.support.ServiceSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.support.service.ServiceSupport;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -41,14 +40,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
-/**
- * @version
- */
 @ManagedResource(description = "JPA based message id repository")
-public class JpaMessageIdRepository extends ServiceSupport implements ExchangeIdempotentRepository<String> {
+public class JpaMessageIdRepository extends ServiceSupport implements IdempotentRepository {
     protected static final String QUERY_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
     protected static final String QUERY_CLEAR_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
-    private static final Logger LOG = LoggerFactory.getLogger(JpaMessageIdRepository.class);
+
     private final String processorName;
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
@@ -110,7 +106,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
                         return Boolean.FALSE;
                     }
                 } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to add message to repository {}", ex);
+                    log.error("Something went wrong trying to add message to repository {}", ex);
                     throw new PersistenceException(ex);
                 } finally {
                     try {
@@ -124,7 +120,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
             }
         });
 
-        LOG.debug("add {} -> {}", messageId, rc);
+        log.debug("add {} -> {}", messageId, rc);
         return rc;
     }
 
@@ -153,7 +149,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
             }
         });
 
-        LOG.debug("contains {} -> {}", messageId, rc);
+        log.debug("contains {} -> {}", messageId, rc);
         return rc;
     }
 
@@ -183,7 +179,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
                         return Boolean.TRUE;
                     }
                 } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to remove message to repository {}", ex);
+                    log.error("Something went wrong trying to remove message to repository {}", ex);
                     throw new PersistenceException(ex);
                 } finally {
                     try {
@@ -197,7 +193,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
             }
         });
 
-        LOG.debug("remove {}", messageId);
+        log.debug("remove {}", messageId);
         return rc;
     }
 
@@ -208,7 +204,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
 
     @Override
     public boolean confirm(final Exchange exchange, String messageId) {
-        LOG.debug("confirm {} -> true", messageId);
+        log.debug("confirm {} -> true", messageId);
         return true;
     }
 
@@ -234,7 +230,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
                     }
                     return Boolean.TRUE;
                 } catch (Exception ex) {
-                    LOG.error("Something went wrong trying to clear the repository {}", ex);
+                    log.error("Something went wrong trying to clear the repository {}", ex);
                     throw new PersistenceException(ex);
                 } finally {
                     try {
@@ -248,7 +244,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements ExchangeId
             }
         });
 
-        LOG.debug("clear the store {}", MessageProcessed.class.getName());
+        log.debug("clear the store {}", MessageProcessed.class.getName());
     }
 
     private List<?> query(final EntityManager entityManager, final String messageId) {

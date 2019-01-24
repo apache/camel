@@ -24,6 +24,10 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
+import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderSerializer;
+import org.apache.camel.component.kafka.serde.KafkaHeaderDeserializer;
+import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -31,12 +35,12 @@ import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.jsse.CipherSuitesParameters;
-import org.apache.camel.util.jsse.KeyManagersParameters;
-import org.apache.camel.util.jsse.KeyStoreParameters;
-import org.apache.camel.util.jsse.SSLContextParameters;
-import org.apache.camel.util.jsse.SecureSocketProtocolsParameters;
-import org.apache.camel.util.jsse.TrustManagersParameters;
+import org.apache.camel.support.jsse.CipherSuitesParameters;
+import org.apache.camel.support.jsse.KeyManagersParameters;
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SecureSocketProtocolsParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -49,7 +53,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     //Common configuration properties
     @UriPath(label = "common")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String topic;
     @UriParam(label = "common")
     private String brokers;
@@ -66,6 +70,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private int consumerStreams = 10;
     @UriParam(label = "consumer", defaultValue = "1")
     private int consumersCount = 1;
+    @UriParam(label = "consumer", description = "To use a custom KafkaHeaderDeserializer to deserialize kafka headers values")
+    private KafkaHeaderDeserializer kafkaHeaderDeserializer = new DefaultKafkaHeaderDeserializer();
 
     //interceptor.classes
     @UriParam(label = "common,monitoring")
@@ -221,6 +227,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     //reconnect.backoff.ms
     @UriParam(label = "producer", defaultValue = "false")
     private boolean enableIdempotence;
+    @UriParam(label = "producer", description = "To use a custom KafkaHeaderSerializer to serialize kafka headers values")
+    private KafkaHeaderSerializer kafkaHeaderSerializer = new DefaultKafkaHeaderSerializer();
+
     //reconnect.backoff.max.ms
     @UriParam(label = "common", defaultValue = "1000")
     private Integer reconnectBackoffMaxMs = 1000;
@@ -715,8 +724,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     /**
      * What to do when there is no initial offset in ZooKeeper or if an offset is out of range:
-     * smallest : automatically reset the offset to the smallest offset
-     * largest : automatically reset the offset to the largest offset
+     * earliest : automatically reset the offset to the earliest offset
+     * latest : automatically reset the offset to the latest offset
      * fail: throw exception to the consumer
      */
     public void setAutoOffsetReset(String autoOffsetReset) {
@@ -1612,6 +1621,32 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public KafkaHeaderDeserializer getKafkaHeaderDeserializer() {
+        return kafkaHeaderDeserializer;
+    }
+
+    /**
+     * Sets custom KafkaHeaderDeserializer for deserialization kafka headers values to camel headers values.
+     *
+     * @param kafkaHeaderDeserializer custom kafka header deserializer to be used
+     */
+    public void setKafkaHeaderDeserializer(final KafkaHeaderDeserializer kafkaHeaderDeserializer) {
+        this.kafkaHeaderDeserializer = kafkaHeaderDeserializer;
+    }
+
+    public KafkaHeaderSerializer getKafkaHeaderSerializer() {
+        return kafkaHeaderSerializer;
+    }
+
+    /**
+     * Sets custom KafkaHeaderDeserializer for serialization camel headers values to kafka headers values.
+     *
+     * @param kafkaHeaderSerializer custom kafka header serializer to be used
+     */
+    public void setKafkaHeaderSerializer(final KafkaHeaderSerializer kafkaHeaderSerializer) {
+        this.kafkaHeaderSerializer = kafkaHeaderSerializer;
     }
 
 }

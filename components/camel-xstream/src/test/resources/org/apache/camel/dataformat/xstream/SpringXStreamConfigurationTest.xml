@@ -65,30 +65,30 @@
 
         <route>
             <from uri="direct:marshal"/>
-            <marshal ref="xstream-1" />
+            <marshal><custom ref="xstream-1" /></marshal>
             <to uri="mock:result"/>
         </route>
         <route>
             <from uri="direct:unmarshal"/>
-            <unmarshal ref="xstream-1"/>
+            <unmarshal><custom ref="xstream-1"/></unmarshal>
             <to uri="mock:result"/>
         </route>
         
         <route>
             <from uri="direct:marshal-json"/>
-            <marshal ref="xstream-json" />
+            <marshal><custom ref="xstream-json" /></marshal>
             <to uri="mock:result"/>
         </route>
 
         <route>
             <from uri="direct:unmarshal-json"/>
-            <unmarshal ref="xstream-json"/>
+            <unmarshal><custom ref="xstream-json"/></unmarshal>
             <to uri="mock:result"/>
         </route>
         
         <route>
             <from uri="direct:myDriver"/>
-            <marshal ref="xstream-driver"/>
+            <marshal><custom ref="xstream-driver"/></marshal>
             <to uri="mock:result"/>
         </route>
         

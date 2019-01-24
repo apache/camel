@@ -18,9 +18,6 @@ package org.apache.camel.processor.intercept;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
 public class InterceptFromWithoutProceedRouteTest extends InterceptFromRouteTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {

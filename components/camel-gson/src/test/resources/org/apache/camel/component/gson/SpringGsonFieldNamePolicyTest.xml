@@ -38,12 +38,12 @@
 
         <route>
             <from uri="direct:inPojo"/>
-            <marshal ref="gson"/>
+            <marshal><custom ref="gson"/></marshal>
         </route>
 
         <route>
             <from uri="direct:backPojo"/>
-            <unmarshal ref="gson"/>
+            <unmarshal><custom ref="gson"/></unmarshal>
         </route>
 
     </camelContext>

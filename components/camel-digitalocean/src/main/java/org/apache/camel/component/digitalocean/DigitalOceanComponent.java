@@ -18,10 +18,10 @@ package org.apache.camel.component.digitalocean;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanResources;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +29,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the component that manages {@link DigitalOceanEndpoint}.
  */
-public class DigitalOceanComponent extends UriEndpointComponent {
+@Component("digitalocean")
+public class DigitalOceanComponent extends DefaultComponent {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanComponent.class);
 
 
     public DigitalOceanComponent() {
-        super(DigitalOceanEndpoint.class);
-    }
-
-    public DigitalOceanComponent(CamelContext context) {
-        super(context, DigitalOceanEndpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

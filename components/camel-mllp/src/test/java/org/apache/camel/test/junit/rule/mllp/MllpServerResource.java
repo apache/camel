@@ -683,7 +683,7 @@ public class MllpServerResource extends ExternalResource {
                     serverSocket.bind(listenAddress, backlog);
                 } catch (BindException bindEx) {
                     if (System.currentTimeMillis() < startTicks + bindTimeout) {
-                        log.warn("Unable to bind to {} - retrying in {} milliseconds", listenAddress.toString(), bindRetryDelay);
+                        log.warn("Unable to bind to {} - retrying in {} milliseconds", listenAddress, bindRetryDelay);
                         try {
                             Thread.sleep(bindRetryDelay);
                         } catch (InterruptedException interruptedEx) {
@@ -972,10 +972,10 @@ public class MllpServerResource extends ExternalResource {
 
                 switch (characterReceived) {
                 case MllpProtocolConstants.START_OF_BLOCK:
-                    log.error("Received START_OF_BLOCK before END_OF_DATA.  Discarding data: {}", parsedMessage.toString());
+                    log.error("Received START_OF_BLOCK before END_OF_DATA.  Discarding data: {}", parsedMessage);
                     return null;
                 case MllpProtocolConstants.END_OF_STREAM:
-                    log.error("Received END_OF_STREAM without END_OF_DATA.  Discarding data: {}", parsedMessage.toString());
+                    log.error("Received END_OF_STREAM without END_OF_DATA.  Discarding data: {}", parsedMessage);
                     return null;
                 case MllpProtocolConstants.END_OF_BLOCK:
                     characterReceived = anInputStream.read();

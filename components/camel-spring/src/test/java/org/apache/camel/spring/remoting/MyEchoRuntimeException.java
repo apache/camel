@@ -16,9 +16,6 @@
  */
 package org.apache.camel.spring.remoting;
 
-/**
- * @version 
- */
 public class MyEchoRuntimeException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;

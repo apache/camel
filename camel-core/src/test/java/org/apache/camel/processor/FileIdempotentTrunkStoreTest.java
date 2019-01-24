@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.util.List;
@@ -29,20 +28,20 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.idempotent.FileIdempotentRepository;
+import org.apache.camel.support.processor.idempotent.FileIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
     private File store = new File("target/idempotentfilestore.dat");
-    private IdempotentRepository<String> repo;
+    private IdempotentRepository repo;
 
+    @Test
     public void testTrunkFileStore() throws Exception {
         resultEndpoint.expectedBodiesReceived("A", "B", "C", "D", "E");
 
@@ -89,7 +88,8 @@ public class FileIdempotentTrunkStoreTest extends ContextTestSupport {
     }
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // delete file store before testing
         if (store.exists()) {
             store.delete();

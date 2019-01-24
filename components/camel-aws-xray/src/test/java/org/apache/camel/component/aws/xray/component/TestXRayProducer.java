@@ -19,7 +19,7 @@ package org.apache.camel.component.aws.xray.component;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.aws.xray.XRayTracer;
 import org.apache.camel.component.aws.xray.bean.SomeBackingService;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 
 public class TestXRayProducer extends DefaultProducer {
 

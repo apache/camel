@@ -17,14 +17,12 @@
 package org.apache.camel.component.direct;
 
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class DirectNoConsumerTest extends ContextTestSupport {
 
     @Override
@@ -85,11 +83,27 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         context.start();
 
-        try {
-            template.sendBody("direct:start", "Hello World");
-        } catch (CamelExecutionException e) {
-            assertIsInstanceOf(DirectConsumerNotAvailableException.class, e.getCause());
-        }
+        template.sendBody("direct:start", "Hello World");
+    }
+
+    @Test
+    public void testWireTapFailIfNoConsumerFalse() throws Exception {
+        context.getComponent("direct", DirectComponent.class).setBlock(false);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").wireTap("direct:foo?failIfNoConsumers=false").to("mock:foo");
+            }
+        });
+
+        context.start();
+
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Test
@@ -111,7 +125,7 @@ public class DirectNoConsumerTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        context.stopRoute("stopThisRoute");
+        context.getRouteController().stopRoute("stopThisRoute");
         TimeUnit.MILLISECONDS.sleep(100);
         try {
             template.sendBody("direct:foo", "Hello World");
@@ -140,7 +154,6 @@ public class DirectNoConsumerTest extends ContextTestSupport {
         template.sendBody("direct:in", "Hello World");
 
         assertMockEndpointsSatisfied();
-
     }
 
     @Test

@@ -1,0 +1,16 @@
+[[WhydoesuseOriginalMessagewitherrorhandlernotworkasexpected-WhydoesuseOriginalMessagewitherrorhandlernotworkasexpected]]
+=== Why does useOriginalMessage with error handler not work as expected?
+
+If you use the link:../exception-clause.adoc[useOriginalMessage] option
+from the Camel link:../exception-clause.adoc[Error Handler] then it matters
+if you use this with link:../enterprise-integration-patterns.adoc[EIP]s such as:
+
+* <<recipientList-eip,Recipient List>>
+* <<split-eip,Splitter>>
+* <<multicast-eip,Multicast>>
+
+Then the option `shareUnitOfWork` on these link:../enterprise-integration-patterns.adoc[EIP]s
+influence the message in use by the `useOriginalMessage` option.
+
+See more details at <<split-eip,Splitter>> and further below with
+the examples explaining this in more detail.

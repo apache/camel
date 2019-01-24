@@ -21,9 +21,6 @@ import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-/**
- * @version 
- */
 public class BeanCallDerivedClassTest extends CamelSpringTestSupport {
 
     protected AbstractXmlApplicationContext createApplicationContext() {

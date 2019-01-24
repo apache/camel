@@ -24,7 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneEndpoint;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -69,7 +69,7 @@ public class RegionProducer extends AbstractKeystoneProducer {
 
     private void doGet(Exchange exchange) {
         final String id = exchange.getIn().getHeader(OpenstackConstants.ID, String.class);
-        ObjectHelper.notEmpty(id, "Region ID");
+        StringHelper.notEmpty(id, "Region ID");
         final Region out = osV3Client.identity().regions().get(id);
         exchange.getIn().setBody(out);
     }
@@ -89,7 +89,7 @@ public class RegionProducer extends AbstractKeystoneProducer {
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, String.class);
-        ObjectHelper.notEmpty(id, "Region ID");
+        StringHelper.notEmpty(id, "Region ID");
         final ActionResponse response = osV3Client.identity().regions().delete(id);
         checkFailure(response, msg, "Delete network" + id);
     }

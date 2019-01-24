@@ -26,6 +26,7 @@ import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
+import org.junit.Test;
 
 public class RefComponentTest extends ContextTestSupport {
 
@@ -45,6 +46,7 @@ public class RefComponentTest extends ContextTestSupport {
         jndi.bind("foo", slow);
     }
 
+    @Test
     public void testRef() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");

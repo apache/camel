@@ -30,8 +30,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 
-/**
- */
 @Plugin(name = "LogCaptureAppender", category = "Core", elementType = "appender", printObject = true)
 public class LogCaptureAppender extends AbstractAppender {
     private static final Deque<LogEvent> LOG_EVENTS = new ArrayDeque<>();

@@ -30,12 +30,14 @@ import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 
 /**
  * The <a href="http://camel.apache.org/sjms">Simple JMS</a> component.
  */
+@Component("sjms")
 public class SjmsComponent extends HeaderFilterStrategyComponent {
 
     private ExecutorService asyncStartStopExecutorService;
@@ -78,11 +80,10 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     private long connectionMaxWait = 5000;
 
     public SjmsComponent() {
-        super(SjmsEndpoint.class);
     }
 
     protected SjmsComponent(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
+        super();
     }
 
     @Override

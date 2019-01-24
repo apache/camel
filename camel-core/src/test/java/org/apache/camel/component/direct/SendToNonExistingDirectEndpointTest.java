@@ -19,10 +19,8 @@ package org.apache.camel.component.direct;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class SendToNonExistingDirectEndpointTest extends ContextTestSupport {
 
     @Override
@@ -30,6 +28,7 @@ public class SendToNonExistingDirectEndpointTest extends ContextTestSupport {
         return false;
     }
 
+    @Test
     public void testDirect() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
         

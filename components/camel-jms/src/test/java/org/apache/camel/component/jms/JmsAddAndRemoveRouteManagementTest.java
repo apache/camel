@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.Set;
+
 import javax.jms.ConnectionFactory;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -66,7 +67,7 @@ public class JmsAddAndRemoveRouteManagementTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
         // now stop and remove that route
-        context.stopRoute("myNewRoute");
+        context.getRouteController().stopRoute("myNewRoute");
         context.removeRoute("myNewRoute");
 
         Set<ObjectName> after = mbeanServer.queryNames(new ObjectName("*:type=threadpools,*"), null);

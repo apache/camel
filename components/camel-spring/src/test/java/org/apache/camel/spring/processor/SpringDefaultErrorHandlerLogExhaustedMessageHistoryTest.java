@@ -21,9 +21,6 @@ import org.apache.camel.processor.DefaultErrorHandlerLogExhaustedMessageHistoryT
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version 
- */
 public class SpringDefaultErrorHandlerLogExhaustedMessageHistoryTest extends DefaultErrorHandlerLogExhaustedMessageHistoryTest {
 
     protected CamelContext createCamelContext() throws Exception {

@@ -18,20 +18,16 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.AsyncProcessor;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Routes a message through a series of steps that are pre-determined (the slip)
@@ -77,31 +73,13 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     }
 
     @Override
-    public String getLabel() {
-        return "routingSlip[" + getExpression() + "]";
+    public String getShortName() {
+        return "routingSlip";
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expression = getExpression().createExpression(routeContext);
-        String delimiter = getUriDelimiter() != null ? getUriDelimiter() : DEFAULT_DELIMITER;
-
-        RoutingSlip routingSlip = new RoutingSlip(routeContext.getCamelContext(), expression, delimiter);
-        if (getIgnoreInvalidEndpoints() != null) {
-            routingSlip.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoints());
-        }
-        if (getCacheSize() != null) {
-            routingSlip.setCacheSize(getCacheSize());
-        }
-
-        // and wrap this in an error handler
-        ErrorHandlerFactory builder = routeContext.getRoute().getErrorHandlerBuilder();
-        // create error handler (create error handler directly to keep it light weight,
-        // instead of using ProcessorDefinition.wrapInErrorHandler)
-        AsyncProcessor errorHandler = (AsyncProcessor) builder.createErrorHandler(routeContext, routingSlip.newRoutingSlipProcessorForErrorHandler());
-        routingSlip.setErrorHandler(errorHandler);
-
-        return routingSlip;
+    public String getLabel() {
+        return "routingSlip[" + getExpression() + "]";
     }
 
     @Override
@@ -175,7 +153,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     }
 
     /**
-     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * Sets the maximum size used by the {@link org.apache.camel.spi.ProducerCache} which is used
      * to cache and reuse producers when using this routing slip, when uris are reused.
      *
      * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.

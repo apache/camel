@@ -24,14 +24,13 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version 
- */
 public class RouteSedaSuspendResumeTest extends ContextTestSupport {
 
+    @Test
     public void testSuspendResume() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("A");
@@ -45,9 +44,9 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         // now suspend and dont expect a message to be routed
         resetMocks();
         mock.expectedMessageCount(0);
-        context.suspendRoute("foo");
+        context.getRouteController().suspendRoute("foo");
 
-        assertEquals("Suspended", context.getRouteStatus("foo").name());
+        assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
         Route route = context.getRoute("foo");
         if (route instanceof StatefulService) {
             assertEquals("Suspended", ((StatefulService) route).getStatus().name());
@@ -65,10 +64,10 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         // now resume and expect the previous message to be routed
         resetMocks();
         mock.expectedBodiesReceived("B");
-        context.resumeRoute("foo");
+        context.getRouteController().resumeRoute("foo");
         assertMockEndpointsSatisfied();
 
-        assertEquals("Started", context.getRouteStatus("foo").name());
+        assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
         route = context.getRoute("foo");
         if (route instanceof StatefulService) {
             assertEquals("Started", ((StatefulService) route).getStatus().name());

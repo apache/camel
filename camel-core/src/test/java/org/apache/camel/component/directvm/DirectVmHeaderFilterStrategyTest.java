@@ -21,12 +21,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.junit.Test;
 
 /**
  *
  */
 public class DirectVmHeaderFilterStrategyTest extends ContextTestSupport {
 
+    @Test
     public void testPropertiesPropagatedOrNot() throws Exception {
         context.getRegistry(JndiRegistry.class).bind("headerFilterStrategy", new HeaderFilterStrategy() {
             @Override

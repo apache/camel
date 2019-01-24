@@ -26,8 +26,6 @@ import org.apache.camel.support.ExpressionSupport;
 
 /**
  * An <a href="http://www.ognl.org/">OGNL</a> {@link org.apache.camel.Expression}
- *
- * @version 
  */
 public class OgnlExpression extends ExpressionSupport {
 

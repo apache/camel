@@ -17,16 +17,8 @@
 package org.apache.camel.component.sjms.springboot;
 
 import javax.annotation.Generated;
-import javax.jms.ConnectionFactory;
-import org.apache.camel.component.sjms.TransactionCommitStrategy;
-import org.apache.camel.component.sjms.jms.ConnectionResource;
-import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
-import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
-import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The sjms component (simple jms) allows messages to be sent to (or consumed
@@ -41,17 +33,23 @@ public class SjmsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * A ConnectionFactory is required to enable the SjmsComponent. It can be
-     * set directly or set set as part of a ConnectionResource.
+     * Whether to enable auto configuration of the sjms component. This is
+     * enabled by default.
      */
-    private ConnectionFactory connectionFactory;
+    private Boolean enabled;
+    /**
+     * A ConnectionFactory is required to enable the SjmsComponent. It can be
+     * set directly or set set as part of a ConnectionResource. The option is a
+     * javax.jms.ConnectionFactory type.
+     */
+    private String connectionFactory;
     /**
      * A ConnectionResource is an interface that allows for customization and
      * container control of the ConnectionFactory. See Plugable Connection
-     * Resource Management for further details.
+     * Resource Management for further details. The option is a
+     * org.apache.camel.component.sjms.jms.ConnectionResource type.
      */
-    @NestedConfigurationProperty
-    private ConnectionResource connectionResource;
+    private String connectionResource;
     /**
      * The maximum number of connections available to endpoints started under
      * this component
@@ -65,21 +63,21 @@ public class SjmsComponentConfiguration
      * whether JMS header keys contain illegal characters. You can provide your
      * own implementation of the
      * org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using
-     * the notation.
+     * the # notation. The option is a
+     * org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy type.
      */
-    @NestedConfigurationProperty
-    private JmsKeyFormatStrategy jmsKeyFormatStrategy;
+    private String jmsKeyFormatStrategy;
     /**
      * To configure which kind of commit strategy to use. Camel provides two
-     * implementations out of the box, default and batch.
+     * implementations out of the box, default and batch. The option is a
+     * org.apache.camel.component.sjms.TransactionCommitStrategy type.
      */
-    @NestedConfigurationProperty
-    private TransactionCommitStrategy transactionCommitStrategy;
+    private String transactionCommitStrategy;
     /**
-     * To use a custom DestinationCreationStrategy.
+     * To use a custom DestinationCreationStrategy. The option is a
+     * org.apache.camel.component.sjms.jms.DestinationCreationStrategy type.
      */
-    @NestedConfigurationProperty
-    private DestinationCreationStrategy destinationCreationStrategy;
+    private String destinationCreationStrategy;
     /**
      * To use a custom TimedTaskManager
      */
@@ -87,10 +85,10 @@ public class SjmsComponentConfiguration
     /**
      * To use the given MessageCreatedStrategy which are invoked when Camel
      * creates new instances of javax.jms.Message objects when Camel is sending
-     * a JMS message.
+     * a JMS message. The option is a
+     * org.apache.camel.component.sjms.jms.MessageCreatedStrategy type.
      */
-    @NestedConfigurationProperty
-    private MessageCreatedStrategy messageCreatedStrategy;
+    private String messageCreatedStrategy;
     /**
      * When using the default
      * org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should
@@ -121,10 +119,10 @@ public class SjmsComponentConfiguration
     private Long connectionMaxWait = 5000L;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
-     * header to and from Camel message.
+     * header to and from Camel message. The option is a
+     * org.apache.camel.spi.HeaderFilterStrategy type.
      */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
+    private String headerFilterStrategy;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -132,19 +130,19 @@ public class SjmsComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public ConnectionFactory getConnectionFactory() {
+    public String getConnectionFactory() {
         return connectionFactory;
     }
 
-    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+    public void setConnectionFactory(String connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
 
-    public ConnectionResource getConnectionResource() {
+    public String getConnectionResource() {
         return connectionResource;
     }
 
-    public void setConnectionResource(ConnectionResource connectionResource) {
+    public void setConnectionResource(String connectionResource) {
         this.connectionResource = connectionResource;
     }
 
@@ -156,30 +154,28 @@ public class SjmsComponentConfiguration
         this.connectionCount = connectionCount;
     }
 
-    public JmsKeyFormatStrategy getJmsKeyFormatStrategy() {
+    public String getJmsKeyFormatStrategy() {
         return jmsKeyFormatStrategy;
     }
 
-    public void setJmsKeyFormatStrategy(
-            JmsKeyFormatStrategy jmsKeyFormatStrategy) {
+    public void setJmsKeyFormatStrategy(String jmsKeyFormatStrategy) {
         this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
     }
 
-    public TransactionCommitStrategy getTransactionCommitStrategy() {
+    public String getTransactionCommitStrategy() {
         return transactionCommitStrategy;
     }
 
-    public void setTransactionCommitStrategy(
-            TransactionCommitStrategy transactionCommitStrategy) {
+    public void setTransactionCommitStrategy(String transactionCommitStrategy) {
         this.transactionCommitStrategy = transactionCommitStrategy;
     }
 
-    public DestinationCreationStrategy getDestinationCreationStrategy() {
+    public String getDestinationCreationStrategy() {
         return destinationCreationStrategy;
     }
 
     public void setDestinationCreationStrategy(
-            DestinationCreationStrategy destinationCreationStrategy) {
+            String destinationCreationStrategy) {
         this.destinationCreationStrategy = destinationCreationStrategy;
     }
 
@@ -192,12 +188,11 @@ public class SjmsComponentConfiguration
         this.timedTaskManager = timedTaskManager;
     }
 
-    public MessageCreatedStrategy getMessageCreatedStrategy() {
+    public String getMessageCreatedStrategy() {
         return messageCreatedStrategy;
     }
 
-    public void setMessageCreatedStrategy(
-            MessageCreatedStrategy messageCreatedStrategy) {
+    public void setMessageCreatedStrategy(String messageCreatedStrategy) {
         this.messageCreatedStrategy = messageCreatedStrategy;
     }
 
@@ -241,12 +236,11 @@ public class SjmsComponentConfiguration
         this.connectionMaxWait = connectionMaxWait;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
+    public String getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
+    public void setHeaderFilterStrategy(String headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 

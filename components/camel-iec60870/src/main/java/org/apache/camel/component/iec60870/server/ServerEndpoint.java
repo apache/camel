@@ -23,16 +23,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.iec60870.AbstractIecEndpoint;
 import org.apache.camel.component.iec60870.ObjectAddress;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * IEC 60870 component used for telecontrol (supervisory control and data acquisition)
  * such as controlling electric power transmission grids and other geographically widespread control systems.
  */
 @UriEndpoint(firstVersion = "2.20.0", scheme = "iec60870-server", syntax = "iec60870-server:uriPath",
-    title = "IEC 60870 Server", consumerClass = ServerConsumer.class, label = "iot")
+    title = "IEC 60870 Server", label = "iot")
 public class ServerEndpoint extends AbstractIecEndpoint<ServerConnectionMultiplexor> {
 
     /**

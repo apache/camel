@@ -32,6 +32,11 @@ public class MvelLanguageConfiguration
             LanguageConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the mvel language. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Whether to trim the value to remove leading and trailing whitespaces and
      * line breaks
      */

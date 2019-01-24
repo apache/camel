@@ -19,6 +19,7 @@ package org.apache.camel.component.rss;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
+
 import javax.naming.Context;
 
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -26,8 +27,8 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.jndi.JndiContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
 
 public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {

@@ -24,7 +24,6 @@ import java.util.Date;
 import javax.management.JMException;
 
 import org.mockito.Mockito;
-
 import quickfix.Acceptor;
 import quickfix.Application;
 import quickfix.ConfigError;

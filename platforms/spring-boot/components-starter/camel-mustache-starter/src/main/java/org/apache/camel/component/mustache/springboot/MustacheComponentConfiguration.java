@@ -17,10 +17,8 @@
 package org.apache.camel.component.mustache.springboot;
 
 import javax.annotation.Generated;
-import com.github.mustachejava.MustacheFactory;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Transforms the message using a Mustache template.
@@ -34,10 +32,15 @@ public class MustacheComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
-     * To use a custom MustacheFactory
+     * Whether to enable auto configuration of the mustache component. This is
+     * enabled by default.
      */
-    @NestedConfigurationProperty
-    private MustacheFactory mustacheFactory;
+    private Boolean enabled;
+    /**
+     * To use a custom MustacheFactory. The option is a
+     * com.github.mustachejava.MustacheFactory type.
+     */
+    private String mustacheFactory;
     /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
@@ -45,11 +48,11 @@ public class MustacheComponentConfiguration
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public MustacheFactory getMustacheFactory() {
+    public String getMustacheFactory() {
         return mustacheFactory;
     }
 
-    public void setMustacheFactory(MustacheFactory mustacheFactory) {
+    public void setMustacheFactory(String mustacheFactory) {
         this.mustacheFactory = mustacheFactory;
     }
 

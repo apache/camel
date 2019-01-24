@@ -32,6 +32,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -42,18 +43,18 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.StreamCache;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RoutingSlip;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
@@ -63,8 +64,6 @@ import static org.apache.camel.util.ObjectHelper.asString;
 
 /**
  * Information about a method to be used for invocation.
- *
- * @version 
  */
 public class MethodInfo {
     private static final Logger LOG = LoggerFactory.getLogger(MethodInfo.class);
@@ -99,7 +98,7 @@ public class MethodInfo {
             try {
                 return invoke(method, pojo, arguments, exchange);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -109,7 +108,6 @@ public class MethodInfo {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public MethodInfo(CamelContext camelContext, Class<?> type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters,
                       boolean hasCustomAnnotation, boolean hasHandlerAnnotation) {
         this.camelContext = camelContext;
@@ -140,7 +138,7 @@ public class MethodInfo {
             try {
                 camelContext.addService(routingSlip);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -156,7 +154,7 @@ public class MethodInfo {
             try {
                 camelContext.addService(dynamicRouter);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
 
@@ -174,7 +172,7 @@ public class MethodInfo {
             recipientList.setTimeout(recipientListAnnotation.timeout());
             recipientList.setShareUnitOfWork(recipientListAnnotation.shareUnitOfWork());
 
-            if (ObjectHelper.isNotEmpty(recipientListAnnotation.executorServiceRef())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(recipientListAnnotation.executorServiceRef())) {
                 ExecutorService executor = camelContext.getExecutorServiceManager().newDefaultThreadPool(this, recipientListAnnotation.executorServiceRef());
                 recipientList.setExecutorService(executor);
             }
@@ -185,12 +183,12 @@ public class MethodInfo {
                 recipientList.setExecutorService(executor);
             }
 
-            if (ObjectHelper.isNotEmpty(recipientListAnnotation.strategyRef())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(recipientListAnnotation.strategyRef())) {
                 AggregationStrategy strategy = CamelContextHelper.mandatoryLookup(camelContext, recipientListAnnotation.strategyRef(), AggregationStrategy.class);
                 recipientList.setAggregationStrategy(strategy);
             }
 
-            if (ObjectHelper.isNotEmpty(recipientListAnnotation.onPrepareRef())) {
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(recipientListAnnotation.onPrepareRef())) {
                 Processor onPrepare = CamelContextHelper.mandatoryLookup(camelContext, recipientListAnnotation.onPrepareRef(), Processor.class);
                 recipientList.setOnPrepare(onPrepare);
             }
@@ -199,7 +197,7 @@ public class MethodInfo {
             try {
                 camelContext.addService(recipientList);
             } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
         }
     }
@@ -234,7 +232,7 @@ public class MethodInfo {
      * Does the given context match this camel context
      */
     private boolean matchContext(String context) {
-        if (ObjectHelper.isNotEmpty(context)) {
+        if (org.apache.camel.util.ObjectHelper.isNotEmpty(context)) {
             if (!camelContext.getName().equals(context)) {
                 return false;
             }
@@ -295,7 +293,7 @@ public class MethodInfo {
 
                 // invoke pojo
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace(">>>> invoking: {} on bean: {} with arguments: {} for exchange: {}", new Object[]{method, pojo, asString(arguments), exchange});
+                    LOG.trace(">>>> invoking: {} on bean: {} with arguments: {} for exchange: {}", method, pojo, asString(arguments), exchange);
                 }
                 Object result = invoke(method, pojo, arguments, exchange);
 
@@ -433,7 +431,7 @@ public class MethodInfo {
 
     public boolean bodyParameterMatches(Class<?> bodyType) {
         Class<?> actualType = getBodyParameterType();
-        return actualType != null && ObjectHelper.isAssignableFrom(bodyType, actualType);
+        return actualType != null && org.apache.camel.util.ObjectHelper.isAssignableFrom(bodyType, actualType);
     }
 
     public List<ParameterInfo> getParameters() {
@@ -641,13 +639,6 @@ public class MethodInfo {
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             Object body = exchange.getIn().getBody();
-            boolean multiParameterArray = exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, false, boolean.class);
-            if (multiParameterArray) {
-                // Just change the message body to an Object array
-                if (!(body instanceof Object[])) {
-                    body = exchange.getIn().getBody(Object[].class);
-                }
-            }
 
             // if there was an explicit method name to invoke, then we should support using
             // any provided parameter values in the method name
@@ -667,21 +658,18 @@ public class MethodInfo {
             // we need to do this before the expressions gets evaluated as it may contain
             // a @Bean expression which would by mistake read these headers. So the headers
             // must be removed at this point of time
-            if (multiParameterArray) {
-                exchange.getIn().removeHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY);
-            }
             if (methodName != null) {
                 exchange.getIn().removeHeader(Exchange.BEAN_METHOD_NAME);
             }
 
-            Object[] answer = evaluateParameterExpressions(exchange, body, multiParameterArray, it);
+            Object[] answer = evaluateParameterExpressions(exchange, body, it);
             return (T) answer;
         }
 
         /**
          * Evaluates all the parameter expressions
          */
-        private Object[] evaluateParameterExpressions(Exchange exchange, Object body, boolean multiParameterArray, Iterator<?> it) {
+        private Object[] evaluateParameterExpressions(Exchange exchange, Object body, Iterator<?> it) {
             Object[] answer = new Object[expressions.length];
             for (int i = 0; i < expressions.length; i++) {
 
@@ -697,24 +685,16 @@ public class MethodInfo {
                 // the value for the parameter to use
                 Object value = null;
 
-                if (multiParameterArray && body instanceof Object[]) {
-                    // get the value from the array
-                    Object[] array = (Object[]) body;
-                    if (array.length >= i) {
-                        value = array[i];
-                    }
-                } else {
-                    // prefer to use parameter value if given, as they override any bean parameter binding
-                    // we should skip * as its a type placeholder to indicate any type
-                    if (parameterValue != null && !parameterValue.equals("*")) {
-                        // evaluate the parameter value binding
-                        value = evaluateParameterValue(exchange, i, parameterValue, parameterType);
-                    }
-                    // use bean parameter binding, if still no value
-                    Expression expression = expressions[i];
-                    if (value == null && expression != null) {
-                        value = evaluateParameterBinding(exchange, expression, i, parameterType);
-                    }
+                // prefer to use parameter value if given, as they override any bean parameter binding
+                // we should skip * as its a type placeholder to indicate any type
+                if (parameterValue != null && !parameterValue.equals("*")) {
+                    // evaluate the parameter value binding
+                    value = evaluateParameterValue(exchange, i, parameterValue, parameterType);
+                }
+                // use bean parameter binding, if still no value
+                Expression expression = expressions[i];
+                if (value == null && expression != null) {
+                    value = evaluateParameterBinding(exchange, expression, i, parameterType);
                 }
                 // remember the value to use
                 if (value != Void.TYPE) {
@@ -800,11 +780,11 @@ public class MethodInfo {
                             // its a valid parameter value, so convert it to the expected type of the parameter
                             answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
                             if (LOG.isTraceEnabled()) {
-                                LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
+                                LOG.trace("Parameter #{} evaluated as: {} type: ", index, answer, org.apache.camel.util.ObjectHelper.type(answer));
                             }
                         } catch (Exception e) {
                             if (LOG.isDebugEnabled()) {
-                                LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(parameterValue), parameterType, index});
+                                LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", org.apache.camel.util.ObjectHelper.type(parameterValue), parameterType, index);
                             }
                             throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
                         }
@@ -833,11 +813,11 @@ public class MethodInfo {
                         answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, result);
                     }
                     if (LOG.isTraceEnabled()) {
-                        LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
+                        LOG.trace("Parameter #{} evaluated as: {} type: ", index, answer, org.apache.camel.util.ObjectHelper.type(answer));
                     }
                 } catch (NoTypeConversionAvailableException e) {
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(result), parameterType, index});
+                        LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", org.apache.camel.util.ObjectHelper.type(result), parameterType, index);
                     }
                     throw new ParameterBindingException(e, method, index, parameterType, result);
                 }

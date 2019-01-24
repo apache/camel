@@ -30,10 +30,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
@@ -46,11 +44,10 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "1.3.0", scheme = "test", title = "Test", syntax = "test:name", producerOnly = true, label = "core,testing", lenientProperties = true)
 public class TestEndpoint extends MockEndpoint {
-    private static final Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
 
     private Endpoint expectedMessageEndpoint;
 
-    @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing") @Metadata(required = "true")
+    @UriPath(description = "Name of endpoint to lookup in the registry to use for polling messages used for testing") @Metadata(required = true)
     private String name;
     @UriParam
     private boolean anyOrder;
@@ -71,7 +68,7 @@ public class TestEndpoint extends MockEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        LOG.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
+        log.debug("Consuming expected messages from: {}", expectedMessageEndpoint);
 
         final List<Object> expectedBodies = new ArrayList<>();
         EndpointHelper.pollEndpoint(expectedMessageEndpoint, new Processor() {
@@ -83,10 +80,10 @@ public class TestEndpoint extends MockEndpoint {
                 }
                 if (split) {
                     // use new lines in both styles
-                    Iterator it = ObjectHelper.createIterator(body, delimiter, false, true);
+                    Iterator<?> it = ObjectHelper.createIterator(body, delimiter, false, true);
                     while (it.hasNext()) {
                         Object line = it.next();
-                        LOG.trace("Received message body {}", line);
+                        log.trace("Received message body {}", line);
                         expectedBodies.add(line);
                     }
                 } else {
@@ -95,7 +92,7 @@ public class TestEndpoint extends MockEndpoint {
             }
         }, timeout);
 
-        LOG.info("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
+        log.info("Received: {} expected message(s) from: {}", expectedBodies.size(), expectedMessageEndpoint);
         if (anyOrder) {
             expectedBodiesReceivedInAnyOrder(expectedBodies);
         } else {

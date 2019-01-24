@@ -20,9 +20,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class FromFtpToMockTest extends FtpServerTestSupport {
     protected String expectedBody = "Hello there!";
 

@@ -33,7 +33,7 @@ public class IronMQConfiguration {
     @UriParam
     private String token;
     
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String queueName;
     
     @UriParam(defaultValue = "https://mq-aws-us-east-1-1.iron.io")

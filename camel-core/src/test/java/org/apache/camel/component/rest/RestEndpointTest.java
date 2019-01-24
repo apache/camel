@@ -23,10 +23,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.DefaultComponent;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -19,9 +19,6 @@ package org.apache.camel.language.groovy;
 import org.apache.camel.test.junit4.LanguageTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class GroovyLanguageTest extends LanguageTestSupport {
 
     @Test

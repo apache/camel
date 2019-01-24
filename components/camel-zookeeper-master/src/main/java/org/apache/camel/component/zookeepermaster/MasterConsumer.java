@@ -25,8 +25,8 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,7 +163,7 @@ public class MasterConsumer extends DefaultConsumer {
 
                     ServiceHelper.startService(delegate);
                 } catch (Exception e) {
-                    LOG.error("Failed to start master consumer for: " + endpoint, e);
+                    LOG.error("Failed to start master consumer for: {}", endpoint, e);
                 }
 
                 LOG.info("Elected as master. Consumer started: {}", endpoint.getConsumerEndpoint());
@@ -176,7 +176,7 @@ public class MasterConsumer extends DefaultConsumer {
             try {
                 stopConsumer();
             } catch (Exception e) {
-                LOG.warn("Failed to stop master consumer for: " + endpoint, e);
+                LOG.warn("Failed to stop master consumer for: {}", endpoint, e);
             }
         };
     }

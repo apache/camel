@@ -61,7 +61,7 @@ public class UserRouteBuilder extends RouteBuilder {
                 .responseMessage().code(200).message("User created or updated").endResponseMessage()
                 .to("bean:userService?method=updateUser")
 
-            .get("/findAll").description("Find all users").outTypeList(User.class)
+            .get("/findAll").description("Find all users").outType(User[].class)
                 .responseMessage().code(200).message("All users").endResponseMessage()
                 .to("bean:userService?method=listUsers");
     }

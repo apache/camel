@@ -23,7 +23,8 @@ import java.util.Arrays;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.QuoteMode;
 
@@ -36,6 +37,7 @@ import org.apache.commons.csv.QuoteMode;
  * Autogeneration can be disabled. In this case, only the fields defined in
  * csvConfig are written on the output.
  */
+@Dataformat("csv")
 public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     // CSV format options
     private CSVFormat format = CSVFormat.DEFAULT;
@@ -67,6 +69,8 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     private boolean useOrderedMaps;
     private CsvRecordConverter<?> recordConverter;
 
+    private CsvMarshallerFactory marshallerFactory = CsvMarshallerFactory.DEFAULT;
+
     private volatile CsvMarshaller marshaller;
     private volatile CsvUnmarshaller unmarshaller;
 
@@ -92,7 +96,7 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
     @Override
     protected void doStart() throws Exception {
-        marshaller = CsvMarshaller.create(getActiveFormat(), this);
+        marshaller = marshallerFactory.create(getActiveFormat(), this);
         unmarshaller = CsvUnmarshaller.create(getActiveFormat(), this);
     }
 
@@ -203,6 +207,27 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     public CsvDataFormat setFormat(CSVFormat format) {
         this.format = (format == null) ? CSVFormat.DEFAULT : format;
         return this;
+    }
+
+    /**
+     * Sets the {@link CsvMarshaller} factory.
+     * If {@code null}, then {@link CsvMarshallerFactory#DEFAULT} is used instead.
+     *
+     * @param marshallerFactory
+     * @return Current {@code CsvDataFormat}, fluent API
+     */
+    public CsvDataFormat setMarshallerFactory(CsvMarshallerFactory marshallerFactory) {
+        this.marshallerFactory = (marshallerFactory == null) ? CsvMarshallerFactory.DEFAULT : marshallerFactory;
+        return this;
+    }
+
+    /**
+     * Returns the used {@link CsvMarshallerFactory}.
+     *
+     * @return never {@code null}.
+     */
+    public CsvMarshallerFactory getMarshallerFactory() {
+        return marshallerFactory;
     }
 
     /**

@@ -39,9 +39,9 @@
       <!-- throttle 3 messages per 1 sec -->
       <throttle timePeriodMillis="1000">
         <constant>3</constant>
-        <to uri="log:result"/>
-        <to uri="mock:result"/>
       </throttle>
+      <to uri="log:result"/>
+      <to uri="mock:result"/>
     </route>
     <!-- END SNIPPET: example -->
 
@@ -50,17 +50,17 @@
       <!-- throttle 5 messages per 0.5 sec -->
       <throttle timePeriodMillis="500">
         <constant>5</constant>
-        <to uri="log:result"/>
-        <to uri="mock:result"/>
       </throttle>
+      <to uri="log:result"/>
+      <to uri="mock:result"/>
     </route>
 
     <route>
       <from uri="direct:expressionConstant"/>
       <throttle timePeriodMillis="500">
         <constant>5</constant>
-        <to uri="mock:result"/>
       </throttle>
+      <to uri="mock:result"/>
     </route>
 
     <!-- START SNIPPET: e2 -->
@@ -69,9 +69,9 @@
       <throttle timePeriodMillis="500">
         <!-- use a header to determine how many messages to throttle per 0.5 sec -->
         <header>throttleValue</header>
-        <to uri="log:result"/>
-        <to uri="mock:result"/>
       </throttle>
+      <to uri="log:result"/>
+      <to uri="mock:result"/>
     </route>
     <!-- END SNIPPET: e2 -->
 
@@ -80,17 +80,17 @@
       <!-- throttle 2 messages per 1 sec -->
       <throttle timePeriodMillis="1000" rejectExecution="true">
         <constant>2</constant>
-        <to uri="log:result"/>
-        <to uri="mock:result"/>
       </throttle>
+      <to uri="log:result"/>
+      <to uri="mock:result"/>
     </route>
 
     <route>
       <from uri="direct:highThrottleRate"/>
       <throttle timePeriodMillis="500">
         <constant>10000</constant>
-        <to uri="mock:result"/>
       </throttle>
+      <to uri="mock:result"/>
     </route>
 
   </camelContext>

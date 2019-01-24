@@ -15,15 +15,16 @@
  * limitations under the License.
  */
 package org.apache.camel.pollconsumer.quartz2;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 public class FileConsumerQuartzSchedulerRestartTest extends CamelTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         deleteDirectory("target/file/quartz");
         super.setUp();
@@ -33,15 +34,15 @@ public class FileConsumerQuartzSchedulerRestartTest extends CamelTestSupport {
     public void testQuartzSchedulerRestart() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBodyAndHeader("file:target/file/quartz", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         assertMockEndpointsSatisfied();
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
         resetMocks();
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBodyAndHeader("file:target/file/quartz", "Bye World", Exchange.FILE_NAME, "bye.txt");
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
         assertMockEndpointsSatisfied();
     }
 

@@ -20,9 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorHelper;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
@@ -30,7 +30,7 @@ import org.reactivestreams.Subscription;
 /**
  * A Processor that converts a Publisher into its content asynchronously.
  */
-public class UnwrapStreamProcessor implements AsyncProcessor {
+public class UnwrapStreamProcessor extends AsyncProcessorSupport {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -95,11 +95,6 @@ public class UnwrapStreamProcessor implements AsyncProcessor {
 
         callback.done(true);
         return true;
-    }
-
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
     }
 
 }

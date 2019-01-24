@@ -1,0 +1,15 @@
+=== Spring Boot Auto-Configuration
+
+@if{this.isEmpty()}
+The component has no Spring Boot auto configuration options.
+@else{}
+The component supports @{this.size()} options, which are listed below.
+@end{}
+
+@if{!this.isEmpty()}
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+@foreach{row : this}| *@{row.name}* | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
+@end{}|===
+@end{}

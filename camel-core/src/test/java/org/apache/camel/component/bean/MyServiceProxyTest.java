@@ -21,18 +21,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class MyServiceProxyTest extends ContextTestSupport {
 
+    @Test
     public void testOk() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:start"), MyService.class);
         String reply = myService.method("Hello World");
         assertEquals("Camel in Action", reply);
     }
 
+    @Test
     public void testKaboom() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:start"), MyService.class);
         try {
@@ -43,6 +43,7 @@ public class MyServiceProxyTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testCheckedException() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:start"), MyService.class);
         try {
@@ -54,6 +55,7 @@ public class MyServiceProxyTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNestedRuntimeCheckedException() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:start"), MyService.class);
         try {
@@ -65,6 +67,7 @@ public class MyServiceProxyTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testNestedCheckedCheckedException() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:start"), MyService.class);
         try {
@@ -76,6 +79,7 @@ public class MyServiceProxyTest extends ContextTestSupport {
         }
     }
     
+    @Test
     public void testRequestAndResponse() throws Exception {
         MyService myService = ProxyHelper.createProxy(context.getEndpoint("direct:request"), MyService.class);
         MyRequest in = new MyRequest();

@@ -25,7 +25,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.util.StopWatch;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     public boolean acquireExclusiveReadLock(GenericFileOperations<FTPFile> operations, GenericFile<FTPFile> file, Exchange exchange) throws Exception {
         boolean exclusive = false;
 
-        LOG.trace("Waiting for exclusive read lock to file: " + file);
+        LOG.trace("Waiting for exclusive read lock to file: {}", file);
 
         long lastModified = Long.MIN_VALUE;
         long length = Long.MIN_VALUE;
@@ -137,7 +137,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     }
 
     private boolean sleep() {
-        LOG.trace("Exclusive read lock not granted. Sleeping for " + checkInterval + " millis.");
+        LOG.trace("Exclusive read lock not granted. Sleeping for {} millis.", checkInterval);
         try {
             Thread.sleep(checkInterval);
             return false;

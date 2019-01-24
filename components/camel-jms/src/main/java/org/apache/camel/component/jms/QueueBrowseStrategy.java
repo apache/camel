@@ -21,9 +21,6 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.springframework.jms.core.JmsOperations;
 
-/**
- * @version 
- */
 public interface QueueBrowseStrategy {
 
     List<Exchange> browse(JmsOperations template, String queue, JmsQueueEndpoint endpoint);

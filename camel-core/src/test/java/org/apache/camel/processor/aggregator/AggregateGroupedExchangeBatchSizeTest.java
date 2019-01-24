@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
+import org.junit.Test;
 
 /**
  * Unit test for aggregate grouped exchanges.
@@ -30,6 +31,7 @@ import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
+    @Test
     public void testGrouped() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
 

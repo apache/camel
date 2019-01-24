@@ -1,6 +1,5 @@
 [[pipeline-eip]]
 == Pipeline EIP
-== Pipes and Filters
 
 Camel supports the link:http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the link:https://github.com/apache/camel/blob/master/docs/user-manual/en/enterprise-integration-patterns.adoc[EIP patterns] in various ways.
 
@@ -10,14 +9,14 @@ With Camel you can split your processing across multiple independent
 link:https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] instances which can then be chained
 together.
 
-== Options
+=== Options
 
 // eip options: START
 The Pipeline EIP has no options.
 // eip options: END
 
-[[PipesandFilters-Samples]]
-=== Samples
+[[pipeline-Examples]]
+=== Examples
 
 You can create pipelines of logic using multiple
 link:https://github.com/apache/camel/blob/master/docs/user-manual/en/endpoint.adoc[Endpoint] or link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/message-translator.adoc[Message
@@ -33,9 +32,9 @@ In Java you do:
 ----
 from("activemq:SomeQueue")
     .pipeline()
-    .bean("foo")
-    .bean("bar")
-    .to("acitvemq:OutputQueue");
+      .bean("foo")
+      .bean("bar")
+      .to("acitvemq:OutputQueueu");
 ----
 
 The pipeline is the default mode, which can be omitted, and therefore you almost often write as:
@@ -45,7 +44,7 @@ The pipeline is the default mode, which can be omitted, and therefore you almost
 from("activemq:SomeQueue")
     .bean("foo")
     .bean("bar")
-    .to("acitvemq:OutputQueue");
+    .to("acitvemq:OutputQueueu");
 ----
 
 In XML you can use the `<pipeline>` element

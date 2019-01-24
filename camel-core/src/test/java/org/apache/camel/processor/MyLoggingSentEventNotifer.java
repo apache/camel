@@ -16,36 +16,20 @@
  */
 package org.apache.camel.processor;
 
-import java.util.EventObject;
-
-import org.apache.camel.management.event.ExchangeSentEvent;
+import org.apache.camel.spi.CamelEvent;
+import org.apache.camel.spi.CamelEvent.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
-/**
- * @version 
- */
 // START SNIPPET: e1
 public class MyLoggingSentEventNotifer extends EventNotifierSupport {
 
-    public void notify(EventObject event) throws Exception {
+    public void notify(CamelEvent event) throws Exception {
         // react only when its the sent event
         if (event instanceof ExchangeSentEvent) {
             ExchangeSentEvent sent = (ExchangeSentEvent) event;
             log.info("Took {} millis to send to: {}", sent.getTimeTaken(), sent.getEndpoint());
         }
 
-    }
-
-    public boolean isEnabled(EventObject event) {
-        return true;
-    }
-
-    protected void doStart() throws Exception {
-        // noop
-    }
-
-    protected void doStop() throws Exception {
-        // noop
     }
 
 }

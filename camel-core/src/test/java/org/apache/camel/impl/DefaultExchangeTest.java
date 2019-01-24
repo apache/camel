@@ -19,19 +19,20 @@ package org.apache.camel.impl;
 import java.io.IOException;
 import java.net.ConnectException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConversionException;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultMessage;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultExchangeTest extends ExchangeTestSupport {
 
+    @Test
     public void testBody() throws Exception {
         assertNotNull(exchange.getIn().getBody());
 
@@ -42,6 +43,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("<hello id='m123'>world!</hello>", exchange.getIn().getMandatoryBody(String.class));
     }
 
+    @Test
     public void testMandatoryBody() throws Exception {
         assertNotNull(exchange.getIn().getBody());
 
@@ -62,8 +64,9 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         }
     }
 
+    @Test
     public void testExceptionAsType() throws Exception {
-        exchange.setException(ObjectHelper.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
+        exchange.setException(RuntimeCamelException.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
 
         ConnectException ce = exchange.getException(ConnectException.class);
         assertNotNull(ce);
@@ -83,6 +86,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("Cannot connect to remote server", rce.getCause().getMessage());
     }
 
+    @Test
     public void testHeader() throws Exception {
         assertNotNull(exchange.getIn().getHeaders());
 
@@ -104,6 +108,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("456", exchange.getIn().getHeader("cheese", () -> 456, String.class));
     }
 
+    @Test
     public void testProperty() throws Exception {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
@@ -126,6 +131,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("banana", exchange.getProperty("beer", "banana", String.class));
     }
     
+    @Test
     public void testRemoveProperties() throws Exception {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
@@ -147,6 +153,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("Africa", exchange.getProperty("zone", String.class));
     }
     
+    @Test
     public void testRemoveAllProperties() throws Exception {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
@@ -161,6 +168,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals(exchange.getProperties().size(), 0);
     }
 
+    @Test
     public void testRemovePropertiesWithExclusion() throws Exception {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
@@ -185,6 +193,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("Africa", exchange.getProperty("zone", String.class));
     }
     
+    @Test
     public void testRemovePropertiesPatternWithAllExcluded() throws Exception {
         exchange.removeProperty("foobar");
         assertFalse(exchange.hasProperties());
@@ -210,23 +219,26 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
     
 
+    @Test
     public void testInType() throws Exception {
-        exchange.setIn(new MyMessage());
+        exchange.setIn(new MyMessage(context));
 
         MyMessage my = exchange.getIn(MyMessage.class);
         assertNotNull(my);
     }
 
+    @Test
     public void testOutType() throws Exception {
-        exchange.setOut(new MyMessage());
+        exchange.setOut(new MyMessage(context));
 
         MyMessage my = exchange.getOut(MyMessage.class);
         assertNotNull(my);
     }
 
+    @Test
     public void testCopy() {
         DefaultExchange sourceExchange = new DefaultExchange(context);
-        MyMessage sourceIn = new MyMessage();
+        MyMessage sourceIn = new MyMessage(context);
         sourceExchange.setIn(sourceIn);
         Exchange destExchange = sourceExchange.copy();
         Message destIn = destExchange.getIn();
@@ -235,21 +247,18 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
                      sourceIn.getClass(), destIn.getClass());
     }
 
-    public void testFaultCopy() {
-        testFaultCopy(false);
-    }
-
+    @Test
     public void testFaultSafeCopy() {
-        testFaultCopy(true);
+        testFaultCopy();
     }
 
-    private void testFaultCopy(boolean safe) {
+    private void testFaultCopy() {
         DefaultExchange sourceExchange = new DefaultExchange(context);
-        MyMessage source = new MyMessage();
+        MyMessage source = new MyMessage(context);
         source.setFault(true);
         sourceExchange.setIn(source);
         sourceExchange.setOut(source);
-        Exchange destExchange = sourceExchange.copy(safe);
+        Exchange destExchange = sourceExchange.copy();
         assertEquals("Fault property was not copied to IN message",
                 sourceExchange.getIn().isFault(), destExchange.getIn().isFault());
         assertEquals("Fault property was not copied to OUT message",
@@ -257,9 +266,13 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
     }
 
     public static class MyMessage extends DefaultMessage {
+        public MyMessage(CamelContext camelContext) {
+            super(camelContext);
+        }
+
         @Override
         public MyMessage newInstance() {
-            return new MyMessage();
+            return new MyMessage(getCamelContext());
         }
     }
 

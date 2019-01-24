@@ -30,12 +30,11 @@
         <route>
             <from uri="direct:inbound"/>
             <log message="Received [${body}] from [${threadName}]"/>
-            <threads executorServiceRef="thread-pool-profile">
-                <log message="Processing [${body}] with [${threadName}]"/>
-                <transform>
-                    <simple>Processed [${body}] with [${threadName}]</simple>
-                </transform>
-            </threads>
+            <threads executorServiceRef="thread-pool-profile"/>
+            <log message="Processing [${body}] with [${threadName}]"/>
+            <transform>
+                <simple>Processed [${body}] with [${threadName}]</simple>
+            </transform>
         </route>
     </camelContext>
 

@@ -23,7 +23,6 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.MimeMappings;
 import io.undertow.util.StatusCodes;
-
 import org.apache.camel.component.undertow.ExchangeHeaders;
 
 /**

@@ -22,8 +22,6 @@ import javax.xml.ws.Endpoint;
  * A bean to start and stop the real webservice.
  * <p/>
  * This implementation uses pure JAX-WS (no CXF, no Camel).
- *
- * @version 
  */
 public class RealWebServiceBean {
 

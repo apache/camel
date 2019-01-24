@@ -51,7 +51,7 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
         exchange.getIn().setBody(result.getFound());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Downloaded: {}", result.toString());
+            LOG.debug("Downloaded: {}", result);
         }
 
         try {

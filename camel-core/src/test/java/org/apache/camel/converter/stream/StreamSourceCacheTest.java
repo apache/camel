@@ -17,17 +17,17 @@
 package org.apache.camel.converter.stream;
 
 import java.io.ByteArrayOutputStream;
+
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class StreamSourceCacheTest extends ContextTestSupport {
 
+    @Test
     public void testStreamSourceCache() throws Exception {
         Exchange exchange = new DefaultExchange(context);
 

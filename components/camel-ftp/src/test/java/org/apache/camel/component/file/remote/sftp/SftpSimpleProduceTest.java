@@ -21,9 +21,6 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class SftpSimpleProduceTest extends SftpServerTestSupport {
 
     @Override

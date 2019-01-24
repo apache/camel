@@ -34,17 +34,15 @@ public class ComprehensiveTrackingTest extends CamelAwsXRayTestSupport {
     public ComprehensiveTrackingTest() {
         super(
                 TestDataBuilder.createTrace().inRandomOrder()
-                        .withSegment(TestDataBuilder.createSegment("start")
-                                .withSubsegment(TestDataBuilder.createSubsegment("direct:a")
-                                        .withSubsegment(TestDataBuilder.createSubsegment("a")
-                                                .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
-                                                .withSubsegment(TestDataBuilder.createSubsegment("seda:c"))
-                                                // note that the subsegment name matches the routeId
-                                                .withSubsegment(TestDataBuilder.createSubsegment("test"))
-                                                // no tracing of the invoke checker bean as it wasn't annotated with
-                                                // @XRayTrace
-                                        )
-                                )
+                        .withSegment(TestDataBuilder.createSegment("start").inRandomOrder()
+                                .withSubsegment(TestDataBuilder.createSubsegment("seda:d"))
+                                .withSubsegment(TestDataBuilder.createSubsegment("direct:a"))
+                        )
+                        .withSegment(TestDataBuilder.createSegment("a")
+                                        .withSubsegment(TestDataBuilder.createSubsegment("seda:b"))
+                                        .withSubsegment(TestDataBuilder.createSubsegment("seda:c"))
+                                // no tracing of the invoke checker bean as it wasn't annotated with
+                                // @XRayTrace
                         )
                         .withSegment(TestDataBuilder.createSegment("b"))
                         .withSegment(TestDataBuilder.createSegment("c")
@@ -52,7 +50,7 @@ public class ComprehensiveTrackingTest extends CamelAwsXRayTestSupport {
                                 //.withSubsegment(TestDataBuilder.createSubsegment("log:test"))
                         )
                         .withSegment(TestDataBuilder.createSegment("d"))
-                        // note no test-segment here!
+                        .withSegment(TestDataBuilder.createSegment("test"))
         );
     }
 

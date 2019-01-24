@@ -24,17 +24,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.FatalFallbackErrorHandler;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.LoggerFactory;
 
 /**
  * A builder of a <a
  * href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
  * Channel</a>
- *
- * @version 
  */
 public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
@@ -90,7 +88,7 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
     protected void validateDeadLetterUri(RouteContext routeContext) {
         if (deadLetter == null) {
-            ObjectHelper.notEmpty(deadLetterUri, "deadLetterUri", this);
+            StringHelper.notEmpty(deadLetterUri, "deadLetterUri", this);
             deadLetter = routeContext.getCamelContext().getEndpoint(deadLetterUri);
             if (deadLetter == null) {
                 throw new NoSuchEndpointException(deadLetterUri);

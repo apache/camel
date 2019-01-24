@@ -19,9 +19,6 @@ package org.apache.camel.component.jpa;
 import org.apache.camel.Exchange;
 import org.apache.camel.examples.MultiSteps;
 
-/**
- * @version 
- */
 public class JpaWithNativeQueryTest extends JpaWithNamedQueryTest {
     
     /**

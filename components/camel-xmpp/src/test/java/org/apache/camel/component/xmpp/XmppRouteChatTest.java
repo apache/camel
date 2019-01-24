@@ -15,17 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.xmpp;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
-/**
- * @version 
- */
 @Ignore("This test is flaky on CI server")
 public class XmppRouteChatTest extends CamelTestSupport {
 
@@ -101,6 +98,7 @@ public class XmppRouteChatTest extends CamelTestSupport {
     }
 
     @Override
+    @After
     public void tearDown() throws Exception {
         super.tearDown();
         embeddedXmppTestServer.stop();

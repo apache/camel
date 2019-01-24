@@ -18,7 +18,7 @@ package org.apache.camel.component.ssh;
 
 import java.util.concurrent.CountDownLatch;
 
-import org.apache.sshd.server.Command;
+import org.apache.sshd.server.command.Command;
 
 public class TestEchoCommandFactory extends EchoCommandFactory {
 

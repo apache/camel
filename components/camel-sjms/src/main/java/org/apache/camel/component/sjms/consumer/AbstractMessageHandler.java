@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.consumer;
 
 import java.util.concurrent.ExecutorService;
+
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.Session;
@@ -30,7 +31,7 @@ import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * Abstract MessageListener

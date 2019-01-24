@@ -24,12 +24,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.BatchGoogleMailClientFactory;
 import org.apache.camel.component.google.mail.GoogleMailClientFactory;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 
 /**
  * Represents the component that manages {@link GoogleMailStreamEndpoint}.
  */
+@Component("google-mail-stream")
 public class GoogleMailStreamComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
@@ -45,7 +47,7 @@ public class GoogleMailStreamComponent extends DefaultComponent {
 
     public GoogleMailStreamComponent(CamelContext context) {
         super(context);
-
+        registerExtension(new GoogleMailStreamComponentVerifierExtension());
         this.configuration = new GoogleMailStreamConfiguration();
     }
 

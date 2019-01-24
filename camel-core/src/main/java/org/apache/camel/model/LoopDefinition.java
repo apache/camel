@@ -23,16 +23,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.LoopProcessor;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * Processes a message multiple times
- *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "loop")
@@ -101,26 +96,15 @@ public class LoopDefinition extends ExpressionNode {
     }
     
     @Override
+    public String getShortName() {
+        return "loop";
+    }
+
+    @Override
     public String getLabel() {
         return "loop[" + getExpression() + "]";
     }
     
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Processor output = this.createChildProcessor(routeContext, true);
-        boolean isCopy = getCopy() != null && getCopy();
-        boolean isWhile = getDoWhile() != null && getDoWhile();
-
-        Predicate predicate = null;
-        Expression expression = null;
-        if (isWhile) {
-            predicate = getExpression().createPredicate(routeContext);
-        } else {
-            expression = getExpression().createExpression(routeContext);
-        }
-        return new LoopProcessor(output, expression, predicate, isCopy);
-    }
-
     /**
      * Expression to define how many times we should loop. Notice the expression is only evaluated once, and should return
      * a number as how many times to loop. A value of zero or negative means no looping. The loop is like a for-loop fashion,

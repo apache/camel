@@ -22,12 +22,11 @@ import java.util.concurrent.Future;
 import com.surftools.BeanstalkClient.BeanstalkException;
 import com.surftools.BeanstalkClient.Client;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.beanstalk.processors.Command;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 
-public class BeanstalkProducer extends DefaultProducer implements AsyncProcessor {
+public class BeanstalkProducer extends DefaultAsyncProducer {
     private ExecutorService executor;
     private Client client;
     private final Command command;

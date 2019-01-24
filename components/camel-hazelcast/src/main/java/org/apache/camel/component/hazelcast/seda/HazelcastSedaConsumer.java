@@ -28,18 +28,15 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultExchangeHolder;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultExchangeHolder;
+import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.DefaultConsumer;
 
 /**
  * Implementation of Hazelcast SEDA {@link Consumer} component.
  */
 public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HazelcastSedaConsumer.class);
     private final HazelcastSedaEndpoint endpoint;
     private final AsyncProcessor processor;
     private ExecutorService executor;
@@ -114,7 +111,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                         }
 
                     } catch (Exception e) {
-                        LOG.error("Hzlq Exception caught: " + e, e);
+                        log.error("Hzlq Exception caught: {}", e, e);
                         // Rollback
                         if (transactionCtx != null) {
                             log.trace("Rollback transaction: {}", transactionCtx.getTxnId());
@@ -128,8 +125,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     transactionCtx.commitTransaction();
                 }
             } catch (InterruptedException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Hzlq Consumer Interrupted: " + e, e);
+                if (log.isDebugEnabled()) {
+                    log.debug("Hzlq Consumer Interrupted: {}", e, e);
                 }
                 continue;
             } catch (Throwable e) {

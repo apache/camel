@@ -30,7 +30,7 @@ import com.ibm.as400.access.ProgramParameter;
 import com.ibm.as400.access.ServiceProgramCall;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         boolean result = pgmCall.run();
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Executed PGM '{}' in host '{}'. Success? {}", new Object[]{commandStr, iSeries.getSystemName(), result});
+            LOG.trace("Executed PGM '{}' in host '{}'. Success? {}", commandStr, iSeries.getSystemName(), result);
         }
 
         if (result) {

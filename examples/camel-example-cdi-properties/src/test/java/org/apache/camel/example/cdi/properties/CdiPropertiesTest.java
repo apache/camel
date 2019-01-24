@@ -21,8 +21,9 @@ import javax.enterprise.event.Observes;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.management.event.CamelContextStartingEvent;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.reifier.RouteReifier;
+import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.test.cdi.CamelCdiRunner;
 import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class CdiPropertiesTest {
     static void advice(@Observes CamelContextStartingEvent event,
                        ModelCamelContext context) throws Exception {
         // Add a mock endpoint to the end of the route
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() {
                 weaveAddLast().to("mock:outbound");

@@ -38,6 +38,7 @@ import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsMessage;
 import org.apache.camel.component.sjms.SjmsProducer;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
+import org.apache.camel.component.sjms.jms.DestinationNameParser;
 import org.apache.camel.component.sjms.jms.JmsConstants;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.spi.UuidGenerator;
@@ -87,12 +88,16 @@ public class InOutProducer extends SjmsProducer {
                 }
 
                 Destination replyToDestination;
+                boolean isReplyToTopic = false;
                 if (ObjectHelper.isEmpty(getNamedReplyTo())) {
-                    replyToDestination = getEndpoint().getDestinationCreationStrategy().createTemporaryDestination(session, isTopic());
+                    isReplyToTopic = isTopic();
+                    replyToDestination = getEndpoint().getDestinationCreationStrategy().createTemporaryDestination(session, isReplyToTopic);
                 } else {
-                    replyToDestination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getNamedReplyTo(), isTopic());
+                    DestinationNameParser parser = new DestinationNameParser();
+                    isReplyToTopic = parser.isNamedReplyToTopic(getNamedReplyTo(), isTopic());
+                    replyToDestination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getNamedReplyTo(), isReplyToTopic);
                 }
-                MessageConsumer messageConsumer = getEndpoint().getJmsObjectFactory().createMessageConsumer(session, replyToDestination, null, isTopic(), null, true, false, false);
+                MessageConsumer messageConsumer = getEndpoint().getJmsObjectFactory().createMessageConsumer(session, replyToDestination, null, isReplyToTopic, null, true, false, false);
                 messageConsumer.setMessageListener(new MessageListener() {
                     @Override
                     public void onMessage(final Message message) {
@@ -108,7 +113,7 @@ public class InOutProducer extends SjmsProducer {
                 });
                 answer = new MessageConsumerResources(session, messageConsumer, replyToDestination);
             } catch (Exception e) {
-                log.error("Unable to create the MessageConsumerResource: " + e.getLocalizedMessage());
+                log.error("Unable to create the MessageConsumerResource: {}", e.getLocalizedMessage());
                 throw new CamelException(e);
             } finally {
                 connectionResource.returnConnection(conn);
@@ -221,7 +226,7 @@ public class InOutProducer extends SjmsProducer {
             } else if (responseObject instanceof Message) {
                 Message message = (Message) responseObject;
 
-                SjmsMessage response = new SjmsMessage(message, consumer.getSession(), getEndpoint().getBinding());
+                SjmsMessage response = new SjmsMessage(exchange, message, consumer.getSession(), getEndpoint().getBinding());
                 // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
                 // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access
                 // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).

@@ -19,12 +19,12 @@ package org.apache.camel.impl;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.InflightRepository;
+import org.apache.camel.support.DefaultExchange;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class DefaultInflightRepositoryTest extends ContextTestSupport {
 
+    @Test
     public void testDefaultInflightRepository() throws Exception {
         InflightRepository repo = new DefaultInflightRepository();
 

@@ -16,10 +16,7 @@
  */
 package org.apache.camel.model;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -50,7 +47,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     // Fluent API
     // -------------------------------------------------------------------------
 
-   /**
+    /**
      * Sets the group key to use. The default value is CamelHystrix.
      */
     public HystrixConfigurationDefinition groupKey(String groupKey) {
@@ -90,7 +87,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * If true the HystrixCircuitBreaker#allowRequest() will always return true to allow requests regardless of
+     * If true the HystrixCircuitBreaker.allowRequest() will always return true to allow requests regardless of
      * the error percentage from HystrixCommandMetrics.getHealthCounts().
      * <p>
      * The circuitBreakerForceOpen() property takes precedence so if it set to true this property does nothing.
@@ -131,7 +128,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     /**
      * Number of concurrent requests permitted to HystrixCommand.run(). Requests beyond the concurrent limit will be rejected.
      * <p>
-     * Applicable only when executionIsolationStrategy == SEMAPHORE.
+     * Applicable only when executionIsolationStrategy is SEMAPHORE.
      */
     public HystrixConfigurationDefinition executionIsolationSemaphoreMaxConcurrentRequests(Integer executionIsolationSemaphoreMaxConcurrentRequests) {
         setExecutionIsolationSemaphoreMaxConcurrentRequests(executionIsolationSemaphoreMaxConcurrentRequests);
@@ -151,9 +148,9 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Whether the execution thread should attempt an interrupt (using {@link Future#cancel}) when a thread times out.
+     * Whether the execution thread should attempt an interrupt (using Future cancel) when a thread times out.
      * <p>
-     * Applicable only when executionIsolationStrategy() == THREAD.
+     * Applicable only when executionIsolationStrategy() is set to THREAD.
      */
     public HystrixConfigurationDefinition executionIsolationThreadInterruptOnTimeout(Boolean executionIsolationThreadInterruptOnTimeout) {
         setExecutionIsolationThreadInterruptOnTimeout(executionIsolationThreadInterruptOnTimeout);
@@ -163,7 +160,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     /**
      * Time in milliseconds at which point the command will timeout and halt execution.
      * <p>
-     * If {@link #executionIsolationThreadInterruptOnTimeout} == true and the command is thread-isolated, the executing thread will be interrupted.
+     * If executionIsolationThreadInterruptOnTimeout is true and the command is thread-isolated, the executing thread will be interrupted.
      * If the command is semaphore-isolated and a HystrixObservableCommand, that command will get unsubscribed.
      */
     public HystrixConfigurationDefinition executionTimeoutInMilliseconds(Integer executionTimeoutInMilliseconds) {
@@ -270,7 +267,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Core thread-pool size that gets passed to {@link java.util.concurrent.ThreadPoolExecutor#setCorePoolSize(int)}
+     * Core thread-pool size.
      */
     public HystrixConfigurationDefinition corePoolSize(Integer corePoolSize) {
         setCorePoolSize(corePoolSize);
@@ -278,7 +275,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Keep-alive time in minutes that gets passed to {@link ThreadPoolExecutor#setKeepAliveTime(long, TimeUnit)}
+     * Keep-alive time in minutes.
      */
     public HystrixConfigurationDefinition keepAliveTime(Integer keepAliveTime) {
         setKeepAliveTime(keepAliveTime);
@@ -286,10 +283,9 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Max queue size that gets passed to {@link BlockingQueue} in HystrixConcurrencyStrategy.getBlockingQueue(int)
+     * Max queue size.
      *
-     * This should only affect the instantiation of a threadpool - it is not eliglible to change a queue size on the fly.
-     * For that, use queueSizeRejectionThreshold().
+     * This should only affect the instantiation of the thread-pool - it is not eligible to change a queue size on the fly.
      */
     public HystrixConfigurationDefinition maxQueueSize(Integer maxQueueSize) {
         setMaxQueueSize(maxQueueSize);
@@ -307,9 +303,9 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * Queue size rejection threshold is an artificial "max" size at which rejections will occur even
-     * if {@link #maxQueueSize} has not been reached. This is done because the {@link #maxQueueSize}
-     * of a {@link BlockingQueue} can not be dynamically changed and we want to support dynamically
+     * Queue size rejection threshold is an artificial max size at which rejections will occur even
+     * if maxQueueSize has not been reached. This is done because the maxQueueSize
+     * of a blocking queue can not be dynamically changed and we want to support dynamically
      * changing the queue size that affects rejections.
      * <p>
      * This is used by HystrixCommand when queuing a thread for execution.
@@ -346,7 +342,7 @@ public class HystrixConfigurationDefinition extends HystrixConfigurationCommon {
     }
 
     /**
-     * End of configuration
+     * End of configuration.
      */
     public HystrixDefinition end() {
         return parent;

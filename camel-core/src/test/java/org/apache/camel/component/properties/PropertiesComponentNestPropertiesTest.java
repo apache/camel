@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.component.properties;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class PropertiesComponentNestPropertiesTest extends ContextTestSupport {
     
@@ -30,17 +32,20 @@ public class PropertiesComponentNestPropertiesTest extends ContextTestSupport {
     }
     
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         System.setProperty("environment", "junit");
         super.setUp();
     }
     
     @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         System.clearProperty("environment");
         super.tearDown();
     }
     
+    @Test
     public void testPropertiesComponentDefault() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

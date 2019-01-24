@@ -21,14 +21,13 @@ import java.net.URLEncoder;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class LanguageNoCacheScriptTest extends ContextTestSupport {
 
     private LanguageEndpoint endpoint;
 
+    @Test
     public void testNoCache() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("World", "Camel");
 

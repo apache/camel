@@ -18,7 +18,7 @@ package org.apache.camel.component.zendesk;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.zendesk.internal.ZendeskApiName;
-import org.apache.camel.util.component.AbstractApiConsumer;
+import org.apache.camel.support.component.AbstractApiConsumer;
 
 /**
  * The Zendesk consumer.

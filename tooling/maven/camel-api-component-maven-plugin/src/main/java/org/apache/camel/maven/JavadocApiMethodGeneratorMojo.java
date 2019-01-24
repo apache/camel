@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.text.html.parser.DTD;
 
-import org.apache.camel.util.component.ApiMethodParser;
+import org.apache.camel.support.component.ApiMethodParser;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;

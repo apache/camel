@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Unit testing for using a MinaProducer that it can shutdown properly (CAMEL-395)
@@ -42,6 +43,7 @@ public class Mina2ProducerShutdownTest extends TestSupport {
         me.testProducer();
     }
 
+    @Test
     public void testProducer() throws Exception {
         // use shutdown hook to verify that we have stopped within 5 seconds
         Thread hook = new AssertShutdownHook();

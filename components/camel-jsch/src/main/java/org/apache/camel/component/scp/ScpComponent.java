@@ -21,17 +21,17 @@ import java.util.Map;
 
 import com.jcraft.jsch.JSch;
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.remote.RemoteFileComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.spi.annotations.Component;
 
 /**
  * Component providing secure messaging using JSch
  */
+@Component("scp")
+@FileProcessStrategy(ScpProcessStrategyFactory.class)
 public class ScpComponent extends RemoteFileComponent<ScpFile> {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ScpComponent.class);
 
     private boolean verboseLogging;
 
@@ -83,26 +83,26 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
         JSch.setLogger(new com.jcraft.jsch.Logger() {
             @Override
             public boolean isEnabled(int level) {
-                return level == FATAL || level == ERROR ? LOG.isErrorEnabled()
-                        : level == WARN ? LOG.isWarnEnabled()
-                        : level == INFO ? LOG.isInfoEnabled() : LOG.isDebugEnabled();
+                return level == FATAL || level == ERROR ? ScpComponent.this.log.isErrorEnabled()
+                        : level == WARN ? ScpComponent.this.log.isWarnEnabled()
+                        : level == INFO ? ScpComponent.this.log.isInfoEnabled() : ScpComponent.this.log.isDebugEnabled();
             }
 
             @Override
             public void log(int level, String message) {
                 if (level == FATAL || level == ERROR) {
-                    LOG.error("[JSCH] {}", message);
+                    ScpComponent.this.log.error("[JSCH] {}", message);
                 } else if (level == WARN) {
-                    LOG.warn("[JSCH] {}", message);
+                    ScpComponent.this.log.warn("[JSCH] {}", message);
                 } else if (level == INFO) {
                     // JSCH is verbose at INFO logging so allow to turn the noise down and log at DEBUG by default
                     if (isVerboseLogging()) {
-                        LOG.info("[JSCH] {}", message);
+                        ScpComponent.this.log.info("[JSCH] {}", message);
                     } else {
-                        LOG.debug("[JSCH] {}", message);
+                        ScpComponent.this.log.debug("[JSCH] {}", message);
                     }
                 } else {
-                    LOG.debug("[JSCH] {}", message);
+                    ScpComponent.this.log.debug("[JSCH] {}", message);
                 }
             }
         });

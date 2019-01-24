@@ -27,9 +27,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class JMXTXUseOriginalBodyWithDLCErrorHandlerTest extends JMXTXUseOriginalBodyTest {
 
     @EndpointInject(uri = "mock:end")

@@ -21,22 +21,19 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
-import org.apache.camel.builder.LoggingErrorHandlerBuilder;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 
 /**
  * Used to configure the error handler type
- *
- * @version 
  */
 @Metadata(label = "spring,configuration,error")
 @XmlType
 @XmlEnum(String.class)
 public enum ErrorHandlerType {
 
-    DefaultErrorHandler, DeadLetterChannel, LoggingErrorHandler, NoErrorHandler, TransactionErrorHandler;
+    DefaultErrorHandler, DeadLetterChannel, NoErrorHandler, TransactionErrorHandler;
 
     /**
      * Get the type as class.
@@ -49,8 +46,6 @@ public enum ErrorHandlerType {
             return DefaultErrorHandlerBuilder.class;
         case DeadLetterChannel:
             return DeadLetterChannelBuilder.class;
-        case LoggingErrorHandler:
-            return LoggingErrorHandlerBuilder.class;
         case NoErrorHandler:
             return NoErrorHandlerBuilder.class;
         case TransactionErrorHandler:

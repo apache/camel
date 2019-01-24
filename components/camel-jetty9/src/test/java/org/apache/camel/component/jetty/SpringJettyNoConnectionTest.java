@@ -24,9 +24,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringJettyNoConnectionTest extends CamelSpringTestSupport {
 
     @Override
@@ -43,7 +40,7 @@ public class SpringJettyNoConnectionTest extends CamelSpringTestSupport {
     @Test
     public void testConnectionNotOk() throws Exception {
         // stop Jetty route so there should not be a connection
-        context.stopRoute("jetty");
+        context.getRouteController().stopRoute("jetty");
 
         try {
             template.requestBody("direct:start", "Moon", String.class);

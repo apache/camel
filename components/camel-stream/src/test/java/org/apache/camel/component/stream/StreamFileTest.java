@@ -101,7 +101,7 @@ public class StreamFileTest extends CamelTestSupport {
         template.sendBody("direct:start", "Apache");
         template.sendBody("direct:start", "Camel");
         
-        context.startRoute("consume");
+        context.getRouteController().startRoute("consume");
         assertMockEndpointsSatisfied();
         context.stop();
     }

@@ -21,12 +21,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.junit.Test;
 
 /**
  *
  */
 public class SimplePropertiesNestedTest extends ContextTestSupport {
 
+    @Test
     public void testSimplePropertiesNested() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);

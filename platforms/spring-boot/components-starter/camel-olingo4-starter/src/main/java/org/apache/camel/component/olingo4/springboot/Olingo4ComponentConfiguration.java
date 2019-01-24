@@ -20,12 +20,11 @@ import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.http.HttpHost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Communicates with OData 4.0 services using Apache Olingo OData API.
@@ -38,6 +37,11 @@ public class Olingo4ComponentConfiguration
         extends
             ComponentConfigurationPropertiesCommon {
 
+    /**
+     * Whether to enable auto configuration of the olingo4 component. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
     /**
      * To use the shared configuration
      */
@@ -117,12 +121,10 @@ public class Olingo4ComponentConfiguration
         /**
          * HTTP proxy server configuration
          */
-        @NestedConfigurationProperty
         private HttpHost proxy;
         /**
          * To configure security using SSLContextParameters
          */
-        @NestedConfigurationProperty
         private SSLContextParameters sslContextParameters;
         /**
          * Custom HTTP async client builder for more complex HTTP client
@@ -130,7 +132,6 @@ public class Olingo4ComponentConfiguration
          * sslContext. Note that a socketTimeout MUST be specified in the
          * builder, otherwise OData requests could block indefinitely
          */
-        @NestedConfigurationProperty
         private HttpAsyncClientBuilder httpAsyncClientBuilder;
         /**
          * Custom HTTP client builder for more complex HTTP client
@@ -138,7 +139,6 @@ public class Olingo4ComponentConfiguration
          * sslContext. Note that a socketTimeout MUST be specified in the
          * builder, otherwise OData requests could block indefinitely
          */
-        @NestedConfigurationProperty
         private HttpClientBuilder httpClientBuilder;
 
         public Olingo4ApiName getApiName() {

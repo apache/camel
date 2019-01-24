@@ -21,8 +21,8 @@ import java.util.Map;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.twilio.internal.TwilioApiName;
 import org.apache.camel.component.twilio.internal.TwilioPropertiesHelper;
-import org.apache.camel.util.component.AbstractApiProducer;
-import org.apache.camel.util.component.ApiMethod;
+import org.apache.camel.support.component.AbstractApiProducer;
+import org.apache.camel.support.component.ApiMethod;
 
 /**
  * The Twilio producer.

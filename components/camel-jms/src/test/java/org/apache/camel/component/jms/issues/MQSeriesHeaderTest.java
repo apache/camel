@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.issues;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
@@ -34,8 +35,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when
  * forwarding a JMS message from one destination to another
- *
- * @version 
  */
 public class MQSeriesHeaderTest extends CamelTestSupport {
 

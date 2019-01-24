@@ -19,14 +19,13 @@ package org.apache.camel.spring.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class SpringCustomPredicateTest extends SpringTestSupport {
 
+    @Test
     public void testFilterMyPredicate() throws InterruptedException {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello Camel", "Secret Agent");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello Camel", "Hello World", "Secret Agent");

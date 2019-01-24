@@ -66,10 +66,10 @@ with the following path and query parameters:
 | *outType* (common) | To declare the outgoing POJO binding type as a FQN class name |  | String
 | *produces* (common) | Media type such as: 'text/xml', or 'application/json' this REST service returns. |  | String
 | *routeId* (common) | Name of the route this REST services creates |  | String
-| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN/ERROR level and ignored. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *description* (consumer) | Human description to document this REST service |  | String
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored. |  | ExceptionHandler
-| *exchangePattern* (consumer) | Sets the default exchange pattern when creating an exchange. |  | ExchangePattern
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *apiDoc* (producer) | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
 | *bindingMode* (producer) | Configures the binding mode for the producer. If set to anything other than 'off' the producer will try to convert the body of the incoming message from inType to the json or xml, and the response from json or xml to outType. |  | RestBindingMode
 | *host* (producer) | Host and port of HTTP service to use (override host in swagger schema) |  | String

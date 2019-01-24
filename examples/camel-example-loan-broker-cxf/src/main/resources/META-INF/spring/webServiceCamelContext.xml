@@ -91,9 +91,9 @@
       <camel:from uri="cxf:bean:loanBroker"/>
       <camel:process ref="creditScoreProcessor"/>
       <camel:multicast parallelProcessing="true" strategyRef="bankResponse">
-        <camel:to ref="bank1WS"/>
-        <camel:to ref="bank2WS"/>
-        <camel:to ref="bank3WS"/>
+        <camel:to uri="ref:bank1WS"/>
+        <camel:to uri="ref:bank2WS"/>
+        <camel:to uri="ref:bank3WS"/>
       </camel:multicast>
       <camel:process ref="replyProcessor"/>
     </camel:route>

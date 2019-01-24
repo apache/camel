@@ -17,7 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.DefaultExchangeFormatter;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 
 public class TraceExchangeFormatter extends DefaultExchangeFormatter {
 

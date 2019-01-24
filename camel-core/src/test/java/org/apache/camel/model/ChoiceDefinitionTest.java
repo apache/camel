@@ -17,12 +17,14 @@
 package org.apache.camel.model;
 
 import org.apache.camel.TestSupport;
+import org.junit.Test;
 
 /**
  *
  */
 public class ChoiceDefinitionTest extends TestSupport {
 
+    @Test
     public void testChoiceOutputOrder() throws Exception {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
@@ -39,6 +41,7 @@ public class ChoiceDefinitionTest extends TestSupport {
         assertEquals(other, choice.getOutputs().get(2));
     }
 
+    @Test
     public void testChoiceOutputOrderIterate() throws Exception {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
@@ -63,6 +66,7 @@ public class ChoiceDefinitionTest extends TestSupport {
         }
     }
 
+    @Test
     public void testChoiceOutputOrderNoOtherwise() throws Exception {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
@@ -76,6 +80,7 @@ public class ChoiceDefinitionTest extends TestSupport {
         assertEquals(when2, choice.getOutputs().get(1));
     }
 
+    @Test
     public void testChoiceOutputOrderNoOtherwiseIterate() throws Exception {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
@@ -100,6 +105,7 @@ public class ChoiceDefinitionTest extends TestSupport {
         }
     }
 
+    @Test
     public void testChoiceOtherwiseAlwaysLast() throws Exception {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
@@ -118,6 +124,7 @@ public class ChoiceDefinitionTest extends TestSupport {
         assertEquals(other, choice.getOutputs().get(2));
     }
 
+    @Test
     public void testChoiceOtherwiseAlwaysLastIterate() throws Exception {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
@@ -149,6 +156,7 @@ public class ChoiceDefinitionTest extends TestSupport {
         }
     }
 
+    @Test
     public void testChoiceOutputRemoveFirst() throws Exception {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
@@ -166,6 +174,7 @@ public class ChoiceDefinitionTest extends TestSupport {
         assertEquals(other, choice.getOutputs().get(1));
     }
 
+    @Test
     public void testChoiceOutputRemoveLast() throws Exception {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
@@ -183,6 +192,7 @@ public class ChoiceDefinitionTest extends TestSupport {
         assertEquals(when2, choice.getOutputs().get(1));
     }
 
+    @Test
     public void testChoiceOutputSetFirst() throws Exception {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));
@@ -202,6 +212,7 @@ public class ChoiceDefinitionTest extends TestSupport {
         assertEquals(other, choice.getOutputs().get(2));
     }
 
+    @Test
     public void testChoiceOutputClear() throws Exception {
         ChoiceDefinition choice = new ChoiceDefinition();
         WhenDefinition when1 = new WhenDefinition(body().contains("Camel"));

@@ -20,8 +20,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ExpressionToPredicateAdapter;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * A <a href="http://camel.apache.org/bean-language.html">bean language</a>
@@ -35,9 +36,8 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * As of Camel 1.5 the bean language also supports invoking a provided bean by
  * its classname or the bean itself.
- *
- * @version 
  */
+@org.apache.camel.spi.annotations.Language("bean")
 public class BeanLanguage implements Language, IsSingleton {
 
     /**
@@ -80,7 +80,7 @@ public class BeanLanguage implements Language, IsSingleton {
     }
 
     public Expression createExpression(String expression) {
-        ObjectHelper.notNull(expression, "expression");
+        org.apache.camel.util.ObjectHelper.notNull(expression, "expression");
 
         String beanName = expression;
         String method = null;
@@ -88,8 +88,8 @@ public class BeanLanguage implements Language, IsSingleton {
         // we support both the .method name and the ?method= syntax
         // as the ?method= syntax is very common for the bean component
         if (expression.contains("?method=")) {
-            beanName = ObjectHelper.before(expression, "?");
-            method = ObjectHelper.after(expression, "?method=");
+            beanName = StringHelper.before(expression, "?");
+            method = StringHelper.after(expression, "?method=");
         } else {
             //first check case :: because of my.own.Bean::method
             int doubleColonIndex = expression.indexOf("::");
@@ -111,7 +111,7 @@ public class BeanLanguage implements Language, IsSingleton {
     }
 
     public Expression createExpression(Object bean, String method) {
-        ObjectHelper.notNull(bean, "bean");
+        org.apache.camel.util.ObjectHelper.notNull(bean, "bean");
         return new BeanExpression(bean, method);
     }
 

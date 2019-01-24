@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
@@ -30,6 +31,7 @@ public class SameRouteAndContextScopedErrorHandlerIssueTest extends ContextTestS
 
     private final AtomicInteger counter = new AtomicInteger();
 
+    @Test
     public void testSame() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 

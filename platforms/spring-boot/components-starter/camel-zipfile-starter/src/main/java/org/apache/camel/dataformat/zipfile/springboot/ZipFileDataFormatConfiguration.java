@@ -33,6 +33,11 @@ public class ZipFileDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the zipfile data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * If the zip file has more then one entry, the setting this option to true,
      * allows to work with the splitter EIP, to split the data using an iterator
      * in a streaming mode.

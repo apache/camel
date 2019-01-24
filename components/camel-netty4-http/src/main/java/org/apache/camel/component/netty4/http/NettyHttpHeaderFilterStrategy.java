@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.netty4.http;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**

@@ -19,11 +19,12 @@ package org.apache.camel.component.hystrix.processor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.netflix.hystrix.HystrixCommand;
+import com.netflix.hystrix.exception.HystrixBadRequestException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,14 +137,20 @@ public class HystrixProcessorCommand extends HystrixCommand {
                 return null;
             }
 
-            // and copy the result
-            ExchangeHelper.copyResults(exchange, copy);
-
             // execution exception must take precedence over exchange exception
             // because hystrix may have caused this command to fail due timeout or something else
             if (hystrixExecutionException != null) {
                 exchange.setException(new CamelExchangeException("Hystrix execution exception occurred while processing Exchange", exchange, hystrixExecutionException));
             }
+
+            // special for HystrixBadRequestException which should not trigger fallback
+            if (camelExchangeException instanceof HystrixBadRequestException) {
+                LOG.debug("Running processor: {} with exchange: {} done as bad request", processor, exchange);
+                return exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+            }
+
+            // copy the result before its regarded as success
+            ExchangeHelper.copyResults(exchange, copy);
 
             // in case of an exception in the exchange
             // we need to trigger this by throwing the exception so hystrix will execute the fallback

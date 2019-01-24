@@ -33,6 +33,11 @@ public class PGPDataFormatConfiguration
             DataFormatConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the pgp data format. This is
+     * enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * The user ID of the key in the PGP keyring used during encryption. Can
      * also be only a part of a user ID. For example, if the user ID is Test
      * User then you can use the part Test User or to address the user ID.

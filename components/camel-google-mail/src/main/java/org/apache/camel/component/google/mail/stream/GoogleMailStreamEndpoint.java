@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.google.mail.stream;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.mail.internet.AddressException;
 
 import com.google.api.client.util.Base64;
 import com.google.api.services.gmail.Gmail;
@@ -30,7 +27,6 @@ import com.google.api.services.gmail.model.ListLabelsResponse;
 import com.google.api.services.gmail.model.MessagePart;
 import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.common.base.Splitter;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -38,19 +34,18 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.google.mail.GoogleMailClientFactory;
-import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * The google-mail component provides access to Google Mail.
  */
-@UriEndpoint(firstVersion = "2.22.0", 
-             scheme = "google-mail-stream", 
-             title = "Google Mail Stream", 
-             syntax = "google-mail-stream:index", 
-             consumerClass = GoogleMailStreamConsumer.class,
+@UriEndpoint(firstVersion = "2.22.0",
+             scheme = "google-mail-stream",
+             title = "Google Mail Stream",
+             syntax = "google-mail-stream:index",
              consumerOnly = true,
              label = "api,cloud,mail")
 public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
@@ -116,14 +111,14 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
         return true;
     }
 
-    public Exchange createExchange(ExchangePattern pattern, com.google.api.services.gmail.model.Message mail) throws UnsupportedEncodingException {
+    public Exchange createExchange(ExchangePattern pattern, com.google.api.services.gmail.model.Message mail) {
 
-        Exchange exchange = super.createExchange();
+        Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         exchange.getIn().setHeader(GoogleMailStreamConstants.MAIL_ID, mail.getId());
         List<MessagePart> parts = mail.getPayload().getParts();
         if (parts != null && parts.get(0).getBody().getData() != null) {
-            byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim().toString()); 
+            byte[] bodyBytes = Base64.decodeBase64(parts.get(0).getBody().getData().trim());
             String body = new String(bodyBytes, StandardCharsets.UTF_8);
             message.setBody(body);
         }
@@ -151,8 +146,8 @@ public class GoogleMailStreamEndpoint extends ScheduledPollEndpoint {
             }
         }
     }
-    
-    private List<String> splitLabels(String labels) throws AddressException {
+
+    private List<String> splitLabels(String labels) {
         return Splitter.on(',').splitToList(labels);
     }
 }

@@ -34,6 +34,11 @@ public class ReactiveStreamsComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the reactive-streams component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Configures the internal engine for Reactive Streams.
      */
     private ReactiveStreamsEngineConfigurationNestedConfiguration internalEngineConfiguration;

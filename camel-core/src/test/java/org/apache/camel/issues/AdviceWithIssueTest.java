@@ -22,12 +22,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.reifier.RouteReifier;
+import org.junit.Test;
 
-/**
- * @version 
- */
 public class AdviceWithIssueTest extends ContextTestSupport {
 
+    @Test
     public void testNoAdvice() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
@@ -42,10 +42,11 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithErrorHandler() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
         try {
-            route.adviceWith(context, new AdviceWithRouteBuilder() {
+            RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     errorHandler(deadLetterChannel("mock:dead"));
@@ -57,9 +58,10 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         }
     }
 
+    @Test
     public void testAdviceWithOnException() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
@@ -77,9 +79,10 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithInterceptFrom() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptFrom().to("mock:from");
@@ -95,9 +98,10 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithInterceptSendToEndpoint() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 interceptSendToEndpoint("mock:result").to("mock:to");
@@ -113,9 +117,10 @@ public class AdviceWithIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testAdviceWithOnCompletion() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        route.adviceWith(context, new AdviceWithRouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onCompletion().to("mock:done");

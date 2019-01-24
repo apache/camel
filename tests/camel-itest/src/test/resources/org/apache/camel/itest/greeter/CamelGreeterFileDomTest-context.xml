@@ -40,7 +40,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring" xmlns:types="http://apache.org/hello_world_soap_http/types">
     <route streamCache="true">
       <from uri="direct:start"/>
-      <to uri="cxf://bean:serviceEndpoint?dataFormat=MESSAGE"/>
+      <to uri="cxf://bean:serviceEndpoint?dataFormat=RAW"/>
       <to uri="file:target/greeter/response/?fileName=response.txt"/>
       <convertBodyTo type="org.w3c.dom.Document"/>
       <to uri="log:xml"/>

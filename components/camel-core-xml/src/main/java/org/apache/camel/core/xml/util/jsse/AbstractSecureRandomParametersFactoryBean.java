@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.util.jsse.SecureRandomParameters;
+import org.apache.camel.support.jsse.SecureRandomParameters;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractSecureRandomParametersFactoryBean extends AbstractJsseUtilFactoryBean<SecureRandomParameters> {

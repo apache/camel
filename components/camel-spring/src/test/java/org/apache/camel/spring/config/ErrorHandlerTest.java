@@ -25,6 +25,7 @@ import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -34,6 +35,7 @@ public class ErrorHandlerTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/errorHandler.xml");
     }
 
+    @Test
     public void testEndpointConfiguration() throws Exception {
         SpringCamelContext context = applicationContext.getBeansOfType(SpringCamelContext.class).values().iterator().next();
         List<Route> list = context.getRoutes();

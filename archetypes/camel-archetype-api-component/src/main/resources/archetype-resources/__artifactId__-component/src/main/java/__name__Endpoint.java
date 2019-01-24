@@ -24,9 +24,9 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.component.AbstractApiEndpoint;
-import org.apache.camel.util.component.ApiMethod;
-import org.apache.camel.util.component.ApiMethodPropertiesHelper;
+import org.apache.camel.support.component.AbstractApiEndpoint;
+import org.apache.camel.support.component.ApiMethod;
+import org.apache.camel.support.component.ApiMethodPropertiesHelper;
 
 import ${package}.api.${name}FileHello;
 import ${package}.api.${name}JavadocHello;
@@ -42,7 +42,7 @@ import ${package}.internal.${name}PropertiesHelper;
              consumerClass = ${name}Consumer.class, label = "custom")
 public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}Configuration> {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String name;
 
     // TODO create and manage API proxy

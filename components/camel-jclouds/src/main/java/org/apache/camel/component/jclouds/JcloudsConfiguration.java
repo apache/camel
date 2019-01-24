@@ -24,9 +24,9 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class JcloudsConfiguration {
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private JcloudsCommand command;
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = true)
     private String providerId;
 
     // compute options

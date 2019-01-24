@@ -1,0 +1,11 @@
+[[RouteBuilder-RouteBuilder]]
+=== RouteBuilder
+
+The RouteBuilder is a base class which is derived from to create routing rules using the DSL.
+Instances of RouteBuilder are then added to the CamelContext.
+
+==== See Also
+
+* link:camelcontext.adoc[CamelContext]
+* link:routes.adoc[Routes]
+* link:architecture.adoc[Architecture]

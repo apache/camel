@@ -47,6 +47,7 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Assert;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 
 
@@ -55,7 +56,6 @@ import org.springframework.test.context.ContextConfiguration;
  * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfProducer in PAYLOAD mode.  
  * That is, testing attachment with MTOM optimization off.
  *  
- * @version 
  */
 @ContextConfiguration
 public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPayloadModeTest {
@@ -71,6 +71,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
     }
     
     @Override
+    @Test
     public void testProducer() throws Exception {
         if (MtomTestHelper.isAwtHeadless(logger, null)) {
             return;

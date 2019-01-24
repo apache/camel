@@ -20,13 +20,16 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * For working with Amazon's Elastic Compute Cloud (EC2).
  */
+@Component("aws-ec2")
 public class EC2Component extends DefaultComponent {
 
     @Metadata

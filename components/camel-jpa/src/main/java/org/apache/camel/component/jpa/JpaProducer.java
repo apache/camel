@@ -26,21 +26,16 @@ import javax.persistence.Query;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.language.simple.SimpleLanguage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultProducer;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 
-/**
- * @version 
- */
 public class JpaProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
+
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
     private final Expression expression;
@@ -185,14 +180,21 @@ public class JpaProducer extends DefaultProducer {
         });
     }
 
+    @SuppressWarnings("unchecked")
     private void configureParameters(Query query, Exchange exchange) {
         int maxResults = getEndpoint().getMaximumResults();
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
         }
-        // setup the parameter
+        // setup the parameters
+        Map<String, ?> params;
         if (parameters != null) {
-            parameters.forEach((key, value) -> {
+            params = parameters;
+        } else {
+            params = exchange.getIn().getHeader(JpaConstants.JPA_PARAMETERS_HEADER, Map.class);
+        }
+        if (params != null) {
+            params.forEach((key, value) -> {
                 Object resolvedValue = value;
                 if (value instanceof String) {
                     resolvedValue = SimpleLanguage.expression((String)value).evaluate(exchange, Object.class);
@@ -255,7 +257,7 @@ public class JpaProducer extends DefaultProducer {
                  * @return the managed entity
                  */
                 private Object save(final Object entity) {
-                    LOG.debug("save: {}", entity);
+                    log.debug("save: {}", entity);
                     if (getEndpoint().isUsePersist()) {
                         entityManager.persist(entity);
                         return entity;
@@ -270,7 +272,7 @@ public class JpaProducer extends DefaultProducer {
                  * @return the managed entity
                  */
                 private Object remove(final Object entity) {
-                    LOG.debug("remove: {}", entity);
+                    log.debug("remove: {}", entity);
 
                     Object managedEntity;
 

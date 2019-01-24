@@ -17,14 +17,13 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.spring.SpringTestSupport;
+import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
 public class OneRouteRefReverseOnExceptionAndDLCErrorHandlerTest extends SpringTestSupport {
 
+    @Test
     public void testOneRouteRefReverseNoOnExceptionAndDLCErrorHandler() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(1);
@@ -35,6 +34,7 @@ public class OneRouteRefReverseOnExceptionAndDLCErrorHandlerTest extends SpringT
         assertMockEndpointsSatisfied();
     }
 
+    @Test
     public void testOneRouteRefReverseOnExceptionAndDLCErrorHandler() throws Exception {
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:dead").expectedMessageCount(0);

@@ -23,9 +23,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Headers;
 import org.apache.camel.ProducerTemplate;
 
-/**
- * @version 
- */
 public class MyBean {
     private Map<?, ?> headers;
     private String body;

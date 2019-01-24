@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 public class RoundRobinLoadBalanceTest extends ContextTestSupport {
@@ -27,7 +29,8 @@ public class RoundRobinLoadBalanceTest extends ContextTestSupport {
     protected MockEndpoint z;
 
     @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         super.setUp();
 
         x = getMockEndpoint("mock:x");
@@ -46,6 +49,7 @@ public class RoundRobinLoadBalanceTest extends ContextTestSupport {
         };
     }
 
+    @Test
     public void testRoundRobin() throws Exception {
         String body = "<one/>";
         x.expectedBodiesReceived(body);

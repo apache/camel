@@ -60,14 +60,16 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.RestProducerFactoryHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
@@ -93,21 +95,16 @@ import org.eclipse.jetty.util.component.Container;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An HttpComponent which starts an embedded Jetty for to handle consuming from
  * the http endpoints.
- *
- * @version
  */
 public abstract class JettyHttpComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
     public static final String TMP_DIR = "CamelJettyTempDir";
 
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<>();
 
-    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent.class);
     private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
     private static final String JETTY_SSL_KEYPASSWORD = "org.eclipse.jetty.ssl.keypassword";
     private static final String JETTY_SSL_PASSWORD = "org.eclipse.jetty.ssl.password";
@@ -142,16 +139,17 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     private boolean sendServerVersion = true;
 
     public JettyHttpComponent() {
-        super(JettyHttpEndpoint.class);
     }
 
     class ConnectorRef {
+        CamelContext camelContext;
         Server server;
         Connector connector;
         CamelServlet servlet;
         int refCount;
 
-        ConnectorRef(Server server, Connector connector, CamelServlet servlet) {
+        ConnectorRef(CamelContext camelContext, Server server, Connector connector, CamelServlet servlet) {
+            this.camelContext = camelContext;
             this.server = server;
             this.connector = connector;
             this.servlet = servlet;
@@ -212,7 +210,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         // create endpoint after all known parameters have been extracted from parameters
 
         // include component scheme in the uri
-        String scheme = ObjectHelper.before(uri, ":");
+        String scheme = StringHelper.before(uri, ":");
         endpointUri = new URI(scheme + ":" + endpointUri);
 
         JettyHttpEndpoint endpoint = createEndpoint(endpointUri, httpUri);
@@ -314,6 +312,34 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
     protected abstract JettyHttpEndpoint createEndpoint(URI endpointUri, URI httpUri) throws URISyntaxException;
 
+    @Override
+    public boolean canConnect(HttpConsumer consumer) throws Exception {
+        // Make sure that there is a connector for the requested endpoint.
+        JettyHttpEndpoint endpoint = (JettyHttpEndpoint)consumer.getEndpoint();
+        String connectorKey = getConnectorKey(endpoint);
+
+        synchronized (CONNECTORS) {
+            ConnectorRef connectorRef = CONNECTORS.get(connectorKey);
+
+            // check if there are already another consumer on the same context-path and if so fail
+            if (connectorRef != null) {
+                for (Map.Entry<String, HttpConsumer> entry : connectorRef.servlet.getConsumers().entrySet()) {
+                    String path = entry.getValue().getPath();
+                    CamelContext camelContext = entry.getValue().getEndpoint().getCamelContext();
+                    if (consumer.getPath().equals(path)) {
+                        // its allowed if they are from the same camel context
+                        boolean sameContext = consumer.getEndpoint().getCamelContext() == camelContext;
+                        if (!sameContext) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Connects the URL specified on the endpoint to the specified processor.
      */
@@ -329,7 +355,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 Server server = createServer();
                 Connector connector = getConnector(server, endpoint);
                 if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
-                    LOG.warn("You use localhost interface! It means that no external connections will be available."
+                    log.warn("You use localhost interface! It means that no external connections will be available."
                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)? " + endpoint);
                 }
                 if (endpoint.isEnableJmx()) {
@@ -337,16 +363,19 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 }
                 server.addConnector(connector);
 
-                connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
+                connectorRef = new ConnectorRef(getCamelContext(), server, connector, createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
                 // must enable session before we start
                 if (endpoint.isSessionSupport()) {
                     enableSessionSupport(connectorRef.server, connectorKey);
                 }
                 connectorRef.server.start();
 
+                log.debug("Adding connector key: {} -> {}", connectorKey, connectorRef);
                 CONNECTORS.put(connectorKey, connectorRef);
 
             } else {
+                log.debug("Using existing connector key: {} -> {}", connectorKey, connectorRef);
+
                 // check if there are any new handlers, and if so then we need to re-start the server
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
                     List<Handler> existingHandlers = new ArrayList<>();
@@ -356,18 +385,18 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     List<Handler> newHandlers = new ArrayList<>(endpoint.getHandlers());
                     boolean changed = !existingHandlers.containsAll(newHandlers) && !newHandlers.containsAll(existingHandlers);
                     if (changed) {
-                        LOG.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
+                        log.debug("Restarting Jetty server due to adding new Jetty Handlers: {}", newHandlers);
                         connectorRef.server.stop();
                         addJettyHandlers(connectorRef.server, endpoint.getHandlers());
                         connectorRef.server.start();
                     }
                 }
+                // check the session support
+                if (endpoint.isSessionSupport()) {
+                    enableSessionSupport(connectorRef.server, connectorKey);
+                }
                 // ref track the connector
                 connectorRef.increment();
-            }
-            // check the session support
-            if (endpoint.isSessionSupport()) {
-                enableSessionSupport(connectorRef.server, connectorKey);
             }
 
             if (endpoint.isEnableMultipartFilter()) {
@@ -384,7 +413,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     private void enableJmx(Server server) {
         MBeanContainer containerToRegister = getMbContainer();
         if (containerToRegister != null) {
-            LOG.info("Jetty JMX Extensions is enabled");
+            log.info("Jetty JMX Extensions is enabled");
             addServerMBean(server);
             // Since we may have many Servers running, don't tie the MBeanContainer
             // to a Server lifecycle or we end up closing it while it is still in use.
@@ -433,12 +462,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         CamelContext camelContext = this.getCamelContext();
         FilterHolder filterHolder = new FilterHolder();
         filterHolder.setInitParameter("deleteFiles", "true");
-        if (ObjectHelper.isNotEmpty(camelContext.getProperty(TMP_DIR))) {
-            File file = new File(camelContext.getProperty(TMP_DIR));
+        if (ObjectHelper.isNotEmpty(camelContext.getGlobalOption(TMP_DIR))) {
+            File file = new File(camelContext.getGlobalOption(TMP_DIR));
             if (!file.isDirectory()) {
                 throw new RuntimeCamelException(
                         "The temp file directory of camel-jetty is not exists, please recheck it with directory name :"
-                                + camelContext.getProperties().get(TMP_DIR));
+                                + camelContext.getGlobalOptions().get(TMP_DIR));
             }
             context.setAttribute("javax.servlet.context.tempdir", file);
         }
@@ -457,7 +486,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
         }
         addFilter(context, filterHolder, pathSpec);
-        LOG.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
+        log.debug("using multipart filter implementation " + filter.getClass().getName() + " for path " + pathSpec);
     }
 
     /**
@@ -721,18 +750,18 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         CamelContext context = endpoint.getCamelContext();
 
         if (context != null
-            && ObjectHelper.isNotEmpty(context.getProperty("http.proxyHost"))
-            && ObjectHelper.isNotEmpty(context.getProperty("http.proxyPort"))) {
-            String host = context.getProperty("http.proxyHost");
-            int port = Integer.parseInt(context.getProperty("http.proxyPort"));
-            LOG.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
+            && ObjectHelper.isNotEmpty(context.getGlobalOption("http.proxyHost"))
+            && ObjectHelper.isNotEmpty(context.getGlobalOption("http.proxyPort"))) {
+            String host = context.getGlobalOption("http.proxyHost");
+            int port = Integer.parseInt(context.getGlobalOption("http.proxyPort"));
+            log.debug("CamelContext properties http.proxyHost and http.proxyPort detected. Using http proxy host: {} port: {}", host, port);
             httpClient.setProxy(host, port);
         }
 
         if (ObjectHelper.isNotEmpty(endpoint.getProxyHost()) && endpoint.getProxyPort() > 0) {
             String host = endpoint.getProxyHost();
             int port = endpoint.getProxyPort();
-            LOG.debug("proxyHost and proxyPort options detected. Using http proxy host: {} port: {}", host, port);
+            log.debug("proxyHost and proxyPort options detected. Using http proxy host: {} port: {}", host, port);
             httpClient.setProxy(host, port);
         }
 
@@ -755,11 +784,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             httpClient.setThreadPoolOrExecutor(qtp);
         }
 
-        if (LOG.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             if (minThreads != null) {
-                LOG.debug("Created HttpClient with thread pool {}-{} -> {}", new Object[]{minThreads, maxThreads, httpClient});
+                log.debug("Created HttpClient with thread pool {}-{} -> {}", minThreads, maxThreads, httpClient);
             } else {
-                LOG.debug("Created HttpClient with default thread pool size -> {}", httpClient);
+                log.debug("Created HttpClient with default thread pool size -> {}", httpClient);
             }
         }
 
@@ -899,7 +928,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 mbContainer = new MBeanContainer(mbs);
                 startMbContainer();
             } else {
-                LOG.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
+                log.warn("JMX disabled in CamelContext. Jetty JMX extensions will remain disabled.");
             }
         }
 
@@ -1100,7 +1129,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
      * If the option is true, jetty will send the server header with the jetty version information to the client which sends the request.
      * NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.
      */
-    @Metadata(description = "If the option is true, jetty server will send the date header to the client which sends the request."
+    @Metadata(description = "If the option is true, jetty will send the server header with the jetty version information to the client which sends the request."
             + " NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected.",
             defaultValue = "true", label = "consumer")
     public void setSendServerVersion(boolean sendServerVersion) {
@@ -1169,11 +1198,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
 
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
+            if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
                 host = "0.0.0.0";
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
                 host = HostUtils.getLocalHostName();
-            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
                 host = HostUtils.getLocalIp();
             }
         }
@@ -1273,6 +1302,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (!query.isEmpty()) {
             url = url + "?" + query;
         }
+
+        // there are cases where we might end up here without component being created beforehand
+        // we need to abide by the component properties specified in the parameters when creating
+        // the component
+        RestProducerFactoryHelper.setupComponentFor(url, camelContext, (Map<String, Object>) parameters.get("component"));
 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {
@@ -1436,7 +1470,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                     mbContainer.getClass().getMethod("addBean", Object.class).invoke(mbContainer, mbContainer);
                 }
             } catch (Throwable e) {
-                LOG.warn("Could not start Jetty MBeanContainer. Jetty JMX extensions will remain disabled.", e);
+                log.warn("Could not start Jetty MBeanContainer. Jetty JMX extensions will remain disabled.", e);
             }
         }
     }

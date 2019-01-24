@@ -26,12 +26,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "camel.clustered.controller")
 public class ClusteredRouteControllerConfiguration {
     /**
-     * Global option to enable/disable this ${@link org.apache.camel.spi.RouteController}, default is false.
+     * Global option to enable/disable Camel clustered route controller, default is false.
      */
     private boolean enabled;
 
     /**
-     * Set the amount of time the route controller should wait before to start
+     * Set the amount of time (in millis) the route controller should wait before to start
      * the routes after the camel context is started or after the route is
      * initialized if the route is created after the camel context is started.
      */
@@ -108,7 +108,7 @@ public class ClusteredRouteControllerConfiguration {
         private boolean clustered = true;
 
         /**
-         * Set the amount of time the route controller should wait before to start
+         * Set the amount of time (in millis) the route controller should wait before to start
          * the routes after the camel context is started or after the route is
          * initialized if the route is created after the camel context is started.
          */
@@ -118,7 +118,6 @@ public class ClusteredRouteControllerConfiguration {
          * The default namespace.
          */
         private String namespace;
-
 
         public boolean isClustered() {
             return clustered;

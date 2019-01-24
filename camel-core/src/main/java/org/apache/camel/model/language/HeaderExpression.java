@@ -24,8 +24,6 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * To use a Camel Message header in expressions or predicates.
- *
- * @version 
  */
 @Metadata(firstVersion = "1.5.0", label = "language,core", title = "Header")
 @XmlRootElement(name = "header")

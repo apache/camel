@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import com.notnoop.apns.ApnsServiceBuilder;
 
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.junit.Before;
 import org.junit.Test;
 

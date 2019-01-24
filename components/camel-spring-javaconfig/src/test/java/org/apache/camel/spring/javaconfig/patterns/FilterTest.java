@@ -34,8 +34,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 /**
  * Tests filtering using Spring Test and Java Config
- * 
- * @version 
  */
 // START SNIPPET: example
 // tag::example[]

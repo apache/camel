@@ -21,17 +21,16 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.support.service.ServiceSupport;
+import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-/**
- * @version 
- */
 public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
 
+    @Test
     public void testConsumerCacheZeroCapacity() throws Exception {
-        ConsumerCache cache = new ConsumerCache(this, context, 0);
+        DefaultConsumerCache cache = new DefaultConsumerCache(this, context, -1);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());
@@ -39,7 +38,7 @@ public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
         Endpoint endpoint = context.getEndpoint("file:target/foo?fileName=foo.txt&initialDelay=0&delay=10");
         PollingConsumer consumer = cache.acquirePollingConsumer(endpoint);
         assertNotNull(consumer);
-        assertEquals("Started", ((org.apache.camel.support.ServiceSupport) consumer).getStatus().name());
+        assertEquals("Started", ((ServiceSupport) consumer).getStatus().name());
 
         // let it run a poll
         consumer.receive(50);

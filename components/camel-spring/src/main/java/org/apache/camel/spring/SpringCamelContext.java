@@ -21,7 +21,7 @@ import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -41,10 +41,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.Phased;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.Ordered;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 /**
  * A Spring aware implementation of {@link org.apache.camel.CamelContext} which
@@ -53,8 +52,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * as well as supporting accessing components and beans via the Spring
  * {@link ApplicationContext}
- *
- * @version 
  */
 public class SpringCamelContext extends DefaultCamelContext implements Lifecycle, ApplicationContextAware, Phased,
         ApplicationListener<ApplicationEvent>, Ordered {
@@ -66,9 +63,15 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
     private boolean shutdownEager = true;
 
     public SpringCamelContext() {
+        super(false);
+        if (Boolean.getBoolean("org.apache.camel.jmx.disabled")) {
+            disableJMX();
+        }
+        setManagementMBeanAssembler(new SpringManagementMBeanAssembler(this));
     }
 
     public SpringCamelContext(ApplicationContext applicationContext) {
+        this();
         setApplicationContext(applicationContext);
     }
 
@@ -78,15 +81,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
         } else {
             NO_START.set(null);
         }
-    }
-
-    /**
-     * @deprecated its better to create and boot Spring the standard Spring way and to get hold of CamelContext
-     * using the Spring API.
-     */
-    @Deprecated
-    public static SpringCamelContext springCamelContext(ApplicationContext applicationContext) throws Exception {
-        return springCamelContext(applicationContext, true);
     }
 
     /**
@@ -104,19 +98,11 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
         }
         SpringCamelContext answer = new SpringCamelContext();
         answer.setApplicationContext(applicationContext);
+        answer.init();
         if (maybeStart) {
             answer.start();
         }
         return answer;
-    }
-
-    /**
-     * @deprecated its better to create and boot Spring the standard Spring way and to get hold of CamelContext
-     * using the Spring API.
-     */
-    @Deprecated
-    public static SpringCamelContext springCamelContext(String configLocations) throws Exception {
-        return springCamelContext(new ClassPathXmlApplicationContext(configLocations));
     }
 
     @Override
@@ -131,7 +117,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
             try {
                 StopWatch watch = new StopWatch();
                 super.start();
-                LOG.debug("start() took {} millis", watch.stop());
+                LOG.debug("start() took {} millis", watch.taken());
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
             }
@@ -143,15 +129,10 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
 
     @Override
     public void stop() {
-        if (!isStopping() && !isStopped()) {
-            try {
-                super.stop();
-            } catch (Exception e) {
-                throw wrapRuntimeCamelException(e);
-            }
-        } else {
-            // ignore as Camel is already stopped
-            LOG.trace("Ignoring stop() as Camel is already stopped");
+        try {
+            super.stop();
+        } catch (Exception e) {
+            throw wrapRuntimeCamelException(e);
         }
     }
 
@@ -159,7 +140,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
     public void onApplicationEvent(ApplicationEvent event) {
         LOG.debug("onApplicationEvent: {}", event);
 
-        if (event instanceof ContextRefreshedEvent) {
+        if (event instanceof ContextRefreshedEvent && ((ContextRefreshedEvent) event).getApplicationContext() == this.applicationContext) {
             // nominally we would prefer to use Lifecycle interface that
             // would invoke start() method, but in order to do that 
             // SpringCamelContext needs to implement SmartLifecycle
@@ -221,16 +202,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
         }
     }
 
-    @Deprecated
-    public EventEndpoint getEventEndpoint() {
-        return null;
-    }
-
-    @Deprecated
-    public void setEventEndpoint(EventEndpoint eventEndpoint) {
-        // noop
-    }
-
     /**
      * Whether to shutdown this {@link org.apache.camel.spring.SpringCamelContext} eager (first)
      * when Spring {@link org.springframework.context.ApplicationContext} is being stopped.
@@ -264,12 +235,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Lifecycle
                       + applicationContext);
             return super.createInjector();
         }
-    }
-
-    @Override
-    protected ManagementMBeanAssembler createManagementMBeanAssembler() {
-        // use a spring mbean assembler
-        return new SpringManagementMBeanAssembler(this);
     }
 
     protected EventEndpoint createEventEndpoint() {

@@ -18,12 +18,14 @@ package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
 
 /**
  *
  */
 public class FileConsumerSharedThreadPollStopRouteTest extends FileConsumerSharedThreadPollTest {
 
+    @Test
     public void testSharedThreadPool() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
@@ -36,7 +38,7 @@ public class FileConsumerSharedThreadPollStopRouteTest extends FileConsumerShare
         assertMockEndpointsSatisfied();
 
         // now stop a
-        context.stopRoute("a");
+        context.getRouteController().stopRoute("a");
 
         resetMocks();
         mock.expectedBodiesReceived("Bye World 2");
@@ -51,7 +53,7 @@ public class FileConsumerSharedThreadPollStopRouteTest extends FileConsumerShare
         // now start a, which should pickup the file
         resetMocks();
         mock.expectedBodiesReceived("Hello World 2");
-        context.startRoute("a");
+        context.getRouteController().startRoute("a");
 
         assertMockEndpointsSatisfied();
     }

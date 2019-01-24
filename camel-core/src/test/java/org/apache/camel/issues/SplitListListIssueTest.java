@@ -21,12 +21,14 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 /**
  *
  */
 public class SplitListListIssueTest extends ContextTestSupport {
 
+    @Test
     public void testSplitListList() throws Exception {
         List<List<String>> list = new ArrayList<>();
         for (int i = 0; i < 5; i++) {

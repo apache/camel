@@ -25,7 +25,7 @@ import org.apache.camel.component.openstack.cinder.CinderConstants;
 import org.apache.camel.component.openstack.cinder.CinderEndpoint;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -77,7 +77,7 @@ public class VolumeProducer extends AbstractOpenstackProducer {
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
-        ObjectHelper.notEmpty(id, "Volume ID");
+        StringHelper.notEmpty(id, "Volume ID");
         final Volume out = os.blockStorage().volumes().get(id);
         msg.setBody(out);
     }
@@ -96,9 +96,9 @@ public class VolumeProducer extends AbstractOpenstackProducer {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
         final Volume vol = messageToVolume(msg);
-        ObjectHelper.notEmpty(id, "Cinder Volume ID");
-        ObjectHelper.notEmpty(vol.getDescription(), "Cinder Volume Description");
-        ObjectHelper.notEmpty(vol.getName(), "Cinder Volume Name");
+        StringHelper.notEmpty(id, "Cinder Volume ID");
+        StringHelper.notEmpty(vol.getDescription(), "Cinder Volume Description");
+        StringHelper.notEmpty(vol.getName(), "Cinder Volume Name");
         final ActionResponse out = os.blockStorage().volumes().update(id, vol.getName(), vol.getDescription());
         checkFailure(out, msg, "Update volume " + id);
     }
@@ -106,7 +106,7 @@ public class VolumeProducer extends AbstractOpenstackProducer {
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
-        ObjectHelper.notEmpty(id, "Cinder Volume ID");
+        StringHelper.notEmpty(id, "Cinder Volume ID");
         final ActionResponse out = os.blockStorage().volumes().delete(id);
         checkFailure(out, msg, "Delete volume " + id);
     }
@@ -118,7 +118,7 @@ public class VolumeProducer extends AbstractOpenstackProducer {
             VolumeBuilder builder = Builders.volume();
 
             final String name = message.getHeader(OpenstackConstants.NAME, String.class);
-            ObjectHelper.notEmpty(name, "Name ");
+            StringHelper.notEmpty(name, "Name ");
             builder.name(name);
 
             if (headers.containsKey(OpenstackConstants.DESCRIPTION)) {

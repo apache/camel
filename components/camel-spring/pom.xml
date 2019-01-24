@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.23.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-spring</artifactId>
@@ -61,10 +61,6 @@
       org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
       org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
     </camel.osgi.export>
-    <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=spring-event,
-      org.apache.camel.spi.LanguageResolver;language=spel
-    </camel.osgi.export.service>
     <!-- do not skip any tests by default -->
     <platform.skip.tests/>
   </properties>
@@ -73,6 +69,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-management-impl</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -133,6 +133,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-management-impl</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -322,9 +328,11 @@
                     <include name="org/apache/camel/ManagementStatisticsLevel.java" />
                     <include name="org/apache/camel/ShutdownRoute.java" />
                     <include name="org/apache/camel/ShutdownRunningTask.java" />
-                    <include name="org/apache/camel/ThreadPoolRejectedPolicy.java" />
                     <include name="org/apache/camel/WaitForTaskToComplete.java" />
                     <include name="org/apache/camel/package-info.java" />
+                  </fileset>
+                  <fileset dir="${basedir}/../../camel-util/src/main/java">
+                    <include name="org/apache/camel/concurrent/ThreadPoolRejectedPolicy.java" />
                   </fileset>
                 </copy>
               </target>

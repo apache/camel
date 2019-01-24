@@ -81,7 +81,7 @@ You can append query options to the URI in the following format,
 With Camel 2.21 there is support to pass https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/headers.htm[Salesforce headers]
 via inbound message headers, header names that start with `Sforce` or
 `x-sfdc` on the Camel message will be passed on in the request, and
-response headers that start with `Sforce` will be present in the outboud
+response headers that start with `Sforce` will be present in the outbound
 message headers.
 
 For example to fetch API limits you can specify:
@@ -140,6 +140,9 @@ results) using result link returned from the 'query' API
 * composite - submit up to 25 possibly related REST requests and receive individual responses
 * composite-tree - create up to 200 records with parent-child relationships (up to 5 levels) in one go
 * composite-batch - submit a composition of requests in batch
+* queryAll - Runs a SOQL query. It returns the results that are deleted because of a merge or delete. Also returns the  information about archived Task and Event records.
+* getBlobField - Retrieves the specified blob field from an individual record.
+* apexCall - Executes a user defined APEX REST API call.
 
 For example, the following producer endpoint uses the upsertSObject API,
 with the sObjectIdName parameter specifying 'Name' as the external id
@@ -179,6 +182,12 @@ You can use the following for `operationName`:
 * createBatchQuery - Creates a Batch from an SOQL query
 * getQueryResultIds - Gets a list of Result Ids for a Batch Query
 * getQueryResult - Gets results for a Result Id
+* getRecentReports - Gets up to 200 of the reports you most recently viewed by sending a GET request to the Report List resource.
+* getReportDescription - Retrieves the report, report type, and related metadata for a report, either in a tabular or summary or matrix format.
+* executeSyncReport - Runs a report synchronously with or without changing filters and returns the latest summary data.
+* executeAsyncReport - Runs an instance of a report asynchronously with or without filters and returns the summary data with or without details.
+* getReportInstances - Returns a list of instances for a report that you requested to be run asynchronously. Each item in the list is treated as a separate instance of the report.
+* getReportResults: Contains the results of running a report.
 
 For example, the following producer endpoint uses the createBatch API to
 create a Job Batch. The in message must contain a body that can be converted into an
@@ -195,7 +204,7 @@ error.
 
 ==== Rest Streaming API
 
-Consumer endpoints can use the following sytax for streaming endpoints
+Consumer endpoints can use the following syntax for streaming endpoints
 to receive Salesforce notifications on create/update.
 
 To create and subscribe to a topic
@@ -210,6 +219,62 @@ To subscribe to an existing topic
 [source,java]
 ----
 from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
+----
+
+==== Platform events
+
+To emit a platform event use `createSObject` operation. And set the
+message body can be JSON string or InputStream with key-value data --
+in that case `sObjectName` needs to be set to the API name of the
+event, or a class that extends from AbstractDTOBase with the
+appropriate class name for the event.
+
+For example using a DTO:
+
+[source,java]
+----
+class Order_Event__e extends AbstractDTOBase {
+  @JsonProperty("OrderNumber")
+  private String orderNumber;
+  // ... other properties and getters/setters
+}
+
+from("timer:tick")
+    .process(exchange -> {
+        final Message in = exchange.getIn();
+        String orderNumber = "ORD" + String.valueOf(in.getHeader(Exchange.TIMER_COUNTER));
+        Order_Event__e event = new Order_Event__e();
+        event.setOrderNumber(orderNumber);
+        in.setBody(event);
+    })
+    .to("salesforce:createSObject");
+----
+
+Or using JSON event data:
+
+[source,java]
+----
+from("timer:tick")
+    .process(exchange -> {
+        final Message in = exchange.getIn();
+        String orderNumber = "ORD" + String.valueOf(in.getHeader(Exchange.TIMER_COUNTER));
+        in.setBody("{\"OrderNumber\":\"" + orderNumber + "\"}");
+    })
+    .to("salesforce:createSObject?sObjectName=Order_Event__e");
+----
+
+To receive platform events use the consumer endpoint with the API name of
+the platform event prefixed with `event/` (or `/event/`), e.g.:
+`salesforce:events/Order_Event__e`. Processor consuming from that
+endpoint will receive either `org.apache.camel.component.salesforce.api.dto.PlatformEvent`
+object or `org.cometd.bayeux.Message` in the body depending on the
+`rawPayload` being `false` or `true` respectively.
+
+For example, in the simplest form to consume one event:
+
+[source,java]
+----
+PlatformEvent event = consumer.receiveBody("salesforce:event/Order_Event__e", PlatformEvent.class);
 ----
 
 === Examples
@@ -340,51 +405,6 @@ from("direct:fetchRecentItems")
     to("salesforce:recent")
         .split().body()
             .log("${body.name} at ${body.attributes.url}");
-----
-
-=== Working with approvals
-
-All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
-approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
-that any property not present in either body or header will be taken from the Endpoint configuration. Or you can set
-the approval template on the Endpoint by assigning `approval` property to a reference onto a bean in the Registry.
-
-You can also provide header values using the same `approval.PropertyName` in the incoming message headers.
-
-And finally body can contain one `AprovalRequest` or an `Iterable` of `ApprovalRequest` objects to process as
-a batch.
-
-The important thing to remember is the priority of the values specified in these three mechanisms:
-
-. value in body takes precedence before any other
-. value in message header takes precedence before template value
-. value in template is set if no other value in header or body was given
-
-For example to send one record for approval using values in headers use:
-
-Given a route:
-
-[source,java]
-----
-from("direct:example1")//
-        .setHeader("approval.ContextId", simple("${body['contextId']}"))
-        .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
-        .to("salesforce:approval?"//
-            + "approvalActionType=Submit"//
-            + "&approvalComments=this is a test"//
-            + "&approvalProcessDefinitionNameOrId=Test_Account_Process"//
-            + "&approvalSkipEntryCriteria=true");
-----
-
-You could send a record for approval using:
-
-[source,java]
-----
-final Map<String, String> body = new HashMap<>();
-body.put("contextId", accountIds.iterator().next());
-body.put("nextApproverIds", userId);
-
-final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
 ----
 
 === Using Salesforce Composite API to submit SObject tree
@@ -585,7 +605,7 @@ The Salesforce component supports 29 options, which are listed below.
 | Name | Description | Default | Type
 | *authenticationType* (security) | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. |  | AuthenticationType
 | *loginConfig* (security) | All authentication configuration in one nested bean, all properties set there can be set directly on the component as well |  | SalesforceLoginConfig
-| *instanceUrl* (security) | URL of the Salesforce instance used after authantication, by default received from Salesforce on successful authentication |  | String
+| *instanceUrl* (security) | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
 | *loginUrl* (security) | *Required* URL of the Salesforce instance used for authentication, by default set to https://login.salesforce.com | https://login.salesforce.com | String
 | *clientId* (security) | *Required* OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
 | *clientSecret* (security) | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
@@ -593,7 +613,7 @@ The Salesforce component supports 29 options, which are listed below.
 | *refreshToken* (security) | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token, or configure using the builtin callback at https://login.salesforce.com/services/oauth2/success or https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
 | *userName* (security) | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. |  | String
 | *password* (security) | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
-| *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generaly set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
+| *lazyLogin* (security) | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | boolean
 | *config* (common) | Global endpoint configuration - use to set values that are common to all endpoints |  | SalesforceEndpoint Config
 | *httpClientProperties* (common) | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. |  | Map
 | *longPollingTransport Properties* (common) | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api |  | Map
@@ -657,7 +677,7 @@ with the following path and query parameters:
 | *backoffIncrement* (common) | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
 | *batchId* (common) | Bulk API Batch ID |  | String
 | *contentType* (common) | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV |  | ContentType
-| *defaultReplayId* (common) | Default replayId setting if no value is found in link initialReplayIdMap |  | Long
+| *defaultReplayId* (common) | Default replayId setting if no value is found in initialReplayIdMap |  | Long
 | *format* (common) | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON |  | PayloadFormat
 | *httpClient* (common) | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *includeDetails* (common) | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
@@ -666,7 +686,7 @@ with the following path and query parameters:
 | *jobId* (common) | Bulk API Job ID |  | String
 | *limit* (common) | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
 | *maxBackoff* (common) | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | long
-| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL link NotFoundBehaviourNULL or should a exception be signaled on the exchange link NotFoundBehaviourEXCEPTION - the default. |  | NotFoundBehaviour
+| *notFoundBehaviour* (common) | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. |  | NotFoundBehaviour
 | *notifyForFields* (common) | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
 | *notifyForOperationCreate* (common) | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
 | *notifyForOperationDelete* (common) | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
@@ -691,8 +711,106 @@ with the following path and query parameters:
 | *updateTopic* (common) | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *replayId* (consumer) | The replayId value to use when subscribing |  | Long
-| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 85 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.salesforce.authentication-type* | Explicit authentication method to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT. Salesforce component can auto-determine the authentication method to use from the properties set, set this property to eliminate any ambiguity. |  | AuthenticationType
+| *camel.component.salesforce.client-id* | OAuth Consumer Key of the connected app configured in the Salesforce instance setup. Typically a connected app needs to be configured but one can be provided by installing a package. |  | String
+| *camel.component.salesforce.client-secret* | OAuth Consumer Secret of the connected app configured in the Salesforce instance setup. |  | String
+| *camel.component.salesforce.config.apex-method* | APEX method name |  | String
+| *camel.component.salesforce.config.apex-query-params* | Query params for APEX method |  | Map
+| *camel.component.salesforce.config.apex-url* | APEX method URL |  | String
+| *camel.component.salesforce.config.api-version* | Salesforce API version, defaults to SalesforceEndpointConfig.DEFAULT_VERSION |  | String
+| *camel.component.salesforce.config.approval* | The approval request for Approval API.  @param approval |  | ApprovalRequest
+| *camel.component.salesforce.config.approval-action-type* | Represents the kind of action to take: Submit, Approve, or Reject.  @param actionType |  | ApprovalRequest$Action
+| *camel.component.salesforce.config.approval-comments* | The comment to add to the history step associated with this request.  @param comments |  | String
+| *camel.component.salesforce.config.approval-context-actor-id* | The ID of the submitter who’s requesting the approval record.  @param contextActorId |  | String
+| *camel.component.salesforce.config.approval-context-id* | The ID of the item that is being acted upon.  @param contextId |  | String
+| *camel.component.salesforce.config.approval-next-approver-ids* | If the process requires specification of the next approval, the ID of the user to be assigned the next request.  @param nextApproverIds |  | List
+| *camel.component.salesforce.config.approval-process-definition-name-or-id* | The developer name or ID of the process definition.  @param processDefinitionNameOrId |  | String
+| *camel.component.salesforce.config.approval-skip-entry-criteria* | Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition name or ID isn’t null. If the process definition name or ID isn’t specified, this argument is ignored, and standard evaluation is followed based on process order. By default, the entry criteria isn’t skipped if it’s not set by this request.  @param skipEntryCriteria |  | Boolean
+| *camel.component.salesforce.config.backoff-increment* | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | Long
+| *camel.component.salesforce.config.batch-id* | Bulk API Batch ID |  | String
+| *camel.component.salesforce.config.content-type* | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV |  | ContentType
+| *camel.component.salesforce.config.default-replay-id* | Default replayId setting if no value is found in initialReplayIdMap |  | Long
+| *camel.component.salesforce.config.format* | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON |  | PayloadFormat
+| *camel.component.salesforce.config.http-client* | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
+| *camel.component.salesforce.config.include-details* | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
+| *camel.component.salesforce.config.initial-replay-id-map* | Replay IDs to start from per channel name. |  | Map
+| *camel.component.salesforce.config.instance-id* | Salesforce1 Analytics report execution instance ID |  | String
+| *camel.component.salesforce.config.job-id* | Bulk API Job ID |  | String
+| *camel.component.salesforce.config.limit* | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
+| *camel.component.salesforce.config.max-backoff* | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | Long
+| *camel.component.salesforce.config.not-found-behaviour* | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. |  | NotFoundBehaviour
+| *camel.component.salesforce.config.notify-for-fields* | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
+| *camel.component.salesforce.config.notify-for-operation-create* | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
+| *camel.component.salesforce.config.notify-for-operation-delete* | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *camel.component.salesforce.config.notify-for-operation-undelete* | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
+| *camel.component.salesforce.config.notify-for-operation-update* | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
+| *camel.component.salesforce.config.notify-for-operations* | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0) |  | NotifyForOperations Enum
+| *camel.component.salesforce.config.object-mapper* | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
+| *camel.component.salesforce.config.raw-payload* | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | Boolean
+| *camel.component.salesforce.config.report-id* | Salesforce1 Analytics report Id |  | String
+| *camel.component.salesforce.config.report-metadata* | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
+| *camel.component.salesforce.config.result-id* | Bulk API Result ID |  | String
+| *camel.component.salesforce.config.s-object-blob-field-name* | SObject blob field name |  | String
+| *camel.component.salesforce.config.s-object-class* | Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin |  | String
+| *camel.component.salesforce.config.s-object-fields* | SObject fields to retrieve |  | String
+| *camel.component.salesforce.config.s-object-id* | SObject ID if required by API |  | String
+| *camel.component.salesforce.config.s-object-id-name* | SObject external ID field name |  | String
+| *camel.component.salesforce.config.s-object-id-value* | SObject external ID field value |  | String
+| *camel.component.salesforce.config.s-object-name* | SObject name if required or supported by API |  | String
+| *camel.component.salesforce.config.s-object-query* | Salesforce SOQL query string |  | String
+| *camel.component.salesforce.config.s-object-search* | Salesforce SOSL search string |  | String
+| *camel.component.salesforce.config.serialize-nulls* | Should the NULL values of given DTO be serialized with empty (NULL) values. This affects only JSON data format. | false | Boolean
+| *camel.component.salesforce.config.update-topic* | Whether to update an existing Push Topic when using the Streaming API, defaults to false | false | Boolean
+| *camel.component.salesforce.enabled* | Enable salesforce component | true | Boolean
+| *camel.component.salesforce.http-client-properties* | Used to set any properties that can be configured on the underlying HTTP client. Have a look at properties of SalesforceHttpClient and the Jetty HttpClient for all available options. The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
+| *camel.component.salesforce.http-proxy-auth-uri* | Used in authentication against the HTTP proxy server, needs to match the URI of the proxy server in order for the httpProxyUsername and httpProxyPassword to be used for authentication. |  | String
+| *camel.component.salesforce.http-proxy-excluded-addresses* | A list of addresses for which HTTP proxy server should not be used. The option is a java.util.Set<java.lang.String> type. |  | String
+| *camel.component.salesforce.http-proxy-host* | Hostname of the HTTP proxy server to use. |  | String
+| *camel.component.salesforce.http-proxy-included-addresses* | A list of addresses for which HTTP proxy server should be used. The option is a java.util.Set<java.lang.String> type. |  | String
+| *camel.component.salesforce.http-proxy-password* | Password to use to authenticate against the HTTP proxy server. |  | String
+| *camel.component.salesforce.http-proxy-port* | Port number of the HTTP proxy server to use. |  | Integer
+| *camel.component.salesforce.http-proxy-realm* | Realm of the proxy server, used in preemptive Basic/Digest authentication methods against the HTTP proxy server. |  | String
+| *camel.component.salesforce.http-proxy-use-digest-auth* | If set to true Digest authentication will be used when authenticating to the HTTP proxy,otherwise Basic authorization method will be used | false | Boolean
+| *camel.component.salesforce.http-proxy-username* | Username to use to authenticate against the HTTP proxy server. |  | String
+| *camel.component.salesforce.instance-url* | URL of the Salesforce instance used after authentication, by default received from Salesforce on successful authentication |  | String
+| *camel.component.salesforce.is-http-proxy-secure* | If set to false disables the use of TLS when accessing the HTTP proxy. | true | Boolean
+| *camel.component.salesforce.is-http-proxy-socks4* | If set to true the configures the HTTP proxy to use as a SOCKS4 proxy. | false | Boolean
+| *camel.component.salesforce.keystore* | KeyStore parameters to use in OAuth JWT flow. The KeyStore should contain only one entry with private key and certificate. Salesforce does not verify the certificate chain, so this can easily be a selfsigned certificate. Make sure that you upload the certificate to the corresponding connected app. The option is a org.apache.camel.support.jsse.KeyStoreParameters type. |  | String
+| *camel.component.salesforce.lazy-login* | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | Boolean
+| *camel.component.salesforce.login-config.client-id* | Salesforce connected application Consumer Key |  | String
+| *camel.component.salesforce.login-config.client-secret* | Salesforce connected application Consumer Secret |  | String
+| *camel.component.salesforce.login-config.instance-url* |  |  | String
+| *camel.component.salesforce.login-config.keystore* | Keystore parameters for keystore containing certificate and private key needed for OAuth 2.0 JWT Bearer Token Flow. |  | KeyStoreParameters
+| *camel.component.salesforce.login-config.lazy-login* | Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth token retrieval or generation is not done until the first API call |  | Boolean
+| *camel.component.salesforce.login-config.login-url* | Salesforce login URL, defaults to https://login.salesforce.com |  | String
+| *camel.component.salesforce.login-config.password* | Salesforce account password |  | String
+| *camel.component.salesforce.login-config.refresh-token* | Salesforce connected application Consumer token |  | String
+| *camel.component.salesforce.login-config.type* |  |  | AuthenticationType
+| *camel.component.salesforce.login-config.user-name* | Salesforce account user name |  | String
+| *camel.component.salesforce.login-url* | URL of the Salesforce instance used for authentication, by default set to https://login.salesforce.com | https://login.salesforce.com | String
+| *camel.component.salesforce.long-polling-transport-properties* | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api. The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
+| *camel.component.salesforce.packages* | In what packages are the generated DTO classes. Typically the classes would be generated using camel-salesforce-maven-plugin. Set it if using the generated DTOs to gain the benefit of using short SObject names in parameters/header values. |  | String[]
+| *camel.component.salesforce.password* | Password used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. Make sure that you append security token to the end of the password if using one. |  | String
+| *camel.component.salesforce.refresh-token* | Refresh token already obtained in the refresh token OAuth flow. One needs to setup a web application and configure a callback URL to receive the refresh token, or configure using the builtin callback at https://login.salesforce.com/services/oauth2/success or https://test.salesforce.com/services/oauth2/success and then retrive the refresh_token from the URL at the end of the flow. Note that in development organizations Salesforce allows hosting the callback web application at localhost. |  | String
+| *camel.component.salesforce.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.salesforce.ssl-context-parameters* | SSL parameters to use, see SSLContextParameters class for all available options. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
+| *camel.component.salesforce.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters | false | Boolean
+| *camel.component.salesforce.user-name* | Username used in OAuth flow to gain access to access token. It's easy to get started with password OAuth flow, but in general one should avoid it as it is deemed less secure than other flows. |  | String
+|===
+// spring-boot-auto-configure options: END

@@ -21,12 +21,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
+import org.junit.Test;
 
-/**
- * @version
- */
 public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
 
+    @Test
     public void testCompleteAllOnStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:aggregated");
         mock.expectedBodiesReceived("A+B", "C");
@@ -37,7 +36,7 @@ public class AggregateCompleteAllOnStopTest extends ContextTestSupport {
         template.sendBodyAndHeader("seda:start", "B", "id", "foo");
         template.sendBodyAndHeader("seda:start", "C", "id", "foo");
 
-        context.stopRoute("foo");
+        context.getRouteController().stopRoute("foo");
 
         assertMockEndpointsSatisfied();
     }

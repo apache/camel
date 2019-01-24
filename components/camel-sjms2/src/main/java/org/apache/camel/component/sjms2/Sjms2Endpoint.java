@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
  * This component uses plain JMS 2.x API where as the jms component uses Spring JMS.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "sjms2", extendsScheme = "sjms", title = "Simple JMS2",
-        syntax = "sjms2:destinationType:destinationName", consumerClass = SjmsConsumer.class, label = "messaging")
+        syntax = "sjms2:destinationType:destinationName", label = "messaging")
 public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
 
     @UriParam(label = "consumer")
@@ -56,7 +56,6 @@ public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
     /**
      * Sets the durable subscription Id required for durable topics.
      */
-    @Deprecated
     @Override
     public void setDurableSubscriptionId(String durableSubscriptionId) {
         super.setDurableSubscriptionId(durableSubscriptionId);

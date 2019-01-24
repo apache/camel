@@ -28,20 +28,20 @@ import java.nio.charset.Charset;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 
 import io.netty.handler.codec.http.HttpHeaders;
-
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.ahc.helper.AhcHelper;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.GZIPHelper;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.GZIPHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.asynchttpclient.HttpResponseStatus;
 import org.asynchttpclient.Request;
@@ -126,12 +126,14 @@ public class DefaultAhcBinding implements AhcBinding {
                 Map<String, List<String>> cookieHeaders = endpoint.getCookieHandler().loadCookies(exchange, uri);
                 for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
                     String key = entry.getKey();
+                    StringJoiner joiner = new StringJoiner("; ");
                     for (String value : entry.getValue()) {
-                        if (log.isTraceEnabled()) {
-                            log.trace("Adding header {} = {}", key, value);
-                        }
-                        builder.addHeader(key, value);                        
+                        joiner.add(value);
                     }
+                    if (log.isTraceEnabled()) {
+                        log.trace("Adding header {} = {}", key, joiner.toString());
+                    }
+                    builder.addHeader(key, joiner.toString());
                 }
             } catch (IOException e) {
                 throw new CamelExchangeException("Error loading cookies", exchange, e);
@@ -147,7 +149,7 @@ public class DefaultAhcBinding implements AhcBinding {
 
         String contentType = ExchangeHelper.getContentType(exchange);
         BodyGenerator body = in.getBody(BodyGenerator.class);
-        String charset = IOHelper.getCharsetName(exchange, false);
+        String charset = ExchangeHelper.getCharsetName(exchange, false);
 
         if (body == null) {
             try {

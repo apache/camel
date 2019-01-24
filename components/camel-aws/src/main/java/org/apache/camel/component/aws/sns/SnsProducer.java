@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.sns;
 
 import java.nio.ByteBuffer;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,11 +28,9 @@ import com.amazonaws.services.sns.model.PublishResult;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageForResponse;
 
@@ -41,8 +40,6 @@ import static org.apache.camel.component.aws.common.AwsExchangeUtil.getMessageFo
  * <a href="http://aws.amazon.com/sns/">AWS SNS</a>
  */
 public class SnsProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SnsProducer.class);
 
     private transient String snsProducerToString;
 
@@ -59,11 +56,11 @@ public class SnsProducer extends DefaultProducer {
         request.setMessage(exchange.getIn().getBody(String.class));
         request.setMessageAttributes(this.translateAttributes(exchange.getIn().getHeaders(), exchange));
 
-        LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
+        log.trace("Sending request [{}] from exchange [{}]...", request, exchange);
 
         PublishResult result = getEndpoint().getSNSClient().publish(request);
 
-        LOG.trace("Received result [{}]", result);
+        log.trace("Received result [{}]", result);
 
         Message message = getMessageForResponse(exchange);
         message.setHeader(SnsConstants.MESSAGE_ID, result.getMessageId());
@@ -104,9 +101,14 @@ public class SnsProducer extends DefaultProducer {
                     mav.setDataType("Binary");
                     mav.withBinaryValue((ByteBuffer)value);
                     result.put(entry.getKey(), mav);
+                } else if (value instanceof Date) {
+                    MessageAttributeValue mav = new MessageAttributeValue();
+                    mav.setDataType("String");
+                    mav.withStringValue(value.toString());
+                    result.put(entry.getKey(), mav);
                 } else {
                     // cannot translate the message header to message attribute value
-                    LOG.warn("Cannot put the message header key={}, value={} into Sns MessageAttribute", entry.getKey(), entry.getValue());
+                    log.warn("Cannot put the message header key={}, value={} into Sns MessageAttribute", entry.getKey(), entry.getValue());
                 }
             }
         }

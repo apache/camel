@@ -21,9 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.AsyncProcessorSupport;
 import org.junit.Test;
 
 /**
@@ -46,7 +46,7 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
         // the log file should log that all the ftp client work is done in the same thread (fully synchronous)
         // as the ftp client is not thread safe and must process fully synchronous
 
-        context.startRoute("foo");
+        context.getRouteController().startRoute("foo");
 
         assertMockEndpointsSatisfied();
 
@@ -70,7 +70,7 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
         };
     }
 
-    private class MyAsyncProcessor implements AsyncProcessor {
+    private class MyAsyncProcessor extends AsyncProcessorSupport {
 
         private ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -93,9 +93,5 @@ public class FromFtpAsyncProcessTest extends FtpServerTestSupport {
             return false;
         }
 
-        @Override
-        public void process(Exchange exchange) throws Exception {
-            // noop
-        }
     }
 }

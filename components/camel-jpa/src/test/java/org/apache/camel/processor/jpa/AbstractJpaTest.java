@@ -33,9 +33,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-/**
- * @version 
- */
 public abstract class AbstractJpaTest extends CamelTestSupport {
     protected ApplicationContext applicationContext;
     protected TransactionTemplate transactionTemplate;
@@ -62,7 +59,7 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext(routeXml());
-        return SpringCamelContext.springCamelContext(applicationContext);
+        return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
     protected void cleanupRepository() {

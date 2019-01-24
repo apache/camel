@@ -22,11 +22,11 @@ import static java.util.Objects.requireNonNull;
 
 import org.apache.camel.component.iec60870.AbstractConnectionMultiplexor.Handle;
 import org.apache.camel.component.iec60870.client.ClientOptions;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
 import org.eclipse.neoscada.protocol.iec60870.ProtocolOptions;
 import org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions;
 
@@ -36,7 +36,7 @@ public abstract class AbstractIecEndpoint<T extends AbstractConnectionMultiplexo
      * The object information address
      */
     @UriPath(name = "uriPath")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private final ObjectAddress address;
 
     // dummy for doc generation

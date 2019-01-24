@@ -16,15 +16,17 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultMessage;
+import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -32,8 +34,6 @@ import org.apache.camel.util.ObjectHelper;
  * A processor which converts the payload of the input message to be of the given type
  * <p/>
  * If the conversion fails an {@link org.apache.camel.InvalidPayloadException} is thrown.
- *
- * @version 
  */
 public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
     private String id;
@@ -66,25 +66,18 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
     }
 
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
         boolean out = exchange.hasOut();
         Message old = out ? exchange.getOut() : exchange.getIn();
 
         if (old.getBody() == null) {
             // only convert if there is a body
-            callback.done(true);
-            return true;
+            return;
         }
 
         if (exchange.getException() != null) {
             // do not convert if an exception has been thrown as if we attempt to convert and it also fails with a new
             // exception then it will override the existing exception
-            callback.done(true);
-            return true;
+            return;
         }
 
         String originalCharsetName = null;
@@ -95,14 +88,7 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
             exchange.setProperty(Exchange.CHARSET_NAME, charset);
         }
         // use mandatory conversion
-        Object value;
-        try {
-            value = old.getMandatoryBody(type);
-        } catch (Throwable e) {
-            exchange.setException(e);
-            callback.done(true);
-            return true;
-        }
+        Object value = old.getMandatoryBody(type);
 
         // create a new message container so we do not drag specialized message objects along
         // but that is only needed if the old message is a specialized message
@@ -128,7 +114,22 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
                 exchange.removeProperty(Exchange.CHARSET_NAME);
             }
         }
+    }
 
+    @Override
+    public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+        AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
+        process(exchange, callback);
+        return callback.getFuture();
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
         callback.done(true);
         return true;
     }

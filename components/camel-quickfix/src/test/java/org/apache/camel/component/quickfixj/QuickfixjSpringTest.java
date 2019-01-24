@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.quickfixj;
-
 import java.util.Properties;
 
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.hamcrest.CoreMatchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -37,6 +37,7 @@ import static org.hamcrest.CoreMatchers.is;
 public class QuickfixjSpringTest extends CamelSpringTestSupport {
 
     @Override
+    @Before
     public void setUp() throws Exception {
         if (isJava16()) {
             // cannot test on java 1.6

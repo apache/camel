@@ -22,12 +22,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.util.CamelLogger;
+import org.apache.camel.spi.CamelLogger;
 
 /**
  * Default error handler
- *
- * @version
  */
 public class DefaultErrorHandler extends RedeliveryErrorHandler {
 

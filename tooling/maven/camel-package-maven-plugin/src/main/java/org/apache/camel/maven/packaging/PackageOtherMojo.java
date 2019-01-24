@@ -24,11 +24,13 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -37,49 +39,39 @@ import static org.apache.camel.maven.packaging.StringHelper.camelDashToTitle;
 
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
- *
- * @goal generate-others-list
  */
+@Mojo(name = "generate-others-list", threadSafe = true)
 public class PackageOtherMojo extends AbstractMojo {
 
     /**
      * The maven project.
-     *
-     * @parameter property="project"
-     * @required
-     * @readonly
      */
+    @Parameter(property = "project", required = true, readonly = true)
     protected MavenProject project;
 
     /**
      * The output directory for generated components file
-     *
-     * @parameter default-value="${project.build.directory}/generated/camel/others"
      */
+    @Parameter(defaultValue = "${project.build.directory}/generated/camel/others")
     protected File otherOutDir;
 
     /**
      * The output directory for generated languages file
-     *
-     * @parameter default-value="${project.build.directory}/classes"
      */
+    @Parameter(defaultValue = "${project.build.directory}/classes")
     protected File schemaOutDir;
 
     /**
      * Maven ProjectHelper.
-     *
-     * @component
-     * @readonly
      */
+    @Component
     private MavenProjectHelper projectHelper;
 
     /**
      * build context to check changed files and mark them for refresh (used for
      * m2e compatibility)
-     * 
-     * @component
-     * @readonly
      */
+    @Component
     private BuildContext buildContext;
 
     /**
@@ -90,44 +82,30 @@ public class PackageOtherMojo extends AbstractMojo {
      * @throws MojoFailureException something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+        File f = new File(project.getBasedir(), "target/classes");
+        File comp = new File(f, "META-INF/services/org/apache/camel/component");
+        if (comp.exists() && comp.isDirectory()) {
+            return;
+        }
+        File df = new File(f, "META-INF/services/org/apache/camel/dataformat");
+        if (df.exists() && df.isDirectory()) {
+            return;
+        }
+        File lan = new File(f, "META-INF/services/org/apache/camel/language");
+        if (lan.exists() && lan.isDirectory()) {
+            return;
+        }
+
         prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
     }
 
     public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
                                      File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
-        // are there any components, data formats or languages?
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            File comp = new File(f, "META-INF/services/org/apache/camel/component");
-            if (comp.exists() && comp.isDirectory()) {
-                return;
-            }
-            File df = new File(f, "META-INF/services/org/apache/camel/dataformat");
-            if (df.exists() && df.isDirectory()) {
-                return;
-            }
-            File lan = new File(f, "META-INF/services/org/apache/camel/language");
-            if (lan.exists() && lan.isDirectory()) {
-                return;
-            }
-        }
-
-        // okay none of those then this is a other kind of artifact
-
         // first we need to setup the output directory because the next check
         // can stop the build before the end and eclipse always needs to know about that directory
         if (projectHelper != null) {
             projectHelper.addResource(project, otherOutDir.getPath(), Collections.singletonList("**/other.properties"), Collections.emptyList());
-        }
-
-        if (!PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/component")
-            && !PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/dataformat")
-            && !PackageHelper.haveResourcesChanged(log, project, buildContext, "META-INF/services/org/apache/camel/language")) {
-            return;
         }
 
         String name = project.getArtifactId();
@@ -157,7 +135,9 @@ public class PackageOtherMojo extends AbstractMojo {
             }
             otherModel.setTitle(title);
 
-            log.debug("Model " + otherModel);
+            if (log.isDebugEnabled()) {
+                log.debug("Model: " + otherModel);
+            }
 
             // write this to the directory
             File dir = schemaOutDir;
@@ -171,7 +151,9 @@ public class PackageOtherMojo extends AbstractMojo {
 
             buildContext.refresh(out);
 
-            log.debug("Generated " + out + " containing JSon schema for " + name + " other");
+            if (log.isDebugEnabled()) {
+                log.debug("Generated " + out + " containing JSon schema for " + name + " other");
+            }
         } catch (Exception e) {
             throw new MojoExecutionException("Error loading other model. Reason: " + e, e);
         }
@@ -218,6 +200,8 @@ public class PackageOtherMojo extends AbstractMojo {
             os.close();
 
             log.info("Generated " + outFile);
+
+            buildContext.refresh(outFile);
 
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);

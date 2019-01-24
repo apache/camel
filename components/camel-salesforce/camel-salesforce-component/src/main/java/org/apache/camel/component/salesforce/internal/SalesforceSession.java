@@ -47,8 +47,8 @@ import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.dto.LoginError;
 import org.apache.camel.component.salesforce.internal.dto.LoginToken;
+import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.eclipse.jetty.client.HttpConversation;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
@@ -224,6 +224,13 @@ public class SalesforceSession implements Service {
             byte[] signed = signature.sign();
 
             token.append('.').append(Base64.getUrlEncoder().encodeToString(signed));
+
+            // Clean the private key from memory
+            try {
+                key.destroy();
+            } catch (javax.security.auth.DestroyFailedException ex) {
+                LOG.debug("Error destroying private key: {}", ex.getMessage());
+            }
         } catch (IOException | GeneralSecurityException e) {
             throw new IllegalStateException(e);
         }

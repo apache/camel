@@ -17,12 +17,8 @@
 package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
-/**
- *
- * @version 
- */
 public class CxfRsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public CxfRsHeaderFilterStrategy() {

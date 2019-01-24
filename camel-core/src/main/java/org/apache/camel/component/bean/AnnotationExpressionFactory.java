@@ -25,8 +25,6 @@ import org.apache.camel.language.LanguageAnnotation;
 /**
  * A factory which creates an {@link Expression} object from an annotation on a field, property or method parameter
  * of a specified type.
- *
- * @version 
  */
 public interface AnnotationExpressionFactory {
 

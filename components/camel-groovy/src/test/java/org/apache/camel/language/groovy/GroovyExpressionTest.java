@@ -18,16 +18,13 @@ package org.apache.camel.language.groovy;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class GroovyExpressionTest extends CamelTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(GroovyExpressionTest.class);
 

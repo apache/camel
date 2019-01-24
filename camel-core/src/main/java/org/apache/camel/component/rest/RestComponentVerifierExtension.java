@@ -21,20 +21,19 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.Component;
-import org.apache.camel.ComponentVerifier;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.CatalogVerifierCustomizer;
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
-import org.apache.camel.runtimecatalog.JSonSchemaHelper;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
+import org.apache.camel.runtimecatalog.impl.JSonSchemaHelper;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 
-public class RestComponentVerifierExtension extends DefaultComponentVerifierExtension implements ComponentVerifier {
+public class RestComponentVerifierExtension extends DefaultComponentVerifierExtension {
     private static final CatalogVerifierCustomizer CUSTOMIZER = new CatalogVerifierCustomizer().excludeUnknown();
 
     RestComponentVerifierExtension() {
@@ -86,7 +85,7 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
 
                 if (extension.isPresent()) {
                     final ComponentVerifierExtension verifier = extension.get();
-                    final RuntimeCamelCatalog catalog = getCamelContext().getRuntimeCamelCatalog();
+                    final RuntimeCamelCatalog catalog = getCamelContext().getExtension(RuntimeCamelCatalog.class);
                     final String json = catalog.componentJSonSchema("rest");
                     final Map<String, Object> restParameters = new HashMap<>(parameters);
 

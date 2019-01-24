@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.servicenow.model.AttachmentMeta;
 import org.junit.Test;
 
-import static org.apache.camel.util.ResourceHelper.resolveResourceAsInputStream;
+import static org.apache.camel.support.ResourceHelper.resolveResourceAsInputStream;
 
 public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
     @Produce(uri = "direct:servicenow")

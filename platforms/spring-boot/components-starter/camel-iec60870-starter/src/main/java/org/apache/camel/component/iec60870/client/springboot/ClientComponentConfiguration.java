@@ -34,6 +34,11 @@ public class ClientComponentConfiguration
             ComponentConfigurationPropertiesCommon {
 
     /**
+     * Whether to enable auto configuration of the iec60870-client component.
+     * This is enabled by default.
+     */
+    private Boolean enabled;
+    /**
      * Default connection options
      */
     private ClientOptionsNestedConfiguration defaultConnectionOptions;
@@ -64,19 +69,10 @@ public class ClientComponentConfiguration
 
     public static class ClientOptionsNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.iec60870.client.ClientOptions.class;
-        private Byte causeSourceAddress;
         /**
          * Whether background scan transmissions should be ignored.
          */
         private Boolean ignoreBackgroundScan = true;
-
-        public Byte getCauseSourceAddress() {
-            return causeSourceAddress;
-        }
-
-        public void setCauseSourceAddress(Byte causeSourceAddress) {
-            this.causeSourceAddress = causeSourceAddress;
-        }
 
         public Boolean getIgnoreBackgroundScan() {
             return ignoreBackgroundScan;

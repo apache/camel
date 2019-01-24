@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.util.Properties;
+
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
@@ -25,9 +26,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class MailCustomMailSenderTest extends CamelTestSupport {
 
     private static boolean sent;

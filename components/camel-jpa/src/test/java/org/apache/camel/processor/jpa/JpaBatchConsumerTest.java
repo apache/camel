@@ -22,9 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
 import org.junit.Test;
 
-/**
- * @version 
- */
 public class JpaBatchConsumerTest extends AbstractJpaTest {
 
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
@@ -37,10 +34,10 @@ public class JpaBatchConsumerTest extends AbstractJpaTest {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.message(0).property(Exchange.BATCH_INDEX).isEqualTo(0);
-        mock.message(0).property(Exchange.BATCH_COMPLETE).isEqualTo(false);
-        mock.message(1).property(Exchange.BATCH_INDEX).isEqualTo(1);
-        mock.message(1).property(Exchange.BATCH_COMPLETE).isEqualTo(true);
+        mock.message(0).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(0);
+        mock.message(0).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(false);
+        mock.message(1).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(1);
+        mock.message(1).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(true);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 2);
 
         assertMockEndpointsSatisfied();

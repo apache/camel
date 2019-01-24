@@ -21,11 +21,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * A <code>SamplingThrottler</code> is a special kind of throttler. It also
@@ -37,12 +35,9 @@ import org.slf4j.LoggerFactory;
  * This kind of throttling can be useful for taking a sample from
  * an exchange stream, rough consolidation of noisy and bursty exchange traffic
  * or where queuing of throttled exchanges is undesirable.
- *
- * @version 
  */
-public class SamplingThrottler extends DelegateAsyncProcessor implements Traceable, IdAware {
+public class SamplingThrottler extends AsyncProcessorSupport implements Traceable, IdAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SamplingThrottler.class);
     private String id;
     private long messageFrequency;
     private long currentMessageCount;
@@ -54,18 +49,14 @@ public class SamplingThrottler extends DelegateAsyncProcessor implements Traceab
     private final Object calculationLock = new Object();
     private SampleStats sampled = new SampleStats();
 
-    public SamplingThrottler(Processor processor, long messageFrequency) {
-        super(processor);
-
+    public SamplingThrottler(long messageFrequency) {
         if (messageFrequency <= 0) {
             throw new IllegalArgumentException("A positive value is required for the sampling message frequency");
         }
         this.messageFrequency = messageFrequency;
     }
 
-    public SamplingThrottler(Processor processor, long samplePeriod, TimeUnit units) {
-        super(processor);
-
+    public SamplingThrottler(long samplePeriod, TimeUnit units) {
         if (samplePeriod <= 0) {
             throw new IllegalArgumentException("A positive value is required for the sampling period");
         }
@@ -80,9 +71,9 @@ public class SamplingThrottler extends DelegateAsyncProcessor implements Traceab
     @Override
     public String toString() {
         if (messageFrequency > 0) {
-            return "SamplingThrottler[1 exchange per: " + messageFrequency + " messages received -> " + getProcessor() + "]";
+            return "SamplingThrottler[1 exchange per: " + messageFrequency + " messages received]";
         } else {
-            return "SamplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase(Locale.ENGLISH) + " -> " + getProcessor() + "]";
+            return "SamplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase(Locale.ENGLISH) + "]";
         }
     }
 
@@ -129,23 +120,19 @@ public class SamplingThrottler extends DelegateAsyncProcessor implements Traceab
                 long now = System.currentTimeMillis();
                 if (now >= timeOfLastExchange + periodInMillis) {
                     doSend = true;
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace(sampled.sample());
+                    if (log.isTraceEnabled()) {
+                        log.trace(sampled.sample());
                     }
                     timeOfLastExchange = now;
                 } else {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace(sampled.drop());
+                    if (log.isTraceEnabled()) {
+                        log.trace(sampled.drop());
                     }
                 }
             }
         }
 
-        if (doSend) {
-            // continue routing
-            return processor.process(exchange, callback);
-        } else {
-            // okay to invoke this synchronously as the stopper
+        if (!doSend) {
             // will just set a property
             try {
                 stopper.process(exchange);

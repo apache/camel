@@ -51,7 +51,7 @@ public final class Client {
         StopWatch watch = new StopWatch();
         String result = loanBroker.getLoanQuote("SSN", 5000.00, 24);
 
-        System.out.println("Took " + watch.stop() + " milliseconds to call the loan broker service");
+        System.out.println("Took " + watch.taken() + " milliseconds to call the loan broker service");
         System.out.println(result);
     }
 
