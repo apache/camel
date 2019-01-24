@@ -297,6 +297,7 @@
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-undertow</include>
         <include>org.apache.camel:camel-univocity-parsers</include>
+        <include>org.apache.camel:camel-validator</include>
         <include>org.apache.camel:camel-velocity</include>
         <include>org.apache.camel:camel-vertx</include>
         <include>org.apache.camel:camel-vm</include>
@@ -593,6 +594,7 @@
         <include>org.apache.camel:camel-twitter-starter</include>
         <include>org.apache.camel:camel-undertow-starter</include>
         <include>org.apache.camel:camel-univocity-parsers-starter</include>
+        <include>org.apache.camel:camel-validator-starter</include>
         <include>org.apache.camel:camel-velocity-starter</include>
         <include>org.apache.camel:camel-vertx-starter</include>
         <include>org.apache.camel:camel-vm-starter</include>
