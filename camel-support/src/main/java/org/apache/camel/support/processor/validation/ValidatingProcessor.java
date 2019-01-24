@@ -49,7 +49,7 @@ import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.support.AsyncProcessorSupport;
-import org.apache.camel.support.processor.validation.helper.XMLConverterHelper;
+import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.IOHelper;
 
 import static org.apache.camel.support.processor.validation.SchemaReader.ACCESS_EXTERNAL_DTD;

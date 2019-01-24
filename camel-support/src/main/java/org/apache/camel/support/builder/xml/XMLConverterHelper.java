@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support.processor.validation.helper;
+package org.apache.camel.support.builder.xml;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,15 +36,17 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * XML converter support.
+ */
 public class XMLConverterHelper {
-    
-    private static final Logger LOG = LoggerFactory.getLogger(ValidatingProcessor.class);
+
+    private static final Logger LOG = LoggerFactory.getLogger(XMLConverterHelper.class);
     private static final ErrorHandler DOCUMENT_BUILDER_LOGGING_ERROR_HANDLER = new DocumentBuilderLoggingErrorHandler();
     private static final String DOCUMENT_BUILDER_FACTORY_FEATURE = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
 
