@@ -19,10 +19,10 @@ package org.apache.camel.component.dozer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.support.processor.MarshalProcessor;
-import org.apache.camel.support.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.processor.MarshalProcessor;
+import org.apache.camel.support.processor.UnmarshalProcessor;
 
 /**
  * Producer class for Dozer endpoints.
