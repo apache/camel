@@ -14,33 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.validation;
-
-import javax.xml.transform.Result;
-import javax.xml.validation.Schema;
-
-import org.xml.sax.ErrorHandler;
+package org.apache.camel.support.processor.validation;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
 /**
- * Validator error handler.
+ * An exception found if no XML body is available on the inbound message
  */
-public interface ValidatorErrorHandler extends ErrorHandler {
+public class NoXmlBodyValidationException extends ValidationException {
+    private static final long serialVersionUID = 4502520681354358599L;
 
-    /**
-     * Resets any state within this error handler
-     */
-    void reset();
+    public NoXmlBodyValidationException(Exchange exchange) {
+        super(exchange, "No XML body could be found on the input message");
+    }
 
-    /**
-     * Process any errors which may have occurred during validation
-     *
-     * @param exchange the exchange
-     * @param schema   the schema
-     * @param result   the result
-     * @throws ValidationException is thrown in case of validation errors
-     */
-    void handleErrors(Exchange exchange, Schema schema, Result result) throws ValidationException;
+    public NoXmlBodyValidationException(Exchange exchange, Throwable cause) {
+        super("No XML body could be found on the input message", exchange, cause);
+    }
 }

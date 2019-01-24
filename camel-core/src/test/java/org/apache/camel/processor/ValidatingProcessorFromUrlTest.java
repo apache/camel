@@ -17,7 +17,7 @@
 package org.apache.camel.processor;
 import java.net.URL;
 
-import org.apache.camel.processor.validation.ValidatingProcessor;
+import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.Before;
 import org.junit.Test;

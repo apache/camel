@@ -27,6 +27,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 public class IOConverterCharsetTest extends ContextTestSupport {
@@ -91,7 +92,7 @@ public class IOConverterCharsetTest extends ContextTestSupport {
     @Test
     public void testToReaderFileWithCharsetUTF8() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/converter/german.utf-8.txt");
-        try (BufferedReader reader = IOConverter.toReader(file, "UTF-8");
+        try (BufferedReader reader = IOHelper.toReader(file, "UTF-8");
              BufferedReader naiveReader = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(file.getAbsolutePath())), StandardCharsets.UTF_8))) {
             String line = reader.readLine();
             String naiveLine = naiveReader.readLine();
@@ -103,7 +104,7 @@ public class IOConverterCharsetTest extends ContextTestSupport {
     @Test
     public void testToReaderFileWithCharsetLatin1() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/converter/german.iso-8859-1.txt");
-        try (BufferedReader reader = IOConverter.toReader(file, "ISO-8859-1");
+        try (BufferedReader reader = IOHelper.toReader(file, "ISO-8859-1");
              BufferedReader naiveReader = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(file.getAbsolutePath())), "ISO-8859-1"))) {
             String line = reader.readLine();
             String naiveLine = naiveReader.readLine();
@@ -113,6 +114,6 @@ public class IOConverterCharsetTest extends ContextTestSupport {
     }
 
     private static void switchToDefaultCharset(final Charset charset) {
-        IOConverter.defaultCharset = () -> charset;
+        IOHelper.defaultCharset = () -> charset;
     }
 }

@@ -14,22 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.validation;
+package org.apache.camel.support.processor.validation;
+
+import javax.xml.transform.Result;
+import javax.xml.validation.Schema;
+
+import org.xml.sax.ErrorHandler;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 
 /**
- * An exception thrown if the XML header is not available on the inbound message
+ * Validator error handler.
  */
-public class NoXmlHeaderValidationException extends ValidationException {
-    private static final long serialVersionUID = 4502520681354358599L;
+public interface ValidatorErrorHandler extends ErrorHandler {
 
-    public NoXmlHeaderValidationException(Exchange exchange, String header) {
-        super(exchange, "XML header \"" + header + "\" could not be found on the input message");
-    }
+    /**
+     * Resets any state within this error handler
+     */
+    void reset();
 
-    public NoXmlHeaderValidationException(Exchange exchange, String header, Throwable cause) {
-        super("XML header \"" + header + "\"  could not found on the input message", exchange, cause);
-    }
+    /**
+     * Process any errors which may have occurred during validation
+     *
+     * @param exchange the exchange
+     * @param schema   the schema
+     * @param result   the result
+     * @throws ValidationException is thrown in case of validation errors
+     */
+    void handleErrors(Exchange exchange, Schema schema, Result result) throws ValidationException;
 }

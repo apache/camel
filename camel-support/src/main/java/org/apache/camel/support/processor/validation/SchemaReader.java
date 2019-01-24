@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.validation;
+package org.apache.camel.support.processor.validation;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +34,6 @@ import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -232,13 +232,19 @@ public class SchemaReader {
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext, schemaResourceUri);
         byte[] bytes = null;
         try {
-            bytes = IOConverter.toBytes(is);
+            bytes = getBytes(is);
         } finally {
             // and make sure to close the input stream after the schema has been
             // loaded
             IOHelper.close(is);
         }
         return bytes;
+    }
+    
+    private static byte[] getBytes(InputStream stream) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        IOHelper.copy(IOHelper.buffered(stream), bos);
+        return bos.toByteArray();
     }
 
 }

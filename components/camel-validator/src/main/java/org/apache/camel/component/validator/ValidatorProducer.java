@@ -19,8 +19,8 @@ package org.apache.camel.component.validator;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.validation.ValidatingProcessor;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 
 public class ValidatorProducer extends DefaultAsyncProducer {

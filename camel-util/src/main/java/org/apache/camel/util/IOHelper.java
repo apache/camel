@@ -22,17 +22,24 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +48,8 @@ import org.slf4j.LoggerFactory;
  * IO helper class.
  */
 public final class IOHelper {
+	
+    public static Supplier<Charset> defaultCharset = Charset::defaultCharset;
 
     public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
@@ -494,5 +503,111 @@ public final class IOHelper {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Encoding-aware input stream.
+     */
+    public static class EncodingInputStream extends InputStream {
+
+        private final File file;
+        private final BufferedReader reader;
+        private final Charset defaultStreamCharset;
+
+        private ByteBuffer bufferBytes;
+        private CharBuffer bufferedChars = CharBuffer.allocate(4096);
+
+        public EncodingInputStream(File file, String charset) throws IOException {
+            this.file = file;
+            reader = toReader(file, charset);
+            defaultStreamCharset = defaultCharset.get();
+        }
+
+        @Override
+        public int read() throws IOException {
+            if (bufferBytes == null || bufferBytes.remaining() <= 0) {
+                bufferedChars.clear();
+                int len = reader.read(bufferedChars);
+                bufferedChars.flip();
+                if (len == -1) {
+                    return -1;
+                }
+                bufferBytes = defaultStreamCharset.encode(bufferedChars);
+            }
+            return bufferBytes.get();
+        }
+
+        @Override
+        public void close() throws IOException {
+            reader.close();
+        }
+
+        @Override
+        public void reset() throws IOException {
+            reader.reset();
+        }
+
+        public InputStream toOriginalInputStream() throws FileNotFoundException {
+            return new FileInputStream(file);
+        }
+    }
+
+    /**
+     * Encoding-aware file reader. 
+     */
+    public static class EncodingFileReader extends InputStreamReader {
+
+        private final FileInputStream in;
+
+        /**
+         * @param in file to read
+         * @param charset character set to use
+         */
+        public EncodingFileReader(FileInputStream in, String charset)
+            throws FileNotFoundException, UnsupportedEncodingException {
+            super(in, charset);
+            this.in = in;
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                super.close();
+            } finally {
+                in.close();
+            }
+        }
+    }
+    
+    /**
+     * Encoding-aware file writer. 
+     */
+    public static class EncodingFileWriter extends OutputStreamWriter {
+
+        private final FileOutputStream out;
+
+        /**
+         * @param out file to write
+         * @param charset character set to use
+         */
+        public EncodingFileWriter(FileOutputStream out, String charset)
+            throws FileNotFoundException, UnsupportedEncodingException {
+            super(out, charset);
+            this.out = out;
+        }
+
+        @Override
+        public void close() throws IOException {
+            try {
+                super.close();
+            } finally {
+                out.close();
+            }
+        }
+    }
+    
+    public static BufferedReader toReader(File file, String charset) throws IOException {
+        FileInputStream in = new FileInputStream(file);
+        return IOHelper.buffered(new EncodingFileReader(in, charset));
     }
 }

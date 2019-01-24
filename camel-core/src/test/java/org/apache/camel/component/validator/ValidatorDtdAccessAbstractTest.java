@@ -21,7 +21,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.validation.SchemaReader;
+import org.apache.camel.support.processor.validation.SchemaReader;
 import org.junit.Before;
 
 public abstract class ValidatorDtdAccessAbstractTest extends ContextTestSupport {
