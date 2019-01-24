@@ -153,7 +153,7 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
-import org.apache.camel.processor.validation.PredicateValidatingProcessor;
+import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
