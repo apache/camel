@@ -40,7 +40,7 @@
     <!-- Camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-support</artifactId>
     </dependency>
 
     <!-- Apns -->

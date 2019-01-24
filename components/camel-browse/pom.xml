@@ -40,81 +40,9 @@
 
   <dependencies>
 
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
-      <optional>true</optional>
-    </dependency>
-
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>meta-annotations</artifactId>
-      <version>${project.version}</version>
-      <optional>true</optional>
-    </dependency>
-
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-util</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-management-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-support</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <!-- required dependencies by camel-core -->
-    <!-- which we shade into camel-core so its available for everybody out of the box -->
-    <dependency>
-      <groupId>com.github.ben-manes.caffeine</groupId>
-      <artifactId>caffeine</artifactId>
-    </dependency>
-    <!-- we shade our patched ordered json-simple parser -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>json-simple-ordered</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <!-- required dependencies by camel-core -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-
-    <!-- osgi support -->
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <scope>provided</scope>
-      <optional>true</optional>
     </dependency>
 
     <!-- testing -->
@@ -133,41 +61,6 @@
           <groupId>org.hamcrest</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.openjdk.jmh</groupId>
-      <artifactId>jmh-core</artifactId>
-      <version>1.21</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openjdk.jmh</groupId>
-      <artifactId>jmh-generator-annprocess</artifactId>
-      <version>1.21</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>java-hamcrest</artifactId>
-      <version>${hamcrest-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.awaitility</groupId>
-      <artifactId>awaitility</artifactId>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>hamcrest-core</artifactId>
-          <groupId>org.hamcrest</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>${assertj-version}</version>
-      <scope>test</scope>
     </dependency>
 
     <!-- logging -->
@@ -203,14 +96,6 @@
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-core</artifactId>
         <scope>test</scope>
-    </dependency>
-
-    <!-- validator -->
-    <dependency>
-      <groupId>xml-resolver</groupId>
-      <artifactId>xml-resolver</artifactId>
-      <version>${xml-resolver-version}</version>
-      <scope>test</scope>
     </dependency>
 
   </dependencies>
