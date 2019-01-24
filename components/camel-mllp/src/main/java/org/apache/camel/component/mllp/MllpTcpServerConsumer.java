@@ -48,9 +48,9 @@ import org.apache.camel.component.mllp.internal.TcpServerAcceptThread;
 import org.apache.camel.component.mllp.internal.TcpServerBindThread;
 import org.apache.camel.component.mllp.internal.TcpServerConsumerValidationRunnable;
 import org.apache.camel.component.mllp.internal.TcpSocketConsumerRunnable;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerationException;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -489,7 +489,7 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
                         acknowledgmentTypeBytes[0] = originalHl7MessageBytes[i + 5];
                         acknowledgmentTypeBytes[1] = originalHl7MessageBytes[i + 6];
                         try {
-                            acknowledgementMessageType = IOConverter.toString(acknowledgmentTypeBytes, exchange);
+                            acknowledgementMessageType = new String(acknowledgmentTypeBytes, ExchangeHelper.getCharsetName(exchange));
                         } catch (IOException ioEx) {
                             throw new RuntimeException("Failed to convert acknowledgement message to string", ioEx);
                         }

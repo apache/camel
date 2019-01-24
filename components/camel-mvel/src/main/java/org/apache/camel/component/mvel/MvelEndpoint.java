@@ -24,10 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.mvel2.ParserContext;
 import org.mvel2.templates.CompiledTemplate;
@@ -109,7 +109,7 @@ public class MvelEndpoint extends ResourceEndpoint {
             }
             // getResourceAsInputStream also considers the content cache
             Reader reader = getEncoding() != null ? new InputStreamReader(getResourceAsInputStream(), getEncoding()) : new InputStreamReader(getResourceAsInputStream());
-            String template = IOConverter.toString(reader);
+            String template = IOHelper.toString(reader);
             if (!template.equals(this.template)) {
                 this.template = template;
                 this.compiled = TemplateCompiler.compileTemplate(template, mvelContext);
