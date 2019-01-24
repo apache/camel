@@ -20,8 +20,9 @@ import javax.xml.XMLConstants;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.validator.ValidatorEndpoint;
-import org.apache.camel.processor.validation.ValidatingProcessor;
+
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.support.processor.validation.ValidatingProcessor;
 import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
 
 /**
