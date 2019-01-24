@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 

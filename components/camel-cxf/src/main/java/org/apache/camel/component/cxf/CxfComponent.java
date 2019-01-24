@@ -22,10 +22,10 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.cxf.message.Message;
 

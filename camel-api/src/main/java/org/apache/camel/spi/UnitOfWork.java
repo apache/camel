@@ -32,6 +32,14 @@ import org.apache.camel.Service;
  */
 public interface UnitOfWork extends Service {
 
+    String MDC_BREADCRUMB_ID = "camel.breadcrumbId";
+    String MDC_EXCHANGE_ID = "camel.exchangeId";
+    String MDC_MESSAGE_ID = "camel.messageId";
+    String MDC_CORRELATION_ID = "camel.correlationId";
+    String MDC_ROUTE_ID = "camel.routeId";
+    String MDC_CAMEL_CONTEXT_ID = "camel.contextId";
+    String MDC_TRANSACTION_KEY = "camel.transactionKey";
+
     /**
      * Adds a synchronization hook
      *

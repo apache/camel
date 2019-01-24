@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.spi.MessageHistoryFactory;
+import org.apache.camel.support.DefaultMessageHistory;
 
 public class DefaultMessageHistoryFactory implements MessageHistoryFactory {
 

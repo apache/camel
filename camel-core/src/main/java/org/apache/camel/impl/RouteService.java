@@ -49,8 +49,8 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.slf4j.MDC;
 
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
+import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
+import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
 
 /**
  * Represents the runtime objects for a given {@link RouteDefinition} so that it can be stopped independently

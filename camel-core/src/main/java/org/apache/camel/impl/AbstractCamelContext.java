@@ -182,7 +182,7 @@ import org.apache.camel.util.URISupport;
 import org.apache.camel.util.function.ThrowingRunnable;
 import org.slf4j.MDC;
 
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
+import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 
 /**
  * Represents the context used to configure routes and the policies to use.
