@@ -31,8 +31,8 @@ import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
