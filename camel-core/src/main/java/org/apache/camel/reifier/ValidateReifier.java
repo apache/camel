@@ -19,8 +19,8 @@ package org.apache.camel.reifier;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ValidateDefinition;
-import org.apache.camel.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
 
 class ValidateReifier extends ExpressionReifier<ValidateDefinition> {
 

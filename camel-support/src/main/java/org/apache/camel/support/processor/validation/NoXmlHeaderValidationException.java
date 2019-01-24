@@ -14,34 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.validation;
+package org.apache.camel.support.processor.validation;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.apache.camel.ValidationException;
 
 /**
- * A predicate validation exception occurred
+ * An exception thrown if the XML header is not available on the inbound message
  */
-public class PredicateValidationException extends ValidationException {
+public class NoXmlHeaderValidationException extends ValidationException {
+    private static final long serialVersionUID = 4502520681354358599L;
 
-    private static final long serialVersionUID = 5767438583860347105L;
-
-    private final Predicate predicate;
-
-    public PredicateValidationException(Exchange exchange, Predicate predicate) {
-        super(exchange, buildMessage(predicate, exchange));
-        this.predicate = predicate;
+    public NoXmlHeaderValidationException(Exchange exchange, String header) {
+        super(exchange, "XML header \"" + header + "\" could not be found on the input message");
     }
 
-    protected static String buildMessage(Predicate predicate, Exchange exchange) {
-        StringBuilder builder = new StringBuilder("Validation failed for Predicate[");
-        builder.append(predicate.toString());
-        builder.append("]");
-        return builder.toString();
-    }
-
-    public Predicate getPredicate() {
-        return predicate;
+    public NoXmlHeaderValidationException(Exchange exchange, String header, Throwable cause) {
+        super("XML header \"" + header + "\"  could not found on the input message", exchange, cause);
     }
 }

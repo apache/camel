@@ -14,22 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.validation;
+package org.apache.camel.support.processor.validation;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.ValidationException;
 
 /**
- * An exception found if no XML body is available on the inbound message
+ * A predicate validation exception occurred
  */
-public class NoXmlBodyValidationException extends ValidationException {
-    private static final long serialVersionUID = 4502520681354358599L;
+public class PredicateValidationException extends ValidationException {
 
-    public NoXmlBodyValidationException(Exchange exchange) {
-        super(exchange, "No XML body could be found on the input message");
+    private static final long serialVersionUID = 5767438583860347105L;
+
+    private final Predicate predicate;
+
+    public PredicateValidationException(Exchange exchange, Predicate predicate) {
+        super(exchange, buildMessage(predicate, exchange));
+        this.predicate = predicate;
     }
 
-    public NoXmlBodyValidationException(Exchange exchange, Throwable cause) {
-        super("No XML body could be found on the input message", exchange, cause);
+    protected static String buildMessage(Predicate predicate, Exchange exchange) {
+        StringBuilder builder = new StringBuilder("Validation failed for Predicate[");
+        builder.append(predicate.toString());
+        builder.append("]");
+        return builder.toString();
+    }
+
+    public Predicate getPredicate() {
+        return predicate;
     }
 }

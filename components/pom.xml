@@ -46,6 +46,7 @@
     <module>camel-seda</module>
     <module>camel-stub</module>
     <module>camel-timer</module>
+    <module>camel-validator</module>
     <module>camel-vm</module>
 
     <!-- we want to test these modules first to catch any errors early as possible -->

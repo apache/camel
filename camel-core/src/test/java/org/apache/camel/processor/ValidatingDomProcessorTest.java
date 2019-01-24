@@ -17,8 +17,7 @@
 package org.apache.camel.processor;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.validation.NoXmlBodyValidationException;
-import org.apache.camel.processor.validation.SchemaValidationException;
+import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.junit.Before;
 import org.junit.Test;
 

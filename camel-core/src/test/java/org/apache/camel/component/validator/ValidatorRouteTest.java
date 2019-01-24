@@ -26,7 +26,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.validation.NoXmlHeaderValidationException;
+import org.apache.camel.support.processor.validation.NoXmlHeaderValidationException;
 import org.junit.Before;
 import org.junit.Test;
 

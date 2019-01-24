@@ -59,8 +59,6 @@ import org.slf4j.LoggerFactory;
 @Converter
 public final class IOConverter {
 
-    static Supplier<Charset> defaultCharset = Charset::defaultCharset;
-
     private static final Logger LOG = LoggerFactory.getLogger(IOConverter.class);
 
     /**
@@ -88,7 +86,7 @@ public final class IOConverter {
      */
     public static InputStream toInputStream(File file, String charset) throws IOException {
         if (charset != null) {
-            return new EncodingInputStream(file, charset);
+            return new IOHelper.EncodingInputStream(file, charset);
         } else {
             return toInputStream(file);
         }
@@ -96,12 +94,7 @@ public final class IOConverter {
 
     @Converter
     public static BufferedReader toReader(File file, Exchange exchange) throws IOException {
-        return toReader(file, ExchangeHelper.getCharsetName(exchange));
-    }
-
-    public static BufferedReader toReader(File file, String charset) throws IOException {
-        FileInputStream in = new FileInputStream(file);
-        return IOHelper.buffered(new EncodingFileReader(in, charset));
+        return IOHelper.toReader(file, ExchangeHelper.getCharsetName(exchange));
     }
 
     @Converter
@@ -125,7 +118,7 @@ public final class IOConverter {
     }
 
     public static BufferedWriter toWriter(FileOutputStream os, String charset) throws IOException {
-        return IOHelper.buffered(new EncodingFileWriter(os, charset));
+        return IOHelper.buffered(new IOHelper.EncodingFileWriter(os, charset));
     }
 
     @Converter
@@ -332,107 +325,6 @@ public final class IOConverter {
             IOHelper.close(reader);
         }
         return prop;
-    }
-
-    /**
-     * Encoding-aware input stream.
-     */
-    public static class EncodingInputStream extends InputStream {
-
-        private final File file;
-        private final BufferedReader reader;
-        private final Charset defaultStreamCharset;
-
-        private ByteBuffer bufferBytes;
-        private CharBuffer bufferedChars = CharBuffer.allocate(4096);
-
-        public EncodingInputStream(File file, String charset) throws IOException {
-            this.file = file;
-            reader = toReader(file, charset);
-            defaultStreamCharset = defaultCharset.get();
-        }
-
-        @Override
-        public int read() throws IOException {
-            if (bufferBytes == null || bufferBytes.remaining() <= 0) {
-                bufferedChars.clear();
-                int len = reader.read(bufferedChars);
-                bufferedChars.flip();
-                if (len == -1) {
-                    return -1;
-                }
-                bufferBytes = defaultStreamCharset.encode(bufferedChars);
-            }
-            return bufferBytes.get();
-        }
-
-        @Override
-        public void close() throws IOException {
-            reader.close();
-        }
-
-        @Override
-        public void reset() throws IOException {
-            reader.reset();
-        }
-
-        public InputStream toOriginalInputStream() throws FileNotFoundException {
-            return new FileInputStream(file);
-        }
-    }
-
-    /**
-     * Encoding-aware file reader. 
-     */
-    private static class EncodingFileReader extends InputStreamReader {
-
-        private final FileInputStream in;
-
-        /**
-         * @param in file to read
-         * @param charset character set to use
-         */
-        EncodingFileReader(FileInputStream in, String charset)
-            throws FileNotFoundException, UnsupportedEncodingException {
-            super(in, charset);
-            this.in = in;
-        }
-
-        @Override
-        public void close() throws IOException {
-            try {
-                super.close();
-            } finally {
-                in.close();
-            }
-        }
-    }
-    
-    /**
-     * Encoding-aware file writer. 
-     */
-    private static class EncodingFileWriter extends OutputStreamWriter {
-
-        private final FileOutputStream out;
-
-        /**
-         * @param out file to write
-         * @param charset character set to use
-         */
-        EncodingFileWriter(FileOutputStream out, String charset)
-            throws FileNotFoundException, UnsupportedEncodingException {
-            super(out, charset);
-            this.out = out;
-        }
-
-        @Override
-        public void close() throws IOException {
-            try {
-                super.close();
-            } finally {
-                out.close();
-            }
-        }
     }
 
 }
