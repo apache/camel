@@ -30,14 +30,6 @@ import org.slf4j.MDC;
  */
 public class MDCUnitOfWork extends DefaultUnitOfWork {
 
-    public static final String MDC_BREADCRUMB_ID = "camel.breadcrumbId";
-    public static final String MDC_EXCHANGE_ID = "camel.exchangeId";
-    public static final String MDC_MESSAGE_ID = "camel.messageId";
-    public static final String MDC_CORRELATION_ID = "camel.correlationId";
-    public static final String MDC_ROUTE_ID = "camel.routeId";
-    public static final String MDC_CAMEL_CONTEXT_ID = "camel.contextId";
-    public static final String MDC_TRANSACTION_KEY = "camel.transactionKey";
-
     private static final Logger LOG = LoggerFactory.getLogger(MDCUnitOfWork.class);
 
     private final String originalBreadcrumbId;

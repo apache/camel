@@ -30,9 +30,9 @@ import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 
 /**
  * The <a href="http://camel.apache.org/sjms">Simple JMS</a> component.

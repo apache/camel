@@ -24,10 +24,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.slf4j.MDC;
 
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_BREADCRUMB_ID;
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_EXCHANGE_ID;
-import static org.apache.camel.impl.MDCUnitOfWork.MDC_ROUTE_ID;
+import static org.apache.camel.spi.UnitOfWork.MDC_BREADCRUMB_ID;
+import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
+import static org.apache.camel.spi.UnitOfWork.MDC_EXCHANGE_ID;
+import static org.apache.camel.spi.UnitOfWork.MDC_ROUTE_ID;
 
 public class AsyncMDCTest extends ContextTestSupport {
 

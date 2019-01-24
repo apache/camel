@@ -21,7 +21,7 @@ import io.micrometer.core.instrument.Timer;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
-import org.apache.camel.impl.DefaultMessageHistory;
+import org.apache.camel.support.DefaultMessageHistory;
 
 /**
  * A micrometer metrics based {@link MessageHistory}. This could also use {@link #elapsed}

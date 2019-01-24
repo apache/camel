@@ -18,9 +18,9 @@ package org.apache.camel.http.common;
 
 import java.util.Map;
 
-import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.HeaderFilterStrategyComponent;
 
 public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent {
 
