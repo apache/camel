@@ -69,7 +69,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private String resourceUri;
     @UriParam(defaultValue = "true")
     private boolean contentCache = true;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced") @Deprecated
     private XmlConverter converter;
     @UriParam(label = "advanced")
     private String transformerFactoryClass;
@@ -176,6 +176,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.resourceUri = resourceUri;
     }
 
+    @Deprecated
     public XmlConverter getConverter() {
         return converter;
     }
@@ -183,6 +184,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     /**
      * To use a custom implementation of {@link org.apache.camel.converter.jaxp.XmlConverter}
      */
+    @Deprecated
     public void setConverter(XmlConverter converter) {
         this.converter = converter;
     }

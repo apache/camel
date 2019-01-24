@@ -50,7 +50,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     private List<String> exceptions = new ArrayList<>();
     @XmlElement(name = "onWhen") @AsPredicate
     private WhenDefinition onWhen;
-    @XmlElement(name = "handled") @AsPredicate @Metadata(deprecationNote = "not in use")
+    @XmlElement(name = "handled") @AsPredicate
     @Deprecated
     private ExpressionSubElementDefinition handled;
     @XmlElementRef
