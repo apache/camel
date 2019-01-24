@@ -64,8 +64,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private String resourceUri;
     @UriParam(defaultValue = "true")
     private boolean contentCache = true;
-    @UriParam(label = "advanced") @Deprecated
-    private XmlConverter converter;
     @UriParam(label = "advanced")
     private String transformerFactoryClass;
     @UriParam(label = "advanced")
@@ -160,17 +158,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
-    }
-
-    public XmlConverter getConverter() {
-        return converter;
-    }
-
-    /**
-     * To use a custom implementation of {@link org.apache.camel.converter.jaxp.XmlConverter}
-     */
-    public void setConverter(XmlConverter converter) {
-        this.converter = converter;
     }
 
     public String getTransformerFactoryClass() {
@@ -420,9 +407,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
         log.debug("{} using schema resource: {}", this, resourceUri);
 
         this.xslt = injector.newInstance(XsltBuilder.class);
-        if (converter != null) {
-            xslt.setConverter(converter);
-        }
 
         boolean useSaxon = false;
         if (transformerFactoryClass == null && (saxon || saxonExtensionFunctions != null)) {
@@ -446,7 +430,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
         if (factory != null) {
             log.debug("Using TransformerFactory {}", factory);
-            xslt.getConverter().setTransformerFactory(factory);
+            xslt.setTransformerFactory(factory);
         }
         if (resultHandlerFactory != null) {
             xslt.setResultHandlerFactory(resultHandlerFactory);

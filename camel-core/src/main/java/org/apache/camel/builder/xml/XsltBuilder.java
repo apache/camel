@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
@@ -41,7 +40,6 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Node;
-
 import org.xml.sax.EntityResolver;
 
 import org.apache.camel.Exchange;
@@ -72,6 +70,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class XsltBuilder implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
     private Map<String, Object> parameters = new HashMap<>();
+    private TransformerFactory transformerFactory;
     private XmlConverter converter = new XmlConverter();
     private Templates template;
     private volatile BlockingQueue<Transformer> transformers;
@@ -281,7 +280,7 @@ public class XsltBuilder implements Processor {
         return this;
     }
 
-        // Properties
+    // Properties
     // -------------------------------------------------------------------------
 
     public Map<String, Object> getParameters() {
@@ -381,14 +380,6 @@ public class XsltBuilder implements Processor {
         setTransformerSource(new StreamSource(in));
     }
 
-    public XmlConverter getConverter() {
-        return converter;
-    }
-
-    public void setConverter(XmlConverter converter) {
-        this.converter = converter;
-    }
-
     public URIResolver getUriResolver() {
         return uriResolver;
     }
@@ -419,6 +410,10 @@ public class XsltBuilder implements Processor {
 
     // Implementation methods
     // -------------------------------------------------------------------------
+    public void setTransformerFactory(TransformerFactory transformerFactory) {
+        this.converter.setTransformerFactory(transformerFactory);
+    }
+
     private void releaseTransformer(Transformer transformer) {
         if (transformers != null) {
             transformer.reset();

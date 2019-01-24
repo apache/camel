@@ -36,8 +36,6 @@ import org.apache.camel.support.ResourceHelper;
 public class XsltComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
-    private XmlConverter xmlConverter;
-    @Metadata(label = "advanced")
     private URIResolver uriResolver;
     @Metadata(label = "advanced")
     private XsltUriResolverFactory uriResolverFactory;
@@ -52,17 +50,6 @@ public class XsltComponent extends DefaultComponent {
     private boolean saxon;
 
     public XsltComponent() {
-    }
-
-    public XmlConverter getXmlConverter() {
-        return xmlConverter;
-    }
-
-    /**
-     * To use a custom implementation of {@link org.apache.camel.converter.jaxp.XmlConverter}
-     */
-    public void setXmlConverter(XmlConverter xmlConverter) {
-        this.xmlConverter = xmlConverter;
     }
 
     public XsltUriResolverFactory getUriResolverFactory() {
@@ -163,7 +150,6 @@ public class XsltComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, final String remaining, Map<String, Object> parameters) throws Exception {
         XsltEndpoint endpoint = new XsltEndpoint(uri, this);
-        endpoint.setConverter(getXmlConverter());
         endpoint.setContentCache(isContentCache());
         endpoint.setSaxon(isSaxon());
         endpoint.setSaxonConfiguration(saxonConfiguration);

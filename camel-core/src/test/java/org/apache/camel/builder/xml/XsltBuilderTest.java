@@ -263,23 +263,6 @@ public class XsltBuilderTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXsltSetConverter() throws Exception {
-        URL styleSheet = getClass().getResource("example.xsl");
-
-        XsltBuilder builder = XsltBuilder.xslt(styleSheet);
-        XmlConverter converter = new XmlConverter();
-        builder.setConverter(converter);
-        assertSame(converter, builder.getConverter());
-
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody("<hello>world!</hello>");
-
-        builder.process(exchange);
-
-        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
-    }
-
-    @Test
     public void testXsltResultHandler() throws Exception {
         URL styleSheet = getClass().getResource("example.xsl");
 

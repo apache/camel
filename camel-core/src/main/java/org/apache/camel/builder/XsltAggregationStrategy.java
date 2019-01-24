@@ -228,7 +228,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
             Class<?> factoryClass = camelContext.getClassResolver().resolveMandatoryClass(transformerFactoryClass,
                 XsltAggregationStrategy.class.getClassLoader());
             TransformerFactory factory = (TransformerFactory) camelContext.getInjector().newInstance(factoryClass);
-            xslt.getConverter().setTransformerFactory(factory);
+            xslt.setTransformerFactory(factory);
         }
 
         if (uriResolver == null) {
