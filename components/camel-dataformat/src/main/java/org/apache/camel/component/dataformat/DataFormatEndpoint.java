@@ -23,14 +23,14 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.support.processor.MarshalProcessor;
-import org.apache.camel.support.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.processor.MarshalProcessor;
+import org.apache.camel.support.processor.UnmarshalProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
