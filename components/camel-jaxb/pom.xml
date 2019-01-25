@@ -32,9 +32,10 @@
     <description>Camel JAXB support</description>
 
     <properties>
-		<camel.osgi.import.before.defaults>
-			com.sun.xml.bind.marshaller;resolution:=optional;version="[2.2,3)"
-		</camel.osgi.import.before.defaults>
+		<camel.osgi.import>
+			com.sun.xml.bind.marshaller;resolution:=optional;version="[2.2,3)",
+            *
+		</camel.osgi.import>
     </properties>
 
     <dependencies>
@@ -51,6 +52,7 @@
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- for testing -->

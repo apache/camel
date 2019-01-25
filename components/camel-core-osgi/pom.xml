@@ -32,6 +32,10 @@
   <description>Using Camel with OSGi</description>
   
   <properties>
+    <camel.osgi.import>
+      org.osgi.service.event;resolution:=optional,
+      *
+    </camel.osgi.import>
   </properties>
 
   <dependencies>
