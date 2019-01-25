@@ -23,7 +23,7 @@ import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PropertyPlaceholdersHelper {
+public final class PropertyPlaceholdersHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertyPlaceholdersHelper.class);
 
