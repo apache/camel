@@ -17,8 +17,12 @@
 package org.apache.camel.component.as2.api.protocol;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import org.apache.camel.component.as2.api.AS2AsynchronousMDNManager;
 import org.apache.camel.component.as2.api.AS2Charset;
@@ -29,6 +33,7 @@ import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
 import org.apache.camel.component.as2.api.InvalidAS2NameException;
+import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
@@ -39,18 +44,33 @@ import org.apache.camel.component.as2.api.util.AS2Utils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.context.Context;
+import org.apache.velocity.runtime.RuntimeConstants;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResponseMDN implements HttpResponseInterceptor {
 
     public static final String BOUNDARY_PARAM_NAME = "boundary";
+    
+    private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = "MDN for -\n" + 
+            " Message ID: $requestHeaders[\"Message-Id\"]\n" + 
+            "  Subject: $requestHeaders[\"Subject\"]\n" + 
+            "  Date: $requestHeaders[\"Date\"]\n" + 
+            "  From: $requestHeaders[\"AS2-From\"]\n" + 
+            "  To: $requestHeaders[\"AS2-To\"]\n" + 
+            "  Received on: $responseHeaders[\"Date\"]\n" + 
+            " Status: $dispositionType \n";
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseMDN.class);
 
@@ -61,7 +81,9 @@ public class ResponseMDN implements HttpResponseInterceptor {
     private PrivateKey signingPrivateKey;
     private PrivateKey decryptingPrivateKey;
 
-    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, 
+    private VelocityEngine velocityEngine;
+
+   public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, 
                        Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
@@ -101,9 +123,10 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
         // Return a Message Disposition Notification Receipt in response body
         String boundary = EntityUtils.createBoundaryValue();
+        String mdnMessage = createMdnDescription(request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, DEFAULT_MDN_MESSAGE_TEMPLATE);
         DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                 request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey);
+                AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey, mdnMessage);
 
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
                 .parseDispositionNotificationOptions(
@@ -189,6 +212,68 @@ public class ResponseMDN implements HttpResponseInterceptor {
         }
 
         LOG.debug(AS2Utils.printMessage(response));
+    }
+    
+    private String createMdnDescription(HttpEntityEnclosingRequest request,
+                                        HttpResponse response,
+                                        DispositionMode dispositionMode,
+                                        AS2DispositionType dispositionType,
+                                        AS2DispositionModifier dispositionModifier,
+                                        String[] failureFields,
+                                        String[] errorFields,
+                                        String[] warningFields,
+                                        Map<String, String> extensionFields,
+                                        String charset,
+                                        String mdnMessageTemplate) throws HttpException {
+        
+        try {
+            Context context = new VelocityContext();
+            context.put("request", request);
+            Map<String, Object> requestHeaders = new HashMap<>();
+            for (Header header: request.getAllHeaders()) {
+                requestHeaders.put(header.getName(), header.getValue());
+            }
+            context.put("requestHeaders", requestHeaders);
+            
+            Map<String, Object> responseHeaders = new HashMap<>();
+            for (Header header: response.getAllHeaders()) {
+                responseHeaders.put(header.getName(), header.getValue());
+            }
+            context.put("responseHeaders", responseHeaders);
+            
+            context.put("dispositionMode", dispositionMode);
+            context.put("dispositionType", dispositionType);
+            context.put("dispositionModifier", dispositionModifier);
+            context.put("failureFields", failureFields);
+            context.put("errorFields", errorFields);
+            context.put("warningFields", warningFields);
+            context.put("extensionFields", extensionFields);
+            
+            VelocityEngine engine = getVelocityEngine();
+            StringWriter buffer = new StringWriter();
+            engine.evaluate(context, buffer, getClass().getName(), mdnMessageTemplate);
+            return buffer.toString();
+            
+        } catch (Exception e) {
+            throw new HttpException("failed to create MDN description", e);
+        }
+    }
+
+    private synchronized VelocityEngine getVelocityEngine() throws Exception {
+        if (velocityEngine == null) {
+            velocityEngine = new VelocityEngine();
+            
+            // set default properties
+            Properties properties = new Properties();
+            properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "file, class");
+            properties.setProperty("class.resource.loader.description", "Camel Velocity Classpath Resource Loader");
+            properties.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
+            final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
+            properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
+            
+            velocityEngine.init(properties);
+        }
+        return velocityEngine;
     }
 
 }

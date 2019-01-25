@@ -145,7 +145,7 @@ public class AS2MessageTest {
     private static List<X509Certificate> certList;
 
     private AS2SignedDataGenerator gen;
-    
+
     @BeforeClass
     public static void setUpOnce() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
@@ -675,8 +675,8 @@ public class AS2MessageTest {
         String[] warningFields = new String[] {"warning-field-1"};
         DispositionNotificationMultipartReportEntity mdn = new DispositionNotificationMultipartReportEntity(request,
                 response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED,
-                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, null, "boundary",
-                true, null);
+                dispositionModifier, failureFields, errorFields, warningFields, extensionFields, null, "boundary", true,
+                null, "Got ya message!");
 
         // Send MDN
         HttpCoreContext httpContext = mdnManager.send(mdn, RECIPIENT_DELIVERY_ADDRESS);
@@ -980,7 +980,5 @@ public class AS2MessageTest {
         assertFalse("First mime type set as main body of request", signatureEntity.isMainBody());
 
     }
-
-
 
 }
