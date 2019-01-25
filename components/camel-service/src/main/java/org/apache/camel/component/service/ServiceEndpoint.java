@@ -30,11 +30,11 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.cloud.DiscoverableService;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceRegistry;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * Represents an endpoint which is registered to a Service Registry such as Consul, Etcd.
