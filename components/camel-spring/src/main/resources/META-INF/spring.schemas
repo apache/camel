@@ -126,6 +126,7 @@ http\://camel.apache.org/schema/spring/camel-spring-2.21.4.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.22.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.22.1.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.22.2.xsd=camel-spring.xsd
+http\://camel.apache.org/schema/spring/camel-spring-2.22.3.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.23.0.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-2.23.1.xsd=camel-spring.xsd
 http\://camel.apache.org/schema/spring/camel-spring-${project.version}.xsd=camel-spring.xsd
