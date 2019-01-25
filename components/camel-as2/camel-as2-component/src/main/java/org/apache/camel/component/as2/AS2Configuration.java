@@ -119,6 +119,9 @@ public class AS2Configuration {
 
     @UriParam
     private PrivateKey decryptingPrivateKey;
+    
+    @UriParam
+    private String mdnMessageTemplate;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -462,4 +465,17 @@ public class AS2Configuration {
     public void setDecryptingPrivateKey(PrivateKey signingPrivateKey) {
         this.decryptingPrivateKey = signingPrivateKey;
     }
+
+    public String getMdnMessageTemplate() {
+        return mdnMessageTemplate;
+    }
+
+    /**
+     * The template used to format MDN message
+     */
+    public void setMdnMessageTemplate(String mdnMessageTemplate) {
+        this.mdnMessageTemplate = mdnMessageTemplate;
+    }
+    
+    
 }
