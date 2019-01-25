@@ -50,7 +50,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private boolean showProperties;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
-    @UriParam(label = "formatting", defaultValue = "true", description = "Whether to skip line separators when logging the message body. This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
+    @UriParam(label = "formatting", defaultValue = "true", description = "Whether to skip line separators when logging the message body." 
+    + "This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
     private boolean skipBodyLineSeparator = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the message body.")
     private boolean showBody = true;
@@ -60,7 +61,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private boolean showOut;
     @UriParam(label = "formatting", description = "If the exchange has an exception, show the exception message (no stacktrace)")
     private boolean showException;
-    @UriParam(label = "formatting", description = "f the exchange has a caught exception, show the exception message (no stack trace). A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT and for instance a doCatch can catch exceptions.")
+    @UriParam(label = "formatting", description = "f the exchange has a caught exception, show the exception message (no stack trace)." 
+    + "A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT and for instance a doCatch can catch exceptions.")
     private boolean showCaughtException;
     @UriParam(label = "formatting", description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
     private boolean showStackTrace;
@@ -70,7 +72,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private boolean multiline;
     @UriParam(label = "formatting", description = "If enabled Camel will on Future objects wait for it to complete to obtain the payload to be logged.")
     private boolean showFuture;
-    @UriParam(label = "formatting", description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
+    @UriParam(label = "formatting", description = "Whether Camel should show stream bodies or not (eg such as java.io.InputStream). Beware if you enable this option then " 
+    + "you may not be able later to access the message body as the stream have already been read by this logger. To remedy this you will have to use Stream Caching.")
     private boolean showStreams;
     @UriParam(label = "formatting", description = "If enabled Camel will output files")
     private boolean showFiles;
