@@ -37,12 +37,6 @@ public class XsltComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * To use a custom implementation of
-     * org.apache.camel.converter.jaxp.XmlConverter. The option is a
-     * org.apache.camel.component.xslt.XmlConverter type.
-     */
-    private String xmlConverter;
-    /**
      * To use a custom UriResolver which depends on a dynamic endpoint resource
      * URI. Should not be used together with the option 'uriResolver'. The
      * option is a org.apache.camel.component.xslt.XsltUriResolverFactory type.
@@ -91,14 +85,6 @@ public class XsltComponentConfiguration
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
-
-    public String getXmlConverter() {
-        return xmlConverter;
-    }
-
-    public void setXmlConverter(String xmlConverter) {
-        this.xmlConverter = xmlConverter;
-    }
 
     public String getUriResolverFactory() {
         return uriResolverFactory;
