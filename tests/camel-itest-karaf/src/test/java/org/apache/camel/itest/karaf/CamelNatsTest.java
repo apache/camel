@@ -18,12 +18,29 @@ package org.apache.camel.itest.karaf;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.CoreOptions;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
 public class CamelNatsTest extends BaseKarafTest {
 
     public static final String COMPONENT = extractName(CamelNatsTest.class);
+    
+    @Configuration
+    public static Option[] configure() {
+        Option[] baseOptions = BaseKarafTest.configure();
+        Option[] additionalOptions = CoreOptions.options(
+            CoreOptions.systemPackage("sun.security.x509")
+        );
+
+        Option[] options = new Option[baseOptions.length + additionalOptions.length];
+        System.arraycopy(baseOptions, 0, options, 0, baseOptions.length);
+        System.arraycopy(additionalOptions, 0, options, baseOptions.length, additionalOptions.length);
+
+        return options;    
+    }
 
     @Test
     public void test() throws Exception {
