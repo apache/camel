@@ -18,8 +18,8 @@ package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.springframework.integration.channel.DirectChannel;
