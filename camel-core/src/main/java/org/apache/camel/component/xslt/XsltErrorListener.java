@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.component.xslt;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
@@ -26,8 +26,6 @@ import org.slf4j.LoggerFactory;
  * {@link ErrorListener} which logs the errors and rethrow the exceptions for error and fatal conditions.
  */
 public class XsltErrorListener implements ErrorListener {
-
-    // TODO: move to org.apache.camel.component.xslt
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltErrorListener.class);
 

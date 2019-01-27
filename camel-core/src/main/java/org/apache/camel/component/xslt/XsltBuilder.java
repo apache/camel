@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.component.xslt;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,8 +68,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * you want using the <tt>outputXXX</tt> methods.
  */
 public class XsltBuilder implements Processor {
-
-    // TODO: move to org.apache.camel.component.xslt
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
     private Map<String, Object> parameters = new HashMap<>();

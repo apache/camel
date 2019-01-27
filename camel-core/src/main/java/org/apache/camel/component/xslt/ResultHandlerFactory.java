@@ -14,22 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
-
-import java.io.File;
+package org.apache.camel.component.xslt;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.support.ExchangeHelper;
 
 /**
- * Factory for {@link javax.xml.transform.stream.StreamResult} which is streamed to file.
+ * Factory for {@link ResultHandler}
  */
-public class FileResultHandlerFactory implements ResultHandlerFactory {
+public interface ResultHandlerFactory {
 
-    // TODO: move to org.apache.camel.component.xslt
-
-    public ResultHandler createResult(Exchange exchange) throws Exception {
-        String fileName = ExchangeHelper.getMandatoryHeader(exchange, Exchange.XSLT_FILE_NAME, String.class);
-        return new FileResultHandler(new File(fileName));
-    }
+    /**
+     * Creates the {@link ResultHandler} to use
+     *
+     * @param exchange the current exchange
+     * @return the result handler
+     */
+    ResultHandler createResult(Exchange exchange) throws Exception;
 }

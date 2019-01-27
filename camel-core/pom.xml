@@ -215,6 +215,11 @@
       <artifactId>camel-vm</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xslt</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- required dependencies by camel-core -->
     <!-- which we shade into camel-core so its available for everybody out of the box -->

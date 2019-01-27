@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-import static org.apache.camel.builder.xml.XsltBuilder.xslt;
+import static org.apache.camel.component.xslt.XsltBuilder.xslt;
 
 public class XsltTest extends ContextTestSupport {
 

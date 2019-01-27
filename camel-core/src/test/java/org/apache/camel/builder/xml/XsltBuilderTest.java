@@ -26,6 +26,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.sax.SAXSource;
 
+import org.apache.camel.component.xslt.StreamResultHandlerFactory;
+import org.apache.camel.component.xslt.XsltBuilder;
 import org.w3c.dom.Document;
 
 import org.xml.sax.InputSource;

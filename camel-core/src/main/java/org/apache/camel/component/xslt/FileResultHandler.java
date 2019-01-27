@@ -14,18 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.component.xslt;
 
-import org.apache.camel.Exchange;
+import java.io.File;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.camel.Message;
 
 /**
- * Factory for {@link StringResultHandler}
+ * Use file to handle the result of XSLT transformation.
+ * <p/>
+ * For example when transforming big files you can stream directly to a file output
+ * to avoid consuming to much memory.
  */
-public class StringResultHandlerFactory implements ResultHandlerFactory {
+public class FileResultHandler implements ResultHandler {
 
-    // TODO: move to org.apache.camel.component.xslt
+    private final File file;
+    private final StreamResult result;
 
-    public ResultHandler createResult(Exchange exchange) throws Exception {
-        return new StringResultHandler();
+    public FileResultHandler(File file) {
+        this.file = file;
+        this.result = new StreamResult(file);
     }
+
+    public Result getResult() {
+        return result;
+    }
+
+    public void setBody(Message in) {
+        in.setBody(file);
+    }
+
 }

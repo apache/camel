@@ -14,22 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.component.xslt;
 
 import org.apache.camel.Exchange;
 
 /**
- * Factory for {@link org.apache.camel.builder.xml.ResultHandler}
+ * Factory for {@link StringResultHandler}
  */
-public interface ResultHandlerFactory {
+public class StringResultHandlerFactory implements ResultHandlerFactory {
 
-    // TODO: move to org.apache.camel.component.xslt
-
-    /**
-     * Creates the {@link ResultHandler} to use
-     *
-     * @param exchange the current exchange
-     * @return the result handler
-     */
-    ResultHandler createResult(Exchange exchange) throws Exception;
+    public ResultHandler createResult(Exchange exchange) throws Exception {
+        return new StringResultHandler();
+    }
 }

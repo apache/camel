@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.component.xslt;
 
-import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
 
 import javax.xml.transform.Result;
 import javax.xml.transform.stream.StreamResult;
@@ -24,13 +24,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.camel.Message;
 
 /**
- * Processes the XSLT result as a byte[]
+ * Processes the XSLT result as a String
  */
-public class StreamResultHandler implements ResultHandler {
+public class StringResultHandler implements ResultHandler {
 
-    // TODO: move to org.apache.camel.component.xslt
-
-    private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+    private StringWriter buffer = new StringWriter();
     private StreamResult result = new StreamResult(buffer);
 
     public Result getResult() {
@@ -38,6 +36,6 @@ public class StreamResultHandler implements ResultHandler {
     }
 
     public void setBody(Message in) {
-        in.setBody(buffer.toByteArray());
+        in.setBody(buffer.toString());
     }
 }

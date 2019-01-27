@@ -19,7 +19,6 @@ package org.apache.camel.component.xslt;
 import javax.xml.transform.URIResolver;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.xml.XsltUriResolver;
 
 /**
  * Default URI resolver factory which instantiates the camel default XSLT URI

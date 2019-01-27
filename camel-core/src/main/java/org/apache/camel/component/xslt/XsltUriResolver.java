@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.component.xslt;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,8 +43,6 @@ import org.slf4j.LoggerFactory;
  * For bean you can specify the method name after dot, eg bean:myBean.myMethod
  */
 public class XsltUriResolver implements URIResolver {
-
-    // TODO: move to org.apache.camel.component.xslt
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltUriResolver.class);
 

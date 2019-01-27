@@ -14,26 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.component.xslt;
 
-import javax.xml.transform.Result;
-import javax.xml.transform.dom.DOMResult;
+import java.io.File;
 
-import org.apache.camel.Message;
+import org.apache.camel.Exchange;
+import org.apache.camel.support.ExchangeHelper;
 
 /**
- * Uses DOM to handle results of the transformation
+ * Factory for {@link javax.xml.transform.stream.StreamResult} which is streamed to file.
  */
-public class DomResultHandler implements ResultHandler {
-    // TODO: move to org.apache.camel.component.xslt
+public class FileResultHandlerFactory implements ResultHandlerFactory {
 
-    private DOMResult result = new DOMResult();
-
-    public Result getResult() {
-        return result;
-    }
-
-    public void setBody(Message in) {
-        in.setBody(result.getNode());
+    public ResultHandler createResult(Exchange exchange) throws Exception {
+        String fileName = ExchangeHelper.getMandatoryHeader(exchange, Exchange.XSLT_FILE_NAME, String.class);
+        return new FileResultHandler(new File(fileName));
     }
 }

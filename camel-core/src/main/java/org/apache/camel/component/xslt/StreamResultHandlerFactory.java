@@ -14,30 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.component.xslt;
 
-import java.io.StringWriter;
-
-import javax.xml.transform.Result;
-import javax.xml.transform.stream.StreamResult;
-
-import org.apache.camel.Message;
+import org.apache.camel.Exchange;
 
 /**
- * Processes the XSLT result as a String
+ * Factory for {@link StreamResultHandler}
  */
-public class StringResultHandler implements ResultHandler {
+public class StreamResultHandlerFactory implements ResultHandlerFactory {
 
-    // TODO: move to org.apache.camel.component.xslt
-
-    private StringWriter buffer = new StringWriter();
-    private StreamResult result = new StreamResult(buffer);
-
-    public Result getResult() {
-        return result;
-    }
-
-    public void setBody(Message in) {
-        in.setBody(buffer.toString());
+    public ResultHandler createResult(Exchange exchange) throws Exception {
+        return new StreamResultHandler();
     }
 }

@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.component.xslt;
 
-import org.apache.camel.Exchange;
+import javax.xml.transform.Result;
+
+import org.apache.camel.Message;
 
 /**
- * Factory for {@link DomResultHandler}
+ * A strategy for handling XSLT results
  */
-public class DomResultHandlerFactory implements ResultHandlerFactory {
+public interface ResultHandler {
 
-    // TODO: move to org.apache.camel.component.xslt
+    Result getResult();
 
-    public ResultHandler createResult(Exchange exchange) throws Exception {
-        return new DomResultHandler();
-    }
+    void setBody(Message in);
 }

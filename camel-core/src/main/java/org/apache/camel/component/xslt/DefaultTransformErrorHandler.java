@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.xml;
+package org.apache.camel.component.xslt;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
@@ -34,8 +34,6 @@ import org.apache.camel.Exchange;
  * allows end users to access those information form the exchange.
  */
 public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener {
-
-    // TODO: move to org.apache.camel.component.xslt
 
     private final Exchange exchange;
 
