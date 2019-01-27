@@ -28,7 +28,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.TransformerFactoryImpl;
-import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.junit.Assert;

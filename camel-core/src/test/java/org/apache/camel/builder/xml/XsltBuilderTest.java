@@ -26,6 +26,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.sax.SAXSource;
 
+import org.apache.camel.component.xslt.StreamResultHandlerFactory;
+import org.apache.camel.component.xslt.XsltBuilder;
 import org.w3c.dom.Document;
 
 import org.xml.sax.InputSource;
@@ -260,23 +262,6 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         // the file should be deleted
         assertFalse("Output file should be deleted", file.exists());
-    }
-
-    @Test
-    public void testXsltSetConverter() throws Exception {
-        URL styleSheet = getClass().getResource("example.xsl");
-
-        XsltBuilder builder = XsltBuilder.xslt(styleSheet);
-        XmlConverter converter = new XmlConverter();
-        builder.setConverter(converter);
-        assertSame(converter, builder.getConverter());
-
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody("<hello>world!</hello>");
-
-        builder.process(exchange);
-
-        assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>", exchange.getOut().getBody());
     }
 
     @Test

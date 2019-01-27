@@ -31,6 +31,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.builder.xml.StAX2SAXSource;
 import org.junit.Test;
 
 import static org.hamcrest.core.IsEqual.equalTo;

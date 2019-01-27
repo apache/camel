@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 289 in 208 JAR artifacts (0 deprecated)
+Number of Components: 289 in 209 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -859,7 +859,7 @@ Number of Components: 289 in 208 JAR artifacts (0 deprecated)
 | link:camel-saxon/src/main/docs/xquery-component.adoc[XQuery] (camel-saxon) +
 `xquery:resourceUri` | 1.0 | Transforms the message using a XQuery template using Saxon.
 
-| link:../camel-core/src/main/docs/xslt-component.adoc[XSLT] (camel-core) +
+| link:camel-xslt/src/main/docs/xslt-component.adoc[XSLT] (camel-xslt) +
 `xslt:resourceUri` | 1.3 | Transforms the message using a XSLT template.
 
 | link:camel-yammer/src/main/docs/yammer-component.adoc[Yammer] (camel-yammer) +

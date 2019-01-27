@@ -30,8 +30,8 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.xml.XsltBuilder;
-import org.apache.camel.builder.xml.XsltUriResolver;
+import org.apache.camel.component.xslt.XsltBuilder;
+import org.apache.camel.component.xslt.XsltUriResolver;
 import org.apache.camel.component.xslt.XsltEndpoint;
 import org.apache.camel.component.xslt.XsltOutput;
 import org.apache.camel.support.service.ServiceSupport;
@@ -65,6 +65,8 @@ import org.slf4j.LoggerFactory;
  * Some code bits have been copied from the {@link org.apache.camel.component.xslt.XsltEndpoint}.
  */
 public class XsltAggregationStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
+
+    // TODO: move to camel-xslt in org.apache.camel.component.xslt package (not having split osgi packages)
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltAggregationStrategy.class);
     private static final String DEFAULT_PROPERTY_NAME = "new-exchange";
@@ -228,7 +230,7 @@ public class XsltAggregationStrategy extends ServiceSupport implements Aggregati
             Class<?> factoryClass = camelContext.getClassResolver().resolveMandatoryClass(transformerFactoryClass,
                 XsltAggregationStrategy.class.getClassLoader());
             TransformerFactory factory = (TransformerFactory) camelContext.getInjector().newInstance(factoryClass);
-            xslt.getConverter().setTransformerFactory(factory);
+            xslt.setTransformerFactory(factory);
         }
 
         if (uriResolver == null) {

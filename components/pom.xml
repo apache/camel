@@ -307,6 +307,7 @@
     <module>camel-xchange</module>
     <module>camel-xmlsecurity</module>
     <module>camel-xmpp</module>
+    <module>camel-xslt</module>
     <module>camel-xstream</module>
     <module>camel-yammer</module>
     <module>camel-zendesk</module>
