@@ -351,6 +351,7 @@
 * xref:secureXML-dataformat.adoc[XML Security DataFormat]
 * xref:xmlsecurity-component.adoc[XML Security Component]
 * xref:xmpp-component.adoc[XMPP Component]
+* xref:xslt-component.adoc[XSLT Component]
 * xref:json-xstream-dataformat.adoc[JSon XStream DataFormat]
 * xref:xstream-dataformat.adoc[XStream DataFormat]
 * xref:yammer-component.adoc[Yammer Component]

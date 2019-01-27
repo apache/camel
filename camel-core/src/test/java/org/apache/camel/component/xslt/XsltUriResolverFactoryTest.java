@@ -28,7 +28,6 @@ import javax.xml.transform.URIResolver;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.language.ConstantExpression;

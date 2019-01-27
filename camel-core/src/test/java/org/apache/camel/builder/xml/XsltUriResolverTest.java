@@ -19,6 +19,7 @@ package org.apache.camel.builder.xml;
 import javax.xml.transform.Source;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.xslt.XsltUriResolver;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
