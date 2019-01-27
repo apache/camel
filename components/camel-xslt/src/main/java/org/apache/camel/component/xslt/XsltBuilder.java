@@ -40,6 +40,9 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.Node;
+import org.xml.sax.EntityResolver;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
@@ -54,11 +57,8 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.xml.sax.EntityResolver;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
-
 
 /**
  * Creates a <a href="http://camel.apache.org/processor.html">Processor</a>
