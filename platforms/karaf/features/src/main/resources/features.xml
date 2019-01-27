@@ -63,6 +63,7 @@
     <bundle>mvn:org.apache.camel/camel-seda/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-validator/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-vm/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-xslt/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-management-impl/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>

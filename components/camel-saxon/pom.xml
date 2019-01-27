@@ -36,10 +36,13 @@
 
   <dependencies>
 
-    <!-- TODO: camel-xslt -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-xslt</artifactId>
     </dependency>
 
     <dependency>
