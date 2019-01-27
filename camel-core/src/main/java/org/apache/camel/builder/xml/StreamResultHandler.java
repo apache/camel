@@ -27,6 +27,9 @@ import org.apache.camel.Message;
  * Processes the XSLT result as a byte[]
  */
 public class StreamResultHandler implements ResultHandler {
+
+    // TODO: move to org.apache.camel.component.xslt
+
     private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     private StreamResult result = new StreamResult(buffer);
 

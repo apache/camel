@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
  */
 public class XsltErrorListener implements ErrorListener {
 
+    // TODO: move to org.apache.camel.component.xslt
+
     private static final Logger LOG = LoggerFactory.getLogger(XsltErrorListener.class);
 
     @Override

@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
  */
 public class DomResultHandlerFactory implements ResultHandlerFactory {
 
+    // TODO: move to org.apache.camel.component.xslt
+
     public ResultHandler createResult(Exchange exchange) throws Exception {
         return new DomResultHandler();
     }

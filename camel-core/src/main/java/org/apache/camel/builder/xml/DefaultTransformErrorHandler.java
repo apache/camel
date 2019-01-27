@@ -35,6 +35,8 @@ import org.apache.camel.Exchange;
  */
 public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener {
 
+    // TODO: move to org.apache.camel.component.xslt
+
     private final Exchange exchange;
 
     public DefaultTransformErrorHandler(Exchange exchange) {

@@ -25,6 +25,8 @@ import org.apache.camel.Message;
  * Uses DOM to handle results of the transformation
  */
 public class DomResultHandler implements ResultHandler {
+    // TODO: move to org.apache.camel.component.xslt
+
     private DOMResult result = new DOMResult();
 
     public Result getResult() {

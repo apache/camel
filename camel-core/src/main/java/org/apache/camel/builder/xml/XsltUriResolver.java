@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
  */
 public class XsltUriResolver implements URIResolver {
 
+    // TODO: move to org.apache.camel.component.xslt
+
     private static final Logger LOG = LoggerFactory.getLogger(XsltUriResolver.class);
 
     private final CamelContext context;

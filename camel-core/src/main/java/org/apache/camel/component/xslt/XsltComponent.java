@@ -47,6 +47,7 @@ public class XsltComponent extends DefaultComponent {
     private List<Object> saxonExtensionFunctions;
     @Metadata(defaultValue = "true")
     private boolean contentCache = true;
+    @Metadata
     private boolean saxon;
 
     public XsltComponent() {

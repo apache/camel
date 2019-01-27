@@ -66,6 +66,8 @@ import org.slf4j.LoggerFactory;
  */
 public class XsltAggregationStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
 
+    // TODO: move to camel-xslt in org.apache.camel.component.xslt package (not having split osgi packages)
+
     private static final Logger LOG = LoggerFactory.getLogger(XsltAggregationStrategy.class);
     private static final String DEFAULT_PROPERTY_NAME = "new-exchange";
 

@@ -67,6 +67,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * you want using the <tt>outputXXX</tt> methods.
  */
 public class XsltBuilder implements Processor {
+
+    // TODO: move to org.apache.camel.component.xslt
+
     private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
     private Map<String, Object> parameters = new HashMap<>();
     // TODO: Use XmlConverterHelper instead

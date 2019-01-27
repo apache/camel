@@ -25,6 +25,8 @@ import org.apache.camel.Message;
  */
 public interface ResultHandler {
 
+    // TODO: move to org.apache.camel.component.xslt
+
     Result getResult();
 
     void setBody(Message in);

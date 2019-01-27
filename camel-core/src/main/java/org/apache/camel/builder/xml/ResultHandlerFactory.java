@@ -23,6 +23,8 @@ import org.apache.camel.Exchange;
  */
 public interface ResultHandlerFactory {
 
+    // TODO: move to org.apache.camel.component.xslt
+
     /**
      * Creates the {@link ResultHandler} to use
      *

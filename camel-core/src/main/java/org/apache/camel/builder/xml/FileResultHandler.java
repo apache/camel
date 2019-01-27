@@ -31,6 +31,8 @@ import org.apache.camel.Message;
  */
 public class FileResultHandler implements ResultHandler {
 
+    // TODO: move to org.apache.camel.component.xslt
+
     private final File file;
     private final StreamResult result;
 
