@@ -39,23 +39,22 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Node;
-import org.xml.sax.EntityResolver;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.jaxp.StAX2SAXSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
+import org.apache.camel.support.builder.xml.StAX2SAXSource;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.xml.sax.EntityResolver;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -70,7 +69,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class XsltBuilder implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
     private Map<String, Object> parameters = new HashMap<>();
-    private TransformerFactory transformerFactory;
+    // TODO: Use XmlConverterHelper instead
     private XmlConverter converter = new XmlConverter();
     private Templates template;
     private volatile BlockingQueue<Transformer> transformers;
