@@ -32,6 +32,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
@@ -45,10 +46,10 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.builder.xml.StAX2SAXSource;
+import org.apache.camel.support.builder.xml.XMLConverterHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -72,8 +73,7 @@ public class XsltBuilder implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltBuilder.class);
     private Map<String, Object> parameters = new HashMap<>();
-    // TODO: Use XmlConverterHelper instead
-    private XmlConverter converter = new XmlConverter();
+    private XMLConverterHelper converter = new XMLConverterHelper();
     private Templates template;
     private volatile BlockingQueue<Transformer> transformers;
     private ResultHandlerFactory resultHandlerFactory = new StringResultHandlerFactory();
@@ -521,7 +521,7 @@ public class XsltBuilder implements Processor {
             } else {
                 try {
                     source = converter.toDOMSource(converter.createDocument());
-                } catch (ParserConfigurationException e) {
+                } catch (ParserConfigurationException | TransformerException e) {
                     throw new RuntimeTransformException(e);
                 }
             }
