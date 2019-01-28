@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.json.simple;
+package org.apache.camel.util.json;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -25,8 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.json.simple.JsonObject;
-import org.json.simple.Jsoner;
 import org.junit.Assert;
 import org.junit.Test;
 

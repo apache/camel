@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.json.simple.JSONObject;
+import org.apache.camel.util.json.JsonObject;
 
 /**
  * The slack component allows you to send messages to Slack.
@@ -181,21 +181,21 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
         this.serverUrl = serverUrl;
     }
 
-    public Exchange createExchange(JSONObject object) {
+    public Exchange createExchange(JsonObject object) {
         return createExchange(getExchangePattern(), object);
     }
 
-    public Exchange createExchange(ExchangePattern pattern, JSONObject object) {
+    public Exchange createExchange(ExchangePattern pattern, JsonObject object) {
         Exchange exchange = super.createExchange(pattern);
         SlackMessage slackMessage = new SlackMessage();
-        String text = (String)object.get("text");
-        String username = (String)object.get("username");
+        String text = object.getString("text");
+        String username = object.getString("username");
         slackMessage.setText(text);
         slackMessage.setUsername(username);
-        if (ObjectHelper.isNotEmpty((JSONObject)object.get("icons"))) {
-            JSONObject icons = (JSONObject)object.get("icons");
-            if (ObjectHelper.isNotEmpty((String)icons.get("emoji"))) {
-                slackMessage.setIconEmoji((String)icons.get("emoji"));
+        if (ObjectHelper.isNotEmpty(object.get("icons"))) {
+            JsonObject icons = object.getMap("icons");
+            if (ObjectHelper.isNotEmpty(icons.get("emoji"))) {
+                slackMessage.setIconEmoji(icons.getString("emoji"));
             }
         }
         Message message = exchange.getIn();

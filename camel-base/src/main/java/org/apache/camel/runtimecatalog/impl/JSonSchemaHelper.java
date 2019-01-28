@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.json.simple.JsonObject;
-import org.json.simple.Jsoner;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 public final class JSonSchemaHelper {
 

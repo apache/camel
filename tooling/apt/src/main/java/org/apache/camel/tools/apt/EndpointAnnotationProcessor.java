@@ -56,8 +56,8 @@ import org.apache.camel.tools.apt.model.ComponentModel;
 import org.apache.camel.tools.apt.model.ComponentOption;
 import org.apache.camel.tools.apt.model.EndpointOption;
 import org.apache.camel.tools.apt.model.EndpointPath;
-import org.json.simple.JsonObject;
-import org.json.simple.Jsoner;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findFieldElement;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;

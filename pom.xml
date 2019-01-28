@@ -143,6 +143,7 @@
     <module>tooling-bundle</module>
     <module>etc</module>
     <module>bom</module>
+    <module>camel-util-json</module>
     <module>buildingtools</module>
     <module>camel-util</module>
     <module>camel-api</module>

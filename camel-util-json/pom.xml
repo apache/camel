@@ -19,6 +19,7 @@
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -28,51 +29,17 @@
     <relativePath>../parent</relativePath>
   </parent>
 
-  <artifactId>tooling</artifactId>
-  <name>Camel :: Tooling</name>
-  <description>Camel Tooling</description>
-  <packaging>pom</packaging>
+  <artifactId>camel-util-json</artifactId>
+  <name>Camel :: Util :: JSon</name>
+  <description>A json simple parser that preserves the ordering in Map as read from JSon source</description>
 
-  <properties>
-    <camel.osgi.export.pkg />
-  </properties>
+  <dependencies>
 
-  <modules>
-    <module>parent</module>
-    <module>meta-annotations</module>
-    <module>spi-annotations</module>
-    <module>apt</module>
-    <module>camel-route-parser</module>
-    <module>swagger-rest-dsl-generator</module>
-    <module>maven</module>
-    <module>camel-manual</module>
-  </modules>
-
-  <!-- profiles>
-    <profile>
-      <id>build.manual</id>
-      <modules>
-        <module>camel-manual</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>assembly</id>
-      <modules>
-        <module>camel-manual</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>deploy</id>
-      <modules>
-        <module>camel-manual</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>apache-release</id>
-      <modules>
-        <module>camel-manual</module>
-      </modules>
-    </profile>
-  </profiles -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
 </project>

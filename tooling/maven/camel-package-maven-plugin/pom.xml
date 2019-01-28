@@ -49,7 +49,7 @@
     <!-- use our patched ordered json-simple parser -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>json-simple-ordered</artifactId>
+      <artifactId>camel-util-json</artifactId>
       <version>${project.version}</version>
     </dependency>
 
