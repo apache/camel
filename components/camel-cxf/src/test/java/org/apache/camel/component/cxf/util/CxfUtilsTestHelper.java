@@ -34,7 +34,7 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 
-public class CxfUtilsTestHelper {
+public final class CxfUtilsTestHelper {
 
     private CxfUtilsTestHelper() {
         // helper class
