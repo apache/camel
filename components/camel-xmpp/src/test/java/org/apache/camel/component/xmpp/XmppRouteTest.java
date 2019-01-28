@@ -92,8 +92,8 @@ public class XmppRouteTest extends TestCase {
         return body;
     }
 
-   @Override
-   protected void setUp() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         client = new DefaultProducerTemplate(context);
 
         String uriPrefix = getUriPrefix();
