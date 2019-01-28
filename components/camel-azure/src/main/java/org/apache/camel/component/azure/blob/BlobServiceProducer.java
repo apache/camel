@@ -153,7 +153,7 @@ public class BlobServiceProducer extends DefaultProducer {
         
         List<BlobBlock> blobBlocks = null;
         if (object instanceof List) {
-            blobBlocks = blobBlocks;
+            blobBlocks = (List<BlobBlock>) object;
         } else if (object instanceof BlobBlock) {
             blobBlocks = Collections.singletonList((BlobBlock)object);
         } 
@@ -185,7 +185,7 @@ public class BlobServiceProducer extends DefaultProducer {
         
         List<BlockEntry> blockEntries = null;
         if (object instanceof List) {
-            blockEntries = blockEntries;
+            blockEntries = (List<BlockEntry>) object;
         } else if (object instanceof BlockEntry) {
             blockEntries = Collections.singletonList((BlockEntry)object);
         } 
