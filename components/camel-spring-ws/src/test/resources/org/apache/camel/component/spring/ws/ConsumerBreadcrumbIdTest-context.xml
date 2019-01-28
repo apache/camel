@@ -25,8 +25,6 @@
 
     <bean id="endpointMapping"
           class="org.apache.camel.component.spring.ws.bean.CamelEndpointMapping"/>
-          
-    
 
     <bean id="webServiceTemplate" class="org.springframework.ws.client.core.WebServiceTemplate">
         <property name="defaultUri" value="http://localhost"/>
