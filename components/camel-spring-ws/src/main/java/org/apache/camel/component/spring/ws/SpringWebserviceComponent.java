@@ -20,8 +20,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
-import javax.xml.transform.TransformerFactory;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
@@ -32,7 +30,6 @@ import org.apache.camel.component.spring.ws.filter.MessageFilter;
 import org.apache.camel.component.spring.ws.filter.impl.BasicMessageFilter;
 import org.apache.camel.component.spring.ws.type.EndpointMappingKey;
 import org.apache.camel.component.spring.ws.type.EndpointMappingType;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
@@ -69,7 +66,6 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SpringWebserviceConfiguration configuration = new SpringWebserviceConfiguration();
         addConsumerConfiguration(remaining, parameters, configuration);
-        addXmlConverterToConfiguration(parameters, configuration);
         setProperties(configuration, parameters);
         configureProducerConfiguration(remaining, configuration);
         configureMessageFilter(configuration);
@@ -158,15 +154,6 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
         // Obtain CamelEndpointDispatcher with the given name from registry
         CamelEndpointDispatcher endpoint = CamelContextHelper.mandatoryLookup(getCamelContext(), lookupKey, CamelEndpointDispatcher.class);
         configuration.setEndpointDispatcher(endpoint);
-    }
-
-    private void addXmlConverterToConfiguration(Map<String, Object> parameters, SpringWebserviceConfiguration configuration) {
-        XmlConverter xmlConverter = new XmlConverter();
-        TransformerFactory transformerFactory = resolveAndRemoveReferenceParameter(parameters, "transformerFactory", TransformerFactory.class, null);
-        if (transformerFactory != null) {
-            xmlConverter.setTransformerFactory(transformerFactory);
-        }
-        configuration.setXmlConverter(xmlConverter);
     }
 
     /**
