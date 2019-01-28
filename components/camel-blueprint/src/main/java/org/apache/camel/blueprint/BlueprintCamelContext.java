@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
@@ -34,7 +35,6 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.LoadPropertiesException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;

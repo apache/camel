@@ -34,8 +34,6 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import org.apache.camel.model.InterceptDefinition;
-import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -75,6 +73,8 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.model.ExpressionSubElementDefinition;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.MarshalDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnExceptionDefinition;
