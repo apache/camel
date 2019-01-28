@@ -25,11 +25,11 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignatureConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * Used to sign and verify exchanges using the XML signature specification.

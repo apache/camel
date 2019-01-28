@@ -24,8 +24,8 @@ import javax.xml.transform.OutputKeys;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.utils.EncryptionConstants;
 import org.junit.Before;
