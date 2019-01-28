@@ -29,7 +29,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.ExchangeTestSupport;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
@@ -75,7 +74,7 @@ public class CachedCxfPayloadTest extends ExchangeTestSupport {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void doTest(Object source, String payload) throws IOException {
         CxfPayload<?> originalPayload = context.getTypeConverter().convertTo(CxfPayload.class, source);
-        CachedCxfPayload<?> cache = new CachedCxfPayload(originalPayload, exchange, new XmlConverter());
+        CachedCxfPayload<?> cache = new CachedCxfPayload(originalPayload, exchange);
 
         assertTrue(cache.inMemory());
 
