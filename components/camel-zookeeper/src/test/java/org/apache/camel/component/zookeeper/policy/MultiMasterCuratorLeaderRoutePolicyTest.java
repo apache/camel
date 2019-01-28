@@ -272,8 +272,10 @@ public class MultiMasterCuratorLeaderRoutePolicyTest extends ZooKeeperTestSuppor
         first.shutdown();
         // let's find out who's active now:
 
-        CuratorMultiMasterLeaderRoutePolicy routePolicySecond = (CuratorMultiMasterLeaderRoutePolicy) arr[0].controlledContext.adapt(ModelCamelContext.class).getRouteDefinition(secondDestination).getRoutePolicies().get(0);
-        CuratorMultiMasterLeaderRoutePolicy routePolicyThird = (CuratorMultiMasterLeaderRoutePolicy) arr[1].controlledContext.adapt(ModelCamelContext.class).getRouteDefinition(thirdDestination).getRoutePolicies().get(0);
+        CuratorMultiMasterLeaderRoutePolicy routePolicySecond = (CuratorMultiMasterLeaderRoutePolicy) arr[0].controlledContext.adapt(ModelCamelContext.class)
+                                                                .getRouteDefinition(secondDestination).getRoutePolicies().get(0);
+        CuratorMultiMasterLeaderRoutePolicy routePolicyThird = (CuratorMultiMasterLeaderRoutePolicy) arr[1].controlledContext.adapt(ModelCamelContext.class)
+                                                                .getRouteDefinition(thirdDestination).getRoutePolicies().get(0);
 
         MultiMasterZookeeperPolicyEnforcedContext newMaster = null;
         MultiMasterZookeeperPolicyEnforcedContext slave = null;
