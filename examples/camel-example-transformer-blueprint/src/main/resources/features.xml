@@ -22,9 +22,6 @@
 
     <feature name='camel-example-transformer-blueprint' version='${project.version}'>
         <feature version="${project.version}">camel</feature>
-        <feature version="${project.version}">camel-blueprint</feature>
-        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
-        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
         <bundle>mvn:org.apache.camel.example/camel-example-transformer-blueprint/${project.version}</bundle>
     </feature>
 
