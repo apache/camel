@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.xml.TimeUnitAdapter;
+import org.apache.camel.model.TimeUnitAdapter;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,service-discovery")
