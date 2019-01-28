@@ -26,8 +26,8 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.Component;
-import org.apache.camel.support.DefaultPollingEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.support.DefaultPollingEndpoint;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
