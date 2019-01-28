@@ -21,10 +21,15 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Result;
 import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
@@ -32,9 +37,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.converter.stream.StreamSourceCache;
+import org.apache.camel.support.builder.xml.StAX2SAXSource;
+import org.apache.camel.support.builder.xml.XMLConverterHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
 import org.slf4j.Logger;
@@ -42,8 +49,9 @@ import org.slf4j.LoggerFactory;
 
 public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     private static final Logger LOG = LoggerFactory.getLogger(CachedCxfPayload.class);
+    private static String defaultCharset = ObjectHelper.getSystemProperty("org.apache.camel.default.charset", "UTF-8");
 
-    public CachedCxfPayload(CxfPayload<T> orig, Exchange exchange, XmlConverter xml) {
+    public CachedCxfPayload(CxfPayload<T> orig, Exchange exchange) {
         super(orig.getHeaders(), new ArrayList<>(orig.getBodySources()), orig.getNsMap());
         ListIterator<Source> li = getBodySources().listIterator();
         while (li.hasNext()) {
@@ -75,7 +83,7 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                     // fallback to trying to read the reader using another way
                     StreamResult sr = new StreamResult(cos);
                     try {
-                        xml.toResult(source, sr);
+                        toResult(source, sr);
                         li.set(new StreamSourceCache(cos.newStreamCache()));
                         // this worked so continue
                         continue;
@@ -90,6 +98,28 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
             DOMSource document = exchange.getContext().getTypeConverter().tryConvertTo(DOMSource.class, exchange, source);
             if (document != null) {
                 li.set(document);
+            }
+        }
+    }
+
+    private static void toResult(Source source, Result result) throws TransformerException {
+        if (source != null) {
+            XMLConverterHelper xml = new XMLConverterHelper();
+            TransformerFactory factory = xml.getTransformerFactory();
+            Transformer transformer = factory.newTransformer();
+            if (transformer == null) {
+                throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
+            } else {
+                Properties outputProperties = new Properties();
+                outputProperties.put("encoding", defaultCharset);
+                outputProperties.put("omit-xml-declaration", "yes");
+
+                transformer.setOutputProperties(outputProperties);
+                if (factory.getClass().getName().equals("org.apache.xalan.processor.TransformerFactoryImpl") && source instanceof StAXSource) {
+                    source = new StAX2SAXSource(((StAXSource)source).getXMLStreamReader());
+                }
+
+                transformer.transform(source, result);
             }
         }
     }

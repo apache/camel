@@ -41,7 +41,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfPayload;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.cxf.staxutils.StaxSource;
 import org.apache.cxf.staxutils.StaxUtils;
@@ -50,7 +49,6 @@ import static org.apache.camel.TypeConverter.MISS_VALUE;
 
 @Converter
 public final class CxfPayloadConverter {
-    private static XmlConverter xml = new XmlConverter();
 
     private CxfPayloadConverter() {
         // Helper class
@@ -118,7 +116,7 @@ public final class CxfPayloadConverter {
 
     @Converter
     public static <T> StreamCache cxfPayLoadToStreamCache(CxfPayload<T> payload, Exchange exchange) {
-        return new CachedCxfPayload<>(payload, exchange, xml);
+        return new CachedCxfPayload<>(payload, exchange);
     }
 
     @SuppressWarnings("unchecked")
