@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
@@ -26,7 +27,17 @@ public final class IntrospectionSupport {
     private IntrospectionSupport() {
     }
 
+    /**
+     * @deprecated use {@link org.apache.camel.support.IntrospectionSupport#extractProperties} instead
+     */
+    @Deprecated
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
-        return org.apache.camel.support.IntrospectionSupport.extractProperties(properties, optionPrefix);
+        try {
+            Class<?> clazz = Class.forName("org.apache.camel.support.IntrospectionSupport");
+            Method method = clazz.getMethod("extractProperties", Map.class, String.class);
+            return (Map) method.invoke(properties, optionPrefix);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
 }
