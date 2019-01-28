@@ -102,6 +102,17 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
         }
     }
 
+    private CachedCxfPayload(CachedCxfPayload<T> orig, Exchange exchange) throws IOException {
+        super(orig.getHeaders(), new ArrayList<>(orig.getBodySources()), orig.getNsMap());
+        ListIterator<Source> li = getBodySources().listIterator();
+        while (li.hasNext()) {
+            Source source = li.next();
+            if (source instanceof StreamCache) {
+                li.set((Source) (((StreamCache) source)).copy(exchange));
+            }
+        }
+    }
+
     private static void toResult(Source source, Result result) throws TransformerException {
         if (source != null) {
             XMLConverterHelper xml = new XMLConverterHelper();
@@ -120,17 +131,6 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
                 }
 
                 transformer.transform(source, result);
-            }
-        }
-    }
-
-    private CachedCxfPayload(CachedCxfPayload<T> orig, Exchange exchange) throws IOException {
-        super(orig.getHeaders(), new ArrayList<>(orig.getBodySources()), orig.getNsMap());
-        ListIterator<Source> li = getBodySources().listIterator();
-        while (li.hasNext()) {
-            Source source = li.next();
-            if (source instanceof StreamCache) {
-                li.set((Source) (((StreamCache) source)).copy(exchange));
             }
         }
     }
