@@ -25,11 +25,11 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.query.StaticQueryContext;
 import org.apache.camel.Component;
-import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
