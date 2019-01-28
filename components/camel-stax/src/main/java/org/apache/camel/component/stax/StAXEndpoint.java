@@ -20,11 +20,11 @@ import org.xml.sax.ContentHandler;
 
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
-import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.ProcessorEndpoint;
 
 /**
  * The stax component allows messages to be process through a SAX ContentHandler.
