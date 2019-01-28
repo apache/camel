@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.apache.camel.component.ehcache.processor.aggregate.EhcacheAggregationRepository;
-import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
