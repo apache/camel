@@ -184,4 +184,21 @@ public final class PackageHelper {
         }
     }
 
+    public static File findCamelCoreDirectory(MavenProject project, File dir) {
+        if (dir == null) {
+            return null;
+        }
+        File[] files = dir.listFiles(f -> f.getName().equals("camel-core"));
+        if (files != null && files.length == 1) {
+            // okay the file are in the target folder
+            File target = new File(files[0], "target");
+            String version = project.getVersion();
+            return new File(target, "camel-core-" + version + ".jar");
+        } else {
+            // okay walk up the parent dir
+            return findCamelCoreDirectory(project, dir.getParentFile());
+        }
+    }
+
+
 }

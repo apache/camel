@@ -25,7 +25,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -43,6 +42,7 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import static org.apache.camel.maven.packaging.PackageHelper.after;
+import static org.apache.camel.maven.packaging.PackageHelper.findCamelCoreDirectory;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.parseAsMap;
 
@@ -139,60 +139,59 @@ public class PackageDataFormatMojo extends AbstractMojo {
         // and create json schema model file for this data format
         try {
             if (apacheCamel && count > 0) {
-                Artifact camelCore = findCamelCoreArtifact(project);
-                if (camelCore != null) {
-                    File core = camelCore.getFile();
-                    if (core != null) {
-                        URL url = new URL("file", null, core.getAbsolutePath());
-                        try (URLClassLoader loader = new URLClassLoader(new URL[] {url})) {
-                            for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
-                                String name = entry.getKey();
-                                String javaType = entry.getValue();
-                                String modelName = asModelName(name);
+                File core = findCamelCoreJar(project);
+                if (core != null) {
+                    URL url = new URL("file", null, core.getAbsolutePath());
+                    try (URLClassLoader loader = new URLClassLoader(new URL[] {url})) {
+                        for (Map.Entry<String, String> entry : javaTypes.entrySet()) {
+                            String name = entry.getKey();
+                            String javaType = entry.getValue();
+                            String modelName = asModelName(name);
 
-                                InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + modelName + ".json");
-                                if (is == null) {
-                                    // use file input stream if we build
-                                    // camel-core itself, and thus do not have a
-                                    // JAR which can be loaded by URLClassLoader
-                                    is = new FileInputStream(new File(core, "org/apache/camel/model/dataformat/" + modelName + ".json"));
-                                }
-                                String json = loadText(is);
+                            InputStream is = loader.getResourceAsStream("org/apache/camel/model/dataformat/" + modelName + ".json");
+                            if (is == null) {
+                                // use file input stream if we build
+                                // camel-core itself, and thus do not have a
+                                // JAR which can be loaded by URLClassLoader
+                                is = new FileInputStream(new File(core, "org/apache/camel/model/dataformat/" + modelName + ".json"));
+                            }
+                            String json = loadText(is);
 
-                                DataFormatModel dataFormatModel = extractDataFormatModel(project, json, modelName, name, javaType);
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Model: " + dataFormatModel);
-                                }
+                            DataFormatModel dataFormatModel = extractDataFormatModel(project, json, modelName, name, javaType);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Model: " + dataFormatModel);
+                            }
 
-                                // build json schema for the data format
-                                String properties = after(json, "  \"properties\": {");
+                            // build json schema for the data format
+                            String properties = after(json, "  \"properties\": {");
 
-                                // special prepare for bindy/json properties
-                                properties = prepareBindyProperties(name, properties);
-                                properties = prepareJsonProperties(name, properties);
+                            // special prepare for bindy/json properties
+                            properties = prepareBindyProperties(name, properties);
+                            properties = prepareJsonProperties(name, properties);
 
-                                String schema = createParameterJsonSchema(dataFormatModel, properties);
-                                if (log.isDebugEnabled()) {
-                                    log.debug("JSon schema:\n" + schema);
-                                }
+                            String schema = createParameterJsonSchema(dataFormatModel, properties);
+                            if (log.isDebugEnabled()) {
+                                log.debug("JSon schema:\n" + schema);
+                            }
 
-                                // write this to the directory
-                                File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
-                                dir.mkdirs();
+                            // write this to the directory
+                            File dir = new File(schemaOutDir, schemaSubDirectory(dataFormatModel.getJavaType()));
+                            dir.mkdirs();
 
-                                File out = new File(dir, name + ".json");
-                                OutputStream fos = buildContext.newFileOutputStream(out);
-                                fos.write(schema.getBytes());
-                                fos.close();
+                            File out = new File(dir, name + ".json");
+                            OutputStream fos = buildContext.newFileOutputStream(out);
+                            fos.write(schema.getBytes());
+                            fos.close();
 
-                                buildContext.refresh(out);
+                            buildContext.refresh(out);
 
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
-                                }
+                            if (log.isDebugEnabled()) {
+                                log.debug("Generated " + out + " containing JSon schema for " + name + " data format");
                             }
                         }
                     }
+                } else {
+                    throw new MojoExecutionException("Error finding camel-core/target/camel-core-" + project.getVersion() + ".jar file. Make sure camel-core has been built first.");
                 }
             }
         } catch (Exception e) {
@@ -427,22 +426,15 @@ public class PackageDataFormatMojo extends AbstractMojo {
         return title;
     }
 
-    private static Artifact findCamelCoreArtifact(MavenProject project) {
+    private static File findCamelCoreJar(MavenProject project) {
         // maybe this project is camel-core itself
         Artifact artifact = project.getArtifact();
         if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {
-            return artifact;
+            return artifact.getFile();
         }
 
-        // or its a component which has a dependency to camel-core
-        Iterator<?> it = project.getDependencyArtifacts().iterator();
-        while (it.hasNext()) {
-            artifact = (Artifact) it.next();
-            if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {
-                return artifact;
-            }
-        }
-        return null;
+        // okay we are a custom dataformat so we need to find camel-core by walking down the folders
+        return findCamelCoreDirectory(project, project.getBasedir());
     }
 
     private static String schemaSubDirectory(String javaType) {
