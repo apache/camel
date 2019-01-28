@@ -195,6 +195,10 @@ public class AS2ComponentConfiguration
          * The key used to encrypt the EDI message.
          */
         private PrivateKey decryptingPrivateKey;
+        /**
+         * The template used to format MDN message
+         */
+        private String mdnMessageTemplate;
 
         public AS2ApiName getApiName() {
             return apiName;
@@ -418,6 +422,14 @@ public class AS2ComponentConfiguration
 
         public void setDecryptingPrivateKey(PrivateKey decryptingPrivateKey) {
             this.decryptingPrivateKey = decryptingPrivateKey;
+        }
+
+        public String getMdnMessageTemplate() {
+            return mdnMessageTemplate;
+        }
+
+        public void setMdnMessageTemplate(String mdnMessageTemplate) {
+            this.mdnMessageTemplate = mdnMessageTemplate;
         }
     }
 }
