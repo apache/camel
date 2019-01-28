@@ -22,8 +22,8 @@ import javax.xml.xpath.XPathFactory;
 import net.sf.saxon.lib.NamespaceConstant;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.language.XPath;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.support.jndi.JndiContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class XPathAnnotationResultTypeTest extends CamelTestSupport {
