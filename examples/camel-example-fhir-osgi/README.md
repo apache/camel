@@ -2,8 +2,14 @@
 
 ### Introduction
 
-This is an example application of the `camel-fhir` component that can be executed inside an OSGi container. We will be 
-using Apache Karaf.
+This is an example application of the `camel-fhir` component that can be executed inside an OSGi container. We will be using Apache Karaf.
+
+The example assumes you have a running FHIR server at your disposal.
+You may use [hapi-fhir-jpa-server-example](https://github.com/jamesagnew/hapi-fhir/tree/master/hapi-fhir-jpaserver-example)
+
+By default, the example uses `http://localhost:8080/hapi-fhir-jpaserver-example/baseDstu3` as the FHIR server URL, DSTU3 as the FHIR version and `target/work/fhir/input`
+as the directory to look for HL7V2 patients.
+However, you can edit the `org.apache.camel.example.fhir.osgi.configuration.cfg` file to override the defaults and provide your own configuration.
 
 ### Build
 
