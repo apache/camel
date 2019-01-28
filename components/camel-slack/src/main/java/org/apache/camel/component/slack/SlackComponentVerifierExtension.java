@@ -34,8 +34,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.simple.JSONObject;
-import org.json.simple.JsonObject;
-import org.json.simple.Jsoner;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 

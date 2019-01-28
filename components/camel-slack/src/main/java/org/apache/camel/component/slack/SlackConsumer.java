@@ -29,18 +29,16 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.json.DeserializationException;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.simple.DeserializationException;
-import org.json.simple.JSONObject;
-import org.json.simple.JsonArray;
-import org.json.simple.JsonObject;
-import org.json.simple.Jsoner;
-import org.json.simple.parser.JSONParser;
 
 import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 
@@ -74,22 +72,21 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         HttpResponse response = client.execute(httpPost);
 
         String jsonString = readResponse(response);
-        JSONParser parser = new JSONParser();
 
-        JSONObject c = (JSONObject)parser.parse(jsonString);
-        List list = (List)c.get("messages");
+        JsonObject c = (JsonObject) Jsoner.deserialize(jsonString);
+        JsonArray list = c.getCollection("messages");
         exchanges = createExchanges(list);
         return processBatch(CastUtils.cast(exchanges));
     }
 
-    private Queue<Exchange> createExchanges(List list) {
+    private Queue<Exchange> createExchanges(List<Object> list) {
         Queue<Exchange> answer = new LinkedList<>();
         if (ObjectHelper.isNotEmpty(list)) {
             Iterator it = list.iterator();
             int i = 0;
             while (it.hasNext()) {
-                Object object = (Object)it.next();
-                JSONObject singleMess = (JSONObject)object;
+                Object object = it.next();
+                JsonObject singleMess = (JsonObject) object;
                 if (i == 0) {
                     timestamp = (String)singleMess.get("ts");
                 }
