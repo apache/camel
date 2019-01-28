@@ -19,8 +19,8 @@ import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ehcache.EhcacheTestSupport;
-import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.DefaultExchangeHolder;
 import org.junit.After;
 import org.junit.Test;
 
