@@ -18,7 +18,6 @@ package org.apache.camel.component.spring.ws;
 
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import javax.xml.soap.MimeHeaders;
@@ -30,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.DefaultConsumer;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.context.MessageContext;
@@ -41,6 +39,8 @@ import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.saaj.SaajSoapMessage;
+
+import static org.apache.camel.component.spring.ws.SpringWebserviceHelper.toResult;
 
 public class SpringWebserviceConsumer extends DefaultConsumer implements MessageEndpoint {
 
@@ -73,16 +73,12 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
             if (responseMessage != null) {
                 Source responseBody = responseMessage.getBody(Source.class);
                 WebServiceMessage response = messageContext.getResponse();
-
                 configuration.getMessageFilter().filterConsumer(exchange, response);
-
-                XmlConverter xmlConverter = configuration.getXmlConverter();
-                xmlConverter.toResult(responseBody, response.getPayloadResult());
+                toResult(responseBody, response.getPayloadResult());
             }
         }
-
     }
-    
+
     private void populateExchangeWithBreadcrumbFromMessageContext(MessageContext messageContext, Exchange exchange) {
         if (messageContext.getRequest() instanceof SaajSoapMessage) {
             SaajSoapMessage saajSoap = (SaajSoapMessage) messageContext.getRequest();
@@ -93,7 +89,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     }
 
     private void populateExchangeWithBreadcrumbFromSaajMessage(Exchange exchange, SaajSoapMessage saajSoap) {
-        SOAPMessage soapMessageRequest = null;
+        SOAPMessage soapMessageRequest;
         if (saajSoap != null) {
             soapMessageRequest = saajSoap.getSaajMessage();
             if (soapMessageRequest != null) {

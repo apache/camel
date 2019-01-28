@@ -33,7 +33,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.springframework.ws.WebServiceMessage;
@@ -53,9 +52,9 @@ import org.springframework.ws.transport.http.HttpComponentsMessageSender;
 import org.springframework.ws.transport.http.HttpUrlConnection;
 import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
 
-public class SpringWebserviceProducer extends DefaultProducer {
+import static org.apache.camel.component.spring.ws.SpringWebserviceHelper.toResult;
 
-    private static final XmlConverter XML_CONVERTER = new XmlConverter();
+public class SpringWebserviceProducer extends DefaultProducer {
 
     public SpringWebserviceProducer(Endpoint endpoint) {
         super(endpoint);
@@ -88,7 +87,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
         getEndpoint().getConfiguration().getWebServiceTemplate().sendAndReceive(endpointUriHeader, new WebServiceMessageCallback() {
             @Override
             public void doWithMessage(WebServiceMessage requestMessage) throws IOException, TransformerException {
-                XML_CONVERTER.toResult(sourcePayload, requestMessage.getPayloadResult());
+                toResult(sourcePayload, requestMessage.getPayloadResult());
                 callback.doWithMessage(requestMessage);
             }
         }, new WebServiceMessageCallback() {
@@ -109,11 +108,6 @@ public class SpringWebserviceProducer extends DefaultProducer {
  
     /**
      * Populates soap message headers and attachments from soap response
-     * 
-     * @param inOrOut
-     *            {@link Message}
-     * @param soapMessage
-     *            {@link SoapMessage}
      */
     private void populateHeaderAndAttachmentsFromResponse(Message inOrOut, SoapMessage soapMessage) {
         if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) {
@@ -126,11 +120,6 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
     /**
      * Populates message headers from soapHeader response
-     * 
-     * @param message
-     *            Message
-     * @param soapHeader
-     *            SoapHeader
      */
     private void populateMessageHeaderFromResponse(Message message, SoapHeader soapHeader) {
         message.setHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soapHeader.getSource());
@@ -152,8 +141,6 @@ public class SpringWebserviceProducer extends DefaultProducer {
     }
     /**
      * Populates message attachments from soap response attachments 
-     * @param inOrOut {@link Message}
-     * @param soapMessage {@link SoapMessage}
      */
     private void populateMessageAttachmentsFromResponse(Message inOrOut, Iterator<Attachment> attachments) {
         while (attachments.hasNext()) {
@@ -305,7 +292,7 @@ public class SpringWebserviceProducer extends DefaultProducer {
             // Create the SOAP header
             if (soapHeaderSource != null) {
                 SoapHeader header = ((SoapMessage) message).getSoapHeader();
-                XML_CONVERTER.toResult(soapHeaderSource, header.getResult());
+                toResult(soapHeaderSource, header.getResult());
             }
 
             if (wsAddressingAction != null) {
