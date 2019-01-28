@@ -63,14 +63,14 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     public static final String BOUNDARY_PARAM_NAME = "boundary";
     
-    private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = "MDN for -\n" + 
-            " Message ID: $requestHeaders[\"Message-Id\"]\n" + 
-            "  Subject: $requestHeaders[\"Subject\"]\n" + 
-            "  Date: $requestHeaders[\"Date\"]\n" + 
-            "  From: $requestHeaders[\"AS2-From\"]\n" + 
-            "  To: $requestHeaders[\"AS2-To\"]\n" + 
-            "  Received on: $responseHeaders[\"Date\"]\n" + 
-            " Status: $dispositionType \n";
+    private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = "MDN for -\n" 
+            + " Message ID: $requestHeaders[\"Message-Id\"]\n" 
+            + "  Subject: $requestHeaders[\"Subject\"]\n"
+            + "  Date: $requestHeaders[\"Date\"]\n"
+            + "  From: $requestHeaders[\"AS2-From\"]\n"
+            + "  To: $requestHeaders[\"AS2-To\"]\n"
+            + "  Received on: $responseHeaders[\"Date\"]\n"
+            + " Status: $dispositionType \n";
 
     private static final Logger LOG = LoggerFactory.getLogger(ResponseMDN.class);
 
@@ -83,7 +83,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     private VelocityEngine velocityEngine;
 
-   public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, 
+    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, 
                        Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
@@ -123,7 +123,8 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
         // Return a Message Disposition Notification Receipt in response body
         String boundary = EntityUtils.createBoundaryValue();
-        String mdnMessage = createMdnDescription(request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, DEFAULT_MDN_MESSAGE_TEMPLATE);
+        String mdnMessage = createMdnDescription(request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, 
+        AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, DEFAULT_MDN_MESSAGE_TEMPLATE);
         DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                 request, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
                 AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey, mdnMessage);
