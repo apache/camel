@@ -32,7 +32,9 @@ import org.apache.camel.component.thrift.server.ThriftHsHaServer;
 import org.apache.camel.component.thrift.server.ThriftMethodHandler;
 import org.apache.camel.component.thrift.server.ThriftThreadPoolServer;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.server.TServer;
@@ -41,6 +43,8 @@ import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TTransportException;
 import org.apache.thrift.transport.TZlibTransport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents Thrift server consumer implementation

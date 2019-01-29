@@ -24,7 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.thrift.client.AsyncClientMethodCallback;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TNonblockingSocket;
@@ -163,6 +165,8 @@ public class ThriftProducer extends DefaultProducer implements AsyncProcessor {
             if (sslParameters == null) {
                 throw new IllegalArgumentException("SSL parameters must be initialized if negotiation type is set to " + configuration.getNegotiationType());
             }
+            
+            ClassResolver classResolver = endpoint.getCamelContext().getClassResolver();
             
             ObjectHelper.notNull(sslParameters.getSecureSocketProtocol(), "Security protocol");
             ObjectHelper.notNull(sslParameters.getTrustManagers().getKeyStore().getResource(), "Trust store path");
