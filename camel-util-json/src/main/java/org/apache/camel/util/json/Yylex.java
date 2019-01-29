@@ -27,12 +27,12 @@ class Yylex {
     /** This character denotes the end of file */
     public static final int YYEOF = -1;
 
-    /** initial size of the lookahead buffer */
-    private static final int ZZ_BUFFERSIZE = 16384;
-
     /** lexical states */
     public static final int YYINITIAL = 0;
     public static final int STRING_BEGIN = 2;
+    
+    /** initial size of the lookahead buffer */
+    private static final int ZZ_BUFFERSIZE = 16384;
 
     /**
      * ZZ_LEXSTATE[l] is the state in the DFA for the lexical state l
@@ -61,27 +61,6 @@ class Yylex {
     private static final String ZZ_ACTION_PACKED_0 = "\2\0\2\1\1\2\1\3\1\4\3\1\1\5\1\6" + "\1\7\1\10\1\11\1\12\1\13\1\14\1\15\5\0" + "\1\14\1\16\1\17\1\20\1\21\1\22\1\23\1\24"
                                                      + "\1\0\1\2\1\0\1\2\4\0\1\25\1\26\2\0" + "\1\27";
 
-    private static int[] zzUnpackAction() {
-        int[] result = new int[45];
-        int offset = 0;
-        offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
-        return result;
-    }
-
-    private static int zzUnpackAction(String packed, int offset, int[] result) {
-        int i = 0; /* index in packed string */
-        int j = offset; /* index in unpacked array */
-        int l = packed.length();
-        while (i < l) {
-            int count = packed.charAt(i++);
-            int value = packed.charAt(i++);
-            do
-                result[j++] = value;
-            while (--count > 0);
-        }
-        return j;
-    }
-
     /**
      * Translates a state to a row index in the transition table
      */
@@ -90,25 +69,8 @@ class Yylex {
     private static final String ZZ_ROWMAP_PACKED_0 = "\0\0\0\33\0\66\0\121\0\154\0\207\0\66\0\242" + "\0\275\0\330\0\66\0\66\0\66\0\66\0\66\0\66"
                                                      + "\0\363\0\u010e\0\66\0\u0129\0\u0144\0\u015f\0\u017a\0\u0195" + "\0\66\0\66\0\66\0\66\0\66\0\66\0\66\0\66"
                                                      + "\0\u01b0\0\u01cb\0\u01e6\0\u01e6\0\u0201\0\u021c\0\u0237\0\u0252" + "\0\66\0\66\0\u026d\0\u0288\0\66";
-
-    private static int[] zzUnpackRowMap() {
-        int[] result = new int[45];
-        int offset = 0;
-        offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
-        return result;
-    }
-
-    private static int zzUnpackRowMap(String packed, int offset, int[] result) {
-        int i = 0; /* index in packed string */
-        int j = offset; /* index in unpacked array */
-        int l = packed.length();
-        while (i < l) {
-            int high = packed.charAt(i++) << 16;
-            result[j++] = high | packed.charAt(i++);
-        }
-        return j;
-    }
-
+    
+    
     /**
      * The transition table of the DFA
      */
@@ -147,28 +109,7 @@ class Yylex {
     private static final int[] ZZ_ATTRIBUTE = zzUnpackAttribute();
 
     private static final String ZZ_ATTRIBUTE_PACKED_0 = "\2\0\1\11\3\1\1\11\3\1\6\11\2\1\1\11" + "\5\0\10\11\1\0\1\1\1\0\1\1\4\0\2\11" + "\2\0\1\11";
-
-    private static int[] zzUnpackAttribute() {
-        int[] result = new int[45];
-        int offset = 0;
-        offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
-        return result;
-    }
-
-    private static int zzUnpackAttribute(String packed, int offset, int[] result) {
-        int i = 0; /* index in packed string */
-        int j = offset; /* index in unpacked array */
-        int l = packed.length();
-        while (i < l) {
-            int count = packed.charAt(i++);
-            int value = packed.charAt(i++);
-            do
-                result[j++] = value;
-            while (--count > 0);
-        }
-        return j;
-    }
-
+    
     /** the input device */
     private java.io.Reader zzReader;
 
@@ -224,6 +165,66 @@ class Yylex {
 
     /* user code: */
     private StringBuilder sb = new StringBuilder();
+    
+    private static int[] zzUnpackAction() {
+        int[] result = new int[45];
+        int offset = 0;
+        offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
+        return result;
+    }
+
+    private static int zzUnpackAction(String packed, int offset, int[] result) {
+        int i = 0; /* index in packed string */
+        int j = offset; /* index in unpacked array */
+        int l = packed.length();
+        while (i < l) {
+            int count = packed.charAt(i++);
+            int value = packed.charAt(i++);
+            do
+                result[j++] = value;
+            while (--count > 0);
+        }
+        return j;
+    }
+
+    private static int[] zzUnpackRowMap() {
+        int[] result = new int[45];
+        int offset = 0;
+        offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
+        return result;
+    }
+
+    private static int zzUnpackRowMap(String packed, int offset, int[] result) {
+        int i = 0; /* index in packed string */
+        int j = offset; /* index in unpacked array */
+        int l = packed.length();
+        while (i < l) {
+            int high = packed.charAt(i++) << 16;
+            result[j++] = high | packed.charAt(i++);
+        }
+        return j;
+    }
+
+    private static int[] zzUnpackAttribute() {
+        int[] result = new int[45];
+        int offset = 0;
+        offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
+        return result;
+    }
+
+    private static int zzUnpackAttribute(String packed, int offset, int[] result) {
+        int i = 0; /* index in packed string */
+        int j = offset; /* index in unpacked array */
+        int l = packed.length();
+        while (i < l) {
+            int count = packed.charAt(i++);
+            int value = packed.charAt(i++);
+            do
+                result[j++] = value;
+            while (--count > 0);
+        }
+        return j;
+    }
 
     int getPosition() {
         return yychar;
