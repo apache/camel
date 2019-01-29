@@ -142,11 +142,4 @@ public final class AggregationStrategies {
         return adapter;
     }
 
-    /**
-     * Creates a {@link XsltAggregationStrategy} as the aggregation strategy.
-     */
-    public static XsltAggregationStrategy xslt(String xslFileLocation) {
-        return XsltAggregationStrategy.create(xslFileLocation);
-    }
-
 }

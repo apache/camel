@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel.component.xslt;
 
 import java.io.IOException;
 import java.util.concurrent.RejectedExecutionException;
@@ -30,10 +30,6 @@ import org.apache.camel.AggregationStrategy;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.xslt.XsltBuilder;
-import org.apache.camel.component.xslt.XsltUriResolver;
-import org.apache.camel.component.xslt.XsltEndpoint;
-import org.apache.camel.component.xslt.XsltOutput;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -65,8 +61,6 @@ import org.slf4j.LoggerFactory;
  * Some code bits have been copied from the {@link org.apache.camel.component.xslt.XsltEndpoint}.
  */
 public class XsltAggregationStrategy extends ServiceSupport implements AggregationStrategy, CamelContextAware {
-
-    // TODO: move to camel-xslt in org.apache.camel.component.xslt package (not having split osgi packages)
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltAggregationStrategy.class);
     private static final String DEFAULT_PROPERTY_NAME = "new-exchange";
