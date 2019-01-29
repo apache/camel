@@ -120,14 +120,6 @@
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
     <cglib-bundle-version>3.2.10_1</cglib-bundle-version>
     <cglib-version>3.2.10</cglib-version>
-    <chronicle-bytes-version>1.16.29</chronicle-bytes-version>
-    <chronicle-core-version>1.16.29</chronicle-core-version>
-    <chronicle-engine-version>1.13.27</chronicle-engine-version>
-    <chronicle-map-version>2.4.17</chronicle-map-version>
-    <chronicle-network-version>1.16.6</chronicle-network-version>
-    <chronicle-queue-version>4.16.5</chronicle-queue-version>
-    <chronicle-threads-version>1.16.4</chronicle-threads-version>
-    <chronicle-wire-version>1.16.21</chronicle-wire-version>
     <chunk-templates-version>3.3.1</chunk-templates-version>
     <chunk-templates-bundle-version>3.3.1_1</chunk-templates-bundle-version>
     <cmis-version>1.1.0</cmis-version>
@@ -1004,11 +996,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cdi</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-chronicle</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2433,11 +2420,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cassandraql-starter</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-chronicle-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

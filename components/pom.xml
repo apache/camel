@@ -108,7 +108,6 @@
     <module>camel-caffeine</module>
     <module>camel-cassandraql</module>
     <module>camel-cdi</module>
-    <module>camel-chronicle</module>
     <module>camel-chunk</module>
     <module>camel-cm-sms</module>
     <module>camel-cmis</module>
