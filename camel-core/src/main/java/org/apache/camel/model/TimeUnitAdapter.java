@@ -20,11 +20,13 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * <code>TimeUnitAdapter</code> is a simple adapter to convert between Strings
  * and instances of the {@link TimeUnit} enumeration
  */
+@XmlJavaTypeAdapter(value = TimeUnitAdapter.class)
 public class TimeUnitAdapter extends XmlAdapter<String, TimeUnit> {
 
     @Override
