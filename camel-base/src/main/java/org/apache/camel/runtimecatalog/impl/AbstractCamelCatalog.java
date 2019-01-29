@@ -40,30 +40,31 @@ import org.apache.camel.runtimecatalog.JSonSchemaResolver;
 import org.apache.camel.runtimecatalog.LanguageValidationResult;
 
 import static org.apache.camel.runtimecatalog.impl.CatalogHelper.after;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.getNames;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.getPropertyDefaultValue;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.getPropertyEnum;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.getPropertyKind;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.getPropertyNameFromNameWithPrefix;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.getPropertyPrefix;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.getRow;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isComponentConsumerOnly;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isComponentLenientProperties;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isComponentProducerOnly;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isPropertyBoolean;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isPropertyConsumerOnly;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isPropertyDeprecated;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isPropertyInteger;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isPropertyMultiValue;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isPropertyNumber;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isPropertyObject;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isPropertyProducerOnly;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.isPropertyRequired;
-import static org.apache.camel.runtimecatalog.impl.JSonSchemaHelper.stripOptionalPrefixFromName;
 import static org.apache.camel.runtimecatalog.impl.URISupport.createQueryString;
 import static org.apache.camel.runtimecatalog.impl.URISupport.isEmpty;
 import static org.apache.camel.runtimecatalog.impl.URISupport.normalizeUri;
 import static org.apache.camel.runtimecatalog.impl.URISupport.stripQuery;
+import static org.apache.camel.support.JSonSchemaHelper.getNames;
+import static org.apache.camel.support.JSonSchemaHelper.getPropertyDefaultValue;
+import static org.apache.camel.support.JSonSchemaHelper.getPropertyEnum;
+import static org.apache.camel.support.JSonSchemaHelper.getPropertyKind;
+import static org.apache.camel.support.JSonSchemaHelper.getPropertyNameFromNameWithPrefix;
+import static org.apache.camel.support.JSonSchemaHelper.getPropertyPrefix;
+import static org.apache.camel.support.JSonSchemaHelper.getRow;
+import static org.apache.camel.support.JSonSchemaHelper.isComponentConsumerOnly;
+import static org.apache.camel.support.JSonSchemaHelper.isComponentLenientProperties;
+import static org.apache.camel.support.JSonSchemaHelper.isComponentProducerOnly;
+import static org.apache.camel.support.JSonSchemaHelper.isPropertyBoolean;
+import static org.apache.camel.support.JSonSchemaHelper.isPropertyConsumerOnly;
+import static org.apache.camel.support.JSonSchemaHelper.isPropertyDeprecated;
+import static org.apache.camel.support.JSonSchemaHelper.isPropertyInteger;
+import static org.apache.camel.support.JSonSchemaHelper.isPropertyMultiValue;
+import static org.apache.camel.support.JSonSchemaHelper.isPropertyNumber;
+import static org.apache.camel.support.JSonSchemaHelper.isPropertyObject;
+import static org.apache.camel.support.JSonSchemaHelper.isPropertyProducerOnly;
+import static org.apache.camel.support.JSonSchemaHelper.isPropertyRequired;
+import static org.apache.camel.support.JSonSchemaHelper.parseJsonSchema;
+import static org.apache.camel.support.JSonSchemaHelper.stripOptionalPrefixFromName;
 
 /**
  * Base class for both the runtime RuntimeCamelCatalog from camel-core and the complete CamelCatalog from camel-catalog.
@@ -110,8 +111,8 @@ public abstract class AbstractCamelCatalog {
         EndpointValidationResult result = new EndpointValidationResult(scheme);
 
         String json = jsonSchemaResolver.getComponentJSonSchema(scheme);
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-        List<Map<String, String>> componentProps = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+        List<Map<String, String>> rows = parseJsonSchema("properties", json, true);
+        List<Map<String, String>> componentProps = parseJsonSchema("componentProperties", json, true);
 
         // endpoint options have higher priority so remove those from component
         // that may clash
@@ -127,7 +128,7 @@ public abstract class AbstractCamelCatalog {
             String dfName = properties.get("name");
             if (dfName != null) {
                 String dfJson = jsonSchemaResolver.getDataFormatJSonSchema(dfName);
-                List<Map<String, String>> dfRows = JSonSchemaHelper.parseJsonSchema("properties", dfJson, true);
+                List<Map<String, String>> dfRows = parseJsonSchema("properties", dfJson, true);
                 if (dfRows != null && !dfRows.isEmpty()) {
                     rows.addAll(dfRows);
                 }
@@ -331,7 +332,7 @@ public abstract class AbstractCamelCatalog {
                 return result;
             }
 
-            rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+            rows = parseJsonSchema("component", json, false);
 
             // is the component capable of both consumer and producer?
             boolean canConsumeAndProduce = false;
@@ -346,7 +347,7 @@ public abstract class AbstractCamelCatalog {
                 // only enable lenient properties if we should not ignore
                 lenientProperties = !ignoreLenientProperties && isComponentLenientProperties(rows);
             }
-            rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+            rows = parseJsonSchema("properties", json, true);
             properties = endpointProperties(uri);
         } catch (URISyntaxException e) {
             if (uri.startsWith("{{")) {
@@ -365,7 +366,7 @@ public abstract class AbstractCamelCatalog {
             String dfName = properties.get("name");
             if (dfName != null) {
                 String dfJson = jsonSchemaResolver.getDataFormatJSonSchema(dfName);
-                List<Map<String, String>> dfRows = JSonSchemaHelper.parseJsonSchema("properties", dfJson, true);
+                List<Map<String, String>> dfRows = parseJsonSchema("properties", dfJson, true);
                 if (dfRows != null && !dfRows.isEmpty()) {
                     rows.addAll(dfRows);
                 }
@@ -550,7 +551,7 @@ public abstract class AbstractCamelCatalog {
         // grab the syntax
         String syntax = null;
         String alternativeSyntax = null;
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+        List<Map<String, String>> rows = parseJsonSchema("component", json, false);
         for (Map<String, String> row : rows) {
             if (row.containsKey("syntax")) {
                 syntax = row.get("syntax");
@@ -677,7 +678,7 @@ public abstract class AbstractCamelCatalog {
             word2.add(option);
         }
 
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        rows = parseJsonSchema("properties", json, true);
 
         boolean defaultValueAdded = false;
 
@@ -796,7 +797,7 @@ public abstract class AbstractCamelCatalog {
             throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
         }
 
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        List<Map<String, String>> rows = parseJsonSchema("properties", json, true);
 
         // now parse the uri parameters
         Map<String, Object> parameters = URISupport.parseParameters(u);
@@ -838,7 +839,7 @@ public abstract class AbstractCamelCatalog {
     }
 
     private String doAsEndpointUri(String scheme, String json, String ampersand, boolean encode) throws URISyntaxException {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        List<Map<String, String>> rows = parseJsonSchema("properties", json, true);
 
         Map<String, String> copy = new HashMap<>();
         for (Map<String, String> row : rows) {
@@ -889,7 +890,7 @@ public abstract class AbstractCamelCatalog {
 
         // grab the syntax
         String originalSyntax = null;
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+        List<Map<String, String>> rows = parseJsonSchema("component", json, false);
         for (Map<String, String> row : rows) {
             if (row.containsKey("syntax")) {
                 originalSyntax = row.get("syntax");
@@ -903,7 +904,7 @@ public abstract class AbstractCamelCatalog {
         // do any properties filtering which can be needed for some special components
         properties = filterProperties(scheme, properties);
 
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        rows = parseJsonSchema("properties", json, true);
 
         // clip the scheme from the syntax
         String syntax = "";
@@ -1188,7 +1189,7 @@ public abstract class AbstractCamelCatalog {
             return answer;
         }
 
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+        List<Map<String, String>> rows = parseJsonSchema("language", json, false);
         String className = null;
         for (Map<String, String> row : rows) {
             if (row.containsKey("javaType")) {

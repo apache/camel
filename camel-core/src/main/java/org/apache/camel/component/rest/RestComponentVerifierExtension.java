@@ -27,9 +27,9 @@ import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExt
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
-import org.apache.camel.runtimecatalog.impl.JSonSchemaHelper;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
+import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.Suppliers;
 

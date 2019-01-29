@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
+import org.apache.camel.support.JSonSchemaHelper;
 import org.junit.Test;
 
 public class JSonSchemaHelperTest extends ContextTestSupport {

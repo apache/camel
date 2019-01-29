@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.runtimecatalog.impl;
+package org.apache.camel.support;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -27,6 +27,9 @@ import java.util.stream.Collectors;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
+/**
+ * Used for parsing Camel components json meta-data descriptors.
+ */
 public final class JSonSchemaHelper {
 
     private JSonSchemaHelper() {
