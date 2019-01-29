@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-chronicle</artifactId>
-  <name>Camel :: Chronicle</name>
+  <name>Camel :: Chronicle (deprecated)</name>
   <description>Camel Chronicle support</description>
 
   <properties>
