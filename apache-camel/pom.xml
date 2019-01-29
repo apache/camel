@@ -240,11 +240,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-chronicle</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-chunk</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1625,11 +1620,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-cassandraql-starter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-chronicle-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
