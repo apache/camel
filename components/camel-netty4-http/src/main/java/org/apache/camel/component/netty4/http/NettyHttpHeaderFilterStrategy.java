@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.netty4.http;
 
-import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultHeaderFilterStrategy;
 
 /**
  * Default Netty {@link HeaderFilterStrategy} used when binding with {@link NettyHttpBinding}.
