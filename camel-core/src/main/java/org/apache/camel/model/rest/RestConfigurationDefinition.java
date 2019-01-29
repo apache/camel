@@ -650,6 +650,14 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * To specify the binding mode
+     */
+    public RestConfigurationDefinition bindingMode(String bindingMode) {
+        setBindingMode(RestBindingMode.valueOf(bindingMode.toLowerCase()));
+        return this;
+    }
+
+    /**
      * To specify whether to skip binding output if there is a custom HTTP error code
      */
     public RestConfigurationDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
