@@ -37,7 +37,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
@@ -62,7 +61,6 @@ import org.apache.maven.project.artifact.MavenMetadataSource;
 import org.codehaus.mojo.exec.AbstractExecMojo;
 import org.codehaus.mojo.exec.ExecutableDependency;
 import org.codehaus.mojo.exec.Property;
-import org.eclipse.aether.RepositorySystem;
 
 /**
  * Runs a CamelContext using any Spring or Blueprint XML configuration files found in
@@ -143,90 +141,73 @@ public class RunMojo extends AbstractExecMojo {
     @Parameter(property = "project.remoteArtifactRepositories")
     private List remoteRepositories;
 
-    /**
-     * @component
-     */
+    @Component
     private MavenProjectBuilder projectBuilder;
 
-    /**
-     * @parameter property="plugin.artifacts"
-     * @readonly
-     */
+    @Parameter(property = "plugin.artifacts")
     private List<Artifact> pluginDependencies;
 
     /**
      * Whether to enable the tracer or not
-     *
-     * @parameter property="camel.trace"
-     *            default-value="false"
-     * @required
      */
+    @Parameter(property = "camel.trace")
     private boolean trace;
 
     /**
      * The main class to execute.
-     *
-     * @parameter property="camel.mainClass"
      */
+    @Parameter(property = "camel.mainClass")
     private String mainClass;
 
     /**
      * The basedPackages that spring java config want to gets.
-     *
-     * @parameter property="camel.basedPackages"
      */
+    @Parameter(property = "camel.basedPackages")
     private String basedPackages;
 
     /**
      * The configClasses that spring java config want to gets.
-     *
-     * @parameter property="camel.configClasses"
      */
+    @Parameter(property = "camel.configClasses")
     private String configClasses;
     
     /**
      * The classpath based application context uri that spring want to gets.
-     *
-     * @parameter property="camel.applicationContextUri"
      */
+    @Parameter(property = "camel.applicationContextUri")
     private String applicationContextUri;
 
     /**
      * The filesystem based application context uri that spring want to gets.
-     *
-     * @parameter property="camel.fileApplicationContextUri"
      */
+    @Parameter(property = "camel.fileApplicationContextUri")
     private String fileApplicationContextUri;
     
     /**
      * The configureAdmin persistent id, it will be used when loading the 
      * camel context from blueprint.
-     * 
-     * @parameter property="camel.configAdminPid"
      */
+    @Parameter(property = "camel.configAdminPid")
     private String configAdminPid;
     
     /**
      * The configureAdmin persistent file name, it will be used when 
      * loading the camel context from blueprint.
-     * 
-     * @parameter property="camel.configAdminFileName"
      */
+    @Parameter(property = "camel.configAdminFileName")
     private String configAdminFileName;
 
     /**
      * To watch the directory for file changes which triggers
      * a live reload of the Camel routes on-the-fly.
-     *
-     * @parameter property="camel.fileWatcherDirectory"
      */
+    @Parameter(property = "camel.fileWatcherDirectory")
     private String fileWatcherDirectory;
 
     /**
      * The class arguments.
-     *
-     * @parameter property="camel.arguments"
      */
+    @Parameter(property = "camel.arguments")
     private String[] arguments;
 
     /**
@@ -234,8 +215,6 @@ public class RunMojo extends AbstractExecMojo {
      * forked, some system properties required by the JVM cannot be passed here.
      * Use MAVEN_OPTS or the exec:exec instead. See the user guide for more
      * information.
-     *
-     * @parameter
      */
     private Property[] systemProperties;
 
@@ -243,18 +222,15 @@ public class RunMojo extends AbstractExecMojo {
      * Deprecated; this is not needed anymore. Indicates if mojo should be kept
      * running after the mainclass terminates. Usefull for serverlike apps with
      * deamonthreads.
-     *
-     * @parameter property="camel.keepAlive" default-value="false"
      */
+    @Parameter(property = "camel.keepAlive")
     private boolean keepAlive;
 
     /**
      * Indicates if the project dependencies should be used when executing the
      * main class.
-     *
-     * @parameter property="camel.includeProjectDependencies"
-     *            default-value="true"
      */
+    @Parameter(property = "camel.includeProjectDependencies", defaultValue = "true")
     private boolean includeProjectDependencies;
 
     /**
@@ -264,10 +240,8 @@ public class RunMojo extends AbstractExecMojo {
      * useful when the project is not a java project. For example a mvn project
      * using the csharp plugins only expects to see dotnet libraries as
      * dependencies.
-     *
-     * @parameter property="camel.includePluginDependencies"
-     *            default-value="false"
      */
+    @Parameter(property = "camel.includePluginDependencies", defaultValue = "false")
     private boolean includePluginDependencies;
 
     /**
@@ -279,10 +253,8 @@ public class RunMojo extends AbstractExecMojo {
      * the executable's classpath. Whether a particular project dependency is a
      * dependency of the identified ExecutableDependency will be irrelevant to
      * its inclusion in the classpath.
-     *
-     * @parameter
-     * @optional
      */
+    @Parameter(property = "camel.executableDependency")
     private ExecutableDependency executableDependency;
 
     /**
@@ -297,9 +269,8 @@ public class RunMojo extends AbstractExecMojo {
      * {@link #daemonThreadJoinTimeout} and
      * {@link #stopUnresponsiveDaemonThreads} for further tuning.
      * </p>
-     *
-     * @parameter property="camel.cleanupDaemonThreads" default-value="true"
      */
+    @Parameter(property = "camel.cleanupDaemonThreads", defaultValue = "true")
     private boolean cleanupDaemonThreads;
 
     /**
@@ -318,10 +289,8 @@ public class RunMojo extends AbstractExecMojo {
      * value has been chosen, but this default value <i>may change</i> in the
      * future based on user feedback.
      * </p>
-     *
-     * @parameter property="camel.daemonThreadJoinTimeout"
-     *            default-value="15000"
      */
+    @Parameter(property = "camel.daemonThreadJoinTimeout", defaultValue = "15000")
     private long daemonThreadJoinTimeout;
 
     /**
@@ -338,18 +307,9 @@ public class RunMojo extends AbstractExecMojo {
      * <code>Timer</code> fixed, vote for <a
      * href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6336543">this
      * bug</a>.
-     *
-     * @parameter property="camel.stopUnresponsiveDaemonThreads"
-     *            default-value="false"
      */
+    @Parameter(property = "camel.stopUnresponsiveDaemonThreads", defaultValue = "15000")
     private boolean stopUnresponsiveDaemonThreads;
-
-    /**
-     * Deprecated this is not needed anymore.
-     *
-     * @parameter property="camel.killAfter" default-value="-1"
-     */
-    private long killAfter;
 
     private Properties originalSystemProperties;
 
@@ -388,10 +348,6 @@ public class RunMojo extends AbstractExecMojo {
         } else {
             // auto detect if we have blueprint
             usingBlueprintMain = detectBlueprintOnClassPathOrBlueprintXMLFiles();
-        }
-
-        if (killAfter != -1) {
-            getLog().warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
         }
 
         // lets create the command line arguments to pass in...
@@ -487,6 +443,7 @@ public class RunMojo extends AbstractExecMojo {
             getLog().debug(msg);
         }
 
+        final ClassLoader loader = getClassLoader();
         IsolatedThreadGroup threadGroup = new IsolatedThreadGroup(mainClass /* name */);
         final Thread bootstrapThread = new Thread(threadGroup, new Runnable() {
             public void run() {
@@ -510,7 +467,7 @@ public class RunMojo extends AbstractExecMojo {
             }
         }, mainClass + ".main()");
 
-        bootstrapThread.setContextClassLoader(getClassLoader());
+        bootstrapThread.setContextClassLoader(loader);
         setSystemProperties();
 
         bootstrapThread.start();
