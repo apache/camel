@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.support.DefaultComponent;
@@ -68,11 +67,11 @@ public class RestEndpointTest {
         restEndpoint.setParameters(new HashMap<>());
         restEndpoint.setHost("http://localhost");
 
-        restEndpoint.setBindingMode(RestBindingMode.json);
+        restEndpoint.setBindingMode("json");
 
         final RestProducer producer = (RestProducer) restEndpoint.createProducer();
 
-        Assert.assertEquals(producer.getBindingMode(), RestBindingMode.json);
+        Assert.assertEquals(producer.getBindingMode().name(), "json");
     }
 
     @Test
@@ -86,7 +85,7 @@ public class RestEndpointTest {
             .createEndpoint("rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar", "GET:/path", parameters);
 
         assertEquals("http://localhost", endpoint.getHost());
-        assertEquals(RestBindingMode.json, endpoint.getBindingMode());
+        assertEquals("json", endpoint.getBindingMode().name());
         assertEquals("GET", endpoint.getMethod());
         assertEquals("/path", endpoint.getPath());
         assertEquals("foo=bar", endpoint.getQueryParameters());
@@ -98,7 +97,7 @@ public class RestEndpointTest {
             "rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar&queryParameters=RAW(a%3Db%26c%3Dd)");
 
         assertEquals("http://localhost", endpoint.getHost());
-        assertEquals(RestBindingMode.json, endpoint.getBindingMode());
+        assertEquals("json", endpoint.getBindingMode().name());
         assertEquals("GET", endpoint.getMethod());
         assertEquals("/path", endpoint.getPath());
         assertEquals("foo=bar&a=b&c=d", endpoint.getQueryParameters());

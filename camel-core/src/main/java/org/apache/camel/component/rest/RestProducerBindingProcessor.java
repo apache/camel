@@ -23,11 +23,11 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.UnmarshalProcessor;
-import org.apache.camel.processor.binding.BindingException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -222,9 +222,9 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
             return getProcessor().process(exchange, callback);
         } else {
             if (bindingMode.contains("xml")) {
-                exchange.setException(new BindingException("Cannot bind to xml as message body is not xml compatible", exchange));
+                exchange.setException(new CamelExchangeException("Cannot bind to xml as message body is not xml compatible", exchange));
             } else {
-                exchange.setException(new BindingException("Cannot bind to json as message body is not json compatible", exchange));
+                exchange.setException(new CamelExchangeException("Cannot bind to json as message body is not json compatible", exchange));
             }
             // we failed so cannot call producer
             callback.done(true);
@@ -345,9 +345,9 @@ public class RestProducerBindingProcessor extends DelegateAsyncProcessor {
                         // okay for auto we do not mind if we could not bind
                     } else {
                         if (bindingMode.contains("xml")) {
-                            exchange.setException(new BindingException("Cannot bind from xml as message body is not xml compatible", exchange));
+                            exchange.setException(new CamelExchangeException("Cannot bind from xml as message body is not xml compatible", exchange));
                         } else {
-                            exchange.setException(new BindingException("Cannot bind from json as message body is not json compatible", exchange));
+                            exchange.setException(new CamelExchangeException("Cannot bind from json as message body is not json compatible", exchange));
                         }
                     }
                 }

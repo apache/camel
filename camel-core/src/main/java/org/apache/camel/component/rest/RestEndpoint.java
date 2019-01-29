@@ -26,7 +26,6 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
@@ -78,8 +77,8 @@ public class RestEndpoint extends DefaultEndpoint {
     private String host;
     @UriParam(label = "producer", multiValue = true)
     private String queryParameters;
-    @UriParam(label = "producer")
-    private RestBindingMode bindingMode;
+    @UriParam(label = "producer", enums = "auto,off,json,xml,json_xml")
+    private RestConfiguration.RestBindingMode bindingMode;
 
     private Map<String, Object> parameters;
 
@@ -252,7 +251,7 @@ public class RestEndpoint extends DefaultEndpoint {
         this.queryParameters = queryParameters;
     }
 
-    public RestBindingMode getBindingMode() {
+    public RestConfiguration.RestBindingMode getBindingMode() {
         return bindingMode;
     }
 
@@ -262,8 +261,12 @@ public class RestEndpoint extends DefaultEndpoint {
      * the incoming message from inType to the json or xml, and the
      * response from json or xml to outType.
      */
-    public void setBindingMode(final RestBindingMode bindingMode) {
+    public void setBindingMode(RestConfiguration.RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
+    }
+
+    public void setBindingMode(String bindingMode) {
+        this.bindingMode = RestConfiguration.RestBindingMode.valueOf(bindingMode.toLowerCase());
     }
 
     @Override
