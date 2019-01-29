@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 289 in 209 JAR artifacts (0 deprecated)
+Number of Components: 289 in 210 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -670,10 +670,10 @@ Number of Components: 289 in 209 JAR artifacts (0 deprecated)
 | link:camel-ref/src/main/docs/ref-component.adoc[Ref] (camel-ref) +
 `ref:name` | 1.2 | The ref component is used for lookup of existing endpoints bound in the Registry.
 
-| link:../camel-core/src/main/docs/rest-component.adoc[REST] (camel-core) +
+| link:camel-rest/src/main/docs/rest-component.adoc[REST] (camel-rest) +
 `rest:method:path:uriTemplate` | 2.14 | The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
 
-| link:../camel-core/src/main/docs/rest-api-component.adoc[REST API] (camel-core) +
+| link:camel-rest/src/main/docs/rest-api-component.adoc[REST API] (camel-rest) +
 `rest-api:path/contextIdPattern` | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
 
 | link:camel-rest-swagger/src/main/docs/rest-swagger-component.adoc[REST Swagger] (camel-rest-swagger) +
