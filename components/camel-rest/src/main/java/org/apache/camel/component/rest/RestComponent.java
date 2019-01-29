@@ -26,7 +26,6 @@ import java.util.function.Supplier;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.model.rest.RestConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
@@ -42,6 +41,8 @@ import org.apache.camel.util.URISupport;
 @org.apache.camel.spi.annotations.Component("rest")
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class RestComponent extends DefaultComponent {
+
+    public static final String DEFAULT_REST_CONFIGURATION_ID = "rest-configuration";
 
     @Metadata(label = "common")
     private String componentName;
@@ -183,7 +184,7 @@ public class RestComponent extends DefaultComponent {
     private RestConfiguration findGlobalRestConfiguration() {
         CamelContext context = getCamelContext();
 
-        RestConfiguration conf = CamelContextHelper.lookup(context, RestConstants.DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
+        RestConfiguration conf = CamelContextHelper.lookup(context, DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
         if (conf == null) {
             conf = CamelContextHelper.findByType(getCamelContext(), RestConfiguration.class);
         }
