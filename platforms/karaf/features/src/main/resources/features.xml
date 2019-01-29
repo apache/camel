@@ -42,33 +42,34 @@
     <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <bundle dependency='true'>mvn:com.github.ben-manes.caffeine/caffeine/${caffeine-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.camel/camel-util-json/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/spi-annotations/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-api/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-management-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-util/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-support/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-base/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-management-impl/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
+    <!-- core components -->
     <bundle>mvn:org.apache.camel/camel-browse/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-controlbus/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-management-api/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-support/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dataformat/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-direct/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-directvm/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-saga/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-file/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-language/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-log/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-file/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-properties/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ref/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-rest/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-saga/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-scheduler/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-seda/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-stub/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-timer/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-rest/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-seda/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-validator/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-vm/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xslt/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-management-impl/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-base/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/spi-annotations/${project.version}</bundle>
     <conditional>
       <condition>shell</condition>
       <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
