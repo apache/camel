@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 289 in 210 JAR artifacts (0 deprecated)
+Number of Components: 288 in 209 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -147,9 +147,6 @@ Number of Components: 289 in 210 JAR artifacts (0 deprecated)
 
 | link:camel-cassandraql/src/main/docs/cql-component.adoc[Cassandra CQL] (camel-cassandraql) +
 `cql:beanRef:hosts:port/keyspace` | 2.15 | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
-
-| link:camel-chronicle/src/main/docs/chronicle-engine-component.adoc[Chronicle Engine] (camel-chronicle) +
-`chronicle-engine:addresses/path` | 2.18 | The camel chronicle-engine component let you leverage the power of OpenHFT's Chronicle-Engine.
 
 | link:camel-chunk/src/main/docs/chunk-component.adoc[Chunk] (camel-chunk) +
 `chunk:resourceUri` | 2.15 | Transforms the message using a Chunk template.
