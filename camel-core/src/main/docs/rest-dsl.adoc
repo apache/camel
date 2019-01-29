@@ -19,6 +19,7 @@ others that has native REST integration.
 The following Camel components supports the Rest DSL. See the bottom of
 this page for how to integrate a component with the Rest DSL.
 
+* <<rest-component,came-rest>> *required* contains the base rest component needed by Rest DSL
 * <<netty-http-component,camel-netty-http>> (also
 supports Swagger Java)
 * <<netty4-http-component,camel-netty4-http>> (also
