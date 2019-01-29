@@ -479,6 +479,10 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    public RestDefinition bindingMode(String mode) {
+        return bindingMode(RestBindingMode.valueOf(mode.toLowerCase()));
+    }
+
     public RestDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
         if (getVerbs().isEmpty()) {
             this.skipBindingOnErrorCode = skipBindingOnErrorCode;
