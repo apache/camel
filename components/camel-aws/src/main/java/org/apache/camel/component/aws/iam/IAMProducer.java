@@ -26,6 +26,8 @@ import com.amazonaws.services.identitymanagement.model.CreateUserRequest;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyRequest;
 import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyResult;
+import com.amazonaws.services.identitymanagement.model.DeleteGroupRequest;
+import com.amazonaws.services.identitymanagement.model.DeleteGroupResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserRequest;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.GetUserRequest;
@@ -85,6 +87,9 @@ public class IAMProducer extends DefaultProducer {
             break;
         case createGroup:
             createGroup(getEndpoint().getIamClient(), exchange);
+            break;
+        case deleteGroup:
+            deleteGroup(getEndpoint().getIamClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -275,6 +280,23 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.createGroup(request);
         } catch (AmazonServiceException ase) {
             log.trace("Create Group command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void deleteGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
+        DeleteGroupRequest request = new DeleteGroupRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
+            String groupName = exchange.getIn().getHeader(IAMConstants.GROUP_NAME, String.class);
+            request.withGroupName(groupName);
+        }
+        DeleteGroupResult result;
+        try {
+            result = iamClient.deleteGroup(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("Delete Group command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

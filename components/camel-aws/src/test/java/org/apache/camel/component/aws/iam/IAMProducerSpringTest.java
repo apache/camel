@@ -20,6 +20,7 @@ import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateGroupResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyResult;
+import com.amazonaws.services.identitymanagement.model.DeleteGroupResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.GetUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
@@ -206,6 +207,23 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         assertNotNull(resultGet);
         assertEquals("Test", resultGet.getGroup().getGroupName());
         assertEquals("/test", resultGet.getGroup().getPath());
+    }
+    
+    public void iamDeleteGroupTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createGroup", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.deleteGroup);
+                exchange.getIn().setHeader(IAMConstants.GROUP_NAME, "Test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        DeleteGroupResult resultGet = (DeleteGroupResult)exchange.getIn().getBody();
+        assertNotNull(resultGet);
     }
 
     @Override

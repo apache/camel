@@ -441,7 +441,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
     @Override
     public DeleteGroupResult deleteGroup(DeleteGroupRequest deleteGroupRequest) {
-        throw new UnsupportedOperationException();
+        DeleteGroupResult result = new DeleteGroupResult();
+        return result;
     }
 
     @Override
