@@ -21,21 +21,11 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.xml.Namespaces;
-import org.apache.camel.model.language.ConstantExpression;
-import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.model.language.GroovyExpression;
-import org.apache.camel.model.language.HeaderExpression;
-import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
-import org.apache.camel.model.language.MvelExpression;
-import org.apache.camel.model.language.OgnlExpression;
-import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.model.language.SpELExpression;
-import org.apache.camel.model.language.TerserExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
@@ -77,11 +67,7 @@ public class ExpressionClauseSupport<T> {
      * do not use this if you want dynamic values during routing.
      */
     public T constant(Object value) {
-        if (value instanceof String) {
-            return expression(new ConstantExpression((String) value));
-        } else {
-            return expression(ExpressionBuilder.constantExpression(value));
-        }
+        return expression(ExpressionBuilder.constantExpression(value));
     }
 
     /**
@@ -138,7 +124,7 @@ public class ExpressionClauseSupport<T> {
      * An expression of an inbound message header of the given name
      */
     public T header(String name) {
-        return expression(new HeaderExpression(name));
+        return expression(new LanguageExpression("header", name));
     }
 
     /**
@@ -180,7 +166,7 @@ public class ExpressionClauseSupport<T> {
      * An expression of an exchange property of the given name
      */
     public T exchangeProperty(String name) {
-        return expression(new ExchangePropertyExpression(name));
+        return expression(ExpressionBuilder.exchangePropertyExpression(name));
     }
 
     /**
@@ -282,7 +268,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T groovy(String text) {
-        return expression(new GroovyExpression(text));
+        return expression(new LanguageExpression("groovy", text));
     }
 
     /**
@@ -296,7 +282,7 @@ public class ExpressionClauseSupport<T> {
      */
     @Deprecated
     public T javaScript(String text) {
-        return expression(new JavaScriptExpression(text));
+        return expression(new LanguageExpression("js", text));
     }
 
     /**
@@ -482,7 +468,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T ognl(String text) {
-        return expression(new OgnlExpression(text));
+        return expression(new LanguageExpression("ognl", text));
     }
 
     /**
@@ -493,7 +479,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T mvel(String text) {
-        return expression(new MvelExpression(text));
+        return expression(new LanguageExpression("mvel", text));
     }
 
     /**
@@ -504,7 +490,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T ref(String ref) {
-        return expression(new RefExpression(ref));
+        return expression(new LanguageExpression("ref", ref));
     }
 
     /**
@@ -515,7 +501,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T spel(String text) {
-        return expression(new SpELExpression(text));
+        return expression(new LanguageExpression("spel", text));
     }
 
     /**
@@ -552,7 +538,7 @@ public class ExpressionClauseSupport<T> {
      * @return the builder to continue processing the DSL
      */
     public T terser(String text) {
-        return expression(new TerserExpression(text));
+        return expression(new LanguageExpression("terser", text));
     }
 
     /**

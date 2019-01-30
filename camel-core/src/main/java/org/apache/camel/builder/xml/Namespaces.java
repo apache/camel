@@ -28,7 +28,7 @@ import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A helper class for working with namespaces or creating namespace based expressions
+ * A helper class for working with namespaces.
  */
 public class Namespaces {
     public static final String DEFAULT_NAMESPACE = "http://camel.apache.org/schema/spring";
