@@ -35,8 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineFactory;
 
-import org.apache.camel.impl.osgi.tracker.BundleTracker;
-import org.apache.camel.impl.osgi.tracker.BundleTrackerCustomizer;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.IOHelper;
 import org.osgi.framework.Bundle;
@@ -49,6 +47,8 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.util.tracker.BundleTracker;
+import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

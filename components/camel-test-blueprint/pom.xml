@@ -93,11 +93,11 @@
                 <!-- felix-connect includes osgi.core and osgi.compendium version 5.0.0 -->
                 <exclusion>
                     <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.core</artifactId>
+                    <artifactId>osgi.core</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>org.osgi</groupId>
-                    <artifactId>org.osgi.compendium</artifactId>
+                    <artifactId>osgi.cmpn</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -125,11 +125,11 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.apache.felix</groupId>
-                        <artifactId>org.osgi.core</artifactId>
+                        <artifactId>osgi.core</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.apache.felix</groupId>
-                        <artifactId>org.osgi.compendium</artifactId>
+                        <artifactId>osgi.cmpn</artifactId>
                     </exclusion>
                 </exclusions>
         </dependency>
@@ -146,11 +146,11 @@
                     </exclusion>
                     <exclusion>
                         <groupId>org.apache.felix</groupId>
-                        <artifactId>org.osgi.core</artifactId>
+                        <artifactId>osgi.core</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.apache.felix</groupId>
-                        <artifactId>org.osgi.compendium</artifactId>
+                        <artifactId>osgi.cmpn</artifactId>
                     </exclusion>
                 </exclusions>
         </dependency>
