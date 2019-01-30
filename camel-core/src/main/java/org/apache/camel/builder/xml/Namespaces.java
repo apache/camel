@@ -24,8 +24,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import org.apache.camel.model.language.XPathExpression;
-import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
 
@@ -90,48 +88,6 @@ public class Namespaces {
             }
         }
         return this;
-    }
-
-    /**
-     * Creates the XPath expression using the current namespace context
-     */
-    @Deprecated
-    public XPathExpression xpath(String expression) {
-        XPathExpression answer = new XPathExpression(expression);
-        configure(answer);
-        return answer;
-    }
-
-    /**
-     * Creates the XPath expression using the current namespace context
-     */
-    @Deprecated
-    public XPathExpression xpath(String expression, Class<?> resultType) {
-        XPathExpression answer = xpath(expression);
-        answer.setResultType(resultType);
-        return answer;
-    }
-
-    /**
-     * Creates the XQuery expression using the current namespace context
-     */
-    @Deprecated
-    public XQueryExpression xquery(String expression) {
-        XQueryExpression answer = new XQueryExpression(expression);
-        configure(answer);
-        return answer;
-    }
-
-    /**
-     * Creates the XQuery expression using the current namespace context
-     * and the given expected return type
-     */
-    @Deprecated
-    public XQueryExpression xquery(String expression, Class<?> resultType) {
-        XQueryExpression answer = new XQueryExpression(expression);
-        answer.setResultType(resultType);
-        configure(answer);
-        return answer;
     }
 
     public Map<String, String> getNamespaces() {
