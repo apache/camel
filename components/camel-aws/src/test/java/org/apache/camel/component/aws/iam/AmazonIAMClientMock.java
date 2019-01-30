@@ -943,7 +943,8 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
     @Override
     public RemoveUserFromGroupResult removeUserFromGroup(RemoveUserFromGroupRequest removeUserFromGroupRequest) {
-        throw new UnsupportedOperationException();
+        RemoveUserFromGroupResult res = new RemoveUserFromGroupResult();
+        return res;
     }
 
     @Override

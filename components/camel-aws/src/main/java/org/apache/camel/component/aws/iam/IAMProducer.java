@@ -37,6 +37,8 @@ import com.amazonaws.services.identitymanagement.model.GetUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 import com.amazonaws.services.identitymanagement.model.ListGroupsResult;
 import com.amazonaws.services.identitymanagement.model.ListUsersResult;
+import com.amazonaws.services.identitymanagement.model.RemoveUserFromGroupRequest;
+import com.amazonaws.services.identitymanagement.model.RemoveUserFromGroupResult;
 import com.amazonaws.services.identitymanagement.model.StatusType;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyRequest;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyResult;
@@ -99,6 +101,9 @@ public class IAMProducer extends DefaultProducer {
             break;
         case addUserToGroup:
             addUserToGroup(getEndpoint().getIamClient(), exchange);
+            break;
+        case removeUserFromGroup:
+            removeUserFromGroup(getEndpoint().getIamClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -339,6 +344,27 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.addUserToGroup(request);
         } catch (AmazonServiceException ase) {
             log.trace("Add User To Group command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void removeUserFromGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
+        RemoveUserFromGroupRequest request = new RemoveUserFromGroupRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
+            String groupName = exchange.getIn().getHeader(IAMConstants.GROUP_NAME, String.class);
+            request.withGroupName(groupName);
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
+            String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
+            request.withUserName(userName);
+        }
+        RemoveUserFromGroupResult result;
+        try {
+            result = iamClient.removeUserFromGroup(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("Remove User From Group command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

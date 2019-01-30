@@ -27,6 +27,7 @@ import com.amazonaws.services.identitymanagement.model.GetUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
 import com.amazonaws.services.identitymanagement.model.ListGroupsResult;
 import com.amazonaws.services.identitymanagement.model.ListUsersResult;
+import com.amazonaws.services.identitymanagement.model.RemoveUserFromGroupResult;
 import com.amazonaws.services.identitymanagement.model.StatusType;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyResult;
 
@@ -265,6 +266,24 @@ public class IAMProducerTest extends CamelTestSupport {
         AddUserToGroupResult resultGet = (AddUserToGroupResult)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
+    
+    public void iamRemoveUserFromGroupTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:removeUserFromGroup", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.removeUserFromGroup);
+                exchange.getIn().setHeader(IAMConstants.GROUP_NAME, "Test");
+                exchange.getIn().setHeader(IAMConstants.USERNAME, "Test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        RemoveUserFromGroupResult resultGet = (RemoveUserFromGroupResult)exchange.getIn().getBody();
+        assertNotNull(resultGet);
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -294,6 +313,7 @@ public class IAMProducerTest extends CamelTestSupport {
                 from("direct:deleteGroup").to("aws-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup").to("mock:result");
                 from("direct:listGroups").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listGroups").to("mock:result");
                 from("direct:addUserToGroup").to("aws-iam://test?iamClient=#amazonIAMClient&operation=addUserToGroup").to("mock:result");
+                from("direct:removeUserFromGroup").to("aws-iam://test?iamClient=#amazonIAMClient&operation=removeUserFromGroup").to("mock:result");
             }
         };
     }
