@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -60,17 +61,9 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     private static final String TEST_CREATE_PEOPLE = PEOPLE + "(" + TEST_CREATE_KEY + ")";
     private static final String TEST_CREATE_RESOURCE_CONTENT_ID = "1";
     private static final String TEST_UPDATE_RESOURCE_CONTENT_ID = "2";
-    private static final String TEST_CREATE_JSON = "{\n"
-            + "  \"UserName\": \"lewisblack\",\n"
-            + "  \"FirstName\": \"Lewis\",\n"
-            + "  \"LastName\": \"Black\"\n"
-            + "}";
-    private static final String TEST_UPDATE_JSON = "{\n"
-            + "  \"UserName\": \"lewisblack\",\n"
-            + "  \"FirstName\": \"Lewis\",\n"
-            + "  \"MiddleName\": \"Black\",\n"
-            + "  \"LastName\": \"Black\"\n"
-            + "}";
+    private static final String TEST_CREATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n" + "  \"LastName\": \"Black\"\n" + "}";
+    private static final String TEST_UPDATE_JSON = "{\n" + "  \"UserName\": \"lewisblack\",\n" + "  \"FirstName\": \"Lewis\",\n" + "  \"MiddleName\": \"Black\",\n"
+                                                   + "  \"LastName\": \"Black\"\n" + "}";
 
     @Test
     public void testRead() throws Exception {
@@ -116,12 +109,12 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         final ClientEntity unbFuncReturn = (ClientEntity)requestBodyAndHeaders("direct:callunboundfunction", null, headers);
         assertNotNull(unbFuncReturn);
     }
-    
+
     @Test
     public void testReadWithFilter() {
         // Read entity set with filter of the Airports object
         final ClientEntitySet entities = (ClientEntitySet)requestBody("direct:readwithfilter", null);
-        
+
         assertNotNull(entities);
         assertEquals(1, entities.getEntities().size());
     }
@@ -269,25 +262,25 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         assertNotNull(error);
         LOG.info("Read deleted entity error: {}", error.getMessage());
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void testEndpointHttpHeaders() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
         final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct:read-etag", null, headers);
-        
+
         MockEndpoint mockEndpoint = getMockEndpoint("mock:check-etag-header");
         mockEndpoint.expectedMessageCount(1);
         mockEndpoint.assertIsSatisfied();
-        
+
         Map<String, String> responseHttpHeaders = (Map<String, String>)mockEndpoint.getExchanges().get(0).getIn().getHeader("CamelOlingo4.responseHttpHeaders");
         assertEquals(responseHttpHeaders.get("ETag"), entity.getETag());
-        
+
         Map<String, String> endpointHttpHeaders = new HashMap<>();
         endpointHttpHeaders.put("If-Match", entity.getETag());
         headers.put("CamelOlingo4.endpointHttpHeaders", endpointHttpHeaders);
         requestBodyAndHeaders("direct:delete-with-etag", null, headers);
-        
+
         // check for deleted entity with ETag
         try {
             requestBody("direct:read-etag", null);
@@ -297,10 +290,9 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     }
 
     /**
-     * Read entity set of the People object
-     * and filter already seen items on subsequent exchanges
-     * Use a delay since the mock endpoint does not always get
-     * the correct number of exchanges before being satisfied.
+     * Read entity set of the People object and filter already seen items on
+     * subsequent exchanges Use a delay since the mock endpoint does not always
+     * get the correct number of exchanges before being satisfied.
      */
     @Test
     public void testConsumerReadFilterAlreadySeen() throws Exception {
@@ -324,10 +316,9 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
                 // First polled messages contained all the entities
                 //
                 assertTrue(body instanceof ClientEntitySet);
-                ClientEntitySet set = (ClientEntitySet) body;
+                ClientEntitySet set = (ClientEntitySet)body;
                 assertEquals(expectedEntities, set.getEntities().size());
-            }
-            else {
+            } else {
                 //
                 // Subsequent polling messages should be empty
                 // since the filterAlreadySeen property is true
@@ -338,10 +329,8 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     }
 
     /**
-     *
-     * Read entity set of the People object
-     * and with no filter already seen, all items
-     * should be present in each message
+     * Read entity set of the People object and with no filter already seen, all
+     * items should be present in each message
      *
      * @throws Exception
      */
@@ -364,7 +353,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         for (int i = 0; i < expectedMsgCount; ++i) {
             Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
             assertTrue(body instanceof ClientEntitySet);
-            ClientEntitySet set = (ClientEntitySet) body;
+            ClientEntitySet set = (ClientEntitySet)body;
 
             //
             // All messages contained all the entities
@@ -374,8 +363,8 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
     }
 
     /**
-     * Read entity set of the People object
-     * and filter already seen items on subsequent exchanges
+     * Read entity set of the People object and filter already seen items on
+     * subsequent exchanges
      */
     @Test
     public void testProducerReadFilterAlreadySeen() throws Exception {
@@ -396,15 +385,14 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         for (int i = 0; i < expectedMsgCount; ++i) {
             Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
             assertTrue(body instanceof ClientEntitySet);
-            ClientEntitySet set = (ClientEntitySet) body;
+            ClientEntitySet set = (ClientEntitySet)body;
 
             if (i == 0) {
                 //
                 // First polled messages contained all the entities
                 //
                 assertEquals(expectedEntities, set.getEntities().size());
-            }
-            else {
+            } else {
                 //
                 // Subsequent messages should be empty
                 // since the filterAlreadySeen property is true
@@ -434,7 +422,7 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
                 from("direct:readcomplexprop").to("olingo4://read/Airports('KSFO')/Location");
 
                 from("direct:readentitybyid").to("olingo4://read/People('russellwhyte')");
-                
+
                 from("direct:readwithfilter").to("olingo4://read/Airports?$filter=Name eq 'San Francisco International Airport'");
 
                 from("direct:callunboundfunction").to("olingo4://read/GetNearestAirport(lat=33,lon=-118)");
@@ -453,24 +441,19 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
 
                 // test route for batch
                 from("direct:batch").to("olingo4://batch");
-                
+
                 from("direct:read-etag").to("olingo4://read/Airlines('AA')").to("mock:check-etag-header");
-                
+
                 from("direct:delete-with-etag").to("olingo4://delete/Airlines('AA')");
 
-                from("direct:read-people-nofilterseen")
-                .to("olingo4://read/People")
-                .to("mock:producer-noalreadyseen");
+                from("direct:read-people-nofilterseen").to("olingo4://read/People").to("mock:producer-noalreadyseen");
 
-                from("direct:read-people-filterseen")
-                .to("olingo4://read/People?filterAlreadySeen=true")
-                .to("mock:producer-alreadyseen");
+                from("direct:read-people-filterseen").to("olingo4://read/People?filterAlreadySeen=true").to("mock:producer-alreadyseen");
 
                 //
                 // Consumer endpoint
                 //
-                from("olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true")
-                .to("mock:consumer-alreadyseen");
+                from("olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true").to("mock:consumer-alreadyseen");
             }
         };
     }
