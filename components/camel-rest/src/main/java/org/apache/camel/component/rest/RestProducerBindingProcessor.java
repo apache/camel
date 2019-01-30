@@ -25,11 +25,11 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.UnmarshalProcessor;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 
