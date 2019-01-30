@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.iam;
 
+import com.amazonaws.services.identitymanagement.model.AddUserToGroupResult;
 import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateGroupResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
@@ -246,6 +247,24 @@ public class IAMProducerTest extends CamelTestSupport {
         assertEquals(1, resultGet.getGroups().size());
         assertEquals("Test", resultGet.getGroups().get(0).getGroupName());
     }
+    
+    public void iamAddUserToGroupTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:addUserToGroup", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.addUserToGroup);
+                exchange.getIn().setHeader(IAMConstants.GROUP_NAME, "Test");
+                exchange.getIn().setHeader(IAMConstants.USERNAME, "Test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        AddUserToGroupResult resultGet = (AddUserToGroupResult)exchange.getIn().getBody();
+        assertNotNull(resultGet);
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -274,6 +293,7 @@ public class IAMProducerTest extends CamelTestSupport {
                 from("direct:createGroup").to("aws-iam://test?iamClient=#amazonIAMClient&operation=createGroup").to("mock:result");
                 from("direct:deleteGroup").to("aws-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup").to("mock:result");
                 from("direct:listGroups").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listGroups").to("mock:result");
+                from("direct:addUserToGroup").to("aws-iam://test?iamClient=#amazonIAMClient&operation=addUserToGroup").to("mock:result");
             }
         };
     }

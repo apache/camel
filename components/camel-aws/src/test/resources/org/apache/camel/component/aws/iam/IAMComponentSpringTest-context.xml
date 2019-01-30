@@ -79,6 +79,11 @@
             <to uri="aws-iam://Test?iamClient=#amazonIAMClient&amp;operation=listGroups"/>
             <to uri="mock:result"/>
         </route>
+        <route>
+            <from uri="direct:addUserToGroup"/>
+            <to uri="aws-iam://Test?iamClient=#amazonIAMClient&amp;operation=addUserToGroup"/>
+            <to uri="mock:result"/>
+        </route>
     </camelContext>
     
     <bean id="amazonIAMClient" class="org.apache.camel.component.aws.iam.AmazonIAMClientMock"/>

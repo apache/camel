@@ -18,6 +18,8 @@ package org.apache.camel.component.aws.iam;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
+import com.amazonaws.services.identitymanagement.model.AddUserToGroupRequest;
+import com.amazonaws.services.identitymanagement.model.AddUserToGroupResult;
 import com.amazonaws.services.identitymanagement.model.CreateAccessKeyRequest;
 import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateGroupRequest;
@@ -94,6 +96,9 @@ public class IAMProducer extends DefaultProducer {
             break;
         case listGroups:
             listGroups(getEndpoint().getIamClient(), exchange);
+            break;
+        case addUserToGroup:
+            addUserToGroup(getEndpoint().getIamClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -313,6 +318,27 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.listGroups();
         } catch (AmazonServiceException ase) {
             log.trace("List Groups command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void addUserToGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
+        AddUserToGroupRequest request = new AddUserToGroupRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
+            String groupName = exchange.getIn().getHeader(IAMConstants.GROUP_NAME, String.class);
+            request.withGroupName(groupName);
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
+            String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
+            request.withUserName(userName);
+        }
+        AddUserToGroupResult result;
+        try {
+            result = iamClient.addUserToGroup(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("Add User To Group command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
