@@ -149,6 +149,7 @@ Camel-AWS IAM component provides the following operation on the producer side:
 - updateAccessKey
 - createGroup
 - deleteGroup
+- listGroups
 
 Dependencies
 
