@@ -42,8 +42,6 @@ import org.apache.camel.Converter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
-import org.apache.camel.impl.osgi.tracker.BundleTracker;
-import org.apache.camel.impl.osgi.tracker.BundleTrackerCustomizer;
 import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.ComponentResolver;
@@ -67,12 +65,14 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.wiring.BundleCapability;
 import org.osgi.framework.wiring.BundleWire;
 import org.osgi.framework.wiring.BundleWiring;
+import org.osgi.util.tracker.BundleTracker;
+import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.osgi.framework.wiring.BundleRevision.PACKAGE_NAMESPACE;
 
-public class Activator implements BundleActivator, BundleTrackerCustomizer {
+public class Activator implements BundleActivator, BundleTrackerCustomizer<Object> {
 
     public static final String META_INF_COMPONENT = "META-INF/services/org/apache/camel/component/";
     public static final String META_INF_LANGUAGE = "META-INF/services/org/apache/camel/language/";
@@ -85,7 +85,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
-    private BundleTracker tracker;
+    private BundleTracker<?> tracker;
     private final Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<>();
     private long bundleId;
     
@@ -97,7 +97,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         cachePackageCapabilities(context);
         bundleId = context.getBundle().getBundleId();
         BundleContext systemBundleContext = context.getBundle(0).getBundleContext();
-        tracker = new BundleTracker(systemBundleContext, Bundle.ACTIVE, this);
+        tracker = new BundleTracker<>(systemBundleContext, Bundle.ACTIVE, this);
         tracker.open();
         LOG.info("Camel activator started");
     }
