@@ -27,7 +27,10 @@ import java.util.regex.Pattern;
 
 /**
  * A helper class for <a href="http://json-schema.org/">JSON schema</a>.
+ *
+ * @deprecated use org.apache.camel.support.JSonSchemaHelper
  */
+@Deprecated
 public final class JsonSchemaHelper {
 
     // 0 = text, 1 = enum, 2 = boolean, 3 = integer or number
