@@ -49,8 +49,8 @@ import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Verifica
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.VerificationError.StandardCode;
 import org.apache.camel.api.management.mbean.ManagedComponentMBean;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.util.CastUtils;
-import org.apache.camel.util.JsonSchemaHelper;
 
 @ManagedResource(description = "Managed Component")
 public class ManagedComponent implements ManagedInstance, ManagedComponentMBean {
@@ -117,7 +117,7 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
             String target = defaultName != null ? defaultName : name;
             String json = component.getCamelContext().explainComponentJson(target, allOptions);
 
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
 
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainComponentTabularType());
 

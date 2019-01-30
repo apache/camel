@@ -39,7 +39,6 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -630,7 +629,7 @@ public final class CamelContextHelper {
                     // enrich with more meta-data
                     String json = camelContext.explainEipJson(line, false);
                     if (json != null) {
-                        List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("model", json, false);
+                        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
 
                         for (Map<String, String> row : rows) {
                             if (row.get("title") != null) {
