@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.iam;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -756,7 +757,12 @@ public class AmazonIAMClientMock extends AmazonIdentityManagementClient {
 
     @Override
     public ListGroupsResult listGroups(ListGroupsRequest listGroupsRequest) {
-        throw new UnsupportedOperationException();
+        Group group = new Group();
+        group.setGroupId("TestGroup");
+        group.setGroupName("Test");
+        ListGroupsResult res = new ListGroupsResult();
+        res.setGroups(Collections.singleton(group));
+        return res;
     }
 
     @Override
