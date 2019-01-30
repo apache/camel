@@ -24,6 +24,7 @@ import com.amazonaws.services.identitymanagement.model.DeleteGroupResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.GetUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
+import com.amazonaws.services.identitymanagement.model.ListGroupsResult;
 import com.amazonaws.services.identitymanagement.model.ListUsersResult;
 import com.amazonaws.services.identitymanagement.model.StatusType;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyResult;
@@ -214,7 +215,7 @@ public class IAMProducerTest extends CamelTestSupport {
     public void iamDeleteGroupTest() throws Exception {
 
         mock.expectedMessageCount(1);
-        Exchange exchange = template.request("direct:createGroup", new Processor() {
+        Exchange exchange = template.request("direct:deleteGroup", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.deleteGroup);
@@ -226,6 +227,24 @@ public class IAMProducerTest extends CamelTestSupport {
 
         DeleteGroupResult resultGet = (DeleteGroupResult)exchange.getIn().getBody();
         assertNotNull(resultGet);
+    }
+    
+    public void iamListGroupsTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:listGroups", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.listGroups);
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        ListGroupsResult resultGet = (ListGroupsResult)exchange.getIn().getBody();
+        assertNotNull(resultGet);
+        assertEquals(1, resultGet.getGroups().size());
+        assertEquals("Test", resultGet.getGroups().get(0).getGroupName());
     }
 
     @Override
@@ -254,6 +273,7 @@ public class IAMProducerTest extends CamelTestSupport {
                 from("direct:updateAccessKey").to("aws-iam://test?iamClient=#amazonIAMClient&operation=updateAccessKey").to("mock:result");
                 from("direct:createGroup").to("aws-iam://test?iamClient=#amazonIAMClient&operation=createGroup").to("mock:result");
                 from("direct:deleteGroup").to("aws-iam://test?iamClient=#amazonIAMClient&operation=deleteGroup").to("mock:result");
+                from("direct:listGroups").to("aws-iam://test?iamClient=#amazonIAMClient&operation=listGroups").to("mock:result");
             }
         };
     }

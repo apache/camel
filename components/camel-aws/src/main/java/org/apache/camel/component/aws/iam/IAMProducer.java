@@ -33,6 +33,7 @@ import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
 import com.amazonaws.services.identitymanagement.model.GetUserRequest;
 import com.amazonaws.services.identitymanagement.model.GetUserResult;
 import com.amazonaws.services.identitymanagement.model.ListAccessKeysResult;
+import com.amazonaws.services.identitymanagement.model.ListGroupsResult;
 import com.amazonaws.services.identitymanagement.model.ListUsersResult;
 import com.amazonaws.services.identitymanagement.model.StatusType;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyRequest;
@@ -90,6 +91,9 @@ public class IAMProducer extends DefaultProducer {
             break;
         case deleteGroup:
             deleteGroup(getEndpoint().getIamClient(), exchange);
+            break;
+        case listGroups:
+            listGroups(getEndpoint().getIamClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -297,6 +301,18 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.deleteGroup(request);
         } catch (AmazonServiceException ase) {
             log.trace("Delete Group command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void listGroups(AmazonIdentityManagement iamClient, Exchange exchange) {
+        ListGroupsResult result;
+        try {
+            result = iamClient.listGroups();
+        } catch (AmazonServiceException ase) {
+            log.trace("List Groups command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
