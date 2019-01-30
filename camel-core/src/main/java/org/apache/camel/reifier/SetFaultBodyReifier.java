@@ -18,7 +18,6 @@ package org.apache.camel.reifier;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.SetFaultBodyDefinition;
 import org.apache.camel.spi.RouteContext;
@@ -31,7 +30,11 @@ class SetFaultBodyReifier extends ExpressionReifier<SetFaultBodyDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Expression expr = definition.getExpression().createExpression(routeContext);
-        return ProcessorBuilder.setFaultBody(expr);
+        final Expression expr = definition.getExpression().createExpression(routeContext);
+        return exchange -> {
+            Object body = expr.evaluate(exchange, Object.class);
+            exchange.getMessage().setFault(true);
+            exchange.getMessage().setBody(body);
+        };
     }
 }

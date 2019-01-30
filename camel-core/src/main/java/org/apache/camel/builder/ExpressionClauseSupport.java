@@ -1007,8 +1007,6 @@ public class ExpressionClauseSupport<T> {
         return result;
     }
 
-
-    
     /**
      * Evaluates an <a
      * href="http://camel.apache.org/xquery.html">XQuery expression</a>

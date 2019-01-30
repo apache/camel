@@ -49,7 +49,6 @@ import org.apache.camel.builder.EnrichClause;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessClause;
-import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.language.ConstantExpression;
@@ -2433,7 +2432,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public Type setFaultBody(Expression expression) {
-        return process(ProcessorBuilder.setFaultBody(expression));
+        SetFaultBodyDefinition answer = new SetFaultBodyDefinition(expression);
+        addOutput(answer);
+        return (Type) this;
     }
 
     /**

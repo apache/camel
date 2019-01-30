@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.InterceptSendToEndpoint;
+import org.apache.camel.impl.DefaultInterceptSendToEndpoint;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -46,14 +46,14 @@ class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSendToEnd
         // register endpoint callback so we can proxy the endpoint
         routeContext.getCamelContext().addRegisterEndpointCallback(new EndpointStrategy() {
             public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
-                if (endpoint instanceof InterceptSendToEndpoint) {
+                if (endpoint instanceof DefaultInterceptSendToEndpoint) {
                     // endpoint already decorated
                     return endpoint;
                 } else if (matchURI == null || matchPattern(routeContext.getCamelContext(), uri, matchURI)) {
                     // only proxy if the uri is matched decorate endpoint with our proxy
                     // should be false by default
                     boolean skip = definition.getSkipSendToOriginalEndpoint() != null && definition.getSkipSendToOriginalEndpoint();
-                    InterceptSendToEndpoint proxy = new InterceptSendToEndpoint(endpoint, skip);
+                    DefaultInterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
                     proxy.setDetour(detour);
                     return proxy;
                 } else {

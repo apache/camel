@@ -127,6 +127,7 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
@@ -807,7 +808,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             throw new NoSuchEndpointException(name);
         }
         if (endpoint instanceof InterceptSendToEndpoint) {
-            endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
+            endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
         }
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);

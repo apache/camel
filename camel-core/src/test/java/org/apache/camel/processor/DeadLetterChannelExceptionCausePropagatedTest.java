@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -52,7 +51,9 @@ public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSu
                 onException(RuntimeException.class).handled(true).to("mock:failed");
 
                 from("direct:start")
-                    .process(ProcessorBuilder.throwException(RUNTIME_EXCEPTION))
+                    .process(e -> {
+                        throw RUNTIME_EXCEPTION;
+                    })
                     .to("mock:success");
             }
         };
