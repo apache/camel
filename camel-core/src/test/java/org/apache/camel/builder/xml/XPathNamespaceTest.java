@@ -62,7 +62,7 @@ public class XPathNamespaceTest extends ContextTestSupport {
                 Namespaces ns = new Namespaces("c", "http://acme.com/cheese");
 
                 from("direct:in").choice()
-                    .when(ns.xpath("/c:number = 55", Integer.class))
+                    .when(xpath("/c:number = 55", Integer.class).namespaces(ns))
                         .to("mock:55")
                     .otherwise()
                         .to("mock:other")
