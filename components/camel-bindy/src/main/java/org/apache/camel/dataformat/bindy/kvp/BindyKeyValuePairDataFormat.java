@@ -41,8 +41,8 @@ import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
