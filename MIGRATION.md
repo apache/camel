@@ -23,7 +23,7 @@ TODO: as table of all the modules
 Maven users of Apache Camel can keep using the dependency *camel-core* which will have transitive dependency on all of its modules, and therefore no migration is needed.
 However users whom wants to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
 
-TODO: we need camel-core-minimal dependecy for just basic Camel
+TODO: we need camel-core-minimal dependency for just basic Camel
 
 
 Migrating custom components
@@ -53,6 +53,8 @@ TODO: Add the other moved classes/packages etc
 The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. If you have built custom Camel components that may have used some of these APIs you would then need to migrate.
 
 All the classes in `org.apache.camel.util.component` has been moved from the camel-core JAR to the package `org.apache.camel.support.component` in the `camel-support` JAR.
+
+The class `ServiceHelper` has been moved from `org.apache.camek.util.ServiceHelper` in the camel-core JAR to `org.apache.camel.support.service.ServiceHelper` and moved to the `camel-api` JAR.
 
 The class `FileIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.FileIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.FileIdempotentRepository` and moved to the `camel-suppor` JAR.
 
