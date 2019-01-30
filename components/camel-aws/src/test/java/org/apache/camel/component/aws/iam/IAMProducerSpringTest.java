@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.iam;
 
+import com.amazonaws.services.identitymanagement.model.AddUserToGroupResult;
 import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.CreateGroupResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
@@ -243,6 +244,24 @@ public class IAMProducerSpringTest extends CamelSpringTestSupport {
         assertNotNull(resultGet);
         assertEquals(1, resultGet.getGroups().size());
         assertEquals("Test", resultGet.getGroups().get(0).getGroupName());
+    }
+    
+    public void iamAddUserToGroupTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:addUserToGroup", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.addUserToGroup);
+                exchange.getIn().setHeader(IAMConstants.GROUP_NAME, "Test");
+                exchange.getIn().setHeader(IAMConstants.USERNAME, "Test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        AddUserToGroupResult resultGet = (AddUserToGroupResult)exchange.getIn().getBody();
+        assertNotNull(resultGet);
     }
 
     @Override
