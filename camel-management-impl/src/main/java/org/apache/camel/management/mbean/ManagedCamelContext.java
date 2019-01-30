@@ -58,8 +58,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -682,7 +682,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
                 // load component json data, and parse it to gather the component meta-data
                 String json = context.getComponentParameterJsonSchema(target);
-                List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
                 for (Map<String, String> row : rows) {
                     if (row.containsKey("title")) {
                         title = row.get("title");

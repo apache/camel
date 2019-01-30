@@ -21,7 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.commands.internal.MatchUtil.matchWildcard;
@@ -53,7 +53,7 @@ public abstract class AbstractCamelController implements CamelController {
     }
 
     protected Map<String, Object> loadProperties(String json, String group, Map<String, Object> answer) {
-        List<Map<String, String>> kv = JsonSchemaHelper.parseJsonSchema(group, json, true);
+        List<Map<String, String>> kv = JSonSchemaHelper.parseJsonSchema(group, json, true);
         if (kv.isEmpty()) {
             return answer;
         }

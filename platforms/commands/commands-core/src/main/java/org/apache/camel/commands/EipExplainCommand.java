@@ -20,7 +20,7 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.support.JSonSchemaHelper;
 
 /**
  * Explain the Camel EIP.
@@ -46,7 +46,7 @@ public class EipExplainCommand extends AbstractContextCommand {
         out.println("Context:       " + context);
 
         // use a basic json parser
-        List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+        List<Map<String, String>> options = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
         for (Map<String, String> option : options) {
             out.print("Option:        ");

@@ -36,7 +36,7 @@ import org.apache.camel.api.management.mbean.ManagedDataFormatMBean;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.support.JSonSchemaHelper;
 
 @ManagedResource(description = "Managed DataFormat")
 public class ManagedDataFormat implements ManagedInstance, ManagedDataFormatMBean {
@@ -108,7 +108,7 @@ public class ManagedDataFormat implements ManagedInstance, ManagedDataFormatMBea
                 TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainDataFormatTabularType());
 
                 String json = camelContext.explainDataFormatJson(dataFormatName, dataFormat, allOptions);
-                List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
                 for (Map<String, String> row : rows) {
                     String name = row.get("name");

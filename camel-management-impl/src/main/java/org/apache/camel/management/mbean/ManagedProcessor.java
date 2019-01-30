@@ -38,8 +38,8 @@ import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.support.service.ServiceHelper;
-import org.apache.camel.util.JsonSchemaHelper;
 
 @ManagedResource(description = "Managed Processor")
 public class ManagedProcessor extends ManagedPerformanceCounter implements ManagedInstance, ManagedProcessorMBean {
@@ -151,7 +151,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     public TabularData explain(boolean allOptions) {
         try {
             String json = context.explainEipJson(id, allOptions);
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEipTabularType());
 

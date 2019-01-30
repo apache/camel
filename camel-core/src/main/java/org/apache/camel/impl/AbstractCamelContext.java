@@ -164,6 +164,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResolverHelper;
@@ -172,7 +173,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -1696,7 +1696,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
             // overlay with runtime parameters that id uses at runtime
             if (target != null) {
-                List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
                 // selected rows to use for answer
                 Map<String, String[]> selected = new LinkedHashMap<>();
@@ -1824,7 +1824,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
                 }
             }
 
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
             // selected rows to use for answer
             Map<String, String[]> selected = new LinkedHashMap<>();
@@ -1983,7 +1983,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             if (json == null) {
                 return null;
             }
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
 
             // selected rows to use for answer
             Map<String, String[]> selected = new LinkedHashMap<>();
@@ -2143,7 +2143,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             if (json == null) {
                 return null;
             }
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
             // selected rows to use for answer
             Map<String, String[]> selected = new LinkedHashMap<>();

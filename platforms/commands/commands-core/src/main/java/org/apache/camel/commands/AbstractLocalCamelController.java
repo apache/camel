@@ -50,7 +50,7 @@ import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.Validator;
-import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.support.JSonSchemaHelper;
 
 /**
  * Abstract {@link org.apache.camel.commands.LocalCamelController} that implementators should extend when implementing
@@ -585,7 +585,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
 
             // load component json data, and parse it to gather the component meta-data
             String json = context.getComponentParameterJsonSchema(name);
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("component", json, false);
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
             for (Map<String, String> row : rows) {
                 if (row.containsKey("description")) {
                     description = row.get("description");

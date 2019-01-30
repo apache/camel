@@ -34,7 +34,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedEndpointMBean;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.JsonSchemaHelper;
+import org.apache.camel.support.JSonSchemaHelper;
 
 @ManagedResource(description = "Managed Endpoint")
 public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
@@ -93,7 +93,7 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     public TabularData explain(boolean allOptions) {
         try {
             String json = endpoint.getCamelContext().explainEndpointJson(getEndpointUri(), allOptions);
-            List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
+            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEndpointTabularType());
 
