@@ -22,6 +22,7 @@ import java.util.Map;
 /**
  * Bridge class for ActiveMQ component
  */
+@Deprecated
 public final class IntrospectionSupport {
 
     private IntrospectionSupport() {
