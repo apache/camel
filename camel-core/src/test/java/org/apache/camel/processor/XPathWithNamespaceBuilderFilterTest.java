@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,7 +67,7 @@ public class XPathWithNamespaceBuilderFilterTest extends ContextTestSupport {
 
                 // now lets create an xpath based Message Filter
                 from("direct:start").
-                        filter(ns.xpath("/c:person[@name='James']")).
+                        filter(xpath("/c:person[@name='James']").namespaces(ns)).
                         to("mock:result");
                 // END SNIPPET: example
             }

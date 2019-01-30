@@ -20,7 +20,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.impl.InterceptSendToEndpoint;
+import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -52,6 +52,6 @@ public class CamelSpringRunnerMockEndpointsTest
         
         MockEndpoint.assertIsSatisfied(camelContext);
         MockEndpoint.assertIsSatisfied(camelContext2);
-        assertTrue("Original endpoint should be invoked", ((SedaEndpoint) original.getDelegate()).getExchanges().size() == 1);
+        assertTrue("Original endpoint should be invoked", ((SedaEndpoint) original.getOriginalEndpoint()).getExchanges().size() == 1);
     }
 }

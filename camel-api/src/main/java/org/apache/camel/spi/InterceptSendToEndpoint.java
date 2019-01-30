@@ -14,24 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.spi;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 
-public class DeadLetterChannelExceptionCausePropagatedWithDefaultErrorHandlerTest extends DeadLetterChannelExceptionCausePropagatedTest {
+/**
+ * This is an endpoint when sending to it, is intercepted and is routed in a detour
+ */
+public interface InterceptSendToEndpoint extends Endpoint {
 
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                onException(RuntimeException.class).handled(true).to("mock:failed");
+    /**
+     * The original endpoint which was intercepted.
+     */
+    Endpoint getOriginalEndpoint();
 
-                from("direct:start")
-                    .process(e -> {
-                        throw RUNTIME_EXCEPTION;
-                    })
-                    .to("mock:success");
-            }
-        };
-    }
+    /**
+     * The processor for routing in a detour
+     */
+    Processor getDetour();
+
+    /**
+     * Whether to skip sending after the detour to the original endpoint.
+     */
+    boolean isSkip();
 
 }
