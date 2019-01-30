@@ -28,16 +28,13 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ShutdownableService;
+import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is an endpoint when sending to it, is intercepted and is routed in a detour
  */
-public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(InterceptSendToEndpoint.class);
+public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, ShutdownableService {
 
     private final Endpoint delegate;
     private Processor detour;
@@ -49,7 +46,7 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
      * @param destination  the original endpoint
      * @param skip <tt>true</tt> to skip sending after the detour to the original endpoint
      */
-    public InterceptSendToEndpoint(final Endpoint destination, boolean skip) {
+    public DefaultInterceptSendToEndpoint(final Endpoint destination, boolean skip) {
         this.delegate = destination;
         this.skip = skip;
     }
@@ -58,12 +55,19 @@ public class InterceptSendToEndpoint implements Endpoint, ShutdownableService {
         this.detour = detour;
     }
 
+    @Override
     public Processor getDetour() {
         return detour;
     }
 
-    public Endpoint getDelegate() {
+    @Override
+    public Endpoint getOriginalEndpoint() {
         return delegate;
+    }
+
+    @Override
+    public boolean isSkip() {
+        return skip;
     }
 
     public String getEndpointUri() {

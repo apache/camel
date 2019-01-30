@@ -44,8 +44,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.impl.InterceptSendToEndpoint; // TODO: Find out what to do (maybe as spi interface)
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -193,7 +193,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         for (Endpoint endpoint : endpoints) {
             // if the endpoint was intercepted we should get the delegate
             if (endpoint instanceof InterceptSendToEndpoint) {
-                endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
+                endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
             }
             if (endpoint instanceof MockEndpoint) {
                 MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
@@ -218,7 +218,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         for (Endpoint endpoint : endpoints) {
             // if the endpoint was intercepted we should get the delegate
             if (endpoint instanceof InterceptSendToEndpoint) {
-                endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
+                endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
             }
             if (endpoint instanceof MockEndpoint) {
                 MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
@@ -241,7 +241,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         for (Endpoint endpoint : endpoints) {
             // if the endpoint was intercepted we should get the delegate
             if (endpoint instanceof InterceptSendToEndpoint) {
-                endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
+                endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
             }
             if (endpoint instanceof MockEndpoint) {
                 MockEndpoint mockEndpoint = (MockEndpoint) endpoint;
@@ -261,7 +261,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         for (Endpoint endpoint : endpoints) {
             // if the endpoint was intercepted we should get the delegate
             if (endpoint instanceof InterceptSendToEndpoint) {
-                endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
+                endpoint = ((InterceptSendToEndpoint) endpoint).getOriginalEndpoint();
             }
             if (endpoint instanceof MockEndpoint) {
                 MockEndpoint mockEndpoint = (MockEndpoint) endpoint;

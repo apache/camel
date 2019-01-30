@@ -69,7 +69,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
     }
 
     public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
-        if (endpoint instanceof InterceptSendToEndpoint) {
+        if (endpoint instanceof DefaultInterceptSendToEndpoint) {
             // endpoint already decorated
             return endpoint;
         } else if (endpoint instanceof MockEndpoint) {
@@ -80,7 +80,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
             // only proxy if the uri is matched decorate endpoint with our proxy
             // should be false by default
-            InterceptSendToEndpoint proxy = new InterceptSendToEndpoint(endpoint, skip);
+            DefaultInterceptSendToEndpoint proxy = new DefaultInterceptSendToEndpoint(endpoint, skip);
 
             // create mock endpoint which we will use as interceptor
             // replace :// from scheme to make it easy to lookup the mock endpoint without having double :// in uri

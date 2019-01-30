@@ -16,27 +16,27 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+
 /**
- * A pluggable strategy for creating and possibly dependency injecting objects
- * which could be implemented using straight forward reflection or using Spring
- * or CDI to perform dependency injection.
+ * This is an endpoint when sending to it, is intercepted and is routed in a detour
  */
-public interface Injector {
+public interface InterceptSendToEndpoint extends Endpoint {
 
     /**
-     * Instantiates a new instance of the given type possibly injecting values
-     * into the object in the process
-     * 
-     * @param type the type of object to create
-     * @return a newly created instance
+     * The original endpoint which was intercepted.
      */
-    <T> T newInstance(Class<T> type);
+    Endpoint getOriginalEndpoint();
 
     /**
-     * Whether the injector supports creating new instances using auto-wiring.
-     * If this is possible then bean instances is attempt first to be created this way
-     * and if not, then the bean can only be created if there is a public no-arg constructor.
+     * The processor for routing in a detour
      */
-    boolean supportsAutoWiring();
+    Processor getDetour();
+
+    /**
+     * Whether to skip sending after the detour to the original endpoint.
+     */
+    boolean isSkip();
 
 }

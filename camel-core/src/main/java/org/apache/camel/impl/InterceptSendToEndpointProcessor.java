@@ -33,16 +33,16 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
  * {@link org.apache.camel.Processor} used to interceptor and detour the routing
- * when using the {@link InterceptSendToEndpoint} functionality.
+ * when using the {@link DefaultInterceptSendToEndpoint} functionality.
  */
 public class InterceptSendToEndpointProcessor extends DefaultAsyncProducer {
 
-    private final InterceptSendToEndpoint endpoint;
+    private final DefaultInterceptSendToEndpoint endpoint;
     private final Endpoint delegate;
     private final AsyncProducer producer;
     private final boolean skip;
 
-    public InterceptSendToEndpointProcessor(InterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip) throws Exception {
+    public InterceptSendToEndpointProcessor(DefaultInterceptSendToEndpoint endpoint, Endpoint delegate, AsyncProducer producer, boolean skip) throws Exception {
         super(delegate);
         this.endpoint = endpoint;
         this.delegate = delegate;
