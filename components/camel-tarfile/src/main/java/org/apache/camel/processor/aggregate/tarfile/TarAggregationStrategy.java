@@ -23,13 +23,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.AggregationStrategy;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
