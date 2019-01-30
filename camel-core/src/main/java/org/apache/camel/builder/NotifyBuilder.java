@@ -33,7 +33,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
@@ -58,6 +57,8 @@ import org.slf4j.LoggerFactory;
  * have finished routing 5 messages. You can then in your test await for this condition to occur.
  */
 public class NotifyBuilder {
+
+    // TODO: camel-mock
 
     private static final Logger LOG = LoggerFactory.getLogger(NotifyBuilder.class);
 
@@ -192,7 +193,7 @@ public class NotifyBuilder {
                 // and just continue to route that on the consumer side, which causes the EventNotifier not to
                 // emit events when the consumer received the exchange, as its already done. For example by
                 // ProducerTemplate which creates the UoW before producing messages.
-                if (exchange.getFromEndpoint() instanceof DirectEndpoint) {
+                if (exchange.getFromEndpoint().getEndpointUri().startsWith("direct:")) {
                     return true;
                 }
                 return PatternHelper.matchPattern(exchange.getFromRouteId(), "*");

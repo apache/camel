@@ -25,7 +25,11 @@ import org.apache.camel.Processor;
 /**
  * A builder of a number of different {@link Processor} implementations
  */
+@Deprecated
 public final class ProcessorBuilder {
+
+    // TODO: copy what is needed into a new class for camel-mock
+    // TODO: and likewise for camel-core
 
     /**
      * Utility classes should not have a public constructor.

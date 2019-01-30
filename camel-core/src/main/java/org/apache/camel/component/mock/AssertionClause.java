@@ -35,6 +35,8 @@ import org.apache.camel.support.PredicateAssertHelper;
  */
 public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuilder> implements Runnable {
 
+    // TODO: camel-mock
+
     protected final MockEndpoint mock;
     protected volatile int currentIndex;
     private final Set<Predicate> predicates = new LinkedHashSet<>();

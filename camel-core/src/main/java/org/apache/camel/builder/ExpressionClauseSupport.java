@@ -46,6 +46,8 @@ import org.apache.camel.model.language.XQueryExpression;
  */
 public class ExpressionClauseSupport<T> {
 
+    // TODO: camel-mock
+
     private T result;
     private Expression expressionValue;
     private ExpressionDefinition expressionType;

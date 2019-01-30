@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
  */
 public class TimeClause extends BinaryPredicateSupport {
 
+    // TODO: copy logic from BinaryPredicateSupport over in camel-mock
+
     private static final Logger LOG = LoggerFactory.getLogger(TimeClause.class);
 
     private Time timeFrom;
