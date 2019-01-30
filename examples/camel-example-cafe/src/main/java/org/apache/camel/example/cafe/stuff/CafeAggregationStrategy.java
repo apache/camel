@@ -19,9 +19,9 @@ package org.apache.camel.example.cafe.stuff;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
 import org.apache.camel.example.cafe.Drink;
-import org.apache.camel.AggregationStrategy;
 
 public class CafeAggregationStrategy implements AggregationStrategy {
 
