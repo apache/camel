@@ -43,7 +43,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.Metadata;
@@ -341,7 +340,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * @param expression which is use to set the message body 
      */
     public void returnReplyBody(Expression expression) {
-        this.defaultProcessor = ProcessorBuilder.setBody(expression);
+        this.defaultProcessor = exchange -> {
+            Object exp = expression.evaluate(exchange, Object.class);
+            exchange.getMessage().setBody(exp);
+        };
     }
     
     /**
@@ -350,7 +352,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * @param expression which is use to set the message header 
      */
     public void returnReplyHeader(String headerName, Expression expression) {
-        this.defaultProcessor = ProcessorBuilder.setHeader(headerName, expression);
+        this.defaultProcessor = exchange -> {
+            Object exp = expression.evaluate(exchange, Object.class);
+            exchange.getMessage().setHeader(headerName, exp);
+        };
     }
     
 

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
 public class DeadLetterChannelExceptionCausePropagatedWithDefaultErrorHandlerTest extends DeadLetterChannelExceptionCausePropagatedTest {
@@ -27,7 +26,9 @@ public class DeadLetterChannelExceptionCausePropagatedWithDefaultErrorHandlerTes
                 onException(RuntimeException.class).handled(true).to("mock:failed");
 
                 from("direct:start")
-                    .process(ProcessorBuilder.throwException(RUNTIME_EXCEPTION))
+                    .process(e -> {
+                        throw RUNTIME_EXCEPTION;
+                    })
                     .to("mock:success");
             }
         };

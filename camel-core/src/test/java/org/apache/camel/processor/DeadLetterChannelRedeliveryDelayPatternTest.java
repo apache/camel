@@ -23,8 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-import static org.apache.camel.builder.ProcessorBuilder.throwException;
-
 /**
  * Unit test to verify delay pattern
  */
@@ -60,7 +58,7 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
                         }
                     }));
 
-                from("direct:start").process(throwException(new Exception("Forced exception by unit test")));
+                from("direct:start").throwException(new Exception("Forced exception by unit test"));
             }
         };
     }
