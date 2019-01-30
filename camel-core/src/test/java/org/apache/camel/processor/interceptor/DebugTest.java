@@ -17,7 +17,6 @@
 package org.apache.camel.processor.interceptor;
 
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,7 +25,6 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.BreakpointSupport;
-import org.apache.camel.impl.ConditionSupport;
 import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Breakpoint;

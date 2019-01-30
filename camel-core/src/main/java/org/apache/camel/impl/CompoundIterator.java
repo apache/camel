@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
 /**
  * Compound iterator to iterate over multiple iterators sequentially.
  */
-public class CompoundIterator<T> implements Iterator<T> {
+class CompoundIterator<T> implements Iterator<T> {
 
     final Iterator<Iterator<T>> it;
     Iterator<T> current;
