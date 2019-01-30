@@ -43,8 +43,8 @@ import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
-import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.service.ServiceSupport;
 
 /**
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
