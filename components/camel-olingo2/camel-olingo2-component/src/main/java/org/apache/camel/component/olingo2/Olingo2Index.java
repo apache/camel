@@ -1,11 +1,12 @@
-/*
- * Copyright (C) 2016 Red Hat, Inc.
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.olingo.odata2.api.ep.entry.EntryMetadata;
 import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
@@ -44,8 +46,8 @@ public class Olingo2Index {
     }
 
     /**
-     * Hash entry leaving out certain fields that change
-     * between exchange messages
+     * Hash entry leaving out certain fields that change between exchange
+     * messages
      *
      * @param entry
      * @return hascode of entry
@@ -57,7 +59,8 @@ public class Olingo2Index {
         result = prime * result + ((entry.getMetadata() == null) ? 0 : hash(entry.getMetadata()));
         result = prime * result + ((entry.getProperties() == null) ? 0 : entry.getProperties().hashCode());
 
-        // Ignore mediaMetadata, expandSelectTree since its object changes each time
+        // Ignore mediaMetadata, expandSelectTree since its object changes each
+        // time
 
         return result;
     }
@@ -120,21 +123,20 @@ public class Olingo2Index {
      */
     public void index(Object result) {
         if (result instanceof ODataFeed) {
-            index((ODataFeed) result);
+            index((ODataFeed)result);
         } else if (result instanceof Iterable) {
-            index((Iterable<?>) result);
+            index((Iterable<?>)result);
         } else {
             indexDefault(result);
         }
     }
 
-    @SuppressWarnings( "unchecked" )
+    @SuppressWarnings("unchecked")
     public Object filterResponse(Object response) {
         if (response instanceof ODataFeed) {
-            response = filter((ODataFeed) response);
-        } else
-        if (response instanceof Iterable) {
-            response = filter((Iterable<Object>) response);
+            response = filter((ODataFeed)response);
+        } else if (response instanceof Iterable) {
+            response = filter((Iterable<Object>)response);
         } else if (response.getClass().isArray()) {
             List<Object> result = new ArrayList<>();
             final int size = Array.getLength(response);
