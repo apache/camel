@@ -20,6 +20,8 @@ import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.identitymanagement.AmazonIdentityManagement;
 import com.amazonaws.services.identitymanagement.model.CreateAccessKeyRequest;
 import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
+import com.amazonaws.services.identitymanagement.model.CreateGroupRequest;
+import com.amazonaws.services.identitymanagement.model.CreateGroupResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserRequest;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyRequest;
@@ -80,6 +82,9 @@ public class IAMProducer extends DefaultProducer {
             break;
         case listUsers:
             listUsers(getEndpoint().getIamClient(), exchange);
+            break;
+        case createGroup:
+            createGroup(getEndpoint().getIamClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -249,6 +254,27 @@ public class IAMProducer extends DefaultProducer {
             result = iamClient.updateAccessKey(request);
         } catch (AmazonServiceException ase) {
             log.trace("Update Access Key command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void createGroup(AmazonIdentityManagement iamClient, Exchange exchange) {
+        CreateGroupRequest request = new CreateGroupRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
+            String groupName = exchange.getIn().getHeader(IAMConstants.GROUP_NAME, String.class);
+            request.withGroupName(groupName);
+        }
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_PATH))) {
+            String groupPath = exchange.getIn().getHeader(IAMConstants.GROUP_PATH, String.class);
+            request.withPath(groupPath);
+        }
+        CreateGroupResult result;
+        try {
+            result = iamClient.createGroup(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("Create Group command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

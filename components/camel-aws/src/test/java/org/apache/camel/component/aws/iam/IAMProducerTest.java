@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws.iam;
 
 import com.amazonaws.services.identitymanagement.model.CreateAccessKeyResult;
+import com.amazonaws.services.identitymanagement.model.CreateGroupResult;
 import com.amazonaws.services.identitymanagement.model.CreateUserResult;
 import com.amazonaws.services.identitymanagement.model.DeleteAccessKeyResult;
 import com.amazonaws.services.identitymanagement.model.DeleteUserResult;
@@ -186,6 +187,27 @@ public class IAMProducerTest extends CamelTestSupport {
         UpdateAccessKeyResult resultGet = (UpdateAccessKeyResult)exchange.getIn().getBody();
         assertNotNull(resultGet);
     }
+    
+    @Test
+    public void iamCreateGroupTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:createGroup", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(IAMConstants.OPERATION, IAMOperations.createGroup);
+                exchange.getIn().setHeader(IAMConstants.GROUP_NAME, "Test");
+                exchange.getIn().setHeader(IAMConstants.GROUP_PATH, "/test");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        CreateGroupResult resultGet = (CreateGroupResult)exchange.getIn().getBody();
+        assertNotNull(resultGet);
+        assertEquals("Test", resultGet.getGroup().getGroupName());
+        assertEquals("/test", resultGet.getGroup().getPath());
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -211,6 +233,7 @@ public class IAMProducerTest extends CamelTestSupport {
                 from("direct:createAccessKey").to("aws-iam://test?iamClient=#amazonIAMClient&operation=createAccessKey").to("mock:result");
                 from("direct:deleteAccessKey").to("aws-iam://test?iamClient=#amazonIAMClient&operation=deleteAccessKey").to("mock:result");
                 from("direct:updateAccessKey").to("aws-iam://test?iamClient=#amazonIAMClient&operation=updateAccessKey").to("mock:result");
+                from("direct:createGroup").to("aws-iam://test?iamClient=#amazonIAMClient&operation=createGroup").to("mock:result");
             }
         };
     }
