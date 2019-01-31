@@ -140,6 +140,7 @@ public final class Jsoner {
      *             Ensure the reader is properly instantiated, isn't closed, or
      *             that it is ready before trying again.
      */
+    // CHECKSTYLE:OFF
     private static JsonArray deserialize(final Reader deserializable, final Set<DeserializationOptions> flags) throws DeserializationException, IOException {
         final Yylex lexer = new Yylex(deserializable);
         Yytoken token;
@@ -352,6 +353,7 @@ public final class Jsoner {
         } while (!(States.DONE.equals(currentState) && Yytoken.Types.END.equals(token.getType())));
         return new JsonArray(valueStack);
     }
+    // CHECKSTYLE:ON
 
     /**
      * A convenience method that assumes a StringReader to deserialize a string.
@@ -759,14 +761,15 @@ public final class Jsoner {
      *             serializable in JSON.
      * @see SerializationOptions
      */
+    // CHECKSTYLE:OFF
     private static void serialize(final Object jsonSerializable, final Writer writableDestination, final Set<SerializationOptions> flags) throws IOException {
         if (jsonSerializable == null) {
             /* When a null is passed in the word null is supported in JSON. */
             writableDestination.write("null");
-        } else if (((jsonSerializable instanceof Jsonable) && flags.contains(SerializationOptions.ALLOW_JSONABLES))) {
+        } else if (jsonSerializable instanceof Jsonable && flags.contains(SerializationOptions.ALLOW_JSONABLES)) {
             /* Writes the writable as defined by the writable. */
             writableDestination.write(((Jsonable)jsonSerializable).toJson());
-        } else if ((jsonSerializable instanceof Enum) && flags.contains(SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS)) {
+        } else if (jsonSerializable instanceof Enum && flags.contains(SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS)) {
             /*
              * Writes the enum as a special case of string. All enums (unless
              * they implement Jsonable) will be the string literal
@@ -997,12 +1000,17 @@ public final class Jsoner {
                 /*
                  * Notify the caller the cause of failure for the serialization.
                  */
-                throw new IllegalArgumentException("Encountered a: " + jsonSerializable.getClass().getName() + " as: " + jsonSerializable
-                    .toString() + "  that isn't JSON serializable.\n  Try:\n    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
+                throw new IllegalArgumentException("Encountered a: " + jsonSerializable.getClass().getName() + " as: " + jsonSerializable.toString()
+                        + "  that isn't JSON serializable.\n  Try:\n"
+                        + "    1) Implementing the Jsonable interface for the object to return valid JSON. If it already does it probably has a bug.\n"
+                        + "    2) If you cannot edit the source of the object or couple it with this library consider wrapping it in a class that does implement the Jsonable interface.\n"
+                        + "    3) Otherwise convert it to a boolean, null, number, JsonArray, JsonObject, or String value before serializing it.\n"
+                        + "    4) If you feel it should have serialized you could use a more tolerant serialization for debugging purposes.");
             }
         }
         // System.out.println(writableDestination.toString());
     }
+    // CHECKSTYLE:ON
 
     /**
      * Serializes like the first version of this library. It has been adapted to
