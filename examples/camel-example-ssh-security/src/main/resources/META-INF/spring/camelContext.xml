@@ -32,7 +32,7 @@
   <camelContext id="camel-example-ssh-security-context"
                 xmlns="http://camel.apache.org/schema/spring">
     <route id="camel-example-ssh-consumer-secure" autoStartup="true">
-      <from uri="ssh://scott@localhost:8101?certResource=classpath:test_rsa&amp;useFixedDelay=true&amp;delay=5000&amp;pollCommand=features:list%0A"/>
+      <from uri="ssh://scott@localhost:8101?certResource=classpath:test_rsa&amp;useFixedDelay=true&amp;delay=5000&amp;pollCommand=feature:list%0A"/>
       <log message="${body}"/>
     </route>
   </camelContext>
