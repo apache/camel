@@ -23,8 +23,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
