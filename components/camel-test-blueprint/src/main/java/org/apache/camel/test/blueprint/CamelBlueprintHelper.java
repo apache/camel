@@ -47,10 +47,10 @@ import java.util.jar.JarInputStream;
 
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.support.ResourceHelper;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.felix.connect.PojoServiceRegistryFactoryImpl;
 import org.apache.felix.connect.felix.framework.util.Util;
 import org.apache.felix.connect.launch.BundleDescriptor;
