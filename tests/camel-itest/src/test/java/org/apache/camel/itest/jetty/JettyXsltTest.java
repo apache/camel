@@ -22,10 +22,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.support.ResourceHelper;
 import org.junit.Test;
 
 public class JettyXsltTest extends CamelTestSupport {
