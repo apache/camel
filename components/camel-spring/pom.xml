@@ -31,40 +31,6 @@
   <description>Camel Spring with XML DSL</description>
   <packaging>jar</packaging>
 
-  <properties>
-    <camel.osgi.import>
-      !org.springframework.boot.*,
-      !org.springframework.context.annotation.*;resolution:=optional,
-      !org.apache.camel.spring.*,
-      !org.apache.camel.component,
-      !org.apache.camel.component.event,
-      !org.apache.camel.language.spel,
-      !org.apache.camel.core.xml*,
-      org.apache.camel.model;${camel.osgi.import.strict.version},
-      org.apache.camel.model.cloud;${camel.osgi.import.strict.version},
-      org.apache.camel.model.config;${camel.osgi.import.strict.version},
-      org.apache.camel.model.dataformat;${camel.osgi.import.strict.version},
-      org.apache.camel.model.language;${camel.osgi.import.strict.version},
-      org.apache.camel.model.loadbalancer;${camel.osgi.import.strict.version},
-      org.apache.camel.model.rest;${camel.osgi.import.strict.version},
-      org.apache.camel.model.transformer;${camel.osgi.import.strict.version},
-      org.apache.camel.model.validator;${camel.osgi.import.strict.version},
-      org.apache.camel.*;${camel.osgi.import.strict.version},
-      org.springframework*;version="${spring-version-range}",
-      org.osgi.service.event;resolution:=optional,
-      ${camel.osgi.import.defaults},
-      *
-    </camel.osgi.import>
-    <camel.osgi.export>
-      org.apache.camel.spring.*;${camel.osgi.version},
-      org.apache.camel.util.spring.*;${camel.osgi.version},
-      org.apache.camel.component.event;${camel.osgi.split.pkg};${camel.osgi.version},
-      org.apache.camel.language.spel;${camel.osgi.split.pkg};${camel.osgi.version}
-    </camel.osgi.export>
-    <!-- do not skip any tests by default -->
-    <platform.skip.tests/>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -77,7 +43,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-xml</artifactId>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -226,33 +191,6 @@
     </resources>
 
     <plugins>
-
-      <!-- Inline the contents of camel-core-xml into this jar. -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.10</version>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.camel</groupId>
-                  <artifactId>camel-core-xml</artifactId>
-                  <version>${project.version}</version>
-                  <includes>org/apache/camel/**</includes>
-                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
 
       <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
       <plugin>
