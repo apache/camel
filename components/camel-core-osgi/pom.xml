@@ -36,6 +36,13 @@
       org.osgi.service.event;resolution:=optional,
       *
     </camel.osgi.import>
+    <camel.osgi.provide.capability>
+      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.core.osgi.impl";
+      version:Version="$(version;==;${camel.osgi.version.clean})"
+    </camel.osgi.provide.capability>
+    <camel.osgi.activator>
+      org.apache.camel.core.osgi.impl.Activator
+    </camel.osgi.activator>
   </properties>
 
   <dependencies>

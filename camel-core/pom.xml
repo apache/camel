@@ -63,13 +63,6 @@
       org.apache.camel.pollconsumer.quartz2;${camel.osgi.import.strict.version},
       net.sf.saxon
     </camel.osgi.dynamic>
-    <camel.osgi.provide.capability>
-      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.impl.osgi";
-      version:Version="$(version;==;${camel.osgi.version.clean})"
-    </camel.osgi.provide.capability>
-    <camel.osgi.activator>
-      org.apache.camel.impl.osgi.Activator
-    </camel.osgi.activator>
     <!-- do not skip any tests by default -->
     <platform.skip.tests/>
   </properties>

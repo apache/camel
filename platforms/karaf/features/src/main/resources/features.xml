@@ -50,6 +50,7 @@
     <bundle>mvn:org.apache.camel/camel-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-management-impl/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <!-- core components -->
     <bundle>mvn:org.apache.camel/camel-browse/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-controlbus/${project.version}</bundle>
@@ -86,6 +87,7 @@
   </feature>
   <feature name='camel-blueprint' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-core-xml/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-blueprint/${project.version}</bundle>
     <feature>aries-blueprint</feature>
   </feature>
@@ -94,6 +96,7 @@
     <feature version='${spring-version-range}'>spring</feature>
     <feature version='${spring-version-range}'>spring-tx</feature>
     <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-core-xml/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring/${project.version}</bundle>
   </feature>
 
@@ -340,7 +343,6 @@
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${pax-cdi-version}'>pax-cdi</feature>
     <feature>eventadmin</feature>
-    <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cdi/${project.version}</bundle>
   </feature>
   <feature name='camel-chunk' version='${project.version}' start-level='50'>
@@ -1263,7 +1265,6 @@
   <feature name='camel-kura' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature>scr</feature>
-    <bundle dependency='true'>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-kura/${project.version}</bundle>
   </feature>
   <feature name='camel-ldap' version='${project.version}' start-level='50'>
