@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * IO helper class.
  */
 public final class IOHelper {
-	
+
     public static Supplier<Charset> defaultCharset = Charset::defaultCharset;
 
     public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
@@ -56,17 +56,18 @@ public final class IOHelper {
     private static final Logger LOG = LoggerFactory.getLogger(IOHelper.class);
     private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
-    // allows to turn on backwards compatible to turn off regarding the first read byte with value zero (0b0) as EOL.
+    // allows to turn on backwards compatible to turn off regarding the first
+    // read byte with value zero (0b0) as EOL.
     // See more at CAMEL-11672
-    private static final boolean ZERO_BYTE_EOL_ENABLED =
-        "true".equalsIgnoreCase(System.getProperty("camel.zeroByteEOLEnabled", "true"));
+    private static final boolean ZERO_BYTE_EOL_ENABLED = "true".equalsIgnoreCase(System.getProperty("camel.zeroByteEOLEnabled", "true"));
 
     private IOHelper() {
         // Utility Class
     }
-    
+
     /**
-     * Use this function instead of new String(byte[]) to avoid surprises from non-standard default encodings.
+     * Use this function instead of new String(byte[]) to avoid surprises from
+     * non-standard default encodings.
      */
     public static String newStringFromBytes(byte[] bytes) {
         try {
@@ -77,8 +78,8 @@ public final class IOHelper {
     }
 
     /**
-     * Use this function instead of new String(byte[], int, int) 
-     * to avoid surprises from non-standard default encodings.
+     * Use this function instead of new String(byte[], int, int) to avoid
+     * surprises from non-standard default encodings.
      */
     public static String newStringFromBytes(byte[] bytes, int start, int length) {
         try {
@@ -195,8 +196,7 @@ public final class IOHelper {
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Copying InputStream: {} -> OutputStream: {} with buffer: {} and flush on each write {}",
-                    new Object[]{input, output, bufferSize, flushOnEachWrite});
+            LOG.trace("Copying InputStream: {} -> OutputStream: {} with buffer: {} and flush on each write {}", new Object[] {input, output, bufferSize, flushOnEachWrite});
         }
 
         int total = 0;
@@ -205,7 +205,8 @@ public final class IOHelper {
 
         boolean hasData;
         if (ZERO_BYTE_EOL_ENABLED) {
-            // workaround issue on some application servers which can return 0 (instead of -1)
+            // workaround issue on some application servers which can return 0
+            // (instead of -1)
             // as first byte to indicate end of stream (CAMEL-11672)
             hasData = n > 0;
         } else {
@@ -227,11 +228,11 @@ public final class IOHelper {
         }
         return total;
     }
-    
+
     public static void copyAndCloseInput(InputStream input, OutputStream output) throws IOException {
         copyAndCloseInput(input, output, DEFAULT_BUFFER_SIZE);
     }
-    
+
     public static void copyAndCloseInput(InputStream input, OutputStream output, int bufferSize) throws IOException {
         copy(input, output, bufferSize);
         close(input, null, LOG);
@@ -251,11 +252,13 @@ public final class IOHelper {
     }
 
     /**
-     * Forces any updates to this channel's file to be written to the storage device that contains it.
+     * Forces any updates to this channel's file to be written to the storage
+     * device that contains it.
      *
      * @param channel the file channel
      * @param name the name of the resource
-     * @param log the log to use when reporting warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
+     * @param log the log to use when reporting warnings, will use this class's
+     *            own {@link Logger} if <tt>log == null</tt>
      */
     public static void force(FileChannel channel, String name, Logger log) {
         try {
@@ -276,11 +279,13 @@ public final class IOHelper {
     }
 
     /**
-     * Forces any updates to a FileOutputStream be written to the storage device that contains it.
+     * Forces any updates to a FileOutputStream be written to the storage device
+     * that contains it.
      *
      * @param os the file output stream
      * @param name the name of the resource
-     * @param log the log to use when reporting warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
+     * @param log the log to use when reporting warnings, will use this class's
+     *            own {@link Logger} if <tt>log == null</tt>
      */
     public static void force(FileOutputStream os, String name, Logger log) {
         try {
@@ -305,9 +310,11 @@ public final class IOHelper {
      * An associated FileOutputStream can optionally be forced to disk.
      *
      * @param writer the writer to close
-     * @param os an underlying FileOutputStream that will to be forced to disk according to the force parameter
+     * @param os an underlying FileOutputStream that will to be forced to disk
+     *            according to the force parameter
      * @param name the name of the resource
-     * @param log the log to use when reporting warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
+     * @param log the log to use when reporting warnings, will use this class's
+     *            own {@link Logger} if <tt>log == null</tt>
      * @param force forces the FileOutputStream to disk
      */
     public static void close(Writer writer, FileOutputStream os, String name, Logger log, boolean force) {
@@ -332,11 +339,13 @@ public final class IOHelper {
     }
 
     /**
-     * Closes the given resource if it is available, logging any closing exceptions to the given log.
+     * Closes the given resource if it is available, logging any closing
+     * exceptions to the given log.
      *
      * @param closeable the object to close
      * @param name the name of the resource
-     * @param log the log to use when reporting closure warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
+     * @param log the log to use when reporting closure warnings, will use this
+     *            class's own {@link Logger} if <tt>log == null</tt>
      */
     public static void close(Closeable closeable, String name, Logger log) {
         if (closeable != null) {
@@ -355,13 +364,14 @@ public final class IOHelper {
             }
         }
     }
-    
+
     /**
-     * Closes the given resource if it is available and don't catch the exception
+     * Closes the given resource if it is available and don't catch the
+     * exception
      *
      * @param closeable the object to close
      * @throws IOException
-      */
+     */
     public static void closeWithException(Closeable closeable) throws IOException {
         if (closeable != null) {
             closeable.close();
@@ -369,12 +379,14 @@ public final class IOHelper {
     }
 
     /**
-     * Closes the given channel if it is available, logging any closing exceptions to the given log.
-     * The file's channel can optionally be forced to disk.
+     * Closes the given channel if it is available, logging any closing
+     * exceptions to the given log. The file's channel can optionally be forced
+     * to disk.
      *
      * @param channel the file channel
      * @param name the name of the resource
-     * @param log the log to use when reporting warnings, will use this class's own {@link Logger} if <tt>log == null</tt>
+     * @param log the log to use when reporting warnings, will use this class's
+     *            own {@link Logger} if <tt>log == null</tt>
      * @param force forces the file channel to disk
      */
     public static void close(FileChannel channel, String name, Logger log, boolean force) {
@@ -416,10 +428,10 @@ public final class IOHelper {
 
     public static void closeIterator(Object it) throws IOException {
         if (it instanceof Closeable) {
-            IOHelper.closeWithException((Closeable) it);
+            IOHelper.closeWithException((Closeable)it);
         }
         if (it instanceof java.util.Scanner) {
-            IOException ioException = ((java.util.Scanner) it).ioException();
+            IOException ioException = ((java.util.Scanner)it).ioException();
             if (ioException != null) {
                 throw ioException;
             }
@@ -463,14 +475,15 @@ public final class IOHelper {
             close(isr, in);
         }
     }
-    
+
     /**
      * Get the charset name from the content type string
+     * 
      * @param contentType
      * @return the charset name, or <tt>UTF-8</tt> if no found
      */
     public static String getCharsetNameFromContentType(String contentType) {
-        String[] values = contentType.split(";"); 
+        String[] values = contentType.split(";");
         String charset = "";
 
         for (String value : values) {
@@ -481,7 +494,7 @@ public final class IOHelper {
             }
         }
         if ("".equals(charset)) {
-            charset = "UTF-8"; 
+            charset = "UTF-8";
         }
         return normalizeCharset(charset);
 
@@ -504,7 +517,7 @@ public final class IOHelper {
             return null;
         }
     }
-    
+
     /**
      * Encoding-aware input stream.
      */
@@ -553,7 +566,7 @@ public final class IOHelper {
     }
 
     /**
-     * Encoding-aware file reader. 
+     * Encoding-aware file reader.
      */
     public static class EncodingFileReader extends InputStreamReader {
 
@@ -563,8 +576,7 @@ public final class IOHelper {
          * @param in file to read
          * @param charset character set to use
          */
-        public EncodingFileReader(FileInputStream in, String charset)
-            throws FileNotFoundException, UnsupportedEncodingException {
+        public EncodingFileReader(FileInputStream in, String charset) throws FileNotFoundException, UnsupportedEncodingException {
             super(in, charset);
             this.in = in;
         }
@@ -578,9 +590,9 @@ public final class IOHelper {
             }
         }
     }
-    
+
     /**
-     * Encoding-aware file writer. 
+     * Encoding-aware file writer.
      */
     public static class EncodingFileWriter extends OutputStreamWriter {
 
@@ -590,8 +602,7 @@ public final class IOHelper {
          * @param out file to write
          * @param charset character set to use
          */
-        public EncodingFileWriter(FileOutputStream out, String charset)
-            throws FileNotFoundException, UnsupportedEncodingException {
+        public EncodingFileWriter(FileOutputStream out, String charset) throws FileNotFoundException, UnsupportedEncodingException {
             super(out, charset);
             this.out = out;
         }
@@ -605,7 +616,7 @@ public final class IOHelper {
             }
         }
     }
-    
+
     public static BufferedReader toReader(File file, String charset) throws IOException {
         FileInputStream in = new FileInputStream(file);
         return IOHelper.buffered(new EncodingFileReader(in, charset));
