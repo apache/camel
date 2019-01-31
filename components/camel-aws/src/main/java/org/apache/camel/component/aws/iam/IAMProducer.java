@@ -152,6 +152,8 @@ public class IAMProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
             request.withUserName(userName);
+        } else {
+            throw new IllegalArgumentException("User Name must be specified");
         }
         CreateUserResult result;
         try {
@@ -169,6 +171,8 @@ public class IAMProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
             request.withUserName(userName);
+        } else {
+            throw new IllegalArgumentException("User Name must be specified");
         }
         DeleteUserResult result;
         try {
@@ -186,6 +190,8 @@ public class IAMProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
             request.withUserName(userName);
+        } else {
+            throw new IllegalArgumentException("User Name must be specified");
         }
         GetUserResult result;
         try {
@@ -215,7 +221,7 @@ public class IAMProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
             request.withUserName(userName);
-        }
+        } 
         CreateAccessKeyResult result;
         try {
             result = iamClient.createAccessKey(request);
@@ -284,11 +290,13 @@ public class IAMProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
             String groupName = exchange.getIn().getHeader(IAMConstants.GROUP_NAME, String.class);
             request.withGroupName(groupName);
+        } else {
+            throw new IllegalArgumentException("Group Name must be specified");
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_PATH))) {
             String groupPath = exchange.getIn().getHeader(IAMConstants.GROUP_PATH, String.class);
             request.withPath(groupPath);
-        }
+        } 
         CreateGroupResult result;
         try {
             result = iamClient.createGroup(request);
@@ -305,6 +313,8 @@ public class IAMProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
             String groupName = exchange.getIn().getHeader(IAMConstants.GROUP_NAME, String.class);
             request.withGroupName(groupName);
+        } else {
+            throw new IllegalArgumentException("Group Name must be specified");
         }
         DeleteGroupResult result;
         try {
@@ -334,10 +344,14 @@ public class IAMProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
             String groupName = exchange.getIn().getHeader(IAMConstants.GROUP_NAME, String.class);
             request.withGroupName(groupName);
+        } else {
+            throw new IllegalArgumentException("Group Name must be specified");
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
             request.withUserName(userName);
+        } else {
+            throw new IllegalArgumentException("User Name must be specified");
         }
         AddUserToGroupResult result;
         try {
@@ -355,10 +369,14 @@ public class IAMProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.GROUP_NAME))) {
             String groupName = exchange.getIn().getHeader(IAMConstants.GROUP_NAME, String.class);
             request.withGroupName(groupName);
+        } else {
+            throw new IllegalArgumentException("Group Name must be specified");
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(IAMConstants.USERNAME))) {
             String userName = exchange.getIn().getHeader(IAMConstants.USERNAME, String.class);
             request.withUserName(userName);
+        } else {
+            throw new IllegalArgumentException("User Name must be specified");
         }
         RemoveUserFromGroupResult result;
         try {
