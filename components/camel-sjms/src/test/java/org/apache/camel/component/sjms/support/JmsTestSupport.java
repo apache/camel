@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.sjms.support;
 
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Properties;
+
 import javax.jms.Connection;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
@@ -36,10 +40,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Properties;
-
 /**
  * A support class that builds up and tears down an ActiveMQ instance to be used
  * for unit testing.
@@ -49,12 +49,13 @@ public class JmsTestSupport extends CamelTestSupport {
     @Produce
     protected ProducerTemplate template;
     protected String brokerUri;
+    protected boolean externalAmq;
+    protected Properties properties;
+
     private BrokerService broker;
     private Connection connection;
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
-    protected boolean externalAmq = false;
-    protected Properties properties;
 
     /**
      * Set up the Broker
