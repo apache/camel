@@ -764,6 +764,10 @@
     <camel.osgi.import.before.defaults/>
     <camel.osgi.import.additional/>
     <camel.osgi.import.pkg>
+      org.apache.camel.*;${camel.osgi.import.camel.version},
+      ${camel.osgi.import.before.defaults},
+      ${camel.osgi.import.defaults},
+      ${camel.osgi.import.additional},
       *
     </camel.osgi.import.pkg>
     <camel.osgi.activator/>

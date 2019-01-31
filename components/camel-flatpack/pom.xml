@@ -36,6 +36,7 @@
 
   <dependencies>
 
+    <!-- core required: org.apache.camel.processor.loadbalancer -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>

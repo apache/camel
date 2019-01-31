@@ -31,17 +31,8 @@
   <name>Camel :: Quartz2</name>
   <description>Camel Quartz2 support</description>
 
-  <properties>
-    <camel.osgi.import.pkg>
-      !org.apache.camel.component.quartz2.*,
-      !org.apache.camel.pollconsumer.quartz2.*,
-      !org.apache.camel.routepolicy.quartz2.*,
-      ${camel.osgi.import.defaults},
-      *
-    </camel.osgi.import.pkg>
-  </properties>
-
   <dependencies>
+    <!-- core required: org.apache.camel.processor.loadbalancer -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>

@@ -33,7 +33,6 @@
 
     <properties>
         <camel.osgi.import.pkg>
-            !org.apache.camel.component.cometd.*,
             org.eclipse.jetty.util.ssl;version="[9.2,10)";resolution:=optional,
             ${camel.osgi.import.defaults},
             *

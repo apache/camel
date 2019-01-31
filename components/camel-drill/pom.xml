@@ -31,14 +31,6 @@
     <name>Camel :: Drill</name>
     <description>Camel Apache Drill support</description>
 
-    <properties>
-		<camel.osgi.import.pkg>
-			!org.apache.camel.component.drill.*,
-			${camel.osgi.import.defaults},
-			*
-		</camel.osgi.import.pkg>
-	</properties>
-
     <dependencies>
 
         <dependency>
