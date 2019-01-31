@@ -31,14 +31,14 @@
   -->
   <camelContext id="camel-example-ssh" xmlns="http://camel.apache.org/schema/spring">
     <route id="camel-example-ssh-consumer">
-      <from uri="ssh://karaf:karaf@localhost:8101?useFixedDelay=true&amp;delay=5000&amp;pollCommand=features:list%0A"/>
+      <from uri="ssh://karaf:karaf@localhost:8101?useFixedDelay=true&amp;delay=5000&amp;pollCommand=feature:list%0A"/>
       <log message="${body}"/>
     </route>
 
     <route id="camel-example-ssh-producer">
       <from uri="direct:exampleSshProducer"/>
       <setBody>
-        <constant>features:list&#10;</constant>
+        <constant>feature:list&#10;</constant>
       </setBody>
       <to uri="ssh://karaf:karaf@localhost:8101"/>
       <log message="${body}"/>
