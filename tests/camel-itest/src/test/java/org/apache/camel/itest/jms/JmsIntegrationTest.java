@@ -25,8 +25,8 @@ import javax.naming.Context;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.itest.CamelJmsTestHelper;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.support.jndi.JndiContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
