@@ -33,9 +33,6 @@
 
   <properties>
     <camel.osgi.import.pkg>
-      !org.apache.camel.component.jpa.*,
-      !org.apache.camel.processor.idempotent.jpa.*,
-      !org.apache.camel.processor.interceptor.jpa.*,
       org.apache.camel.*;${camel.osgi.import.camel.version},
       ${camel.osgi.import.defaults},
       org.hibernate.proxy;resolution:=optional,

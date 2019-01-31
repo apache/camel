@@ -31,14 +31,6 @@
   <description>Camel DNS support</description>
   <packaging>jar</packaging>
 
-  <properties>
-
-    <camel.osgi.import.pkg>
-      !org.apache.camel.component.dns*,
-      *
-    </camel.osgi.import.pkg>
-  </properties>
-
   <dependencies>
 
     <dependency>

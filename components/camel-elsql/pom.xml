@@ -31,15 +31,6 @@
   <name>Camel :: ElSql</name>
   <description>Camel ElSql support</description>
 
-  <properties>
-    <camel.osgi.import.pkg>
-      org.apache.camel.component.sql.*,
-      !org.apache.camel.component.elsql.*,
-      ${camel.osgi.import.defaults},
-      *
-    </camel.osgi.import.pkg>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
