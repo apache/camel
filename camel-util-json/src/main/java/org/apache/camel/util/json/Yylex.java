@@ -93,7 +93,7 @@ class Yylex {
                                            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 40, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
                                            -1, 41, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 42, -1, 42, -1, 42, -1, -1, -1, -1, -1, 42, 42, -1, -1, -1, -1, 42, 42, -1, -1, -1, -1,
                                            -1, -1, -1, -1, -1, 43, -1, 43, -1, 43, -1, -1, -1, -1, -1, 43, 43, -1, -1, -1, -1, 43, 43, -1, -1, -1, -1, -1, -1, -1, -1, -1, 44, -1,
-                                           44, -1, 44, -1, -1, -1, -1, -1, 44, 44, -1, -1, -1, -1, 44, 44, -1, -1, -1, -1, -1, -1, -1, -1,};
+                                           44, -1, 44, -1, -1, -1, -1, -1, 44, 44, -1, -1, -1, -1, 44, 44, -1, -1, -1, -1, -1, -1, -1, -1 };
 
     /* error codes */
     private static final int ZZ_UNKNOWN_ERROR = 0;
@@ -165,7 +165,27 @@ class Yylex {
 
     /* user code: */
     private StringBuilder sb = new StringBuilder();
-    
+
+    /**
+     * Creates a new scanner There is also a java.io.InputStream version of this
+     * constructor.
+     *
+     * @param in the java.io.Reader to read input from.
+     */
+    Yylex(java.io.Reader in) {
+        this.zzReader = in;
+    }
+
+    /**
+     * Creates a new scanner. There is also java.io.Reader version of this
+     * constructor.
+     *
+     * @param in the java.io.Inputstream to read input from.
+     */
+    Yylex(java.io.InputStream in) {
+        this(new java.io.InputStreamReader(in));
+    }
+
     private static int[] zzUnpackAction() {
         int[] result = new int[45];
         int offset = 0;
@@ -180,9 +200,9 @@ class Yylex {
         while (i < l) {
             int count = packed.charAt(i++);
             int value = packed.charAt(i++);
-            do
+            do {
                 result[j++] = value;
-            while (--count > 0);
+            } while (--count > 0);
         }
         return j;
     }
@@ -219,35 +239,15 @@ class Yylex {
         while (i < l) {
             int count = packed.charAt(i++);
             int value = packed.charAt(i++);
-            do
+            do {
                 result[j++] = value;
-            while (--count > 0);
+            } while (--count > 0);
         }
         return j;
     }
 
     int getPosition() {
         return yychar;
-    }
-
-    /**
-     * Creates a new scanner There is also a java.io.InputStream version of this
-     * constructor.
-     *
-     * @param in the java.io.Reader to read input from.
-     */
-    Yylex(java.io.Reader in) {
-        this.zzReader = in;
-    }
-
-    /**
-     * Creates a new scanner. There is also java.io.Reader version of this
-     * constructor.
-     *
-     * @param in the java.io.Inputstream to read input from.
-     */
-    Yylex(java.io.InputStream in) {
-        this(new java.io.InputStreamReader(in));
     }
 
     /**
@@ -263,9 +263,9 @@ class Yylex {
         while (i < 90) {
             int count = packed.charAt(i++);
             char value = packed.charAt(i++);
-            do
+            do {
                 map[j++] = value;
-            while (--count > 0);
+            } while (--count > 0);
         }
         return map;
     }
@@ -327,8 +327,9 @@ class Yylex {
         zzAtEOF = true; /* indicate end of file */
         zzEndRead = zzStartRead; /* invalidate buffer */
 
-        if (zzReader != null)
+        if (zzReader != null) {
             zzReader.close();
+        }
     }
 
     /**
@@ -421,8 +422,9 @@ class Yylex {
      *            not be greater than yylength()!
      */
     public void yypushback(int number) {
-        if (number > yylength())
+        if (number > yylength()) {
             zzScanError(ZZ_PUSHBACK_2BIG);
+        }
 
         zzMarkedPos -= number;
     }
@@ -434,6 +436,7 @@ class Yylex {
      * @return the next token
      * @exception java.io.IOException if any I/O-Error occurs
      */
+    // CHECKSTYLE:OFF
     public Yytoken yylex() throws java.io.IOException, DeserializationException {
         int zzInput;
         int zzAction;
@@ -463,9 +466,9 @@ class Yylex {
             zzForAction: {
                 while (true) {
 
-                    if (zzCurrentPosL < zzEndReadL)
+                    if (zzCurrentPosL < zzEndReadL) {
                         zzInput = zzBufferL[zzCurrentPosL++];
-                    else if (zzAtEOF) {
+                    } else if (zzAtEOF) {
                         zzInput = YYEOF;
                         break zzForAction;
                     } else {
@@ -486,8 +489,9 @@ class Yylex {
                         }
                     }
                     int zzNext = zzTransL[zzRowMapL[zzState] + zzCMapL[zzInput]];
-                    if (zzNext == -1)
+                    if (zzNext == -1) {
                         break zzForAction;
+                    }
                     zzState = zzNext;
 
                     int zzAttributes = zzAttrL[zzState];
@@ -643,5 +647,6 @@ class Yylex {
             }
         }
     }
+    // CHECKSTYLE:ON
 
 }
