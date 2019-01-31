@@ -26,6 +26,6 @@
   <feature name="camel-example-ssh" version="${project.version}">
     <feature version="${project.version}">camel-ssh</feature>
     <feature version="${project.version}">camel-spring</feature>
-    <bundle>mvn:org.apache.camel.examples/camel-example-ssh/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel.example/camel-example-ssh/${project.version}</bundle>
   </feature>
 </features>
