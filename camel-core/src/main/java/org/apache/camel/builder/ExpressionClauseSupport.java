@@ -46,6 +46,9 @@ import org.apache.camel.model.language.XQueryExpression;
  */
 public class ExpressionClauseSupport<T> {
 
+    // Implementation detail: We must use the specific model.language.xxx classes to make the DSL use these specific types
+    // which ensures that the route model dumped as XML uses these types, eg <header> instead of <language name="header"> etc.
+
     private T result;
     private Expression expressionValue;
     private ExpressionDefinition expressionType;
