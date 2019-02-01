@@ -80,7 +80,7 @@
     <module>camel-example-loan-broker-cxf</module>
     <module>camel-example-loan-broker-jms</module>
     <module>camel-example-management</module>
-    <module>camel-example-micrometer</module>	
+    <module>camel-example-micrometer</module>
     <module>camel-example-mybatis</module>
     <module>camel-example-netty-custom-correlation</module>
     <module>camel-example-netty-http</module>
@@ -151,8 +151,23 @@
     <!-- as having org.apache.camel as prefix is not needed and makes the name very long -->
     <camel.osgi.symbolic.name>${project.artifactId}</camel.osgi.symbolic.name>
     <skip.starting.camel.context>false</skip.starting.camel.context>
-    <camel.osgi.export.pkg/>
+    <javax.servlet.api.version>4.0.1</javax.servlet.api.version>
+    <camel.osgi.export.pkg />
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!--
+        CAMEL-13084 Fix the spring-boot examples start up error by overriding servlet API version from camel-parent
+        Wqe need to clean it up once camel-parent upgrade the servlet api version.
+      -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${javax.servlet.api.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <resources>
@@ -260,9 +275,9 @@
         <skip.starting.camel.context>true</skip.starting.camel.context>
       </properties>
     </profile>
-    <!-- 
-      This profile allows you to add a repository to the repo list so that 
-      you can test the examples out against a staged version of the camel distribution 
+    <!--
+      This profile allows you to add a repository to the repo list so that
+      you can test the examples out against a staged version of the camel distribution
     -->
     <profile>
       <id>add-remote-repo</id>
