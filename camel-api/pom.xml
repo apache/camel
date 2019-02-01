@@ -77,9 +77,9 @@
         <version>${project.version}</version>
         <executions>
           <execution>
-            <id>generate</id>
+            <id>jaxb-list</id>
             <goals>
-              <goal>generate-legal</goal>
+              <goal>generate-jaxb-list</goal>
             </goals>
             <phase>process-classes</phase>
           </execution>
