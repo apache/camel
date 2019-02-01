@@ -129,12 +129,13 @@ public class CamelKieServerExtension implements KieServerExtension {
         try (InputStream is = classloader.getResourceAsStream("camel-routes.xml")) {
             if (is != null) {
 
-                DefaultCamelContext context = (DefaultCamelContext)buildDeploymentContext(id);
+                DefaultCamelContext context = (DefaultCamelContext)buildDeploymentContext(id, classloader);
                 context.setName("KIE Server Camel context for container " + kieContainerInstance.getContainerId());
 
                 RoutesDefinition routes = context.loadRoutesDefinition(is);
                 annotateKJarRoutes(routes, id);
                 context.addRouteDefinitions(routes.getRoutes());
+                
                 context.start();
                 camelContexts.put(id, context);
 
@@ -258,8 +259,9 @@ public class CamelKieServerExtension implements KieServerExtension {
         }.buildCamelContext();
     }
 
-    protected CamelContext buildDeploymentContext(String identifier) {
-
+    protected CamelContext buildDeploymentContext(String identifier, ClassLoader classloader) {
+       
+        
         InternalRuntimeManager runtimeManager = (InternalRuntimeManager)RuntimeManagerRegistry.get().getManager(identifier);
 
         if (runtimeManager != null) {
@@ -269,9 +271,10 @@ public class CamelKieServerExtension implements KieServerExtension {
                 return deploymentContextBuilder.buildCamelContext();
             }
         }
-
-        return new CamelContextBuilder() {
-        }.buildCamelContext();
+        CamelContext camelContext = new CamelContextBuilder() { 
+        }.buildCamelContext();       
+        camelContext.setApplicationContextClassLoader(classloader);
+        return camelContext;
     }
 
     protected CamelContextBuilder discoverCamelContextBuilder() {

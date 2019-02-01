@@ -163,7 +163,7 @@ public class CamelKieServerExtensionTest {
         RuntimeManagerRegistry.get().register(runtimeManager);
 
         CamelKieServerExtension extension = new CamelKieServerExtension();
-        CamelContext context = extension.buildDeploymentContext(identifier);
+        CamelContext context = extension.buildDeploymentContext(identifier, this.getClass().getClassLoader());
         assertNotNull(context);
 
         context.stop();
@@ -190,7 +190,7 @@ public class CamelKieServerExtensionTest {
         RuntimeManagerRegistry.get().register(runtimeManager);
 
         CamelKieServerExtension extension = new CamelKieServerExtension();
-        CamelContext context = extension.buildDeploymentContext(identifier);
+        CamelContext context = extension.buildDeploymentContext(identifier, this.getClass().getClassLoader());
         assertNull(context);
 
     }
