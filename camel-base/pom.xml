@@ -34,6 +34,30 @@
   <name>Camel :: Base</name>
   <description>The Base Camel Framework</description>
 
+  <properties>
+    <camel.osgi.export.pkg>
+      org.apache.camel.cloud;
+      org.apache.camel.converter;
+      org.apache.camel.converter.jaxp;
+      org.apache.camel.impl.converter;
+      org.apache.camel.impl.event;
+      org.apache.camel.impl.health;
+      org.apache.camel.impl.saga;
+      org.apache.camel.impl.scan;
+      org.apache.camel.impl.validator;
+      org.apache.camel.runtimecatalog.impl;
+      org.apache.camel.support.dump;
+      org.apache.camel.throttling;
+        -noimport:=true
+    </camel.osgi.export.pkg>
+    <camel.osgi.import.pkg>
+      =org.apache.camel,
+      *
+    </camel.osgi.import.pkg>
+    <!-- do not skip any tests by default -->
+    <platform.skip.tests/>
+  </properties>
+
   <dependencies>
 
     <!-- required dependencies by camel-core -->

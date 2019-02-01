@@ -34,6 +34,24 @@
   <name>Camel :: API</name>
   <description>The Camel API</description>
 
+  <properties>
+    <camel.osgi.export.pkg>
+      org.apache.camel;
+      org.apache.camel.cluster;
+      org.apache.camel.component.extension;
+      org.apache.camel.health;
+      org.apache.camel.runtimecatalog;
+      org.apache.camel.spi;
+      org.apache.camel.support.jsse;
+      org.apache.camel.support.service;
+        -noimport:=true
+    </camel.osgi.export.pkg>
+    <camel.osgi.import.pkg>
+      =org.apache.camel.util.concurrent,
+      *
+    </camel.osgi.import.pkg>
+  </properties>
+
   <dependencies>
 
     <dependency>
