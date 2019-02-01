@@ -36,12 +36,17 @@
 
   <dependencies>
 
+    <!-- required dependencies by camel-core -->
+    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
+
+    <!-- required dependencies by camel-core -->
+    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>meta-annotations</artifactId>
@@ -222,9 +227,51 @@
           <execution>
             <id>generate</id>
             <goals>
+              <goal>generate-jaxb-list</goal>
               <goal>generate-legal</goal>
             </goals>
             <phase>process-classes</phase>
+          </execution>
+          <execution>
+            <id>readme</id>
+            <goals>
+              <goal>update-readme</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-generated-resources</id>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/components</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/dataformats</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/languages</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/models</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/jaxb</directory>
+                </resource>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/legal</directory>
+                </resource>
+              </resources>
+            </configuration>
           </execution>
         </executions>
       </plugin>

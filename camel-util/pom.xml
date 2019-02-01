@@ -36,6 +36,23 @@
 
   <dependencies>
 
+    <!-- required dependencies by camel-core -->
+    <!-- it will be shade into camel-core by bnd plugin -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>spi-annotations</artifactId>
+      <version>${project.version}</version>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- we shade our patched ordered json-simple parser -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-util-json</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- required dependencies by camel-core -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -58,6 +75,17 @@
       <artifactId>java-hamcrest</artifactId>
       <version>${hamcrest-version}</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
