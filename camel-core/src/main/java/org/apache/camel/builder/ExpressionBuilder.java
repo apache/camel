@@ -1946,7 +1946,7 @@ public final class ExpressionBuilder {
                     if (date == null) {
                         throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
                     }
-                } else if (command.startsWith("property.")) {
+                } else if (command.startsWith("property.") || command.startsWith("exchangeProperty.")) {
                     String key = command.substring(command.lastIndexOf('.') + 1);
                     date = exchange.getProperty(key, Date.class);
                     if (date == null) {
