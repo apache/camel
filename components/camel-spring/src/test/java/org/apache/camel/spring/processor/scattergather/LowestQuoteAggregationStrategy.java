@@ -16,8 +16,8 @@
  */
 package org.apache.camel.spring.processor.scattergather;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Exchange;
 
 // START SNIPPET: e1
 public class LowestQuoteAggregationStrategy implements AggregationStrategy {
