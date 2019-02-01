@@ -55,6 +55,7 @@ import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -397,10 +398,10 @@ public class MailBinding {
                         Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                         while (iter.hasNext()) {
                             Object value = iter.next();
-                            mimeMessage.addHeader(headerName, asString(exchange, value));
+                            mimeMessage.addHeader(StringHelper.removeCRLF(headerName), asString(exchange, value));
                         }
                     } else {
-                        mimeMessage.setHeader(headerName, asString(exchange, headerValue));
+                        mimeMessage.setHeader(StringHelper.removeCRLF(headerName), asString(exchange, headerValue));
                     }
                 }
             }
@@ -417,10 +418,12 @@ public class MailBinding {
                     Iterator<?> iter = ObjectHelper.createIterator(headerValue);
                     while (iter.hasNext()) {
                         Object recipient = iter.next();
-                        appendRecipientToMimeMessage(mimeMessage, configuration, exchange, headerName, asString(exchange, recipient));
+                        appendRecipientToMimeMessage(mimeMessage, configuration, exchange,
+                                                     StringHelper.removeCRLF(headerName), asString(exchange, recipient));
                     }
                 } else {
-                    appendRecipientToMimeMessage(mimeMessage, configuration, exchange, headerName, asString(exchange, headerValue));
+                    appendRecipientToMimeMessage(mimeMessage, configuration, exchange,
+                                                 StringHelper.removeCRLF(headerName), asString(exchange, headerValue));
                 }
             }
         }
@@ -719,7 +722,8 @@ public class MailBinding {
     }
 
     private static String asString(Exchange exchange, Object value) {
-        return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+        String strValue = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+        return StringHelper.removeCRLF(strValue);
     }
 
     /**

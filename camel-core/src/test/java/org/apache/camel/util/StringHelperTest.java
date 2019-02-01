@@ -38,6 +38,27 @@ public class StringHelperTest extends TestCase {
         assertTrue("Should not contain . ", out.indexOf('.') == -1);
     }
 
+    public void testSimpleCRLF() {
+        String out = StringHelper.removeCRLF("hello");
+        assertEquals("hello", out);
+        assertTrue("Should not contain : ", !out.contains("\r"));
+        assertTrue("Should not contain : ", !out.contains("\n"));
+
+        out = StringHelper.removeCRLF("hello\r\n");
+        assertEquals("hello", out);
+        assertTrue("Should not contain : ", !out.contains("\r"));
+        assertTrue("Should not contain : ", !out.contains("\n"));
+
+        out = StringHelper.removeCRLF("\r\nhe\r\nllo\n");
+        assertEquals("hello", out);
+        assertTrue("Should not contain : ", !out.contains("\r"));
+        assertTrue("Should not contain : ", !out.contains("\n"));
+
+        out = StringHelper.removeCRLF("hello" + System.lineSeparator());
+        assertEquals("hello", out);
+        assertTrue("Should not contain : ", !out.contains(System.lineSeparator()));
+    }
+
     public void testCountChar() {
         assertEquals(0, StringHelper.countChar("Hello World", 'x'));
         assertEquals(1, StringHelper.countChar("Hello World", 'e'));
