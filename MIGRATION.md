@@ -60,6 +60,8 @@ The class `JNDIContext` has been moved from `org.apache.camel.util.jndi.JNDICont
 
 The class `EventHelper` has been moved from `org.apache.camel.util.EventHelper` in the camel-core JAR to `org.apache.camel.support.support.EventHelper` and moved to the `camel-support` JAR.
 
+The class `GZIPHelper` has been moved from `org.apache.camel.util.GZIPHelper` in the camel-core JAR to `org.apache.camel.support.support.GZIPHelper` and moved to the `camel-support` JAR.
+
 The class `FileIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.FileIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.FileIdempotentRepository` and moved to the `camel-suppor` JAR.
 
 The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.processor.idempotent.MemoryIdempotentRepository` in the camel-core JAR to `org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository` and moved to the `camel-suppor` JAR.
