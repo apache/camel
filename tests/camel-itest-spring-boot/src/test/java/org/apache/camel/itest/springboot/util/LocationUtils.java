@@ -32,7 +32,7 @@ public final class LocationUtils {
         try {
             File root = new File(".").getCanonicalFile();
             while (root != null) {
-                File[] names = root.listFiles(pathname -> pathname.getName().equals("camel-core"));
+                File[] names = root.listFiles(pathname -> pathname.getName().equals("core"));
                 if (names != null && names.length == 1) {
                     break;
                 }
