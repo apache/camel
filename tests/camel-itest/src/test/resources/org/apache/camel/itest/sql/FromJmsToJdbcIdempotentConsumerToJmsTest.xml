@@ -56,7 +56,7 @@
     </bean>
 
     <!-- define the activemq Camel component so we can integrate with the AMQ broker below -->
-    <bean id="activemq2" class="org.apache.activemq.camel.component.ActiveMQComponent" depends-on="my-broker2">
+    <bean id="activemq2" class="org.apache.camel.component.activemq.ActiveMQComponent" depends-on="my-broker2">
         <!-- must indicate that we use transacted acknowledge mode -->
         <property name="transacted" value="true"/>
         <!-- refer to the transaction manager -->
