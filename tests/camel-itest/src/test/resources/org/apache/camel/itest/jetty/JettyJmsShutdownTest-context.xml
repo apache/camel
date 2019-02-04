@@ -26,7 +26,7 @@
 
     <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
     
-    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
         <property name="acceptMessagesWhileStopping" value="true"/>
     </bean>
