@@ -17,8 +17,7 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -29,17 +28,20 @@
     <relativePath>../parent</relativePath>
   </parent>
 
-  <artifactId>camel-util-json</artifactId>
-  <name>Camel :: Util :: JSon</name>
-  <description>A json simple parser that preserves the ordering in Map as read from JSon source</description>
+  <artifactId>core</artifactId>
+  <name>Camel :: Core</name>
+  <description>Camel Core Modules</description>
+  <packaging>pom</packaging>
 
-  <dependencies>
-
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
+  <modules>
+    <module>camel-util</module>
+    <module>camel-util-json</module>
+    <module>camel-api</module>
+    <module>camel-support</module>
+    <module>camel-management-api</module>
+    <module>camel-management-impl</module>
+    <module>camel-base</module>
+    <module>camel-core</module>
+  </modules>
+  
 </project>

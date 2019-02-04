@@ -24,9 +24,9 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
+    <artifactId>core</artifactId>
     <version>3.0.0-SNAPSHOT</version>
-    <relativePath>../parent</relativePath>
+    <relativePath>..</relativePath>
   </parent>
 
   <artifactId>camel-core</artifactId>

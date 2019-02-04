@@ -24,30 +24,23 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
+    <artifactId>core</artifactId>
     <version>3.0.0-SNAPSHOT</version>
-    <relativePath>../parent</relativePath>
+    <relativePath>..</relativePath>
   </parent>
 
-  <artifactId>camel-api</artifactId>
+  <artifactId>camel-management-impl</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: API</name>
-  <description>The Camel API</description>
+  <name>Camel :: Management Implementation</name>
+  <description>The Camel Management Implementation</description>
 
   <properties>
     <camel.osgi.export.pkg>
-      org.apache.camel;
-      org.apache.camel.cluster;
-      org.apache.camel.component.extension;
-      org.apache.camel.health;
-      org.apache.camel.runtimecatalog;
-      org.apache.camel.spi;
-      org.apache.camel.support.jsse;
-      org.apache.camel.support.service;
+      org.apache.camel.management;
+      org.apache.camel.management.mbean;
         -noimport:=true
     </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
-      =org.apache.camel.util.concurrent,
       *
     </camel.osgi.import.pkg>
   </properties>
@@ -76,6 +69,12 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-util-json</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -85,42 +84,70 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
+    <!-- testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>java-hamcrest</artifactId>
+      <version>${hamcrest-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.awaitility</groupId>
+      <artifactId>awaitility</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>hamcrest-core</artifactId>
+          <groupId>org.hamcrest</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
-            <id>jaxb-list</id>
             <goals>
-              <goal>generate-jaxb-list</goal>
+              <goal>test-jar</goal>
             </goals>
-            <phase>process-classes</phase>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-generated-resources</id>
-            <goals>
-              <goal>resources</goal>
-            </goals>
-            <phase>process-classes</phase>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>${basedir}/target/generated/camel/jaxb</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
+        <configuration>
+          <excludes>
+            <exclude>log4j.properties</exclude>
+          </excludes>
+        </configuration>
       </plugin>
     </plugins>
   </build>
