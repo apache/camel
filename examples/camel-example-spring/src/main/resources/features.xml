@@ -31,12 +31,11 @@
        <bundle>mvn:org.apache.activemq/activemq-core/${activemq-version}</bundle>
        <bundle>mvn:org.apache.activemq/activemq-ra/${activemq-version}</bundle>
        <bundle>mvn:org.apache.activemq/activemq-pool/${activemq-version}</bundle>
-       <bundle>mvn:org.apache.activemq/activemq-camel/${activemq-version}</bundle>
     </feature>
     
     <feature name='camel-example-spring' version='${project.version}'>
         <feature version="${project.version}">camel</feature>
-        <feature version="${project.version}">camel-jms</feature>
+        <feature version="${project.version}">camel-activemq</feature>
         <bundle>mvn:org.apache.camel.example/camel-example-spring/${project.version}</bundle>
     </feature>
 
