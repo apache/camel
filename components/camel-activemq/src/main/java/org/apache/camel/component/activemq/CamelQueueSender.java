@@ -27,8 +27,6 @@ import org.apache.camel.Endpoint;
 /**
  * A JMS {@link javax.jms.QueueSender} which sends message exchanges to a Camel
  * {@link org.apache.camel.Endpoint}
- * 
- * 
  */
 public class CamelQueueSender extends CamelMessageProducer implements QueueSender {
 
@@ -41,7 +39,7 @@ public class CamelQueueSender extends CamelMessageProducer implements QueueSende
      * 
      * @return this sender's queue
      * @throws JMSException if the JMS provider fails to get the queue for this
-     *                 <CODE>QueueSender</CODE> due to some internal error.
+     *             <CODE>QueueSender</CODE> due to some internal error.
      */
 
     public Queue getQueue() throws JMSException {
@@ -50,16 +48,18 @@ public class CamelQueueSender extends CamelMessageProducer implements QueueSende
 
     /**
      * Sends a message to a queue for an unidentified message producer. Uses the
-     * <CODE>QueueSender</CODE>'s default delivery mode, priority, and time
-     * to live. <p/> <p/> Typically, a message producer is assigned a queue at
-     * creation time; however, the JMS API also supports unidentified message
-     * producers, which require that the queue be supplied every time a message
-     * is sent.
+     * <CODE>QueueSender</CODE>'s default delivery mode, priority, and time to
+     * live.
+     * <p/>
+     * <p/>
+     * Typically, a message producer is assigned a queue at creation time;
+     * however, the JMS API also supports unidentified message producers, which
+     * require that the queue be supplied every time a message is sent.
      * 
      * @param queue the queue to send this message to
      * @param message the message to send
      * @throws JMSException if the JMS provider fails to send the message due to
-     *                 some internal error.
+     *             some internal error.
      * @see javax.jms.MessageProducer#getDeliveryMode()
      * @see javax.jms.MessageProducer#getTimeToLive()
      * @see javax.jms.MessageProducer#getPriority()
@@ -71,10 +71,12 @@ public class CamelQueueSender extends CamelMessageProducer implements QueueSende
 
     /**
      * Sends a message to a queue for an unidentified message producer,
-     * specifying delivery mode, priority and time to live. <p/> <p/> Typically,
-     * a message producer is assigned a queue at creation time; however, the JMS
-     * API also supports unidentified message producers, which require that the
-     * queue be supplied every time a message is sent.
+     * specifying delivery mode, priority and time to live.
+     * <p/>
+     * <p/>
+     * Typically, a message producer is assigned a queue at creation time;
+     * however, the JMS API also supports unidentified message producers, which
+     * require that the queue be supplied every time a message is sent.
      * 
      * @param queue the queue to send this message to
      * @param message the message to send
@@ -82,7 +84,7 @@ public class CamelQueueSender extends CamelMessageProducer implements QueueSende
      * @param priority the priority for this message
      * @param timeToLive the message's lifetime (in milliseconds)
      * @throws JMSException if the JMS provider fails to send the message due to
-     *                 some internal error.
+     *             some internal error.
      */
 
     public void send(Queue queue, Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {

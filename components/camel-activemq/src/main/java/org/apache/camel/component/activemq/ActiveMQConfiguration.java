@@ -17,6 +17,7 @@
 package org.apache.camel.component.activemq;
 
 import java.lang.reflect.Constructor;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.Service;
@@ -33,7 +34,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class ActiveMQConfiguration extends JmsConfiguration {
     private ActiveMQComponent activeMQComponent;
     private String brokerURL = ActiveMQConnectionFactory.DEFAULT_BROKER_URL;
-    private boolean useSingleConnection = false;
+    private boolean useSingleConnection;
     private boolean usePooledConnection = true;
     private boolean trustAllPackages;
 
@@ -46,7 +47,8 @@ public class ActiveMQConfiguration extends JmsConfiguration {
 
     /**
      * Sets the broker URL to use to connect to ActiveMQ using the
-     * <a href="http://activemq.apache.org/configuring-transports.html">ActiveMQ URI format</a>
+     * <a href="http://activemq.apache.org/configuring-transports.html">ActiveMQ
+     * URI format</a>
      *
      * @param brokerURL the URL of the broker.
      */
@@ -77,10 +79,11 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     }
 
     /**
-     * Enables or disables whether a Spring {@link SingleConnectionFactory} will be used so that when
-     * messages are sent to ActiveMQ from outside of a message consuming thread, pooling will be used rather
-     * than the default with the Spring {@link JmsTemplate} which will create a new connection, session, producer
-     * for each message then close them all down again.
+     * Enables or disables whether a Spring {@link SingleConnectionFactory} will
+     * be used so that when messages are sent to ActiveMQ from outside of a
+     * message consuming thread, pooling will be used rather than the default
+     * with the Spring {@link JmsTemplate} which will create a new connection,
+     * session, producer for each message then close them all down again.
      * <p/>
      * The default value is false and a pooled connection is used by default.
      */
@@ -93,12 +96,14 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     }
 
     /**
-     * Enables or disables whether a PooledConnectionFactory will be used so that when
-     * messages are sent to ActiveMQ from outside of a message consuming thread, pooling will be used rather
-     * than the default with the Spring {@link JmsTemplate} which will create a new connection, session, producer
-     * for each message then close them all down again.
+     * Enables or disables whether a PooledConnectionFactory will be used so
+     * that when messages are sent to ActiveMQ from outside of a message
+     * consuming thread, pooling will be used rather than the default with the
+     * Spring {@link JmsTemplate} which will create a new connection, session,
+     * producer for each message then close them all down again.
      * <p/>
-     * The default value is true. Note that this requires an extra dependency on commons-pool2.
+     * The default value is true. Note that this requires an extra dependency on
+     * commons-pool2.
      */
     public void setUsePooledConnection(boolean usePooledConnection) {
         this.usePooledConnection = usePooledConnection;
@@ -109,12 +114,13 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     }
 
     /**
-     * ObjectMessage objects depend on Java serialization of marshal/unmarshal object payload.
-     * This process is generally considered unsafe as malicious payload can exploit the host system.
-     * That's why starting with versions 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist packages
-     * that can be exchanged using ObjectMessages.
-     * <br/>
-     * This option can be set to <tt>true</tt> to trust all packages (eg whitelist is *).
+     * ObjectMessage objects depend on Java serialization of marshal/unmarshal
+     * object payload. This process is generally considered unsafe as malicious
+     * payload can exploit the host system. That's why starting with versions
+     * 5.12.2 and 5.13.0, ActiveMQ enforces users to explicitly whitelist
+     * packages that can be exchanged using ObjectMessages. <br/>
+     * This option can be set to <tt>true</tt> to trust all packages (eg
+     * whitelist is *).
      * <p/>
      * See more details at: http://activemq.apache.org/objectmessage.html
      */
@@ -123,7 +129,8 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     }
 
     /**
-     * Factory method to create a default transaction manager if one is not specified
+     * Factory method to create a default transaction manager if one is not
+     * specified
      */
     @Override
     protected PlatformTransactionManager createTransactionManager() {
@@ -156,28 +163,26 @@ public class ActiveMQConfiguration extends JmsConfiguration {
                 activeMQComponent.addSingleConnectionFactory(scf);
             }
             return scf;
-        }
-        else if (isUsePooledConnection()) {
+        } else if (isUsePooledConnection()) {
             ConnectionFactory pcf = createPooledConnectionFactory(answer);
             if (activeMQComponent != null) {
-                activeMQComponent.addPooledConnectionFactoryService((Service) pcf);
+                activeMQComponent.addPooledConnectionFactoryService((Service)pcf);
             }
             return pcf;
-        }
-        else {
+        } else {
             return answer;
         }
     }
 
     protected ConnectionFactory createPooledConnectionFactory(ActiveMQConnectionFactory connectionFactory) {
-        // lets not use classes directly to avoid a runtime dependency on commons-pool2
+        // lets not use classes directly to avoid a runtime dependency on
+        // commons-pool2
         // for folks not using this option
         try {
             Class type = loadClass("org.apache.activemq.pool.PooledConnectionFactory", getClass().getClassLoader());
             Constructor constructor = type.getConstructor(org.apache.activemq.ActiveMQConnectionFactory.class);
-            return (ConnectionFactory) constructor.newInstance(connectionFactory);
-        }
-        catch (Exception e) {
+            return (ConnectionFactory)constructor.newInstance(connectionFactory);
+        } catch (Exception e) {
             throw new RuntimeException("Failed to instantiate PooledConnectionFactory: " + e, e);
         }
     }
@@ -187,12 +192,10 @@ public class ActiveMQConfiguration extends JmsConfiguration {
         if (contextClassLoader != null) {
             try {
                 return contextClassLoader.loadClass(name);
-            }
-            catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException e) {
                 try {
                     return loader.loadClass(name);
-                }
-                catch (ClassNotFoundException e1) {
+                } catch (ClassNotFoundException e1) {
                     throw e1;
                 }
             }

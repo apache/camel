@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,15 +26,16 @@ import org.apache.camel.Converter;
 public class ActiveMQConverter {
     /**
      * Converts a URL in ActiveMQ syntax to a destination such as to support
-     * "queue://foo.bar" or 'topic://bar.whatnot". Things default to queues if no scheme.
+     * "queue://foo.bar" or 'topic://bar.whatnot". Things default to queues if
+     * no scheme. This allows ActiveMQ destinations to be passed around as
+     * Strings and converted back again.
      *
-     * This allows ActiveMQ destinations to be passed around as Strings and converted back again.
-     *
-     * @param name is the name of the queue or the full URI using prefixes queue:// or topic://
+     * @param name is the name of the queue or the full URI using prefixes
+     *            queue:// or topic://
      * @return the ActiveMQ destination
      */
     @Converter
-    public static ActiveMQDestination toDestination(String name) {
+    public ActiveMQDestination toDestination(String name) {
         return ActiveMQDestination.createDestination(name, ActiveMQDestination.QUEUE_TYPE);
     }
 

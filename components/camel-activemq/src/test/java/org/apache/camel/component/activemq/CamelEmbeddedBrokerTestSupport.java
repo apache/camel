@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,11 +28,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.jndi.JndiContext;
 
-
 /**
  * A helper class for test cases which use an embedded broker and use Camel to
  * do the routing
- *
  */
 public abstract class CamelEmbeddedBrokerTestSupport extends EmbeddedBrokerTestSupport {
     protected CamelContext camelContext;
@@ -67,7 +64,7 @@ public abstract class CamelEmbeddedBrokerTestSupport extends EmbeddedBrokerTestS
         return new DefaultCamelContext(createJndiContext());
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Context createJndiContext() throws Exception {
         return new JndiContext(new Hashtable());
     }
@@ -78,8 +75,7 @@ public abstract class CamelEmbeddedBrokerTestSupport extends EmbeddedBrokerTestS
     /**
      * Resolves a mandatory endpoint for the given URI or an exception is thrown
      *
-     * @param uri
-     *            the Camel <a href="">URI</a> to use to create or resolve an
+     * @param uri the Camel <a href="">URI</a> to use to create or resolve an
      *            endpoint
      * @return the endpoint
      */
@@ -91,8 +87,7 @@ public abstract class CamelEmbeddedBrokerTestSupport extends EmbeddedBrokerTestS
      * Resolves a mandatory endpoint for the given URI and expected type or an
      * exception is thrown
      *
-     * @param uri
-     *            the Camel <a href="">URI</a> to use to create or resolve an
+     * @param uri the Camel <a href="">URI</a> to use to create or resolve an
      *            endpoint
      * @return the endpoint
      */
@@ -126,8 +121,7 @@ public abstract class CamelEmbeddedBrokerTestSupport extends EmbeddedBrokerTestS
      * Resolves the mandatory Mock endpoint using a URI of the form
      * <code>mock:someName</code>
      *
-     * @param uri
-     *            the URI which typically starts with "mock:" and has some name
+     * @param uri the URI which typically starts with "mock:" and has some name
      * @return the mandatory mock endpoint or an exception is thrown if it could
      *         not be resolved
      */

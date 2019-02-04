@@ -24,9 +24,8 @@ import org.apache.camel.CamelContextAware;
 
 /**
  * A JMS ConnectionFactory which resolves non-JMS destinations or instances of
- * {@link CamelDestination} to use the {@link CamelContext} to perform smart routing etc
- *
- * 
+ * {@link CamelDestination} to use the {@link CamelContext} to perform smart
+ * routing etc
  */
 public class CamelConnectionFactory extends ActiveMQConnectionFactory implements CamelContextAware {
     private CamelContext camelContext;
@@ -43,7 +42,7 @@ public class CamelConnectionFactory extends ActiveMQConnectionFactory implements
     }
 
     // Implementation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     protected CamelConnection createActiveMQConnection(Transport transport, JMSStatsImpl stats) throws Exception {
         CamelConnection connection = new CamelConnection(transport, getClientIdGenerator(), getConnectionIdGenerator(), stats);
         CamelContext context = getCamelContext();

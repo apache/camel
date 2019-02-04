@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,8 +16,22 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.jms.Connection;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.*;
+import org.apache.activemq.broker.BrokerPlugin;
+import org.apache.activemq.broker.BrokerPluginSupport;
+import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.broker.ConnectionContext;
+import org.apache.activemq.broker.ProducerBrokerExchange;
+import org.apache.activemq.broker.TransportConnector;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ConnectionInfo;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
@@ -27,23 +41,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import javax.jms.*;
-import javax.jms.Connection;
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class JmsBridge extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsBridge.class);
 
-    BrokerService brokerSub = null;
-    BrokerService brokerPub = null;
+    BrokerService brokerSub;
+    BrokerService brokerPub;
 
     int messageCount;
     final int backLog = 50;
     final int errorLimit = 10;
     AtomicInteger sendCount = new AtomicInteger();
     AtomicInteger connectionCount = new AtomicInteger();
-
 
     @Test
     public void testBridgeWorks() throws Exception {
@@ -108,7 +117,7 @@ public class JmsBridge extends CamelSpringTestSupport {
 
         try {
             brokerSub = createBroker("sub", 61617, true);
-            brokerSub.setPlugins(new BrokerPlugin[]{new BrokerPluginSupport() {
+            brokerSub.setPlugins(new BrokerPlugin[] {new BrokerPluginSupport() {
                 @Override
                 public void send(ProducerBrokerExchange producerExchange, org.apache.activemq.command.Message messageSend) throws Exception {
                     if (sendCount.incrementAndGet() <= errorLimit) {
@@ -119,7 +128,7 @@ public class JmsBridge extends CamelSpringTestSupport {
 
                 @Override
                 public void addConnection(ConnectionContext context, ConnectionInfo info) throws Exception {
-                    if (((TransportConnector) context.getConnector()).getConnectUri().getScheme().equals("tcp") && connectionCount.incrementAndGet() <= errorLimit) {
+                    if (((TransportConnector)context.getConnector()).getConnectUri().getScheme().equals("tcp") && connectionCount.incrementAndGet() <= errorLimit) {
                         throw new SecurityException("You need to try connect " + errorLimit + " times!");
                     }
                     super.addConnection(context, info);
@@ -129,7 +138,6 @@ public class JmsBridge extends CamelSpringTestSupport {
 
             brokerPub = createBroker("pub", 61616, true);
             brokerPub.start();
-
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to start broker", e);

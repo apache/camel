@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -36,15 +35,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A helper bean which populates a {@link CamelContext} with ActiveMQ Queue endpoints
+ * A helper bean which populates a {@link CamelContext} with ActiveMQ Queue
+ * endpoints
  *
  * @org.apache.xbean.XBean
  */
 public class CamelEndpointLoader implements CamelContextAware {
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelEndpointLoader.class);
+    DestinationSource source;
     private CamelContext camelContext;
     private ActiveMQComponent component;
-    DestinationSource source;
 
     public CamelEndpointLoader() {
     }
@@ -55,11 +55,9 @@ public class CamelEndpointLoader implements CamelContextAware {
     }
 
     /**
-     * JSR-250 callback wrapper; converts checked exceptions to runtime exceptions
-     *
-     * delegates to afterPropertiesSet, done to prevent backwards incompatible signature change
-     *
-     * fix: AMQ-4676
+     * JSR-250 callback wrapper; converts checked exceptions to runtime
+     * exceptions delegates to afterPropertiesSet, done to prevent backwards
+     * incompatible signature change fix: AMQ-4676
      */
     @PostConstruct
     private void postConstruct() {
@@ -71,7 +69,6 @@ public class CamelEndpointLoader implements CamelContextAware {
     }
 
     /**
-     *
      * @throws Exception
      * @org.apache.xbean.InitMethod
      */
@@ -83,14 +80,14 @@ public class CamelEndpointLoader implements CamelContextAware {
                     try {
                         ActiveMQDestination destination = event.getDestination();
                         if (destination instanceof ActiveMQQueue) {
-                            ActiveMQQueue queue = (ActiveMQQueue) destination;
+                            ActiveMQQueue queue = (ActiveMQQueue)destination;
                             if (event.isAddOperation()) {
                                 addQueue(queue);
                             } else {
                                 removeQueue(queue);
                             }
                         } else if (destination instanceof ActiveMQTopic) {
-                            ActiveMQTopic topic = (ActiveMQTopic) destination;
+                            ActiveMQTopic topic = (ActiveMQTopic)destination;
                             if (event.isAddOperation()) {
                                 addTopic(topic);
                             } else {
@@ -116,7 +113,7 @@ public class CamelEndpointLoader implements CamelContextAware {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
@@ -139,7 +136,7 @@ public class CamelEndpointLoader implements CamelContextAware {
     }
 
     // Implementation methods
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     protected void addQueue(ActiveMQQueue queue) throws Exception {
         String queueUri = getQueueUri(queue);

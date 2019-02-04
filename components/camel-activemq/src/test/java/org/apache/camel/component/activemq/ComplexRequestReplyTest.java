@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.concurrent.TimeUnit;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -26,7 +24,6 @@ import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
 import org.junit.Before;
@@ -34,24 +31,26 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertNotNull;
+
 public class ComplexRequestReplyTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComplexRequestReplyTest.class);
 
-    private BrokerService brokerA = null;
-    private BrokerService brokerB = null;
-    private CamelContext senderContext = null;
-    private CamelContext brokerAContext = null;
-    private CamelContext brokerBContext = null;
-
-    private final String fromEndpoint = "direct:test";
-    private final String toEndpoint = "activemq:queue:send";
-    private final String brokerEndpoint = "activemq:send";
-
+    private BrokerService brokerA;
+    private BrokerService brokerB;
+    private CamelContext senderContext;
+    private CamelContext brokerAContext;
+    private CamelContext brokerBContext;
+    
     private String brokerAUri;
     private String brokerBUri;
 
     private String connectionUri;
+
+    private final String fromEndpoint = "direct:test";
+    private final String toEndpoint = "activemq:queue:send";
+    private final String brokerEndpoint = "activemq:send";
 
     @Before
     public void setUp() throws Exception {
@@ -69,11 +68,13 @@ public class ComplexRequestReplyTest {
     public void tearDown() throws Exception {
         try {
             shutdownBrokerA();
-        } catch (Exception ex) {}
+        } catch (Exception ex) {
+        }
 
         try {
             shutdownBrokerB();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
     }
 
     @Test
@@ -81,29 +82,30 @@ public class ComplexRequestReplyTest {
 
         ProducerTemplate requester = senderContext.createProducerTemplate();
         LOG.info("*** Sending Request 1");
-        String response = (String) requester.requestBody(fromEndpoint, "This is a request");
+        String response = (String)requester.requestBody(fromEndpoint, "This is a request");
         assertNotNull(response != null);
         LOG.info("Got response: " + response);
 
         /**
-         * You actually don't need to restart the broker, just wait long enough and the next
-         * next send will take out a closed connection and reconnect, and if you happen to hit
-         * the broker you weren't on last time, then you will see the failure.
+         * You actually don't need to restart the broker, just wait long enough
+         * and the next next send will take out a closed connection and
+         * reconnect, and if you happen to hit the broker you weren't on last
+         * time, then you will see the failure.
          */
 
         TimeUnit.SECONDS.sleep(20);
 
         /**
-         * I restart the broker after the wait that exceeds the idle timeout value of the
-         * PooledConnectionFactory to show that it doesn't matter now as the older connection
-         * has already been closed.
+         * I restart the broker after the wait that exceeds the idle timeout
+         * value of the PooledConnectionFactory to show that it doesn't matter
+         * now as the older connection has already been closed.
          */
         LOG.info("Restarting Broker A now.");
         shutdownBrokerA();
         createBrokerA();
 
         LOG.info("*** Sending Request 2");
-        response = (String) requester.requestBody(fromEndpoint, "This is a request");
+        response = (String)requester.requestBody(fromEndpoint, "This is a request");
         assertNotNull(response != null);
         LOG.info("Got response: " + response);
     }
@@ -182,8 +184,7 @@ public class ComplexRequestReplyTest {
     private CamelContext createBrokerCamelContext(String brokerName) throws Exception {
 
         CamelContext camelContext = new DefaultCamelContext();
-        camelContext.addComponent("activemq",
-                ActiveMQComponent.activeMQComponent("vm://"+brokerName+"?create=false&waitForStart=10000"));
+        camelContext.addComponent("activemq", ActiveMQComponent.activeMQComponent("vm://" + brokerName + "?create=false&waitForStart=10000"));
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,7 +31,6 @@ import org.apache.activemq.broker.TransportConnector;
 import org.apache.activemq.util.ThreadTracker;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -41,48 +39,48 @@ import org.slf4j.LoggerFactory;
 // see: https://issues.apache.org/activemq/browse/AMQ-2966
 public class CamelVMTransportRoutingTest extends TestCase {
 
-    private static final Logger log = LoggerFactory.getLogger(CamelVMTransportRoutingTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelVMTransportRoutingTest.class);
 
-    private BrokerService broker = null;
-    private TransportConnector connector = null;
-    private CamelContext camelContext = null;
+    private BrokerService broker;
+    private TransportConnector connector;
+    private CamelContext camelContext;
 
     private Connection senderConnection;
     private Connection receiverConnection1;
     private Connection receiverConnection2;
 
-    private final String MSG_STRING = "MESSAGE-TEXT";
-    private final String SENDER_TOPIC = "A";
-    private final String RECEIVER_TOPIC = "B";
+    private final String msgString = "MESSAGE-TEXT";
+    private final String senderTopic = "A";
+    private final String receiverTopic = "B";
 
     @SuppressWarnings("unused")
     public void testSendReceiveWithCamelRouteIntercepting() throws Exception {
 
-        final int MSG_COUNT = 1000;
+        final int msgCount = 1000;
 
         Session sendSession = senderConnection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Session receiverSession1 = receiverConnection1.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Session receiverSession2 = receiverConnection2.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-        Destination sendTo = sendSession.createTopic(SENDER_TOPIC);
-        Destination receiveFrom = receiverSession1.createTopic(RECEIVER_TOPIC);
+        Destination sendTo = sendSession.createTopic(senderTopic);
+        Destination receiveFrom = receiverSession1.createTopic(receiverTopic);
 
-        TextMessage message = sendSession.createTextMessage(MSG_STRING);
+        TextMessage message = sendSession.createTextMessage(msgString);
 
         MessageConsumer receiver1 = receiverSession1.createConsumer(receiveFrom);
         MessageConsumer receiver2 = receiverSession2.createConsumer(receiveFrom);
 
         MessageProducer sender = sendSession.createProducer(sendTo);
-        for( int i = 0; i < MSG_COUNT; ++i ) {
+        for (int i = 0; i < msgCount; ++i) {
             sender.send(message);
         }
 
-        for( int i = 0; i < MSG_COUNT; ++i ) {
+        for (int i = 0; i < msgCount; ++i) {
 
-            log.debug("Attempting Received for Message #" + i);
-            TextMessage received1 = (TextMessage) receiver1.receive(5000);
+            LOG.debug("Attempting Received for Message #" + i);
+            TextMessage received1 = (TextMessage)receiver1.receive(5000);
             Assert.assertNotNull(received1);
-            Assert.assertEquals(MSG_STRING, received1.getText());
+            Assert.assertEquals(msgString, received1.getText());
         }
     }
 
@@ -119,15 +117,15 @@ public class CamelVMTransportRoutingTest extends TestCase {
     @Override
     public void tearDown() throws Exception {
 
-        if( senderConnection != null ) {
+        if (senderConnection != null) {
             senderConnection.close();
         }
 
-        if( receiverConnection1 != null ) {
+        if (receiverConnection1 != null) {
             receiverConnection1.close();
         }
 
-        if( receiverConnection2 != null ) {
+        if (receiverConnection2 != null) {
             receiverConnection2.close();
         }
 
@@ -139,13 +137,12 @@ public class CamelVMTransportRoutingTest extends TestCase {
 
     private void createCamelContext() throws Exception {
 
-        final String fromEndpoint = "activemq:topic:" + SENDER_TOPIC;
-        final String toEndpoint = "activemq:topic:" + RECEIVER_TOPIC;
+        final String fromEndpoint = "activemq:topic:" + senderTopic;
+        final String toEndpoint = "activemq:topic:" + receiverTopic;
 
-        log.info("creating context and sending message");
+        LOG.info("creating context and sending message");
         camelContext = new DefaultCamelContext();
-        camelContext.addComponent("activemq",
-                ActiveMQComponent.activeMQComponent("vm://localhost?create=false&waitForStart=10000"));
+        camelContext.addComponent("activemq", ActiveMQComponent.activeMQComponent("vm://localhost?create=false&waitForStart=10000"));
         camelContext.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

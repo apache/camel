@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import org.apache.camel.component.activemq.ActiveMQComponent;
-import org.apache.camel.component.activemq.ActiveMQConfiguration;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -35,7 +33,7 @@ public class ActiveMQComponentFactoryUserNamePasswordTest extends CamelSpringTes
         ActiveMQComponent comp = context.getComponent("activemq", ActiveMQComponent.class);
         assertNotNull(comp);
 
-        ActiveMQConfiguration config = (ActiveMQConfiguration) comp.getConfiguration();
+        ActiveMQConfiguration config = (ActiveMQConfiguration)comp.getConfiguration();
         assertNotNull(config);
         assertEquals("admin2", config.getUserName());
         assertEquals("secret2", config.getPassword());

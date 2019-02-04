@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.activemq.EmbeddedBrokerTestSupport;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQDestination;
@@ -23,25 +27,14 @@ import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 /**
- * Shows that we can see the queues inside ActiveMQ via Camel
- * by enabling the {@link ActiveMQComponent#setExposeAllQueues(boolean)} flag
- *
- * 
+ * Shows that we can see the queues inside ActiveMQ via Camel by enabling the
+ * {@link ActiveMQComponent#setExposeAllQueues(boolean)} flag
  */
 public class AutoExposeQueuesInCamelTest extends EmbeddedBrokerTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(AutoExposeQueuesInCamelTest.class);
@@ -58,13 +51,14 @@ public class AutoExposeQueuesInCamelTest extends EmbeddedBrokerTestSupport {
         broker.getAdminView().addQueue("runtime");
 
         Thread.sleep(1000);
-        // Changed from using CamelContextHelper.getSingletonEndpoints here because JMS Endpoints in Camel
+        // Changed from using CamelContextHelper.getSingletonEndpoints here
+        // because JMS Endpoints in Camel
         // are always non-singleton
         List<BrowsableEndpoint> endpoints = getEndpoints(camelContext, BrowsableEndpoint.class);
         for (BrowsableEndpoint endpoint : endpoints) {
             LOG.debug("Endpoint: " + endpoint);
         }
-        assertEquals("Should have found an endpoint: "+ endpoints, 2, endpoints.size());
+        assertEquals("Should have found an endpoint: " + endpoints, 2, endpoints.size());
     }
 
     public <T> List<T> getEndpoints(CamelContext camelContext, Class<T> type) {
@@ -77,8 +71,8 @@ public class AutoExposeQueuesInCamelTest extends EmbeddedBrokerTestSupport {
             }
         }
         return answer;
-    }    
-    
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -98,14 +92,10 @@ public class AutoExposeQueuesInCamelTest extends EmbeddedBrokerTestSupport {
         super.tearDown();
     }
 
-
     @Override
     protected BrokerService createBroker() throws Exception {
         BrokerService broker = super.createBroker();
-        broker.setDestinations(new ActiveMQDestination[]{
-                sampleQueue,
-                sampleTopic
-        });
+        broker.setDestinations(new ActiveMQDestination[] {sampleQueue, sampleTopic});
         return broker;
     }
 

@@ -25,8 +25,6 @@ import org.apache.activemq.ActiveMQSession;
 
 /**
  * A JMS {@link javax.jms.Topic} object which refers to a Camel endpoint
- *
- * 
  */
 public class CamelTopic extends CamelDestination implements Topic {
 
@@ -45,6 +43,5 @@ public class CamelTopic extends CamelDestination implements Topic {
     public TopicSubscriber createDurableSubscriber(ActiveMQSession session, String name, String messageSelector, boolean noLocal) {
         return new CamelTopicSubscriber(this, resolveEndpoint(session), session, name, messageSelector, noLocal);
     }
-
 
 }

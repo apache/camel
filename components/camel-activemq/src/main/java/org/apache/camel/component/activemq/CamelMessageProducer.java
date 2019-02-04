@@ -34,11 +34,9 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A JMS {@link javax.jms.MessageProducer} which sends message exchanges to a
  * Camel {@link Endpoint}
- * 
- * 
  */
 public class CamelMessageProducer extends ActiveMQMessageProducerSupport {
-    
+
     protected Producer producer;
 
     private final CamelDestination destination;
@@ -88,8 +86,8 @@ public class CamelMessageProducer extends ActiveMQMessageProducerSupport {
             throw new IllegalArgumentException("Invalid destination setting: " + destination + " when expected: " + this.destination);
         }
         try {
-			Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
-			exchange.setIn(new JmsMessage(exchange, message, null, camelDestination.getBinding()));
+            Exchange exchange = endpoint.createExchange(ExchangePattern.InOnly);
+            exchange.setIn(new JmsMessage(exchange, message, null, camelDestination.getBinding()));
             producer.process(exchange);
         } catch (JMSException e) {
             throw e;

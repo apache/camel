@@ -33,8 +33,6 @@ import org.apache.camel.Processor;
 /**
  * A JMS {@link javax.jms.MessageConsumer} which consumes message exchanges from
  * a Camel {@link Endpoint}
- * 
- * 
  */
 public class CamelMessageConsumer implements MessageConsumer {
     private final CamelDestination destination;

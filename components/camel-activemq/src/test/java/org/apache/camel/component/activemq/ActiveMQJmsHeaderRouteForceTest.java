@@ -29,7 +29,8 @@ public class ActiveMQJmsHeaderRouteForceTest extends ActiveMQJmsHeaderRouteTest 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // do not map jms message as we want to tamper with the JMS message directly, and not use the Camel API for that
+                // do not map jms message as we want to tamper with the JMS
+                // message directly, and not use the Camel API for that
                 from("activemq:test.a?mapJmsMessage=false").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // lets set the custom JMS headers using the JMS API
@@ -37,9 +38,11 @@ public class ActiveMQJmsHeaderRouteForceTest extends ActiveMQJmsHeaderRouteTest 
 
                         jmsMessage.getJmsMessage().setJMSReplyTo(replyQueue);
                         jmsMessage.getJmsMessage().setJMSCorrelationID(correlationID);
-                        jmsMessage.getJmsMessage().setJMSType(messageType);                    }
-                // force sending the incoming JMS Message, as we want to tamper with the JMS API directly
-                // instead of using the Camel API for setting JMS headers.
+                        jmsMessage.getJmsMessage().setJMSType(messageType);
+                    }
+                    // force sending the incoming JMS Message, as we want to
+                    // tamper with the JMS API directly
+                    // instead of using the Camel API for setting JMS headers.
                 }).to("activemq:test.b?preserveMessageQos=true&forceSendOriginalMessage=true");
 
                 from("activemq:test.b").to("mock:result");

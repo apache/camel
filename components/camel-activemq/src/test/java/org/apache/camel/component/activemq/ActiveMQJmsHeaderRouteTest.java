@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.activemq;
 
-import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
-
 import java.util.Date;
 import java.util.List;
+
 import javax.jms.Destination;
 
 import org.apache.activemq.command.ActiveMQQueue;
@@ -33,6 +32,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
 
 /**
  * 

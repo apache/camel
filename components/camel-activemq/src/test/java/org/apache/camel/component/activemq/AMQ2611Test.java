@@ -23,7 +23,6 @@ import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +31,9 @@ public class AMQ2611Test extends TestCase {
 
     private static final String BROKER_URL = "tcp://localhost:61616";
     private static final String QUEUE_NAME = "test.queue";
-    private static final Logger log = LoggerFactory.getLogger(AMQ2611Test.class);
-    private BrokerService brokerService = null;
-    private CamelContext camelContext = null;
+    private static final Logger LOG = LoggerFactory.getLogger(AMQ2611Test.class);
+    private BrokerService brokerService;
+    private CamelContext camelContext;
 
     private void createBroker() throws Exception {
         brokerService = new BrokerService();
@@ -44,12 +43,12 @@ public class AMQ2611Test extends TestCase {
 
     public static class Consumer {
         public void consume(@Body String message) {
-            log.info("consume message = " + message);
+            LOG.info("consume message = " + message);
         }
     }
 
     private void createCamelContext() throws Exception {
-        log.info("creating context and sending message");
+        LOG.info("creating context and sending message");
         camelContext = new DefaultCamelContext();
         camelContext.addComponent("activemq", ActiveMQComponent.activeMQComponent(BROKER_URL));
         final String queueEndpointName = "activemq:queue" + QUEUE_NAME;
@@ -65,7 +64,7 @@ public class AMQ2611Test extends TestCase {
     }
 
     private void destroyCamelContext() throws Exception {
-        log.info("destroying context");
+        LOG.info("destroying context");
         camelContext.stop();
         camelContext = null;
     }
@@ -82,7 +81,7 @@ public class AMQ2611Test extends TestCase {
                 assertEquals(0, brokerService.getConnectorByName(BROKER_URL).getConnections().size());
             }
         } catch (Exception e) {
-            log.warn("run", e);
+            LOG.warn("run", e);
         }
     }
 }

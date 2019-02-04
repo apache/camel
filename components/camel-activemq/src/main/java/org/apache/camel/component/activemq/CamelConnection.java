@@ -30,8 +30,7 @@ public class CamelConnection extends ActiveMQConnection implements CamelContextA
 
     private CamelContext camelContext;
 
-    protected CamelConnection(Transport transport, IdGenerator clientIdGenerator,
-                              IdGenerator connectionIdGenerator, JMSStatsImpl factoryStats) throws Exception {
+    protected CamelConnection(Transport transport, IdGenerator clientIdGenerator, IdGenerator connectionIdGenerator, JMSStatsImpl factoryStats) throws Exception {
         super(transport, clientIdGenerator, connectionIdGenerator, factoryStats);
     }
 

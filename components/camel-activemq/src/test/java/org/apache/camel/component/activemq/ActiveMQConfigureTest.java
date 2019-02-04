@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.activemq;
 
-import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.activemq.pool.PooledConnectionFactory;
+import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.activemq.ActiveMQConfiguration;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsConsumer;
 import org.apache.camel.component.jms.JmsEndpoint;
@@ -27,9 +26,9 @@ import org.apache.camel.component.jms.JmsProducer;
 import org.apache.camel.support.processor.CamelLogProcessor;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
-import org.springframework.jms.connection.SingleConnectionFactory;
 
 /**
  * 
@@ -39,7 +38,7 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
     @Test
     public void testJmsTemplateUsesPoolingConnectionFactory() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:test.foo");
-        JmsProducer producer = (JmsProducer) endpoint.createProducer();
+        JmsProducer producer = (JmsProducer)endpoint.createProducer();
 
         JmsTemplate template = assertIsInstanceOf(JmsTemplate.class, producer.getInOutTemplate());
         assertEquals("pubSubDomain", false, template.isPubSubDomain());
@@ -49,7 +48,7 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
     @Test
     public void testJmsTemplateUsesSingleConnectionFactory() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:test.foo?useSingleConnection=true");
-        JmsProducer producer = (JmsProducer) endpoint.createProducer();
+        JmsProducer producer = (JmsProducer)endpoint.createProducer();
 
         JmsTemplate template = assertIsInstanceOf(JmsTemplate.class, producer.getInOutTemplate());
         assertEquals("pubSubDomain", false, template.isPubSubDomain());
@@ -61,7 +60,7 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
     public void testSessionTransactedWithoutTransactionManager() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:test.foo?transacted=true&lazyCreateTransactionManager=false");
         JmsConfiguration configuration = endpoint.getConfiguration();
-        
+
         assertIsInstanceOf(ActiveMQConfiguration.class, configuration);
 
         assertTrue("The JMS sessions are not transacted!", endpoint.isTransacted());
@@ -74,7 +73,7 @@ public class ActiveMQConfigureTest extends CamelTestSupport {
     @Test
     public void testJmsTemplateDoesNotUsePoolingConnectionFactory() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("activemq:test.foo?usePooledConnection=false");
-        JmsProducer producer = (JmsProducer) endpoint.createProducer();
+        JmsProducer producer = (JmsProducer)endpoint.createProducer();
 
         JmsTemplate template = assertIsInstanceOf(JmsTemplate.class, producer.getInOutTemplate());
         assertEquals("pubSubDomain", false, template.isPubSubDomain());

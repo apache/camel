@@ -24,10 +24,8 @@ import org.apache.activemq.ActiveMQSession;
 import org.apache.camel.Endpoint;
 
 /**
- * A JMS {@link javax.jms.TopicSubscriber} which consumes message exchanges from a
- * Camel {@link Endpoint}
- *
- * 
+ * A JMS {@link javax.jms.TopicSubscriber} which consumes message exchanges from
+ * a Camel {@link Endpoint}
  */
 public class CamelTopicSubscriber extends CamelMessageConsumer implements TopicSubscriber {
 
@@ -39,23 +37,23 @@ public class CamelTopicSubscriber extends CamelMessageConsumer implements TopicS
      * Gets the <CODE>Topic</CODE> associated with this subscriber.
      *
      * @return this subscriber's <CODE>Topic</CODE>
-     * @throws javax.jms.JMSException if the JMS provider fails to get the topic for this topic
-     *                                subscriber due to some internal error.
+     * @throws javax.jms.JMSException if the JMS provider fails to get the topic
+     *             for this topic subscriber due to some internal error.
      */
 
     public Topic getTopic() throws JMSException {
         checkClosed();
-        return (Topic) super.getDestination();
+        return (Topic)super.getDestination();
     }
 
     /**
-     * Gets the <CODE>NoLocal</CODE> attribute for this subscriber. The
-     * default value for this attribute is false.
+     * Gets the <CODE>NoLocal</CODE> attribute for this subscriber. The default
+     * value for this attribute is false.
      *
      * @return true if locally published messages are being inhibited
      * @throws JMSException if the JMS provider fails to get the <CODE>NoLocal
-     *                      </CODE> attribute for this topic subscriber due to some
-     *                      internal error.
+     *                      </CODE> attribute for this topic subscriber due to
+     *             some internal error.
      */
 
     public boolean getNoLocal() throws JMSException {
