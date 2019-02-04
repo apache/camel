@@ -29,7 +29,6 @@ public class CamelCxfTest extends BaseKarafTest {
     public void test() throws Exception {
         testComponent(COMPONENT, "cxf");
         testComponent(COMPONENT, "cxfrs");
-        testComponent(COMPONENT, "cxfbean");
     }
 
 }
