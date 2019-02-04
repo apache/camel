@@ -21,6 +21,7 @@
   <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf-version}/xml/features</repository>
   <repository>mvn:org.apache.jclouds.karaf/jclouds-karaf/${jclouds-version}/xml/features</repository>
   <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${pax-cdi-version}/xml/features</repository>
+  <repository>mvn:org.apache.activemq/activemq-karaf/${activemq-version}/xml/features-core</repository>
   <repository>mvn:org.hibernate.validator/hibernate-validator-osgi-karaf-features/${hibernate-validator-version}/xml/features</repository>
   <repository>mvn:ca.uhn.hapi.fhir.karaf/hapi-fhir/${hapi-fhir-version}/xml/features</repository>
 
@@ -101,7 +102,11 @@
   </feature>
 
   <!-- the following features are sorted A..Z -->
-
+  <feature name='camel-activemq' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-jms</feature>
+    <feature version='${activemq-version}'>activemq-client</feature>
+    <bundle>mvn:org.apache.camel/camel-activemq/${project.version}</bundle>
+  </feature>
   <feature name='camel-ahc' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>wrap:mvn:org.asynchttpclient/async-http-client/${ahc-version}$Export-Package=org.asynchttpclient.*;version=${ahc-version}</bundle>
