@@ -18,7 +18,7 @@ package org.apache.camel.example.widget;
 
 import javax.enterprise.inject.Produces;
 
-import org.apache.activemq.camel.component.ActiveMQComponent;
+import org.apache.camel.component.activemq.ActiveMQComponent;
 
 /**
  * To configure the widget-gadget application

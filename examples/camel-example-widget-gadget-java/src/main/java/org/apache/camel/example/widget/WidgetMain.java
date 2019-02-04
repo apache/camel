@@ -16,7 +16,7 @@
  */
 package org.apache.camel.example.widget;
 
-import org.apache.activemq.camel.component.ActiveMQComponent;
+import org.apache.camel.component.activemq.ActiveMQComponent;
 import org.apache.camel.main.Main;
 
 /**

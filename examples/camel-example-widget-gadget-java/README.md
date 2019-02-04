@@ -13,7 +13,7 @@ The example is implemented in plain Java without using any kind of _application 
 
 * camel-core
 * camel-jms
-* activemq-camel
+* camel-activemq
 
 ### Build
 
