@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,8 +19,8 @@ package org.apache.camel.component.activemq.converter;
 import java.io.Serializable;
 
 import javax.jms.JMSException;
-import javax.jms.MessageListener;
 import javax.jms.Message;
+import javax.jms.MessageListener;
 
 import org.apache.activemq.command.ActiveMQMessage;
 import org.apache.activemq.command.ActiveMQObjectMessage;
@@ -51,13 +50,14 @@ public class ActiveMQMessageConverter {
     }
 
     /**
-     * Allows a JMS {@link MessageListener} to be converted to a Camel {@link Processor}
-     * so that we can provide better
-     * <a href="">Bean Integration</a> so that we can use any JMS MessageListener in
-     * in Camel as a bean
+     * Allows a JMS {@link MessageListener} to be converted to a Camel
+     * {@link Processor} so that we can provide better <a href="">Bean
+     * Integration</a> so that we can use any JMS MessageListener in in Camel as
+     * a bean
+     * 
      * @param listener the JMS message listener
      * @return a newly created Camel Processor which when invoked will invoke
-     * {@link MessageListener#onMessage(Message)}
+     *         {@link MessageListener#onMessage(Message)}
      */
     @Converter
     public Processor toProcessor(final MessageListener listener) {
@@ -78,11 +78,11 @@ public class ActiveMQMessageConverter {
         Object body = exchange.getIn().getBody();
         if (body instanceof String) {
             ActiveMQTextMessage answer = new ActiveMQTextMessage();
-            answer.setText((String) body);
+            answer.setText((String)body);
             return answer;
         } else if (body instanceof Serializable) {
             ActiveMQObjectMessage answer = new ActiveMQObjectMessage();
-            answer.setObject((Serializable) body);
+            answer.setObject((Serializable)body);
             return answer;
         } else {
             return new ActiveMQMessage();
@@ -91,7 +91,7 @@ public class ActiveMQMessageConverter {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public JmsBinding getBinding() {
         return binding;
     }

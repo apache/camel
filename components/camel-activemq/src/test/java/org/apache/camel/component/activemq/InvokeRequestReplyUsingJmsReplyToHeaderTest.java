@@ -18,6 +18,7 @@ package org.apache.camel.component.activemq;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.jms.Destination;
 
 import org.apache.camel.CamelContext;
@@ -73,7 +74,7 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
 
         assertMessageHeader(in, "JMSCorrelationID", correlationID);
 
-        Map<String,Object> receivedHeaders = myBean.getHeaders();
+        Map<String, Object> receivedHeaders = myBean.getHeaders();
         assertThat(receivedHeaders, hasKey("JMSReplyTo"));
         assertThat(receivedHeaders, hasEntry("JMSXGroupID", groupID));
         assertThat(receivedHeaders, hasEntry("JMSCorrelationID", correlationID));
@@ -103,15 +104,15 @@ public class InvokeRequestReplyUsingJmsReplyToHeaderTest extends CamelTestSuppor
     }
 
     protected static class MyServer {
-        private Map<String,Object> headers;
+        private Map<String, Object> headers;
 
-        public String process(@Headers Map<String,Object> headers, String body) {
+        public String process(@Headers Map<String, Object> headers, String body) {
             this.headers = headers;
             LOG.info("process() invoked with headers: " + headers);
             return "Hello " + body;
         }
 
-        public Map<String,Object> getHeaders() {
+        public Map<String, Object> getHeaders() {
             return headers;
         }
     }

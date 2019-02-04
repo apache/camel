@@ -24,8 +24,8 @@ import javax.jms.Connection;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
-
 import javax.sql.DataSource;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerPlugin;
 import org.apache.activemq.broker.BrokerPluginSupport;
@@ -42,21 +42,16 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- *  shows broker 'once only delivery' and recovery with XA
+ * shows broker 'once only delivery' and recovery with XA
  */
 public class JmsJdbcXATest extends CamelSpringTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(JmsJdbcXATest.class);
-    BrokerService broker = null;
+    BrokerService broker;
     int messageCount;
 
     public java.sql.Connection initDb() throws Exception {
-        String createStatement =
-                "CREATE TABLE SCP_INPUT_MESSAGES (" +
-                        "id int NOT NULL GENERATED ALWAYS AS IDENTITY, " +
-                        "messageId varchar(96) NOT NULL, " +
-                        "messageCorrelationId varchar(96) NOT NULL, " +
-                        "messageContent varchar(2048) NOT NULL, " +
-                        "PRIMARY KEY (id) )";
+        String createStatement = "CREATE TABLE SCP_INPUT_MESSAGES (" + "id int NOT NULL GENERATED ALWAYS AS IDENTITY, " + "messageId varchar(96) NOT NULL, "
+                                 + "messageCorrelationId varchar(96) NOT NULL, " + "messageContent varchar(2048) NOT NULL, " + "PRIMARY KEY (id) )";
 
         java.sql.Connection conn = getJDBCConnection();
         try {
@@ -84,10 +79,7 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         ResultSet resultSet = jdbcConn.createStatement().executeQuery("SELECT * FROM SCP_INPUT_MESSAGES");
         while (resultSet.next()) {
             count++;
-            log.info("message - seq:" + resultSet.getInt(1)
-                    + ", id: " + resultSet.getString(2)
-                    + ", corr: " + resultSet.getString(3)
-                    + ", content: " + resultSet.getString(4));
+            log.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: " + resultSet.getString(3) + ", content: " + resultSet.getString(4));
         }
         return count;
     }
@@ -108,7 +100,8 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         broker.waitUntilStarted();
         assertEquals("pending transactions", 1, broker.getBroker().getPreparedTransactions(null).length);
 
-        // TM stays actively committing first message ack which won't get redelivered - xa once only delivery
+        // TM stays actively committing first message ack which won't get
+        // redelivered - xa once only delivery
         LOG.info("waiting for recovery to complete");
         assertTrue("recovery complete in time", Wait.waitFor(new Wait.Condition() {
             @Override
@@ -173,32 +166,29 @@ public class JmsJdbcXATest extends CamelSpringTestSupport {
         // make broker available to recovery processing on app context start
         try {
             broker = createBroker(true);
-            broker.setPlugins(new BrokerPlugin[]{
-                new BrokerPluginSupport() {
-                    @Override
-                    public void commitTransaction(ConnectionContext context,
-                                                  TransactionId xid, boolean onePhase) throws Exception {
-                        if (onePhase) {
-                            super.commitTransaction(context, xid, onePhase);
-                        } else {
-                            // die before doing the commit
-                            // so commit will hang as if reply is lost
-                            context.setDontSendReponse(true);
-                            Executors.newSingleThreadExecutor().execute(new Runnable() {
-                                @Override
-                                public void run() {
-                                    LOG.info("Stopping broker post commit...");
-                                    try {
-                                        broker.stop();
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
+            broker.setPlugins(new BrokerPlugin[] {new BrokerPluginSupport() {
+                @Override
+                public void commitTransaction(ConnectionContext context, TransactionId xid, boolean onePhase) throws Exception {
+                    if (onePhase) {
+                        super.commitTransaction(context, xid, onePhase);
+                    } else {
+                        // die before doing the commit
+                        // so commit will hang as if reply is lost
+                        context.setDontSendReponse(true);
+                        Executors.newSingleThreadExecutor().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                LOG.info("Stopping broker post commit...");
+                                try {
+                                    broker.stop();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            });
-                        }
+                            }
+                        });
                     }
                 }
-            });
+            }});
             broker.start();
         } catch (Exception e) {
             throw new RuntimeException("Failed to start broker", e);

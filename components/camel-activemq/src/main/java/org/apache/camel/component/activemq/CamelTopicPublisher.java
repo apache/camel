@@ -27,8 +27,6 @@ import org.apache.camel.Endpoint;
 /**
  * A JMS {@link javax.jms.TopicPublisher} which sends message exchanges to a
  * Camel {@link Endpoint}
- *
- * 
  */
 public class CamelTopicPublisher extends CamelMessageProducer implements TopicPublisher {
 
@@ -36,17 +34,16 @@ public class CamelTopicPublisher extends CamelMessageProducer implements TopicPu
         super(destination, endpoint, session);
     }
 
-
     /**
      * Gets the topic associated with this <CODE>TopicPublisher</CODE>.
      *
      * @return this publisher's topic
      * @throws JMSException if the JMS provider fails to get the topic for this
-     *                      <CODE>TopicPublisher</CODE> due to some internal error.
+     *             <CODE>TopicPublisher</CODE> due to some internal error.
      */
 
     public Topic getTopic() throws JMSException {
-        return (Topic) super.getDestination();
+        return (Topic)super.getDestination();
     }
 
     /**
@@ -54,14 +51,17 @@ public class CamelTopicPublisher extends CamelMessageProducer implements TopicPu
      * default delivery mode, priority, and time to live.
      *
      * @param message the message to publish
-     * @throws JMSException                if the JMS provider fails to publish the message due to
-     *                                     some internal error.
-     * @throws javax.jms.MessageFormatException      if an invalid message is specified.
-     * @throws javax.jms.InvalidDestinationException if a client uses this method with a <CODE>TopicPublisher
+     * @throws JMSException if the JMS provider fails to publish the message due
+     *             to some internal error.
+     * @throws javax.jms.MessageFormatException if an invalid message is
+     *             specified.
+     * @throws javax.jms.InvalidDestinationException if a client uses this
+     *             method with a <CODE>TopicPublisher
      *                                     </CODE> with an invalid topic.
-     * @throws java.lang.UnsupportedOperationException
-     *                                     if a client uses this method with a <CODE>TopicPublisher
-     *                                     </CODE> that did not specify a topic at creation time.
+     * @throws java.lang.UnsupportedOperationException if a client uses this
+     *             method with a <CODE>TopicPublisher
+     *                                     </CODE> that did not specify a topic
+     *             at creation time.
      * @see javax.jms.MessageProducer#getDeliveryMode()
      * @see javax.jms.MessageProducer#getTimeToLive()
      * @see javax.jms.MessageProducer#getPriority()
@@ -72,44 +72,48 @@ public class CamelTopicPublisher extends CamelMessageProducer implements TopicPu
     }
 
     /**
-     * Publishes a message to the topic, specifying delivery mode, priority,
-     * and time to live.
+     * Publishes a message to the topic, specifying delivery mode, priority, and
+     * time to live.
      *
-     * @param message      the message to publish
+     * @param message the message to publish
      * @param deliveryMode the delivery mode to use
-     * @param priority     the priority for this message
-     * @param timeToLive   the message's lifetime (in milliseconds)
-     * @throws JMSException                if the JMS provider fails to publish the message due to
-     *                                     some internal error.
-     * @throws javax.jms.MessageFormatException      if an invalid message is specified.
-     * @throws javax.jms.InvalidDestinationException if a client uses this method with a <CODE>TopicPublisher
+     * @param priority the priority for this message
+     * @param timeToLive the message's lifetime (in milliseconds)
+     * @throws JMSException if the JMS provider fails to publish the message due
+     *             to some internal error.
+     * @throws javax.jms.MessageFormatException if an invalid message is
+     *             specified.
+     * @throws javax.jms.InvalidDestinationException if a client uses this
+     *             method with a <CODE>TopicPublisher
      *                                     </CODE> with an invalid topic.
-     * @throws java.lang.UnsupportedOperationException
-     *                                     if a client uses this method with a <CODE>TopicPublisher
-     *                                     </CODE> that did not specify a topic at creation time.
+     * @throws java.lang.UnsupportedOperationException if a client uses this
+     *             method with a <CODE>TopicPublisher
+     *                                     </CODE> that did not specify a topic
+     *             at creation time.
      */
 
-    public void publish(Message message, int deliveryMode, int priority,
-                        long timeToLive) throws JMSException {
+    public void publish(Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {
         super.send(message, deliveryMode, priority, timeToLive);
     }
 
     /**
-     * Publishes a message to a topic for an unidentified message producer.
-     * Uses the <CODE>TopicPublisher</CODE>'s default delivery mode,
-     * priority, and time to live.
+     * Publishes a message to a topic for an unidentified message producer. Uses
+     * the <CODE>TopicPublisher</CODE>'s default delivery mode, priority, and
+     * time to live.
      * <p/>
      * <P>
      * Typically, a message producer is assigned a topic at creation time;
      * however, the JMS API also supports unidentified message producers, which
      * require that the topic be supplied every time a message is published.
      *
-     * @param topic   the topic to publish this message to
+     * @param topic the topic to publish this message to
      * @param message the message to publish
-     * @throws JMSException                if the JMS provider fails to publish the message due to
-     *                                     some internal error.
-     * @throws javax.jms.MessageFormatException      if an invalid message is specified.
-     * @throws javax.jms.InvalidDestinationException if a client uses this method with an invalid topic.
+     * @throws JMSException if the JMS provider fails to publish the message due
+     *             to some internal error.
+     * @throws javax.jms.MessageFormatException if an invalid message is
+     *             specified.
+     * @throws javax.jms.InvalidDestinationException if a client uses this
+     *             method with an invalid topic.
      * @see javax.jms.MessageProducer#getDeliveryMode()
      * @see javax.jms.MessageProducer#getTimeToLive()
      * @see javax.jms.MessageProducer#getPriority()
@@ -128,19 +132,20 @@ public class CamelTopicPublisher extends CamelMessageProducer implements TopicPu
      * however, the JMS API also supports unidentified message producers, which
      * require that the topic be supplied every time a message is published.
      *
-     * @param topic        the topic to publish this message to
-     * @param message      the message to publish
+     * @param topic the topic to publish this message to
+     * @param message the message to publish
      * @param deliveryMode the delivery mode to use
-     * @param priority     the priority for this message
-     * @param timeToLive   the message's lifetime (in milliseconds)
-     * @throws JMSException                if the JMS provider fails to publish the message due to
-     *                                     some internal error.
-     * @throws javax.jms.MessageFormatException      if an invalid message is specified.
-     * @throws javax.jms.InvalidDestinationException if a client uses this method with an invalid topic.
+     * @param priority the priority for this message
+     * @param timeToLive the message's lifetime (in milliseconds)
+     * @throws JMSException if the JMS provider fails to publish the message due
+     *             to some internal error.
+     * @throws javax.jms.MessageFormatException if an invalid message is
+     *             specified.
+     * @throws javax.jms.InvalidDestinationException if a client uses this
+     *             method with an invalid topic.
      */
 
-    public void publish(Topic topic, Message message, int deliveryMode,
-                        int priority, long timeToLive) throws JMSException {
+    public void publish(Topic topic, Message message, int deliveryMode, int priority, long timeToLive) throws JMSException {
         super.send(topic, message, deliveryMode, priority, timeToLive);
     }
 }

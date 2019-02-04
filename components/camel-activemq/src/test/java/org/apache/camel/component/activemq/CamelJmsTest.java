@@ -26,8 +26,8 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -38,9 +38,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  */
 public class CamelJmsTest extends CamelSpringTestSupport {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(CamelJmsTest.class);
-    
+
     protected String expectedBody = "<hello>world!</hello>";
 
     @Test
@@ -75,7 +75,7 @@ public class CamelJmsTest extends CamelSpringTestSupport {
         ConnectionFactory factory = getMandatoryBean(ConnectionFactory.class, "connectionFactory");
         ProducerTemplate template = getMandatoryBean(ProducerTemplate.class, "camelTemplate");
         assertNotNull("template is valid", template);
-        
+
         Connection connection = factory.createConnection();
         connection.start();
         Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);

@@ -16,6 +16,18 @@
  */
 package org.apache.camel.component.activemq;
 
+import java.net.URI;
+import java.util.Arrays;
+
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
+
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQDestination;
 import org.apache.activemq.command.ActiveMQQueue;
@@ -27,20 +39,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import java.net.URI;
-import java.util.Arrays;
-
 public class CamelJmsRequestReplyNobTest extends CamelSpringTestSupport {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(CamelJmsRequestReplyNobTest.class);
+
+    BrokerService consumerBroker;
+    BrokerService producerBroker;
 
     @Test
     public void testRoundTrip() throws Exception {
@@ -86,18 +90,17 @@ public class CamelJmsRequestReplyNobTest extends CamelSpringTestSupport {
         return brokerService;
     }
 
-    BrokerService producerBroker, consumerBroker;
     @SuppressWarnings("unchecked")
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         try {
             consumerBroker = createBroker("CON");
-            producerBroker  = createBroker("PRO");
+            producerBroker = createBroker("PRO");
             DiscoveryNetworkConnector discoveryNetworkConnector = new DiscoveryNetworkConnector();
             discoveryNetworkConnector.setUri(new URI("static:" + consumerBroker.getTransportConnectorByScheme("tcp").getPublishableConnectString()));
             discoveryNetworkConnector.setDuplex(true);
             discoveryNetworkConnector.setNetworkTTL(2);
-            discoveryNetworkConnector.setDynamicallyIncludedDestinations(Arrays.asList(new ActiveMQDestination[]{new ActiveMQQueue("service1")}));
+            discoveryNetworkConnector.setDynamicallyIncludedDestinations(Arrays.asList(new ActiveMQDestination[] {new ActiveMQQueue("service1")}));
             discoveryNetworkConnector.setDestinationFilter("ActiveMQ.Advisory.TempQueue,ActiveMQ.Advisory.TempTopic,ActiveMQ.Advisory.Consumer.Queue.>");
             producerBroker.addNetworkConnector(discoveryNetworkConnector);
             consumerBroker.start();

@@ -22,6 +22,7 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
@@ -31,9 +32,8 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JmsConsumeSendTransacted extends CamelSpringTestSupport {
-    BrokerService broker = null;
+    BrokerService broker;
     int messageCount;
-
 
     @Test
     public void testTransactedRoute() throws Exception {

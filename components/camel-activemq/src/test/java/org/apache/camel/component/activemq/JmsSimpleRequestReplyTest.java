@@ -27,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
@@ -42,7 +43,7 @@ public class JmsSimpleRequestReplyTest extends CamelTestSupport {
         result.expectedMessageCount(1);
 
         template.requestBody("activemq:queue:hello", "Hello World");
-        
+
         result.assertIsSatisfied();
     }
 
@@ -66,7 +67,7 @@ public class JmsSimpleRequestReplyTest extends CamelTestSupport {
         pooled.setMaxConnections(8);
         return pooled;
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

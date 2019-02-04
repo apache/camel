@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.activemq;
 
-import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +35,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
+
 /**
  * 
  */
@@ -47,18 +47,18 @@ public class ActiveMQReplyToHeaderUsingConverterTest extends CamelTestSupport {
     protected String correlationID = "ABC-123";
     protected String groupID = "GROUP-XYZ";
     protected String messageType = getClass().getName();
-    protected boolean useReplyToHeader = false;
+    protected boolean useReplyToHeader;
 
     @Test
     public void testSendingAMessageFromCamelSetsCustomJmsHeaders() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-
+        ActiveMQConverter conv = new ActiveMQConverter();
         resultEndpoint.expectedBodiesReceived(expectedBody);
         AssertionClause firstMessage = resultEndpoint.message(0);
         firstMessage.header("cheese").isEqualTo(123);
         firstMessage.header("JMSCorrelationID").isEqualTo(correlationID);
         if (useReplyToHeader) {
-            firstMessage.header("JMSReplyTo").isEqualTo(ActiveMQConverter.toDestination(replyQueueName));
+            firstMessage.header("JMSReplyTo").isEqualTo(conv.toDestination(replyQueueName));
         }
         firstMessage.header("JMSType").isEqualTo(messageType);
         firstMessage.header("JMSXGroupID").isEqualTo(groupID);

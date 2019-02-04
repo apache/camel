@@ -40,7 +40,7 @@ public class CamelDestination implements CustomDestination, CamelContextAware {
     private String uri;
     private Endpoint endpoint;
     private CamelContext camelContext;
-    // add in dummy endpoint pending camel release with 
+    // add in dummy endpoint pending camel release with
     // https://issues.apache.org/activemq/browse/CAMEL-1982
     private JmsBinding binding = new JmsBinding(new JmsEndpoint());
 
@@ -56,7 +56,7 @@ public class CamelDestination implements CustomDestination, CamelContextAware {
     }
 
     // CustomDestination interface
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public MessageConsumer createConsumer(ActiveMQSession session, String messageSelector) {
         return createConsumer(session, messageSelector, false);
     }
@@ -78,7 +78,7 @@ public class CamelDestination implements CustomDestination, CamelContextAware {
     }
 
     // Producers
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
     public MessageProducer createProducer(ActiveMQSession session) throws JMSException {
         return new CamelMessageProducer(this, resolveEndpoint(session), session);
     }
@@ -92,7 +92,7 @@ public class CamelDestination implements CustomDestination, CamelContextAware {
     }
 
     // Properties
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     public String getUri() {
         return uri;
@@ -127,7 +127,7 @@ public class CamelDestination implements CustomDestination, CamelContextAware {
     }
 
     // Implementation methods
-    //-----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
 
     /**
      * Resolves the Camel Endpoint for this destination
@@ -150,7 +150,7 @@ public class CamelDestination implements CustomDestination, CamelContextAware {
         if (answer == null) {
             ActiveMQConnection connection = session.getConnection();
             if (connection instanceof CamelConnection) {
-                CamelConnection camelConnection = (CamelConnection) connection;
+                CamelConnection camelConnection = (CamelConnection)connection;
                 answer = camelConnection.getCamelContext();
             }
         }

@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.activemq;
 
+import javax.jms.Connection;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.jms.JmsBinding;
@@ -26,9 +31,6 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
-
-import javax.jms.*;
-import java.util.concurrent.TimeUnit;
 
 public class ObjectMessageTest extends CamelSpringTestSupport {
 
@@ -71,7 +73,7 @@ public class ObjectMessageTest extends CamelSpringTestSupport {
         Exchange exchange = result.getReceivedExchanges().get(0);
         // This should be a JMS Exchange
         assertNotNull(ExchangeHelper.getBinding(exchange, JmsBinding.class));
-        JmsMessage in = (JmsMessage) exchange.getIn();
+        JmsMessage in = (JmsMessage)exchange.getIn();
         assertNotNull(in);
         assertIsInstanceOf(ObjectMessage.class, in.getJmsMessage());
 

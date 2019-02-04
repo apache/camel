@@ -18,6 +18,7 @@ package org.apache.camel.component.activemq;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import javax.jms.Connection;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -26,6 +27,7 @@ import javax.jms.Session;
 import javax.jms.TextMessage;
 import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.region.policy.SharedDeadLetterStrategy;
@@ -42,21 +44,17 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 /**
- *  shows rollback and redelivery dlq respected with external tm
+ * shows rollback and redelivery dlq respected with external tm
  */
 public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
+    static TransactionManager[] transactionManager = new TransactionManager[1];
     private static final Logger LOG = LoggerFactory.getLogger(JmsJdbcXARollbackTest.class);
-    BrokerService broker = null;
+    BrokerService broker;
     int messageCount;
 
     public java.sql.Connection initDb() throws Exception {
-        String createStatement =
-                "CREATE TABLE SCP_INPUT_MESSAGES (" +
-                        "id int NOT NULL GENERATED ALWAYS AS IDENTITY, " +
-                        "messageId varchar(96) NOT NULL, " +
-                        "messageCorrelationId varchar(96) NOT NULL, " +
-                        "messageContent varchar(2048) NOT NULL, " +
-                        "PRIMARY KEY (id) )";
+        String createStatement = "CREATE TABLE SCP_INPUT_MESSAGES (" + "id int NOT NULL GENERATED ALWAYS AS IDENTITY, " + "messageId varchar(96) NOT NULL, "
+                                 + "messageCorrelationId varchar(96) NOT NULL, " + "messageContent varchar(2048) NOT NULL, " + "PRIMARY KEY (id) )";
 
         java.sql.Connection conn = getJDBCConnection();
         try {
@@ -84,10 +82,7 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
         ResultSet resultSet = jdbcConn.createStatement().executeQuery("SELECT * FROM SCP_INPUT_MESSAGES");
         while (resultSet.next()) {
             count++;
-            log.info("message - seq:" + resultSet.getInt(1)
-                    + ", id: " + resultSet.getString(2)
-                    + ", corr: " + resultSet.getString(3)
-                    + ", content: " + resultSet.getString(4));
+            log.info("message - seq:" + resultSet.getInt(1) + ", id: " + resultSet.getString(2) + ", corr: " + resultSet.getString(3) + ", content: " + resultSet.getString(4));
         }
         return count;
     }
@@ -124,7 +119,6 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
         return message != null;
     }
 
-    static TransactionManager[] transactionManager = new TransactionManager[1];
     private void initTMRef() {
         transactionManager[0] = getMandatoryBean(JtaTransactionManager.class, "jtaTransactionManager").getTransactionManager();
 
@@ -172,14 +166,14 @@ public class JmsJdbcXARollbackTest extends CamelSpringTestSupport {
     }
 
     public static class MarkRollbackOnly {
-            public String enrich(Exchange exchange) throws Exception {
-                LOG.info("Got exchange: " + exchange);
-                LOG.info("Got message: " + ((JmsMessage)exchange.getIn()).getJmsMessage());
+        public String enrich(Exchange exchange) throws Exception {
+            LOG.info("Got exchange: " + exchange);
+            LOG.info("Got message: " + ((JmsMessage)exchange.getIn()).getJmsMessage());
 
-                LOG.info("Current tx: " + transactionManager[0].getTransaction());
-                LOG.info("Marking rollback only...");
-                transactionManager[0].getTransaction().setRollbackOnly();
-                return "Some Text";
-            }
+            LOG.info("Current tx: " + transactionManager[0].getTransaction());
+            LOG.info("Marking rollback only...");
+            transactionManager[0].getTransaction().setRollbackOnly();
+            return "Some Text";
         }
+    }
 }

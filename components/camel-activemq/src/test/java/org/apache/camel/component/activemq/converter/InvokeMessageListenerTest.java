@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.activemq.converter;
 
-import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
-
 import java.util.List;
 
 import javax.jms.Message;
@@ -29,6 +27,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
+import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComponent;
 
 /**
  * 
@@ -58,8 +58,7 @@ public class InvokeMessageListenerTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.addComponent("activemq",
-                activeMQComponent("vm://localhost?broker.persistent=false"));
+        camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
         return camelContext;
     }
 

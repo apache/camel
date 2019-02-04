@@ -25,8 +25,6 @@ import org.apache.activemq.ActiveMQSession;
 
 /**
  * A JMS {@link Queue} object which refers to a Camel endpoint
- *
- * 
  */
 public class CamelQueue extends CamelDestination implements Queue {
 
@@ -41,6 +39,7 @@ public class CamelQueue extends CamelDestination implements Queue {
     public QueueSender createSender(ActiveMQSession session) throws JMSException {
         return new CamelQueueSender(this, resolveEndpoint(session), session);
     }
+
     public QueueReceiver createReceiver(ActiveMQSession session, String messageSelector) {
         return new CamelQueueReceiver(this, resolveEndpoint(session), session, messageSelector);
     }

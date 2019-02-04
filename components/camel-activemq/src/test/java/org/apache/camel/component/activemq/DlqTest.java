@@ -20,11 +20,11 @@ import javax.jms.Connection;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.util.Wait;
-
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class DlqTest extends CamelSpringTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DlqTest.class);
-    BrokerService broker = null;
+    BrokerService broker;
     int messageCount;
 
     @Test
@@ -90,7 +90,7 @@ public class DlqTest extends CamelSpringTestSupport {
     }
 
     public static class CanError {
-        public String  enrich(String body) throws Exception {
+        public String enrich(String body) throws Exception {
             LOG.info("Got body: " + body);
             throw new RuntimeException("won't enrich today!");
         }
