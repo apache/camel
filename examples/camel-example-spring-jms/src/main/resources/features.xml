@@ -23,9 +23,8 @@
 
     <feature name='camel-example-spring-jms' version='${project.version}'>
         <feature>activemq-broker-noweb</feature>
-        <feature>activemq-camel</feature>
         <feature version="${project.version}">camel</feature>
-        <feature version="${project.version}">camel-jms</feature>
+        <feature version="${project.version}">camel-activemq</feature>
         <bundle>mvn:org.apache.camel.example/camel-example-spring-jms/${project.version}</bundle>
     </feature>
 
