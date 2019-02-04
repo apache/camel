@@ -1,11 +1,14 @@
 ==== Components
 
 // components: START
-Number of Components: 283 in 208 JAR artifacts (0 deprecated)
+Number of Components: 289 in 210 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Component | Available From | Description
+
+| link:camel-activemq/src/main/docs/activemq-component.adoc[ActiveMQ] (camel-activemq) +
+`activemq:destinationType:destinationName` |  | The activemq component allows messages to be sent to (or consumed from) Apache ActiveMQ.
 
 | link:camel-ahc/src/main/docs/ahc-component.adoc[AHC] (camel-ahc) +
 `ahc:httpUri` | 2.8 | To call external HTTP services using Async Http Client.
