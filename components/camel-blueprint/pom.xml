@@ -326,8 +326,8 @@
                   <target>
                     <echo>Copying XSD schema to be included in JAR</echo>
                     <replace file="${project.build.directory}/schema/camel-blueprint.xsd"
-                             token="xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;"
-                             value="xmlns=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;"/>
+                             token="xs:schema xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;"
+                             value="xs:schema xmlns=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xs=&quot;http://www.w3.org/2001/XMLSchema&quot;"/>
                     <replace file="${project.build.directory}/schema/camel-blueprint.xsd"
                              token="http://camel.apache.org/schema/spring"
                              value="http://camel.apache.org/schema/blueprint"/>
