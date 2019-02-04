@@ -831,6 +831,11 @@
       <!-- camel components: START -->
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-activemq</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ahc</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2283,6 +2288,11 @@
 
       <!-- NOTE: auto-generated list of starter components when building platforms/camel-catalog -->
       <!-- camel starters: START -->
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-activemq-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ahc-starter</artifactId>

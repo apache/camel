@@ -37,6 +37,7 @@
 
         <!-- NOTE: auto-generated list of components when building platforms/camel-catalog -->
         <!-- camel components: START -->
+        <include>org.apache.camel:camel-activemq</include>
         <include>org.apache.camel:camel-ahc</include>
         <include>org.apache.camel:camel-ahc-ws</include>
         <include>org.apache.camel:camel-amqp</include>
@@ -355,6 +356,7 @@
       <includes>
         <!-- NOTE: auto-generated list of components when building platforms/camel-catalog -->
         <!-- camel starters: START -->
+        <include>org.apache.camel:camel-activemq-starter</include>
         <include>org.apache.camel:camel-ahc-starter</include>
         <include>org.apache.camel:camel-ahc-ws-starter</include>
         <include>org.apache.camel:camel-amqp-starter</include>
