@@ -71,9 +71,8 @@
 
     <!-- for testing activemq component -->
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-camel</artifactId>
-      <version>${activemq-version}</version>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-activemq</artifactId>
       <scope>test</scope>
     </dependency>
 
