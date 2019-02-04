@@ -31,7 +31,7 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
         </route>
     </camelContext>
 
-   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+   <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
     </bean>
 
