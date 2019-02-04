@@ -41,6 +41,7 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
 
         // we expect message 2 to arrive before 1 as message 1 is in trouble
         // and must be redelivered 2 times before succeed
+        mock.expectedMinimumMessageCount(2);
         mock.expectedBodiesReceived("Message 2", "Message 1");
         mock.expectedHeaderReceived("foo", "bar");
         // the first is not redelivered
