@@ -71,8 +71,8 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-camel</artifactId>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-activemq</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
