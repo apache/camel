@@ -59,6 +59,9 @@ public class RestConfigurationDefinition {
     private String apiHost;
 
     @XmlAttribute
+    private Boolean useXForwardHeaders;
+
+    @XmlAttribute
     private String port;
 
     @XmlAttribute @Metadata(label = "producer")
@@ -908,6 +911,20 @@ public class RestConfigurationDefinition {
             answer.setCorsHeaders(props);
         }
         return answer;
+    }
+
+
+    public Boolean getUseXForwardHeaders() {
+        return useXForwardHeaders;
+    }
+
+    /**
+     * Whether to enable CORS headers in the HTTP response.
+     * <p/>
+     * The default value is false.
+     */
+    public void setUseXForwardHeaders(Boolean useXForwardHeaders) {
+        this.useXForwardHeaders = useXForwardHeaders;
     }
 
 }
