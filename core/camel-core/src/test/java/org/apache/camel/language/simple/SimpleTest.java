@@ -564,9 +564,9 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${date:property.birthday:yyyyMMdd}", "19760622");
         assertExpression("${date:property.birthday+24h:yyyyMMdd}", "19760623");
 
-        assertExpression("date:exchangeProperty.birthday", propertyCalendar.getTime());
-        assertExpression("date:exchangeProperty.birthday:yyyyMMdd", "19760622");
-        assertExpression("date:exchangeProperty.birthday+24h:yyyyMMdd", "19760623");
+        assertExpression("${date:exchangeProperty.birthday}", propertyCalendar.getTime());
+        assertExpression("${date:exchangeProperty.birthday:yyyyMMdd}", "19760622");
+        assertExpression("${date:exchangeProperty.birthday+24h:yyyyMMdd}", "19760623");
 
         try {
             assertExpression("${date:yyyyMMdd}", "19740420");
