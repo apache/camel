@@ -115,18 +115,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
-      <artifactId>activemq-camel</artifactId>
-      <scope>test</scope>
-      <!-- break the cyclic dependency to camel-jms which otherwise would baffle the maven eclipse plugin -->
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-jms</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-pool</artifactId>
       <scope>test</scope>
       <!-- lets use JMS 2.0 api but camel-jms still works with ActiveMQ 5.x that is JMS 1.1 only -->
