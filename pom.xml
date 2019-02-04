@@ -143,15 +143,8 @@
     <module>tooling-bundle</module>
     <module>etc</module>
     <module>bom</module>
-    <module>camel-util-json</module>
     <module>buildingtools</module>
-    <module>camel-util</module>
-    <module>camel-api</module>
-    <module>camel-management-api</module>
-    <module>camel-management-impl</module>
-    <module>camel-support</module>
-    <module>camel-base</module>
-    <module>camel-core</module>
+    <module>core</module>
     <module>components</module>
     <module>archetypes</module>
     <module>tooling</module>

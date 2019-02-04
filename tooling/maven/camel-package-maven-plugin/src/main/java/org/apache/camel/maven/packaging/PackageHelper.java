@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.logging.Log;
@@ -188,12 +190,10 @@ public final class PackageHelper {
         if (dir == null) {
             return null;
         }
-        File[] files = dir.listFiles(f -> f.getName().equals("camel-core"));
-        if (files != null && files.length == 1) {
-            // okay the file are in the target folder
-            File target = new File(files[0], "target");
+        Path p = dir.toPath().resolve("core/camel-core");
+        if (Files.isDirectory(p)) {
             String version = project.getVersion();
-            return new File(target, "camel-core-" + version + ".jar");
+            return p.resolve("target").resolve("camel-core-" + version + ".jar").toFile();
         } else {
             // okay walk up the parent dir
             return findCamelCoreDirectory(project, dir.getParentFile());

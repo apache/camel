@@ -122,7 +122,7 @@
               <overwrite>true</overwrite>
               <resources>
                 <resource>
-                  <directory>../../camel-api/src/main/java/org/apache/camel/runtimecatalog</directory>
+                  <directory>../../core/camel-api/src/main/java/org/apache/camel/runtimecatalog</directory>
                   <!-- the following files are maintained in camel-api and not here, so they are copied over -->
                   <includes>
                     <include>EndpointValidationResult.java</include>
@@ -131,7 +131,7 @@
                   </includes>
                 </resource>
                 <resource>
-                  <directory>../../camel-base/src/main/java/org/apache/camel/runtimecatalog/impl</directory>
+                  <directory>../../core/camel-base/src/main/java/org/apache/camel/runtimecatalog/impl</directory>
                   <!-- the following files are maintained in camel-base and not here, so they are copied over -->
                   <includes>
                     <include>AbstractCamelCatalog.java</include>
@@ -145,7 +145,7 @@
                   </includes>
                 </resource>
                 <resource>
-                  <directory>../../camel-support/src/main/java/org/apache/camel/support</directory>
+                  <directory>../../core/camel-support/src/main/java/org/apache/camel/support</directory>
                   <!-- the following files are maintained in camel-base and not here, so they are copied over -->
                   <includes>
                     <include>JSonSchemaHelper.java</include>

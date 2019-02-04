@@ -24,20 +24,20 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
+    <artifactId>core</artifactId>
     <version>3.0.0-SNAPSHOT</version>
-    <relativePath>../parent</relativePath>
+    <relativePath>..</relativePath>
   </parent>
 
-  <artifactId>camel-management-impl</artifactId>
+  <artifactId>camel-management-api</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Management Implementation</name>
-  <description>The Camel Management Implementation</description>
+  <name>Camel :: Management API</name>
+  <description>The Camel Management API</description>
 
   <properties>
     <camel.osgi.export.pkg>
-      org.apache.camel.management;
-      org.apache.camel.management.mbean;
+      org.apache.camel.api.management;
+      org.apache.camel.api.management.mbean;
         -noimport:=true
     </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
@@ -69,12 +69,6 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-util-json</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -84,73 +78,7 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
-    <!-- testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>hamcrest-core</artifactId>
-          <groupId>org.hamcrest</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>java-hamcrest</artifactId>
-      <version>${hamcrest-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.awaitility</groupId>
-      <artifactId>awaitility</artifactId>
-      <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <artifactId>hamcrest-core</artifactId>
-          <groupId>org.hamcrest</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>${assertj-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>test-jar</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <excludes>
-            <exclude>log4j.properties</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <reporting>
     <plugins>
