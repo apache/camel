@@ -57,7 +57,7 @@
 
   <!-- create a Camel ActiveMQ component to use, using the Spring bean style -->
   <!-- we use the vm protocol to communicate intra-jvm which is much faster than tcp -->
-  <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+  <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent">
     <!-- the url to the remote ActiveMQ broker -->
     <property name="brokerURL" value="tcp://localhost:61616"/>
     <!-- The ActiveMQ Broker allows anonymous connection by default
