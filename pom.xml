@@ -140,14 +140,13 @@
 
   <modules>
     <module>parent</module>
-    <module>tooling-bundle</module>
     <module>etc</module>
     <module>bom</module>
     <module>buildingtools</module>
+    <module>tooling</module>
     <module>core</module>
     <module>components</module>
     <module>archetypes</module>
-    <module>tooling</module>
     <module>platforms</module>
     <module>tests</module>
     <module>examples</module>

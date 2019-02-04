@@ -42,6 +42,7 @@
     <module>meta-annotations</module>
     <module>spi-annotations</module>
     <module>apt</module>
+    <module>camel-bundle-plugin</module>
     <module>camel-route-parser</module>
     <module>swagger-rest-dsl-generator</module>
     <module>maven</module>
