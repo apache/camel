@@ -38,7 +38,7 @@
   <!-- Lets connect the Camel ActiveMQ component to the embedded broker.
        See http://camel.apache.org/activemq.html for more information.
   -->
-  <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent" depends-on="broker">
+  <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent" depends-on="broker">
     <property name="brokerURL" value="vm://myBroker"/>
   </bean>
 
