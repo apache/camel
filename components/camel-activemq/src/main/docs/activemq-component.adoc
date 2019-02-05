@@ -1,7 +1,7 @@
 [[activemq-component]]
 == ActiveMQ Component
 
-*Available as of Camel version *
+*Available as of Camel version 1.0*
 
 
 #### Component options
