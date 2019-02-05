@@ -87,7 +87,7 @@ public class ECSEndpoint extends ScheduledPollEndpoint {
     }
 
     AmazonECS createECSClient() {
-    	AmazonECS client = null;
+        AmazonECS client = null;
         ClientConfiguration clientConfiguration = null;
         AmazonECSClientBuilder clientBuilder = null;
         boolean isClientConfigFound = false;
