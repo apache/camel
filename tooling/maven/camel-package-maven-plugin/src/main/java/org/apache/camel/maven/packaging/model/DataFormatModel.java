@@ -173,7 +173,7 @@ public class DataFormatModel {
         }
 
         if ("camel-core".equals(artifactId)) {
-            return coreOnly ? "src/main/docs" : "../camel-core/src/main/docs";
+            return coreOnly ? "src/main/docs" : "../core/camel-core/src/main/docs";
         } else {
             return artifactId + "/src/main/docs";
         }
