@@ -24,12 +24,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.logging.Log;
@@ -186,17 +186,16 @@ public final class PackageHelper {
         }
     }
 
-    public static File findCamelCoreDirectory(MavenProject project, File dir) {
+    public static File findCamelCoreDirectory(File dir) {
         if (dir == null) {
             return null;
         }
         Path p = dir.toPath().resolve("core/camel-core");
         if (Files.isDirectory(p)) {
-            String version = project.getVersion();
-            return p.resolve("target").resolve("camel-core-" + version + ".jar").toFile();
+            return p.toFile();
         } else {
             // okay walk up the parent dir
-            return findCamelCoreDirectory(project, dir.getParentFile());
+            return findCamelCoreDirectory(dir.getParentFile());
         }
     }
 
