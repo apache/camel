@@ -16,9 +16,13 @@ Modularization of camel-core
 One of the biggest change is the modularization of camel-core.
 In Camel 2.x camel-core was one JAR file, which now has been splitup into many JARs as follows:
 
-TODO: as table of all the modules
-- camel-core
 - camel-api
+- camel-base
+- camel-core
+- camel-management-api
+- camel-management-impl
+- camel-support
+- camel-util
  
 Maven users of Apache Camel can keep using the dependency *camel-core* which will have transitive dependency on all of its modules, and therefore no migration is needed.
 However users whom wants to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
