@@ -388,7 +388,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <executions>
           <execution>
-            <id>test-compile</id>
+            <id>default-testCompile</id>
             <phase>process-test-sources</phase>
             <goals>
               <goal>testCompile</goal>
