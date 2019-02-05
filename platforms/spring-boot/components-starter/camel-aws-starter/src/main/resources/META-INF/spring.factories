@@ -31,7 +31,9 @@ org.apache.camel.component.aws.lambda.springboot.LambdaComponentAutoConfiguratio
 org.apache.camel.component.aws.mq.springboot.MQComponentAutoConfiguration,\
 org.apache.camel.component.aws.kms.springboot.KMSComponentAutoConfiguration,\
 org.apache.camel.component.aws.iam.springboot.IAMComponentAutoConfiguration,\
-org.apache.camel.component.aws.eks.springboot.EKSComponentAutoConfiguration
+org.apache.camel.component.aws.eks.springboot.EKSComponentAutoConfiguration,\
+org.apache.camel.component.aws.ecs.springboot.ECSComponentAutoConfiguration
+
 
 
 
