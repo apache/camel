@@ -14,7 +14,7 @@ return value should be used as a changed message body then
 use Message Translator EIP instead.
 
 [[Script-UsingfromJavaDSL]]
-==== Using from Java DSL
+=== Using from Java DSL
 
 The route below will read the file contents and validate them against a
 regular expression.
@@ -27,7 +27,7 @@ from("file://inbox")
 ---------------------------------------------------
 
 [[Script-UsingfromSpringDSL]]
-==== Using from Spring DSL
+=== Using from Spring DSL
 
 And from XML its easy as well
 
@@ -85,13 +85,3 @@ You can also refer to the script from the file system with file: instead
 of classpath: such as file:/var/myscript.groovy
 
  
-
-[[Script-UsingThisPattern]]
-===== Using This Pattern
-
-If you would like to use this EIP Pattern then please read the
-Getting Started, you may also find the
-Architecture useful particularly the description
-of Endpoint and URIs. Then you could
-try out some of the Examples first before trying
-this pattern out.
