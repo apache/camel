@@ -160,8 +160,43 @@ public class CachePolicyProcessorTest extends CamelTestSupport {
 
     }
 
-    //Async route - callback is called
-    //Async route with exception - callback is called
+    //Value is cached after handled exception
+    @Test
+    public void testHandledException() throws Exception {
+        final String key  = randomString();
+        MockEndpoint mock = getMockEndpoint("mock:value");
+        Cache cache = lookupCache("simple");
+
+        //Send first, key is not in cache
+        Object responseBody = this.template().requestBody("direct:cached-exception", key);
+
+        //We got back the value after exception handler, mock was called once, value got cached.
+        assertEquals("handled-"+generateValue(key),cache.get(key));
+        assertEquals("handled-"+generateValue(key),responseBody);
+        assertEquals(1,mock.getExchanges().size());
+
+    }
+
+    //Nothing is cached after an unhandled exception
+    @Test
+    public void testException() throws Exception {
+        final String key  = randomString();
+        MockEndpoint mock = getMockEndpoint("mock:value");
+        mock.whenAnyExchangeReceived( (e)->{
+                throw new RuntimeException("unexpected");
+            });
+        Cache cache = lookupCache("simple");
+
+        //Send
+        Exchange response = this.template().request("direct:cached-exception",
+                (e)->e.getMessage().setBody(key));
+
+        //Exception is on the exchange, cache is empty
+        assertEquals("unexpected",response.getException().getMessage());
+        assertEquals(1,mock.getExchanges().size());
+        assertFalse(cache.iterator().hasNext());
+
+    }
 
 
     @Override
@@ -179,6 +214,16 @@ public class CachePolicyProcessorTest extends CamelTestSupport {
                     .policy(cachePolicy)
                     .to("mock:value");
 
+                //Cache after exception handling
+                from("direct:cached-exception")
+                    .onException(Exception.class)
+                        .onWhen(exceptionMessage().isEqualTo("test"))
+                        .handled(true)
+                        .setBody(simple("handled-${body}"))
+                        .end()
+                    .policy(cachePolicy)
+                    .to("mock:value")
+                    .throwException(new Exception("test"));
 
                 //Closed cache
                 cache =cacheManager.createCache("closed",new MutableConfiguration<>());
@@ -208,7 +253,6 @@ public class CachePolicyProcessorTest extends CamelTestSupport {
                 from("direct:cached-invalidkey")
                         .policy(cachePolicy)
                         .to("mock:value");
-
             }
         };
     }
