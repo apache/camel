@@ -26,6 +26,7 @@ import org.apache.activemq.EnhancedConnection;
 import org.apache.activemq.Service;
 import org.apache.activemq.advisory.DestinationSource;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.spi.annotations.Component;
@@ -174,7 +175,7 @@ public class ActiveMQComponent extends JmsComponent {
         try {
             query = URISupport.createQueryString(options);
         } catch (URISyntaxException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
 
         // if we have destination options then append them to the destination

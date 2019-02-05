@@ -26,12 +26,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.slack.helper.SlackMessage;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.json.JsonObject;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.json.simple.JSONObject;
 
 public class SlackProducer extends DefaultProducer {
 
@@ -101,11 +101,8 @@ public class SlackProducer extends DefaultProducer {
             buildAttachmentJson(jsonMap, attachments);
         }
 
-        // Generate a JSONObject
-        JSONObject jsonObject = new JSONObject(jsonMap);
-
         // Return the string based on the JSON Object
-        return JSONObject.toJSONString(jsonObject);
+        return new JsonObject(jsonMap).toJson();
     }
 
     private void buildAttachmentJson(Map<String, Object> jsonMap, List<SlackMessage.Attachment> attachments) {

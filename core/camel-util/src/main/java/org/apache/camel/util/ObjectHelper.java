@@ -1140,7 +1140,7 @@ public final class ObjectHelper {
      *
      * @param e the caused exception
      * @return the wrapper exception
-     * @deprecated Use {@link org.apache.camel.CamelRuntimeException#wrapRuntimeCamelException} instead
+     * @deprecated Use {@link org.apache.camel.RuntimeCamelException#wrapRuntimeCamelException} instead
      */
     @Deprecated
     public static RuntimeException wrapRuntimeCamelException(Throwable e) {

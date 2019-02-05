@@ -29,13 +29,12 @@
   </parent>
 
   <artifactId>core</artifactId>
-  <name>Camel :: Core</name>
+  <name>Camel :: Core Modules</name>
   <description>Camel Core Modules</description>
   <packaging>pom</packaging>
 
   <modules>
     <module>camel-util</module>
-    <module>camel-util-json</module>
     <module>camel-api</module>
     <module>camel-support</module>
     <module>camel-management-api</module>
@@ -43,5 +42,50 @@
     <module>camel-base</module>
     <module>camel-core</module>
   </modules>
-  
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>generate-legal</id>
+            <goals>
+              <goal>generate-legal</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+          <execution>
+            <id>jaxb-list</id>
+            <goals>
+              <goal>generate-jaxb-list</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-generated-resources</id>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/jaxb</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>

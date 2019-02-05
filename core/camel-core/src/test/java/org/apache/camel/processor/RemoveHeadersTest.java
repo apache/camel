@@ -34,7 +34,8 @@ public class RemoveHeadersTest extends ContextTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("dudeCool", "cool");
-        headers.put("dudeWicket", "wicket");
+        headers.put("DudeWicket", "wicket");
+        headers.put("DUDEbig", "upper");
         headers.put("duck", "Donald");
         headers.put("foo", "bar");
 
@@ -55,11 +56,38 @@ public class RemoveHeadersTest extends ContextTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("dudeCool", "cool");
-        headers.put("dudeWicket", "wicket");
+        headers.put("DudeWicket", "wicket");
         headers.put("duck", "Donald");
+        headers.put("DUDEbig", "upper");
         headers.put("BeerCarlsberg", "Great");
         headers.put("BeerTuborg", "Also Great");
         headers.put("BeerHeineken", "Good");
+        headers.put("foo", "bar");
+
+        template.sendBodyAndHeaders("direct:start", "Hello World", headers);
+
+        assertMockEndpointsSatisfied();
+
+        // breadcrumb is a header added as well so we expect 3
+        assertEquals(3, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
+    }
+
+    @Test
+    public void testRemoveHeadersCaseInsensitive() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:end");
+        mock.expectedBodiesReceived("Hello World");
+        mock.expectedHeaderReceived("duck", "Donald");
+        mock.expectedHeaderReceived("BeerHeineken", "Good");
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("dudeCool", "cool");
+        headers.put("DudeWicket", "wicket");
+        headers.put("DUDEbig", "upper");
+        headers.put("duck", "Donald");
+        headers.put("Beercarlsberg", "Great");
+        headers.put("BeerTUBORG", "Also Great");
+        headers.put("BeerHeineken", "Good");
+        headers.put("FOO", "bar");
 
         template.sendBodyAndHeaders("direct:start", "Hello World", headers);
 

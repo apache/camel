@@ -16,6 +16,9 @@
  */
 package org.apache.camel.support;
 
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public final class PatternHelper {
@@ -25,7 +28,7 @@ public final class PatternHelper {
     }
 
     /**
-     * Matches the name with the given pattern.
+     * Matches the name with the given pattern (case insensitive).
      * <p/>
      * The match rules are applied in this order:
      * <ul>
@@ -44,7 +47,7 @@ public final class PatternHelper {
             return false;
         }
 
-        if (name.equals(pattern)) {
+        if (name.equalsIgnoreCase(pattern)) {
             // exact match
             return true;
         }
@@ -62,7 +65,7 @@ public final class PatternHelper {
     }
 
     /**
-     * Matches the name with the given pattern.
+     * Matches the name with the given pattern (case insensitive).
      * <p/>
      * The match rules are applied in this order:
      * <ul>
@@ -76,14 +79,15 @@ public final class PatternHelper {
      */
     private static boolean matchWildcard(String name, String pattern) {
         // we have wildcard support in that hence you can match with: file* to match any file endpoints
-        if (pattern.endsWith("*") && name.startsWith(pattern.substring(0, pattern.length() - 1))) {
-            return true;
+        if (pattern.endsWith("*")) {
+            String text = pattern.substring(0, pattern.length() - 1);
+            return name.toLowerCase(Locale.ENGLISH).startsWith(text.toLowerCase(Locale.ENGLISH));
         }
         return false;
     }
 
     /**
-     * Matches the name with the given pattern.
+     * Matches the name with the given pattern (case insensitive).
      * <p/>
      * The match rules are applied in this order:
      * <ul>
@@ -98,9 +102,9 @@ public final class PatternHelper {
     private static boolean matchRegex(String name, String pattern) {
         // match by regular expression
         try {
-            if (name.matches(pattern)) {
-                return true;
-            }
+            Pattern compiled = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+            Matcher matcher = compiled.matcher(name);
+            return matcher.matches();
         } catch (PatternSyntaxException e) {
             // ignore
         }

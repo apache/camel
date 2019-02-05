@@ -160,6 +160,11 @@
     <!-- validating using karaf 4.x -->
     <profile>
       <id>validate</id>
+      <activation>
+        <property>
+          <name>!skipTests</name>
+        </property>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -180,11 +185,8 @@
                 <feature>framework</feature>
               </framework>
               <features>
-                <!-- camel-blueprint uses blueprint but its feature name is different in karaf 3.x vs 4.x -->
-                <!-- camel-cdi requires to install a cdi provider first -->
-                <!-- camel-cxf uses blueprint but its feature name is different in karaf 3.x vs 4.x -->
                 <!-- camel-ignite requires to install apache ignite first -->
-                <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite))*</feature>
+                <feature>camel|camel-(?!(ignite|nats|pgevent|script-groovy|spring-redis|spring-security))*</feature>
               </features>
             <configuration>file://${project.build.directory}/classes/config.properties</configuration>
             </configuration>

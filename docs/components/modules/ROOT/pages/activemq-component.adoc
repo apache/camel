@@ -1,10 +1,54 @@
 [[activemq-component]]
 == ActiveMQ Component
 
+<<<<<<< HEAD
 *Available as of Camel version *
 
 
 #### Component options
+=======
+*Available as of Camel version 1.0*
+
+The ActiveMQ component is an extension to the JMS component and has been pre-configured for using Apache ActiveMQ 5.x (not Artemis).
+Users of Apache ActiveMQ Artemis should use the JMS component.
+
+[TIP]
+====
+*More documentation*
+
+See the JMS component for more documentation and examples
+====
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-activemq</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+=== URI format
+
+--------------------------------------------
+activemq:[queue:|topic:]destinationName[?options]
+--------------------------------------------
+
+Where `destinationName` is a JMS queue or topic name. By default, the
+`destinationName` is interpreted as a queue name. For example, to
+connect to the queue, `foo` use:
+
+-----------
+activemq:foo
+-----------
+
+
+=== Component options
+>>>>>>> upstream/master
 
 // component options: START
 The ActiveMQ component supports 85 options, which are listed below.
@@ -102,7 +146,11 @@ The ActiveMQ component supports 85 options, which are listed below.
 |===
 // component options: END
 
+<<<<<<< HEAD
 #### Endpoint options
+=======
+=== Endpoint options
+>>>>>>> upstream/master
 
 
 // endpoint options: START
@@ -323,4 +371,8 @@ The component supports 86 options, which are listed below.
 | *camel.component.activemq.wait-for-provision-correlation-to-be-updated-counter* | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled. | 50 | Integer
 | *camel.component.activemq.wait-for-provision-correlation-to-be-updated-thread-sleeping-time* | Interval in millis to sleep each time while waiting for provisional correlation id to be updated. | 100 | Long
 |===
+<<<<<<< HEAD
 // spring-boot-auto-configure options: END
+=======
+// spring-boot-auto-configure options: END
+>>>>>>> upstream/master
