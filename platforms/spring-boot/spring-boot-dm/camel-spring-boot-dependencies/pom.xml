@@ -2900,6 +2900,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-util-json</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-validator</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3096,6 +3101,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-zookeeper-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>meta-annotations</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3399,6 +3409,11 @@
             <artifactId>stax-api</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>java-hamcrest</artifactId>
+        <version>2.0.0.0</version>
       </dependency>
       <dependency>
         <groupId>org.jdom</groupId>
