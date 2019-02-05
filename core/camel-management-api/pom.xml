@@ -34,43 +34,28 @@
   <name>Camel :: Management API</name>
   <description>The Camel Management API</description>
 
-  <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.api.management;
-      org.apache.camel.api.management.mbean;
-        -noimport:=true
-    </camel.osgi.export.pkg>
-    <camel.osgi.import.pkg>
-      *
-    </camel.osgi.import.pkg>
-  </properties>
-
   <dependencies>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>meta-annotations</artifactId>
-      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-util</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-util-json</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>

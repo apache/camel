@@ -769,10 +769,9 @@
     <camel.osgi.activator/>
     <camel.osgi.failok>false</camel.osgi.failok>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
-    <camel.osgi.export.pkg>{local-packages}</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>$${replace;{local-packages};;;\;}</camel.osgi.export.pkg>
     <camel.osgi.export>${camel.osgi.export.pkg};-noimport:=true;${camel.osgi.version}</camel.osgi.export>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
-    <camel.osgi.split.pkg>-split-package:=first</camel.osgi.split.pkg>
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
     <camel.osgi.dynamic/>
     <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
@@ -788,6 +787,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>apt</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-util-json</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3659,6 +3663,11 @@
         <artifactId>spi-annotations</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>meta-annotations</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- testing jars -->
       <dependency>
@@ -4520,6 +4529,16 @@
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
         <version>${awaitility-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>java-hamcrest</artifactId>
+        <version>${hamcrest-version}</version>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>

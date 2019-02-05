@@ -34,49 +34,33 @@
   <name>Camel :: Management Implementation</name>
   <description>The Camel Management Implementation</description>
 
-  <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.management;
-      org.apache.camel.management.mbean;
-        -noimport:=true
-    </camel.osgi.export.pkg>
-    <camel.osgi.import.pkg>
-      *
-    </camel.osgi.import.pkg>
-  </properties>
-
   <dependencies>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>meta-annotations</artifactId>
-      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-util</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-util-json</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -99,7 +83,6 @@
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>java-hamcrest</artifactId>
-      <version>${hamcrest-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -116,7 +99,6 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>${assertj-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

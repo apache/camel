@@ -35,27 +35,6 @@
   <description>The Core Camel Java DSL based router</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.builder.*;
-      org.apache.camel.component.*;
-      org.apache.camel.impl;
-      org.apache.camel.impl.cloud;
-      org.apache.camel.impl.cluster;
-      org.apache.camel.impl.transformer;
-      org.apache.camel.impl.osgi;
-      org.apache.camel.impl.osgi.tracker;
-      org.apache.camel.language.*;
-      org.apache.camel.main;
-      org.apache.camel.model.*;
-      org.apache.camel.processor.*;
-      org.apache.camel.reifier.*;
-        -noimport:=true
-    </camel.osgi.export.pkg>
-    <camel.osgi.import.pkg>
-      =org.apache.camel,
-      =org.apache.camel.util.concurrent,
-      *
-    </camel.osgi.import.pkg>
     <camel.osgi.dynamic>
       org.apache.camel.spring.util;${camel.osgi.import.strict.version},
       org.apache.camel.spring.pollingconsumer;${camel.osgi.import.strict.version},
@@ -63,27 +42,19 @@
       org.apache.camel.pollconsumer.quartz2;${camel.osgi.import.strict.version},
       net.sf.saxon
     </camel.osgi.dynamic>
-    <!-- do not skip any tests by default -->
-    <platform.skip.tests/>
   </properties>
 
   <dependencies>
 
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
 
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>meta-annotations</artifactId>
-      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
 
@@ -91,132 +62,108 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-util</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-management-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-base</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-support</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- core components -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-browse</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-controlbus</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-dataformat</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-direct</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-directvm</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-file</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-language</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-log</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-properties</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ref</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-rest</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-saga</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-scheduler</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-seda</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-stub</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-timer</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-validator</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-vm</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-xslt</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -229,7 +176,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-util-json</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -284,7 +230,6 @@
     <dependency>
       <groupId>org.hamcrest</groupId>
       <artifactId>java-hamcrest</artifactId>
-      <version>${hamcrest-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -301,7 +246,6 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-      <version>${assertj-version}</version>
       <scope>test</scope>
     </dependency>
 

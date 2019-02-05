@@ -99,10 +99,6 @@ public class PackageJaxbMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         List<String> locations = new ArrayList<>();
         locations.add(project.getBuild().getOutputDirectory());
-        project.getDependencyArtifacts()
-                .stream()
-                .map(Artifact::getFile)
-                .forEach(f -> locations.add(f.toString()));
 
         processClasses(createIndex(locations));
 
@@ -156,6 +152,7 @@ public class PackageJaxbMojo extends AbstractMojo {
             Indexer indexer = new Indexer();
             locations.stream()
                     .map(this::asFolder)
+                    .filter(Files::isDirectory)
                     .flatMap(this::walk)
                     .filter(Files::isRegularFile)
                     .filter(p -> p.getFileName().toString().endsWith(".class"))
