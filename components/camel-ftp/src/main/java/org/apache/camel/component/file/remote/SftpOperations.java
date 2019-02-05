@@ -57,10 +57,10 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExist;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -622,10 +622,10 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 doChangeDirectory(path.substring(0, 1));
                 path = path.substring(1);
             } else {
-                if(path.matches("^[a-zA-Z]:(//).*$")) {
+                if (path.matches("^[a-zA-Z]:(//).*$")) {
                     doChangeDirectory(path.substring(0, 3));
                     path = path.substring(3);
-                } else if(path.matches("^[a-zA-Z]:(\\\\).*$")) {
+                } else if (path.matches("^[a-zA-Z]:(\\\\).*$")) {
                     doChangeDirectory(path.substring(0, 4));
                     path = path.substring(4);
                 }
