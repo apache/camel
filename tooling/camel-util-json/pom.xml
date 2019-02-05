@@ -32,6 +32,12 @@
   <name>Camel :: Util :: JSon</name>
   <description>A json simple parser that preserves the ordering in Map as read from JSon source</description>
 
+  <properties>
+    <camel.osgi.export.pkg>
+      org.apache.camel.util.json
+    </camel.osgi.export.pkg>
+  </properties>
+
   <dependencies>
 
     <dependency>

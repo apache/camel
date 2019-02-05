@@ -34,32 +34,7 @@
   <name>Camel :: Util</name>
   <description>The Camel Utilities</description>
 
-  <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.util*;-noimport:=true
-    </camel.osgi.export.pkg>
-    <camel.osgi.import.pkg>
-      *
-    </camel.osgi.import.pkg>
-  </properties>
-
   <dependencies>
-
-    <!-- required dependencies by camel-core -->
-    <!-- it will be shade into camel-core by bnd plugin -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>spi-annotations</artifactId>
-      <version>${project.version}</version>
-      <optional>true</optional>
-    </dependency>
-
-    <!-- we shade our patched ordered json-simple parser -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-util-json</artifactId>
-      <version>${project.version}</version>
-    </dependency>
 
     <!-- required dependencies by camel-core -->
     <dependency>
