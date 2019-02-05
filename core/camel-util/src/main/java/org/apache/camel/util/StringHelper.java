@@ -54,6 +54,18 @@ public final class StringHelper {
     }
 
     /**
+     * Remove carriage return and line feeds from a String, replacing them with an empty String.
+     * @param s String to be sanitized of carriage return / line feed characters
+     * @return sanitized version of <code>s</code>.
+     * @throws NullPointerException if <code>s</code> is <code>null</code>.
+     */
+    public static String removeCRLF(String s) {
+        return s
+            .replaceAll("\r", "")
+            .replaceAll("\n", "");
+    }
+
+    /**
      * Counts the number of times the given char is in the string
      *
      * @param s  the string
