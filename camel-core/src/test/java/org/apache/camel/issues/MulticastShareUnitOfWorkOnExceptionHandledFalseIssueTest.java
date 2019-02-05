@@ -22,10 +22,44 @@ import org.junit.Test;
 
 public class MulticastShareUnitOfWorkOnExceptionHandledFalseIssueTest extends ContextTestSupport {
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     @Test
-    public void testMulticast() throws Exception {
+    public void testMulticastLocal() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .setHeader("foo", constant("bar"))
+                    .multicast().shareUnitOfWork().stopOnException()
+                        .to("direct:a")
+                        .to("direct:b")
+                    .end()
+                    .to("mock:result");
+
+                from("direct:a")
+                    .to("mock:a");
+
+                from("direct:b")
+                    .onException(Exception.class)
+                        .handled(false)
+                        .to("mock:b")
+                    .end()
+                    .to("mock:c")
+                    .throwException(new IllegalArgumentException("Forced"));
+            }
+        });
+        context.start();
+
         getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:a").expectedHeaderReceived("foo", "bar");
         getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedHeaderReceived("foo", "bar");
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
@@ -39,25 +73,143 @@ public class MulticastShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Co
         assertMockEndpointsSatisfied();
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+    @Test
+    public void testMulticastGlobal() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 onException(Exception.class)
                     .handled(false)
-                    .to("mock:a");
+                    .to("mock:b");
 
                 from("direct:start")
+                    .setHeader("foo", constant("bar"))
                     .multicast().shareUnitOfWork().stopOnException()
+                        .to("direct:a")
                         .to("direct:b")
                     .end()
                     .to("mock:result");
 
+                from("direct:a")
+                    .to("mock:a");
+
                 from("direct:b")
-                    .to("mock:b")
+                    .to("mock:c")
                     .throwException(new IllegalArgumentException("Forced"));
             }
-        };
+        });
+        context.start();
+
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:a").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should throw exception");
+        } catch (Exception e) {
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause().getCause());
+            assertEquals("Forced", cause.getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
     }
+
+    @Test
+    public void testMulticastLocalNoStop() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .setHeader("foo", constant("bar"))
+                    .multicast().shareUnitOfWork()
+                        .to("direct:a")
+                        .to("direct:b")
+                    .end()
+                    .to("mock:result");
+
+                from("direct:a")
+                    .to("mock:a");
+
+                from("direct:b")
+                    .onException(Exception.class)
+                        .handled(false)
+                        .to("mock:b")
+                    .end()
+                    .to("mock:c")
+                    .throwException(new IllegalArgumentException("Forced"));
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:a").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should throw exception");
+        } catch (Exception e) {
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Forced", cause.getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testMulticastGlobalNoStop() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(Exception.class)
+                    .handled(false)
+                    .to("mock:b");
+
+                from("direct:start")
+                    .setHeader("foo", constant("bar"))
+                    .multicast().shareUnitOfWork()
+                        .to("direct:a")
+                        .to("direct:b")
+                    .end()
+                    .to("mock:result");
+
+                from("direct:a")
+                    .to("mock:a");
+
+                from("direct:b")
+                    .to("mock:c")
+                    .throwException(new IllegalArgumentException("Forced"));
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:a").expectedMessageCount(1);
+        getMockEndpoint("mock:a").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:b").expectedMessageCount(1);
+        getMockEndpoint("mock:b").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:c").expectedMessageCount(1);
+        getMockEndpoint("mock:c").expectedHeaderReceived("foo", "bar");
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should throw exception");
+        } catch (Exception e) {
+            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
+            assertEquals("Forced", cause.getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+
 }
