@@ -67,7 +67,13 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
     }
 
     /**
-     * Name or pattern of properties to remove
+     * Name or pattern of properties to remove.
+     *
+     * The pattern is matched in the following order:
+     * 1 = exact match
+     * 2 = wildcard (pattern ends with a * and the name starts with the pattern)
+     * 3 = regular expression
+     * (all of above is case in-sensitive).
      */
     public void setPattern(String pattern) {
         this.pattern = pattern;
@@ -82,7 +88,13 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
     }
 
     /**
-     * Name or pattern of properties to not remove
+     * Name or pattern of properties to not remove.
+     *
+     * The pattern is matched in the following order:
+     * 1 = exact match
+     * 2 = wildcard (pattern ends with a * and the name starts with the pattern)
+     * 3 = regular expression
+     * (all of above is case in-sensitive).
      */
     public void setExcludePatterns(String[] excludePatterns) {
         this.excludePatterns = excludePatterns;
@@ -93,7 +105,13 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
     }
 
     /**
-     * Name or pattern of properties to not remove
+     * Name or pattern of properties to not remove.
+     *
+     * The pattern is matched in the following order:
+     * 1 = exact match
+     * 2 = wildcard (pattern ends with a * and the name starts with the pattern)
+     * 3 = regular expression
+     * (all of above is case in-sensitive).
      */
     public void setExcludePattern(String excludePattern) {
         this.excludePattern = excludePattern;
