@@ -34,8 +34,8 @@ import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.support.CamelContextHelper.getMandatoryEndpoint;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.support.service.ServiceHelper.startService;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 final class XmlServiceExporterBean<T> extends SyntheticBean<T> {
 

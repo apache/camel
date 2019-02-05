@@ -33,8 +33,8 @@ import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.component.bean.ProxyHelper.createProxy;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.support.service.ServiceHelper.startService;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 final class XmlProxyFactoryBean<T> extends SyntheticBean<T> {
 

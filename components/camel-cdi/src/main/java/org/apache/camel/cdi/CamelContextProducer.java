@@ -39,12 +39,12 @@ import org.apache.camel.spi.CamelContextNameStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
 import static org.apache.camel.cdi.CdiSpiHelper.getRawType;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
-import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 
 final class CamelContextProducer<T extends CamelContext> extends DelegateProducer<T> {
 
