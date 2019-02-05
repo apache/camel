@@ -1,11 +1,11 @@
 package org.apache.camel.component.jcache.policy;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jcache.JCacheConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -15,9 +15,6 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
-import javax.cache.spi.CachingProvider;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class CachePolicyProcessorTest extends CamelTestSupport {
@@ -30,11 +27,9 @@ public class CachePolicyProcessorTest extends CamelTestSupport {
         mock.reset();
         mock.whenAnyExchangeReceived((e)->
                 e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
-
-        //clear cache
-        Cache cache = lookupCache("simple");
-        cache.clear();
     }
+
+
 
     //Basic test to verify value gets cached and route is not executed for the second time
     @Test
@@ -104,10 +99,66 @@ public class CachePolicyProcessorTest extends CamelTestSupport {
     }
 
     //Null final body
+    @Test
+    public void testNullResult() throws Exception {
+        final String key  = randomString();
+        MockEndpoint mock = getMockEndpoint("mock:value");
+        mock.whenAnyExchangeReceived((e)-> e.getMessage().setBody(null));
 
-    //Key expression
+        //Send first
+        this.template().requestBody("direct:cached-simple", key);
 
-    //Key expression exception
+        assertEquals(1,mock.getExchanges().size());
+
+        //Send again, nothing was cached
+        this.template().requestBody("direct:cached-simple", key);
+        assertEquals(2,mock.getExchanges().size());
+
+    }
+
+    //Use a key expression ${header.mykey}
+    @Test
+    public void testKeyExpression() throws Exception {
+        final String key  = randomString();
+        final String body  = randomString();
+        MockEndpoint mock = getMockEndpoint("mock:value");
+        Cache cache = lookupCache("simple");
+
+        //Send first, key is not in cache
+        Object responseBody = this.template().requestBodyAndHeader("direct:cached-byheader", body, "mykey",key);
+
+        //We got back the value, mock was called once, value got cached.
+        assertEquals(generateValue(body),cache.get(key));
+        assertEquals(generateValue(body),responseBody);
+        assertEquals(1,mock.getExchanges().size());
+
+        //Send again, use another body, but the same key
+        responseBody = this.template().requestBodyAndHeader("direct:cached-byheader", randomString(), "mykey", key);
+
+        //We got back the stored value, and the mock was not called again
+        assertEquals(generateValue(body),cache.get(key));
+        assertEquals(generateValue(body),responseBody);
+        assertEquals(1,mock.getExchanges().size());
+
+    }
+
+    //Use an invalid key expression causing an exception
+    @Test
+    public void testInvalidKeyExpression() throws Exception {
+        final String body  = randomString();
+        MockEndpoint mock = getMockEndpoint("mock:value");
+        Cache cache = lookupCache("simple");
+
+        //Send
+        Exchange response = this.template().request("direct:cached-invalidkey",
+                (e)->e.getMessage().setBody(body));
+
+        //Exception is on the exchange, cache is empty
+        assertIsInstanceOf(SimpleIllegalSyntaxException.class,response.getException().getCause());
+        assertEquals(0,mock.getExchanges().size());
+        assertFalse(cache.iterator().hasNext());
+
+    }
 
     //Async route - callback is called
     //Async route with exception - callback is called
@@ -117,8 +168,7 @@ public class CachePolicyProcessorTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                CachingProvider cachingProvider = Caching.getCachingProvider();
-                CacheManager cacheManager = cachingProvider.getCacheManager();
+                CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
 
                 //Simple cache - with default config
                 Cache cache =cacheManager.createCache("simple",new MutableConfiguration<>());
@@ -136,13 +186,40 @@ public class CachePolicyProcessorTest extends CamelTestSupport {
                 cachePolicy = new CachePolicy();
                 cachePolicy.setCache(cache);
 
-
                 from("direct:cached-closed")
                     .policy(cachePolicy)
                     .to("mock:value");
 
+
+                //Use ${header.mykey} as the key
+                cachePolicy = new CachePolicy();
+                cachePolicy.setCache(cacheManager.getCache("simple"));
+                cachePolicy.setKeyExpression(simple("${header.mykey}"));
+
+                from("direct:cached-byheader")
+                        .policy(cachePolicy)
+                        .to("mock:value");
+
+                //Use an invalid keyExpression
+                cachePolicy = new CachePolicy();
+                cachePolicy.setCache(cacheManager.getCache("simple"));
+                cachePolicy.setKeyExpression(simple("${unexpected}"));
+
+                from("direct:cached-invalidkey")
+                        .policy(cachePolicy)
+                        .to("mock:value");
+
             }
         };
+    }
+
+    @After
+    public void after(){
+        //The RouteBuilder code is called for every test, so we destroy cache after each test
+        //TODO: isCreateCamelContextPerClass doesn't seem to work
+        CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
+        cacheManager.destroyCache("simple");
+        cacheManager.destroyCache("closed");
     }
 
     protected String randomString() {
