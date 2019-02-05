@@ -345,6 +345,13 @@ public class PackageLanguageMojo extends AbstractMojo {
     }
 
     private static File findCamelCoreJar(MavenProject project) {
+        // maybe this project is camel-core itself
+        Artifact artifact = project.getArtifact();
+        if (artifact.getGroupId().equals("org.apache.camel") && artifact.getArtifactId().equals("camel-core")) {
+            return artifact.getFile();
+        }
+
+        // okay we are a custom dataformat so we need to find camel-core by walking down the folders
         return findCamelCoreDirectory(project, project.getBasedir());
     }
 
