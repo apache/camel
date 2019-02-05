@@ -22,6 +22,5 @@ package org.apache.camel.component.aws.ecs;
 public interface ECSConstants {
     String OPERATION                = "CamelAwsECSOperation";
     String MAX_RESULTS              = "CamelAwsECSMaxResults";
-    String DESCRIPTION              = "CamelAwsECSDescription";
     String CLUSTER_NAME             = "CamelAwsECSClusterName";
 }
