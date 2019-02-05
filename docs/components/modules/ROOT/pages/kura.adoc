@@ -13,7 +13,7 @@ services and finally forward the current temperature value to your data
 center service using Camel EIP and components.
 
 [[Kura-KuraRouteractivator]]
-==== KuraRouter activator
+=== KuraRouter activator
 
 Bundles deployed to the Eclipse Kura are usually
 http://eclipse.github.io/kura/doc/hello-example.html#create-java-class[developed
