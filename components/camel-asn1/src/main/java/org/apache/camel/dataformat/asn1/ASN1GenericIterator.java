@@ -67,7 +67,6 @@ public class ASN1GenericIterator<T> implements Iterator<T>, Closeable {
             }
             return availableDataInCurrentEntry;
         } catch (IOException exception) {
-            // Just wrap the IOException as CamelRuntimeException
             throw new RuntimeCamelException(exception);
         }
     }
@@ -88,7 +87,6 @@ public class ASN1GenericIterator<T> implements Iterator<T>, Closeable {
                 return null;
             }
         } catch (Throwable exception) {
-            // Just wrap the IOException as CamelRuntimeException
             throw new RuntimeCamelException(exception);
         }
     }
