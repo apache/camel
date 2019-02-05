@@ -60,7 +60,7 @@ public class MulticastMixOriginalMessageBodyAndEnrichedHeadersTest extends Conte
         context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(1);
-        getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:a").expectedBodiesReceived("Changed body");
         getMockEndpoint("mock:a").expectedHeaderReceived("foo", "bar");
         getMockEndpoint("mock:b").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
