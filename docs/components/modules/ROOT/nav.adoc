@@ -1,3 +1,4 @@
+* xref:activemq-component.adoc[ActiveMQ Component]
 * xref:ahc-ws-component.adoc[AHC Websocket Component]
 * xref:ahc-component.adoc[AHC Component]
 * xref:amqp-component.adoc[AMQP Component]

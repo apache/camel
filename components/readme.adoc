@@ -1,14 +1,14 @@
 ==== Components
 
 // components: START
-Number of Components: 284 in 209 JAR artifacts (0 deprecated)
+Number of Components: 289 in 210 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Component | Available From | Description
 
 | link:camel-activemq/src/main/docs/activemq-component.adoc[ActiveMQ] (camel-activemq) +
-`activemq:destinationType:destinationName` |  | The activemq component allows messages to be sent to (or consumed from) Apache ActiveMQ.
+`activemq:destinationType:destinationName` |  | The activemq component allows messages to be sent to (or consumed from) Apache ActiveMQ. This component extends the Camel JMS component.
 
 | link:camel-ahc/src/main/docs/ahc-component.adoc[AHC] (camel-ahc) +
 `ahc:httpUri` | 2.8 | To call external HTTP services using Async Http Client.
@@ -121,6 +121,9 @@ Number of Components: 284 in 209 JAR artifacts (0 deprecated)
 | link:camel-azure/src/main/docs/azure-queue-component.adoc[Azure Storage Queue Service] (camel-azure) +
 `azure-queue:containerAndQueueUri` | 2.19 | The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
 
+| link:../camel-core/src/main/docs/bean-component.adoc[Bean] (camel-core) +
+`bean:beanName` | 1.0 | The bean component is for invoking Java beans from Camel.
+
 | link:camel-bean-validator/src/main/docs/bean-validator-component.adoc[Bean Validator] (camel-bean-validator) +
 `bean-validator:label` | 2.3 | The Validator component performs bean validation of the message body using the Java Bean Validation API.
 
@@ -150,6 +153,9 @@ Number of Components: 284 in 209 JAR artifacts (0 deprecated)
 
 | link:camel-chunk/src/main/docs/chunk-component.adoc[Chunk] (camel-chunk) +
 `chunk:resourceUri` | 2.15 | Transforms the message using a Chunk template.
+
+| link:../camel-core/src/main/docs/class-component.adoc[Class] (camel-core) +
+`class:beanName` | 2.4 | The Class Component is for invoking Java Classes (Java beans) from Camel.
 
 | link:camel-cm-sms/src/main/docs/cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) +
 `cm-sms:host` | 2.18 | The cm-sms component allows to integrate with CM SMS Gateway.
@@ -192,6 +198,9 @@ Number of Components: 284 in 209 JAR artifacts (0 deprecated)
 
 | link:camel-dataformat/src/main/docs/dataformat-component.adoc[Data Format] (camel-dataformat) +
 `dataformat:name:operation` | 2.12 | The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
+
+| link:../camel-core/src/main/docs/dataset-component.adoc[Dataset] (camel-core) +
+`dataset:name` | 1.3 | The dataset component provides a mechanism to easily perform load & soak testing of your system.
 
 | link:camel-digitalocean/src/main/docs/digitalocean-component.adoc[DigitalOcean] (camel-digitalocean) +
 `digitalocean:operation` | 2.19 | The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud.
@@ -541,6 +550,9 @@ Number of Components: 284 in 209 JAR artifacts (0 deprecated)
 | link:camel-mllp/src/main/docs/mllp-component.adoc[MLLP] (camel-mllp) +
 `mllp:hostname:port` | 2.17 | Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
 
+| link:../camel-core/src/main/docs/mock-component.adoc[Mock] (camel-core) +
+`mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
+
 | link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
 `mongodb3:connectionBean` | 2.19 | Component for working with documents stored in MongoDB database.
 
@@ -784,6 +796,9 @@ Number of Components: 284 in 209 JAR artifacts (0 deprecated)
 | link:camel-telegram/src/main/docs/telegram-component.adoc[Telegram] (camel-telegram) +
 `telegram:type/authorizationToken` | 2.18 | The telegram component provides access to the Telegram Bot API.
 
+| link:../camel-core/src/main/docs/test-component.adoc[Test] (camel-core) +
+`test:name` | 1.3 | The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+
 | link:camel-thrift/src/main/docs/thrift-component.adoc[Thrift] (camel-thrift) +
 `thrift:host:port/service` | 2.20 | The Thrift component allows to call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism
 
@@ -866,7 +881,7 @@ Number of Components: 284 in 209 JAR artifacts (0 deprecated)
 ==== Data Formats
 
 // dataformats: START
-Number of Data Formats: 41 in 34 JAR artifacts (0 deprecated)
+Number of Data Formats: 45 in 35 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -900,11 +915,15 @@ Number of Data Formats: 41 in 34 JAR artifacts (0 deprecated)
 
 | link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1 | The Flatpack data format is used for working with flat payloads (such as CSV, delimited, or fixed length formats).
 
+| link:../camel-core/src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
+
 | link:camel-hl7/src/main/docs/hl7-dataformat.adoc[HL7] (camel-hl7) | 2.0 | The HL7 data format can be used to marshal or unmarshal HL7 (Health Care) model objects.
 
 | link:camel-ical/src/main/docs/ical-dataformat.adoc[iCal] (camel-ical) | 2.12 | The iCal dataformat is used for working with iCalendar messages.
 
 | link:camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc[JacksonXML] (camel-jacksonxml) | 2.16 | JacksonXML data format is used for unmarshal a XML payload to POJO or to marshal POJO back to XML payload.
+
+| link:../camel-core/src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Serialization is a data format which uses the standard Java Serialization mechanism to unmarshal a binary payload into Java objects or to marshal Java objects into a binary blob.
 
 | link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0 | JAXB data format uses the JAXB2 XML marshalling standard to unmarshal an XML payload into Java objects or to marshal Java objects into an XML payload.
 
@@ -932,6 +951,8 @@ Number of Data Formats: 41 in 34 JAR artifacts (0 deprecated)
 
 | link:camel-soap/src/main/docs/soapjaxb-dataformat.adoc[SOAP] (camel-soap) | 2.3 | SOAP is a data format which uses JAXB2 and JAX-WS annotations to marshal and unmarshal SOAP payloads.
 
+| link:../camel-core/src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String data format is a textual based format that supports character encoding.
+
 | link:camel-syslog/src/main/docs/syslog-dataformat.adoc[Syslog] (camel-syslog) | 2.6 | The Syslog dataformat is used for working with RFC3164 and RFC5424 messages (logging and monitoring).
 
 | link:camel-tarfile/src/main/docs/tarfile-dataformat.adoc[Tar File] (camel-tarfile) | 2.16 | The Tar File data format is a message compression and de-compression format of tar files.
@@ -952,6 +973,8 @@ Number of Data Formats: 41 in 34 JAR artifacts (0 deprecated)
 
 | link:camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML] (camel-snakeyaml) | 2.17 | YAML is a data format to marshal and unmarshal Java objects to and from YAML.
 
+| link:../camel-core/src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip Deflate Compression data format is a message compression and de-compression format (not zip files).
+
 | link:camel-zipfile/src/main/docs/zipfile-dataformat.adoc[Zip File] (camel-zipfile) | 2.11 | The Zip File data format is a message compression and de-compression format of zip files.
 |===
 // dataformats: END
@@ -960,13 +983,23 @@ Number of Data Formats: 41 in 34 JAR artifacts (0 deprecated)
 ==== Expression Languages
 
 // languages: START
-Number of Languages: 8 in 8 JAR artifacts (1 deprecated)
+Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
 | Language | Available From | Description
 
+| link:../camel-core/src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
+
+| link:../camel-core/src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | To use a constant value in Camel expressions or predicates.
+
+| link:../camel-core/src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | To use a Camel Exchange property in expressions or predicates.
+
+| link:../camel-core/src/main/docs/file-language.adoc[File] (camel-core) | 1.1 | For expressions and predicates using the file/simple language
+
 | link:camel-groovy/src/main/docs/groovy-language.adoc[Groovy] (camel-groovy) | 1.3 | To use Groovy scripts in Camel expressions or predicates.
+
+| link:../camel-core/src/main/docs/header-language.adoc[Header] (camel-core) | 1.5 | To use a Camel Message header in expressions or predicates.
 
 | link:camel-hl7/src/main/docs/terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
 
@@ -978,7 +1011,17 @@ Number of Languages: 8 in 8 JAR artifacts (1 deprecated)
 
 | link:camel-ognl/src/main/docs/ognl-language.adoc[OGNL] (camel-ognl) | 1.1 | To use OGNL scripts in Camel expressions or predicates.
 
+| link:../camel-core/src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
+
+| link:../camel-core/src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
+
 | link:camel-spring/src/main/docs/spel-language.adoc[SpEL] (camel-spring) | 2.7 | To use Spring Expression Language (SpEL) in Camel expressions or predicates.
+
+| link:../camel-core/src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
+
+| link:../camel-core/src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+
+| link:../camel-core/src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
 
 | link:camel-saxon/src/main/docs/xquery-language.adoc[XQuery] (camel-saxon) | 1.0 | To use XQuery (XML) in Camel expressions or predicates.
 |===
