@@ -35,7 +35,6 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.simple.JSONObject;
 
 import static org.apache.camel.component.slack.utils.SlackUtils.readResponse;
 
@@ -143,10 +142,7 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
         jsonMap.put("text", message.getText());
 
         // Generate a JSONObject
-        JSONObject jsonObject = new JSONObject(jsonMap);
-
-        // Return the string based on the JSON Object
-        return JSONObject.toJSONString(jsonObject);
+        return new JsonObject(jsonMap).toJson();
     }
 
 }
