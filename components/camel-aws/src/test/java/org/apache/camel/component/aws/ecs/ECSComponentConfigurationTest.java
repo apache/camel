@@ -37,7 +37,7 @@ public class ECSComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-    	ECSComponent component = new ECSComponent(context);
+        ECSComponent component = new ECSComponent(context);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
