@@ -624,7 +624,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
 
         Set<String> answer = new LinkedHashSet<>();
         try {
-            InputStream is = new FileInputStream(new File(featuresDir, "features.xml"));
+            File file = new File(featuresDir, "features.xml");
+            InputStream is = new FileInputStream(file);
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setIgnoringComments(true);
@@ -651,6 +652,9 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     }
                 }
             }
+
+            getLog().info("Found " + answer.size() + " Camel features in file: " + file);
+
         } catch (Exception e) {
             throw new MojoExecutionException("Error reading features.xml file", e);
         }
