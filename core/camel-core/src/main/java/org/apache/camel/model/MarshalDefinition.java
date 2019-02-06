@@ -108,7 +108,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
         @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
         @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
         @XmlElement(required = false, name = "zip", type = ZipDataFormat.class),
-        @XmlElement(required = false, name = "zipFile", type = ZipFileDataFormat.class)}
+        @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class)}
         )
     private DataFormatDefinition dataFormatType;
 
