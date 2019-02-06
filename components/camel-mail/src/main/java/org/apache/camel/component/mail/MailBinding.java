@@ -82,7 +82,13 @@ public class MailBinding {
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
         throws MessagingException, IOException {
 
-        setRecipients(mimeMessage, endpoint.getConfiguration(), exchange);
+        // camel message headers takes precedence over endpoint configuration
+        if (hasRecipientHeaders(exchange)) {
+            setRecipientFromCamelMessage(mimeMessage, endpoint.getConfiguration(), exchange);
+        } else {
+            // fallback to endpoint configuration
+            setRecipientFromEndpointConfiguration(mimeMessage, endpoint, exchange);
+        }
 
         // set the replyTo if it was passed in as an option in the uri. Note: if it is in both the URI
         // and headers the headers win.
@@ -403,11 +409,7 @@ public class MailBinding {
         }
     }
 
-    private void setRecipients(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange) throws MessagingException, IOException {
-        // First we check the Message headers for the recipients - they have priority
-        boolean toSet = false;
-        boolean ccSet = false;
-        boolean bccSet = false;
+    private void setRecipientFromCamelMessage(MimeMessage mimeMessage, MailConfiguration configuration, Exchange exchange) throws MessagingException, IOException {
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
@@ -424,27 +426,25 @@ public class MailBinding {
                     appendRecipientToMimeMessage(mimeMessage, configuration, exchange,
                                                  StringHelper.removeCRLF(headerName), asString(exchange, headerValue));
                 }
-                
-                if (Message.RecipientType.TO.toString().equalsIgnoreCase(headerName)) {
-                    toSet = true;
-                } else if (Message.RecipientType.CC.toString().equalsIgnoreCase(headerName)) {
-                    ccSet = true;
-                } else if (Message.RecipientType.BCC.toString().equalsIgnoreCase(headerName)) {
-                    bccSet = true;
-                }
             }
         }
+    }
 
-        // Otherwise we check the configuration
-        Map<Message.RecipientType, String> recipients = configuration.getRecipients();
-        if (!toSet && recipients.containsKey(Message.RecipientType.TO)) {
-            appendRecipientToMimeMessage(mimeMessage, configuration, exchange, Message.RecipientType.TO.toString(), recipients.get(Message.RecipientType.TO));
+    /**
+     * Appends the Mail headers from the endpoint configuration.
+     */
+    protected void setRecipientFromEndpointConfiguration(MimeMessage mimeMessage, MailEndpoint endpoint, Exchange exchange)
+        throws MessagingException, IOException {
+
+        Map<Message.RecipientType, String> recipients = endpoint.getConfiguration().getRecipients();
+        if (recipients.containsKey(Message.RecipientType.TO)) {
+            appendRecipientToMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange, Message.RecipientType.TO.toString(), recipients.get(Message.RecipientType.TO));
         }
-        if (!ccSet && recipients.containsKey(Message.RecipientType.CC)) {
-            appendRecipientToMimeMessage(mimeMessage, configuration, exchange, Message.RecipientType.CC.toString(), recipients.get(Message.RecipientType.CC));
+        if (recipients.containsKey(Message.RecipientType.CC)) {
+            appendRecipientToMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange, Message.RecipientType.CC.toString(), recipients.get(Message.RecipientType.CC));
         }
-        if (!bccSet && recipients.containsKey(Message.RecipientType.BCC)) {
-            appendRecipientToMimeMessage(mimeMessage, configuration, exchange, Message.RecipientType.BCC.toString(), recipients.get(Message.RecipientType.BCC));
+        if (recipients.containsKey(Message.RecipientType.BCC)) {
+            appendRecipientToMimeMessage(mimeMessage, endpoint.getConfiguration(), exchange, Message.RecipientType.BCC.toString(), recipients.get(Message.RecipientType.BCC));
         }
     }
 
