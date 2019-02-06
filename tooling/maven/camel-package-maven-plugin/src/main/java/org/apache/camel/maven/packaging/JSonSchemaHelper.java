@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -89,11 +90,8 @@ public final class JSonSchemaHelper {
             Object newValue = rowEntry.getValue();
             if (newValue instanceof List) {
                 List<?> list = (List<?>) newValue;
-                CollectionStringBuffer csb = new CollectionStringBuffer(",");
-                for (Object line : list) {
-                    csb.append(line);
-                }
-                newValue = csb.toString();
+                newValue = list.stream().map(Object::toString)
+                        .collect(Collectors.joining(","));
             }
             // ensure value is escaped
             String value = escapeJson(newValue.toString());
