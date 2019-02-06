@@ -41,7 +41,7 @@ public class KMSComponentConfigurationTest extends CamelTestSupport {
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
-        KMSEndpoint endpoint = (KMSEndpoint)component.createEndpoint("aws-mq://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        KMSEndpoint endpoint = (KMSEndpoint)component.createEndpoint("aws-kms://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
         
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
