@@ -34,8 +34,8 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/changed/");
-        createDirectory("target/changed/in");
+        deleteDirectory("target/data/changed/");
+        createDirectory("target/data/changed/in");
         writeFile();
         // sleep to make the file a little bit old
         Thread.sleep(100);
@@ -46,7 +46,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
     public void testChangedReadLockMinAge() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/changed/out/file.dat");
+        mock.expectedFileExists("target/data/changed/out/file.dat");
         // We should get the file on the first poll
         mock.expectedMessagesMatches(exchangeProperty(Exchange.RECEIVED_TIMESTAMP).convertTo(long.class).isLessThan(new Date().getTime() + 15000));
 
@@ -56,7 +56,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
     private void writeFile() throws Exception {
         LOG.debug("Writing file...");
 
-        FileOutputStream fos = new FileOutputStream("target/changed/in/file.dat");
+        FileOutputStream fos = new FileOutputStream("target/data/changed/in/file.dat");
         fos.write("Line".getBytes());
         fos.flush();
         fos.close();
@@ -68,8 +68,8 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockMinAge=10&readLockCheckInterval=30000&readLockTimeout=90000")
-                        .to("file:target/changed/out", "mock:result");
+                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockMinAge=10&readLockCheckInterval=30000&readLockTimeout=90000")
+                        .to("file:target/data/changed/out", "mock:result");
             }
         };
     }

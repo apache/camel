@@ -28,23 +28,23 @@ public class ZipDataFormatFileDeleteTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/zip");
+        deleteDirectory("target/data/zip");
         super.setUp();
     }
 
     @Test
     public void testZipFileDelete() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBodyAndHeader("file:target/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
         assertMockEndpointsSatisfied();
 
         // wait till the exchange is done which means the file should then have been deleted
         oneExchangeDone.matchesMockWaitTime();
 
-        File in = new File("target/zip/hello.txt");
+        File in = new File("target/data/zip/hello.txt");
         assertFalse("Should have been deleted " + in, in.exists());
 
-        File out = new File("target/zip/out/hello.txt.zip");
+        File out = new File("target/data/zip/out/hello.txt.zip");
         assertTrue("Should have been created " + out, out.exists());
     }
 
@@ -53,9 +53,9 @@ public class ZipDataFormatFileDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/zip?initialDelay=0&delay=10&delete=true")
+                from("file:target/data/zip?initialDelay=0&delay=10&delete=true")
                     .marshal().zip()
-                    .to("file:target/zip/out?fileName=${file:name}.zip")
+                    .to("file:target/data/zip/out?fileName=${file:name}.zip")
                     .to("mock:result");
             }
         };

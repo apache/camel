@@ -35,7 +35,7 @@ public class FileProduceOverruleExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
-        mock.expectedFileExists("target/write/copy-of-hello.txt", "Hello World");
+        mock.expectedFileExists("target/data/write/copy-of-hello.txt", "Hello World");
 
         template.sendBodyAndHeader("direct:start", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
@@ -48,7 +48,7 @@ public class FileProduceOverruleExpressionTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.message(0).header(Exchange.OVERRULE_FILE_NAME).isNull();
-        mock.expectedFileExists("target/write/copy-of-overruled.txt", "Hello World");
+        mock.expectedFileExists("target/data/write/copy-of-overruled.txt", "Hello World");
 
         Map<String, Object> map = new HashMap<>();
         map.put(Exchange.FILE_NAME, "hello.txt");
@@ -63,7 +63,7 @@ public class FileProduceOverruleExpressionTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/write");
+        deleteDirectory("target/data/write");
         super.setUp();
     }
 
@@ -72,7 +72,7 @@ public class FileProduceOverruleExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("file://target/write?fileName=copy-of-${file:name}", "mock:result");
+                    .to("file://target/data/write?fileName=copy-of-${file:name}", "mock:result");
             }
         };
     }

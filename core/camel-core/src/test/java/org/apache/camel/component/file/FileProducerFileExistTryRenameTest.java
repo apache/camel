@@ -27,7 +27,7 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file");
+        deleteDirectory("target/data/file");
         super.setUp();
     }
 
@@ -40,10 +40,10 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
-        mock.expectedFileExists("target/file/hello.txt", "Bye World");
+        mock.expectedFileExists("target/data/file/hello.txt", "Bye World");
 
-        template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/file?fileExist=TryRename&tempPrefix=tmp", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file?fileExist=TryRename&tempPrefix=tmp", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         context.getRouteController().startAllRoutes();
 
@@ -55,7 +55,7 @@ public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&initialDelay=0&delay=10").noAutoStartup()
+                from("file://target/data/file?noop=true&initialDelay=0&delay=10").noAutoStartup()
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

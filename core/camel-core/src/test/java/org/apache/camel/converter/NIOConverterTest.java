@@ -85,9 +85,9 @@ public class NIOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToByteBufferFile() throws Exception {
-        template.sendBodyAndHeader("file://target/nio", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/nio", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        ByteBuffer bb = NIOConverter.toByteBuffer(new File("target/nio/hello.txt"));
+        ByteBuffer bb = NIOConverter.toByteBuffer(new File("target/data/nio/hello.txt"));
         assertNotNull(bb);
 
         assertEquals("Hello World", NIOConverter.toString(bb, null));

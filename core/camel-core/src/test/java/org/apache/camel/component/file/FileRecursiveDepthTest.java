@@ -27,7 +27,7 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/depth");
+        deleteDirectory("target/data/depth");
         super.setUp();
     }
 
@@ -36,12 +36,12 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a2", "b2");
 
-        template.sendBodyAndHeader("file:target/depth", "a", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/depth", "b", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("file:target/depth/foo", "a2", Exchange.FILE_NAME, "a2.txt");
-        template.sendBodyAndHeader("file:target/depth/foo/bar", "a3", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/depth/bar", "b2", Exchange.FILE_NAME, "b2.txt");
-        template.sendBodyAndHeader("file:target/depth/bar/foo", "b3", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/data/depth", "a", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/data/depth", "b", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/data/depth/foo", "a2", Exchange.FILE_NAME, "a2.txt");
+        template.sendBodyAndHeader("file:target/data/depth/foo/bar", "a3", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/data/depth/bar", "b2", Exchange.FILE_NAME, "b2.txt");
+        template.sendBodyAndHeader("file:target/data/depth/bar/foo", "b3", Exchange.FILE_NAME, "b.txt");
 
         // only expect 2 of the 6 sent, those at depth 2
         assertMockEndpointsSatisfied();
@@ -53,12 +53,12 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
 
         mock.expectedBodiesReceivedInAnyOrder("a2", "b2", "a3", "b3");
 
-        template.sendBodyAndHeader("file:target/depth2", "a", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/depth2", "b", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("file:target/depth2/bar", "b2", Exchange.FILE_NAME, "b2.txt");
-        template.sendBodyAndHeader("file:target/depth2/foo", "a2", Exchange.FILE_NAME, "a2.txt");
-        template.sendBodyAndHeader("file:target/depth2/foo/bar", "a3", Exchange.FILE_NAME, "a3.txt");
-        template.sendBodyAndHeader("file:target/depth2/bar/foo", "b3", Exchange.FILE_NAME, "b3.txt");
+        template.sendBodyAndHeader("file:target/data/depth2", "a", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/data/depth2", "b", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/data/depth2/bar", "b2", Exchange.FILE_NAME, "b2.txt");
+        template.sendBodyAndHeader("file:target/data/depth2/foo", "a2", Exchange.FILE_NAME, "a2.txt");
+        template.sendBodyAndHeader("file:target/data/depth2/foo/bar", "a3", Exchange.FILE_NAME, "a3.txt");
+        template.sendBodyAndHeader("file:target/data/depth2/bar/foo", "b3", Exchange.FILE_NAME, "b3.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -69,12 +69,12 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
 
         mock.expectedBodiesReceivedInAnyOrder("a", "b");
 
-        template.sendBodyAndHeader("file:target/depth3", "a", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/depth3", "b", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("file:target/depth3/foo", "a2", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/depth3/foo/bar", "a3", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/depth3/bar", "b2", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("file:target/depth3/bar/foo", "b3", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/data/depth3", "a", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/data/depth3", "b", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/data/depth3/foo", "a2", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/data/depth3/foo/bar", "a3", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/data/depth3/bar", "b2", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/data/depth3/bar/foo", "b3", Exchange.FILE_NAME, "b.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -85,15 +85,15 @@ public class FileRecursiveDepthTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("file:target/depth?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2")
+                from("file:target/data/depth?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=2")
                     .convertBodyTo(String.class)
                     .to("mock:result");
 
-                from("file:target/depth2?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=99")
+                from("file:target/data/depth2?initialDelay=0&delay=10&recursive=true&minDepth=2&maxDepth=99")
                     .convertBodyTo(String.class)
                     .to("mock:result");
 
-                from("file:target/depth3?initialDelay=0&delay=10&recursive=true&minDepth=1&maxDepth=1")
+                from("file:target/data/depth3?initialDelay=0&delay=10&recursive=true&minDepth=1&maxDepth=1")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }

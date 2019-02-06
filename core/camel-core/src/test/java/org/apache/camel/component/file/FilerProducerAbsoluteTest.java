@@ -33,7 +33,7 @@ public class FilerProducerAbsoluteTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        File dir = new File("target/reports/absolute");
+        File dir = new File("target/data/reports/absolute");
         path = dir.getAbsolutePath();
         deleteDirectory(dir);
 

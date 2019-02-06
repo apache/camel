@@ -30,7 +30,7 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/exclude");
+        deleteDirectory("target/data/exclude");
         super.setUp();
     }
 
@@ -48,7 +48,7 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
     }
 
     private void sendFiles() throws Exception {
-        String url = "file://target/exclude";
+        String url = "file://target/data/exclude";
         template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
         template.sendBodyAndHeader(url, "", Exchange.FILE_NAME, "empty1.txt");
         template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
@@ -60,7 +60,7 @@ public class FileConsumerInterceptEmptyFileTest extends ContextTestSupport {
             public void configure() throws Exception {
                 interceptFrom().when(simple("${file:length} == 0")).to("mock:skip").stop();
 
-                from("file://target/exclude/?initialDelay=10&delay=10")
+                from("file://target/data/exclude/?initialDelay=10&delay=10")
                     .convertBodyTo(String.class).to("log:test").to("mock:result");
             }
         };

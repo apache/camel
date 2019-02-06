@@ -34,7 +34,7 @@ public class TokenXMLPairNamespaceMultilineSplitTest extends TokenXMLPairNamespa
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\" xmlns:foo=\"http:foo.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader("file:target/pair", body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader("file:target/data/pair", body, Exchange.FILE_NAME, "orders.xml");
 
         assertMockEndpointsSatisfied();
     }

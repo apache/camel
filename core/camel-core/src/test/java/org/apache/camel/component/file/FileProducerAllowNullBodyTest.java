@@ -32,26 +32,26 @@ public class FileProducerAllowNullBodyTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/allow");
+        deleteDirectory("target/data/allow");
         super.setUp();
     }
 
     @Test
     public void testAllowNullBodyTrue() throws Exception {
-        template.sendBody("file://target/allow?allowNullBody=true&fileName=allowNullBody.txt", null);
-        assertFileExists("target/allow/allowNullBody.txt");
+        template.sendBody("file://target/data/allow?allowNullBody=true&fileName=allowNullBody.txt", null);
+        assertFileExists("target/data/allow/allowNullBody.txt");
     }
     
     @Test
     public void testAllowNullBodyFalse() throws Exception {
         try {
-            template.sendBody("file://target/allow?fileName=allowNullBody.txt", null);
+            template.sendBody("file://target/data/allow?fileName=allowNullBody.txt", null);
             fail("Should have thrown a GenericFileOperationFailedException");
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
             assertTrue(cause.getMessage().endsWith("allowNullBody.txt"));
         }
         
-        assertFalse("allowNullBody set to false with null body should not create a new file", new File("target/allow/allowNullBody.txt").exists());
+        assertFalse("allowNullBody set to false with null body should not create a new file", new File("target/data/allow/allowNullBody.txt").exists());
     }
 }

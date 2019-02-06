@@ -29,12 +29,12 @@ import org.junit.Test;
 @Ignore("Manual test")
 public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/";
+    private String fileUrl = "file://target/data/filesorter/";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filesorter");
+        deleteDirectory("target/data/filesorter");
         super.setUp();
     }
 
@@ -63,7 +63,7 @@ public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
     public void testMemoryLeak() throws Exception {
         // run this manually and browse the memory usage, eg in IDEA there is a Statistics tab
 
-        deleteDirectory("target/filesorter/archiv");
+        deleteDirectory("target/data/filesorter/archiv");
         for (int c = 0; c < 100; c++) {
             template.sendBodyAndHeader(fileUrl + "c", "test", Exchange.FILE_NAME, c + ".dat");
         }
@@ -77,7 +77,7 @@ public class FileBatchConsumerMemoryLeakTest extends ContextTestSupport {
                                 buf.setLength(1000000);
                                 exchange.getIn().setBody(buf.toString());
                             }
-                        }).to("file:target/filesorter/archiv");
+                        }).to("file:target/data/filesorter/archiv");
             }
         });
         context.start();

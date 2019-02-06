@@ -27,7 +27,7 @@ public class FileConsumerTemplateTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/consumer");
+        deleteDirectory("target/data/consumer");
         super.setUp();
     }
 
@@ -38,13 +38,13 @@ public class FileConsumerTemplateTest extends ContextTestSupport {
 
     @Test
     public void testFileConsumerTemplate() throws Exception {
-        template.sendBodyAndHeader("file:target/consumer", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/consumer", "Hello World", Exchange.FILE_NAME, "hello.txt");
         // file should exist
-        File file = new File("target/consumer/hello.txt");
+        File file = new File("target/data/consumer/hello.txt");
 
         assertTrue("File should exist " + file, file.exists());
         
-        String body = consumer.receiveBody("file:target/consumer?delete=true", 5000, String.class);
+        String body = consumer.receiveBody("file:target/data/consumer?delete=true", 5000, String.class);
         assertEquals("Hello World", body);
 
         // file should be deleted

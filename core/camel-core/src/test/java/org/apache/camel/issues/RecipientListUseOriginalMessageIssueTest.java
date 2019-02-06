@@ -32,8 +32,8 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/inbox");
-        deleteDirectory("target/outbox");
+        deleteDirectory("target/data/inbox");
+        deleteDirectory("target/data/outbox");
         super.setUp();
     }
 
@@ -41,11 +41,11 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
     public void testRecipientListUseOriginalMessageIssue() throws Exception {
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/inbox", "A", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/inbox", "A", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
-        File out = new File("target/outbox/hello.txt");
+        File out = new File("target/data/outbox/hello.txt");
         String data = context.getTypeConverter().convertTo(String.class, out);
         assertEquals("A", data);
     }
@@ -57,10 +57,10 @@ public class RecipientListUseOriginalMessageIssueTest extends ContextTestSupport
             public void configure() throws Exception {
                 onException(Exception.class)
                     .handled(true).useOriginalMessage()
-                    .to("file://target/outbox")
+                    .to("file://target/data/outbox")
                     .to("mock:error");
 
-                from("file://target/inbox?initialDelay=0&delay=10").process(new Processor() {
+                from("file://target/data/inbox?initialDelay=0&delay=10").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().setBody("B");

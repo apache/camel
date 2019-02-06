@@ -26,7 +26,7 @@ import org.junit.After;
 import org.junit.Test;
 
 public class FileConfigureTest extends ContextTestSupport {
-    private static final String EXPECT_PATH = "target" + File.separator + "foo" + File.separator + "bar";
+    private static final String EXPECT_PATH = "target" + File.separator + "data" + File.separator + "foo" + File.separator + "bar";
     private static final String EXPECT_FILE = "some" + File.separator + "nested" + File.separator + "filename.txt";
 
     private static final Processor DUMMY_PROCESSOR = new Processor() {
@@ -37,15 +37,15 @@ public class FileConfigureTest extends ContextTestSupport {
 
     @Test
     public void testUriConfigurations() throws Exception {
-        assertFileEndpoint("file://target/foo/bar", EXPECT_PATH, false);
-        assertFileEndpoint("file://target/foo/bar?delete=true", EXPECT_PATH, false);
-        assertFileEndpoint("file:target/foo/bar?delete=true", EXPECT_PATH, false);
-        assertFileEndpoint("file:target/foo/bar", EXPECT_PATH, false);
-        assertFileEndpoint("file://target/foo/bar/", EXPECT_PATH, false);
-        assertFileEndpoint("file://target/foo/bar/?delete=true", EXPECT_PATH, false);
-        assertFileEndpoint("file:target/foo/bar/?delete=true", EXPECT_PATH, false);
-        assertFileEndpoint("file:target/foo/bar/", EXPECT_PATH, false);
-        assertFileEndpoint("file:/target/foo/bar/", File.separator + EXPECT_PATH + File.separator + EXPECT_FILE, true);
+        assertFileEndpoint("file://target/data/foo/bar", EXPECT_PATH, false);
+        assertFileEndpoint("file://target/data/foo/bar?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/data/foo/bar?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/data/foo/bar", EXPECT_PATH, false);
+        assertFileEndpoint("file://target/data/foo/bar/", EXPECT_PATH, false);
+        assertFileEndpoint("file://target/data/foo/bar/?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/data/foo/bar/?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/data/foo/bar/", EXPECT_PATH, false);
+        assertFileEndpoint("file:/target/data/foo/bar/", File.separator + EXPECT_PATH + File.separator + EXPECT_FILE, true);
         assertFileEndpoint("file:/", File.separator, true);
         assertFileEndpoint("file:///", File.separator, true);
     }
@@ -77,12 +77,12 @@ public class FileConfigureTest extends ContextTestSupport {
     
     @Test
     public void testUriWithCharset() throws Exception {
-        FileEndpoint endpoint = resolveMandatoryEndpoint("file://target/foo/bar?charset=UTF-8", FileEndpoint.class);
-        assertNotNull("Could not find endpoint: file://target/foo/bar?charset=UTF-8", endpoint);
+        FileEndpoint endpoint = resolveMandatoryEndpoint("file://target/data/foo/bar?charset=UTF-8", FileEndpoint.class);
+        assertNotNull("Could not find endpoint: file://target/data/foo/bar?charset=UTF-8", endpoint);
         assertEquals("Get a wrong charset", "UTF-8", endpoint.getCharset());
         
         try {
-            resolveMandatoryEndpoint("file://target/foo/bar?charset=ASSI", FileEndpoint.class);
+            resolveMandatoryEndpoint("file://target/data/foo/bar?charset=ASSI", FileEndpoint.class);
             // The charset is wrong
             fail("Expect a configure exception here");
         } catch (Exception ex) {
@@ -92,10 +92,10 @@ public class FileConfigureTest extends ContextTestSupport {
 
     @Test
     public void testConsumerConfigurations() throws Exception {
-        FileConsumer consumer = createFileConsumer("file://target/foo/bar?recursive=true");
+        FileConsumer consumer = createFileConsumer("file://target/data/foo/bar?recursive=true");
         assertNotNull(consumer);
         try {
-            createFileConsumer("file://target/foo/bar?recursiv=true");
+            createFileConsumer("file://target/data/foo/bar?recursiv=true");
             fail("Expect a configure exception here");
         } catch (Exception ex) {
             assertTrue("Get the wrong exception type here", ex instanceof ResolveEndpointFailedException);

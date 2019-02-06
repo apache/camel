@@ -27,7 +27,7 @@ public class FileProducerFileExistIgnoreTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file");
+        deleteDirectory("target/data/file");
         super.setUp();
     }
 
@@ -35,10 +35,10 @@ public class FileProducerFileExistIgnoreTest extends ContextTestSupport {
     public void testIgnore() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/file/hello.txt", "Hello World");
+        mock.expectedFileExists("target/data/file/hello.txt", "Hello World");
 
-        template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/file?fileExist=Ignore", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Ignore", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -48,7 +48,7 @@ public class FileProducerFileExistIgnoreTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/file?noop=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

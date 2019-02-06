@@ -27,7 +27,7 @@ public class FileProducerFileExistOverrideNoFileBeforeTest extends ContextTestSu
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file");
+        deleteDirectory("target/data/file");
         super.setUp();
     }
 
@@ -35,9 +35,9 @@ public class FileProducerFileExistOverrideNoFileBeforeTest extends ContextTestSu
     public void testOverride() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
-        mock.expectedFileExists("target/file/hello.txt", "Bye World");
+        mock.expectedFileExists("target/data/file/hello.txt", "Bye World");
 
-        template.sendBodyAndHeader("file://target/file?fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Override", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +47,7 @@ public class FileProducerFileExistOverrideNoFileBeforeTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&delay=1000").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/file?noop=true&delay=1000").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

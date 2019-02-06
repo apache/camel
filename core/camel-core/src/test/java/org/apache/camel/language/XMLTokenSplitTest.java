@@ -31,8 +31,8 @@ public class XMLTokenSplitTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/xtokenizer");
-        deleteDirectory("target/xtokenizer2");
+        deleteDirectory("target/data/xtokenizer");
+        deleteDirectory("target/data/xtokenizer2");
         super.setUp();
     }
 
@@ -45,7 +45,7 @@ public class XMLTokenSplitTest extends ContextTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader("file:target/xtokenizer", body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader("file:target/data/xtokenizer", body, Exchange.FILE_NAME, "orders.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -59,7 +59,7 @@ public class XMLTokenSplitTest extends ContextTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader("file:target/xtokenizer2", body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader("file:target/data/xtokenizer2", body, Exchange.FILE_NAME, "orders.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -82,13 +82,13 @@ public class XMLTokenSplitTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("file:target/xtokenizer?initialDelay=0&delay=10")
+                from("file:target/data/xtokenizer?initialDelay=0&delay=10")
                     // split the order child tags, and inherit namespaces from the orders root tag
                     .split().xtokenize("//orders/order", ns)
                         .to("mock:split");
                 // END SNIPPET: e1
 
-                from("file:target/xtokenizer2?initialDelay=0&delay=10")
+                from("file:target/data/xtokenizer2?initialDelay=0&delay=10")
                     // split the order child tags, and inherit namespaces from the orders root tag
                     .split(body().xtokenize("//orders/order", ns))
                         .to("mock:split");

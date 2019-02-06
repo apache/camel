@@ -27,12 +27,12 @@ import org.junit.Test;
  */
 public class FileSortByNestedExpressionTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/";
+    private String fileUrl = "file://target/data/filesorter/";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filesorter");
+        deleteDirectory("target/data/filesorter");
         super.setUp();
     }
 
@@ -42,16 +42,16 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
     }
 
     private void prepareFolder(String folder) {
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Paris",
+        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Paris",
             Exchange.FILE_NAME, "paris.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello London",
+        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello London",
             Exchange.FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Copenhagen",
+        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Copenhagen",
             Exchange.FILE_NAME, "copenhagen.xml");
 
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Dublin",
+        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Dublin",
             Exchange.FILE_NAME, "dublin.txt");
     }
 

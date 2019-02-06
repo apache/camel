@@ -30,7 +30,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/rename");
+        deleteDirectory("target/data/rename");
         super.setUp();
     }
 
@@ -41,7 +41,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         mock.expectedBodiesReceived("Bye World");
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("bye.txt");
 
-        template.sendBodyAndHeader("file:target/rename", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file:target/data/rename", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // start the route
         context.getRouteController().startRoute("foo");
@@ -51,7 +51,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         assertTrue(oneExchangeDone.matchesMockWaitTime());
 
         // and lock file should be deleted
-        File lock = new File("target/rename/bye.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
+        File lock = new File("target/data/rename/bye.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         assertFalse("Lock file should not exist: " + lock, lock.exists());
     }
 
@@ -60,7 +60,7 @@ public class FileRenameReadLockMustUseMarkerFileTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/rename?readLock=rename&initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                from("file:target/data/rename?readLock=rename&initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {

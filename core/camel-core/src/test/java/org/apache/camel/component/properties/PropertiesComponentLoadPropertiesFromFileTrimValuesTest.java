@@ -27,8 +27,8 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/space");
-        createDirectory("target/space");
+        deleteDirectory("target/data/space");
+        createDirectory("target/data/space");
         super.setUp();
     }
 
@@ -37,7 +37,7 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
         CamelContext context = super.createCamelContext();
 
         // create space.properties file
-        FileOutputStream fos = new FileOutputStream("target/space/space.properties");
+        FileOutputStream fos = new FileOutputStream("target/data/space/space.properties");
         String cool = "cool.leading= Leading space" + LS + "cool.trailing=Trailing space " + LS + "cool.both= Both leading and trailing space ";
         fos.write(cool.getBytes());
         fos.write(LS.getBytes());
@@ -56,7 +56,7 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
         fos.close();
 
         PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("file:target/space/space.properties");
+        pc.setLocation("file:target/data/space/space.properties");
         context.addComponent("properties", pc);
 
         return context;

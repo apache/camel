@@ -35,7 +35,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     private static int counter;
     private static volatile String event = "";
 
-    private String fileUrl = "file://target/pollstrategy/?pollStrategy=#myPoll&initialDelay=0&delay=10";
+    private String fileUrl = "file://target/data/pollstrategy/?pollStrategy=#myPoll&initialDelay=0&delay=10";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -47,9 +47,9 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/pollstrategy");
+        deleteDirectory("target/data/pollstrategy");
         super.setUp();
-        template.sendBodyAndHeader("file:target/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
     @Test

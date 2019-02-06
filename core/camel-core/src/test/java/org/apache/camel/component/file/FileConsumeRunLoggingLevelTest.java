@@ -29,7 +29,7 @@ public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/files");
+        deleteDirectory("target/data/files");
         super.setUp();
     }
 
@@ -37,7 +37,7 @@ public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
     public void testRunLoggingLevel() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +47,7 @@ public class FileConsumeRunLoggingLevelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/files?runLoggingLevel=INFO&initialDelay=0&delay=10")
+                from("file:target/data/files?runLoggingLevel=INFO&initialDelay=0&delay=10")
                     .to("mock:result");
             }
         };

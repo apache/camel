@@ -37,7 +37,7 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
     private static int maxPolls;
     private final CountDownLatch latch = new CountDownLatch(1);
 
-    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll&initialDelay=0&delay=10";
+    private String fileUrl = "file://target/data/pollstrategy/?consumer.pollStrategy=#myPoll&initialDelay=0&delay=10";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -49,14 +49,14 @@ public class FileConsumerPollStrategyPolledMessagesTest extends ContextTestSuppo
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/pollstrategy");
+        deleteDirectory("target/data/pollstrategy");
         super.setUp();
     }
 
     @Test
     public void testPolledMessages() throws Exception {
-        template.sendBodyAndHeader("file:target/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/pollstrategy/", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file:target/data/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/pollstrategy/", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // start route now files have been created
         context.getRouteController().startRoute("foo");

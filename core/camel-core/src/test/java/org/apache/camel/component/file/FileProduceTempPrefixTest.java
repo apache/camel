@@ -29,12 +29,12 @@ import org.junit.Test;
  */
 public class FileProduceTempPrefixTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/tempandrename/?tempPrefix=inprogress.";
+    private String fileUrl = "file://target/data/tempandrename/?tempPrefix=inprogress.";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/tempandrename");
+        deleteDirectory("target/data/tempandrename");
         super.setUp();
     }
 
@@ -45,8 +45,8 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
-        String tempFileName = producer.createTempFileName(exchange, "target/tempandrename/claus.txt");
-        assertDirectoryEquals("target/tempandrename/inprogress.claus.txt", tempFileName);
+        String tempFileName = producer.createTempFileName(exchange, "target/data/tempandrename/claus.txt");
+        assertDirectoryEquals("target/data/tempandrename/inprogress.claus.txt", tempFileName);
     }
 
     @Test
@@ -56,8 +56,8 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "foo/claus.txt");
 
-        String tempFileName = producer.createTempFileName(exchange, "target/tempandrename/foo/claus.txt");
-        assertDirectoryEquals("target/tempandrename/foo/inprogress.claus.txt", tempFileName);
+        String tempFileName = producer.createTempFileName(exchange, "target/data/tempandrename/foo/claus.txt");
+        assertDirectoryEquals("target/data/tempandrename/foo/inprogress.claus.txt", tempFileName);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     public void testTempPrefix() throws Exception {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File("target/tempandrename/hello.txt");
+        File file = new File("target/data/tempandrename/hello.txt");
         assertEquals("The generated file should exists: " + file, true, file.exists());
     }
 

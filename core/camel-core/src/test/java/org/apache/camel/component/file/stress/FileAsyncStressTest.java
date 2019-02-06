@@ -40,9 +40,9 @@ public class FileAsyncStressTest extends ContextTestSupport {
         }
 
         super.setUp();
-        deleteDirectory("target/filestress");
+        deleteDirectory("target/data/filestress");
         for (int i = 0; i < files; i++) {
-            template.sendBodyAndHeader("file:target/filestress", "Hello World", Exchange.FILE_NAME, i + ".txt");
+            template.sendBodyAndHeader("file:target/data/filestress", "Hello World", Exchange.FILE_NAME, i + ".txt");
         }
     }
 
@@ -71,7 +71,7 @@ public class FileAsyncStressTest extends ContextTestSupport {
                 // leverage the fact that we can limit to max 50 files per poll
                 // this will result in polling again and potentially picking up files
                 // that already are in progress
-                from("file:target/filestress?maxMessagesPerPoll=50").routeId("foo").noAutoStartup()
+                from("file:target/data/filestress?maxMessagesPerPoll=50").routeId("foo").noAutoStartup()
                     .threads(10)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

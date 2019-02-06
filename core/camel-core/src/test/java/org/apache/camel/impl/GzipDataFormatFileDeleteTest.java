@@ -28,7 +28,7 @@ public class GzipDataFormatFileDeleteTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/gzip");
+        deleteDirectory("target/data/gzip");
         super.setUp();
     }
 
@@ -36,16 +36,16 @@ public class GzipDataFormatFileDeleteTest extends ContextTestSupport {
     public void testGzipFileDelete() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/gzip", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/gzip", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
 
-        File in = new File("target/gzip/hello.txt");
+        File in = new File("target/data/gzip/hello.txt");
         assertFalse("Should have been deleted " + in, in.exists());
 
-        File out = new File("target/gzip/out/hello.txt.gz");
+        File out = new File("target/data/gzip/out/hello.txt.gz");
         assertTrue("Should have been created " + out, out.exists());
     }
 
@@ -54,9 +54,9 @@ public class GzipDataFormatFileDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/gzip?initialDelay=0&delay=10&delete=true")
+                from("file:target/data/gzip?initialDelay=0&delay=10&delete=true")
                     .marshal().gzip()
-                    .to("file:target/gzip/out?fileName=${file:name}.gz")
+                    .to("file:target/data/gzip/out?fileName=${file:name}.gz")
                     .to("mock:result");
             }
         };

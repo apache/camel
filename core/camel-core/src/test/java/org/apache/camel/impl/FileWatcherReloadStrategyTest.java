@@ -44,7 +44,7 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         reloadStrategy = new FileWatcherReloadStrategy();
-        reloadStrategy.setFolder("target/dummy");
+        reloadStrategy.setFolder("target/data/dummy");
         // to make unit test faster
         reloadStrategy.setDelay(20);
         context.setReloadStrategy(reloadStrategy);
@@ -53,8 +53,8 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 
     @Test
     public void testAddNewRoute() throws Exception {
-        deleteDirectory("target/dummy");
-        createDirectory("target/dummy");
+        deleteDirectory("target/data/dummy");
+        createDirectory("target/data/dummy");
 
         context.start();
 
@@ -62,9 +62,9 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         assertEquals(0, context.getRoutes().size());
 
         // create an xml file with some routes
-        log.info("Copying file to target/dummy");
+        log.info("Copying file to target/data/dummy");
         Thread.sleep(100);
-        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/model/barRoute.xml"), new File("target/dummy/barRoute.xml"));
+        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/model/barRoute.xml"), new File("target/data/dummy/barRoute.xml"));
 
         // wait for that file to be processed
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
@@ -77,8 +77,8 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 
     @Test
     public void testUpdateExistingRoute() throws Exception {
-        deleteDirectory("target/dummy");
-        createDirectory("target/dummy");
+        deleteDirectory("target/data/dummy");
+        createDirectory("target/data/dummy");
 
         // the bar route is added two times, at first, and then when updated
         final CountDownLatch latch = new CountDownLatch(2);
@@ -114,9 +114,9 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         resetMocks();
 
         // create an xml file with some routes
-        log.info("Copying file to target/dummy");
+        log.info("Copying file to target/data/dummy");
         Thread.sleep(100);
-        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/model/barRoute.xml"), new File("target/dummy/barRoute.xml"));
+        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/model/barRoute.xml"), new File("target/data/dummy/barRoute.xml"));
 
         // wait for that file to be processed and remove/add the route
         boolean done = latch.await(10, TimeUnit.SECONDS);
@@ -132,8 +132,8 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
 
     @Test
     public void testUpdateXmlRoute() throws Exception {
-        deleteDirectory("target/dummy");
-        createDirectory("target/dummy");
+        deleteDirectory("target/data/dummy");
+        createDirectory("target/data/dummy");
 
         // the bar route is added two times, at first, and then when updated
         final CountDownLatch latch = new CountDownLatch(2);
@@ -155,9 +155,9 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         assertEquals(0, context.getRoutes().size());
 
         // create an xml file with some routes
-        log.info("Copying file to target/dummy");
+        log.info("Copying file to target/data/dummy");
         Thread.sleep(100);
-        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/model/barRoute.xml"), new File("target/dummy/barRoute.xml"));
+        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/model/barRoute.xml"), new File("target/data/dummy/barRoute.xml"));
 
         // wait for that file to be processed
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(1, context.getRoutes().size()));
@@ -170,9 +170,9 @@ public class FileWatcherReloadStrategyTest extends ContextTestSupport {
         resetMocks();
 
         // now update the file
-        log.info("Updating file in target/dummy");
+        log.info("Updating file in target/data/dummy");
         Thread.sleep(200);
-        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/model/barUpdatedRoute.xml"), new File("target/dummy/barRoute.xml"));
+        FileUtil.copyFile(new File("src/test/resources/org/apache/camel/model/barUpdatedRoute.xml"), new File("target/data/dummy/barRoute.xml"));
 
         // wait for that file to be processed and remove/add the route
         boolean done = latch.await(10, TimeUnit.SECONDS);

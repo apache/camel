@@ -33,7 +33,7 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
         dead.message(0).body().isInstanceOf(GenericFile.class);
         dead.message(0).body(String.class).isEqualTo("Hello");
 
-        template.sendBodyAndHeader("file://target/originalexchange", "Hello", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/originalexchange", "Hello", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -41,7 +41,7 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/originalexchange");
+        deleteDirectory("target/data/originalexchange");
         super.setUp();
     }
 
@@ -52,7 +52,7 @@ public class DeadLetterChannelUseOriginalInBodyWithFileTest extends ContextTestS
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").disableRedelivery().logStackTrace(false).useOriginalMessage());
 
-                from("file://target/originalexchange?initialDelay=0&delay=10&noop=true")
+                from("file://target/data/originalexchange?initialDelay=0&delay=10&noop=true")
                     .transform(body().append(" World"))
                     .process(new MyThrowProcessor());
             }

@@ -33,7 +33,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/deletefile");
+        deleteDirectory("target/data/deletefile");
         super.setUp();
     }
 
@@ -41,7 +41,7 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
     public void testPollFileAndShouldBeDeletedAtThirdPoll() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 
-        template.sendBodyAndHeader("file://target/deletefile", body, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/deletefile", body, Exchange.FILE_NAME, "hello.txt");
         context.getRouteController().startRoute("FromFilePollThirdTimeOkTest");
 
         getMockEndpoint("mock:result").expectedBodiesReceived(body);
@@ -51,20 +51,20 @@ public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
         assertEquals(3, counter);
 
         // assert the file is deleted
-        File file = new File("target/deletefile/hello.txt");
+        File file = new File("target/data/deletefile/hello.txt");
         assertFalse("The file should have been deleted", file.exists());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/deletefile?delete=true&initialDelay=0&delay=10").noAutoStartup().routeId("FromFilePollThirdTimeOkTest")
+                from("file://target/data/deletefile?delete=true&initialDelay=0&delay=10").noAutoStartup().routeId("FromFilePollThirdTimeOkTest")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             counter++;
                             if (counter < 3) {
                                 // file should exists
-                                File file = new File("target/deletefile/hello.txt");
+                                File file = new File("target/data/deletefile/hello.txt");
                                 assertTrue("The file should NOT have been deleted", file.exists());
                                 throw new IllegalArgumentException("Forced by unittest");
                             }

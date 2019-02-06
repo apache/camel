@@ -28,17 +28,17 @@ public class FromFileMoveFileIfProcessFailsTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/movefile");
+        deleteDirectory("target/data/movefile");
         super.setUp();
     }
 
     @Test
     public void testPollFileAndShouldNotBeMoved() throws Exception {
-        template.sendBodyAndHeader("file://target/movefile", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/movefile", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:foo");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/movefile/error/hello.txt", "Hello World");
+        mock.expectedFileExists("target/data/movefile/error/hello.txt", "Hello World");
 
         mock.assertIsSatisfied();
     }
@@ -46,7 +46,7 @@ public class FromFileMoveFileIfProcessFailsTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/movefile?initialDelay=0&delay=10&moveFailed=error")
+                from("file://target/data/movefile?initialDelay=0&delay=10&moveFailed=error")
                         .convertBodyTo(String.class).to("mock:foo").process(
                             new Processor() {
                                 public void process(Exchange exchange) throws Exception {

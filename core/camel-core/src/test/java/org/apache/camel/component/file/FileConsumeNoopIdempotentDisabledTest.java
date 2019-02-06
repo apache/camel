@@ -27,9 +27,9 @@ public class FileConsumeNoopIdempotentDisabledTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/noop");
+        deleteDirectory("target/data/noop");
         super.setUp();
-        template.sendBodyAndHeader("file://target/noop", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/noop", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
     @Test
@@ -46,7 +46,7 @@ public class FileConsumeNoopIdempotentDisabledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/noop?initialDelay=0&delay=10&noop=true&idempotent=false").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/noop?initialDelay=0&delay=10&noop=true&idempotent=false").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

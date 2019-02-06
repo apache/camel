@@ -33,7 +33,7 @@ import org.junit.Test;
  */
 public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
 
-    private final String fileUrl = "file://target/directoryfilter/?recursive=true&filter=#myFilter&initialDelay=0&delay=10";
+    private final String fileUrl = "file://target/data/directoryfilter/?recursive=true&filter=#myFilter&initialDelay=0&delay=10";
     private final Set<String> names = new TreeSet<>();
 
     @Override
@@ -46,7 +46,7 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/directoryfilter");
+        deleteDirectory("target/data/directoryfilter");
         super.setUp();
     }
 
@@ -56,13 +56,13 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/directoryfilter/skipDir/", "This is a file to be filtered",
+        template.sendBodyAndHeader("file:target/data/directoryfilter/skipDir/", "This is a file to be filtered",
                 Exchange.FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/directoryfilter/skipDir2/", "This is a file to be filtered",
+        template.sendBodyAndHeader("file:target/data/directoryfilter/skipDir2/", "This is a file to be filtered",
                 Exchange.FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/directoryfilter/okDir/", "Hello World",
+        template.sendBodyAndHeader("file:target/data/directoryfilter/okDir/", "Hello World",
                 Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();

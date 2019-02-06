@@ -30,13 +30,13 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/utf8");
+        deleteDirectory("target/data/utf8");
         super.setUp();
 
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
         body = "Hello Thai Elephant \u0E08".getBytes("UTF-8");
 
-        template.sendBodyAndHeader("file://target/utf8", body, Exchange.FILE_NAME, "utf8.txt");
+        template.sendBodyAndHeader("file://target/data/utf8", body, Exchange.FILE_NAME, "utf8.txt");
     }
 
     @Override
@@ -49,7 +49,7 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/utf8?initialDelay=0&delay=10")
+                from("file://target/data/utf8?initialDelay=0&delay=10")
                     .convertBodyTo(String.class, "UTF-8")
                     .to("mock:result");
             }

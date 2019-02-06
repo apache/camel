@@ -28,7 +28,7 @@ public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/jail");
+        deleteDirectory("target/data/jail");
         super.setUp();
     }
 
@@ -65,7 +65,7 @@ public class FileProducerJailStartingDirectoryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .setHeader(Exchange.FILE_NAME, simple("../${file:name}"))
-                    .to("file:target/jail/outbox")
+                    .to("file:target/data/jail/outbox")
                     .to("mock:result");
             }
         };

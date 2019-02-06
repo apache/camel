@@ -33,7 +33,7 @@ import org.junit.Test;
 public class FileIdempotentConsumerLoadStoreTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
-    private File store = new File("target/idempotentfilestore.dat");
+    private File store = new File("target/data/idempotentfilestore.dat");
     private IdempotentRepository repo;
 
     @Test

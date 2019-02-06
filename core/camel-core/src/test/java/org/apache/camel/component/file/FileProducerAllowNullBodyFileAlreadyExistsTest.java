@@ -32,16 +32,16 @@ public class FileProducerAllowNullBodyFileAlreadyExistsTest extends ContextTestS
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/allow");
+        deleteDirectory("target/data/allow");
         super.setUp();
-        template.sendBodyAndHeader("file://target/allow", "Hello world", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/allow", "Hello world", Exchange.FILE_NAME, "hello.txt");
     }
 
     @Test
     public void testFileExistAppendAllowNullBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:appendTypeAppendResult");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/allow/hello.txt", "Hello world");
+        mock.expectedFileExists("target/data/allow/hello.txt", "Hello world");
 
         template.sendBody("direct:appendTypeAppend", null);
 
@@ -52,7 +52,7 @@ public class FileProducerAllowNullBodyFileAlreadyExistsTest extends ContextTestS
     public void testFileExistOverrideAllowNullBody() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:appendTypeOverrideResult");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/allow/hello.txt", "");
+        mock.expectedFileExists("target/data/allow/hello.txt", "");
 
         template.sendBody("direct:appendTypeOverride", null);
 
@@ -66,12 +66,12 @@ public class FileProducerAllowNullBodyFileAlreadyExistsTest extends ContextTestS
             public void configure() {
                 from("direct:appendTypeAppend")
                     .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                    .to("file://target/allow?allowNullBody=true&fileExist=Append")
+                    .to("file://target/data/allow?allowNullBody=true&fileExist=Append")
                     .to("mock:appendTypeAppendResult");
                 
                 from("direct:appendTypeOverride")
                      .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                     .to("file://target/allow?allowNullBody=true&fileExist=Override")
+                     .to("file://target/data/allow?allowNullBody=true&fileExist=Override")
                      .to("mock:appendTypeOverrideResult");
             }
         };

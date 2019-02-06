@@ -27,7 +27,7 @@ public class FileConsumerProducerRouteTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file-test");
+        deleteDirectory("target/data/file-test");
         super.setUp();
     }
 
@@ -36,8 +36,8 @@ public class FileConsumerProducerRouteTest extends ContextTestSupport {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedMessageCount(2);
 
-        template.sendBodyAndHeader("file://target/file-test/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/file-test/a", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/file-test/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file-test/a", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         result.assertIsSatisfied();
     }
@@ -46,8 +46,8 @@ public class FileConsumerProducerRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file:target/file-test/a?initialDelay=0&delay=10").to("file:target/file-test/b");
-                from("file:target/file-test/b?initialDelay=0&delay=10").to("mock:result");
+                from("file:target/data/file-test/a?initialDelay=0&delay=10").to("file:target/data/file-test/b");
+                from("file:target/data/file-test/b?initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FileStateRepositoryTest {
-    private final File repositoryStore = new File("target/file-state-repository.dat");
+    private final File repositoryStore = new File("target/data/file-state-repository.dat");
 
     @Before
     public void setUp() throws Exception {

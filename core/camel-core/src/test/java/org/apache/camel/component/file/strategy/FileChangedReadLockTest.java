@@ -34,8 +34,8 @@ public class FileChangedReadLockTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/changed/");
-        createDirectory("target/changed/in");
+        deleteDirectory("target/data/changed/");
+        createDirectory("target/data/changed/in");
         super.setUp();
     }
 
@@ -43,14 +43,14 @@ public class FileChangedReadLockTest extends ContextTestSupport {
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/changed/out/slowfile.dat");
+        mock.expectedFileExists("target/data/changed/out/slowfile.dat");
         mock.expectedHeaderReceived(Exchange.FILE_LENGTH, expectedFileLength());
 
         writeSlowFile();
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/changed/out/slowfile.dat"));
+        String content = context.getTypeConverter().convertTo(String.class, new File("target/data/changed/out/slowfile.dat"));
         String[] lines = content.split(LS);
         assertEquals("There should be 20 lines in the file", 20, lines.length);
         for (int i = 0; i < 20; i++) {
@@ -61,7 +61,7 @@ public class FileChangedReadLockTest extends ContextTestSupport {
     private void writeSlowFile() throws Exception {
         LOG.debug("Writing slow file...");
 
-        FileOutputStream fos = new FileOutputStream("target/changed/in/slowfile.dat");
+        FileOutputStream fos = new FileOutputStream("target/data/changed/in/slowfile.dat");
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             LOG.debug("Writing line " + i);
@@ -86,8 +86,8 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100")
-                    .to("file:target/changed/out", "mock:result");
+                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100")
+                    .to("file:target/data/changed/out", "mock:result");
             }
         };
     }

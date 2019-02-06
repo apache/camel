@@ -29,12 +29,12 @@ import org.junit.Test;
 public class DirectoryCreateIssueTest extends ContextTestSupport {
 
     private final int numFiles = 10;
-    private final String path = "target/a/b/c/d/e/f/g/h";
+    private final String path = "target/data/a/b/c/d/e/f/g/h";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/a");
+        deleteDirectory("target/data/a");
         super.setUp();
     }
 

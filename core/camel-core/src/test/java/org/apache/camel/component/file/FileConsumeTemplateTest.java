@@ -28,19 +28,19 @@ public class FileConsumeTemplateTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/template");
+        deleteDirectory("target/data/template");
         super.setUp();
     }
 
     @Test
     public void testConsumeFileWithTemplate() throws Exception {
-        template.sendBodyAndHeader("file://target/template", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/template", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/template", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/template", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
-        Exchange out = consumer.receive("file://target/template?sortBy=file:name");
+        Exchange out = consumer.receive("file://target/data/template?sortBy=file:name");
         assertNotNull(out);
 
-        Exchange out2 = consumer.receive("file://target/template?sortBy=file:name");
+        Exchange out2 = consumer.receive("file://target/data/template?sortBy=file:name");
         assertNotNull(out2);
 
         String body = out.getIn().getBody(String.class);

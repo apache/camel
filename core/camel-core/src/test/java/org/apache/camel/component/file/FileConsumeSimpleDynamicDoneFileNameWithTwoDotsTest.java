@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class FileConsumeSimpleDynamicDoneFileNameWithTwoDotsTest extends ContextTestSupport {
 
-    private static final String TARGET_DIR_NAME = "target/" + MethodHandles.lookup().lookupClass().getSimpleName();
+    private static final String TARGET_DIR_NAME = "target/data/" + MethodHandles.lookup().lookupClass().getSimpleName();
 
     @Override
     @Before

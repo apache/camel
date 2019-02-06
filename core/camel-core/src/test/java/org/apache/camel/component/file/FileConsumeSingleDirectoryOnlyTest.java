@@ -30,7 +30,7 @@ public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/singledirectoryonly");
+        deleteDirectory("target/data/singledirectoryonly");
         super.setUp();
     }
 
@@ -39,9 +39,9 @@ public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        template.sendBodyAndHeader("file://target/singledirectoryonly/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
-        template.sendBodyAndHeader("file://target/singledirectoryonly", "Hello World", Exchange.FILE_NAME, "report.txt");
-        template.sendBodyAndHeader("file://target/singledirectoryonly", "Bye World", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader("file://target/data/singledirectoryonly/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
+        template.sendBodyAndHeader("file://target/data/singledirectoryonly", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/data/singledirectoryonly", "Bye World", Exchange.FILE_NAME, "report2.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -50,7 +50,7 @@ public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/singledirectoryonly/?recursive=false&delete=true&initialDelay=0&delay=10")
+                from("file://target/data/singledirectoryonly/?recursive=false&delete=true&initialDelay=0&delay=10")
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

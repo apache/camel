@@ -32,7 +32,7 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/files");
+        deleteDirectory("target/data/files");
         super.setUp();
     }
 
@@ -41,23 +41,23 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/files", "Bye World", Exchange.FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader("file://target/files", "Hello World", Exchange.FILE_NAME, "report.txt");
-        template.sendBodyAndHeader("file://target/files/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
+        template.sendBodyAndHeader("file://target/data/files", "Bye World", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/data/files/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
 
         // file should not exists
-        assertFalse("File should been deleted", new File("target/files/report.txt").exists());
+        assertFalse("File should been deleted", new File("target/data/files/report.txt").exists());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/files/?initialDelay=0&delay=10&fileName=report.txt&delete=true")
+                from("file://target/data/files/?initialDelay=0&delay=10&fileName=report.txt&delete=true")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

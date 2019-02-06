@@ -27,8 +27,8 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/enrich");
-        deleteDirectory("target/enrichdata");
+        deleteDirectory("target/data/enrich");
+        deleteDirectory("target/data/enrichdata");
         super.setUp();
     }
 
@@ -38,14 +38,14 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Big file");
-        mock.expectedFileExists("target/enrich/.done/AAA.fin");
-        mock.expectedFileExists("target/enrichdata/.done/AAA.dat");
+        mock.expectedFileExists("target/data/enrich/.done/AAA.fin");
+        mock.expectedFileExists("target/data/enrichdata/.done/AAA.dat");
 
-        template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
+        template.sendBodyAndHeader("file://target/data/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
 
         log.info("Sleeping for 1/4 sec before writing enrichdata file");
         Thread.sleep(250);
-        template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
+        template.sendBodyAndHeader("file://target/data/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
         log.info("... write done");
 
         assertMockEndpointsSatisfied();
@@ -56,9 +56,9 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/enrich?initialDelay=0&delay=10&move=.done")
+                from("file://target/data/enrich?initialDelay=0&delay=10&move=.done")
                     .to("mock:start")
-                    .pollEnrich("file://target/enrichdata?initialDelay=0&delay=10&move=.done", 1000)
+                    .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&move=.done", 1000)
                     .to("mock:result");
             }
         };

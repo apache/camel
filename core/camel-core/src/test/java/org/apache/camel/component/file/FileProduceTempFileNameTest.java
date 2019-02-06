@@ -29,13 +29,13 @@ import org.junit.Test;
  */
 public class FileProduceTempFileNameTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/tempandrename/?tempFileName=inprogress-${file:name.noext}.tmp";
-    private String parentFileUrl = "file://target/tempandrename/?tempFileName=../work/${file:name.noext}.tmp";
+    private String fileUrl = "file://target/data/tempandrename/?tempFileName=inprogress-${file:name.noext}.tmp";
+    private String parentFileUrl = "file://target/data/tempandrename/?tempFileName=../work/${file:name.noext}.tmp";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/tempandrename");
+        deleteDirectory("target/data/tempandrename");
         super.setUp();
     }
 
@@ -46,8 +46,8 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
-        String tempFileName = producer.createTempFileName(exchange, "target/tempandrename/claus.txt");
-        assertDirectoryEquals("target/tempandrename/inprogress-claus.tmp", tempFileName);
+        String tempFileName = producer.createTempFileName(exchange, "target/data/tempandrename/claus.txt");
+        assertDirectoryEquals("target/data/tempandrename/inprogress-claus.tmp", tempFileName);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
     public void testTempFileName() throws Exception {
         template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        File file = new File("target/tempandrename/hello.txt");
+        File file = new File("target/data/tempandrename/hello.txt");
         assertEquals("The generated file should exists: " + file, true, file.exists());
     }
 
@@ -76,8 +76,8 @@ public class FileProduceTempFileNameTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader(Exchange.FILE_NAME, "claus.txt");
 
-        String tempFileName = producer.createTempFileName(exchange, "target/tempandrename/claus.txt");
-        assertDirectoryEquals("target/work/claus.tmp", tempFileName);
+        String tempFileName = producer.createTempFileName(exchange, "target/data/tempandrename/claus.txt");
+        assertDirectoryEquals("target/data/work/claus.tmp", tempFileName);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

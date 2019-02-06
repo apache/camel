@@ -26,14 +26,14 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/cbr");
+        deleteDirectory("target/data/cbr");
         super.setUp();
     }
 
     private void sendFiles() {
-        template.sendBodyAndHeader("file://target/cbr", "Hello London", "CamelFileName", "london.txt");
-        template.sendBodyAndHeader("file://target/cbr", "Hello Paris", "CamelFileName", "paris.txt");
-        template.sendBodyAndHeader("file://target/cbr", "Hello Copenhagen", "CamelFileName", "copenhagen.txt");
+        template.sendBodyAndHeader("file://target/data/cbr", "Hello London", "CamelFileName", "london.txt");
+        template.sendBodyAndHeader("file://target/data/cbr", "Hello Paris", "CamelFileName", "paris.txt");
+        template.sendBodyAndHeader("file://target/data/cbr", "Hello Copenhagen", "CamelFileName", "copenhagen.txt");
     }
 
     @Test
@@ -82,7 +82,7 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/cbr?noop=true&initialDelay=0&delay=10")
+                from("file://target/data/cbr?noop=true&initialDelay=0&delay=10")
                     .choice()
                         .when(header("CamelFileName").isEqualTo("london.txt")).to("mock:london")
                         .when(header("CamelFileName").isEqualTo("paris.txt")).to("mock:paris")

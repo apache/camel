@@ -31,17 +31,17 @@ public class XsltOutputFileDeleteTest extends ContextTestSupport {
 
     @Test
     public void testXsltOutputDeleteFile() throws Exception {
-        createDirectory("target/xslt");
+        createDirectory("target/data/xslt");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><goodbye>world!</goodbye>");
-        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME, "target/xslt/xsltme.xml");
+        template.sendBodyAndHeader("direct:start", "<hello>world!</hello>", Exchange.XSLT_FILE_NAME, "target/data/xslt/xsltme.xml");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
         // assert file deleted
-        File file = new File("target/xslt/xsltme.xml");
+        File file = new File("target/data/xslt/xsltme.xml");
         assertFalse("File should be deleted", file.exists());
     }
 

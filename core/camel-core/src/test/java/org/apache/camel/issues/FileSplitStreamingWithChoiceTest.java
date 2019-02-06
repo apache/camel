@@ -27,7 +27,7 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filesplit");
+        deleteDirectory("target/data/filesplit");
         super.setUp();
     }
 
@@ -39,10 +39,10 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
         mock.expectedBodiesReceived("line1", "line2", "line3");
 
         // should be moved to this directory after we are done
-        mock.expectedFileExists("target/filesplit/.camel/splitme.txt");
+        mock.expectedFileExists("target/data/filesplit/.camel/splitme.txt");
 
         String body = "line1" + LS + "line2" + LS + "line3";
-        template.sendBodyAndHeader("file://target/filesplit", body, Exchange.FILE_NAME, "splitme.txt");
+        template.sendBodyAndHeader("file://target/data/filesplit", body, Exchange.FILE_NAME, "splitme.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,7 +52,7 @@ public class FileSplitStreamingWithChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filesplit?initialDelay=0&delay=10")
+                from("file://target/data/filesplit?initialDelay=0&delay=10")
                     .split(body().tokenize(LS)).streaming()
                     .to("mock:split")
                     .choice()

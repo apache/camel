@@ -31,7 +31,7 @@ public class FilerConsumerDoneFileNameDeleteTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/done");
+        deleteDirectory("target/data/done");
         super.setUp();
     }
 
@@ -39,7 +39,7 @@ public class FilerConsumerDoneFileNameDeleteTest extends ContextTestSupport {
     public void testDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // wait a bit and it should not pickup the written file as there are no done file
         Thread.sleep(50);
@@ -51,17 +51,17 @@ public class FilerConsumerDoneFileNameDeleteTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // write the done file
-        template.sendBodyAndHeader("file:target/done", "", Exchange.FILE_NAME, "done");
+        template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
         // done file should be deleted now
-        File file = new File("target/done/done");
+        File file = new File("target/data/done/done");
         assertFalse("Done file should be deleted: " + file, file.exists());
 
         // as well the original file should be deleted
-        file = new File("target/done/hello.txt");
+        file = new File("target/data/done/hello.txt");
         assertFalse("Original file should be deleted: " + file, file.exists());
     }
 
@@ -70,7 +70,7 @@ public class FilerConsumerDoneFileNameDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/done?doneFileName=done&delete=true&initialDelay=0&delay=10").to("mock:result");
+                from("file:target/data/done?doneFileName=done&delete=true&initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

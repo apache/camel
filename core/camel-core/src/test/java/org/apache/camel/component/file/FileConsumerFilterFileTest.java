@@ -27,13 +27,13 @@ import org.junit.Test;
  */
 public class FileConsumerFilterFileTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filefilter/?initialDelay=0&delay=10&filterFile=${bodyAs(String)} contains 'World'";
-    private String fileUrl2 = "file://target/filefilter/?initialDelay=0&delay=10&filterFile=${file:modified} < ${date:now-2s}";
+    private String fileUrl = "file://target/data/filefilter/?initialDelay=0&delay=10&filterFile=${bodyAs(String)} contains 'World'";
+    private String fileUrl2 = "file://target/data/filefilter/?initialDelay=0&delay=10&filterFile=${file:modified} < ${date:now-2s}";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filefilter");
+        deleteDirectory("target/data/filefilter");
         super.setUp();
     }
 
@@ -42,7 +42,7 @@ public class FileConsumerFilterFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
+        template.sendBodyAndHeader("file:target/data/filefilter/", "This is a file to be filtered", Exchange.FILE_NAME, "skipme.txt");
 
         mock.setResultWaitTime(100);
         mock.assertIsSatisfied();
@@ -54,8 +54,8 @@ public class FileConsumerFilterFileTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered", Exchange.FILE_NAME, "skipme2.txt");
-        template.sendBodyAndHeader("file:target/filefilter/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/filefilter/", "This is a file to be filtered", Exchange.FILE_NAME, "skipme2.txt");
+        template.sendBodyAndHeader("file:target/data/filefilter/", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
     }
@@ -65,7 +65,7 @@ public class FileConsumerFilterFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result2");
         mock.expectedBodiesReceived("Something else");
 
-        template.sendBodyAndHeader("file:target/filefilter/", "Something else", Exchange.FILE_NAME, "hello2.txt");
+        template.sendBodyAndHeader("file:target/data/filefilter/", "Something else", Exchange.FILE_NAME, "hello2.txt");
 
         mock.assertIsSatisfied();
     }

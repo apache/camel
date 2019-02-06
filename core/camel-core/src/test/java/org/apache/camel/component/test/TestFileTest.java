@@ -31,20 +31,20 @@ public class TestFileTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/testme");
+        deleteDirectory("target/data/testme");
         super.setUp();
     }
 
     @Ignore
     @Test
     public void testFile() throws Exception {
-        template.sendBody("file:target/testme", "Hello World");
+        template.sendBody("file:target/data/testme", "Hello World");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("test:file:target/testme?noop=true&timeout=1500");
+                        .to("test:file:target/data/testme?noop=true&timeout=1500");
             }
         });
         context.start();

@@ -41,8 +41,8 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/marker/");
-        createDirectory("target/marker/in");
+        deleteDirectory("target/data/marker/");
+        createDirectory("target/data/marker/in");
         super.setUp();
     }
 
@@ -50,20 +50,20 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     public void testMultithreadedLocking() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.expectedFileExists("target/marker/out/file1.dat");
-        mock.expectedFileExists("target/marker/out/file2.dat");
+        mock.expectedFileExists("target/data/marker/out/file1.dat");
+        mock.expectedFileExists("target/data/marker/out/file2.dat");
 
         writeFiles();
 
         assertMockEndpointsSatisfied();
 
-        String content = context.getTypeConverter().convertTo(String.class, new File("target/marker/out/file1.dat"));
+        String content = context.getTypeConverter().convertTo(String.class, new File("target/data/marker/out/file1.dat"));
         String[] lines = content.split(LS);
         for (int i = 0; i < 20; i++) {
             assertEquals("Line " + i, lines[i]);
         }
 
-        content = context.getTypeConverter().convertTo(String.class, new File("target/marker/out/file2.dat"));
+        content = context.getTypeConverter().convertTo(String.class, new File("target/data/marker/out/file2.dat"));
         lines = content.split(LS);
         for (int i = 0; i < 20; i++) {
             assertEquals("Line " + i, lines[i]);
@@ -71,11 +71,11 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
 
         waitUntilCompleted();
 
-        assertFileDoesNotExists("target/marker/in/file1.dat.camelLock");
-        assertFileDoesNotExists("target/marker/in/file2.dat.camelLock");
+        assertFileDoesNotExists("target/data/marker/in/file1.dat.camelLock");
+        assertFileDoesNotExists("target/data/marker/in/file2.dat.camelLock");
 
-        assertFileDoesNotExists("target/marker/in/file1.dat");
-        assertFileDoesNotExists("target/marker/in/file2.dat");
+        assertFileDoesNotExists("target/data/marker/in/file1.dat");
+        assertFileDoesNotExists("target/data/marker/in/file2.dat");
 
         assertEquals(2, this.numberOfFilesProcessed.get());
     }
@@ -83,8 +83,8 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     private void writeFiles() throws Exception {
         LOG.debug("Writing files...");
 
-        FileOutputStream fos = new FileOutputStream("target/marker/in/file1.dat");
-        FileOutputStream fos2 = new FileOutputStream("target/marker/in/file2.dat");
+        FileOutputStream fos = new FileOutputStream("target/data/marker/in/file1.dat");
+        FileOutputStream fos2 = new FileOutputStream("target/data/marker/in/file2.dat");
         for (int i = 0; i < 20; i++) {
             fos.write(("Line " + i + LS).getBytes());
             fos2.write(("Line " + i + LS).getBytes());
@@ -102,7 +102,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/marker/in?readLock=markerFile&initialDelay=0&delay=10")
+                from("file:target/data/marker/in?readLock=markerFile&initialDelay=0&delay=10")
                         .onCompletion()
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
@@ -111,7 +111,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
                         })
                         .end()
                         .threads(NUMBER_OF_THREADS)
-                        .to("file:target/marker/out", "mock:result");
+                        .to("file:target/data/marker/out", "mock:result");
             }
         };
     }

@@ -26,15 +26,15 @@ import org.junit.Test;
 
 public class FileConsumeSimpleAbsoluteMoveToRelativeTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/move";
+    private String fileUrl = "file://target/data/move";
     private String base;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/move");
+        deleteDirectory("target/data/move");
         // use current dir as base as absolute path
-        base = new File("").getAbsolutePath() + "/target/move";
+        base = new File("").getAbsolutePath() + "/target/data/move";
         super.setUp();
     }
 

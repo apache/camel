@@ -26,7 +26,7 @@ public class SplitterUoWIssueTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/splitter");
+        deleteDirectory("target/data/splitter");
         super.setUp();
     }
 
@@ -35,7 +35,7 @@ public class SplitterUoWIssueTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedBodiesReceived("A", "B", "C", "D", "E");
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E");
 
-        template.sendBodyAndHeader("file:target/splitter", "A,B,C,D,E", Exchange.FILE_NAME, "splitme.txt");
+        template.sendBodyAndHeader("file:target/data/splitter", "A,B,C,D,E", Exchange.FILE_NAME, "splitme.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -45,8 +45,8 @@ public class SplitterUoWIssueTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedBodiesReceived("A", "B", "C", "D", "E", "F", "G", "H", "I");
         getMockEndpoint("mock:result").expectedBodiesReceived("A,B,C,D,E", "F,G,H,I");
 
-        template.sendBodyAndHeader("file:target/splitter", "A,B,C,D,E", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/splitter", "F,G,H,I", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/data/splitter", "A,B,C,D,E", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/data/splitter", "F,G,H,I", Exchange.FILE_NAME, "b.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -56,7 +56,7 @@ public class SplitterUoWIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/splitter?initialDelay=0&delay=10&delete=true&sortBy=file:name")
+                from("file:target/data/splitter?initialDelay=0&delay=10&delete=true&sortBy=file:name")
                     .split(body().tokenize(","))
                         .to("seda:queue")
                     .end()

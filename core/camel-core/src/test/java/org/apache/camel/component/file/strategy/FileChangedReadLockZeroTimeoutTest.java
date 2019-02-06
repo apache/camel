@@ -30,8 +30,8 @@ public class FileChangedReadLockZeroTimeoutTest  extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/changed/in");
-        createDirectory("target/changed/out");
+        deleteDirectory("target/data/changed/in");
+        createDirectory("target/data/changed/out");
         super.setUp();
     }
     
@@ -39,22 +39,22 @@ public class FileChangedReadLockZeroTimeoutTest  extends ContextTestSupport {
     public void testChangedReadLockZeroTimeout() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/changed/out/hello1.txt");
+        mock.expectedFileExists("target/data/changed/out/hello1.txt");
         
         
-        template.sendBodyAndHeader("file://target/changed/in", "Hello World", Exchange.FILE_NAME, "hello1.txt");
+        template.sendBodyAndHeader("file://target/data/changed/in", "Hello World", Exchange.FILE_NAME, "hello1.txt");
         
         Thread.sleep(100);
         
-        File file = new File("target/changed/in/hello1.txt");
+        File file = new File("target/data/changed/in/hello1.txt");
         assertTrue(file.delete());
         
         mock.reset();
         oneExchangeDone.reset();
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/changed/out/hello2.txt");
+        mock.expectedFileExists("target/data/changed/out/hello2.txt");
 
-        template.sendBodyAndHeader("file://target/changed/in", "Hello Again World", Exchange.FILE_NAME, "hello2.txt");
+        template.sendBodyAndHeader("file://target/data/changed/in", "Hello Again World", Exchange.FILE_NAME, "hello2.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
@@ -65,8 +65,8 @@ public class FileChangedReadLockZeroTimeoutTest  extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=5000&readLockTimeout=0")
-                    .to("file:target/changed/out", "mock:result");
+                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=5000&readLockTimeout=0")
+                    .to("file:target/data/changed/out", "mock:result");
             }
         };
     }

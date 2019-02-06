@@ -26,12 +26,12 @@ import org.junit.Test;
  */
 public class FileExclusiveReadManuelTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/exclusiveread?readLock=fileLock&initialDelay=0&delay=10";
+    private String fileUrl = "file://target/data/exclusiveread?readLock=fileLock&initialDelay=0&delay=10";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/exclusiveread");
+        deleteDirectory("target/data/exclusiveread");
         super.setUp();
     }
 

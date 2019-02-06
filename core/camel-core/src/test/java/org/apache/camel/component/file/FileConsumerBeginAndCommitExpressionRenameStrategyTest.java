@@ -33,9 +33,9 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/inprogress");
-        deleteDirectory("target/done");
-        deleteDirectory("target/reports");
+        deleteDirectory("target/data/inprogress");
+        deleteDirectory("target/data/done");
+        deleteDirectory("target/data/reports");
         super.setUp();
     }
 
@@ -44,9 +44,9 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists("target/done/paris.bak", "Hello Paris");
+        mock.expectedFileExists("target/data/done/paris.bak", "Hello Paris");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/data/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -54,7 +54,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
     @Test
     public void testIllegalOptions() throws Exception {
         try {
-            context.getEndpoint("file://target?move=../done/${file:name}&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("file://target/data?move=../done/${file:name}&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -67,7 +67,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?preMove=../inprogress/${file:name.noext}.bak&move=../done/${file:name}&initialDelay=0&delay=10")
+                from("file://target/data/reports?preMove=../inprogress/${file:name.noext}.bak&move=../done/${file:name}&initialDelay=0&delay=10")
                         .process(new Processor() {
                             @SuppressWarnings("unchecked")
                             public void process(Exchange exchange) throws Exception {

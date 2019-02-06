@@ -81,7 +81,7 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data?initialDelay=0&delay=10&noop=true")
+                from("file:target/data/data?initialDelay=0&delay=10&noop=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             log.info("Starting to process file");
@@ -149,7 +149,7 @@ public class TokenPairIteratorSplitChoicePerformanceTest extends ContextTestSupp
     }
 
     public static void createDataFile(Logger log, int size) throws Exception {
-        deleteDirectory("target/data");
+        deleteDirectory("target/data/data");
         createDirectory("target/data");
 
         log.info("Creating data file ...");

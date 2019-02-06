@@ -26,7 +26,7 @@ public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/script");
+        deleteDirectory("target/data/script");
         super.setUp();
     }
 
@@ -36,7 +36,7 @@ public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "World");
 
-        template.sendBodyAndHeader("file:target/script", "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader("file:target/data/script", "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
         template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
@@ -48,12 +48,12 @@ public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // create script to start with
-                template.sendBodyAndHeader("file:target/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
+                template.sendBodyAndHeader("file:target/data/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
 
                 // START SNIPPET: e1
                 from("direct:start")
                     // the script will be loaded on each message, as we disabled cache
-                    .to("language:simple:file:target/script/myscript.txt?contentCache=false")
+                    .to("language:simple:file:target/data/script/myscript.txt?contentCache=false")
                     .to("mock:result");
                 // END SNIPPET: e1
             }

@@ -43,13 +43,13 @@ public class FileProducerAppendManyMessagesFastTest extends ContextTestSupport {
             return;
         }
 
-        deleteDirectory("target/big");
-        createDirectory("target/big");
-        deleteDirectory("target/out");
-        createDirectory("target/out");
+        deleteDirectory("target/data/big");
+        createDirectory("target/data/big");
+        deleteDirectory("target/data/out");
+        createDirectory("target/data/out");
 
         // create a big file
-        File file = new File("target/big/data.txt");
+        File file = new File("target/data/big/data.txt");
         FileOutputStream fos = new FileOutputStream(file);
         for (int i = 0; i < 100000; i++) {
             String s = "Hello World this is a long line with number " + i + LS;
@@ -78,12 +78,12 @@ public class FileProducerAppendManyMessagesFastTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/big")
+                from("file:target/data/big")
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
                             // store a output stream we use for writing
-                            FileOutputStream fos = new FileOutputStream("target/out/also-big.txt", true);
+                            FileOutputStream fos = new FileOutputStream("target/data/out/also-big.txt", true);
                             exchange.setProperty("myStream", fos);
                         }
                     })

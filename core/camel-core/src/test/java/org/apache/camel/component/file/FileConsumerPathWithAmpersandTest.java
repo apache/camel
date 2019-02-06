@@ -27,7 +27,7 @@ public class FileConsumerPathWithAmpersandTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file&stuff");
+        deleteDirectory("target/data/file&stuff");
         super.setUp();
     }
 
@@ -36,7 +36,7 @@ public class FileConsumerPathWithAmpersandTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/file&stuff", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file&stuff", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -46,7 +46,7 @@ public class FileConsumerPathWithAmpersandTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file&stuff?delete=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/file&stuff?delete=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -30,7 +30,7 @@ import org.junit.Test;
  * Unit test for consuming a batch of files (multiple files in one consume)
  */
 public class FileConsumerExtendedAttributesTest extends ContextTestSupport {
-    private static final String ROOT = "target/extended-attributes";
+    private static final String ROOT = "target/data/extended-attributes";
     private static final String FILE = "attributes.txt";
 
     @Override

@@ -29,7 +29,7 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file");
+        deleteDirectory("target/data/file");
         super.setUp();
     }
 
@@ -38,15 +38,15 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
-        assertFileExists("target/file/output.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/file/output.txt")));
+        assertFileExists("target/data/file/output.txt");
+        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/output.txt")));
 
-        assertFileExists("target/file/output2.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/file/output2.txt")));
+        assertFileExists("target/data/file/output2.txt");
+        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/output2.txt")));
     }
 
     @Override
@@ -54,10 +54,10 @@ public class FileProducerNoForcedWritesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/file?initialDelay=0&delay=10&noop=true")
+                from("file:target/data/file?initialDelay=0&delay=10&noop=true")
                     .multicast().to(
-                        "file:target/file/?fileName=output.txt&forceWrites=false",
-                        "file:target/file/?fileName=output2.txt&charset=iso-8859-1&forceWrites=false")
+                        "file:target/data/file/?fileName=output.txt&forceWrites=false",
+                        "file:target/data/file/?fileName=output2.txt&charset=iso-8859-1&forceWrites=false")
                     .to("mock:result");
             }
         };

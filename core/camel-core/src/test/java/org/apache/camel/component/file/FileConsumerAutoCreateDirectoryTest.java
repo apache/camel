@@ -30,9 +30,9 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
     @Test
     public void testCreateDirectory() throws Exception {
-        deleteDirectory("target/file/foo");
+        deleteDirectory("target/data/file/foo");
 
-        Endpoint endpoint = context.getEndpoint("file://target/file/foo");
+        Endpoint endpoint = context.getEndpoint("file://target/data/file/foo");
         Consumer consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // noop
@@ -43,16 +43,16 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         consumer.stop();
 
         // the directory should now exists
-        File dir = new File("target/file/foo");
+        File dir = new File("target/data/file/foo");
         assertTrue("Directory should be created", dir.exists());
         assertTrue("Directory should be a directory", dir.isDirectory());
     }
 
     @Test
     public void testCreateAbsoluteDirectory() throws Exception {
-        deleteDirectory("target/file/foo");
+        deleteDirectory("target/data/file/foo");
         // use current dir as base as absolute path
-        String base = new File("").getAbsolutePath() + "/target/file/foo";
+        String base = new File("").getAbsolutePath() + "/target/data/file/foo";
 
         Endpoint endpoint = context.getEndpoint("file://" + base);
         Consumer consumer = endpoint.createConsumer(new Processor() {
@@ -72,9 +72,9 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
 
     @Test
     public void testDoNotCreateDirectory() throws Exception {
-        deleteDirectory("target/file/foo");
+        deleteDirectory("target/data/file/foo");
 
-        Endpoint endpoint = context.getEndpoint("file://target/file/foo?autoCreate=false");
+        Endpoint endpoint = context.getEndpoint("file://target/data/file/foo?autoCreate=false");
         Consumer consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // noop
@@ -85,15 +85,15 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         consumer.stop();
 
         // the directory should NOT exists
-        File dir = new File("target/file/foo");
+        File dir = new File("target/data/file/foo");
         assertFalse("Directory should NOT be created", dir.exists());
     }
 
     @Test
     public void testAutoCreateDirectoryWithDot() throws Exception {
-        deleteDirectory("target/file/foo.bar");
+        deleteDirectory("target/data/file/foo.bar");
 
-        Endpoint endpoint = context.getEndpoint("file://target/file/foo.bar?autoCreate=true");
+        Endpoint endpoint = context.getEndpoint("file://target/data/file/foo.bar?autoCreate=true");
         Consumer consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // noop
@@ -104,16 +104,16 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         consumer.stop();
 
         // the directory should exist
-        File dir = new File("target/file/foo.bar");
+        File dir = new File("target/data/file/foo.bar");
         assertTrue("Directory should be created", dir.exists());
         assertTrue("Directory should be a directory", dir.isDirectory());
     }
 
     @Test
     public void testStartingDirectoryMustExistDirectory() throws Exception {
-        deleteDirectory("target/file/foo");
+        deleteDirectory("target/data/file/foo");
 
-        Endpoint endpoint = context.getEndpoint("file://target/file/foo?autoCreate=false&startingDirectoryMustExist=true");
+        Endpoint endpoint = context.getEndpoint("file://target/data/file/foo?autoCreate=false&startingDirectoryMustExist=true");
         try {
             endpoint.createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
@@ -126,7 +126,7 @@ public class FileConsumerAutoCreateDirectoryTest extends ContextTestSupport {
         }
 
         // the directory should NOT exists
-        File dir = new File("target/file/foo");
+        File dir = new File("target/data/file/foo");
         assertFalse("Directory should NOT be created", dir.exists());
     }
 

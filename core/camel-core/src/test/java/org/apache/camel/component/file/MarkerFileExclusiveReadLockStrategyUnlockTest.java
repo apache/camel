@@ -41,8 +41,8 @@ public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSu
 
         assertTrue("Route should be done processing 1 exchanges", done);
 
-        assertFileNotExists("target/marker-unlock/input-a/file1.dat.camelLock");
-        assertFileNotExists("target/marker-unlock/input-b/file2.dat.camelLock");
+        assertFileNotExists("target/data/marker-unlock/input-a/file1.dat.camelLock");
+        assertFileNotExists("target/data/marker-unlock/input-b/file2.dat.camelLock");
     }
 
     @Override
@@ -50,22 +50,22 @@ public class MarkerFileExclusiveReadLockStrategyUnlockTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/marker-unlock/input-a?fileName=file1.dat&readLock=markerFile&initialDelay=0&delay=10")
-                        .pollEnrich("file:target/marker-unlock/input-b?fileName=file2.dat&readLock=markerFile&initialDelay=0&delay=10")
+                from("file:target/data/marker-unlock/input-a?fileName=file1.dat&readLock=markerFile&initialDelay=0&delay=10")
+                        .pollEnrich("file:target/data/marker-unlock/input-b?fileName=file2.dat&readLock=markerFile&initialDelay=0&delay=10")
                         .to("mock:result");
             }
         };
     }
 
     private void setupDirectory() {
-        deleteDirectory("target/marker-unlock/");
-        createDirectory("target/marker-unlock/input-a");
-        createDirectory("target/marker-unlock/input-b");
+        deleteDirectory("target/data/marker-unlock/");
+        createDirectory("target/data/marker-unlock/input-a");
+        createDirectory("target/data/marker-unlock/input-b");
     }
 
     private void writeFiles() throws Exception {
-        FileOutputStream fos1 = new FileOutputStream("target/marker-unlock/input-a/file1.dat");
-        FileOutputStream fos2 = new FileOutputStream("target/marker-unlock/input-b/file2.dat");
+        FileOutputStream fos1 = new FileOutputStream("target/data/marker-unlock/input-a/file1.dat");
+        FileOutputStream fos2 = new FileOutputStream("target/data/marker-unlock/input-b/file2.dat");
         fos1.write("File-1".getBytes());
         fos2.write("File-2".getBytes());
         fos1.flush();

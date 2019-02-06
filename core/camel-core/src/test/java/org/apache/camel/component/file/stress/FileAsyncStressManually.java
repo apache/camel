@@ -47,7 +47,7 @@ public class FileAsyncStressManually extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/filestress?readLock=markerFile&maxMessagesPerPoll=25&move=backup")
+                from("file:target/data/filestress?readLock=markerFile&maxMessagesPerPoll=25&move=backup")
                     .threads(10)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

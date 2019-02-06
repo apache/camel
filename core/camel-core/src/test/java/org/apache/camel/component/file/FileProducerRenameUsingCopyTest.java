@@ -29,7 +29,7 @@ public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file");
+        deleteDirectory("target/data/file");
         super.setUp();
     }
 
@@ -38,14 +38,14 @@ public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
         final String body = "Hello Camel";
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/file/done/hello.txt", body);
+        mock.expectedFileExists("target/data/file/done/hello.txt", body);
 
-        template.sendBodyAndHeader("file://target/file", body, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file", body, Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("File not copied", new File("target/file/done/hello.txt").exists());
-        assertFalse("File not deleted", new File("target/file/hello.txt").exists());
+        assertTrue("File not copied", new File("target/data/file/done/hello.txt").exists());
+        assertFalse("File not deleted", new File("target/data/file/hello.txt").exists());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class FileProducerRenameUsingCopyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?renameUsingCopy=true&move=done").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/file?renameUsingCopy=true&move=done").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

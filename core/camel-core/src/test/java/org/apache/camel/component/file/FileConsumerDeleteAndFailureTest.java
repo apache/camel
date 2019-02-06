@@ -28,7 +28,7 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/failed");
+        deleteDirectory("target/data/failed");
         super.setUp();
     }
 
@@ -37,10 +37,10 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World IS processed!");
         
-        mock.expectedFileExists("target/failed/error/bye.txt");
+        mock.expectedFileExists("target/data/failed/error/bye.txt");
 
-        template.sendBodyAndHeader("file://target/failed", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/failed", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -50,8 +50,8 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class).handled(true).useOriginalMessage().to("file://target/failed/error");
-                from("file://target/failed?delete=true&initialDelay=0&delay=10")
+                onException(IllegalArgumentException.class).handled(true).useOriginalMessage().to("file://target/data/failed/error");
+                from("file://target/data/failed?delete=true&initialDelay=0&delay=10")
                     .setBody(simple("${body} IS processed!"))
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

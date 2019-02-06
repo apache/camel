@@ -28,7 +28,7 @@ public class FileConsumerMoveAndMoveFailureTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/failed");
+        deleteDirectory("target/data/failed");
         super.setUp();
     }
 
@@ -37,11 +37,11 @@ public class FileConsumerMoveAndMoveFailureTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        mock.expectedFileExists("target/failed/moved/hello.txt", "Hello World");
-        mock.expectedFileExists("target/failed/error/bye-error.txt", "Kabom");
+        mock.expectedFileExists("target/data/failed/moved/hello.txt", "Hello World");
+        mock.expectedFileExists("target/data/failed/error/bye-error.txt", "Kabom");
 
-        template.sendBodyAndHeader("file://target/failed", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/failed", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -51,7 +51,7 @@ public class FileConsumerMoveAndMoveFailureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/failed?move=moved&initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt")
+                from("file://target/data/failed?move=moved&initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String body = exchange.getIn().getBody(String.class);
