@@ -500,7 +500,7 @@
     <mustache-guava-version>16.0</mustache-guava-version>
     <mustache-bundle-version>0.9.5_3</mustache-bundle-version>
     <mvel-version>2.4.2.Final</mvel-version>
-    <mybatis-version>3.4.6</mybatis-version>
+    <mybatis-version>3.5.0</mybatis-version>
     <narayana-version>5.9.2.Final</narayana-version>
     <nessus-version>1.0.0.Beta1</nessus-version>
     <nsq-client-version>1.0.0.RC4</nsq-client-version>
