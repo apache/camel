@@ -118,4 +118,8 @@ The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.pro
 
 The class `XsltAggregationStrategy` has been moved from `org.apache.camel.builder.XsltAggregationStrategy` in the camel-core JAR to `org.apache.camel.component.xslt.XsltAggregationStrategy` and moved to the `camel-xslt` JAR.
 
+### XML DSL Migration
 
+The XML DSL has been changed slightly.
+
+The custom load balancer EIP has changed from `<custom>` to `<customLoadBalancer>` 

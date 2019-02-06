@@ -33,7 +33,7 @@
       <from uri="direct:start"/>
       <loadBalance>
         <!-- refer to my custom load balancer -->
-        <custom ref="myBalancer"/>
+        <customLoadBalancer ref="myBalancer"/>
         <!-- these are the endpoints to balancer -->
         <to uri="mock:x"/>
         <to uri="mock:y"/>

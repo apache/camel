@@ -70,9 +70,6 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> {
 
-    // TODO: Camel 3.0, ref attribute should be removed as CustomDataFormat is to be used instead
-
-    // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
         @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
         @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
