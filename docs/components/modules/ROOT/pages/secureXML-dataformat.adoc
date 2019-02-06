@@ -53,7 +53,7 @@ The XML Security dataformat supports 13 options, which are listed below.
 | secureTagContents | false | Boolean | A boolean value to specify whether the XML Element is to be encrypted or the contents of the XML Element false = Element Level true = Element Content Level
 | keyCipherAlgorithm | RSA_OAEP | String | The cipher algorithm to be used for encryption/decryption of the asymmetric key. The available choices are: XMLCipher.RSA_v1dot5 XMLCipher.RSA_OAEP XMLCipher.RSA_OAEP_11 The default value is XMLCipher.RSA_OAEP
 | recipientKeyAlias |  | String | The key alias to be used when retrieving the recipient's public or private key from a KeyStore when performing asymmetric key encryption or decryption.
-| keyOrTrustStoreParametersId |  | String | Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.
+| keyOrTrustStoreParametersRef |  | String | Refers to a KeyStore instance to lookup in the registry, which is used for configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.
 | keyPassword |  | String | The password to be used for retrieving the private key from the KeyStore. This key is used for asymmetric decryption.
 | digestAlgorithm | SHA1 | String | The digest algorithm to use with the RSA OAEP algorithm. The available choices are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default value is XMLCipher.SHA1
 | mgfAlgorithm | MGF1_SHA1 | String | The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are: EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256 EncryptionConstants.MGF1_SHA512 The default value is EncryptionConstants.MGF1_SHA1
@@ -218,7 +218,7 @@ Spring XML Sender
                            xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"       
                            keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
                            recipientKeyAlias="recipient"
-                           keyOrTrustStoreParametersId="trustStoreParams"/>
+                           keyOrTrustStoreParametersRef="trustStoreParams"/>
             </marshal> 
             ...
 --------------------------------------------------------------------------------------------------
@@ -243,7 +243,7 @@ Spring XML Recipient
                            xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"
                            keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
                            recipientKeyAlias="recipient"
-                           keyOrTrustStoreParametersId="keyStoreParams"
+                           keyOrTrustStoreParametersRef="keyStoreParams"
                            keyPassword="privateKeyPassword" />
             </unmarshal>
             ...
