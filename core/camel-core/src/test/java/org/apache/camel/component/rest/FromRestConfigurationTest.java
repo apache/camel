@@ -33,8 +33,6 @@ public class FromRestConfigurationTest extends FromRestGetTest {
     @Override
     @Test
     public void testFromRestModel() throws Exception {
-        super.testFromRestModel();
-
         assertEquals("dummy-rest", context.getRestConfiguration().getComponent());
         assertEquals("localhost", context.getRestConfiguration().getHost());
         assertEquals(9090, context.getRestConfiguration().getPort());
@@ -52,7 +50,6 @@ public class FromRestConfigurationTest extends FromRestGetTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        final RouteBuilder lowerR = super.createRouteBuilder();
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -63,7 +60,8 @@ public class FromRestConfigurationTest extends FromRestGetTest {
                     .consumerProperty("pollTimeout", "1000")
                     .consumerProperty("dummy", "#myDummy");
 
-                includeRoutes(lowerR);
+                rest("/say/hello")
+                    .get().to("log:hello");
             }
         };
     }
