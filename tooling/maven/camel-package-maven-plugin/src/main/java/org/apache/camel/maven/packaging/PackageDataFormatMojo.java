@@ -381,9 +381,6 @@ public class PackageDataFormatMojo extends AbstractMojo {
             return "json";
         } else if ("bindy-csv".equals(name) || "bindy-fixed".equals(name) || "bindy-kvp".equals(name)) {
             return "bindy";
-        } else if ("zipfile".equals(name)) {
-            // darn should have been lower case
-            return "zipFile";
         } else if ("yaml-snakeyaml".equals(name)) {
             return "yaml";
         }
