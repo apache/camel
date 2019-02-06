@@ -50,13 +50,13 @@
     <dependency>
       <groupId>org.apache.karaf.jaas</groupId>
       <artifactId>org.apache.karaf.jaas.jasypt</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.servicemix.bundles</groupId>
-          <artifactId>org.apache.servicemix.bundles.jasypt</artifactId>
-        </exclusion>
-      </exclusions>
-      <version>${karaf2-version}</version>
+      <version>${karaf4-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.jaas</groupId>
+      <artifactId>org.apache.karaf.jaas.boot</artifactId>
+      <version>${karaf4-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
