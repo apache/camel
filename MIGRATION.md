@@ -123,3 +123,5 @@ The class `XsltAggregationStrategy` has been moved from `org.apache.camel.builde
 The XML DSL has been changed slightly.
 
 The custom load balancer EIP has changed from `<custom>` to `<customLoadBalancer>` 
+
+The XMLSecurity data format has renamed the attribute `keyOrTrustStoreParametersId` to `keyOrTrustStoreParametersRef` in the `<secureXML>` tag.

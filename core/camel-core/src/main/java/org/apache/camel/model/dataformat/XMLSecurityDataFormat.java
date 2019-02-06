@@ -57,8 +57,7 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     @XmlAttribute
     private String recipientKeyAlias;
     @XmlAttribute
-    // TODO: rename to keyOrTrustStoreParametersRef
-    private String keyOrTrustStoreParametersId;
+    private String keyOrTrustStoreParametersRef;
     @XmlAttribute
     private String keyPassword;
     @XmlAttribute  @Metadata(defaultValue = "SHA1")
@@ -107,8 +106,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         if (getRecipientKeyAlias() != null) {
             setProperty(camelContext, dataFormat, "recipientKeyAlias", getRecipientKeyAlias());
         }
-        if (getKeyOrTrustStoreParametersId() != null) {
-            setProperty(camelContext, dataFormat, "keyOrTrustStoreParametersId", getKeyOrTrustStoreParametersId());
+        if (getKeyOrTrustStoreParametersRef() != null) {
+            setProperty(camelContext, dataFormat, "keyOrTrustStoreParametersRef", getKeyOrTrustStoreParametersRef());
         }
         if (keyOrTrustStoreParameters != null) {
             setProperty(camelContext, dataFormat, "keyOrTrustStoreParameters", this.keyOrTrustStoreParameters);
@@ -239,12 +238,12 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
      * Refers to a KeyStore instance to lookup in the registry, which is used for
      * configuration options for creating and loading a KeyStore instance that represents the sender's trustStore or recipient's keyStore.
      */
-    public void setKeyOrTrustStoreParametersId(String id) {
-        this.keyOrTrustStoreParametersId = id;
+    public void setKeyOrTrustStoreParametersRef(String id) {
+        this.keyOrTrustStoreParametersRef = id;
     }
     
-    public String getKeyOrTrustStoreParametersId() {
-        return this.keyOrTrustStoreParametersId;
+    public String getKeyOrTrustStoreParametersRef() {
+        return this.keyOrTrustStoreParametersRef;
     }
 
     public KeyStoreParameters getKeyOrTrustStoreParameters() {
