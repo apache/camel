@@ -1474,12 +1474,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public String resolveComponentDefaultName(String javaType) {
-        // special for some components
-        // TODO: ActiveMQ 5.11 will include this out of the box, so not needed when its released
-        if ("org.apache.activemq.camel.component.ActiveMQComponent".equals(javaType)) {
-            return "jms";
-        }
-
         // try to find the component by its java type from the in-use components
         if (javaType != null) {
             // find all the components which will include the default component name
