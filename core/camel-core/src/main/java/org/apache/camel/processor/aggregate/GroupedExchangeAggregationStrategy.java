@@ -31,18 +31,6 @@ import org.apache.camel.support.DefaultExchange;
 public class GroupedExchangeAggregationStrategy extends AbstractListAggregationStrategy<Exchange> {
 
     @Override
-    public void onCompletion(Exchange exchange) {
-        if (isStoreAsBodyOnCompletion()) {
-            // lets be backwards compatible
-            // TODO: Remove this method in Camel 3.0
-            List<?> list = (List<?>) exchange.getProperty(Exchange.GROUPED_EXCHANGE);
-            if (list != null) {
-                exchange.getIn().setBody(list);
-            }
-        }
-    }
-
-    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {
             // for the first time we must create a new empty exchange as the holder, as the outgoing exchange

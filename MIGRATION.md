@@ -118,6 +118,10 @@ The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.pro
 
 The class `XsltAggregationStrategy` has been moved from `org.apache.camel.builder.XsltAggregationStrategy` in the camel-core JAR to `org.apache.camel.component.xslt.XsltAggregationStrategy` and moved to the `camel-xslt` JAR.
 
+When using the option `groupedExchange` on the aggregator EIP then the output of the aggregation
+is now longer also stored in the exchange property `Exchange.GROUPED_EXCHANGE`.
+This behaviour was already deprecated from Camel 2.13 onwards.
+
 ### XML DSL Migration
 
 The XML DSL has been changed slightly.

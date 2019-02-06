@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class AggregationStrategyBeanInfo {
 
-    // TODO: We could potential merge this logic into AggregationStrategyMethodInfo and only have 1 class
-
     private static final Logger LOG = LoggerFactory.getLogger(AggregationStrategyBeanInfo.class);
 
     private final Class<?> type;
