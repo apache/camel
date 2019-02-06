@@ -38,7 +38,6 @@ public class ConsulEventWatchTest extends ConsulTestSupport {
         List<String> values = generateRandomListOfStrings(3);
 
         MockEndpoint mock = getMockEndpoint("mock:event-watch");
-        mock.expectedMessageCount(values.size());
         mock.expectedBodiesReceived(values);
         mock.expectedHeaderReceived(ConsulConstants.CONSUL_RESULT, true);
 
