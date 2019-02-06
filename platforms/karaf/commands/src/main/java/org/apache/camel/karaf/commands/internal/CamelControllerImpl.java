@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.commands.AbstractLocalCamelController;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.commands.AbstractLocalCamelController;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.osgi.framework.BundleContext;
