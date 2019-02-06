@@ -425,7 +425,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @param routes other builder with routes to include
      *
      * @throws Exception can be thrown during configuration
+     * @deprecated do not use, will be removed in Camel 3
      */
+    @Deprecated
     public void includeRoutes(RoutesBuilder routes) throws Exception {
         // TODO: We should support including multiple routes so I think invoking configure()
         // needs to be deferred to later
