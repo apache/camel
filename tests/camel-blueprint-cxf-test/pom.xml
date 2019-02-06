@@ -32,6 +32,10 @@
   <name>Camel :: Integration Tests :: Blueprint CXF Tests</name>
   <description>Tests the camel-cxf blueprint features</description>
 
+  <properties>
+    <skipTests>true</skipTests>
+  </properties>
+
   <dependencies>
     <!-- assuming camel is pulling aries 1.0.0, pull asm 4.0 first -->
     <dependency>
