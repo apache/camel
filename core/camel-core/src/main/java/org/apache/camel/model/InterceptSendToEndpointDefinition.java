@@ -33,13 +33,6 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptSendToEndpointDefinition extends OutputDefinition<InterceptSendToEndpointDefinition> {
 
-    // TODO: Support lookup endpoint by ref (requires a bit more work)
-
-    // TODO: interceptSendToEndpoint needs to proxy the endpoints at very first
-    // so when other processors uses an endpoint its already proxied, see workaround in SendProcessor
-    // needed when we haven't proxied beforehand. This requires some work in the route builder in Camel
-    // to implement so that should be a part of a bigger rework/improvement in the future
-
     @XmlAttribute(required = true)
     private String uri;
     @XmlAttribute
