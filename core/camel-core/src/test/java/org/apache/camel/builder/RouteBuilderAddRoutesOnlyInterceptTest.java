@@ -26,7 +26,7 @@ public class RouteBuilderAddRoutesOnlyInterceptTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                includeRoutes(new MyExtraRoute());
+                interceptSendToEndpoint("mock:result").transform(constant("Foo was here"));
 
                 from("direct:start").to("mock:result");
             }
@@ -42,10 +42,4 @@ public class RouteBuilderAddRoutesOnlyInterceptTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private static class MyExtraRoute extends RouteBuilder {
-
-        public void configure() throws Exception {
-            interceptSendToEndpoint("mock:result").transform(constant("Foo was here"));
-        }
-    }
 }
