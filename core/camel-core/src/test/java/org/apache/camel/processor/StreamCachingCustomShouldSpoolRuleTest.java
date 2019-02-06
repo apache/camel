@@ -35,7 +35,7 @@ public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/cachedir");
+        deleteDirectory("target/data/cachedir");
         super.setUp();
     }
 

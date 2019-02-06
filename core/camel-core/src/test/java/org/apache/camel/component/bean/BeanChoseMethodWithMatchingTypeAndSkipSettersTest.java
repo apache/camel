@@ -31,7 +31,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file/order");
+        deleteDirectory("target/data/file/order");
         super.setUp();
     }
 
@@ -54,7 +54,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         MockEndpoint mock = getMockEndpoint("mock:queue:order");
         mock.expectedBodiesReceived("66554,123,456");
 
-        template.sendBodyAndHeader("file://target/file/order", "123,456", Exchange.FILE_NAME, "66554.csv");
+        template.sendBodyAndHeader("file://target/data/file/order", "123,456", Exchange.FILE_NAME, "66554.csv");
 
         assertMockEndpointsSatisfied();
     }
@@ -79,7 +79,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file/order?initialDelay=0&delay=10", "seda:xml")
+                from("file://target/data/file/order?initialDelay=0&delay=10", "seda:xml")
                     .bean("orderService")
                     .to("mock:queue:order");
             }

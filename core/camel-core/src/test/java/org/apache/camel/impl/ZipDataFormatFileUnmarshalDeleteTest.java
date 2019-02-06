@@ -29,7 +29,7 @@ public class ZipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/zip");
+        deleteDirectory("target/data/zip");
         super.setUp();
     }
 
@@ -39,7 +39,7 @@ public class ZipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
         NotifyBuilder event = event().whenDone(2).create();
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-        template.sendBodyAndHeader("file:target/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/zip", "Hello World", Exchange.FILE_NAME, "hello.txt");
         assertMockEndpointsSatisfied();
 
         event.matchesMockWaitTime();
@@ -56,11 +56,11 @@ public class ZipDataFormatFileUnmarshalDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/zip?initialDelay=0&delay=10&delete=true")
+                from("file:target/data/zip?initialDelay=0&delay=10&delete=true")
                     .marshal().zip()
-                    .to("file:target/zip/out?fileName=${file:name}.zip");
+                    .to("file:target/data/zip/out?fileName=${file:name}.zip");
 
-                from("file:target/zip/out?initialDelay=0&delay=10&delete=true")
+                from("file:target/data/zip/out?initialDelay=0&delay=10&delete=true")
                     .unmarshal().zip()
                     .to("mock:result");
             }

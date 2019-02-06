@@ -37,7 +37,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/myfile");
+        deleteDirectory("target/data/myfile");
         super.setUp();
     }
 
@@ -45,7 +45,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
     public void testNewFileConsumer() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/myfile", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/myfile", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
@@ -60,7 +60,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 myFile = new MyFileEndpoint();
                 myFile.setCamelContext(context);
-                myFile.setFile(new File("target/myfile"));
+                myFile.setFile(new File("target/data/myfile"));
                 myFile.setDelay(10);
                 myFile.setInitialDelay(0);
 

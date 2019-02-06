@@ -29,12 +29,12 @@ import org.junit.Test;
 
 public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
 
-    private String url = "file:target/seda?initialDelay=0&delay=10";
+    private String url = "file:target/data/seda?initialDelay=0&delay=10";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/seda");
+        deleteDirectory("target/data/seda");
         super.setUp();
     }
 

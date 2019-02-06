@@ -28,8 +28,8 @@ public class FileChangedZeroLengthReadLockTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/changed/");
-        createDirectory("target/changed/in");
+        deleteDirectory("target/data/changed/");
+        createDirectory("target/data/changed/in");
         super.setUp();
     }
 
@@ -37,7 +37,7 @@ public class FileChangedZeroLengthReadLockTest extends ContextTestSupport {
     public void testChangedReadLock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/changed/out/zerofile.dat");
+        mock.expectedFileExists("target/data/changed/out/zerofile.dat");
 
         writeZeroLengthFile();
 
@@ -45,7 +45,7 @@ public class FileChangedZeroLengthReadLockTest extends ContextTestSupport {
     }
 
     private void writeZeroLengthFile() throws Exception {
-        FileOutputStream fos = new FileOutputStream("target/changed/in/zerofile.dat");
+        FileOutputStream fos = new FileOutputStream("target/data/changed/in/zerofile.dat");
         fos.flush();
         fos.close();
     }
@@ -55,8 +55,8 @@ public class FileChangedZeroLengthReadLockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinLength=0")
-                    .to("file:target/changed/out", "mock:result");
+                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100&readLockMinLength=0")
+                    .to("file:target/data/changed/out", "mock:result");
             }
         };
     }

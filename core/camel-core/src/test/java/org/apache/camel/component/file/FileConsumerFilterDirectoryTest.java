@@ -27,14 +27,14 @@ import org.junit.Test;
  */
 public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filefilter/?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4";
+    private String fileUrl = "file://target/data/filefilter/?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filefilter");
-        deleteDirectory("target/filefilter/foo");
-        deleteDirectory("target/filefilter/barbar");
+        deleteDirectory("target/data/filefilter");
+        deleteDirectory("target/data/filefilter/foo");
+        deleteDirectory("target/data/filefilter/barbar");
         super.setUp();
     }
 
@@ -43,7 +43,7 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/filefilter/foo", "This is a file to be filtered",
+        template.sendBodyAndHeader("file:target/data/filefilter/foo", "This is a file to be filtered",
             Exchange.FILE_NAME, "skipme.txt");
 
         mock.setResultWaitTime(100);
@@ -56,10 +56,10 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/filefilter/foo", "This is a file to be filtered",
+        template.sendBodyAndHeader("file:target/data/filefilter/foo", "This is a file to be filtered",
             Exchange.FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/filefilter/barbar", "Hello World",
+        template.sendBodyAndHeader("file:target/data/filefilter/barbar", "Hello World",
             Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();

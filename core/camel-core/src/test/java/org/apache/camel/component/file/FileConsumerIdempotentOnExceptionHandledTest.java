@@ -26,7 +26,7 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/messages/input");
+        deleteDirectory("target/data/messages/input");
         super.setUp();
     }
 
@@ -34,15 +34,15 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
     public void testIdempotent() throws Exception {
         getMockEndpoint("mock:invalid").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/messages/input/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/messages/input/", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         oneExchangeDone.matchesMockWaitTime();
 
         assertMockEndpointsSatisfied();
 
         // the error is handled and the file is regarded as success and therefore moved to .camel
-        assertFileNotExists("target/messages/input/hello.txt");
-        assertFileExists("target/messages/input/.camel/hello.txt");
+        assertFileNotExists("target/data/messages/input/hello.txt");
+        assertFileExists("target/data/messages/input/.camel/hello.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -51,7 +51,7 @@ public class FileConsumerIdempotentOnExceptionHandledTest extends ContextTestSup
                 onException(Exception.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from("file:target/messages/input/?initialDelay=0&delay=10&idempotent=true").
+                from("file:target/data/messages/input/?initialDelay=0&delay=10&idempotent=true").
                     to("mock:input")
                     .throwException(new IllegalArgumentException("Forced"));
             }

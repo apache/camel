@@ -40,8 +40,8 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
         // use utf-8 as original payload with 00e6 which is a danish ae letter
         utf = "ABC\u00e6".getBytes("utf-8");
 
-        deleteDirectory("target/charset");
-        createDirectory("target/charset/input");
+        deleteDirectory("target/data/charset");
+        createDirectory("target/data/charset/input");
 
         log.debug("utf: {}", new String(utf, Charset.forName("utf-8")));
 
@@ -50,7 +50,7 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
         }
 
         // write the byte array to a file using plain API
-        OutputStream fos = Files.newOutputStream(Paths.get("target/charset/input/input.txt"));
+        OutputStream fos = Files.newOutputStream(Paths.get("target/data/charset/input/input.txt"));
         fos.write(utf);
         fos.close();
 
@@ -61,7 +61,7 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
     public void testFileProducerCharsetUTFOptimized() throws Exception {
         oneExchangeDone.matchesMockWaitTime();
 
-        File file = new File("target/charset/output.txt");
+        File file = new File("target/data/charset/output.txt");
         assertTrue("File should exist", file.exists());
 
         InputStream fis = Files.newInputStream(Paths.get(file.getAbsolutePath()));
@@ -87,9 +87,9 @@ public class FileProducerCharsetUTFOptimizedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/charset/input?initialDelay=0&delay=10&noop=true")
+                from("file:target/data/charset/input?initialDelay=0&delay=10&noop=true")
                     // no charset so its optimized to write directly
-                    .to("file:target/charset/?fileName=output.txt");
+                    .to("file:target/data/charset/?fileName=output.txt");
             }
         };
     }

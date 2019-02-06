@@ -28,7 +28,7 @@ import org.junit.Test;
  */
 public class FileConsumerFileFilterTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filefilter/?initialDelay=0&delay=10&filter=#myFilter";
+    private String fileUrl = "file://target/data/filefilter/?initialDelay=0&delay=10&filter=#myFilter";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -40,7 +40,7 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filefilter");
+        deleteDirectory("target/data/filefilter");
         super.setUp();
     }
 
@@ -49,7 +49,7 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
+        template.sendBodyAndHeader("file:target/data/filefilter/", "This is a file to be filtered",
             Exchange.FILE_NAME, "skipme.txt");
 
         mock.setResultWaitTime(100);
@@ -61,10 +61,10 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
+        template.sendBodyAndHeader("file:target/data/filefilter/", "This is a file to be filtered",
             Exchange.FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/filefilter/", "Hello World",
+        template.sendBodyAndHeader("file:target/data/filefilter/", "Hello World",
             Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();

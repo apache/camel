@@ -30,7 +30,7 @@ public class FileConsumerPreMoveIssueTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/premove");
+        deleteDirectory("target/data/premove");
         super.setUp();
     }
 
@@ -39,7 +39,7 @@ public class FileConsumerPreMoveIssueTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -49,7 +49,7 @@ public class FileConsumerPreMoveIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/premove?preMove=before/${file:name.noext}-moved.${file:ext}&initialDelay=0&delay=10")
+                from("file://target/data/premove?preMove=before/${file:name.noext}-moved.${file:ext}&initialDelay=0&delay=10")
                     .process(new MyPreMoveCheckerProcessor())
                     .to("mock:result");
             }
@@ -59,7 +59,7 @@ public class FileConsumerPreMoveIssueTest extends ContextTestSupport {
     public static class MyPreMoveCheckerProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            File pre = new File("target/premove/before/hello-moved.txt");
+            File pre = new File("target/data/premove/before/hello-moved.txt");
             assertTrue("Pre move file should exist", pre.exists());
         }
     }

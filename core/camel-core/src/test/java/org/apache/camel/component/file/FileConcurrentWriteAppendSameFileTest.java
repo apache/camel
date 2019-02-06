@@ -34,7 +34,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/concurrent");
+        deleteDirectory("target/data/concurrent");
         super.setUp();
     }
 
@@ -46,7 +46,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
             sb.append("Line " + i + LS);
         }
 
-        template.sendBodyAndHeader("file:target/concurrent", sb.toString(), Exchange.FILE_NAME, "input.txt");
+        template.sendBodyAndHeader("file:target/data/concurrent", sb.toString(), Exchange.FILE_NAME, "input.txt");
 
         // start route
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -61,7 +61,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // check the file has correct number of lines
-        String txt = context.getTypeConverter().convertTo(String.class, new File("target/concurrent/outbox/result.txt"));
+        String txt = context.getTypeConverter().convertTo(String.class, new File("target/data/concurrent/outbox/result.txt"));
         assertNotNull(txt);
 
         String[] lines = txt.split(LS);
@@ -79,10 +79,10 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/concurrent?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                from("file:target/data/concurrent?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                     .split(body().tokenize(LS)).parallelProcessing().streaming()
                         .setBody(body().append(":Status=OK").append(LS))
-                        .to("file:target/concurrent/outbox?fileExist=Append&fileName=result.txt")
+                        .to("file:target/data/concurrent/outbox?fileExist=Append&fileName=result.txt")
                         .to("mock:result")
                     .end();
             }

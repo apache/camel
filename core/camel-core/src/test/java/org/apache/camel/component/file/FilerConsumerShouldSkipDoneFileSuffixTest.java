@@ -31,7 +31,7 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/done");
+        deleteDirectory("target/data/done");
         super.setUp();
     }
 
@@ -40,7 +40,7 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         // write the done file
-        template.sendBodyAndHeader("file:target/done", "", Exchange.FILE_NAME, "hello.txt.ready");
+        template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "hello.txt.ready");
 
         // wait a bit and it should not pickup the written file as there are no target file
         Thread.sleep(100);
@@ -50,13 +50,13 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
         oneExchangeDone.reset();
 
         // done file should exist
-        File file = new File("target/done/hello.txt.ready");
+        File file = new File("target/data/done/hello.txt.ready");
         assertTrue("Done file should exist: " + file, file.exists());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // write the target file
-        template.sendBodyAndHeader("file:target/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
@@ -70,7 +70,7 @@ public class FilerConsumerShouldSkipDoneFileSuffixTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/done?doneFileName=${file:name}.ready&initialDelay=0&delay=50")
+                from("file:target/data/done?doneFileName=${file:name}.ready&initialDelay=0&delay=50")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }

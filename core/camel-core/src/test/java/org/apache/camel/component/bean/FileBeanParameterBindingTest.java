@@ -29,7 +29,7 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/foo");
+        deleteDirectory("target/data/foo");
         super.setUp();
     }
 
@@ -44,7 +44,7 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
     public void testFileToBean() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -54,7 +54,7 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/foo")
+                from("file:target/data/foo")
                     .to("bean:foo?method=before")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

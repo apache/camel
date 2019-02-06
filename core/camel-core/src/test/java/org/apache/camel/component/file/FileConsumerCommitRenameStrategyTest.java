@@ -34,8 +34,8 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/done");
-        deleteDirectory("target/reports");
+        deleteDirectory("target/data/done");
+        deleteDirectory("target/data/reports");
         super.setUp();
     }
 
@@ -43,9 +43,9 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists("target/done/paris.txt", "Hello Paris");
+        mock.expectedFileExists("target/data/done/paris.txt", "Hello Paris");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/data/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -53,9 +53,9 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     @Test
     public void testRenameFileExists() throws Exception {
         // create a file in done to let there be a duplicate file
-        File file = new File("target/done");
+        File file = new File("target/data/done");
         file.mkdirs();
-        FileWriter fw = new FileWriter("target/done/london.txt");
+        FileWriter fw = new FileWriter("target/data/done/london.txt");
         try {
             fw.write("I was there once in London");
             fw.flush();
@@ -66,21 +66,21 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello London", Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/data/reports", "Hello London", Exchange.FILE_NAME, "london.txt");
 
         mock.assertIsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
 
         // content of file should be Hello London
-        String content = IOConverter.toString(new File("target/done/london.txt"), null);
+        String content = IOConverter.toString(new File("target/data/done/london.txt"), null);
         assertEquals("The file should have been renamed replacing any existing files", "Hello London", content);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?move=../done/${file:name}&initialDelay=0&delay=10")
+                from("file://target/data/reports?move=../done/${file:name}&initialDelay=0&delay=10")
                         .convertBodyTo(String.class).to("mock:report");
             }
         };

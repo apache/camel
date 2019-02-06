@@ -27,7 +27,7 @@ public class FileProducerFileExistAppendNoFileBeforeTest extends ContextTestSupp
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file");
+        deleteDirectory("target/data/file");
         super.setUp();
     }
 
@@ -35,9 +35,9 @@ public class FileProducerFileExistAppendNoFileBeforeTest extends ContextTestSupp
     public void testAppend() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
-        mock.expectedFileExists("target/file/hello.txt", "Bye World");
+        mock.expectedFileExists("target/data/file/hello.txt", "Bye World");
 
-        template.sendBodyAndHeader("file://target/file?fileExist=Append", "Bye World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Append", "Bye World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +47,7 @@ public class FileProducerFileExistAppendNoFileBeforeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&initialDelay=0&delay=10")
+                from("file://target/data/file?noop=true&initialDelay=0&delay=10")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

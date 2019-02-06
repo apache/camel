@@ -34,10 +34,10 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/done");
-        deleteDirectory("target/reports");
+        deleteDirectory("target/data/done");
+        deleteDirectory("target/data/reports");
         // use current dir as base as aboslute path
-        base = new File("").getAbsolutePath() + "/target";
+        base = new File("").getAbsolutePath() + "/target/data";
         super.setUp();
     }
 
@@ -45,9 +45,9 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists("target/done/paris.txt", "Hello Paris");
+        mock.expectedFileExists("target/data/done/paris.txt", "Hello Paris");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/data/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -55,7 +55,7 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?move=" + base + "/done/${file:name}&initialDelay=0&delay=10")
+                from("file://target/data/reports?move=" + base + "/done/${file:name}&initialDelay=0&delay=10")
                         .convertBodyTo(String.class).to("mock:report");
             }
         };

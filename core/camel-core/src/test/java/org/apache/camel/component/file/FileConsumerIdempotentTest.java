@@ -30,14 +30,14 @@ import org.junit.Test;
  */
 public class FileConsumerIdempotentTest extends ContextTestSupport {
 
-    private String uri = "file://target/idempotent/?idempotent=true&move=done/${file:name}&initialDelay=0&delay=10";
+    private String uri = "file://target/data/idempotent/?idempotent=true&move=done/${file:name}&initialDelay=0&delay=10";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/idempotent");
+        deleteDirectory("target/data/idempotent");
         super.setUp();
-        template.sendBodyAndHeader("file://target/idempotent", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/data/idempotent", "Hello World", Exchange.FILE_NAME, "report.txt");
     }
 
     @Override
@@ -65,8 +65,8 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         // move file back
-        File file = new File("target/idempotent/done/report.txt");
-        File renamed = new File("target/idempotent/report.txt");
+        File file = new File("target/data/idempotent/done/report.txt");
+        File renamed = new File("target/data/idempotent/report.txt");
         file.renameTo(renamed);
 
         // should NOT consume the file again, let a bit time pass to let the consumer try to consume it but it should not

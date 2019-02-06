@@ -28,7 +28,7 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/renameissue");
+        deleteDirectory("target/data/renameissue");
         super.setUp();
     }
 
@@ -36,9 +36,9 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
     public void testFileRenameFileOnCommitIssue() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/renameissue/.camel/hello.txt");
+        mock.expectedFileExists("target/data/renameissue/.camel/hello.txt");
 
-        template.sendBodyAndHeader("file://target/renameissue", "World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/renameissue", "World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -48,7 +48,7 @@ public class FileRenameFileOnCommitIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/renameissue?noop=false&initialDelay=0&delay=10")
+                from("file://target/data/renameissue?noop=false&initialDelay=0&delay=10")
                     .setProperty("PartitionID").simple("${file:name}")
                     .convertBodyTo(String.class)
                     .inOut("direct:source")

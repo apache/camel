@@ -26,15 +26,15 @@ public class FileProducerFilenameConstantTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/constant");
+        deleteDirectory("target/data/constant");
         super.setUp();
     }
 
     @Test
     public void testFileProducerFilenameConstant() throws Exception {
-        template.sendBody("file://target/constant?fileName=header.txt", "Hello World");
+        template.sendBody("file://target/data/constant?fileName=header.txt", "Hello World");
 
-        File file = new File("target/constant/header.txt");
+        File file = new File("target/data/constant/header.txt");
         assertTrue("File should exists " + file, file.exists());
     }
 }

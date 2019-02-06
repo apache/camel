@@ -55,7 +55,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        deleteDirectory("target/cachedir");
+        deleteDirectory("target/data/cachedir");
         createDirectory("target/cachedir");
 
         exchange = new DefaultExchange(context);

@@ -36,7 +36,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/messages/input");
+        deleteDirectory("target/data/messages/input");
         super.setUp();
     }
 
@@ -45,7 +45,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("file:target/messages/input/", "Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/data/messages/input/", "Paris", Exchange.FILE_NAME, "paris.txt");
         mock.assertIsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
@@ -59,7 +59,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("London");
 
-        template.sendBodyAndHeader("file:target/messages/input/", "London", Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/data/messages/input/", "London", Exchange.FILE_NAME, "london.txt");
         mock.assertIsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
@@ -74,7 +74,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("Dublin");
 
-        template.sendBodyAndHeader("file:target/messages/input/", "Dublin", Exchange.FILE_NAME, "dublin.txt");
+        template.sendBodyAndHeader("file:target/data/messages/input/", "Dublin", Exchange.FILE_NAME, "dublin.txt");
         mock.assertIsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
@@ -89,7 +89,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("Madrid");
 
-        template.sendBodyAndHeader("file:target/messages/input/", "Madrid", Exchange.FILE_NAME, "madrid.txt");
+        template.sendBodyAndHeader("file:target/data/messages/input/", "Madrid", Exchange.FILE_NAME, "madrid.txt");
         mock.assertIsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
@@ -100,12 +100,12 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
     private static void assertFiles(String filename, boolean deleted) throws InterruptedException {
         // file should be deleted as delete=true in parameter in the route below
-        File file = new File("target/messages/input/" + filename);
+        File file = new File("target/data/messages/input/" + filename);
         assertEquals("File " + filename + " should be deleted: " + deleted, deleted, !file.exists());
 
         // and no lock files
         String lock = filename + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
-        file = new File("target/messages/input/" + lock);
+        file = new File("target/data/messages/input/" + lock);
         assertFalse("File " + lock + " should be deleted", file.exists());
     }
 
@@ -124,7 +124,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
                 onException(ValidationException.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
-                from("file:target/messages/input/?initialDelay=0&delay=10&delete=true").
+                from("file:target/data/messages/input/?initialDelay=0&delay=10&delete=true").
                     process(new MyValidatorProcessor()).
                     to("mock:valid");
             }

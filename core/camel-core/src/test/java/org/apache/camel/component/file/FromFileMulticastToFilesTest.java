@@ -27,7 +27,7 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/multicast");
+        deleteDirectory("target/data/multicast");
         super.setUp();
     }
 
@@ -36,16 +36,16 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/multicast?initialDelay=0&delay=10")
+                from("file://target/data/multicast?initialDelay=0&delay=10")
                     .multicast()
                         .pipeline()
                             .transform(body().prepend("HEADER:"))
-                            .to("file://target/multicast/out/?fileName=header.txt")
+                            .to("file://target/data/multicast/out/?fileName=header.txt")
                             .to("mock:header")
                         .end()
                         .pipeline()
                             .transform(body().prepend("FOOTER:"))
-                            .to("file://target/multicast/out/?fileName=footer.txt")
+                            .to("file://target/data/multicast/out/?fileName=footer.txt")
                             .to("mock:footer")
                         .end()
                     .end()
@@ -56,17 +56,17 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
 
         MockEndpoint header = getMockEndpoint("mock:header");
         header.expectedBodiesReceived("HEADER:foo");
-        header.expectedFileExists("target/multicast/out/header.txt");
+        header.expectedFileExists("target/data/multicast/out/header.txt");
 
         MockEndpoint footer = getMockEndpoint("mock:footer");
         footer.expectedBodiesReceived("FOOTER:foo");
-        footer.expectedFileExists("target/multicast/out/footer.txt");
+        footer.expectedFileExists("target/data/multicast/out/footer.txt");
 
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);
-        end.expectedFileExists("target/multicast/.camel/foo.txt");
+        end.expectedFileExists("target/data/multicast/.camel/foo.txt");
 
-        template.sendBodyAndHeader("file://target/multicast", "foo", Exchange.FILE_NAME, "foo.txt");
+        template.sendBodyAndHeader("file://target/data/multicast", "foo", Exchange.FILE_NAME, "foo.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -76,16 +76,16 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/multicast?initialDelay=0&delay=10")
+                from("file://target/data/multicast?initialDelay=0&delay=10")
                     .multicast().parallelProcessing()
                         .pipeline()
                             .transform(body().prepend("HEADER:"))
-                            .to("file://target/multicast/out/?fileName=header.txt")
+                            .to("file://target/data/multicast/out/?fileName=header.txt")
                             .to("mock:header")
                         .end()
                         .pipeline()
                             .transform(body().prepend("FOOTER:"))
-                            .to("file://target/multicast/out/?fileName=footer.txt")
+                            .to("file://target/data/multicast/out/?fileName=footer.txt")
                             .to("mock:footer")
                         .end()
                     .end()
@@ -96,17 +96,17 @@ public class FromFileMulticastToFilesTest extends ContextTestSupport {
 
         MockEndpoint header = getMockEndpoint("mock:header");
         header.expectedBodiesReceived("HEADER:foo");
-        header.expectedFileExists("target/multicast/out/header.txt");
+        header.expectedFileExists("target/data/multicast/out/header.txt");
 
         MockEndpoint footer = getMockEndpoint("mock:footer");
         footer.expectedBodiesReceived("FOOTER:foo");
-        footer.expectedFileExists("target/multicast/out/footer.txt");
+        footer.expectedFileExists("target/data/multicast/out/footer.txt");
 
         MockEndpoint end = getMockEndpoint("mock:end");
         end.expectedMessageCount(1);
-        end.expectedFileExists("target/multicast/.camel/foo.txt");
+        end.expectedFileExists("target/data/multicast/.camel/foo.txt");
 
-        template.sendBodyAndHeader("file://target/multicast", "foo", Exchange.FILE_NAME, "foo.txt");
+        template.sendBodyAndHeader("file://target/data/multicast", "foo", Exchange.FILE_NAME, "foo.txt");
 
         assertMockEndpointsSatisfied();
     }

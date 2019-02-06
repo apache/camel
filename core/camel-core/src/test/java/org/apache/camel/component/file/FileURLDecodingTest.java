@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class FileURLDecodingTest extends ContextTestSupport {
     
-    static final String TARGET_DIR = "target/files";
+    static final String TARGET_DIR = "target/data/files";
     
     @Override
     public boolean isUseRouteBuilder() {

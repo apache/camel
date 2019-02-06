@@ -28,7 +28,7 @@ public class FileConsumerPreMoveLastModifiedTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/premove");
+        deleteDirectory("target/data/premove");
         super.setUp();
     }
 
@@ -36,7 +36,7 @@ public class FileConsumerPreMoveLastModifiedTest extends ContextTestSupport {
     public void testPreMoveLastModified() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        template.sendBodyAndHeader("file://target/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -46,7 +46,7 @@ public class FileConsumerPreMoveLastModifiedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10&keepLastModified=true")
+                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10&keepLastModified=true")
                         .process(new LastModifiedCheckerProcessor())
                         .log("Got file ${file:name} modified=${file:modified}")
                         .to("mock:result");

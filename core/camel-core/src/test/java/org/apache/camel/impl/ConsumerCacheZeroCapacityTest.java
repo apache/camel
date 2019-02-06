@@ -35,7 +35,7 @@ public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
 
         assertEquals("Size should be 0", 0, cache.size());
 
-        Endpoint endpoint = context.getEndpoint("file:target/foo?fileName=foo.txt&initialDelay=0&delay=10");
+        Endpoint endpoint = context.getEndpoint("file:target/data/foo?fileName=foo.txt&initialDelay=0&delay=10");
         PollingConsumer consumer = cache.acquirePollingConsumer(endpoint);
         assertNotNull(consumer);
         assertEquals("Started", ((ServiceSupport) consumer).getStatus().name());
@@ -43,7 +43,7 @@ public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
         // let it run a poll
         consumer.receive(50);
 
-        boolean found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/foo"));
+        boolean found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/data/foo"));
         assertFalse("Should not find file consumer thread", found);
 
         cache.releasePollingConsumer(endpoint, consumer);
@@ -53,7 +53,7 @@ public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
             assertEquals("Stopped", ((ServiceSupport) consumer).getStatus().name()));
 
         // should not be a file consumer thread
-        found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/foo"));
+        found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/data/foo"));
         assertFalse("Should not find file consumer thread", found);
 
         cache.stop();

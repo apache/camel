@@ -31,7 +31,7 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/xpath");
+        deleteDirectory("target/data/xpath");
         super.setUp();
     }
 
@@ -40,16 +40,16 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/xpath", "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader("file:target/data/xpath", "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
 
-        File file = new File("target/xpath/hello.xml");
+        File file = new File("target/data/xpath/hello.xml");
         assertFalse("File should not exists " + file, file.exists());
 
-        file = new File("target/xpath/ok/hello.xml");
+        file = new File("target/data/xpath/ok/hello.xml");
         assertTrue("File should exists " + file, file.exists());
     }
 
@@ -59,16 +59,16 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
         // the last tag is not ended properly
-        template.sendBodyAndHeader("file:target/xpath", "<hello>world!</hello", Exchange.FILE_NAME, "hello2.xml");
+        template.sendBodyAndHeader("file:target/data/xpath", "<hello>world!</hello", Exchange.FILE_NAME, "hello2.xml");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
         
-        File file = new File("target/xpath/hello2.xml");
+        File file = new File("target/data/xpath/hello2.xml");
         assertFalse("File should not exists " + file, file.exists());
 
-        file = new File("target/xpath/error/hello2.xml");
+        file = new File("target/data/xpath/error/hello2.xml");
         assertTrue("File should exists " + file, file.exists());
     }
 
@@ -77,7 +77,7 @@ public class XPathFromFileExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/xpath?initialDelay=0&delay=10&moveFailed=error&move=ok")
+                from("file:target/data/xpath?initialDelay=0&delay=10&moveFailed=error&move=ok")
                     .onException(Exception.class)
                         .to("mock:error")
                     .end()

@@ -32,7 +32,7 @@ public class FileConsumerSpringSchedulerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/file/custom?scheduler=spring").routeId("foo").noAutoStartup()
+                from("file:target/data/file/custom?scheduler=spring").routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
         });

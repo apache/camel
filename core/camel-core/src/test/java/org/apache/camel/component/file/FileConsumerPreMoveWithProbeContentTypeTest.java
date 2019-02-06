@@ -27,7 +27,7 @@ public class FileConsumerPreMoveWithProbeContentTypeTest extends ContextTestSupp
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/premove");
+        deleteDirectory("target/data/premove");
         super.setUp();
     }
 
@@ -37,7 +37,7 @@ public class FileConsumerPreMoveWithProbeContentTypeTest extends ContextTestSupp
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived(Exchange.FILE_CONTENT_TYPE, "txt");
 
-        template.sendBodyAndHeader("file://target/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/premove", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +47,7 @@ public class FileConsumerPreMoveWithProbeContentTypeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/premove?probeContentType=true&preMove=work/work-${file:name}&initialDelay=0&delay=10")
+                from("file://target/data/premove?probeContentType=true&preMove=work/work-${file:name}&initialDelay=0&delay=10")
                     .to("mock:result");
             }
         };

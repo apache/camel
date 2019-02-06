@@ -29,7 +29,7 @@ public class FileConsumerNoopTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filenoop");
+        deleteDirectory("target/data/filenoop");
         super.setUp();
     }
 
@@ -38,13 +38,13 @@ public class FileConsumerNoopTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
-        template.sendBodyAndHeader("file://target/filenoop", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/filenoop", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/filenoop", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/filenoop", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
 
-        assertTrue(new File("target/filenoop/hello.txt").exists());
-        assertTrue(new File("target/filenoop/bye.txt").exists());
+        assertTrue(new File("target/data/filenoop/hello.txt").exists());
+        assertTrue(new File("target/data/filenoop/bye.txt").exists());
     }
 
     @Override
@@ -52,7 +52,7 @@ public class FileConsumerNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filenoop?noop=true&initialDelay=0&delay=10")
+                from("file://target/data/filenoop?noop=true&initialDelay=0&delay=10")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

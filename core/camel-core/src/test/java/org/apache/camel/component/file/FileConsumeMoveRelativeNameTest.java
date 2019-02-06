@@ -27,12 +27,12 @@ import org.junit.Test;
  */
 public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/multidir/?initialDelay=0&delay=10&recursive=true&move=.done/${file:name}.old";
+    private String fileUrl = "file://target/data/multidir/?initialDelay=0&delay=10&recursive=true&move=.done/${file:name}.old";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/multidir");
+        deleteDirectory("target/data/multidir");
         super.setUp();
     }
 
@@ -41,9 +41,9 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Goodday World");
 
-        mock.expectedFileExists("target/multidir/.done/bye.txt.old");
-        mock.expectedFileExists("target/multidir/.done/sub/hello.txt.old");
-        mock.expectedFileExists("target/multidir/.done/sub/sub2/goodday.txt.old");
+        mock.expectedFileExists("target/data/multidir/.done/bye.txt.old");
+        mock.expectedFileExists("target/data/multidir/.done/sub/hello.txt.old");
+        mock.expectedFileExists("target/data/multidir/.done/sub/sub2/goodday.txt.old");
 
         template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
         template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");

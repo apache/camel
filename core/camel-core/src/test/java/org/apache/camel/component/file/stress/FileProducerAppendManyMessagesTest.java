@@ -40,11 +40,11 @@ public class FileProducerAppendManyMessagesTest extends ContextTestSupport {
             return;
         }
 
-        deleteDirectory("target/big");
-        createDirectory("target/big");
+        deleteDirectory("target/data/big");
+        createDirectory("target/data/big");
 
         // create a big file
-        File file = new File("target/big/data.txt");
+        File file = new File("target/data/big/data.txt");
         FileOutputStream fos = new FileOutputStream(file);
         for (int i = 0; i < 100000; i++) {
             String s = "Hello World this is a long line with number " + i + LS;
@@ -73,10 +73,10 @@ public class FileProducerAppendManyMessagesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/big")
+                from("file:target/data/big")
                     .split(body().tokenize(LS)).streaming()
                         .to("log:processing?groupSize=1000")
-                        .to("file:target/out/also-big.txt?fileExist=Append")
+                        .to("file:target/data/out/also-big.txt?fileExist=Append")
                     .end()
                     .to("mock:done");
             }

@@ -30,7 +30,7 @@ public class FileConsumerConsumedFileNameTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/consumedfilename");
+        deleteDirectory("target/data/consumedfilename");
         super.setUp();
     }
 
@@ -41,8 +41,8 @@ public class FileConsumerConsumedFileNameTest extends ContextTestSupport {
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("hello.txt");
         mock.message(0).header(Exchange.FILE_NAME_CONSUMED).isEqualTo("hello.txt");
 
-        // the file name is also starting with target/consumedfilename
-        template.sendBodyAndHeader("file:target/consumedfilename", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        // the file name is also starting with target/data/consumedfilename
+        template.sendBodyAndHeader("file:target/data/consumedfilename", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,7 +52,7 @@ public class FileConsumerConsumedFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/consumedfilename?initialDelay=0&delay=10").to("mock:result");
+                from("file:target/data/consumedfilename?initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

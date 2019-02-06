@@ -30,7 +30,7 @@ import org.junit.Test;
  */
 public class FileSorterRefTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/?initialDelay=0&delay=10&sorter=#mySorter";
+    private String fileUrl = "file://target/data/filesorter/?initialDelay=0&delay=10&sorter=#mySorter";
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -47,16 +47,16 @@ public class FileSorterRefTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filesorter");
+        deleteDirectory("target/data/filesorter");
         super.setUp();
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Paris",
+        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello Paris",
             Exchange.FILE_NAME, "paris.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello London",
+        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello London",
             Exchange.FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Copenhagen",
+        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello Copenhagen",
             Exchange.FILE_NAME, "copenhagen.txt");
     }
 

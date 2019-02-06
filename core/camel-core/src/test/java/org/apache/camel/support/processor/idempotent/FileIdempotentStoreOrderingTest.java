@@ -54,11 +54,11 @@ public class FileIdempotentStoreOrderingTest {
     @Test
     public void testTrunkStoreNotMaxHit() throws Exception {
         // ensure empty folder
-        deleteDirectory("target/mystore");
-        createDirectory("target/mystore");
+        deleteDirectory("target/data/mystore");
+        createDirectory("target/data/mystore");
 
         //given
-        File fileStore = new File("target/mystore/data.dat");
+        File fileStore = new File("target/data/mystore/data.dat");
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(10);
         fileIdempotentRepository.start();
@@ -87,11 +87,11 @@ public class FileIdempotentStoreOrderingTest {
     @Test
     public void testTrunkStoreFirstLevelMaxHit() throws Exception {
         // ensure empty folder
-        deleteDirectory("target/mystore");
-        createDirectory("target/mystore");
+        deleteDirectory("target/data/mystore");
+        createDirectory("target/data/mystore");
 
         //given
-        File fileStore = new File("target/mystore/data.dat");
+        File fileStore = new File("target/data/mystore/data.dat");
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(5);
         fileIdempotentRepository.start();
@@ -120,11 +120,11 @@ public class FileIdempotentStoreOrderingTest {
     @Test
     public void testTrunkStoreFileMaxHit() throws Exception {
         // ensure empty folder
-        deleteDirectory("target/mystore");
-        createDirectory("target/mystore");
+        deleteDirectory("target/data/mystore");
+        createDirectory("target/data/mystore");
 
         //given
-        File fileStore = new File("target/mystore/data.dat");
+        File fileStore = new File("target/data/mystore/data.dat");
         fileIdempotentRepository.setFileStore(fileStore);
         fileIdempotentRepository.setCacheSize(5);
         fileIdempotentRepository.setMaxFileStoreSize(128);

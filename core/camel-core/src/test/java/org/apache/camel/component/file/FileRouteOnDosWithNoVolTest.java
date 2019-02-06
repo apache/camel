@@ -36,7 +36,7 @@ public class FileRouteOnDosWithNoVolTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        File dir = new File("target/reports/dosnovol");
+        File dir = new File("target/data/reports/dosnovol");
         deleteDirectory(dir);
         path = dir.getAbsolutePath();
         if (FileUtil.isWindows()) {

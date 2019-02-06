@@ -26,15 +26,15 @@ import org.junit.Test;
 
 public class FileConsumeSimpleRelativeMoveToAbsoluteTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/move";
+    private String fileUrl = "file://target/data/move";
     private String base;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/move");
+        deleteDirectory("target/data/move");
         // use current dir as base as absolute path
-        base = new File("").getAbsolutePath() + "/target/move";
+        base = new File("").getAbsolutePath() + "/target/data/move";
         super.setUp();
     }
 
@@ -59,7 +59,7 @@ public class FileConsumeSimpleRelativeMoveToAbsoluteTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/move?recursive=true&move=" + base + "/.done&initialDelay=0&delay=10")
+                from("file://target/data/move?recursive=true&move=" + base + "/.done&initialDelay=0&delay=10")
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

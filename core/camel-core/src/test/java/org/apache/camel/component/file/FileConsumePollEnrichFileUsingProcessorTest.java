@@ -31,8 +31,8 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/enrich");
-        deleteDirectory("target/enrichdata");
+        deleteDirectory("target/data/enrich");
+        deleteDirectory("target/data/enrichdata");
         super.setUp();
     }
 
@@ -43,13 +43,13 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Big file");
 
-        mock.expectedFileExists("target/enrich/.done/AAA.fin");
-        mock.expectedFileExists("target/enrichdata/.done/AAA.dat");
-        mock.expectedFileExists("target/enrichdata/BBB.dat");
+        mock.expectedFileExists("target/data/enrich/.done/AAA.fin");
+        mock.expectedFileExists("target/data/enrichdata/.done/AAA.dat");
+        mock.expectedFileExists("target/data/enrichdata/BBB.dat");
 
-        template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
-        template.sendBodyAndHeader("file://target/enrichdata", "Other Big file", Exchange.FILE_NAME, "BBB.dat");
-        template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
+        template.sendBodyAndHeader("file://target/data/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
+        template.sendBodyAndHeader("file://target/data/enrichdata", "Other Big file", Exchange.FILE_NAME, "BBB.dat");
+        template.sendBodyAndHeader("file://target/data/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
 
         assertMockEndpointsSatisfied();
     }
@@ -59,7 +59,7 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/enrich?initialDelay=0&delay=10&move=.done")
+                from("file://target/data/enrich?initialDelay=0&delay=10&move=.done")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String name = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
@@ -70,7 +70,7 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
                             ConsumerTemplate con = exchange.getContext().createConsumerTemplate();
                             try {
                                 // try to get the data file
-                                data = con.receive("file://target/enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name, 5000);
+                                data = con.receive("file://target/data/enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name, 5000);
                             } finally {
                                 // stop the consumer as it does not need to poll for files anymore
                                 con.stop();

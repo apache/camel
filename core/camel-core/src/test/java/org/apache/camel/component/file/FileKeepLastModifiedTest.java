@@ -29,7 +29,7 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/keep");
+        deleteDirectory("target/data/keep");
         super.setUp();
     }
 
@@ -38,9 +38,9 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/keep?noop=true?initialDelay=0&delay=10")
+                from("file://target/data/keep?noop=true?initialDelay=0&delay=10")
                     .delay(10)
-                    .to("file://target/keep/out?keepLastModified=true", "mock:result");
+                    .to("file://target/data/keep/out?keepLastModified=true", "mock:result");
             }
         });
         context.start();
@@ -49,12 +49,12 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
-        template.sendBodyAndHeader("file://target/keep", "Hello World", "CamelFileName", "hello.txt");
+        template.sendBodyAndHeader("file://target/data/keep", "Hello World", "CamelFileName", "hello.txt");
 
         assertMockEndpointsSatisfied();
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
-        long t2 = new File("target/keep/out/hello.txt").lastModified();
+        long t2 = new File("target/data/keep/out/hello.txt").lastModified();
 
         assertEquals("Timestamp should have been kept", t1, t2);
     }
@@ -64,9 +64,9 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/keep?noop=true?initialDelay=0&delay=10")
+                from("file://target/data/keep?noop=true?initialDelay=0&delay=10")
                     .delay(10)
-                    .to("file://target/keep/out?keepLastModified=false", "mock:result");
+                    .to("file://target/data/keep/out?keepLastModified=false", "mock:result");
             }
         });
         context.start();
@@ -75,12 +75,12 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
-        template.sendBodyAndHeader("file://target/keep", "Hello World", "CamelFileName", "hello.txt");
+        template.sendBodyAndHeader("file://target/data/keep", "Hello World", "CamelFileName", "hello.txt");
 
         assertMockEndpointsSatisfied();
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
-        long t2 = new File("target/keep/out/hello.txt").lastModified();
+        long t2 = new File("target/data/keep/out/hello.txt").lastModified();
 
         assertNotSame("Timestamp should NOT have been kept", t1, t2);
     }
@@ -90,9 +90,9 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/keep?noop=true&initialDelay=0&delay=10")
+                from("file://target/data/keep?noop=true&initialDelay=0&delay=10")
                     .delay(10)
-                    .to("file://target/keep/out", "mock:result");
+                    .to("file://target/data/keep/out", "mock:result");
             }
         });
         context.start();
@@ -101,12 +101,12 @@ public class FileKeepLastModifiedTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).header(Exchange.FILE_LAST_MODIFIED).isNotNull();
 
-        template.sendBodyAndHeader("file://target/keep", "Hello World", "CamelFileName", "hello.txt");
+        template.sendBodyAndHeader("file://target/data/keep", "Hello World", "CamelFileName", "hello.txt");
 
         assertMockEndpointsSatisfied();
 
         long t1 = mock.getReceivedExchanges().get(0).getIn().getHeader(Exchange.FILE_LAST_MODIFIED, long.class);
-        long t2 = new File("target/keep/out/hello.txt").lastModified();
+        long t2 = new File("target/data/keep/out/hello.txt").lastModified();
 
         assertNotSame("Timestamp should NOT have been kept", t1, t2);
     }

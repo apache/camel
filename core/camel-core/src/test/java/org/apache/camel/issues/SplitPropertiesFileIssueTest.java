@@ -34,7 +34,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file/splitprop");
+        deleteDirectory("target/data/file/splitprop");
         super.setUp();
     }
 
@@ -44,12 +44,12 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         foo.expectedBodiesReceived("[foo=1, foo=4]");
 
         // after the file is routed it should be moved to done
-        foo.expectedFileExists("target/file/splitprop/done/myprop.txt", body);
+        foo.expectedFileExists("target/data/file/splitprop/done/myprop.txt", body);
 
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedBodiesReceived("[bar=2, bar=3]");
 
-        template.sendBodyAndHeader("file://target/file/splitprop", body, Exchange.FILE_NAME, "myprop.txt");
+        template.sendBodyAndHeader("file://target/data/file/splitprop", body, Exchange.FILE_NAME, "myprop.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -59,7 +59,7 @@ public class SplitPropertiesFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file/splitprop?initialDelay=0&delay=10&move=done")
+                from("file://target/data/file/splitprop?initialDelay=0&delay=10&move=done")
                     .convertBodyTo(String.class)
                     .split(new MyCustomExpression())
                     .recipientList(header("myCustomDestination"));

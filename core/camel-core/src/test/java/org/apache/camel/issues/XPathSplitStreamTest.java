@@ -31,7 +31,7 @@ public class XPathSplitStreamTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file/xpathsplit");
+        deleteDirectory("target/data/file/xpathsplit");
         super.setUp();
 
         StringBuilder sb = new StringBuilder();
@@ -42,7 +42,7 @@ public class XPathSplitStreamTest extends ContextTestSupport {
         }
         sb.append("\n</persons>");
 
-        template.sendBodyAndHeader("file://target/file/xpathsplit", sb.toString(), Exchange.FILE_NAME, "bigfile.xml");
+        template.sendBodyAndHeader("file://target/data/file/xpathsplit", sb.toString(), Exchange.FILE_NAME, "bigfile.xml");
     }
 
     @Test
@@ -60,7 +60,7 @@ public class XPathSplitStreamTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("file://target/file/xpathsplit?initialDelay=0&delay=10")
+                from("file://target/data/file/xpathsplit?initialDelay=0&delay=10")
                     // set documentType to org.xml.sax.InputSource then Camel will use SAX to split the file
                     .split(xpath("/persons/person").documentType(InputSource.class)).streaming()
                     .to("mock:splitted");

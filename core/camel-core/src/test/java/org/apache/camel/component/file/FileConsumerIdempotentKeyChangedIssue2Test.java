@@ -55,7 +55,7 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                endpoint = endpoint("file:target/changed?noop=true&initialDelay=0&delay=10"
+                endpoint = endpoint("file:target/data/changed?noop=true&initialDelay=0&delay=10"
                         + "&idempotentKey=${file:name}-${file:size}-${file:modified}");
 
                 from(endpoint).noAutoStartup()

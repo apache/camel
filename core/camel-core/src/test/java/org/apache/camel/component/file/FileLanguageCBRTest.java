@@ -26,7 +26,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/cbr");
+        deleteDirectory("target/data/cbr");
         super.setUp();
     }
 
@@ -36,7 +36,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         getMockEndpoint("mock:dat").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file://target/cbr", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/cbr", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,7 +47,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         getMockEndpoint("mock:dat").expectedMessageCount(1);
         getMockEndpoint("mock:other").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file://target/cbr", "Bye World", Exchange.FILE_NAME, "bye.dat");
+        template.sendBodyAndHeader("file://target/data/cbr", "Bye World", Exchange.FILE_NAME, "bye.dat");
 
         assertMockEndpointsSatisfied();
     }
@@ -58,7 +58,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         getMockEndpoint("mock:dat").expectedMessageCount(0);
         getMockEndpoint("mock:other").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/cbr", "Hi World", Exchange.FILE_NAME, "hi.foo");
+        template.sendBodyAndHeader("file://target/data/cbr", "Hi World", Exchange.FILE_NAME, "hi.foo");
 
         assertMockEndpointsSatisfied();
     }
@@ -68,7 +68,7 @@ public class FileLanguageCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/cbr?delete=true&initialDelay=0&delay=10")
+                from("file://target/data/cbr?delete=true&initialDelay=0&delay=10")
                     .convertBodyTo(String.class)
                     .choice()
                         .when().simple("${file:ext} == 'txt'").to("mock:txt")

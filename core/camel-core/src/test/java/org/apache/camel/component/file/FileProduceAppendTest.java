@@ -31,7 +31,7 @@ public class FileProduceAppendTest extends ContextTestSupport {
     public void testAppendText() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/test-file-append/hello.txt", "Hello World");
+        mock.expectedFileExists("target/data/test-file-append/hello.txt", "Hello World");
 
         template.sendBody("direct:start", " World");
 
@@ -41,10 +41,10 @@ public class FileProduceAppendTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/test-file-append");
+        deleteDirectory("target/data/test-file-append");
         super.setUp();
-        template.sendBodyAndHeader("file://target/test-file-append", "Hello", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/test-file-append", " World", Exchange.FILE_NAME, "world.txt");
+        template.sendBodyAndHeader("file://target/data/test-file-append", "Hello", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/test-file-append", " World", Exchange.FILE_NAME, "world.txt");
     }
 
     @Override
@@ -53,7 +53,7 @@ public class FileProduceAppendTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                     .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                    .to("file://target/test-file-append?fileExist=Append", "mock:result");
+                    .to("file://target/data/test-file-append?fileExist=Append", "mock:result");
             }
         };
     }

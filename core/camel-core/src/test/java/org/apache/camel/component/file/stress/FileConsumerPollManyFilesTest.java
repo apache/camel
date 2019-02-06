@@ -36,12 +36,12 @@ public class FileConsumerPollManyFilesTest extends ContextTestSupport {
             return;
         }
 
-        deleteDirectory("target/manyfiles");
+        deleteDirectory("target/data/manyfiles");
         super.setUp();
 
         // create files
         for (int i = 0; i < FILES; i++) {
-            template.sendBodyAndHeader("file:target/manyfiles", "Message " + i, Exchange.FILE_NAME, "file-" + i + ".txt");
+            template.sendBodyAndHeader("file:target/data/manyfiles", "Message " + i, Exchange.FILE_NAME, "file-" + i + ".txt");
         }
     }
 
@@ -60,7 +60,7 @@ public class FileConsumerPollManyFilesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/manyfiles?delete=true")
+                from("file:target/data/manyfiles?delete=true")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }

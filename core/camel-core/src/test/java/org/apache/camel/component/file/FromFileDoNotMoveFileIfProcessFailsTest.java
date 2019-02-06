@@ -32,13 +32,13 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/movefile");
+        deleteDirectory("target/data/movefile");
         super.setUp();
     }
 
     @Test
     public void testPollFileAndShouldNotBeMoved() throws Exception {
-        template.sendBodyAndHeader("file://target/movefile", body, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/movefile", body, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:error");
         // it could potentially retry the file on the 2nd poll and then fail again
@@ -49,7 +49,7 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
         oneExchangeDone.matchesMockWaitTime();
 
         // assert the file is not moved
-        File file = new File("target/movefile/hello.txt");
+        File file = new File("target/data/movefile/hello.txt");
         assertTrue("The file should NOT have been moved", file.exists());
     }
 
@@ -59,7 +59,7 @@ public class FromFileDoNotMoveFileIfProcessFailsTest extends ContextTestSupport 
                 onException(IllegalArgumentException.class)
                     .to("mock:error");
 
-                from("file://target/movefile?initialDelay=0&delay=10&move=done").process(new Processor() {
+                from("file://target/data/movefile?initialDelay=0&delay=10&move=done").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalArgumentException("Forced by unittest");
                     }

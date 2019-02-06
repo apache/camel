@@ -31,7 +31,7 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/done");
+        deleteDirectory("target/data/done");
         super.setUp();
     }
 
@@ -41,7 +41,7 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
         // wait a bit and it should not pickup the written file as there are no done file
         getMockEndpoint("mock:result").setResultMinimumWaitTime(50);
 
-        template.sendBodyAndHeader("file:target/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         resetMocks();
@@ -50,17 +50,17 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // write the done file
-        template.sendBodyAndHeader("file:target/done", "", Exchange.FILE_NAME, "done");
+        template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
         // done file should be kept now
-        File file = new File("target/done/done");
+        File file = new File("target/data/done/done");
         assertTrue("Done file should be not be deleted: " + file, file.exists());
 
         // as well the original file should be kept due noop
-        file = new File("target/done/hello.txt");
+        file = new File("target/data/done/hello.txt");
         assertTrue("Original file should be kept: " + file, file.exists());
     }
 
@@ -69,7 +69,7 @@ public class FilerConsumerDoneFileNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/done?initialDelay=0&delay=10&doneFileName=done&noop=true").to("mock:result");
+                from("file:target/data/done?initialDelay=0&delay=10&doneFileName=done&noop=true").to("mock:result");
             }
         };
     }

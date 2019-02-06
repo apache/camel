@@ -179,10 +179,10 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     @Test
     public void testFileNameDoubleExtension() throws Exception {
-        file = new File("target/filelanguage/test/bigfile.tar.gz");
+        file = new File("target/data/filelanguage/test/bigfile.tar.gz");
 
-        String uri = "file://target/filelanguage?fileExist=Override";
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null, false);
+        String uri = "file://target/data/filelanguage?fileExist=Override";
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/data/filelanguage", file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 
@@ -196,12 +196,12 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     public Exchange createExchange() {
         // create the file
-        String uri = "file://target/filelanguage?fileExist=Override";
+        String uri = "file://target/data/filelanguage?fileExist=Override";
         template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "test/hello.txt");
 
         // get the file handle
-        file = new File("target/filelanguage/test/hello.txt");
-        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file, null, false);
+        file = new File("target/data/filelanguage/test/hello.txt");
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/data/filelanguage", file, null, false);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
 

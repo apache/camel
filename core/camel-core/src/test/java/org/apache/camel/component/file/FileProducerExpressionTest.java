@@ -35,7 +35,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filelanguage");
+        deleteDirectory("target/data/filelanguage");
         super.setUp();
     }
 
@@ -49,50 +49,50 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     @Test
     public void testProducerFileNameHeaderNotEvaluated() {
         if (!isPlatform("windows")) {
-            template.sendBodyAndHeader("file://target/filelanguage", "Hello World", Exchange.FILE_NAME, "$simple{myfile-${id}}.txt");
-            assertFileExists("target/filelanguage/$simple{myfile-${id}}.txt");
+            template.sendBodyAndHeader("file://target/data/filelanguage", "Hello World", Exchange.FILE_NAME, "$simple{myfile-${id}}.txt");
+            assertFileExists("target/data/filelanguage/$simple{myfile-${id}}.txt");
         }
     }
 
     @Test
     public void testProduceBeanByExpression() throws Exception {
-        template.sendBody("file://target/filelanguage?fileName=${bean:myguidgenerator}.bak", "Hello World");
+        template.sendBody("file://target/data/filelanguage?fileName=${bean:myguidgenerator}.bak", "Hello World");
 
-        assertFileExists("target/filelanguage/123.bak");
+        assertFileExists("target/data/filelanguage/123.bak");
     }
 
     @Test
     public void testProducerDateByHeader() throws Exception {
-        template.sendBodyAndHeader("file://target/filelanguage", "Hello World",
+        template.sendBodyAndHeader("file://target/data/filelanguage", "Hello World",
             Exchange.FILE_NAME, simple("myfile-${date:now:yyyyMMdd}.txt"));
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists("target/filelanguage/myfile-" + date + ".txt");
+        assertFileExists("target/data/filelanguage/myfile-" + date + ".txt");
     }
 
     @Test
     public void testProducerDateByExpression() throws Exception {
-        template.sendBody("file://target/filelanguage?fileName=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
+        template.sendBody("file://target/data/filelanguage?fileName=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists("target/filelanguage/myfile-" + date + ".txt");
+        assertFileExists("target/data/filelanguage/myfile-" + date + ".txt");
     }
 
     @Test
     public void testProducerComplexByExpression() throws Exception {
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
-        template.sendBody("file://target/filelanguage?jailStartingDirectory=false&fileName=" + expression, "Hello World");
+        template.sendBody("file://target/data/filelanguage?jailStartingDirectory=false&fileName=" + expression, "Hello World");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists("target/filelanguageinbox/myfile-123-" + date + ".txt");
+        assertFileExists("target/data/filelanguageinbox/myfile-123-" + date + ".txt");
     }
 
     @Test
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
-        template.sendBodyAndHeader("file://target/filelanguage?fileName=myfile-${in.header.foo}.txt",
+        template.sendBodyAndHeader("file://target/data/filelanguage?fileName=myfile-${in.header.foo}.txt",
             "Hello World", "foo", "abc");
 
-        assertFileExists("target/filelanguage/myfile-abc.txt");
+        assertFileExists("target/data/filelanguage/myfile-abc.txt");
     }
 
     @Test
@@ -101,10 +101,10 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader("file://target/filelanguage?fileName=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
+        template.sendBodyAndHeader("file://target/data/filelanguage?fileName=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
             "Hello World", "birthday", date);
 
-        assertFileExists("target/filelanguage/mybirthday-19740420.txt");
+        assertFileExists("target/data/filelanguage/mybirthday-19740420.txt");
     }
 
     public class MyGuidGenerator {

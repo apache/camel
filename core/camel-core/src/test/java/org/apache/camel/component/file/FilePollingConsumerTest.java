@@ -32,7 +32,7 @@ public class FilePollingConsumerTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/enrich");
+        deleteDirectory("target/data/enrich");
         super.setUp();
     }
 
@@ -43,9 +43,9 @@ public class FilePollingConsumerTest extends ContextTestSupport {
 
     @Test
     public void testPollingConsumer() throws Exception {
-        template.sendBodyAndHeader("file:target/enrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/enrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        PollingConsumer consumer = context.getEndpoint("file:target/enrich").createPollingConsumer();
+        PollingConsumer consumer = context.getEndpoint("file:target/data/enrich").createPollingConsumer();
         consumer.start();
         Exchange exchange = consumer.receive(5000);
         assertNotNull(exchange);
@@ -55,12 +55,12 @@ public class FilePollingConsumerTest extends ContextTestSupport {
         Thread.sleep(500);
 
         // drop a new file which should not be picked up by the consumer
-        template.sendBodyAndHeader("file:target/enrich", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file:target/data/enrich", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // sleep a bit to ensure polling consumer would not have picked up that file
         Thread.sleep(1000);
 
-        File file = new File("target/enrich/bye.txt");
+        File file = new File("target/data/enrich/bye.txt");
         assertTrue("File should exist " + file, file.exists());
 
         consumer.stop();

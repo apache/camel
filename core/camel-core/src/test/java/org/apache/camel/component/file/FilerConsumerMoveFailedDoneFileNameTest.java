@@ -31,7 +31,7 @@ public class FilerConsumerMoveFailedDoneFileNameTest extends ContextTestSupport 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/done");
+        deleteDirectory("target/data/done");
         super.setUp();
     }
 
@@ -39,19 +39,19 @@ public class FilerConsumerMoveFailedDoneFileNameTest extends ContextTestSupport 
     public void testDoneFile() throws Exception {
         getMockEndpoint("mock:input").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/done", "", Exchange.FILE_NAME, "done");
+        template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
 
         // done file should be deleted now
-        File file = new File("target/done/done");
+        File file = new File("target/data/done/done");
         assertFalse("Done file should be deleted: " + file, file.exists());
 
         // as well the original file should be moved to failed
-        file = new File("target/done/failed/hello.txt");
+        file = new File("target/data/done/failed/hello.txt");
         assertTrue("Original file should be moved: " + file, file.exists());
     }
 
@@ -60,7 +60,7 @@ public class FilerConsumerMoveFailedDoneFileNameTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/done?doneFileName=done&initialDelay=0&delay=10&moveFailed=failed")
+                from("file:target/data/done?doneFileName=done&initialDelay=0&delay=10&moveFailed=failed")
                         .to("mock:input")
                         .throwException(new IllegalArgumentException("Forced"));
             }

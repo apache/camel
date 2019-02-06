@@ -68,7 +68,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/mail/backup");
+        deleteDirectory("target/data/mail/backup");
         super.setUp();
     }
 
@@ -76,7 +76,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
     public void testOk() throws Exception {
         template.sendBodyAndHeader("direct:confirm", "bumper", "to", "someone@somewhere.org");
 
-        File file = new File("target/mail/backup/");
+        File file = new File("target/data/mail/backup/");
         String[] files = file.list();
         assertEquals("There should be one file", 1, files.length);
     }
@@ -96,7 +96,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
         // onCompletion is async so we gotta wait a bit for the file to be deleted
         assertTrue("Should countdown the latch", LATCH.await(5, TimeUnit.SECONDS));
 
-        File file = new File("target/mail/backup/");
+        File file = new File("target/data/mail/backup/");
         String[] files = file.list();
         assertEquals("There should be no files", 0, files.length);
     }
@@ -116,7 +116,7 @@ public class FileRollbackOnCompletionTest extends ContextTestSupport {
                     // here starts the regular route
                     .bean(OrderService.class, "createMail")
                     .log("Saving mail backup file")
-                    .to("file:target/mail/backup")
+                    .to("file:target/data/mail/backup")
                     .log("Trying to send mail to ${header.to}")
                     .bean(OrderService.class, "sendMail")
                     .log("Mail send to ${header.to}");

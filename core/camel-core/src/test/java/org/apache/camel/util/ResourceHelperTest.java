@@ -60,10 +60,10 @@ public class ResourceHelperTest extends TestSupport {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        createDirectory("target/my space");
-        FileUtil.copyFile(new File("src/test/resources/log4j2.properties"), new File("target/my space/log4j2.properties"));
+        createDirectory("target/data/my space");
+        FileUtil.copyFile(new File("src/test/resources/log4j2.properties"), new File("target/data/my space/log4j2.properties"));
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:target/my%20space/log4j2.properties");
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, "file:target/data/my%20space/log4j2.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);

@@ -24,12 +24,12 @@ import org.junit.Test;
 
 public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/move";
+    private String fileUrl = "file://target/data/move";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/move");
+        deleteDirectory("target/data/move");
         super.setUp();
     }
 
@@ -37,9 +37,9 @@ public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupp
     public void testMoveToSubDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(3);
-        mock.expectedFileExists("target/move/.done/bye.txt");
-        mock.expectedFileExists("target/move/sub/.done/hello.txt");
-        mock.expectedFileExists("target/move/sub/sub2/.done/goodday.txt");
+        mock.expectedFileExists("target/data/move/.done/bye.txt");
+        mock.expectedFileExists("target/data/move/sub/.done/hello.txt");
+        mock.expectedFileExists("target/data/move/sub/sub2/.done/goodday.txt");
 
         template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
         template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
@@ -53,7 +53,7 @@ public class FileConsumeSimpleRelativeMoveToRelativeTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/move?recursive=true&move=.done&initialDelay=0&delay=10")
+                from("file://target/data/move?recursive=true&move=.done&initialDelay=0&delay=10")
                         .convertBodyTo(String.class).to("mock:result");
             }
         };

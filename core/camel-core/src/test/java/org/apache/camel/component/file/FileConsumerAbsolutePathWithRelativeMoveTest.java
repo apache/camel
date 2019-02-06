@@ -34,10 +34,10 @@ public class FileConsumerAbsolutePathWithRelativeMoveTest extends ContextTestSup
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/reports");
-        deleteDirectory("target/done");
+        deleteDirectory("target/data/reports");
+        deleteDirectory("target/data/done");
         // use current dir as base as absolute path
-        base = new File("").getAbsolutePath() + "/target/reports";
+        base = new File("").getAbsolutePath() + "/target/data/reports";
         super.setUp();
     }
 
@@ -47,7 +47,7 @@ public class FileConsumerAbsolutePathWithRelativeMoveTest extends ContextTestSup
         mock.expectedBodiesReceived("Hello Paris");
         mock.expectedFileExists(base + "/../done/paris.txt");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/data/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
         mock.assertIsSatisfied();
     }
 

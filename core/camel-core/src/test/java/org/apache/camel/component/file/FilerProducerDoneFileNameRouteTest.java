@@ -37,7 +37,7 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/done");
+        deleteDirectory("target/data/done");
         super.setUp();
     }
 
@@ -58,10 +58,10 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
 
         assertTrue(oneExchangeDone.matches(5, TimeUnit.SECONDS));
 
-        File file = new File("target/done/hello.txt");
+        File file = new File("target/data/done/hello.txt");
         assertEquals("File should exists", true, file.exists());
 
-        File done = new File("target/done/done-hello.txt");
+        File done = new File("target/data/done/done-hello.txt");
         assertEquals("Done file should exists", true, done.exists());
     }
 
@@ -70,7 +70,7 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                myProp.put("myDir", "target/done");
+                myProp.put("myDir", "target/data/done");
 
                 PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
                 pc.setLocation("ref:myProp");

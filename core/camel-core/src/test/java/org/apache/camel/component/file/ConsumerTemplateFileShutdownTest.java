@@ -27,11 +27,11 @@ public class ConsumerTemplateFileShutdownTest extends ContextTestSupport {
     
     @Test
     public void testConsumerTemplateFile() throws Exception {
-        deleteDirectory("target/consumertemplate");
+        deleteDirectory("target/data/consumertemplate");
         
-        template.sendBodyAndHeader("file:target/consumertemplate", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/consumertemplate", "Hello World", Exchange.FILE_NAME, "hello.txt");
         
-        Exchange exchange = consumer.receive("file:target/consumertemplate?fileName=hello.txt", 5000);
+        Exchange exchange = consumer.receive("file:target/data/consumertemplate?fileName=hello.txt", 5000);
         assertNotNull(exchange);
         
         assertEquals("Hello World", exchange.getIn().getBody(String.class));

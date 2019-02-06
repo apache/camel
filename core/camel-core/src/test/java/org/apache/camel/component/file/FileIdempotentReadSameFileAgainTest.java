@@ -24,13 +24,13 @@ import org.junit.Test;
 
 public class FileIdempotentReadSameFileAgainTest extends ContextTestSupport {
 
-    private String uri = "file://target/inbox?idempotent=false&move=../done&moveFailed=../error"
+    private String uri = "file://target/data/inbox?idempotent=false&move=../done&moveFailed=../error"
         + "&preMove=working/${date:now:yyyyMMddHHmmssSSS}-${file:name}&readLock=none&initialDelay=0&delay=10";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/inbox");
+        deleteDirectory("target/data/inbox");
         super.setUp();
     }
 
@@ -40,15 +40,15 @@ public class FileIdempotentReadSameFileAgainTest extends ContextTestSupport {
         // some file systems may read files in different order 
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Foo");
 
-        template.sendBodyAndHeader("file://target/inbox", "Hello World", Exchange.FILE_NAME, "foo.txt");
-        template.sendBodyAndHeader("file://target/inbox", "Foo", Exchange.FILE_NAME, "bar.txt");
+        template.sendBodyAndHeader("file://target/data/inbox", "Hello World", Exchange.FILE_NAME, "foo.txt");
+        template.sendBodyAndHeader("file://target/data/inbox", "Foo", Exchange.FILE_NAME, "bar.txt");
 
         assertMockEndpointsSatisfied();
 
         mock.reset();
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBodyAndHeader("file://target/inbox", "Bye World", Exchange.FILE_NAME, "foo.txt");
+        template.sendBodyAndHeader("file://target/data/inbox", "Bye World", Exchange.FILE_NAME, "foo.txt");
 
         assertMockEndpointsSatisfied();
     }

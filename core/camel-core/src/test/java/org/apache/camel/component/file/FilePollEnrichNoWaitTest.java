@@ -29,7 +29,7 @@ public class FilePollEnrichNoWaitTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/pollenrich");
+        deleteDirectory("target/data/pollenrich");
         super.setUp();
     }
 
@@ -37,15 +37,15 @@ public class FilePollEnrichNoWaitTest extends ContextTestSupport {
     public void testFilePollEnrichNoWait() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/pollenrich/done/hello.txt");
+        mock.expectedFileExists("target/data/pollenrich/done/hello.txt");
 
-        template.sendBodyAndHeader("file:target/pollenrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/pollenrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
         // file should be moved
-        File file = new File("target/pollenrich/hello.txt");
+        File file = new File("target/data/pollenrich/hello.txt");
         assertFalse("File should have been moved", file.exists());
     }
 
@@ -57,7 +57,7 @@ public class FilePollEnrichNoWaitTest extends ContextTestSupport {
                 from("timer:foo?delay=0&period=10").routeId("foo")
                     .log("Trigger timer foo")
                     // use 0 as timeout for no wait
-                    .pollEnrich("file:target/pollenrich?initialDelay=0&delay=10&move=done", 0)
+                    .pollEnrich("file:target/data/pollenrich?initialDelay=0&delay=10&move=done", 0)
                     .convertBodyTo(String.class)
                     .filter(body().isNull())
                         .stop()

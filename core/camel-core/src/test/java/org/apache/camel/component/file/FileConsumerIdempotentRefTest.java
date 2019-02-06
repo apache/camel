@@ -43,16 +43,16 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/idempotent");
+        deleteDirectory("target/data/idempotent");
         super.setUp();
-        template.sendBodyAndHeader("file://target/idempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/data/idempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10")
+                from("file://target/data/idempotent/?idempotent=true&idempotentRepository=#myRepo&move=done/${file:name}&initialDelay=0&delay=10")
                         .convertBodyTo(String.class).to("mock:result");
             }
         };
@@ -74,8 +74,8 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         // move file back
-        File file = new File("target/idempotent/done/report.txt");
-        File renamed = new File("target/idempotent/report.txt");
+        File file = new File("target/data/idempotent/done/report.txt");
+        File renamed = new File("target/data/idempotent/report.txt");
         file.renameTo(renamed);
 
         // should NOT consume the file again, let a bit time go

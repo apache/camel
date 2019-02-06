@@ -27,7 +27,7 @@ public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/xmltokenize");
+        deleteDirectory("target/data/xmltokenize");
         super.setUp();
     }
 
@@ -46,8 +46,8 @@ public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
                 +   "<c:child some_attr='d' anotherAttr='d'></c:child>"
                 + "</c:parent>";
 
-        deleteDirectory("target/xmltokenize");
-        template.sendBodyAndHeader("file:target/xmltokenize", body, Exchange.FILE_NAME, "myxml.xml");
+        deleteDirectory("target/data/xmltokenize");
+        template.sendBodyAndHeader("file:target/data/xmltokenize", body, Exchange.FILE_NAME, "myxml.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -57,7 +57,7 @@ public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             Namespaces ns = new Namespaces("C", "urn:c");
             public void configure() {
-                from("file:target/xmltokenize?initialDelay=0&delay=10")
+                from("file:target/data/xmltokenize?initialDelay=0&delay=10")
                     .split().xtokenize("//C:child", ns).streaming()
                         .to("mock:result")
                     .end();
