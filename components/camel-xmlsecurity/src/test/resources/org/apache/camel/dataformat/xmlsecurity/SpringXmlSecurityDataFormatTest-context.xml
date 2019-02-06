@@ -47,7 +47,7 @@
                         xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"       
                         keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
                         recipientKeyAlias="recipient"
-                        keyOrTrustStoreParametersId="trustStoreParams" />
+                        keyOrTrustStoreParametersRef="trustStoreParams" />
                 </marshal>            
             <to uri="mock:encrypted"/>
             <to uri="direct://encrypted"/>
@@ -61,7 +61,7 @@
                         xmlCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"
                         keyCipherAlgorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"
                         recipientKeyAlias="recipient"
-                        keyOrTrustStoreParametersId="keyStoreParams" />
+                        keyOrTrustStoreParametersRef="keyStoreParams" />
                 </unmarshal>                           
             <to uri="mock://decrypted"/>
         </route>
