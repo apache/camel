@@ -32,7 +32,7 @@ public class FileMEPInOutTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/FileMEPInOutTest.txt", "Hello World");
+        mock.expectedFileExists("target/data/fileMEPInOutTest.txt", "Hello World");
 
         // request is InOut
         template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME,
@@ -45,7 +45,7 @@ public class FileMEPInOutTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:in")
-                    .to("file://target/?fileExist=Override")
+                    .to("file://target/data/?fileExist=Override")
                     .to("mock:result");
             }
         };

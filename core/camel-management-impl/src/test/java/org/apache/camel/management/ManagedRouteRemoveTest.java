@@ -32,7 +32,7 @@ public class ManagedRouteRemoveTest extends ManagementTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/managed");
+        deleteDirectory("target/data/managed");
         super.setUp();
     }
 
@@ -49,7 +49,7 @@ public class ManagedRouteRemoveTest extends ManagementTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/managed", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/managed", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -87,7 +87,7 @@ public class ManagedRouteRemoveTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/managed?initialDelay=0&delay=10").to("mock:result");
+                from("file://target/data/managed?initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

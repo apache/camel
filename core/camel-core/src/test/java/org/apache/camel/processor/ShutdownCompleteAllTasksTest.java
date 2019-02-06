@@ -30,14 +30,14 @@ import org.junit.Test;
 
 public class ShutdownCompleteAllTasksTest extends ContextTestSupport {
 
-    private static String url = "file:target/pending?initialDelay=0&delay=10&synchronous=true";
+    private static String url = "file:target/data/pending?initialDelay=0&delay=10&synchronous=true";
     private static AtomicInteger counter = new AtomicInteger();
     private static CountDownLatch latch = new CountDownLatch(2);
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/pending");
+        deleteDirectory("target/data/pending");
         super.setUp();
 
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");

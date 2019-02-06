@@ -34,7 +34,7 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
     private static int counter;
     private static volatile String event = "";
 
-    private String fileUrl = "file://target/pollstrategy/?consumer.pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10";
+    private String fileUrl = "file://target/data/pollstrategy/?consumer.pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -46,9 +46,9 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/pollstrategy");
+        deleteDirectory("target/data/pollstrategy");
         super.setUp();
-        template.sendBodyAndHeader("file:target/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/pollstrategy/", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
     @Test

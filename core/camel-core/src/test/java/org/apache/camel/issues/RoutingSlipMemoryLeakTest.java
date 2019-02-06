@@ -26,7 +26,7 @@ public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/output");
+        deleteDirectory("target/data/output");
         super.setUp();
     }
 
@@ -68,7 +68,7 @@ public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
              * MockEndpoint.createProducer() creates an implementation of
              * AsyncProcessor.
              */
-            return "file:target/output";
+            return "file:target/data/output";
         }
     }
 }

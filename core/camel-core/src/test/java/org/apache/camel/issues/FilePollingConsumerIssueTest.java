@@ -27,15 +27,15 @@ public class FilePollingConsumerIssueTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/fpc");
+        deleteDirectory("target/data/fpc");
         super.setUp();
     }
 
     @Test
     public void testFilePollingConsumer() throws Exception {
-        template.sendBodyAndHeader("file://target/fpc", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/fpc", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Endpoint endpoint = context.getEndpoint("file://target/fpc?initialDelay=0&delay=10&fileName=hello.txt");
+        Endpoint endpoint = context.getEndpoint("file://target/data/fpc?initialDelay=0&delay=10&fileName=hello.txt");
         PollingConsumer consumer = endpoint.createPollingConsumer();
         consumer.start();
         Exchange exchange = consumer.receive(5000);

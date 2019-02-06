@@ -31,7 +31,7 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/xslt");
+        deleteDirectory("target/data/xslt");
         super.setUp();
     }
 
@@ -40,16 +40,16 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/xslt", "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader("file:target/data/xslt", "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
 
-        File file = new File("target/xslt/hello.xml");
+        File file = new File("target/data/xslt/hello.xml");
         assertFalse("File should not exists " + file, file.exists());
 
-        file = new File("target/xslt/ok/hello.xml");
+        file = new File("target/data/xslt/ok/hello.xml");
         assertTrue("File should exists " + file, file.exists());
     }
 
@@ -59,16 +59,16 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
         // the last tag is not ended properly
-        template.sendBodyAndHeader("file:target/xslt", "<hello>world!</hello", Exchange.FILE_NAME, "hello2.xml");
+        template.sendBodyAndHeader("file:target/data/xslt", "<hello>world!</hello", Exchange.FILE_NAME, "hello2.xml");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
 
-        File file = new File("target/xslt/hello2.xml");
+        File file = new File("target/data/xslt/hello2.xml");
         assertFalse("File should not exists " + file, file.exists());
 
-        file = new File("target/xslt/error/hello2.xml");
+        file = new File("target/data/xslt/error/hello2.xml");
         assertTrue("File should exists " + file, file.exists());
     }
 
@@ -77,7 +77,7 @@ public class XsltFromFileExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/xslt?moveFailed=error&move=ok&initialDelay=0&delay=10")
+                from("file:target/data/xslt?moveFailed=error&move=ok&initialDelay=0&delay=10")
                     .onException(Exception.class)
                         .to("mock:error")
                     .end()

@@ -32,7 +32,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/done");
+        deleteDirectory("target/data/done");
 
         super.setUp();
     }
@@ -41,14 +41,14 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
     public void testFileConsumeDoneFileIssue() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
-        template.sendBodyAndHeader("file:target/done", "A", Exchange.FILE_NAME, "foo-a.txt");
-        template.sendBodyAndHeader("file:target/done", "B", Exchange.FILE_NAME, "foo-b.txt");
-        template.sendBodyAndHeader("file:target/done", "C", Exchange.FILE_NAME, "foo-c.txt");
-        template.sendBodyAndHeader("file:target/done", "D", Exchange.FILE_NAME, "foo-d.txt");
-        template.sendBodyAndHeader("file:target/done", "E", Exchange.FILE_NAME, "foo-e.txt");
-        template.sendBodyAndHeader("file:target/done", "E", Exchange.FILE_NAME, "foo.done");
+        template.sendBodyAndHeader("file:target/data/done", "A", Exchange.FILE_NAME, "foo-a.txt");
+        template.sendBodyAndHeader("file:target/data/done", "B", Exchange.FILE_NAME, "foo-b.txt");
+        template.sendBodyAndHeader("file:target/data/done", "C", Exchange.FILE_NAME, "foo-c.txt");
+        template.sendBodyAndHeader("file:target/data/done", "D", Exchange.FILE_NAME, "foo-d.txt");
+        template.sendBodyAndHeader("file:target/data/done", "E", Exchange.FILE_NAME, "foo-e.txt");
+        template.sendBodyAndHeader("file:target/data/done", "E", Exchange.FILE_NAME, "foo.done");
 
-        assertTrue("Done file should exists", new File("target/done/foo.done").exists());
+        assertTrue("Done file should exists", new File("target/data/done/foo.done").exists());
 
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("A", "B", "C", "D", "E");
 
@@ -60,23 +60,23 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         Thread.sleep(50);
 
         // the done file should be deleted
-        assertFalse("Done file should be deleted", new File("target/done/foo.done").exists());
+        assertFalse("Done file should be deleted", new File("target/data/done/foo.done").exists());
     }
     
     @Test
     public void testFileConsumeDynamicDoneFileName() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 
-        template.sendBodyAndHeader("file:target/done2", "A", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/done2", "B", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("file:target/done2", "C", Exchange.FILE_NAME, "c.txt");
-        template.sendBodyAndHeader("file:target/done2", "a", Exchange.FILE_NAME, "a.txt.done");
-        template.sendBodyAndHeader("file:target/done2", "b", Exchange.FILE_NAME, "b.txt.done");
-        template.sendBodyAndHeader("file:target/done2", "c", Exchange.FILE_NAME, "c.txt.done");
+        template.sendBodyAndHeader("file:target/data/done2", "A", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/data/done2", "B", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/data/done2", "C", Exchange.FILE_NAME, "c.txt");
+        template.sendBodyAndHeader("file:target/data/done2", "a", Exchange.FILE_NAME, "a.txt.done");
+        template.sendBodyAndHeader("file:target/data/done2", "b", Exchange.FILE_NAME, "b.txt.done");
+        template.sendBodyAndHeader("file:target/data/done2", "c", Exchange.FILE_NAME, "c.txt.done");
         
-        assertTrue("Done file should exists", new File("target/done2/a.txt.done").exists());
-        assertTrue("Done file should exists", new File("target/done2/b.txt.done").exists());
-        assertTrue("Done file should exists", new File("target/done2/c.txt.done").exists());
+        assertTrue("Done file should exists", new File("target/data/done2/a.txt.done").exists());
+        assertTrue("Done file should exists", new File("target/data/done2/b.txt.done").exists());
+        assertTrue("Done file should exists", new File("target/data/done2/c.txt.done").exists());
 
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("A", "B", "C");
 
@@ -88,9 +88,9 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         Thread.sleep(50);
 
         // the done file should be deleted
-        assertFalse("Done file should be deleted", new File("target/done2/a.txt.done").exists());
-        assertFalse("Done file should be deleted", new File("target/done2/b.txt.done").exists());
-        assertFalse("Done file should be deleted", new File("target/done2/c.txt.done").exists());
+        assertFalse("Done file should be deleted", new File("target/data/done2/a.txt.done").exists());
+        assertFalse("Done file should be deleted", new File("target/data/done2/b.txt.done").exists());
+        assertFalse("Done file should be deleted", new File("target/data/done2/c.txt.done").exists());
         
     }
     
@@ -98,16 +98,16 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
     public void testFileDoneFileNameContainingDollarSign() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
 
-        template.sendBodyAndHeader("file:target/done2", "A", Exchange.FILE_NAME, "$a$.txt");
-        template.sendBodyAndHeader("file:target/done2", "B", Exchange.FILE_NAME, "$b.txt");
-        template.sendBodyAndHeader("file:target/done2", "C", Exchange.FILE_NAME, "c$.txt");
-        template.sendBodyAndHeader("file:target/done2", "a", Exchange.FILE_NAME, "$a$.txt.done");
-        template.sendBodyAndHeader("file:target/done2", "b", Exchange.FILE_NAME, "$b.txt.done");
-        template.sendBodyAndHeader("file:target/done2", "c", Exchange.FILE_NAME, "c$.txt.done");
+        template.sendBodyAndHeader("file:target/data/done2", "A", Exchange.FILE_NAME, "$a$.txt");
+        template.sendBodyAndHeader("file:target/data/done2", "B", Exchange.FILE_NAME, "$b.txt");
+        template.sendBodyAndHeader("file:target/data/done2", "C", Exchange.FILE_NAME, "c$.txt");
+        template.sendBodyAndHeader("file:target/data/done2", "a", Exchange.FILE_NAME, "$a$.txt.done");
+        template.sendBodyAndHeader("file:target/data/done2", "b", Exchange.FILE_NAME, "$b.txt.done");
+        template.sendBodyAndHeader("file:target/data/done2", "c", Exchange.FILE_NAME, "c$.txt.done");
         
-        assertTrue("Done file should exists", new File("target/done2/$a$.txt.done").exists());
-        assertTrue("Done file should exists", new File("target/done2/$b.txt.done").exists());
-        assertTrue("Done file should exists", new File("target/done2/c$.txt.done").exists());
+        assertTrue("Done file should exists", new File("target/data/done2/$a$.txt.done").exists());
+        assertTrue("Done file should exists", new File("target/data/done2/$b.txt.done").exists());
+        assertTrue("Done file should exists", new File("target/data/done2/c$.txt.done").exists());
 
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("A", "B", "C");
 
@@ -119,9 +119,9 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         Thread.sleep(50);
 
         // the done file should be deleted
-        assertFalse("Done file should be deleted", new File("target/done2/$a$.txt.done").exists());
-        assertFalse("Done file should be deleted", new File("target/done2/$b.txt.done").exists());
-        assertFalse("Done file should be deleted", new File("target/done2/c$.txt.done").exists());
+        assertFalse("Done file should be deleted", new File("target/data/done2/$a$.txt.done").exists());
+        assertFalse("Done file should be deleted", new File("target/data/done2/$b.txt.done").exists());
+        assertFalse("Done file should be deleted", new File("target/data/done2/c$.txt.done").exists());
         
     }
 
@@ -130,11 +130,11 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/done?doneFileName=foo.done&initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                from("file:target/data/done?doneFileName=foo.done&initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                     .convertBodyTo(String.class)
                     .to("mock:result");
                 
-                from("file:target/done2?doneFileName=${file:name}.done&initialDelay=0&delay=10")
+                from("file:target/data/done2?doneFileName=${file:name}.done&initialDelay=0&delay=10")
                     .routeId("bar").noAutoStartup()
                     .convertBodyTo(String.class)
                     .to("mock:result");

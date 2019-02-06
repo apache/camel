@@ -92,7 +92,7 @@ public class XMLSecurityDataFormatConfiguration
      * for configuration options for creating and loading a KeyStore instance
      * that represents the sender's trustStore or recipient's keyStore.
      */
-    private String keyOrTrustStoreParametersId;
+    private String keyOrTrustStoreParametersRef;
     /**
      * The password to be used for retrieving the private key from the KeyStore.
      * This key is used for asymmetric decryption.
@@ -180,13 +180,13 @@ public class XMLSecurityDataFormatConfiguration
         this.recipientKeyAlias = recipientKeyAlias;
     }
 
-    public String getKeyOrTrustStoreParametersId() {
-        return keyOrTrustStoreParametersId;
+    public String getKeyOrTrustStoreParametersRef() {
+        return keyOrTrustStoreParametersRef;
     }
 
-    public void setKeyOrTrustStoreParametersId(
-            String keyOrTrustStoreParametersId) {
-        this.keyOrTrustStoreParametersId = keyOrTrustStoreParametersId;
+    public void setKeyOrTrustStoreParametersRef(
+            String keyOrTrustStoreParametersRef) {
+        this.keyOrTrustStoreParametersRef = keyOrTrustStoreParametersRef;
     }
 
     public String getKeyPassword() {

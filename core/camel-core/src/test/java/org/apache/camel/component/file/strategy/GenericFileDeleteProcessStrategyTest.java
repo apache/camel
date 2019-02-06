@@ -50,7 +50,7 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         public boolean existsFile(String name) throws GenericFileOperationFailedException {
             existsCounter++;
             // The file name should be normalized
-            if (FileUtil.normalizePath("target/foo/boom.txt").equals(name)) {
+            if (FileUtil.normalizePath("target/data/foo/boom.txt").equals(name)) {
                 // test that we can newer delete this file
                 return true;
             }
@@ -103,11 +103,11 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         existsCounter = 0;
 
         @SuppressWarnings("unchecked")
-        GenericFileEndpoint<Object> endpoint = context.getEndpoint("file://target/foo", GenericFileEndpoint.class);
+        GenericFileEndpoint<Object> endpoint = context.getEndpoint("file://target/data/foo", GenericFileEndpoint.class);
         Exchange exchange = endpoint.createExchange();
 
         GenericFile<Object> file = new GenericFile<>();
-        file.setAbsoluteFilePath("target/foo/me.txt");
+        file.setAbsoluteFilePath("target/data/foo/me.txt");
 
         GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<>();
         strategy.commit(new MyGenericFileOperations(), endpoint, exchange, file);
@@ -122,11 +122,11 @@ public class GenericFileDeleteProcessStrategyTest extends ContextTestSupport {
         existsCounter = 0;
 
         @SuppressWarnings("unchecked")
-        GenericFileEndpoint<Object> endpoint = context.getEndpoint("file://target/foo", GenericFileEndpoint.class);
+        GenericFileEndpoint<Object> endpoint = context.getEndpoint("file://target/data/foo", GenericFileEndpoint.class);
         Exchange exchange = endpoint.createExchange();
 
         GenericFile<Object> file = new GenericFile<>();
-        file.setAbsoluteFilePath("target/foo/boom.txt");
+        file.setAbsoluteFilePath("target/data/foo/boom.txt");
 
         GenericFileDeleteProcessStrategy<Object> strategy = new GenericFileDeleteProcessStrategy<>();
         try {

@@ -34,14 +34,14 @@ public class FileProducerFileBodyGetsMoved extends ContextTestSupport {
     @Before
     @Override
     public void setUp() throws Exception {
-        deleteDirectory("target/filemove");
+        deleteDirectory("target/data/filemove");
         super.setUp();
     }
     
     @Test
     public void testStoreFileExchangeBodyIsFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedFileExists("target/filemove/testStoreFile");
+        mock.expectedFileExists("target/data/filemove/testStoreFile");
         mock.expectedMessageCount(1);
         File temporaryFile = File.createTempFile("camel", "test");
 
@@ -54,7 +54,7 @@ public class FileProducerFileBodyGetsMoved extends ContextTestSupport {
     @Test
     public void testStoreFileExchangeBodyIsWrappedFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedFileExists("target/filemove/testStoreFile");
+        mock.expectedFileExists("target/data/filemove/testStoreFile");
         mock.expectedMessageCount(1);
         File temporaryFile = File.createTempFile("camel", "test");
 
@@ -69,7 +69,7 @@ public class FileProducerFileBodyGetsMoved extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in").to("file://target/filemove/?fileName=testStoreFile")
+                from("direct:in").to("file://target/data/filemove/?fileName=testStoreFile")
                     .to("mock:result");
             }
         };

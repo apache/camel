@@ -35,7 +35,7 @@ public class BeanToFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        mock.expectedFileExists("target/BeanToFileTest.txt", "Bye World");
+        mock.expectedFileExists("target/data/BeanToFileTest.txt", "Bye World");
 
         template.sendBody("direct:in", "World");
 
@@ -54,7 +54,7 @@ public class BeanToFileTest extends ContextTestSupport {
                 from("direct:in").
                     to("bean:myBean").
                     setHeader(Exchange.FILE_NAME, constant("BeanToFileTest.txt")).
-                    to("file://target/?fileExist=Override", "mock:result");
+                    to("file://target/data/?fileExist=Override", "mock:result");
             }
         };
     }

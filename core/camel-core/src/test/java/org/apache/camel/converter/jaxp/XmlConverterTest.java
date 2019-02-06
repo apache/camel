@@ -49,7 +49,7 @@ public class XmlConverterTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/xml");
+        deleteDirectory("target/data/xml");
         super.setUp();
     }
 
@@ -240,8 +240,8 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToSaxSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        template.sendBodyAndHeader("file:target/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
-        File file = new File("target/xml/myxml.xml");
+        template.sendBodyAndHeader("file:target/data/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
+        File file = new File("target/data/xml/myxml.xml");
 
         SAXSource out = conv.toSAXSource(file, null);
         assertNotNull(out);
@@ -251,8 +251,8 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToStAXSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        template.sendBodyAndHeader("file:target/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
-        File file = new File("target/xml/myxml.xml");
+        template.sendBodyAndHeader("file:target/data/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
+        File file = new File("target/data/xml/myxml.xml");
 
         StAXSource out = conv.toStAXSource(file, null);
         assertNotNull(out);
@@ -431,8 +431,8 @@ public class XmlConverterTest extends ContextTestSupport {
     public void testToDomSourceFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
 
-        template.sendBodyAndHeader("file:target/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
-        File file = new File("target/xml/myxml.xml");
+        template.sendBodyAndHeader("file:target/data/xml", "<foo>bar</foo>", Exchange.FILE_NAME, "myxml.xml");
+        File file = new File("target/data/xml/myxml.xml");
 
         DOMSource out = conv.toDOMSource(file, null);
         assertNotNull(out);

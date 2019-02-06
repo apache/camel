@@ -32,7 +32,7 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/reports");
+        deleteDirectory("target/data/reports");
         super.setUp();
     }
 
@@ -43,12 +43,12 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("This is a good report");
 
-        FileEndpoint fileEndpoint = resolveMandatoryEndpoint("file:target/reports/report.txt", FileEndpoint.class);
+        FileEndpoint fileEndpoint = resolveMandatoryEndpoint("file:target/data/reports/report.txt", FileEndpoint.class);
         String id = fileEndpoint.getGeneratedFileName(exchange.getIn());
 
         template.send("direct:report", exchange);
 
-        File file = new File("target/reports/" + id);
+        File file = new File("target/data/reports/" + id);
         assertEquals("File should exists", true, file.exists());
     }
 
@@ -62,7 +62,7 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:report").to("file:target/reports/");
+                from("direct:report").to("file:target/data/reports/");
 
                 from("direct:report2").setHeader(Exchange.FILE_NAME, constant("report-super.txt")).to("file:target/");
             }

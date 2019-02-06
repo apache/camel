@@ -47,7 +47,7 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/managed", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/managed", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -89,7 +89,7 @@ public class ManagedRouteStopAndStartCleanupTest extends ManagedRouteStopAndStar
         // wait 2 seconds while route is stopped to verify that file was not consumed
         mock.setResultWaitTime(2000);
 
-        template.sendBodyAndHeader("file://target/managed", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/managed", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // route is stopped so we do not get the file
         mock.assertIsNotSatisfied();

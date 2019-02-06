@@ -28,7 +28,7 @@ public class ManagedBrowsableEndpointAsXmlFileTest extends ManagementTestSupport
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/files");
+        deleteDirectory("target/data/files");
         super.setUp();
     }
 
@@ -43,7 +43,7 @@ public class ManagedBrowsableEndpointAsXmlFileTest extends ManagementTestSupport
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"file://target/files\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"file://target/data/files\"");
 
         String out = (String) mbeanServer.invoke(name, "browseAllMessagesAsXml", new Object[]{true}, new String[]{"java.lang.Boolean"});
         assertNotNull(out);
@@ -59,7 +59,7 @@ public class ManagedBrowsableEndpointAsXmlFileTest extends ManagementTestSupport
             public void configure() throws Exception {
                 context.setUseBreadcrumb(false);
 
-                from("direct:start").to("file:target/files");
+                from("direct:start").to("file:target/data/files");
             }
         };
     }

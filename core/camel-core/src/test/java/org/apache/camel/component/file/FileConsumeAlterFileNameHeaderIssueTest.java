@@ -32,7 +32,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/files");
+        deleteDirectory("target/data/files");
         super.setUp();
     }
 
@@ -46,7 +46,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/files?initialDelay=0&delay=10&delete=true")
+                from("file://target/data/files?initialDelay=0&delay=10&delete=true")
                     // remove all headers
                     .removeHeaders("*")
                     .to("mock:result");
@@ -57,7 +57,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
@@ -66,7 +66,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
 
         // the original file should have been deleted, as the file consumer should be resilient against
         // end users deleting headers
-        assertFalse("File should been deleted", new File("target/files/hello.txt").exists());
+        assertFalse("File should been deleted", new File("target/data/files/hello.txt").exists());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/files?initialDelay=0&delay=10&delete=true")
+                from("file://target/data/files?initialDelay=0&delay=10&delete=true")
                     // change file header
                     .setHeader(Exchange.FILE_NAME, constant("bye.txt"))
                     .to("mock:result");
@@ -86,14 +86,14 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "bye.txt");
 
-        template.sendBodyAndHeader("file://target/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
         // the original file should have been deleted, as the file consumer should be resilient against
         // end users changing headers
-        assertFalse("File should been deleted", new File("target/files/hello.txt").exists());
+        assertFalse("File should been deleted", new File("target/data/files/hello.txt").exists());
     }
 
     @Test
@@ -101,7 +101,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/files?initialDelay=0&delay=10")
+                from("file://target/data/files?initialDelay=0&delay=10")
                     // remove all headers
                     .removeHeaders("*")
                     .to("mock:result");
@@ -112,7 +112,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
@@ -121,7 +121,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
 
         // the original file should have been moved, as the file consumer should be resilient against
         // end users deleting headers
-        assertTrue("File should been moved", new File("target/files/.camel/hello.txt").exists());
+        assertTrue("File should been moved", new File("target/data/files/.camel/hello.txt").exists());
     }
 
     @Test
@@ -129,7 +129,7 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/files?initialDelay=0&delay=10")
+                from("file://target/data/files?initialDelay=0&delay=10")
                     // change file header
                     .setHeader(Exchange.FILE_NAME, constant("bye.txt"))
                     .to("mock:result");
@@ -141,14 +141,14 @@ public class FileConsumeAlterFileNameHeaderIssueTest extends ContextTestSupport 
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "bye.txt");
 
-        template.sendBodyAndHeader("file://target/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/files", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
         // the original file should have been moved, as the file consumer should be resilient against
         // end users changing headers
-        assertTrue("File should been moved", new File("target/files/.camel/hello.txt").exists());
+        assertTrue("File should been moved", new File("target/data/files/.camel/hello.txt").exists());
     }
 
 }

@@ -32,7 +32,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/begin");
+        deleteDirectory("target/data/begin");
         super.setUp();
     }
 
@@ -48,7 +48,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/begin", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/begin", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -60,7 +60,7 @@ public class FileBeginFailureOneTimeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/begin?initialDelay=0&delay=10&processStrategy=#myStrategy")
+                from("file://target/data/begin?initialDelay=0&delay=10&processStrategy=#myStrategy")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }

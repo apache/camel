@@ -30,7 +30,7 @@ public class SplitGroupMultiXmlTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/pair");
+        deleteDirectory("target/data/pair");
         super.setUp();
     }
 
@@ -43,7 +43,7 @@ public class SplitGroupMultiXmlTest extends ContextTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"5\" xmlns=\"http:acme.com\">Groovy in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader("file:target/pair", body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader("file:target/data/pair", body, Exchange.FILE_NAME, "orders.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -66,7 +66,7 @@ public class SplitGroupMultiXmlTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("file:target/pair?initialDelay=0&delay=10")
+                from("file:target/data/pair?initialDelay=0&delay=10")
                         // split the order child tags, and inherit namespaces from the orders root tag
                         .split().tokenizeXML("order", "orders", 2)
                         .to("log:split")

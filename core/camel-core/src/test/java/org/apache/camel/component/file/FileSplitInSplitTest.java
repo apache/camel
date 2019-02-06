@@ -33,7 +33,7 @@ public class FileSplitInSplitTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/split");
+        deleteDirectory("target/data/split");
         super.setUp();
     }
 
@@ -49,7 +49,7 @@ public class FileSplitInSplitTest extends ContextTestSupport {
             sb.append("Block2 Line " + i + LS);
         }
 
-        template.sendBodyAndHeader("file:target/split", sb.toString(), Exchange.FILE_NAME, "input.txt");
+        template.sendBodyAndHeader("file:target/data/split", sb.toString(), Exchange.FILE_NAME, "input.txt");
 
         // start route
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -62,7 +62,7 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         // check one file has expected number of lines +1 saying split is
         // complete.
         String txt = context.getTypeConverter().convertTo(String.class,
-                                                          new File("target/split/outbox/result0.txt"));
+                                                          new File("target/data/split/outbox/result0.txt"));
         assertNotNull(txt);
 
         String[] lines = txt.split(LS);
@@ -70,7 +70,7 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         
         
         txt = context.getTypeConverter().convertTo(String.class,
-                                                          new File("target/split/outbox/result1.txt"));
+                                                          new File("target/data/split/outbox/result1.txt"));
         assertNotNull(txt);
 
         lines = txt.split(LS);
@@ -84,7 +84,7 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
+                from("file:target/data/split?initialDelay=0&delay=10").routeId("foo").noAutoStartup()
                     .split(body().tokenize(comma))
                         .parallelProcessing()
                         .streaming()
@@ -93,10 +93,10 @@ public class FileSplitInSplitTest extends ContextTestSupport {
                             .parallelProcessing()
                             .streaming()
                             .setBody(body().append(":Status=OK").append(LS))
-                            .to("file:target/split/outbox?fileExist=Append&fileName=result${property.split}.txt")
+                            .to("file:target/data/split/outbox?fileExist=Append&fileName=result${property.split}.txt")
                        .end()
                        .setBody(new SimpleExpression("${property.split} complete"))
-                       .to("file:target/split/outbox?fileExist=Append&fileName=result${property.split}.txt")
+                       .to("file:target/data/split/outbox?fileExist=Append&fileName=result${property.split}.txt")
                     .end().to("mock:result");
 
             }

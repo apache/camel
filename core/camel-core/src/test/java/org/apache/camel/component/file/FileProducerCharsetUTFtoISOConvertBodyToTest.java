@@ -43,8 +43,8 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
         utf = "ABC\u00e6".getBytes("utf-8");
         iso = "ABC\u00e6".getBytes("iso-8859-1");
 
-        deleteDirectory("target/charset");
-        createDirectory("target/charset/input");
+        deleteDirectory("target/data/charset");
+        createDirectory("target/data/charset/input");
 
         log.debug("utf: {}", new String(utf, Charset.forName("utf-8")));
         log.debug("iso: {}", new String(iso, Charset.forName("iso-8859-1")));
@@ -57,7 +57,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
         }
 
         // write the byte array to a file using plain API
-        OutputStream fos = Files.newOutputStream(Paths.get("target/charset/input/input.txt"));
+        OutputStream fos = Files.newOutputStream(Paths.get("target/data/charset/input/input.txt"));
         fos.write(utf);
         fos.close();
 
@@ -68,7 +68,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
     public void testFileProducerCharsetUTFtoISOConvertBodyTo() throws Exception {
         oneExchangeDone.matchesMockWaitTime();
 
-        File file = new File("target/charset/output.txt");
+        File file = new File("target/data/charset/output.txt");
         assertTrue("File should exist", file.exists());
 
         InputStream fis = Files.newInputStream(Paths.get(file.getAbsolutePath()));
@@ -99,12 +99,12 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
             @Override
             public void configure() throws Exception {
                 // the input file is in utf-8
-                from("file:target/charset/input?initialDelay=0&delay=10&noop=true&charset=utf-8")
+                from("file:target/data/charset/input?initialDelay=0&delay=10&noop=true&charset=utf-8")
                     // now convert the input file from utf-8 to iso-8859-1
                     .convertBodyTo(byte[].class, "iso-8859-1")
                     // and write the file using that encoding
                     .setProperty(Exchange.CHARSET_NAME, header("someCharsetHeader"))
-                    .to("file:target/charset/?fileName=output.txt");
+                    .to("file:target/data/charset/?fileName=output.txt");
             }
         };
     }

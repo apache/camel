@@ -32,13 +32,13 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/deletefile");
+        deleteDirectory("target/data/deletefile");
         super.setUp();
     }
 
     @Test
     public void testPollFileAndShouldNotBeDeleted() throws Exception {
-        template.sendBodyAndHeader("file://target/deletefile", body, Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/deletefile", body, Exchange.FILE_NAME, "hello.txt");
 
         MockEndpoint mock = getMockEndpoint("mock:error");
         // it could potentially retry the file on the 2nd poll and then fail again
@@ -49,7 +49,7 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
         oneExchangeDone.matchesMockWaitTime();
 
         // assert the file is deleted
-        File file = new File("target/deletefile/hello.txt");
+        File file = new File("target/data/deletefile/hello.txt");
         assertTrue("The file should NOT have been deleted", file.exists());
     }
 
@@ -59,7 +59,7 @@ public class FromFileDoNotDeleteFileIfProcessFailsTest extends ContextTestSuppor
                 onException(IllegalArgumentException.class)
                     .to("mock:error");
 
-                from("file://target/deletefile?initialDelay=0&delay=10&delete=true").process(new Processor() {
+                from("file://target/data/deletefile?initialDelay=0&delay=10&delete=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalArgumentException("Forced by unittest");
                     }

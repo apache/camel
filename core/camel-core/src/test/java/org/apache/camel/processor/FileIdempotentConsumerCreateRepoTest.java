@@ -34,7 +34,7 @@ public class FileIdempotentConsumerCreateRepoTest extends Assert {
 
     @Test
     public void shouldCreateParentOfRepositoryFileStore() throws Exception {
-        File parentDirectory = new File("target/repositoryParent_" + randomUUID());
+        File parentDirectory = new File("target/data/repositoryParent_" + randomUUID());
         store = new File(parentDirectory, "store");
         assertStoreExists(store);
     }

@@ -30,19 +30,10 @@ public class JGroupsRaftClusterServiceConfiguration {
      */
     private String id;
 
-    public String getRaftId() {
-        return raftId;
-    }
-
-    public void setRaftId(String raftId) {
-        this.raftId = raftId;
-    }
-
     /**
      * JGroups-raft ID
      */
     private String raftId;
-
 
     /**
      * JGrups-raft configuration File name
@@ -54,6 +45,13 @@ public class JGroupsRaftClusterServiceConfiguration {
      */
     private String jgroupsRaftClusterName;
 
+    public String getRaftId() {
+        return raftId;
+    }
+
+    public void setRaftId(String raftId) {
+        this.raftId = raftId;
+    }
 
     public boolean isEnabled() {
         return enabled;

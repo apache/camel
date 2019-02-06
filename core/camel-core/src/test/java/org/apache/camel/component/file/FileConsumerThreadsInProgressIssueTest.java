@@ -39,7 +39,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/manyfiles?sortBy=file:name&delay=10&synchronous=false").routeId("myRoute").noAutoStartup()
+                from("file:target/data/manyfiles?sortBy=file:name&delay=10&synchronous=false").routeId("myRoute").noAutoStartup()
                     .threads(1, 10).maxQueueSize(0)
                     .convertBodyTo(String.class)
                     .process(processor)
@@ -81,11 +81,11 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
     }
 
     private static void createManyFiles(int number) throws Exception {
-        deleteDirectory("target/manyfiles");
-        createDirectory("target/manyfiles");
+        deleteDirectory("target/data/manyfiles");
+        createDirectory("target/data/manyfiles");
         for (int i = 0; i < number; i++) {
             String pad = String.format("%04d", i);
-            PrintWriter writer = new PrintWriter("target/manyfiles/newFile-" + pad, "UTF-8");
+            PrintWriter writer = new PrintWriter("target/data/manyfiles/newFile-" + pad, "UTF-8");
             writer.println(pad);
             writer.close();
         }

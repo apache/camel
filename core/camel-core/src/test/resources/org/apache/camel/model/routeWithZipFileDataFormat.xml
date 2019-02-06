@@ -22,7 +22,7 @@
         <from uri="seda:a"/>
         <pipeline>
             <marshal>
-                <zipFile/>
+                <zipfile/>
             </marshal>
             <to uri="seda:b"/>
         </pipeline>

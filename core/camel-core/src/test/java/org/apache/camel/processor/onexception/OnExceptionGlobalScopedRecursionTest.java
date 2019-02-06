@@ -262,8 +262,6 @@ public class OnExceptionGlobalScopedRecursionTest extends ContextTestSupport {
         });
         context.start();
 
-        // TODO: figure out why it does not throw exception (handle = true, new exception -> handle true?)
-        // TODO: and why route scoped seems to work
         try {
             template.sendBody("direct:test", "Hello World");
             fail("Should have thrown exception");

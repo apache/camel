@@ -41,7 +41,7 @@ public class DdbComponentConfigurationTest extends CamelTestSupport {
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
-        DdbEndpoint endpoint = (DdbEndpoint)component.createEndpoint("aws-myTable://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        DdbEndpoint endpoint = (DdbEndpoint)component.createEndpoint("aws-ddb://myTable?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
         
         assertEquals("myTable", endpoint.getConfiguration().getTableName());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());

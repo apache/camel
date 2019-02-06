@@ -38,7 +38,7 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file");
+        deleteDirectory("target/data/file");
         super.setUp();
     }
     
@@ -51,21 +51,21 @@ public class FileProducerMoveExistingStrategyTest extends ContextTestSupport {
 
     @Test
     public void testExistingFileExists() throws Exception {
-        template.sendBodyAndHeader("file://target/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
                 "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
                 "Bye Existing World 1", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
+        template.sendBodyAndHeader("file://target/data/file?fileExist=Move&moveExisting=${file:parent}/renamed-${file:onlyname}&moveExistingFileStrategy=#myStrategy",
                 "Bye Existing World 2", Exchange.FILE_NAME, "hello.txt");
 
-        assertFileExists("target/file/hello.txt");
-        assertEquals("Bye Existing World 2", context.getTypeConverter().convertTo(String.class, new File("target/file/hello.txt")));
+        assertFileExists("target/data/file/hello.txt");
+        assertEquals("Bye Existing World 2", context.getTypeConverter().convertTo(String.class, new File("target/data/file/hello.txt")));
         
-        assertFileExists("target/file/renamed-hello2.txt");
-        assertEquals("Bye Existing World 1", context.getTypeConverter().convertTo(String.class, new File("target/file/renamed-hello2.txt")));
+        assertFileExists("target/data/file/renamed-hello2.txt");
+        assertEquals("Bye Existing World 1", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello2.txt")));
 
-        assertFileExists("target/file/renamed-hello1.txt");
-        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/file/renamed-hello1.txt")));
+        assertFileExists("target/data/file/renamed-hello1.txt");
+        assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, new File("target/data/file/renamed-hello1.txt")));
     }
     
     private static class MyStrategy implements FileMoveExistingStrategy {

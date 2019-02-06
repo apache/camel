@@ -40,8 +40,8 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/a");
-        deleteDirectory("target/b");
+        deleteDirectory("target/data/a");
+        deleteDirectory("target/data/b");
         super.setUp();
     }
 
@@ -57,8 +57,8 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
         // thread thread name should be the same
         mock.message(0).header("threadName").isEqualTo(mock.message(1).header("threadName"));
 
-        template.sendBodyAndHeader("file:target/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/b", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file:target/data/a", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/b", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -72,10 +72,10 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
                 pool = new ThreadPoolBuilder(context).poolSize(1).buildScheduled(this, "MySharedPool");
                 registry.put("myPool", pool);
 
-                from("file:target/a?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("a")
+                from("file:target/data/a?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("a")
                     .to("direct:shared");
 
-                from("file:target/b?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("b")
+                from("file:target/data/b?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("b")
                     .to("direct:shared");
 
                 from("direct:shared").routeId("shared")

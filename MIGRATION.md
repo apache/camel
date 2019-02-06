@@ -16,9 +16,13 @@ Modularization of camel-core
 One of the biggest change is the modularization of camel-core.
 In Camel 2.x camel-core was one JAR file, which now has been splitup into many JARs as follows:
 
-TODO: as table of all the modules
-- camel-core
 - camel-api
+- camel-base
+- camel-core
+- camel-management-api
+- camel-management-impl
+- camel-support
+- camel-util
  
 Maven users of Apache Camel can keep using the dependency *camel-core* which will have transitive dependency on all of its modules, and therefore no migration is needed.
 However users whom wants to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
@@ -59,6 +63,10 @@ All the classes in `org.apache.camel.util.component` has been moved from the cam
 The method `xslt` has been removed from `org.apache.camel.builder.AggregationStrategies`. Instead use the `XsltAggregationStrategy` from `camel-xslt` JAR directly.
 
 The getter/setter for `bindingMode` on `RestEndpoint` has been changed to use type `org.apache.camel.spi.RestConfiguration.RestBindingMode` from `camel-api` JAR. Instead of using this type class you can also call the setter method with string type instead.
+
+The `activemq-camel` component has been moved from ActiveMQ into Camel and it is now called `camel-activemq`, the package has been changed accordingly to `org.apache.camel.component.activemq`
+
+The method `includeRoutes` on `RouteBuilder` has been removed. This functionality was not fully in use and was deprecated in Camel 2.x.
 
 #### Generic Classes
 
@@ -110,4 +118,16 @@ The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.pro
 
 The class `XsltAggregationStrategy` has been moved from `org.apache.camel.builder.XsltAggregationStrategy` in the camel-core JAR to `org.apache.camel.component.xslt.XsltAggregationStrategy` and moved to the `camel-xslt` JAR.
 
+When using the option `groupedExchange` on the aggregator EIP then the output of the aggregation
+is now longer also stored in the exchange property `Exchange.GROUPED_EXCHANGE`.
+This behaviour was already deprecated from Camel 2.13 onwards.
 
+### XML DSL Migration
+
+The XML DSL has been changed slightly.
+
+The custom load balancer EIP has changed from `<custom>` to `<customLoadBalancer>` 
+
+The XMLSecurity data format has renamed the attribute `keyOrTrustStoreParametersId` to `keyOrTrustStoreParametersRef` in the `<secureXML>` tag.
+
+The `<zipFile>` data format has been renamed to `<zipfile>`.

@@ -34,7 +34,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filelanguage");
+        deleteDirectory("target/data/filelanguage");
         super.setUp();
     }
 
@@ -55,7 +55,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
+                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                         + "&move=${id}.bak").convertBodyTo(String.class).to("mock:result");
             }
         });
@@ -64,13 +64,13 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/data/filelanguage/", "Hello World", Exchange.FILE_NAME, "report.txt");
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
-        File file = new File("target/filelanguage/" + id + ".bak");
+        File file = new File("target/data/filelanguage/" + id + ".bak");
         assertTrue("File should have been renamed", file.exists());
     }
 
@@ -79,7 +79,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
+                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                      + "&move=backup-${id}-${file:name.noext}.bak").convertBodyTo(String.class).to("mock:result");
             }
         });
@@ -88,13 +88,13 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Bye World", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader("file://target/data/filelanguage/", "Bye World", Exchange.FILE_NAME, "report2.txt");
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
-        File file = new File("target/filelanguage/backup-" + id + "-report2.bak");
+        File file = new File("target/data/filelanguage/backup-" + id + "-report2.bak");
         assertTrue("File should have been renamed", file.exists());
     }
 
@@ -103,7 +103,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
+                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                       + "&move=backup/${bean:myguidgenerator.guid}.txt").convertBodyTo(String.class).to("mock:result");
             }
         });
@@ -111,9 +111,9 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Big World");
-        mock.expectedFileExists("target/filelanguage/backup/123.txt", "Bye Big World");
+        mock.expectedFileExists("target/data/filelanguage/backup/123.txt", "Bye Big World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Bye Big World", Exchange.FILE_NAME, "report3.txt");
+        template.sendBodyAndHeader("file://target/data/filelanguage/", "Bye Big World", Exchange.FILE_NAME, "report3.txt");
         assertMockEndpointsSatisfied();
     }
 
@@ -122,7 +122,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
+                from("file://target/data/filelanguage/?initialDelay=0&delay=10&exclude=.*bak"
                      + "&move=../backup/${file:name}.bak").to("mock:result");
             }
         });
@@ -130,9 +130,9 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Big World");
-        mock.expectedFileExists("target/backup/report4.txt.bak");
+        mock.expectedFileExists("target/data/backup/report4.txt.bak");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Hello Big World", Exchange.FILE_NAME, "report4.txt");
+        template.sendBodyAndHeader("file://target/data/filelanguage/", "Hello Big World", Exchange.FILE_NAME, "report4.txt");
         assertMockEndpointsSatisfied();
     }
 
@@ -144,7 +144,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
                 // configured by java using java beans setters
                 FileEndpoint endpoint = new FileEndpoint();
                 endpoint.setCamelContext(context);
-                endpoint.setFile(new File("target/filelanguage/"));
+                endpoint.setFile(new File("target/data/filelanguage/"));
                 endpoint.setAutoCreate(false);
                 endpoint.setMove(BeanLanguage.bean("myguidgenerator"));
                 endpoint.setExclude(".*bak");
@@ -157,9 +157,9 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bean Language Rules The World");
-        mock.expectedFileExists("target/filelanguage/123");
+        mock.expectedFileExists("target/data/filelanguage/123");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Bean Language Rules The World",
+        template.sendBodyAndHeader("file://target/data/filelanguage/", "Bean Language Rules The World",
                 Exchange.FILE_NAME, "report5.txt");
         assertMockEndpointsSatisfied();
     }

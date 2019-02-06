@@ -82,8 +82,8 @@
     <avro-bundle-version>1.8.2_1</avro-bundle-version>
     <avro-ipc-bundle-version>1.8.2_1</avro-ipc-bundle-version>
     <awaitility-version>3.1.6</awaitility-version>
-    <aws-java-sdk-bundle-version>1.11.469_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.11.469</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.11.483_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.11.483</aws-java-sdk-version>
     <aws-xray-version>2.1.0</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-storage-java-sdk-version>8.0.0</azure-storage-java-sdk-version>
@@ -102,8 +102,8 @@
     <braintree-gateway-version>2.91.0</braintree-gateway-version>
     <brave-zipkin-version>5.6.1</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
-    <c3p0-version>0.9.5.2</c3p0-version>
-    <c3p0-bundle-version>0.9.5.2_2</c3p0-bundle-version>
+    <c3p0-version>0.9.5.3</c3p0-version>
+    <c3p0-bundle-version>0.9.5.3_1</c3p0-bundle-version>
     <caffeine-version>2.6.2</caffeine-version>
     <californium-version>1.0.6</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
@@ -120,8 +120,8 @@
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
     <cglib-bundle-version>3.2.10_1</cglib-bundle-version>
     <cglib-version>3.2.10</cglib-version>
-    <chunk-templates-version>3.3.1</chunk-templates-version>
-    <chunk-templates-bundle-version>3.3.1_1</chunk-templates-bundle-version>
+    <chunk-templates-version>3.5.0</chunk-templates-version>
+    <chunk-templates-bundle-version>3.5.0_1</chunk-templates-bundle-version>
     <cmis-version>1.1.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-client-version>3.1.2</cometd-java-client-version>
@@ -162,7 +162,7 @@
     <couchbase-client-version>1.4.13</couchbase-client-version>
     <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
     <curator-version>2.12.0</curator-version>
-    <cxf-version>3.2.7</cxf-version>
+    <cxf-version>3.3.0</cxf-version>
     <cxf-version-range>[3.1,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.2.0</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.2.0</cxf-xjc-utils-version>
@@ -198,8 +198,8 @@
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fabric8-maven-plugin-version>3.5.42</fabric8-maven-plugin-version>
-    <facebook4j-core-version>2.4.12</facebook4j-core-version>
-    <facebook4j-core-bundle-version>2.4.12_1</facebook4j-core-bundle-version>
+    <facebook4j-core-version>2.4.13</facebook4j-core-version>
+    <facebook4j-core-bundle-version>2.4.13_1</facebook4j-core-bundle-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
     <fastjson-version>1.2.54</fastjson-version>
     <fastjson-bundle-version>1.2.54_1</fastjson-bundle-version>
@@ -437,8 +437,8 @@
     <leveldbjni-version>1.8</leveldbjni-version>
     <leveldb-api-version>0.10</leveldb-api-version>
     <leveldb-version>0.10</leveldb-version>
-    <libphonenumber-version>8.10.2</libphonenumber-version>
-    <libphonenumber-bundle-version>8.10.2_1</libphonenumber-bundle-version>
+    <libphonenumber-version>8.10.3</libphonenumber-version>
+    <libphonenumber-bundle-version>8.10.3_1</libphonenumber-bundle-version>
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lettuce-version>5.1.0.RELEASE</lettuce-version>
@@ -468,8 +468,7 @@
     <maven-jar-plugin-version>3.0.2</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
-    <!-- plugin-plugin 3.5 does not work -->
-    <maven-plugin-plugin-version>3.4</maven-plugin-plugin-version>
+    <maven-plugin-plugin-version>3.5.2</maven-plugin-plugin-version>
     <maven-plugin-annotations-version>3.5</maven-plugin-annotations-version>
     <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
     <maven-remote-resources-plugin-version>1.5</maven-remote-resources-plugin-version>
@@ -492,15 +491,16 @@
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockwebserver-version>0.0.17</mockwebserver-version>
     <mockito-version>2.23.4</mockito-version>
-    <mongo-java-driver-version>3.9.1</mongo-java-driver-version>
+    <mongo-java-driver-version>3.10.0</mongo-java-driver-version>
     <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
     <mqtt-client-version>1.14</mqtt-client-version>
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.5</mustache-java-version>
     <mustache-guava-version>16.0</mustache-guava-version>
-    <mustache-bundle-version>0.9.5_3</mustache-bundle-version>
+    <mustache-bundle-version>0.9.5_4</mustache-bundle-version>
+    <!-- mvel 2.4.3 does not work in OSGi: https://github.com/mvel/mvel/issues/178 -->
     <mvel-version>2.4.2.Final</mvel-version>
-    <mybatis-version>3.4.6</mybatis-version>
+    <mybatis-version>3.5.0</mybatis-version>
     <narayana-version>5.9.2.Final</narayana-version>
     <nessus-version>1.0.0.Beta1</nessus-version>
     <nsq-client-version>1.0.0.RC4</nsq-client-version>
@@ -615,8 +615,8 @@
     <spark-rest-version>2.8.0</spark-rest-version>
     <spark-rest-bundle-version>2.8.0_1</spark-rest-bundle-version>
     <splunk-version>1.6.5.0_1</splunk-version>
-    <spring-batch-version>4.0.1.RELEASE</spring-batch-version>
-    <spring-batch-bundle-version>4.0.1.RELEASE_1</spring-batch-bundle-version>
+    <spring-batch-version>4.1.1.RELEASE</spring-batch-version>
+    <spring-batch-bundle-version>4.1.1.RELEASE_1</spring-batch-bundle-version>
     <spring-boot-version>2.1.2.RELEASE</spring-boot-version>
     <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
     <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
@@ -4876,6 +4876,11 @@
 
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${maven-plugin-plugin-version}</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>

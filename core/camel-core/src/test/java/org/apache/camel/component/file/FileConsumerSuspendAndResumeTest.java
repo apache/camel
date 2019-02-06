@@ -34,7 +34,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/suspended");
+        deleteDirectory("target/data/suspended");
         super.setUp();
     }
 
@@ -43,14 +43,14 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/suspended", "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader("file://target/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/suspended", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
         // the route is suspended by the policy so we should only receive one
-        String[] files = new File("target/suspended/").list();
+        String[] files = new File("target/data/suspended/").list();
         assertNotNull(files);
         assertEquals("The file should exists", 1, files.length);
 
@@ -66,7 +66,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         oneExchangeDone.matchesMockWaitTime();
 
         // and the file is now deleted
-        files = new File("target/suspended/").list();
+        files = new File("target/data/suspended/").list();
         assertNotNull(files);
         assertEquals("The file should exists", 0, files.length);
     }
@@ -76,7 +76,7 @@ public class FileConsumerSuspendAndResumeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10")
+                from("file://target/data/suspended?maxMessagesPerPoll=1&delete=true&initialDelay=0&delay=10")
                     .routePolicy(myPolicy).id("myRoute")
                     .convertBodyTo(String.class).to("mock:result");
             }

@@ -39,7 +39,7 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
         }
 
         super.setUp();
-        deleteDirectory("target/filestress");
+        deleteDirectory("target/data/filestress");
     }
 
     public void testDropInNewFiles() throws Exception {
@@ -63,7 +63,7 @@ public class FileAsyncStressFileDropper extends ContextTestSupport {
                 from("timer:foo?period=50")
                     .setHeader(Exchange.FILE_NAME, method(FileAsyncStressFileDropper.class, "getFilename"))
                     .setBody(constant("Hello World"))
-                    .to("file:target/filestress")
+                    .to("file:target/data/filestress")
                     .to("mock:result");
             }
         };

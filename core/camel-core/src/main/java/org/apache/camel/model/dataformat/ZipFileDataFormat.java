@@ -30,8 +30,7 @@ import org.apache.camel.spi.Metadata;
  * The Zip File data format is a message compression and de-compression format of zip files.
  */
 @Metadata(firstVersion = "2.11.0", label = "dataformat,transformation,file", title = "Zip File")
-// TODO: use zipfile as name in Camel 3.0
-@XmlRootElement(name = "zipFile")
+@XmlRootElement(name = "zipfile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipFileDataFormat extends DataFormatDefinition {
     @XmlAttribute

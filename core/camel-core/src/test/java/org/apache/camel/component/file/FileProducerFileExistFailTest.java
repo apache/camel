@@ -29,7 +29,7 @@ public class FileProducerFileExistFailTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/file");
+        deleteDirectory("target/data/file");
         super.setUp();
     }
 
@@ -37,16 +37,16 @@ public class FileProducerFileExistFailTest extends ContextTestSupport {
     public void testFail() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/file/hello.txt", "Hello World");
+        mock.expectedFileExists("target/data/file/hello.txt", "Hello World");
 
-        template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         try {
-            template.sendBodyAndHeader("file://target/file?fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
+            template.sendBodyAndHeader("file://target/data/file?fileExist=Fail", "Bye World", Exchange.FILE_NAME, "hello.txt");
             fail("Should have thrown a GenericFileOperationFailedException");
         } catch (CamelExecutionException e) {
             GenericFileOperationFailedException cause = assertIsInstanceOf(GenericFileOperationFailedException.class, e.getCause());
-            assertEquals(FileUtil.normalizePath("File already exist: target/file/hello.txt. Cannot write new file."), cause.getMessage());
+            assertEquals(FileUtil.normalizePath("File already exist: target/data/file/hello.txt. Cannot write new file."), cause.getMessage());
         }
 
         assertMockEndpointsSatisfied();
@@ -57,7 +57,7 @@ public class FileProducerFileExistFailTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/file?noop=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/file?noop=true&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

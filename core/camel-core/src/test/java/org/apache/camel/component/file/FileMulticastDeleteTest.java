@@ -32,7 +32,7 @@ public class FileMulticastDeleteTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/inbox");
+        deleteDirectory("target/data/inbox");
         super.setUp();
     }
 
@@ -42,7 +42,7 @@ public class FileMulticastDeleteTest extends ContextTestSupport {
         getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,7 +52,7 @@ public class FileMulticastDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/inbox?delete=true&initialDelay=0&delay=10")
+                from("file:target/data/inbox?delete=true&initialDelay=0&delay=10")
                     .multicast(new UseLatestAggregationStrategy()).shareUnitOfWork()
                         .to("direct:foo", "direct:bar")
                     .end()

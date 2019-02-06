@@ -27,7 +27,7 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/noop");
+        deleteDirectory("target/data/noop");
         super.setUp();
     }
 
@@ -36,11 +36,11 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("a", "b", "a2", "c", "b2");
 
-        template.sendBodyAndHeader("file:target/noop", "a", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/noop", "b", Exchange.FILE_NAME, "b.txt");
-        template.sendBodyAndHeader("file:target/noop/foo", "a2", Exchange.FILE_NAME, "a.txt");
-        template.sendBodyAndHeader("file:target/noop/bar", "c", Exchange.FILE_NAME, "c.txt");
-        template.sendBodyAndHeader("file:target/noop/bar", "b2", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/data/noop", "a", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/data/noop", "b", Exchange.FILE_NAME, "b.txt");
+        template.sendBodyAndHeader("file:target/data/noop/foo", "a2", Exchange.FILE_NAME, "a.txt");
+        template.sendBodyAndHeader("file:target/data/noop/bar", "c", Exchange.FILE_NAME, "c.txt");
+        template.sendBodyAndHeader("file:target/data/noop/bar", "b2", Exchange.FILE_NAME, "b.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -48,7 +48,7 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
         mock.reset();
         mock.expectedBodiesReceived("c2");
 
-        template.sendBodyAndHeader("file:target/noop", "c2", Exchange.FILE_NAME, "c.txt");
+        template.sendBodyAndHeader("file:target/data/noop", "c2", Exchange.FILE_NAME, "c.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -58,7 +58,7 @@ public class FileRecursiveNoopTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/noop?initialDelay=0&delay=10&recursive=true&noop=true")
+                from("file:target/data/noop?initialDelay=0&delay=10&recursive=true&noop=true")
                     .convertBodyTo(String.class)
                     .to("mock:result");
             }

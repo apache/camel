@@ -47,8 +47,8 @@ public class XsltBuilderTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/xslt");
-        createDirectory("target/xslt");
+        deleteDirectory("target/data/xslt");
+        createDirectory("target/data/xslt");
         super.setUp();
     }
 
@@ -225,12 +225,12 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
-        exchange.getIn().setHeader(Exchange.XSLT_FILE_NAME, "target/xslt/xsltout.xml");
+        exchange.getIn().setHeader(Exchange.XSLT_FILE_NAME, "target/data/xslt/xsltout.xml");
 
         builder.process(exchange);
         assertIsInstanceOf(File.class, exchange.getOut().getBody());
 
-        File file = new File("target/xslt/xsltout.xml");
+        File file = new File("target/data/xslt/xsltout.xml");
         assertTrue("Output file should exist", file.exists());
 
         String body = exchange.getOut().getBody(String.class);
@@ -245,12 +245,12 @@ public class XsltBuilderTest extends ContextTestSupport {
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("<hello>world!</hello>");
-        exchange.getIn().setHeader(Exchange.XSLT_FILE_NAME, "target/xslt/xsltout.xml");
+        exchange.getIn().setHeader(Exchange.XSLT_FILE_NAME, "target/data/xslt/xsltout.xml");
 
         builder.process(exchange);
         assertIsInstanceOf(File.class, exchange.getOut().getBody());
 
-        File file = new File("target/xslt/xsltout.xml");
+        File file = new File("target/data/xslt/xsltout.xml");
         assertTrue("Output file should exist", file.exists());
 
         String body = exchange.getOut().getBody(String.class);

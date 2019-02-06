@@ -33,7 +33,7 @@ public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/classes/com.mycompany");
+        deleteDirectory("target/data/classes/com.mycompany");
         createDirectory("target/classes/com.mycompany");
 
         // copy templates to this directory
@@ -49,7 +49,7 @@ public class XsltIncludeClasspathDotInDirectoryTest extends ContextTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        deleteDirectory("target/classes/com.mycompany");
+        deleteDirectory("target/data/classes/com.mycompany");
         super.tearDown();
     }
 

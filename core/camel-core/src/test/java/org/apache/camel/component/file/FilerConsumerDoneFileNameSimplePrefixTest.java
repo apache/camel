@@ -31,7 +31,7 @@ public class FilerConsumerDoneFileNameSimplePrefixTest extends ContextTestSuppor
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/done");
+        deleteDirectory("target/data/done");
         super.setUp();
     }
 
@@ -39,7 +39,7 @@ public class FilerConsumerDoneFileNameSimplePrefixTest extends ContextTestSuppor
     public void testDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // wait a bit and it should not pickup the written file as there are no done file
         Thread.sleep(250);
@@ -51,13 +51,13 @@ public class FilerConsumerDoneFileNameSimplePrefixTest extends ContextTestSuppor
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         // write the done file
-        template.sendBodyAndHeader("file:target/done", "", Exchange.FILE_NAME, "done-hello.txt");
+        template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done-hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
         // done file should be deleted now
-        File file = new File("target/done/done-hello.txt");
+        File file = new File("target/data/done/done-hello.txt");
         assertFalse("Done file should be deleted: " + file, file.exists());
     }
 
@@ -67,7 +67,7 @@ public class FilerConsumerDoneFileNameSimplePrefixTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
                 // using $simple{ to avoid clash with spring property placeholder
-                from("file:target/done?doneFileName=done-$simple{file:name}&initialDelay=0&delay=10").to("mock:result");
+                from("file:target/data/done?doneFileName=done-$simple{file:name}&initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

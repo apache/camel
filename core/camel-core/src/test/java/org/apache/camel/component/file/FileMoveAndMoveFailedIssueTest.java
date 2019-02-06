@@ -26,16 +26,16 @@ public class FileMoveAndMoveFailedIssueTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/input");
+        deleteDirectory("target/data/input");
         super.setUp();
     }
 
     @Test
     public void testMove() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").expectedFileExists("target/input/target/input.bak/somedate/hello.txt");
+        getMockEndpoint("mock:result").expectedFileExists("target/data/input/target/data/input.bak/somedate/hello.txt");
 
-        template.sendBodyAndHeader("file:target/input", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/input", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -43,9 +43,9 @@ public class FileMoveAndMoveFailedIssueTest extends ContextTestSupport {
     @Test
     public void testMoveFailed() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(0);
-        getMockEndpoint("mock:result").expectedFileExists("target/input/target/input.err/somedate/bomb.txt");
+        getMockEndpoint("mock:result").expectedFileExists("target/data/input/target/data/input.err/somedate/bomb.txt");
 
-        template.sendBodyAndHeader("file:target/input", "Kaboom", Exchange.FILE_NAME, "bomb.txt");
+        template.sendBodyAndHeader("file:target/data/input", "Kaboom", Exchange.FILE_NAME, "bomb.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -55,7 +55,7 @@ public class FileMoveAndMoveFailedIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:./target/input?move=${file:parent}.bak/somedate/${file:onlyname}&moveFailed=${file:parent}.err/somedate/${file:onlyname}&initialDelay=0&delay=10")
+                from("file:./target/data/input?move=${file:parent}.bak/somedate/${file:onlyname}&moveFailed=${file:parent}.err/somedate/${file:onlyname}&initialDelay=0&delay=10")
                     .convertBodyTo(String.class)
                     .filter(body().contains("Kaboom"))
                         .throwException(new IllegalArgumentException("Forced"))

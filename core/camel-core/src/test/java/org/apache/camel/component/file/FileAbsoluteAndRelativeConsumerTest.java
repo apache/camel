@@ -31,10 +31,10 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filerelative");
-        deleteDirectory("target/fileabsolute");
+        deleteDirectory("target/data/filerelative");
+        deleteDirectory("target/data/fileabsolute");
         // use current dir as base as aboslute path
-        base = new File("").getAbsolutePath() + "/target/fileabsolute";
+        base = new File("").getAbsolutePath() + "/target/data/fileabsolute";
         super.setUp();
     }
 
@@ -46,7 +46,7 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("test" + File.separator + "hello.txt");
         mock.message(0).header(Exchange.FILE_NAME_ONLY).isEqualTo("hello.txt");
 
-        template.sendBodyAndHeader("file://target/filerelative", "Hello World", Exchange.FILE_NAME, "test/hello.txt");
+        template.sendBodyAndHeader("file://target/data/filerelative", "Hello World", Exchange.FILE_NAME, "test/hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -59,7 +59,7 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         mock.message(0).header(Exchange.FILE_NAME).isEqualTo("test" + File.separator + "hello.txt");
         mock.message(0).header(Exchange.FILE_NAME_ONLY).isEqualTo("hello.txt");
 
-        template.sendBodyAndHeader("file://target/fileabsolute", "Hello World", Exchange.FILE_NAME, "test/hello.txt");
+        template.sendBodyAndHeader("file://target/data/fileabsolute", "Hello World", Exchange.FILE_NAME, "test/hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -69,7 +69,7 @@ public class FileAbsoluteAndRelativeConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filerelative?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class).to("mock:relative");
+                from("file://target/data/filerelative?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class).to("mock:relative");
 
                 from("file://" + base + "?initialDelay=0&delay=10&recursive=true").convertBodyTo(String.class).to("mock:absolute");
             }

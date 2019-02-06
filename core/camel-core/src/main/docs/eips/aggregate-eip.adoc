@@ -398,16 +398,9 @@ from("direct:start")
 As a result we have one outgoing `Exchange` being
 routed the `"mock:result"` endpoint. The exchange is a holder
 containing all the incoming Exchanges.
-To get access to these exchanges you need to access them from a
-property on the outgoing exchange as shown:
 
-[source,java]
-----
-List<Exchange> grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
-----
-
-From *Camel 2.13* onwards this behavior has changed to store these
-exchanges directly on the message body which is more intuitive:
+The output of the aggregator will then contain the exchanges grouped
+together in a list as shown below:
 
 [source,java]
 ----

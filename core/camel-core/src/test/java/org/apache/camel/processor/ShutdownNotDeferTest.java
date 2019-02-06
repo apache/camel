@@ -38,7 +38,7 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/deferred");
+        deleteDirectory("target/data/deferred");
         super.setUp();
     }
 
@@ -67,11 +67,11 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("seda:foo")
                     .startupOrder(1)
-                    .to("file://target/deferred");
+                    .to("file://target/data/deferred");
 
                 // use file component to transfer files from route 1 -> route 2
-                MyDeferFileEndpoint defer = new MyDeferFileEndpoint("file://target/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
-                defer.setFile(new File("target/deferred"));
+                MyDeferFileEndpoint defer = new MyDeferFileEndpoint("file://target/data/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
+                defer.setFile(new File("target/data/deferred"));
 
                 from(defer)
                     // do NOT defer it but use default for testing this

@@ -57,7 +57,7 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
         assertEquals(Boolean.TRUE, enabled);
 
         String dir = (String) mbeanServer.getAttribute(name, "SpoolDirectory");
-        assertEquals(normalizePath("target/cachedir/myCamel"), normalizePath(dir));
+        assertEquals(normalizePath("target/data/cachedir/myCamel"), normalizePath(dir));
 
         Long threshold = (Long) mbeanServer.getAttribute(name, "SpoolThreshold");
         assertEquals(StreamCache.DEFAULT_SPOOL_THRESHOLD, threshold.longValue());
@@ -93,7 +93,7 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
                 dcc.setName("myCamel");
 
                 context.setStreamCaching(true);
-                context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir/#name#/");
+                context.getStreamCachingStrategy().setSpoolDirectory("target/data/cachedir/#name#/");
 
                 from("direct:start").routeId("foo")
                     .convertBodyTo(int.class)

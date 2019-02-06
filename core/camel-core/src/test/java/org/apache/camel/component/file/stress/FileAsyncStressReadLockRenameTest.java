@@ -34,7 +34,7 @@ public class FileAsyncStressReadLockRenameTest extends FileAsyncStressTest {
                 // leverage the fact that we can limit to max 50 files per poll
                 // this will result in polling again and potentially picking up files
                 // that already are in progress
-                from("file:target/filestress?maxMessagesPerPoll=50&readLock=rename").routeId("foo").noAutoStartup()
+                from("file:target/data/filestress?maxMessagesPerPoll=50&readLock=rename").routeId("foo").noAutoStartup()
                     .threads(10)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

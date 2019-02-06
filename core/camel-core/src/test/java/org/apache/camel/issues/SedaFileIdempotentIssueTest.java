@@ -40,11 +40,11 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/inbox");
-        createDirectory("target/inbox");
+        deleteDirectory("target/data/inbox");
+        createDirectory("target/data/inbox");
 
         // create file without using Camel
-        File file = new File("target/inbox/hello.txt");
+        File file = new File("target/data/inbox/hello.txt");
         FileOutputStream fos = new FileOutputStream(file, true);
         fos.write("Hello World".getBytes());
         fos.flush();
@@ -69,7 +69,7 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(RuntimeException.class).process(new ShutDown());
 
-                from("file:target/inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10")
+                from("file:target/data/inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10")
                     .to("log:begin")
                     .inOut("seda:process");
 

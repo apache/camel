@@ -30,8 +30,8 @@ public class FromFileMoveDoneCustomHeaderTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/inbox");
-        deleteDirectory("target/outbox");
+        deleteDirectory("target/data/inbox");
+        deleteDirectory("target/data/outbox");
         super.setUp();
     }
 
@@ -39,10 +39,10 @@ public class FromFileMoveDoneCustomHeaderTest extends ContextTestSupport {
     public void testMoveDoneCustomHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedFileExists("target/outbox/hello.txt");
-        mock.expectedFileExists("target/inbox/dones/mydone.txt");
+        mock.expectedFileExists("target/data/outbox/hello.txt");
+        mock.expectedFileExists("target/data/inbox/dones/mydone.txt");
 
-        template.sendBodyAndHeader("file:target/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/inbox", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,10 +52,10 @@ public class FromFileMoveDoneCustomHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/inbox?initialDelay=0&delay=10&move=${header.bar}")
+                from("file:target/data/inbox?initialDelay=0&delay=10&move=${header.bar}")
                     .setHeader("bar", constant("dones/mydone.txt"))
                     .transform(constant("Bye World"))
-                    .to("mock:result", "file:target/outbox");
+                    .to("mock:result", "file:target/data/outbox");
             }
         };
     }

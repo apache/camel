@@ -35,8 +35,8 @@ public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/changed/");
-        createDirectory("target/changed/in");
+        deleteDirectory("target/data/changed/");
+        createDirectory("target/data/changed/in");
         super.setUp();
     }
 
@@ -59,8 +59,8 @@ public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
         mock.message(0).arrives().between(0, 1400).millis();
         mock.message(1).arrives().between(0, 1400).millis();
 
-        template.sendBodyAndHeader("file:target/changed/in", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/changed/in", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file:target/data/changed/in", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/changed/in", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -76,7 +76,7 @@ public class FileIdempotentReadLockDelayedAsyncTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/changed/in?initialDelay=0&delay=10&readLock=idempotent&readLockIdempotentReleaseDelay=1000&readLockIdempotentReleaseAsync=true&idempotentRepository=#myRepo")
+                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=idempotent&readLockIdempotentReleaseDelay=1000&readLockIdempotentReleaseAsync=true&idempotentRepository=#myRepo")
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {

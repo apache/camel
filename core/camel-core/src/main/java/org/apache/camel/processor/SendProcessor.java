@@ -29,7 +29,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultProducerCache;
 import org.apache.camel.spi.IdAware;
-import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.EndpointHelper;
@@ -203,16 +202,6 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         }
         ServiceHelper.startService(producerCache);
 
-        // the destination could since have been intercepted by a interceptSendToEndpoint so we got to
-        // lookup this before we can use the destination
-        Endpoint lookup = camelContext.hasEndpoint(destination.getEndpointKey());
-        if (lookup instanceof InterceptSendToEndpoint) {
-            if (log.isDebugEnabled()) {
-                log.debug("Intercepted sending to {} -> {}",
-                        URISupport.sanitizeUri(destination.getEndpointUri()), URISupport.sanitizeUri(lookup.getEndpointUri()));
-            }
-            destination = lookup;
-        }
         // warm up the producer by starting it so we can fail fast if there was a problem
         // however must start endpoint first
         ServiceHelper.startService(destination);

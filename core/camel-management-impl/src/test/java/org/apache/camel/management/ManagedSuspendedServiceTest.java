@@ -37,7 +37,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/suspended");
+        deleteDirectory("target/data/suspended");
         super.setUp();
     }
 
@@ -65,8 +65,8 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/suspended", "Bye World", Exchange.FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader("file://target/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/suspended", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/suspended", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -77,7 +77,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
         });
 
         // the route is suspended by the policy so we should only receive one
-        String[] files = new File("target/suspended/").list();
+        String[] files = new File("target/data/suspended/").list();
         assertNotNull(files);
         assertEquals("The file should exists", 1, files.length);
 
@@ -95,7 +95,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
 
         await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             // and the file is now deleted
-            String[] names = new File("target/suspended/").list();
+            String[] names = new File("target/data/suspended/").list();
             assertNotNull(names);
             assertEquals("The file should exists", 0, names.length);
         });
@@ -108,7 +108,7 @@ public class ManagedSuspendedServiceTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 MyPolicy myPolicy = new MyPolicy();
 
-                from("file://target/suspended?initialDelay=0&delay=10&maxMessagesPerPoll=1&delete=true")
+                from("file://target/data/suspended?initialDelay=0&delay=10&maxMessagesPerPoll=1&delete=true")
                     .routePolicy(myPolicy).id("myRoute")
                     .to("mock:result");
             }

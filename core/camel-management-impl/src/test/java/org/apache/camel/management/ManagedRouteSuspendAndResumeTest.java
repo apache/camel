@@ -35,7 +35,7 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/managed");
+        deleteDirectory("target/data/managed");
         super.setUp();
     }
 
@@ -52,7 +52,7 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/managed", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/managed", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -71,7 +71,7 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         // wait a little bit while route is stopped to verify that file was not consumed
         mock.setResultWaitTime(250);
 
-        template.sendBodyAndHeader("file://target/managed", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/managed", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // route is stopped so we do not get the file
         mock.assertIsNotSatisfied();
@@ -107,7 +107,7 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/managed?initialDelay=0&delay=10").routeId("foo").to("mock:result");
+                from("file://target/data/managed?initialDelay=0&delay=10").routeId("foo").to("mock:result");
             }
         };
     }

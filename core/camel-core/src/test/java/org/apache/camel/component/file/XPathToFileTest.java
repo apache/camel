@@ -30,7 +30,7 @@ public class XPathToFileTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/xpath");
+        deleteDirectory("target/data/xpath");
         super.setUp();
     }
 
@@ -47,11 +47,11 @@ public class XPathToFileTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        File first = new File("target/xpath/xpath-0.xml");
+        File first = new File("target/data/xpath/xpath-0.xml");
         assertTrue("File xpath-0.xml should exists", first.exists());
         assertEquals("<person id=\"1\">Claus<country>SE</country></person>", context.getTypeConverter().convertTo(String.class, first));
 
-        File second = new File("target/xpath/xpath-1.xml");
+        File second = new File("target/data/xpath/xpath-1.xml");
         assertTrue("File xpath-1.xml should exists", second.exists());
         assertEquals("<person id=\"2\">Jonathan<country>CA</country></person>", context.getTypeConverter().convertTo(String.class, second));
     }
@@ -64,7 +64,7 @@ public class XPathToFileTest extends ContextTestSupport {
                 from("direct:start")
                     .split(xpath("/foo/person"))
                         .log("${bodyAs(String)}")
-                        .to("file://target/xpath?fileName=xpath-${property.CamelSplitIndex}.xml")
+                        .to("file://target/data/xpath?fileName=xpath-${property.CamelSplitIndex}.xml")
                         .to("mock:result");
             }
         };

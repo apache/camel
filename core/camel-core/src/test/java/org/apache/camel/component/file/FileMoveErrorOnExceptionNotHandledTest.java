@@ -29,7 +29,7 @@ public class FileMoveErrorOnExceptionNotHandledTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/move");
+        deleteDirectory("target/data/move");
         super.setUp();
     }
 
@@ -38,9 +38,9 @@ public class FileMoveErrorOnExceptionNotHandledTest extends ContextTestSupport {
         getMockEndpoint("mock:before").expectedMessageCount(1);
         getMockEndpoint("mock:after").expectedMessageCount(0);
         getMockEndpoint("mock:damn").expectedMessageCount(1);
-        getMockEndpoint("mock:damn").expectedFileExists("target/move/error/hello.txt");
+        getMockEndpoint("mock:damn").expectedFileExists("target/data/move/error/hello.txt");
 
-        template.sendBodyAndHeader("file:target/move", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/move", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -50,7 +50,7 @@ public class FileMoveErrorOnExceptionNotHandledTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/move?moveFailed=error&initialDelay=0&delay=10")
+                from("file:target/data/move?moveFailed=error&initialDelay=0&delay=10")
                     .onException(IllegalArgumentException.class)
                         .to("mock:damn")
                     .end()

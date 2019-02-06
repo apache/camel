@@ -29,7 +29,7 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/done");
+        deleteDirectory("target/data/done");
         super.setUp();
     }
 
@@ -37,8 +37,8 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
     public void testTwoDoneFile() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
-        template.sendBodyAndHeader("file:target/done?doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/done?doneFileName=${file:name}.ready", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file:target/data/done?doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/done?doneFileName=${file:name}.ready", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -47,8 +47,8 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
     public void testOneDoneFileMissing() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/done?doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file:target/done", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file:target/data/done?doneFileName=${file:name}.ready", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/done", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
         // give chance to poll 2nd file but it lacks the done file
         Thread.sleep(250);
@@ -61,7 +61,7 @@ public class FilerConsumerDualDoneFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/done?doneFileName=${file:name}.ready&initialDelay=0&delay=10").to("mock:result");
+                from("file:target/data/done?doneFileName=${file:name}.ready&initialDelay=0&delay=10").to("mock:result");
             }
         };
     }

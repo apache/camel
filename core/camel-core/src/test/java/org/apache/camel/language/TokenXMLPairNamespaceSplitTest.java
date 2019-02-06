@@ -30,8 +30,8 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/pair");
-        deleteDirectory("target/pair2");
+        deleteDirectory("target/data/pair");
+        deleteDirectory("target/data/pair2");
         super.setUp();
     }
 
@@ -44,7 +44,7 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader("file:target/pair", body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader("file:target/data/pair", body, Exchange.FILE_NAME, "orders.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -58,7 +58,7 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
         mock.message(2).body().isEqualTo("<order id=\"3\" xmlns=\"http:acme.com\">DSL in Action</order>");
 
         String body = createBody();
-        template.sendBodyAndHeader("file:target/pair2", body, Exchange.FILE_NAME, "orders.xml");
+        template.sendBodyAndHeader("file:target/data/pair2", body, Exchange.FILE_NAME, "orders.xml");
 
         assertMockEndpointsSatisfied();
     }
@@ -79,13 +79,13 @@ public class TokenXMLPairNamespaceSplitTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("file:target/pair?initialDelay=0&delay=10")
+                from("file:target/data/pair?initialDelay=0&delay=10")
                     // split the order child tags, and inherit namespaces from the orders root tag
                     .split().tokenizeXML("order", "orders")
                         .to("mock:split");
                 // END SNIPPET: e1
 
-                from("file:target/pair2?initialDelay=0&delay=10")
+                from("file:target/data/pair2?initialDelay=0&delay=10")
                     // split the order child tags, and inherit namespaces from the orders root tag
                     .split(body().tokenizeXML("order", "orders"))
                         .to("mock:split");

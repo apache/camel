@@ -234,7 +234,7 @@ public class FileUtilTest extends Assert {
 
     @Test
     public void testCreateNewFile() throws Exception {
-        File file = new File("target/foo.txt");
+        File file = new File("target/data/foo.txt");
         if (file.exists()) {
             FileUtil.deleteFile(file);
         }
@@ -245,7 +245,7 @@ public class FileUtilTest extends Assert {
 
     @Test
     public void testRenameUsingDelete() throws Exception {
-        File file = new File("target/foo.txt");
+        File file = new File("target/data/foo.txt");
         if (!file.exists()) {
             FileUtil.createNewFile(file);
         }

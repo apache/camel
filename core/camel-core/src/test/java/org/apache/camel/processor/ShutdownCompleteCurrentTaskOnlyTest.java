@@ -25,13 +25,13 @@ import org.junit.Test;
 
 public class ShutdownCompleteCurrentTaskOnlyTest extends ContextTestSupport {
 
-    private static String url = "file:target/pending?initialDelay=0&delay=10&synchronous=true";
+    private static String url = "file:target/data/pending?initialDelay=0&delay=10&synchronous=true";
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("target/pending");
+        deleteDirectory("target/data/pending");
 
         template.sendBodyAndHeader(url, "A", Exchange.FILE_NAME, "a.txt");
         template.sendBodyAndHeader(url, "B", Exchange.FILE_NAME, "b.txt");

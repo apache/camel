@@ -31,7 +31,7 @@ public class FileConsumerIdleMessageTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/empty?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true").convertBodyTo(String.class).
+                from("file://target/data/empty?initialDelay=0&delay=10&sendEmptyMessageWhenIdle=true").convertBodyTo(String.class).
                     to("mock:result");
             }
         };

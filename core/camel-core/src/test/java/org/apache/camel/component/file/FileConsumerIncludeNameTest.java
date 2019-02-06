@@ -30,7 +30,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/include");
+        deleteDirectory("target/data/include");
         super.setUp();
     }
 
@@ -46,7 +46,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
     }
 
     private void sendFiles() throws Exception {
-        String url = "file://target/include";
+        String url = "file://target/data/include";
         template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
         template.sendBodyAndHeader(url, "Reports1", Exchange.FILE_NAME, "report1.txt");
         template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
@@ -58,7 +58,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/include/?initialDelay=0&delay=10&include=^report.*txt$")
+                from("file://target/data/include/?initialDelay=0&delay=10&include=^report.*txt$")
                     .convertBodyTo(String.class).to("mock:result");
             }
         };

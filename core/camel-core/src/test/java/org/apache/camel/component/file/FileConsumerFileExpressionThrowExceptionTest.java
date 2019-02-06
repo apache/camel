@@ -44,7 +44,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/filelanguage");
+        deleteDirectory("target/data/filelanguage");
         super.setUp();
     }
 
@@ -63,12 +63,12 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
 
     @Test
     public void testConsumeExpressionThrowException() throws Exception {
-        template.sendBodyAndHeader("file://target/filelanguage/bean", "Bye World", Exchange.FILE_NAME, "123.txt");
+        template.sendBodyAndHeader("file://target/data/filelanguage/bean", "Bye World", Exchange.FILE_NAME, "123.txt");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/bean/"
+                from("file://target/data/filelanguage/bean/"
                       + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=doNotExistMethod}.txt&delete=true").to("mock:result");
                     // specify a method name that does not exists
             }

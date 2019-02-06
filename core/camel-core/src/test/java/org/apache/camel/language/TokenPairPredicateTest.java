@@ -31,7 +31,7 @@ public class TokenPairPredicateTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/pair");
+        deleteDirectory("target/data/pair");
         super.setUp();
     }
 
@@ -39,16 +39,16 @@ public class TokenPairPredicateTest extends ContextTestSupport {
     public void testTokenPairPredicate() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/pair", "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader("file:target/data/pair", "<hello>world!</hello>", Exchange.FILE_NAME, "hello.xml");
 
         assertMockEndpointsSatisfied();
 
         oneExchangeDone.matchesMockWaitTime();
 
-        File file = new File("target/pair/hello.xml");
+        File file = new File("target/data/pair/hello.xml");
         assertFalse("File should not exists " + file, file.exists());
 
-        file = new File("target/pair/ok/hello.xml");
+        file = new File("target/data/pair/ok/hello.xml");
         assertTrue("File should exists " + file, file.exists());
     }
 
@@ -57,7 +57,7 @@ public class TokenPairPredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/pair?initialDelay=0&delay=10&move=ok")
+                from("file:target/data/pair?initialDelay=0&delay=10&move=ok")
                     .choice()
                         // does not make so much sense to use a tokenPair in a predicate
                         // but you can do it nevertheless

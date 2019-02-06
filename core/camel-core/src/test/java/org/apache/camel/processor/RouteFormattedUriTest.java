@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class RouteFormattedUriTest extends ContextTestSupport {
 
-    private String path = "target/toformat";
+    private String path = "target/data/toformat";
     private String name = "hello.txt";
     private String pattern = ".*txt$";
     private String result = "result";
@@ -31,7 +31,7 @@ public class RouteFormattedUriTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/toformat");
+        deleteDirectory("target/data/toformat");
         super.setUp();
     }
 

@@ -30,8 +30,8 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/enrich");
-        deleteDirectory("target/enrichdata");
+        deleteDirectory("target/data/enrich");
+        deleteDirectory("target/data/enrichdata");
         super.setUp();
     }
     
@@ -42,19 +42,19 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Big file");
-        mock.expectedFileExists("target/enrich/.done/AAA.fin");
-        mock.expectedFileExists("target/enrichdata/.done/AAA.dat");
+        mock.expectedFileExists("target/data/enrich/.done/AAA.fin");
+        mock.expectedFileExists("target/data/enrichdata/.done/AAA.dat");
 
-        template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
+        template.sendBodyAndHeader("file://target/data/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
 
         log.info("Sleeping for 0.5 sec before writing enrichdata file");
         Thread.sleep(500);
-        template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
+        template.sendBodyAndHeader("file://target/data/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
         log.info("... write done");
 
         assertMockEndpointsSatisfied();
         
-        assertFileDoesNotExists("target/enrichdata/AAA.dat.camelLock");
+        assertFileDoesNotExists("target/data/enrichdata/AAA.dat.camelLock");
     }
 
     @Override
@@ -62,9 +62,9 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/enrich?initialDelay=0&delay=10&move=.done")
+                from("file://target/data/enrich?initialDelay=0&delay=10&move=.done")
                     .to("mock:start")
-                    .pollEnrich("file://target/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done", 10000, new ReplaceAggregationStrategy())
+                    .pollEnrich("file://target/data/enrichdata?initialDelay=0&delay=10&readLock=markerFile&move=.done", 10000, new ReplaceAggregationStrategy())
                     .to("mock:result");
             }
         };

@@ -48,7 +48,6 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "boon", type = BoonDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
-        // TODO: Camel 3.0 - Should be named customDataFormat to avoid naming clash with custom loadbalancer
         @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
         @XmlElement(required = false, name = "fhirJson", type = FhirJsonDataFormat.class),
         @XmlElement(required = false, name = "fhirXml", type = FhirXmlDataFormat.class),
@@ -80,7 +79,7 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
         @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
         @XmlElement(required = false, name = "zip", type = ZipDataFormat.class),
-        @XmlElement(required = false, name = "zipFile", type = ZipFileDataFormat.class)}
+        @XmlElement(required = false, name = "zipfile", type = ZipFileDataFormat.class)}
         )
     private List<DataFormatDefinition> dataFormats;
 

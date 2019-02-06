@@ -26,7 +26,7 @@ public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/leak");
+        deleteDirectory("target/data/leak");
         super.setUp();
     }
 
@@ -35,7 +35,7 @@ public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
         int before = Thread.activeCount();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        template.sendBodyAndHeader("file:target/leak", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/leak", "Hello World", Exchange.FILE_NAME, "hello.txt");
         assertMockEndpointsSatisfied();
 
         for (int i = 0; i < 50; i++) {
@@ -46,7 +46,7 @@ public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
         resetMocks();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
-        template.sendBodyAndHeader("file:target/leak", "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file:target/data/leak", "Bye World", Exchange.FILE_NAME, "bye.txt");
         assertMockEndpointsSatisfied();
 
         int active = Thread.activeCount() - before;
@@ -60,7 +60,7 @@ public class FileConsumerRestartNotLeakThreadTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/leak").routeId("foo")
+                from("file:target/data/leak").routeId("foo")
                     .to("mock:foo");
             }
         };

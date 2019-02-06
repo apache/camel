@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class FileProducerChmodOptionTest extends ContextTestSupport {
-    public static final String TEST_DIRECTORY = "target/fileProducerChmodOptionTest/";
+    public static final String TEST_DIRECTORY = "target/data/fileProducerChmodOptionTest/";
 
     @Override
     @Before

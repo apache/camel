@@ -41,7 +41,7 @@ public class EKSComponentConfigurationTest extends CamelTestSupport {
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
-        EKSEndpoint endpoint = (EKSEndpoint)component.createEndpoint("aws-mq://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        EKSEndpoint endpoint = (EKSEndpoint)component.createEndpoint("aws-eks://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
         
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());

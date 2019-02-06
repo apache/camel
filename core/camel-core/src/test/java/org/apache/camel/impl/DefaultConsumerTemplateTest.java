@@ -374,15 +374,15 @@ public class DefaultConsumerTemplateTest extends ContextTestSupport {
 
     @Test
     public void testDoneUoW() throws Exception {
-        deleteDirectory("target/foo");
-        template.sendBodyAndHeader("file:target/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        deleteDirectory("target/data/foo");
+        template.sendBodyAndHeader("file:target/data/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        Exchange exchange = consumer.receive("file:target/foo?initialDelay=0&delay=10&delete=true");
+        Exchange exchange = consumer.receive("file:target/data/foo?initialDelay=0&delay=10&delete=true");
         assertNotNull(exchange);
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
 
         // file should still exists
-        File file = new File("target/foo/hello.txt");
+        File file = new File("target/data/foo/hello.txt");
         assertTrue("File should exist " + file, file.exists());
 
         // done the exchange

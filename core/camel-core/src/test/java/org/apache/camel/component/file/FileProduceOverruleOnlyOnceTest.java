@@ -36,8 +36,8 @@ public class FileProduceOverruleOnlyOnceTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(Exchange.FILE_NAME, "hello.txt");
         mock.message(0).header(Exchange.OVERRULE_FILE_NAME).isNull();
-        mock.expectedFileExists("target/write/ruled.txt", "Hello World");
-        mock.expectedFileExists("target/again/hello.txt", "Hello World");
+        mock.expectedFileExists("target/data/write/ruled.txt", "Hello World");
+        mock.expectedFileExists("target/data/again/hello.txt", "Hello World");
 
         Map<String, Object> map = new HashMap<>();
         map.put(Exchange.FILE_NAME, "hello.txt");
@@ -52,8 +52,8 @@ public class FileProduceOverruleOnlyOnceTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/write");
-        deleteDirectory("target/again");
+        deleteDirectory("target/data/write");
+        deleteDirectory("target/data/again");
         super.setUp();
     }
 
@@ -62,8 +62,8 @@ public class FileProduceOverruleOnlyOnceTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .to("file://target/write")
-                    .to("file://target/again", "mock:result");
+                    .to("file://target/data/write")
+                    .to("file://target/data/again", "mock:result");
             }
         };
     }

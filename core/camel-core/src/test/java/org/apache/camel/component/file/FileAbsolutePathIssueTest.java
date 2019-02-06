@@ -33,11 +33,11 @@ public class FileAbsolutePathIssueTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/issue");
-        deleteDirectory("target/done");
+        deleteDirectory("target/data/issue");
+        deleteDirectory("target/data/done");
 
-        start = new File("target/issue").getAbsolutePath();
-        done = new File("target/done").getAbsolutePath();
+        start = new File("target/data/issue").getAbsolutePath();
+        done = new File("target/data/done").getAbsolutePath();
         uri = "file:" + start + "?initialDelay=0&delay=10&move=" + done + "/${file:name}";
 
         super.setUp();

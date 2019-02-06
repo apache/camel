@@ -76,8 +76,8 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToOutputStreamFile() throws Exception {
-        template.sendBodyAndHeader("file://target/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        File file = new File("target/test/hello.txt");
+        template.sendBodyAndHeader("file://target/data/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = new File("target/data/test/hello.txt");
 
         OutputStream os = IOConverter.toOutputStream(file);
         assertIsInstanceOf(BufferedOutputStream.class, os); 
@@ -86,8 +86,8 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToWriterFile() throws Exception {
-        template.sendBodyAndHeader("file://target/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        File file = new File("target/test/hello.txt");
+        template.sendBodyAndHeader("file://target/data/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = new File("target/data/test/hello.txt");
 
         Writer writer = IOConverter.toWriter(file, null);
         assertIsInstanceOf(BufferedWriter.class, writer);
@@ -149,8 +149,8 @@ public class IOConverterTest extends ContextTestSupport {
 
     @Test
     public void testToByteArrayFile() throws Exception {
-        template.sendBodyAndHeader("file://target/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        File file = new File("target/test/hello.txt");
+        template.sendBodyAndHeader("file://target/data/test", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        File file = new File("target/data/test/hello.txt");
 
         byte[] data = IOConverter.toByteArray(file);
         assertNotNull(data);

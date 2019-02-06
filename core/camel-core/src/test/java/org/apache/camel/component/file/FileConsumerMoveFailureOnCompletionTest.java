@@ -28,7 +28,7 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/failed");
+        deleteDirectory("target/data/failed");
         super.setUp();
     }
 
@@ -36,11 +36,11 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
     public void testMoveFailedRollbackOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        mock.expectedFileExists("target/failed/error/bye-error.txt", "Kabom");
+        mock.expectedFileExists("target/data/failed/error/bye-error.txt", "Kabom");
 
         getMockEndpoint("mock:failed").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -49,13 +49,13 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
     public void testMoveFailedCommitAndFailure() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/failed/.camel/hello.txt", "Hello World");
-        mock.expectedFileExists("target/failed/error/bye-error.txt", "Kabom");
+        mock.expectedFileExists("target/data/failed/.camel/hello.txt", "Hello World");
+        mock.expectedFileExists("target/data/failed/error/bye-error.txt", "Kabom");
 
         getMockEndpoint("mock:failed").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file://target/failed", "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/data/failed", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/data/failed", "Kabom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -65,7 +65,7 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/failed?initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt")
+                from("file://target/data/failed?initialDelay=0&delay=10&moveFailed=error/${file:name.noext}-error.txt")
                     .onCompletion().onFailureOnly().to("mock:failed").end()
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

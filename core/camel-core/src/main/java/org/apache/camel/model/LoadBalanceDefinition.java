@@ -49,8 +49,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
     @XmlElements({
             @XmlElement(required = false, name = "failover", type = FailoverLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "random", type = RandomLoadBalancerDefinition.class),
-            // TODO: Camel 3.0 - Should be named customLoadBalancer to avoid naming clash with custom dataformat
-            @XmlElement(required = false, name = "custom", type = CustomLoadBalancerDefinition.class),
+            @XmlElement(required = false, name = "customLoadBalancer", type = CustomLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "sticky", type = StickyLoadBalancerDefinition.class),
             @XmlElement(required = false, name = "topic", type = TopicLoadBalancerDefinition.class),

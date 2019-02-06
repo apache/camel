@@ -32,7 +32,7 @@ public class RefFileEndpointTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/foo");
+        deleteDirectory("target/data/foo");
         super.setUp();
     }
 
@@ -40,7 +40,7 @@ public class RefFileEndpointTest extends ContextTestSupport {
     public void testRefFileEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("file:target/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/foo", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -52,7 +52,7 @@ public class RefFileEndpointTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext(registry);
-        registry.put("foo", context.getEndpoint("file:target/foo?initialDelay=250&delay=3000&delete=true"));
+        registry.put("foo", context.getEndpoint("file:target/data/foo?initialDelay=250&delay=3000&delete=true"));
         return context;
     }
 

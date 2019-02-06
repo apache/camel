@@ -31,7 +31,7 @@ public class FilePollEnrichTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/pollenrich");
+        deleteDirectory("target/data/pollenrich");
         super.setUp();
     }
 
@@ -39,15 +39,15 @@ public class FilePollEnrichTest extends ContextTestSupport {
     public void testFilePollEnrich() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/pollenrich/done/hello.txt");
+        mock.expectedFileExists("target/data/pollenrich/done/hello.txt");
 
-        template.sendBodyAndHeader("file:target/pollenrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/pollenrich", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         oneExchangeDone.matchesMockWaitTime();
 
         // file should be moved
-        File file = new File("target/pollenrich/hello.txt");
+        File file = new File("target/data/pollenrich/hello.txt");
         assertFalse("File should have been moved", file.exists());
     }
 
@@ -58,7 +58,7 @@ public class FilePollEnrichTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("timer:foo?period=1000").routeId("foo")
                     .log("Trigger timer foo")
-                    .pollEnrich("file:target/pollenrich?move=done", 5000)
+                    .pollEnrich("file:target/data/pollenrich?move=done", 5000)
                     .convertBodyTo(String.class)
                     .log("Polled filed ${file:name}")
                     .to("mock:result")

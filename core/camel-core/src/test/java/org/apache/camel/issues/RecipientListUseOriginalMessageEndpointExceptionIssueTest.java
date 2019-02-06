@@ -30,8 +30,8 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/inbox");
-        deleteDirectory("target/outbox");
+        deleteDirectory("target/data/inbox");
+        deleteDirectory("target/data/outbox");
         super.setUp();
     }
 
@@ -44,9 +44,9 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
             }
         });
         getMockEndpoint("mock:error").expectedMinimumMessageCount(1);
-        getMockEndpoint("mock:error").expectedFileExists("target/outbox/hello.txt", "A");
+        getMockEndpoint("mock:error").expectedFileExists("target/data/outbox/hello.txt", "A");
 
-        template.sendBodyAndHeader("file:target/inbox", "A", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/inbox", "A", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -58,10 +58,10 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
             public void configure() throws Exception {
                 onException(Exception.class)
                     .handled(true).useOriginalMessage()
-                    .to("file://target/outbox")
+                    .to("file://target/data/outbox")
                     .to("mock:error");
 
-                from("file://target/inbox?initialDelay=0&delay=10")
+                from("file://target/data/inbox?initialDelay=0&delay=10")
                     .transform(constant("B"))
                     .setHeader("path", constant("mock:throwException"))
                     // must enable share uow to let the onException use

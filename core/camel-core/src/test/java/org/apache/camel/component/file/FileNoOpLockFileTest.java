@@ -36,7 +36,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
     @Override
     @After
     public void tearDown() throws Exception {
-        deleteDirectory("target/reports");
+        deleteDirectory("target/data/reports");
         super.tearDown();
     }
 
@@ -45,7 +45,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Locked");
 
-        template.sendBodyAndHeader("file:target/reports/locked", "Hello Locked",
+        template.sendBodyAndHeader("file:target/data/reports/locked", "Hello Locked",
             Exchange.FILE_NAME, "report.txt");
 
         mock.assertIsSatisfied();
@@ -62,7 +62,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Not Locked");
 
-        template.sendBodyAndHeader("file:target/reports/notlocked", "Hello Not Locked",
+        template.sendBodyAndHeader("file:target/data/reports/notlocked", "Hello Not Locked",
             Exchange.FILE_NAME, "report.txt");
 
         mock.assertIsSatisfied();
@@ -75,7 +75,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
     }
 
     private static boolean existsLockFile(boolean expected) {
-        String filename = "target/reports/";
+        String filename = "target/data/reports/";
         filename += expected ? "locked/" : "notlocked/";
         filename += "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
 
@@ -84,7 +84,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
     }
 
     private static void checkLockFile(boolean expected) {
-        String filename = "target/reports/";
+        String filename = "target/data/reports/";
         filename += expected ? "locked/" : "notlocked/";
         filename += "report.txt" + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
 
@@ -96,11 +96,11 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // for locks
-                from("file://target/reports/locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile").process(new MyNoopProcessor()).
+                from("file://target/data/reports/locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile").process(new MyNoopProcessor()).
                     to("mock:report");
 
                 // for no locks
-                from("file://target/reports/notlocked/?initialDelay=0&delay=10&noop=true&readLock=none").process(new MyNoopProcessor()).
+                from("file://target/data/reports/notlocked/?initialDelay=0&delay=10&noop=true&readLock=none").process(new MyNoopProcessor()).
                     to("mock:report");
             }
         };

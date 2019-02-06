@@ -34,13 +34,13 @@ import org.slf4j.LoggerFactory;
 public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(FileExclusiveReadNoneStrategyTest.class);
-    private String fileUrl = "file://target/exclusiveread/slowfile?noop=true&initialDelay=0&delay=10&readLock=none";
+    private String fileUrl = "file://target/data/exclusiveread/slowfile?noop=true&initialDelay=0&delay=10&readLock=none";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/exclusiveread");
-        createDirectory("target/exclusiveread/slowfile");
+        deleteDirectory("target/data/exclusiveread");
+        createDirectory("target/data/exclusiveread/slowfile");
         super.setUp();
     }
 
@@ -74,7 +74,7 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
 
         public void process(Exchange exchange) throws Exception {
             LOG.info("Creating a slow file with no locks...");
-            File file = new File("target/exclusiveread/slowfile/hello.txt");
+            File file = new File("target/data/exclusiveread/slowfile/hello.txt");
             FileOutputStream fos = new FileOutputStream(file);
             fos.write("Hello World".getBytes());
             for (int i = 0; i < 3; i++) {

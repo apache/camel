@@ -28,7 +28,8 @@ import java.io.Reader;
 class RecordableReader extends FilterReader {
     private TrimmableCharArrayWriter buf;
     private boolean recording;
-    protected RecordableReader(Reader in) {
+
+    RecordableReader(Reader in) {
         super(in);
         this.buf = new TrimmableCharArrayWriter();
         this.recording = true;

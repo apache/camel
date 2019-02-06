@@ -69,7 +69,7 @@ public final class FileLockClusteredRoutePolicyTest {
 
             FileLockClusterService service = new FileLockClusterService();
             service.setId("node-" + id);
-            service.setRoot("target/cluster");
+            service.setRoot("target/data/cluster");
             service.setAcquireLockDelay(1, TimeUnit.SECONDS);
             service.setAcquireLockInterval(1, TimeUnit.SECONDS);
 

@@ -30,7 +30,8 @@ class RecordableInputStream extends FilterInputStream {
     private TrimmableByteArrayOutputStream buf;
     private String charset;
     private boolean recording;
-    protected RecordableInputStream(InputStream in, String charset) {
+
+    RecordableInputStream(InputStream in, String charset) {
         super(in);
         this.buf = new TrimmableByteArrayOutputStream();
         this.charset = charset;

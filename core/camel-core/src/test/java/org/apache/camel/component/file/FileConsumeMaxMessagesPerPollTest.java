@@ -27,12 +27,12 @@ import org.junit.Test;
  */
 public class FileConsumeMaxMessagesPerPollTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/poll/?initialDelay=0&delay=10&maxMessagesPerPoll=2";
+    private String fileUrl = "file://target/data/poll/?initialDelay=0&delay=10&maxMessagesPerPoll=2";
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/poll");
+        deleteDirectory("target/data/poll");
         super.setUp();
     }
 

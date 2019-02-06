@@ -31,20 +31,20 @@ public class TestFileSplitTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/testme");
+        deleteDirectory("target/data/testme");
         super.setUp();
     }
 
     @Ignore
     @Test
     public void testFile() throws Exception {
-        template.sendBody("file:target/testme", "Hello World\nBye World\nHi World");
+        template.sendBody("file:target/data/testme", "Hello World\nBye World\nHi World");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .to("test:file:target/testme?noop=true&split=true&timeout=1000");
+                        .to("test:file:target/data/testme?noop=true&split=true&timeout=1000");
             }
         });
         context.start();

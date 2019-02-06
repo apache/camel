@@ -47,7 +47,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/files");
+        deleteDirectory("target/data/files");
         super.setUp();
     }
 
@@ -69,7 +69,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
         LOG.info("Writing 10 files with 100000 rows in each file");
         // write 10 files of 100k rows
         for (int i = 0; i < files; i++) {
-            Writer out = IOHelper.buffered(new FileWriter(new File("target/files", "data" + i)));
+            Writer out = IOHelper.buffered(new FileWriter(new File("target/data/files", "data" + i)));
             for (int j = 0; j < rows; j++) {
                 out.write(DATA);
             }
@@ -92,7 +92,7 @@ public class AggregateSimpleExpressionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/files").routeId("foo").noAutoStartup()
+                from("file:target/data/files").routeId("foo").noAutoStartup()
                     .log("Picked up ${file:name}")
                     .split().tokenize("\n").streaming()
                         .aggregate(constant(true), aggStrategy)
