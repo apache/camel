@@ -37,7 +37,7 @@ import org.junit.Test;
 public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
-    private File store = new File("target/idempotentfilestore.dat");
+    private File store = new File("target/data/idempotentfilestore.dat");
     private IdempotentRepository repo;
 
     @Test
@@ -61,7 +61,7 @@ public class ManagedFileIdempotentClearTest extends ManagementTestSupport {
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
         String path = (String) mbeanServer.getAttribute(on, "FilePath");
-        assertEquals(FileUtil.normalizePath("target/idempotentfilestore.dat"), FileUtil.normalizePath(path));
+        assertEquals(FileUtil.normalizePath("target/data/idempotentfilestore.dat"), FileUtil.normalizePath(path));
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "CacheSize");
         assertEquals(1, size.intValue());

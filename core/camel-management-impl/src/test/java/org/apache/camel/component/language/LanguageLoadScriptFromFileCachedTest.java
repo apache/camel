@@ -32,7 +32,7 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/script");
+        deleteDirectory("target/data/script");
         super.setUp();
     }
     
@@ -48,7 +48,7 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
         template.sendBody("direct:start", "World");
 
         // even if we update the file the content is cached
-        template.sendBodyAndHeader("file:target/script", "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader("file:target/data/script", "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
         template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
@@ -61,7 +61,7 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
         template.sendBody("direct:start", "World");
 
         // even if we update the file the content is cached
-        template.sendBodyAndHeader("file:target/script", "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
+        template.sendBodyAndHeader("file:target/data/script", "Bye ${body}", Exchange.FILE_NAME, "myscript.txt");
         template.sendBody("direct:start", "World");
 
         // now clear the cache via the mbean server
@@ -82,12 +82,12 @@ public class LanguageLoadScriptFromFileCachedTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // create script to start with
-                template.sendBodyAndHeader("file:target/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
+                template.sendBodyAndHeader("file:target/data/script", "Hello ${body}", Exchange.FILE_NAME, "myscript.txt");
 
                 // START SNIPPET: e1
                 from("direct:start")
                     // use content cache to load the script once and cache it (content cache and script cache both enabled)
-                    .to("language:simple:file:target/script/myscript.txt?contentCache=true&cacheScript=true")
+                    .to("language:simple:file:target/data/script/myscript.txt?contentCache=true&cacheScript=true")
                     .to("mock:result");
                 // END SNIPPET: e1
             }
