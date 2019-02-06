@@ -38,7 +38,7 @@ public class ManagedFileWatcherReloadStrategyTest extends ManagementTestSupport 
         assertTrue(mbeanServer.isRegistered(on));
 
         String folder = (String) mbeanServer.getAttribute(on, "Folder");
-        assertEquals("target/dummy", folder);
+        assertEquals("target/data/dummy", folder);
 
         Integer reload = (Integer) mbeanServer.getAttribute(on, "ReloadCounter");
         assertEquals(0, reload.intValue());
@@ -53,11 +53,11 @@ public class ManagedFileWatcherReloadStrategyTest extends ManagementTestSupport 
             @Override
             public void configure() throws Exception {
                 // directory must exists for the watcher to be able to run
-                deleteDirectory("target/dummy");
-                createDirectory("target/dummy");
+                deleteDirectory("target/data/dummy");
+                createDirectory("target/data/dummy");
 
                 // add reload strategy
-                context.setReloadStrategy(new FileWatcherReloadStrategy("target/dummy"));
+                context.setReloadStrategy(new FileWatcherReloadStrategy("target/data/dummy"));
 
                 from("direct:start")
                     .to("mock:result");
