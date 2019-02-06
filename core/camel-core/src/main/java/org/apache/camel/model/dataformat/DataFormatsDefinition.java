@@ -48,7 +48,6 @@ public class DataFormatsDefinition {
         @XmlElement(required = false, name = "boon", type = BoonDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
-        // TODO: Camel 3.0 - Should be named customDataFormat to avoid naming clash with custom loadbalancer
         @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
         @XmlElement(required = false, name = "fhirJson", type = FhirJsonDataFormat.class),
         @XmlElement(required = false, name = "fhirXml", type = FhirXmlDataFormat.class),

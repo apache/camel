@@ -111,7 +111,6 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         @XmlElement(required = false, name = "zipFile", type = ZipFileDataFormat.class)}
     )
     private DataFormatDefinition dataFormatType;
-    // cannot use @XmlElementRef as it doesn't allow optional properties
 
     public UnmarshalDefinition() {
     }
