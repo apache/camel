@@ -16,8 +16,8 @@
  */
 package org.apache.camel.example;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Exchange;
 
 /**
  * Aggregate two numbers
