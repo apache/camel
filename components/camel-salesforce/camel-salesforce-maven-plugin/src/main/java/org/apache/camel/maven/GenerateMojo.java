@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,27 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.maven;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Stack;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.PickListValue;
@@ -55,6 +34,31 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.Stack;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * Goal to generate DTOs for Salesforce SObjects
@@ -120,7 +124,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 final String type = LOOKUP_MAP.get(soapType.substring(soapType.indexOf(':') + 1));
                 if (type == null) {
                     getLog().warn(String.format("Unsupported field type %s in field %s of object %s", soapType,
-                        field.getName(), description.getName()));
+                            field.getName(), description.getName()));
                 }
                 return type;
             }
@@ -142,6 +146,25 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             literals.clear();
             Collections.sort(result, (o1, o2) -> o1.getValue().compareTo(o2.getValue()));
             return result;
+        }
+
+        public void overrideFieldType(final SObjectDescription description, final SObjectField field) {
+            if (fieldTypesOverridesToObjects.isEmpty()) {
+                return;
+            }
+
+            if (fieldTypesOverridesToObjects.containsKey(description.getName()) && fieldTypesOverridesToObjects.get(description.getName()).containsKey(field.getName())) {
+                final FieldTypeOverride fieldTypeOverride = fieldTypesOverridesToObjects.get(description.getName()).get(field.getName());
+                if (!DEFINITION_TYPE_TO_JAVA_TYPE_NAME.containsKey(fieldTypeOverride.getJavaOverrideTypeName())) {
+                    throw new IllegalStateException("Invalid Java type provided: " + fieldTypeOverride.getJavaOverrideTypeName()
+                            + ". Allowed java types: " + DEFINITION_TYPE_TO_JAVA_TYPE_NAME.keySet());
+                }
+                final FieldTypeOverride.Definition definition = DEFINITION_TYPE_TO_JAVA_TYPE_NAME.get(fieldTypeOverride.getJavaOverrideTypeName());
+                isOverrideAllowed(field.getType(), fieldTypeOverride);
+                field.setType(definition.getCorrespondingSalesforceFieldType());
+                field.setSoapType(definition.getCorrespondingSalesforceFieldSoapType());
+            }
+
         }
 
         public boolean hasMultiSelectPicklists(final SObjectDescription desc) {
@@ -187,12 +210,12 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             final Class<?> clazz = object.getClass();
 
             final boolean isWholeNumberWrapper = Byte.class.equals(clazz) || Short.class.equals(clazz)
-                || Integer.class.equals(clazz) || Long.class.equals(clazz);
+                    || Integer.class.equals(clazz) || Long.class.equals(clazz);
 
             final boolean isFloatingPointWrapper = Double.class.equals(clazz) || Float.class.equals(clazz);
 
             final boolean isWrapper = isWholeNumberWrapper || isFloatingPointWrapper || Boolean.class.equals(clazz)
-                || Character.class.equals(clazz);
+                    || Character.class.equals(clazz);
 
             final boolean isPrimitive = clazz.isPrimitive();
 
@@ -216,7 +239,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             IntrospectionSupport.getProperties(object, properties, null, false);
 
             return properties.entrySet().stream()
-                .collect(Collectors.toMap(e -> StringUtils.capitalize(e.getKey()), Map.Entry::getValue)).entrySet();
+                    .collect(Collectors.toMap(e -> StringUtils.capitalize(e.getKey()), Map.Entry::getValue)).entrySet();
         }
 
         public void push(final String additional) {
@@ -254,10 +277,54 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     private static final Logger LOG = Logger.getLogger(GenerateMojo.class.getName());
 
     private static final Map<String, String> LOOKUP_MAP = defineLookupMap();
+
+    private static final Map<String, FieldTypeOverride.Definition> DEFINITION_TYPE_TO_JAVA_TYPE_NAME;
+    private static final Map<String, Set<String>> ALLOWED_CONVERSION_TYPES_NAMES;
+
+    static {
+        final FieldTypeOverride.Definition stringDefinition = new FieldTypeOverride.Definition("string", "xsd:string", "String", String.class.getName());
+        final FieldTypeOverride.Definition stringArrayDefinition = new FieldTypeOverride.Definition("string", "xsd:string", "String[]", String.class.getName() + "[]");
+        final FieldTypeOverride.Definition zonedDateTimeDefinition = new FieldTypeOverride.Definition("datetime", "xsd:dateTime", ZonedDateTime.class.getName());
+        final FieldTypeOverride.Definition offsetTimeDefinition = new FieldTypeOverride.Definition("time", "xsd:time", OffsetTime.class.getName());
+        final FieldTypeOverride.Definition localDateDefinition = new FieldTypeOverride.Definition("date", "xsd:date", LocalDate.class.getName());
+        final List<FieldTypeOverride.Definition> definitionList = new LinkedList<>(
+                Arrays.asList(stringDefinition, stringArrayDefinition, zonedDateTimeDefinition, offsetTimeDefinition, localDateDefinition));
+
+        final Set<String> dateConvertibleTo = new HashSet<>();
+        dateConvertibleTo.addAll(stringDefinition.getJavaTypeNames());
+        dateConvertibleTo.addAll(zonedDateTimeDefinition.getJavaTypeNames());
+        dateConvertibleTo.addAll(offsetTimeDefinition.getJavaTypeNames());
+        dateConvertibleTo.addAll(localDateDefinition.getJavaTypeNames());
+
+        final Map<String, Set<String>> allowedConversionTypesNames = new HashMap<>();
+        allowedConversionTypesNames.put("datetime", dateConvertibleTo);
+        allowedConversionTypesNames.put("time", dateConvertibleTo);
+        allowedConversionTypesNames.put("date", dateConvertibleTo);
+        allowedConversionTypesNames.put("g", dateConvertibleTo);
+
+        allowedConversionTypesNames.put("picklist", new HashSet<>(stringDefinition.getJavaTypeNames()));
+
+        final Set<String> multipicklistConvertibleTo = new HashSet<>();
+        multipicklistConvertibleTo.addAll(stringDefinition.getJavaTypeNames());
+        multipicklistConvertibleTo.addAll(stringArrayDefinition.getJavaTypeNames());
+        allowedConversionTypesNames.put("multipicklist", multipicklistConvertibleTo);
+        ALLOWED_CONVERSION_TYPES_NAMES = Collections.unmodifiableMap(allowedConversionTypesNames);
+
+        final Map<String, FieldTypeOverride.Definition> definitionTypeToJavaTypeName = new HashMap<>();
+        for (FieldTypeOverride.Definition definition : definitionList) {
+            for (String javaTypeName : definition.getJavaTypeNames()) {
+                definitionTypeToJavaTypeName.put(javaTypeName, definition);
+            }
+        }
+
+        DEFINITION_TYPE_TO_JAVA_TYPE_NAME = Collections.unmodifiableMap(definitionTypeToJavaTypeName);
+    }
+
     private static final String MULTIPICKLIST = "multipicklist";
 
     private static final String PACKAGE_NAME_PATTERN = "(\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*\\.)+\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
     private static final String PICKLIST = "picklist";
+
     private static final String SOBJECT_PICKLIST_VM = "/sobject-picklist.vm";
     private static final String SOBJECT_POJO_OPTIONAL_VM = "/sobject-pojo-optional.vm";
     private static final String SOBJECT_POJO_VM = "/sobject-pojo.vm";
@@ -281,7 +348,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
      * target/generated-sources/camel-salesforce.
      */
     @Parameter(property = "camelSalesforce.outputDirectory",
-        defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
+            defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
     File outputDirectory;
 
     /**
@@ -314,11 +381,20 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     private boolean useOptionals;
 
     @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
-    private Boolean useStringsForPicklists;
+    Boolean useStringsForPicklists;
+
+    @Parameter(property = "camelSalesforce.fieldTypeOverrides")
+    List<FieldTypeOverride> fieldTypeOverrides;
+
+    private Map<String, Map<String, FieldTypeOverride>> fieldTypesOverridesToObjects = new HashMap<>();
 
     void processDescription(final File pkgDir, final SObjectDescription description, final GeneratorUtility utility,
-        final String generatedDate) throws IOException {
+                            final String generatedDate) throws IOException {
         // generate a source file for SObject
+        if (useStringsForPicklists == null) {
+            useStringsForPicklists = Boolean.FALSE;
+        }
+
         final VelocityContext context = new VelocityContext();
         context.put("packageName", packageName);
         context.put("utility", utility);
@@ -339,7 +415,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             final String optionalFileName = description.getName() + "Optional" + JAVA_EXT;
             final File optionalFile = new File(pkgDir, optionalFileName);
             try (final Writer writer = new OutputStreamWriter(new FileOutputStream(optionalFile),
-                StandardCharsets.UTF_8)) {
+                    StandardCharsets.UTF_8)) {
                 final Template optionalTemplate = engine.getTemplate(SOBJECT_POJO_OPTIONAL_VM, UTF_8);
                 optionalTemplate.merge(context, writer);
             }
@@ -357,7 +433,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 final Template enumTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM, UTF_8);
 
                 try (final Writer writer = new OutputStreamWriter(new FileOutputStream(enumFile),
-                    StandardCharsets.UTF_8)) {
+                        StandardCharsets.UTF_8)) {
                     enumTemplate.merge(context, writer);
                 }
             }
@@ -368,7 +444,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         final File queryRecordsFile = new File(pkgDir, queryRecordsFileName);
         final Template queryTemplate = engine.getTemplate(SOBJECT_QUERY_RECORDS_VM, UTF_8);
         try (final Writer writer = new OutputStreamWriter(new FileOutputStream(queryRecordsFile),
-            StandardCharsets.UTF_8)) {
+                StandardCharsets.UTF_8)) {
             queryTemplate.merge(context, writer);
         }
 
@@ -378,7 +454,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             final File queryRecordsOptionalFile = new File(pkgDir, queryRecordsOptionalFileName);
             final Template queryRecordsOptionalTemplate = engine.getTemplate(SOBJECT_QUERY_RECORDS_OPTIONAL_VM, UTF_8);
             try (final Writer writer = new OutputStreamWriter(new FileOutputStream(queryRecordsOptionalFile),
-                StandardCharsets.UTF_8)) {
+                    StandardCharsets.UTF_8)) {
                 queryRecordsOptionalTemplate.merge(context, writer);
             }
         }
@@ -386,15 +462,18 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
     @Override
     protected void executeWithClient(final RestClient client) throws MojoExecutionException {
+        //@TODO hookup to populate all data
         descriptions = new ObjectDescriptions(client, getResponseTimeout(), includes, includePattern, excludes,
-            excludePattern, getLog());
+                excludePattern, getLog());
+
+        initializeFieldTypeOverride();
 
         engine = createVelocityEngine();
 
         // make sure we can load both templates
         if (!engine.resourceExists(SOBJECT_POJO_VM) || !engine.resourceExists(SOBJECT_QUERY_RECORDS_VM)
-            || !engine.resourceExists(SOBJECT_POJO_OPTIONAL_VM)
-            || !engine.resourceExists(SOBJECT_QUERY_RECORDS_OPTIONAL_VM)) {
+                || !engine.resourceExists(SOBJECT_POJO_OPTIONAL_VM)
+                || !engine.resourceExists(SOBJECT_QUERY_RECORDS_OPTIONAL_VM)) {
             throw new MojoExecutionException("Velocity templates not found");
         }
 
@@ -432,6 +511,15 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         getLog().info(String.format("Successfully generated %s Java Classes", descriptions.count() * 2));
     }
 
+    private void initializeFieldTypeOverride() {
+        if (fieldTypeOverrides != null && !fieldTypeOverrides.isEmpty()) {
+            for (FieldTypeOverride picklistOrDateRedefinitionOverride : fieldTypeOverrides) {
+                fieldTypesOverridesToObjects.putIfAbsent(picklistOrDateRedefinitionOverride.getObjectName(), new HashMap<>());
+                fieldTypesOverridesToObjects.get(picklistOrDateRedefinitionOverride.getObjectName()).put(picklistOrDateRedefinitionOverride.getFieldName(), picklistOrDateRedefinitionOverride);
+            }
+        }
+    }
+
     static VelocityEngine createVelocityEngine() {
         // initialize velocity to load resources from class loader and use Log4J
         final Properties velocityProperties = new Properties();
@@ -456,34 +544,34 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         // create a type map
         // using JAXB mapping, for the most part
         // mapping for tns:ID SOAPtype
-        final String[][] typeMap = new String[][] {//
-            {"ID", "String"}, //
-            {"string", "String"}, //
-            {"integer", "java.math.BigInteger"}, //
-            {"int", "Integer"}, //
-            {"long", "Long"}, //
-            {"short", "Short"}, //
-            {"decimal", "java.math.BigDecimal"}, //
-            {"float", "Float"}, //
-            {"double", "Double"}, //
-            {"boolean", "Boolean"}, //
-            {"byte", "Byte"}, //
-            {"dateTime", "java.time.ZonedDateTime"}, //
-            // the blob base64Binary type is mapped to String URL for retrieving
-            // the blob
-            {"base64Binary", "String"}, //
-            {"unsignedInt", "Long"}, //
-            {"unsignedShort", "Integer"}, //
-            {"unsignedByte", "Short"}, //
-            {"time", "java.time.ZonedDateTime"}, //
-            {"date", "java.time.ZonedDateTime"}, //
-            {"g", "java.time.ZonedDateTime"}, //
-            // Salesforce maps any types like string, picklist, reference, etc.
-            // to string
-            {"anyType", "String"}, //
-            {"address", "org.apache.camel.component.salesforce.api.dto.Address"}, //
-            {"location", "org.apache.camel.component.salesforce.api.dto.GeoLocation"}, //
-            {"RelationshipReferenceTo", "String"}//
+        final String[][] typeMap = new String[][]{//
+                {"ID", "String"}, //
+                {"string", "String"}, //
+                {"integer", "java.math.BigInteger"}, //
+                {"int", "Integer"}, //
+                {"long", "Long"}, //
+                {"short", "Short"}, //
+                {"decimal", "java.math.BigDecimal"}, //
+                {"float", "Float"}, //
+                {"double", "Double"}, //
+                {"boolean", "Boolean"}, //
+                {"byte", "Byte"}, //
+                {"dateTime", "java.time.ZonedDateTime"}, //
+                // the blob base64Binary type is mapped to String URL for retrieving
+                // the blob
+                {"base64Binary", "String"}, //
+                {"unsignedInt", "Long"}, //
+                {"unsignedShort", "Integer"}, //
+                {"unsignedByte", "Short"}, //
+                {"time", "java.time.OffsetTime"}, //
+                {"date", "java.time.LocalDate"}, //
+                {"g", "java.time.ZonedDateTime"}, //
+                // Salesforce maps any types like string, picklist, reference, etc.
+                // to string
+                {"anyType", "String"}, //
+                {"address", "org.apache.camel.component.salesforce.api.dto.Address"}, //
+                {"location", "org.apache.camel.component.salesforce.api.dto.GeoLocation"}, //
+                {"RelationshipReferenceTo", "String"}//
         };
 
         final Map<String, String> lookupMap = new HashMap<>();
@@ -492,6 +580,20 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         }
 
         return lookupMap;
+    }
+
+    /**
+     * Validates field override.
+     *
+     * @param fieldType
+     * @param fieldTypeOverride
+     * @throws IllegalArgumentException in case illegal override trial
+     */
+    static void isOverrideAllowed(final String fieldType, final FieldTypeOverride fieldTypeOverride) {
+        if (!ALLOWED_CONVERSION_TYPES_NAMES.containsKey(fieldType) || !ALLOWED_CONVERSION_TYPES_NAMES.get(fieldType).contains(fieldTypeOverride.getJavaOverrideTypeName())) {
+            throw new IllegalArgumentException("Type " + fieldType + " cannot be converted to "
+                    + fieldTypeOverride.getJavaOverrideTypeName() + ". Allowed conversions: " + ALLOWED_CONVERSION_TYPES_NAMES);
+        }
     }
 
 }

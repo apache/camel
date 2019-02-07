@@ -16,24 +16,24 @@
  */
 package org.apache.camel.maven;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.tools.JavaFileObject;
-
 import com.google.testing.compile.Compilation;
 import com.google.testing.compile.Compilation.Status;
 import com.google.testing.compile.Compiler;
 import com.google.testing.compile.JavaFileObjects;
-
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import javax.tools.JavaFileObject;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.OffsetTime;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.apache.camel.maven.AbstractSalesforceMojoIntegrationTest.setup;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,7 +78,12 @@ public class CamelSalesforceMojoIntegrationTest {
         mojo.packageName = "test.dto";
 
         // set code generation properties
-        mojo.includePattern = "(.*__c)|(PushTopic)|(Document)|(Account)";
+        mojo.includePattern = "(.*__c)|(PushTopic)|(Document)|(Account)|(Case)";
+        List<FieldTypeOverride> picklistOrDateRedefinitionList = new LinkedList<>();
+        picklistOrDateRedefinitionList.add(new FieldTypeOverride("Account", "AccountSource", String.class.getName()));
+        picklistOrDateRedefinitionList.add(new FieldTypeOverride("Case", "ClosedDate", OffsetTime.class.getName()));
+
+        mojo.fieldTypeOverrides = picklistOrDateRedefinitionList;
 
         return mojo;
     }
