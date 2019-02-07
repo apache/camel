@@ -431,27 +431,6 @@
         </property>
       </activation>
       <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.codehaus.mojo</groupId>
-              <artifactId>jaxb2-maven-plugin</artifactId>
-              <version>2.4</version>
-              <dependencies>
-                <dependency>
-                  <groupId>org.glassfish.jaxb</groupId>
-                  <artifactId>jaxb-jxc-jdk9</artifactId>
-                  <version>${jaxb-version}</version>
-                </dependency>
-                <dependency>
-                  <groupId>javax.activation</groupId>
-                  <artifactId>javax.activation-api</artifactId>
-                  <version>1.2.0</version>
-                </dependency>
-              </dependencies>
-            </plugin>
-          </plugins>
-        </pluginManagement>
         <plugins>
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
