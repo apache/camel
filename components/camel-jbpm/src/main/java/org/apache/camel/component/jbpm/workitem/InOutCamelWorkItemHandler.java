@@ -55,6 +55,7 @@ import org.kie.api.runtime.process.WorkItemManager;
         widfile = "InOutCamelConnector.wid",
         name = "InOutCamelConnector",
         displayName = "InOutCamelConnector",
+        category = "Camel",
         defaultHandler = "mvel: new org.apache.camel.component.jbpm.workitem.InOutCamelWorkitemHandler()",
         documentation = "${artifactId}/index.html",
         parameters = {
@@ -71,7 +72,9 @@ import org.kie.api.runtime.process.WorkItemManager;
         serviceInfo = @WidService(category = "${name}",
                 description = "${description}",
                 keywords = "apache,camel,payload,route,connector",
-                action = @WidAction(title = "Send payload to a Camel endpoint")))
+                action = @WidAction(title = "Send payload to a Camel endpoint")),
+        icon = "InOutCamelConnector.png"
+    )
 public class InOutCamelWorkItemHandler extends AbstractCamelWorkItemHandler {
 
     public InOutCamelWorkItemHandler() {
