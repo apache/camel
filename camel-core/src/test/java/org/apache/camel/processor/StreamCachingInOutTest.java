@@ -38,7 +38,6 @@ public class StreamCachingInOutTest extends ContextTestSupport {
         assertEquals(c.assertExchangeReceived(0).getIn().getBody(String.class), "James,Guillaume,Hiram,Rob,Roman");
     }
 
-    @Test
     public void testStreamCachingPerRouteWithDirecVM() throws Exception {
         MockEndpoint e = getMockEndpoint("mock:e");
         e.expectedMessageCount(1);
