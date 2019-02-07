@@ -39,25 +39,13 @@ import org.apache.maven.project.MavenProjectHelper;
  * Analyses the Camel plugins in a project and generates legal files.
  */
 @Mojo(name = "generate-legal", threadSafe = true, defaultPhase = LifecyclePhase.PREPARE_PACKAGE)
-public class PackageLegalMojo extends AbstractMojo {
-
-    /**
-     * The maven project.
-     */
-    @Parameter(property = "project", required = true, readonly = true)
-    protected MavenProject project;
+public class PackageLegalMojo extends AbstractGeneratorMojo {
 
     /**
      * The output directory for generated components file
      */
     @Parameter(defaultValue = "${project.build.directory}/classes")
     protected File legalOutDir;
-
-    /**
-     * Maven ProjectHelper.
-     */
-    @Component
-    private MavenProjectHelper projectHelper;
 
     /**
      * Execute goal.
@@ -87,23 +75,6 @@ public class PackageLegalMojo extends AbstractMojo {
             updateResource(legalOutDir.resolve("META-INF").resolve("NOTICE.txt"), notice);
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to write legal files. Reason: " + e, e);
-        }
-    }
-
-    protected void updateResource(Path out, String data) throws IOException {
-        if (Files.isRegularFile(out)) {
-            // file already exists
-            return;
-        }
-        if (data == null) {
-            if (Files.isRegularFile(out)) {
-                Files.delete(out);
-            }
-        } else {
-            Files.createDirectories(out.getParent());
-            try (Writer w = Files.newBufferedWriter(out, StandardCharsets.UTF_8)) {
-                w.append(data);
-            }
         }
     }
 
