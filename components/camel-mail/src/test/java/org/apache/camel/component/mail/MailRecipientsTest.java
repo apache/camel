@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.Message;
-import javax.mail.internet.InternetAddress;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -104,7 +103,6 @@ public class MailRecipientsTest extends CamelTestSupport {
         Message msg = box.get(0);
         assertEquals("to@riders.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
         assertNull(msg.getRecipients(Message.RecipientType.CC));
-        // TODO assertEquals("me@you.org", msg.getRecipients(Message.RecipientType.CC)[0].toString());
     }
 
     @Test
