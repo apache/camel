@@ -31,12 +31,12 @@ import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.LanguageValidationResult;
 import org.apache.camel.catalog.lucene.LuceneSuggestionStrategy;
 import org.apache.camel.catalog.maven.MavenVersionManager;
-import org.apache.camel.maven.helper.EndpointHelper;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
@@ -823,7 +823,7 @@ public class ValidateMojo extends AbstractExecMojo {
                 exclude = exclude.trim();
                 // try both with and without directory in the name
                 String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-                boolean match = EndpointHelper.matchPattern(fqn, exclude) || EndpointHelper.matchPattern(file.getName(), exclude);
+                boolean match = PatternHelper.matchPattern(fqn, exclude) || PatternHelper.matchPattern(file.getName(), exclude);
                 if (match) {
                     return false;
                 }
@@ -836,7 +836,7 @@ public class ValidateMojo extends AbstractExecMojo {
                 include = include.trim();
                 // try both with and without directory in the name
                 String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-                boolean match = EndpointHelper.matchPattern(fqn, include) || EndpointHelper.matchPattern(file.getName(), include);
+                boolean match = PatternHelper.matchPattern(fqn, include) || PatternHelper.matchPattern(file.getName(), include);
                 if (match) {
                     return true;
                 }
