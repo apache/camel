@@ -981,7 +981,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testSimplePredicate() throws Exception {
-        LanguageValidationResult result = catalog.validateLanguagePredicate(null,  "simple","${body} == 'abc'");
+        LanguageValidationResult result = catalog.validateLanguagePredicate(null, "simple", "${body} == 'abc'");
         assertTrue(result.isSuccess());
         assertEquals("${body} == 'abc'", result.getText());
 
@@ -996,7 +996,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testPredicatePlaceholder() throws Exception {
-        LanguageValidationResult result = catalog.validateLanguagePredicate(null,  "simple","${body} contains '{{danger}}'");
+        LanguageValidationResult result = catalog.validateLanguagePredicate(null, "simple", "${body} contains '{{danger}}'");
         assertTrue(result.isSuccess());
         assertEquals("${body} contains '{{danger}}'", result.getText());
 
