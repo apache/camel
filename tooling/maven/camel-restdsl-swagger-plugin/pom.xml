@@ -123,6 +123,11 @@
   <profiles>
     <profile>
       <id>fastinstall</id>
+      <activation>
+        <property>
+          <name>skipTests</name>
+        </property>
+      </activation>
       <properties>
         <invoker.skip>true</invoker.skip>
       </properties>
