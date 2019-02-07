@@ -33,13 +33,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import edu.emory.mathcs.backport.java.util.Collections;
-import org.apache.camel.maven.helper.EndpointHelper;
 import org.apache.camel.maven.model.RouteCoverageNode;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.XmlRouteParser;
 import org.apache.camel.parser.helper.RouteCoverageHelper;
 import org.apache.camel.parser.model.CamelNodeDetails;
 import org.apache.camel.parser.model.CoverageData;
+import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -456,7 +456,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                 exclude = exclude.trim();
                 // try both with and without directory in the name
                 String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-                boolean match = EndpointHelper.matchPattern(fqn, exclude) || EndpointHelper.matchPattern(file.getName(), exclude);
+                boolean match = PatternHelper.matchPattern(fqn, exclude) || PatternHelper.matchPattern(file.getName(), exclude);
                 if (match) {
                     return false;
                 }
@@ -469,7 +469,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                 include = include.trim();
                 // try both with and without directory in the name
                 String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
-                boolean match = EndpointHelper.matchPattern(fqn, include) || EndpointHelper.matchPattern(file.getName(), include);
+                boolean match = PatternHelper.matchPattern(fqn, include) || PatternHelper.matchPattern(file.getName(), include);
                 if (match) {
                     return true;
                 }
