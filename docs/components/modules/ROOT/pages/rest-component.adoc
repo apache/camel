@@ -78,6 +78,25 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.rest.api-doc* | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format. |  | String
+| *camel.component.rest.component-name* | The Camel Rest component to use for the REST transport, such as restlet, spark-rest. If no component has been explicit configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or if a org.apache.camel.spi.RestConsumerFactory (consumer) or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry. If either one is found, then that is being used. |  | String
+| *camel.component.rest.enabled* | Whether to enable auto configuration of the rest component. This is enabled by default. |  | Boolean
+| *camel.component.rest.host* | Host and port of HTTP service to use (override host in swagger schema) |  | String
+| *camel.component.rest.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 === Supported rest components
 
 The following components support rest consumer (Rest DSL):

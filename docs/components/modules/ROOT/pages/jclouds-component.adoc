@@ -177,6 +177,26 @@ jclouds:blobstore:aws-s3?operation=CamelJcloudsGet&container=mycontainer&blobNam
 For producer endpoint you can override all of the above URI options by
 passing the appropriate headers to the message.
 
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.jclouds.blob-stores* | To use the given BlobStore which must be configured when using blobstore. |  | List
+| *camel.component.jclouds.compute-services* | To use the given ComputeService which must be configured when use compute. |  | List
+| *camel.component.jclouds.enabled* | Whether to enable auto configuration of the jclouds component. This is enabled by default. |  | Boolean
+| *camel.component.jclouds.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
 #### Message Headers for blobstore
 
 [width="100%",cols="10%,90%",options="header",]
