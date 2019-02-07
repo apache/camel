@@ -1,8 +1,22 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.jcache.policy;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
-
+import java.util.concurrent.TimeUnit;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
@@ -10,29 +24,30 @@ import javax.cache.configuration.CompleteConfiguration;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.expiry.CreatedExpiryPolicy;
 import javax.cache.expiry.Duration;
-import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
 public class CachePolicyTest extends CachePolicyTestBase {
-
 
     //Set cache - this use cases is also covered by tests in CachePolicyProcessorTest
     @Test
     public void testSetCache() throws Exception {
-        final String key  = randomString();
+        final String key = randomString();
 
         //Send exchange
         Object responseBody = this.template().requestBody("direct:policy-cache", key);
 
         //Verify the set cache was used
-        assertEquals(generateValue(key),lookupCache("setCache").get(key));
-        assertEquals(generateValue(key),responseBody);
-        assertEquals(1,getMockEndpoint("mock:value").getExchanges().size());
+        assertEquals(generateValue(key), lookupCache("setCache").get(key));
+        assertEquals(generateValue(key), responseBody);
+        assertEquals(1, getMockEndpoint("mock:value").getExchanges().size());
     }
 
     //Set cacheManager, cacheName, cacheConfiguration
     @Test
     public void testSetManagerNameConfiguration() throws Exception {
-        final String key  = randomString();
+        final String key = randomString();
 
         //Send exchange
         Object responseBody = this.template().requestBody("direct:policy-manager-name-configuration", key);
@@ -40,47 +55,47 @@ public class CachePolicyTest extends CachePolicyTestBase {
         //Verify cache was created with the set configuration and used in route
         Cache cache = lookupCache("setManagerNameConfiguration");
         CompleteConfiguration completeConfiguration = (CompleteConfiguration) cache.getConfiguration(CompleteConfiguration.class);
-        assertEquals(String.class,completeConfiguration.getKeyType());
-        assertEquals(String.class,completeConfiguration.getValueType());
-        assertEquals(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 60)),completeConfiguration.getExpiryPolicyFactory());
+        assertEquals(String.class, completeConfiguration.getKeyType());
+        assertEquals(String.class, completeConfiguration.getValueType());
+        assertEquals(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 60)), completeConfiguration.getExpiryPolicyFactory());
         assertEquals(generateValue(key), cache.get(key));
         assertEquals(generateValue(key), responseBody);
-        assertEquals(1,getMockEndpoint("mock:value").getExchanges().size());
+        assertEquals(1, getMockEndpoint("mock:value").getExchanges().size());
     }
 
     //Set cacheManager, cacheName
     @Test
     public void testSetManagerName() throws Exception {
-        final String key  = randomString();
+        final String key = randomString();
 
         //Send exchange
         Object responseBody = this.template().requestBody("direct:policy-manager-name", key);
 
         //Verify the cache was created with the name and used
-        assertEquals(generateValue(key),lookupCache("setManagerName").get(key));
-        assertEquals(generateValue(key),responseBody);
-        assertEquals(1,getMockEndpoint("mock:value").getExchanges().size());
+        assertEquals(generateValue(key), lookupCache("setManagerName").get(key));
+        assertEquals(generateValue(key), responseBody);
+        assertEquals(1, getMockEndpoint("mock:value").getExchanges().size());
     }
 
     //Set cacheManager, cacheName - cache already exists
     @Test
     public void testSetManagerNameExists() throws Exception {
-        final String key  = randomString();
+        final String key = randomString();
 
         //Send exchange
         Object responseBody = this.template().requestBody("direct:policy-manager-name-exists", key);
 
         //Verify the existing cache with name was used
-        assertEquals(generateValue(key),lookupCache("setManagerNameExists").get(key));
-        assertEquals("dummy",lookupCache("setManagerNameExists").get("test"));
-        assertEquals(generateValue(key),responseBody);
-        assertEquals(1,getMockEndpoint("mock:value").getExchanges().size());
+        assertEquals(generateValue(key), lookupCache("setManagerNameExists").get(key));
+        assertEquals("dummy", lookupCache("setManagerNameExists").get("test"));
+        assertEquals(generateValue(key), responseBody);
+        assertEquals(1, getMockEndpoint("mock:value").getExchanges().size());
     }
 
     //Set cacheManager, cacheConfiguration
     @Test
     public void testSetManagerConfiguration() throws Exception {
-        final String key  = randomString();
+        final String key = randomString();
 
         //Send exchange
         Object responseBody = this.template().requestBody("direct:policy-manager-configuration", key);
@@ -88,19 +103,19 @@ public class CachePolicyTest extends CachePolicyTestBase {
         //Verify the cache was created with routeId and configuration
         Cache cache = lookupCache("direct-policy-manager-configuration");
         CompleteConfiguration completeConfiguration = (CompleteConfiguration) cache.getConfiguration(CompleteConfiguration.class);
-        assertEquals(String.class,completeConfiguration.getKeyType());
-        assertEquals(String.class,completeConfiguration.getValueType());
-        assertEquals(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 61)),completeConfiguration.getExpiryPolicyFactory());
+        assertEquals(String.class, completeConfiguration.getKeyType());
+        assertEquals(String.class, completeConfiguration.getValueType());
+        assertEquals(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 61)), completeConfiguration.getExpiryPolicyFactory());
 
-        assertEquals(generateValue(key),cache.get(key));
-        assertEquals(generateValue(key),responseBody);
-        assertEquals(1,getMockEndpoint("mock:value").getExchanges().size());
+        assertEquals(generateValue(key), cache.get(key));
+        assertEquals(generateValue(key), responseBody);
+        assertEquals(1, getMockEndpoint("mock:value").getExchanges().size());
     }
 
     //Set cacheName - use CachingProvider to lookup CacheManager
     @Test
     public void testDefaultCacheManager() throws Exception {
-        final String key  = randomString();
+        final String key = randomString();
 
         //Send exchange
         Object responseBody = this.template().requestBody("direct:policy-default-manager", key);
@@ -108,15 +123,15 @@ public class CachePolicyTest extends CachePolicyTestBase {
         //Verify the default cacheManager was used, despite it was not set
         Cache cache = lookupCache("contextCacheManager");
 
-        assertEquals(generateValue(key),cache.get(key));
-        assertEquals(generateValue(key),responseBody);
-        assertEquals(1,getMockEndpoint("mock:value").getExchanges().size());
+        assertEquals(generateValue(key), cache.get(key));
+        assertEquals(generateValue(key), responseBody);
+        assertEquals(1, getMockEndpoint("mock:value").getExchanges().size());
     }
 
     //Not enabled
     @Test
     public void testNotEnabled() throws Exception {
-        final String key  = randomString();
+        final String key = randomString();
 
         //Send exchange
         Object responseBody = this.template().requestBody("direct:policy-not-enabled", key);
@@ -125,8 +140,8 @@ public class CachePolicyTest extends CachePolicyTestBase {
         Cache cache = lookupCache("notEnabled");
 
         assertNull(cache.get(key));
-        assertEquals(generateValue(key),responseBody);
-        assertEquals(1,getMockEndpoint("mock:value").getExchanges().size());
+        assertEquals(generateValue(key), responseBody);
+        assertEquals(1, getMockEndpoint("mock:value").getExchanges().size());
     }
 
     @Override
@@ -138,7 +153,7 @@ public class CachePolicyTest extends CachePolicyTestBase {
                 MutableConfiguration configuration;
 
                 //Set cache
-                Cache cache =cacheManager.createCache("setCache", new MutableConfiguration<>());
+                Cache cache = cacheManager.createCache("setCache", new MutableConfiguration<>());
                 CachePolicy cachePolicy = new CachePolicy();
                 cachePolicy.setCache(cache);
 
@@ -148,7 +163,7 @@ public class CachePolicyTest extends CachePolicyTestBase {
 
                 //Set cacheManager, cacheName, cacheConfiguration
                 configuration = new MutableConfiguration<>();
-                configuration.setTypes(String.class,String.class);
+                configuration.setTypes(String.class, String.class);
                 configuration.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 60)));
                 cachePolicy = new CachePolicy();
                 cachePolicy.setCacheManager(cacheManager);
@@ -169,8 +184,8 @@ public class CachePolicyTest extends CachePolicyTestBase {
                         .to("mock:value");
 
                 //Set cacheManager, cacheName - cache already exists
-                cache = cacheManager.createCache("setManagerNameExists",new MutableConfiguration<>());
-                cache.put("test","dummy");
+                cache = cacheManager.createCache("setManagerNameExists", new MutableConfiguration<>());
+                cache.put("test", "dummy");
                 cachePolicy = new CachePolicy();
                 cachePolicy.setCacheManager(cacheManager);
                 cachePolicy.setCacheName("setManagerNameExists");
@@ -181,7 +196,7 @@ public class CachePolicyTest extends CachePolicyTestBase {
 
                 //Set cacheManager, cacheConfiguration
                 configuration = new MutableConfiguration<>();
-                configuration.setTypes(String.class,String.class);
+                configuration.setTypes(String.class, String.class);
                 configuration.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 61)));
                 cachePolicy = new CachePolicy();
                 cachePolicy.setCacheManager(cacheManager);

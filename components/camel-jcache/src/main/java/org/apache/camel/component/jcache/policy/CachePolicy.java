@@ -1,22 +1,41 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.jcache.policy;
 
-import org.apache.camel.*;
+import java.util.Set;
+import javax.cache.Cache;
+import javax.cache.CacheManager;
+import javax.cache.Caching;
+import javax.cache.configuration.Configuration;
+import javax.cache.configuration.MutableConfiguration;
+
+import org.apache.camel.Expression;
+import org.apache.camel.NamedNode;
+import org.apache.camel.Processor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.cache.Cache;
-import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.configuration.Configuration;
-import javax.cache.configuration.MutableConfiguration;
-import java.util.Set;
-
 /**
  * Policy for routes. It caches the final body of a route and next time takes it from the cache instead of executing the route.
- * The cache key is determined by the keyExpression (message body by default). If there is an object in the cache under that key the rest of the route is not executed, but the cached object is added to the Exchange.
+ * The cache key is determined by the keyExpression (message body by default).
+ * If there is an object in the cache under that key the rest of the route is not executed, but the cached object is added to the Exchange.
  *
  * Fields:
  * cache: JCache to use
@@ -27,7 +46,7 @@ import java.util.Set;
  * enabled: If CachePolicy is not enabled, no policy is added to the route. Has an impact only during startup.
  */
 public class CachePolicy implements Policy {
-    private static final Logger log = LoggerFactory.getLogger(CachePolicy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CachePolicy.class);
 
     private Cache cache;
     private CacheManager cacheManager;
@@ -44,7 +63,9 @@ public class CachePolicy implements Policy {
     @Override
     public Processor wrap(RouteContext routeContext, Processor processor) {
         //Don't add CachePolicyProcessor if CachePolicy is disabled. This means enable/disable has impact only during startup
-        if ( !isEnabled() ) return processor;
+        if (!isEnabled()) {
+            return processor;
+        }
 
         Cache cache = this.cache;
         if (cache == null) {
@@ -60,26 +81,26 @@ public class CachePolicy implements Policy {
 
                     //Use the first cache manager found
                     cacheManager = lookupResult.iterator().next();
-                    log.debug("CacheManager from CamelContext registry: {}", cacheManager);
+                    LOG.debug("CacheManager from CamelContext registry: {}", cacheManager);
                 }
             }
 
             //Lookup CacheManager the standard way
             if (cacheManager == null) {
                 cacheManager = Caching.getCachingProvider().getCacheManager();
-                log.debug("CacheManager from CachingProvider: {}",cacheManager);
+                LOG.debug("CacheManager from CachingProvider: {}", cacheManager);
             }
 
             //Use routeId as cacheName if it's not set
             String cacheName = ObjectHelper.isNotEmpty(this.cacheName) ? this.cacheName : routeContext.getRoute().getId();
-            log.debug("Getting cache:{}", cacheName);
+            LOG.debug("Getting cache:{}", cacheName);
 
             //Get cache or create a new one using the cacheConfiguration
             cache = cacheManager.getCache(cacheName);
             if (cache == null) {
-                log.debug("Create cache:{}", cacheName);
+                LOG.debug("Create cache:{}", cacheName);
                 cache = cacheManager.createCache(cacheName,
-                        cacheConfiguration != null ? this.cacheConfiguration : (Configuration)new MutableConfiguration());
+                        cacheConfiguration != null ? this.cacheConfiguration : (Configuration) new MutableConfiguration());
             }
 
         }
@@ -140,9 +161,9 @@ public class CachePolicy implements Policy {
 
     @Override
     public String toString() {
-        return "CachePolicy{" +
-                "keyExpression=" + keyExpression +
-                ", enabled=" + enabled +
-                '}';
+        return "CachePolicy{"
+                + "keyExpression=" + keyExpression
+                + ", enabled=" + enabled
+                + '}';
     }
 }
