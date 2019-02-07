@@ -15,8 +15,8 @@ To run the example, you need to start up the server and copy the .war to the app
 
 The example consumes messages from a servlet endpoint which is secured by Spring Security
 with http basic authentication, there are two service:
- <http://localhost:8080/camel-spring-security-${version}/camel/user> is for the authenticated user whose role is ROLE_USER
- <http://localhost:8080/camel-spring-security-${version}/camel/admin> is for the authenticated user whose role is ROLE_ADMIN
+ <http://localhost:8080/camel-example-spring-security-${version}/camel/user> is for the authenticated user whose role is ROLE_USER
+ <http://localhost:8080/camel-example-spring-security-${version}/camel/admin> is for the authenticated user whose role is ROLE_ADMIN
 
 
 Then you can use the script in the client directory to send the request and check the response,
