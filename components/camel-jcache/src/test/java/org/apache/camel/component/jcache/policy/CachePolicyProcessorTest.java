@@ -4,9 +4,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,20 +12,9 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
-import java.util.UUID;
 
-public class CachePolicyProcessorTest extends CamelTestSupport {
+public class CachePolicyProcessorTest extends CachePolicyTestBase {
     private static final Logger log = LoggerFactory.getLogger(CachePolicyProcessorTest.class);
-
-    @Before
-    public void before(){
-        //reset mock
-        MockEndpoint mock = getMockEndpoint("mock:value");
-        mock.reset();
-        mock.whenAnyExchangeReceived((e)->
-                e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
-    }
-
 
 
     //Basic test to verify value gets cached and route is not executed for the second time
@@ -255,26 +241,5 @@ public class CachePolicyProcessorTest extends CamelTestSupport {
                         .to("mock:value");
             }
         };
-    }
-
-    @After
-    public void after(){
-        //The RouteBuilder code is called for every test, so we destroy cache after each test
-        //TODO: isCreateCamelContextPerClass doesn't seem to work
-        CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
-        cacheManager.destroyCache("simple");
-        cacheManager.destroyCache("closed");
-    }
-
-    protected String randomString() {
-        return UUID.randomUUID().toString();
-    }
-
-    protected Cache lookupCache(String cacheName) {
-        //This will also open a closed cache
-        return Caching.getCachingProvider().getCacheManager().getCache(cacheName);
-    }
-    public static String generateValue(String key){
-        return "value-"+key;
     }
 }
