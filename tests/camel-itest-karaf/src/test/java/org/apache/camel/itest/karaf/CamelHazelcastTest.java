@@ -27,7 +27,17 @@ public class CamelHazelcastTest extends BaseKarafTest {
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        testComponent(COMPONENT, "hazelcast-atomicvalue");
+        testComponent(COMPONENT, "hazelcast-instance");
+        testComponent(COMPONENT, "hazelcast-list");
+        testComponent(COMPONENT, "hazelcast-map");
+        testComponent(COMPONENT, "hazelcast-multimap");
+        testComponent(COMPONENT, "hazelcast-queue");
+        testComponent(COMPONENT, "hazelcast-replicatedmap");
+        testComponent(COMPONENT, "hazelcast-ringbuffer");
+        testComponent(COMPONENT, "hazelcast-seda");
+        testComponent(COMPONENT, "hazelcast-set");
+        testComponent(COMPONENT, "hazelcast-topic");
     }
 
 }

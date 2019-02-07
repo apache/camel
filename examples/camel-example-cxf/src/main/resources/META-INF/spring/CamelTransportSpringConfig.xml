@@ -44,7 +44,7 @@
     <route>
       <from uri="jetty:http://localhost:{{port}}/GreeterContext/GreeterPort"/>
       <loadBalance>
-      	<custom ref="roundRobinRef"/>
+      	<customLoadBalancer ref="roundRobinRef"/>
         <to uri="direct:EndpointA"/>
         <to uri="direct:EndpointB"/>
       </loadBalance>

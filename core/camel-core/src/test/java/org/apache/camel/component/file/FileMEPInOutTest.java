@@ -32,7 +32,7 @@ public class FileMEPInOutTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedFileExists("target/data/fileMEPInOutTest.txt", "Hello World");
+        mock.expectedFileExists("target/data/FileMEPInOutTest.txt", "Hello World");
 
         // request is InOut
         template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME,
