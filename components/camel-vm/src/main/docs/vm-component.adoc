@@ -121,6 +121,9 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+// spring-boot-auto-configure options: END
 
 See the <<seda-component,Seda>> component for options and other important
 usage details as the same rules apply to the <<vm-component,Vm>> component.

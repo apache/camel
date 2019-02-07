@@ -171,6 +171,10 @@ with the following path and query parameters:
 
 TIP: *Default behavior for file producer* By default it will override any existing file, if one exist with the same name.
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+// spring-boot-auto-configure options: END
+
 === Move and Delete operations
 
 Any move or delete operations is executed after (post command) the

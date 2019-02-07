@@ -78,6 +78,10 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+// spring-boot-auto-configure options: END
+
 === Supported rest components
 
 The following components support rest consumer (Rest DSL):

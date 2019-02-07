@@ -177,6 +177,12 @@ jclouds:blobstore:aws-s3?operation=CamelJcloudsGet&container=mycontainer&blobNam
 For producer endpoint you can override all of the above URI options by
 passing the appropriate headers to the message.
 
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+// spring-boot-auto-configure options: END
+
+
 #### Message Headers for blobstore
 
 [width="100%",cols="10%,90%",options="header",]

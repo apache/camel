@@ -101,6 +101,9 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+// spring-boot-auto-configure options: END
 
 === Choosing BlockingQueue implementation
 
