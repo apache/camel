@@ -69,6 +69,6 @@ public class ArrayBlockingQueueFactory<E> implements BlockingQueueFactory<E> {
     @Override
     public ArrayBlockingQueue<E> create(int capacity) {
         return fair == null
-            ? new ArrayBlockingQueue<>(defaultCapacity) : new ArrayBlockingQueue<>(defaultCapacity, fair);
+                ? new ArrayBlockingQueue<>(capacity) : new ArrayBlockingQueue<>(capacity, fair);
     }
 }
