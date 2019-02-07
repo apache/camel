@@ -171,6 +171,22 @@ with the following path and query parameters:
 
 TIP: *Default behavior for file producer* By default it will override any existing file, if one exist with the same name.
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.file.enabled* | Whether to enable auto configuration of the file component. This is enabled by default. |  | Boolean
+| *camel.component.file.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 === Move and Delete operations
 
 Any move or delete operations is executed after (post command) the

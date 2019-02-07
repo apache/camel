@@ -81,6 +81,23 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.direct.block* | If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active. | true | Boolean
+| *camel.component.direct.enabled* | Whether to enable auto configuration of the direct component. This is enabled by default. |  | Boolean
+| *camel.component.direct.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.direct.timeout* | The timeout value to use if block is enabled. | 30000 | Long
+|===
+// spring-boot-auto-configure options: END
 
 === Samples
 

@@ -93,6 +93,22 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.scheduler.concurrent-tasks* | Number of threads used by the scheduling thread pool. Is by default using a single thread | 1 | Integer
+| *camel.component.scheduler.enabled* | Whether to enable auto configuration of the scheduler component. This is enabled by default. |  | Boolean
+| *camel.component.scheduler.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 === More information
 

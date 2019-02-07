@@ -106,6 +106,22 @@ with the following path and query parameters:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.controlbus.enabled* | Whether to enable auto configuration of the controlbus component. This is enabled by default. |  | Boolean
+| *camel.component.controlbus.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 
 === Using route command
 
