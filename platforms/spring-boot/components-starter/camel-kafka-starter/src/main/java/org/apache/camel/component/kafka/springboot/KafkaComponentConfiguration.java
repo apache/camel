@@ -441,8 +441,8 @@ public class KafkaComponentConfiguration
          */
         private String saslJaasConfig;
         /**
-         * Protocol used to communicate with brokers. Currently only PLAINTEXT
-         * and SSL are supported.
+         * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT
+         * and SSL are supported
          */
         private String securityProtocol = "PLAINTEXT";
         /**
