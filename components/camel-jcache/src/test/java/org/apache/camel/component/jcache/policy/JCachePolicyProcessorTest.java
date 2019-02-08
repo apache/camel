@@ -140,6 +140,37 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     }
 
+    //Key is null, ${header.mykey} is not set
+    @Test
+    public void testKeyNull() throws Exception {
+        final String key = randomString();
+        String body = randomString();
+        MockEndpoint mock = getMockEndpoint("mock:value");
+        Cache cache = lookupCache("simple");
+
+        //Send first, expected header is not set
+        Object responseBody = this.template().requestBody("direct:cached-byheader", body);
+
+        //We got back the value, mock was called once, nothing is cached.
+        assertFalse(cache.containsKey("null"));
+        assertFalse(cache.containsKey(""));
+        assertFalse(cache.containsKey(key));
+        assertEquals(generateValue(body), responseBody);
+        assertEquals(1, mock.getExchanges().size());
+
+        //Send again, use another body, but the same key
+        body = randomString();
+        responseBody = this.template().requestBody("direct:cached-byheader", body);
+
+        //We got back the value, mock was called again, nothing is cached
+        assertFalse(cache.containsKey("null"));
+        assertFalse(cache.containsKey(""));
+        assertFalse(cache.containsKey(key));
+        assertEquals(generateValue(body), responseBody);
+        assertEquals(2, mock.getExchanges().size());
+
+    }
+
     //Use an invalid key expression causing an exception
     @Test
     public void testInvalidKeyExpression() throws Exception {
@@ -151,8 +182,9 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
         Exchange response = this.template().request("direct:cached-invalidkey",
             (e) -> e.getMessage().setBody(body));
 
-        //Exception is on the exchange, cache is empty
+        //Exception is on the exchange, cache is empty, onException was called.
         assertIsInstanceOf(SimpleIllegalSyntaxException.class, response.getException().getCause());
+        assertEquals("exception-" + body, response.getMessage().getBody());
         assertEquals(0, mock.getExchanges().size());
         assertFalse(cache.iterator().hasNext());
 
@@ -250,6 +282,10 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
                 jcachePolicy.setKeyExpression(simple("${unexpected}"));
 
                 from("direct:cached-invalidkey")
+                    .onException(Exception.class)
+                    .setBody(simple("exception-${body}"))
+                    .end()
+
                     .policy(jcachePolicy)
                     .to("mock:value");
             }

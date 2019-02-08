@@ -54,18 +54,20 @@ public class JCachePolicyProcessor extends DelegateAsyncProcessor {
             //Get key by the expression or use message body
             Object key = keyExpression != null ? keyExpression.evaluate(exchange, Object.class) : exchange.getMessage().getBody();
 
+            if (key == null) {
+                return super.process(exchange, callback);
+            }
+
             //Check if cache contains the key
-            if (key != null) {
-                Object value = cache.get(key);
-                if (value != null) {
-                    // use the cached object in the Exchange without calling the rest of the route
-                    LOG.debug("Cached object is found, skipping the route - key:{}, exchange:{}", key, exchange.getExchangeId());
+            Object value = cache.get(key);
+            if (value != null) {
+                // use the cached object in the Exchange without calling the rest of the route
+                LOG.debug("Cached object is found, skipping the route - key:{}, exchange:{}", key, exchange.getExchangeId());
 
-                    exchange.getMessage().setBody(value);
+                exchange.getMessage().setBody(value);
 
-                    callback.done(true);
-                    return true;
-                }
+                callback.done(true);
+                return true;
             }
 
 
