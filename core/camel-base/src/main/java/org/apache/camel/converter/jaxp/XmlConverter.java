@@ -695,7 +695,7 @@ public class XmlConverter {
         if (in instanceof IOHelper.EncodingInputStream) {
             // DocumentBuilder detects encoding from XML declaration, so we need to
             // revert the converted encoding for the input stream
-        	IOHelper.EncodingInputStream encIn = (IOHelper.EncodingInputStream) in;
+            IOHelper.EncodingInputStream encIn = (IOHelper.EncodingInputStream) in;
             return documentBuilder.parse(encIn.toOriginalInputStream());
         } else {
             return documentBuilder.parse(in);
