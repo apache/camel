@@ -153,7 +153,6 @@ import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
-import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
@@ -163,6 +162,7 @@ import org.apache.camel.support.ScheduledPollConsumer;
 import org.apache.camel.support.processor.MarshalProcessor;
 import org.apache.camel.support.processor.ThroughputLogger;
 import org.apache.camel.support.processor.UnmarshalProcessor;
+import org.apache.camel.support.processor.validation.PredicateValidatingProcessor;
 
 /**
  * Default {@link org.apache.camel.spi.ManagementObjectStrategy}.
