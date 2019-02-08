@@ -58,7 +58,7 @@
         <property name="brokerURL" value="tcp://localhost:61616"/>
     </bean>
 
-    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
 		<property name="connectionFactory" ref="poolConnectionFactory"/>
 		<property name="transactionManager" ref="jmsTransactionManager"/>
 		<property name="transacted" value="true"/>

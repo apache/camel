@@ -121,6 +121,26 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.vm.concurrent-consumers* | Sets the default number of concurrent threads processing exchanges. | 1 | Integer
+| *camel.component.vm.default-block-when-full* | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | Boolean
+| *camel.component.vm.default-offer-timeout* | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue |  | Long
+| *camel.component.vm.default-queue-factory* | Sets the default queue factory. The option is a org.apache.camel.component .seda.BlockingQueueFactory<org.apache.camel.Exchange> type. |  | String
+| *camel.component.vm.enabled* | Whether to enable auto configuration of the vm component. This is enabled by default. |  | Boolean
+| *camel.component.vm.queue-size* | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | Integer
+| *camel.component.vm.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 See the <<seda-component,Seda>> component for options and other important
 usage details as the same rules apply to the <<vm-component,Vm>> component.

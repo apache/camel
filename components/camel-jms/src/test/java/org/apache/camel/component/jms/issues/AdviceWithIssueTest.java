@@ -18,8 +18,10 @@ package org.apache.camel.component.jms.issues;
 
 import java.util.Collections;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -52,6 +54,14 @@ public class AdviceWithIssueTest extends CamelTestSupport {
         template.sendBody("direct:start", Collections.singletonMap("foo", "bar"));
 
         assertMockEndpointsSatisfied();
+    }
+    
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext camelContext = super.createCamelContext();
+        JmsComponent activemq =
+            JmsComponent.jmsComponent();
+        camelContext.addComponent("activemq", activemq);
+        return camelContext;
     }
 
     @Override

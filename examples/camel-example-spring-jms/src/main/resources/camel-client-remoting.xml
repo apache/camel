@@ -42,7 +42,7 @@
   </camel:camelContext>
 
   <!-- Camel JMSProducer to be able to send messages to a remote Active MQ server -->
-  <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+  <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
     <property name="connectionFactory">
       <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
         <property name="brokerURL" value="tcp://localhost:${tcp.port}"/>

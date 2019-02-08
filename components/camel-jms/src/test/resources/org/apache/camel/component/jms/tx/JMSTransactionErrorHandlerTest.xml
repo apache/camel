@@ -41,7 +41,7 @@
     </bean>
 
     <!-- define our activemq component -->
-    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
         <property name="connectionFactory" ref="poolConnectionFactory"/>
         <!-- define the jms consumer/producer as transacted -->
         <property name="transacted" value="true"/>

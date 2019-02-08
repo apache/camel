@@ -37,14 +37,18 @@
         <property name="connectionFactory" ref="poolConnectionFactory"/>
     </bean>
 
-    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
         <property name="connectionFactory" ref="poolConnectionFactory"/>
         <property name="transacted" value="true"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
     </bean>
 
-    <bean id="activemq2" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <bean id="activemq2" class="org.apache.camel.component.jms.JmsComponent">
+    <property name="connectionFactory">
+       <bean class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
+       </bean>
+    </property>
     </bean>
 
 </beans>

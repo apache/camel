@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -184,19 +186,16 @@ public final class PackageHelper {
         }
     }
 
-    public static File findCamelCoreDirectory(MavenProject project, File dir) {
+    public static File findCamelCoreDirectory(File dir) {
         if (dir == null) {
             return null;
         }
-        File[] files = dir.listFiles(f -> f.getName().equals("camel-core"));
-        if (files != null && files.length == 1) {
-            // okay the file are in the target folder
-            File target = new File(files[0], "target");
-            String version = project.getVersion();
-            return new File(target, "camel-core-" + version + ".jar");
+        Path p = dir.toPath().resolve("core/camel-core");
+        if (Files.isDirectory(p)) {
+            return p.toFile();
         } else {
             // okay walk up the parent dir
-            return findCamelCoreDirectory(project, dir.getParentFile());
+            return findCamelCoreDirectory(dir.getParentFile());
         }
     }
 

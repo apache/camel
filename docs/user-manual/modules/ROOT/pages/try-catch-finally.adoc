@@ -40,7 +40,7 @@ matches a thrown exception against the `doCatch` blocks. The reasons is
 that many times the original caused exceptions is wrapped by other
 wrapper exceptions, typically transposing the exception from a checked
 to a runtime exception.
-Camel for instance does this by wrapped it in a `CamelRuntimeException`.
+Camel for instance does this by wrapped it in a `RuntimeCamelException`.
 So if the original caused exception is an `java.io.IOException` then
 Camel will still match a `doCatch` block defined with an
 `java.io.IOException`. And just like Java the order in which you have

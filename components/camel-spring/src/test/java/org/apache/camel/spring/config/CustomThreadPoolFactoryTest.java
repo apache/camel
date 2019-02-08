@@ -22,8 +22,8 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.apache.camel.spring.SpringRunWithTestSupport;
+import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;

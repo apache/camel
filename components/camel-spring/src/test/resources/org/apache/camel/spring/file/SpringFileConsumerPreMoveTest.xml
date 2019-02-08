@@ -26,7 +26,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="file://target/premove?initialDelay=0&amp;delay=10&amp;preMove=work/work-${file:name}"/>
+            <from uri="file://target/data/premove?initialDelay=0&amp;delay=10&amp;preMove=work/work-${file:name}"/>
             <process ref="checker"/>
             <to uri="mock:result"/>
         </route>

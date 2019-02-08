@@ -32,6 +32,10 @@
   <name>Camel :: Integration Tests :: Blueprint CXF Tests</name>
   <description>Tests the camel-cxf blueprint features</description>
 
+  <properties>
+    <skipTests>true</skipTests>
+  </properties>
+
   <dependencies>
     <!-- assuming camel is pulling aries 1.0.0, pull asm 4.0 first -->
     <dependency>
@@ -50,13 +54,13 @@
     <dependency>
       <groupId>org.apache.karaf.jaas</groupId>
       <artifactId>org.apache.karaf.jaas.jasypt</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.servicemix.bundles</groupId>
-          <artifactId>org.apache.servicemix.bundles.jasypt</artifactId>
-        </exclusion>
-      </exclusions>
-      <version>${karaf2-version}</version>
+      <version>${karaf4-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.jaas</groupId>
+      <artifactId>org.apache.karaf.jaas.boot</artifactId>
+      <version>${karaf4-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

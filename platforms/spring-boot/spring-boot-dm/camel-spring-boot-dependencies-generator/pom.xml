@@ -130,6 +130,7 @@
               <exclude>org.apache.httpcomponents:httpmime</exclude>
               <exclude>org.apache.derby:derby</exclude>
               <exclude>org.apache.logging.log4j:*</exclude>
+              <exclude>org.assertj:assertj-core:*</exclude>
 
               <exclude>org.codehaus.groovy:*</exclude>
               <exclude>org.hibernate:hibernate-entitymanager</exclude>

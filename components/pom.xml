@@ -80,6 +80,7 @@
     <module>camel-ribbon</module>
 
     <!-- regular modules in alphabetic order -->
+    <module>camel-activemq</module>
     <module>camel-ahc</module>
     <module>camel-ahc-ws</module>
     <module>camel-amqp</module>

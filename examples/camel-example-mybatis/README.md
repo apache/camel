@@ -4,10 +4,10 @@
 
 This example shows how to exchange data using a shared database table.
 
-The example has two Camel routes. The first route insert new data into the table,
+The example has two Camel routes. The first route inserts new data into the table,
 triggered by a timer to run every 5th second.
 
-The second route pickup the newly inserted rows from the table,
+The second route picks up the newly inserted rows from the table,
 process the row(s), and mark the row(s) as processed when done;
 to avoid picking up the same rows again.
 

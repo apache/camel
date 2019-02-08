@@ -53,12 +53,12 @@
         <property name="concurrentConsumers" value="1"/>
     </bean>
 
-    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent">
         <property name="configuration" ref="jmsConfig"/>
     </bean>
 
     <!-- If we don't use transaction support defined in jmsConfig, test will succeed
-   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+   <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent">
        <property name="connectionFactory" ref="jmsFactory"/>
    </bean>
     -->

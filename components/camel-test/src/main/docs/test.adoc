@@ -39,7 +39,7 @@ From Camel 2.9 onwards the <<test-component,Test>> component is provided
 directly in the camel-core.
 
 [[Test-URIformat]]
-==== URI format
+=== URI format
 
 [source,java]
 --------------------------------
@@ -51,7 +51,7 @@ Component URI that the expected message bodies are
 pulled from before starting the test.
 
 [[Test-URIOptions]]
-==== URI Options
+=== URI Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -75,7 +75,7 @@ expression.
 |=======================================================================
 
 [[Test-Example]]
-==== Example
+=== Example
 
 For example, you could write a test case as follows:
 
@@ -93,7 +93,7 @@ To see how you can set other expectations on the test endpoint, see the
 <<mock-component,Mock>> component.
 
 [[Test-SeeAlso]]
-==== See Also
+=== See Also
 
 * Configuring Camel
 * Component

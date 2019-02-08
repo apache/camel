@@ -49,7 +49,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     public String getDataFormatName() {
-        return "zipFile";
+        return "zipfile";
     }
 
     @Override

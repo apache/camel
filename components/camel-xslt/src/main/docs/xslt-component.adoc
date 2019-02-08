@@ -117,6 +117,28 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+
+The component supports 9 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.xslt.content-cache* | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | Boolean
+| *camel.component.xslt.enabled* | Whether to enable auto configuration of the xslt component. This is enabled by default. |  | Boolean
+| *camel.component.xslt.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.xslt.saxon* | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath. | false | Boolean
+| *camel.component.xslt.saxon-configuration* | To use a custom Saxon configuration. The option is a java.lang.Object type. |  | String
+| *camel.component.xslt.saxon-configuration-properties* | To set custom Saxon configuration properties. The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
+| *camel.component.xslt.saxon-extension-functions* | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
+| *camel.component.xslt.uri-resolver* | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. The option is a javax.xml.transform.URIResolver type. |  | String
+| *camel.component.xslt.uri-resolver-factory* | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. The option is a org.apache.camel.component.xslt.XsltUriResolverFactory type. |  | String
+|===
+// spring-boot-auto-configure options: END
 
 === Using XSLT endpoints
 

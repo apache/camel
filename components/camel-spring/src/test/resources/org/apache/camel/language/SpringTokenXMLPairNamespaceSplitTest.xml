@@ -27,7 +27,7 @@
   <!-- START SNIPPET: e1 -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
-      <from uri="file:target/pair?initialDelay=0&amp;delay=10"/>
+      <from uri="file:target/data/pair?initialDelay=0&amp;delay=10"/>
       <split>
         <!-- split the file using XML tokenizer, where we grab the order tag,
              and inherit the namespaces from the parent/root orders tag

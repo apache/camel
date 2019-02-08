@@ -150,6 +150,20 @@
     <camel.osgi.export.pkg/>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <!--
+        CAMEL-13084 Fix the spring-boot examples start up error by overriding servlet API version from camel-parent
+        Wqe need to clean it up once camel-parent upgrade the servlet api version.
+      -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${javax.servlet.api.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <resources>
       <resource>

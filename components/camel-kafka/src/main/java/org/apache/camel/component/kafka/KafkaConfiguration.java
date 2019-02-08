@@ -1063,7 +1063,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Protocol used to communicate with brokers. Currently only PLAINTEXT and SSL are supported.
+     * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT and SSL are supported
      */
     public void setSecurityProtocol(String securityProtocol) {
         this.securityProtocol = securityProtocol;

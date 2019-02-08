@@ -14,7 +14,7 @@ The example is implemented in Spring XML only without using any kind of _applica
 * camel-core
 * camel-spring
 * camel-jms
-* activemq-camel
+* camel-activemq
 
 ### Build
 

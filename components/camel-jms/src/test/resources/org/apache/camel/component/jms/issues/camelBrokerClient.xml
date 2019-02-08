@@ -28,8 +28,12 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
         <template id="template"/>
     </camelContext>
 
-    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
+     <property name="connectionFactory">
+       <bean class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://myBroker"/>
+       </bean>
+     </property>
     </bean>
 
 </beans>

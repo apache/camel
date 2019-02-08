@@ -101,6 +101,7 @@
   </build>
   <!-- WARNING: do not edit the modules section, it is update automatically by the camel-package plugin -->
   <modules>
+    <module>camel-activemq-starter</module>
     <module>camel-ahc-starter</module>
     <module>camel-ahc-ws-starter</module>
     <module>camel-amqp-starter</module>

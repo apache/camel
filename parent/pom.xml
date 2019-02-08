@@ -82,9 +82,9 @@
     <avro-bundle-version>1.8.2_1</avro-bundle-version>
     <avro-ipc-bundle-version>1.8.2_1</avro-ipc-bundle-version>
     <awaitility-version>3.1.6</awaitility-version>
-    <aws-java-sdk-bundle-version>1.11.469_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.11.469</aws-java-sdk-version>
-    <aws-xray-version>2.1.0</aws-xray-version>
+    <aws-java-sdk-bundle-version>1.11.483_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.11.483</aws-java-sdk-version>
+    <aws-xray-version>2.2.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-storage-java-sdk-version>8.0.0</azure-storage-java-sdk-version>
     <azure-storage-java-sdk-bundle-version>8.0.0_1</azure-storage-java-sdk-bundle-version>
@@ -102,8 +102,8 @@
     <braintree-gateway-version>2.91.0</braintree-gateway-version>
     <brave-zipkin-version>5.6.1</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
-    <c3p0-version>0.9.5.2</c3p0-version>
-    <c3p0-bundle-version>0.9.5.2_2</c3p0-bundle-version>
+    <c3p0-version>0.9.5.3</c3p0-version>
+    <c3p0-bundle-version>0.9.5.3_1</c3p0-bundle-version>
     <caffeine-version>2.6.2</caffeine-version>
     <californium-version>1.0.6</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
@@ -120,8 +120,8 @@
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
     <cglib-bundle-version>3.2.10_1</cglib-bundle-version>
     <cglib-version>3.2.10</cglib-version>
-    <chunk-templates-version>3.3.1</chunk-templates-version>
-    <chunk-templates-bundle-version>3.3.1_1</chunk-templates-bundle-version>
+    <chunk-templates-version>3.5.0</chunk-templates-version>
+    <chunk-templates-bundle-version>3.5.0_1</chunk-templates-bundle-version>
     <cmis-version>1.1.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-client-version>3.1.2</cometd-java-client-version>
@@ -154,7 +154,6 @@
     <commons-pool-version>1.6</commons-pool-version>
     <commons-pool2-version>2.6.0</commons-pool2-version>
     <commons-text-version>1.6</commons-text-version>
-    <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.4</compress-lzf-version>
     <consul-client-version>1.2.5</consul-client-version>
     <consul-client-bundle-version>1.2.5_1</consul-client-bundle-version>
@@ -163,7 +162,7 @@
     <couchbase-client-version>1.4.13</couchbase-client-version>
     <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
     <curator-version>2.12.0</curator-version>
-    <cxf-version>3.2.7</cxf-version>
+    <cxf-version>3.3.0</cxf-version>
     <cxf-version-range>[3.1,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.2.0</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.2.0</cxf-xjc-utils-version>
@@ -199,8 +198,8 @@
     <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <fabric8-maven-plugin-version>3.5.42</fabric8-maven-plugin-version>
-    <facebook4j-core-version>2.4.12</facebook4j-core-version>
-    <facebook4j-core-bundle-version>2.4.12_1</facebook4j-core-bundle-version>
+    <facebook4j-core-version>2.4.13</facebook4j-core-version>
+    <facebook4j-core-bundle-version>2.4.13_1</facebook4j-core-bundle-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
     <fastjson-version>1.2.54</fastjson-version>
     <fastjson-bundle-version>1.2.54_1</fastjson-bundle-version>
@@ -317,7 +316,7 @@
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
     <jackson2-version>2.9.8</jackson2-version>
-    <jackrabbit-version>2.19.0</jackrabbit-version>
+    <jackrabbit-version>2.19.1</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jandex-version>2.1.0.Final</jandex-version>
@@ -347,6 +346,10 @@
     <javax.servlet-api-version>3.1.0</javax.servlet-api-version>
     <javax.ws.rs-api-version>2.1.1</javax.ws.rs-api-version>
     <jaxb-bundle-version>2.2.11_1</jaxb-bundle-version>
+    <jakarta-jaxb-version>2.3.2</jakarta-jaxb-version>
+    <glassfish-jaxb-runtime-version>${jakarta-jaxb-version}</glassfish-jaxb-runtime-version>
+    <glassfish-jaxb-xjc-version>${jakarta-jaxb-version}</glassfish-jaxb-xjc-version>
+    <jaxb2-maven-plugin-version>2.4</jaxb2-maven-plugin-version>
     <jaxen-version>1.1.6</jaxen-version>
     <jbpm-version>7.14.0.Final</jbpm-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
@@ -438,8 +441,8 @@
     <leveldbjni-version>1.8</leveldbjni-version>
     <leveldb-api-version>0.10</leveldb-api-version>
     <leveldb-version>0.10</leveldb-version>
-    <libphonenumber-version>8.10.2</libphonenumber-version>
-    <libphonenumber-bundle-version>8.10.2_1</libphonenumber-bundle-version>
+    <libphonenumber-version>8.10.3</libphonenumber-version>
+    <libphonenumber-bundle-version>8.10.3_1</libphonenumber-bundle-version>
     <!-- virtual dependency only used by Eclipse m2e -->
     <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
     <lettuce-version>5.1.0.RELEASE</lettuce-version>
@@ -469,8 +472,7 @@
     <maven-jar-plugin-version>3.0.2</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
-    <!-- plugin-plugin 3.5 does not work -->
-    <maven-plugin-plugin-version>3.4</maven-plugin-plugin-version>
+    <maven-plugin-plugin-version>3.5.2</maven-plugin-plugin-version>
     <maven-plugin-annotations-version>3.5</maven-plugin-annotations-version>
     <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
     <maven-remote-resources-plugin-version>1.5</maven-remote-resources-plugin-version>
@@ -493,15 +495,16 @@
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockwebserver-version>0.0.17</mockwebserver-version>
     <mockito-version>2.23.4</mockito-version>
-    <mongo-java-driver-version>3.9.1</mongo-java-driver-version>
+    <mongo-java-driver-version>3.10.0</mongo-java-driver-version>
     <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
     <mqtt-client-version>1.14</mqtt-client-version>
     <msv-version>2013.6.1</msv-version>
     <mustache-java-version>0.9.5</mustache-java-version>
     <mustache-guava-version>16.0</mustache-guava-version>
-    <mustache-bundle-version>0.9.5_3</mustache-bundle-version>
+    <mustache-bundle-version>0.9.5_4</mustache-bundle-version>
+    <!-- mvel 2.4.3 does not work in OSGi: https://github.com/mvel/mvel/issues/178 -->
     <mvel-version>2.4.2.Final</mvel-version>
-    <mybatis-version>3.4.6</mybatis-version>
+    <mybatis-version>3.5.0</mybatis-version>
     <narayana-version>5.9.2.Final</narayana-version>
     <nessus-version>1.0.0.Beta1</nessus-version>
     <nsq-client-version>1.0.0.RC4</nsq-client-version>
@@ -530,9 +533,6 @@
     <opencensus-api-version>0.12.3</opencensus-api-version>
     <oncrpc-version>1.1.3</oncrpc-version>
     <openejb-version>4.7.5</openejb-version>
-    <openhft-affinity-version>3.1.10</openhft-affinity-version>
-    <openhft-compiler-version>2.3.1</openhft-compiler-version>
-    <openhft-lang-version>6.8.2</openhft-lang-version>
     <openjpa-version>2.4.3</openjpa-version>
     <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
     <openstack4j-version>3.0.2</openstack4j-version>
@@ -619,8 +619,8 @@
     <spark-rest-version>2.8.0</spark-rest-version>
     <spark-rest-bundle-version>2.8.0_1</spark-rest-bundle-version>
     <splunk-version>1.6.5.0_1</splunk-version>
-    <spring-batch-version>4.0.1.RELEASE</spring-batch-version>
-    <spring-batch-bundle-version>4.0.1.RELEASE_1</spring-batch-bundle-version>
+    <spring-batch-version>4.1.1.RELEASE</spring-batch-version>
+    <spring-batch-bundle-version>4.1.1.RELEASE_1</spring-batch-bundle-version>
     <spring-boot-version>2.1.2.RELEASE</spring-boot-version>
     <spring-cloud-commons-version>2.0.2.RELEASE</spring-cloud-commons-version>
     <spring-cloud-consul-version>2.0.1.RELEASE</spring-cloud-consul-version>
@@ -673,7 +673,7 @@
     <twitter4j-version>4.0.7</twitter4j-version>
     <uberfire-maven-support-version>1.3.0.Final</uberfire-maven-support-version>
     <undertow-version>1.4.26.Final</undertow-version>
-    <univocity-parsers-version>2.7.6</univocity-parsers-version>
+    <univocity-parsers-version>2.8.1</univocity-parsers-version>
     <unix-socket-factory-version>2015-01-27T15-02-14</unix-socket-factory-version>
     <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>
     <validation-1-api-version>1.1.0.Final</validation-1-api-version>
@@ -719,8 +719,8 @@
     <xstream-version>1.4.11</xstream-version>
     <xom-version>1.2.5</xom-version>
     <zendesk-client-version>0.6.2</zendesk-client-version>
-    <zipkin-reporter-version>2.7.14</zipkin-reporter-version>
-    <zipkin-version>2.12.0</zipkin-version>
+    <zipkin-reporter-version>2.7.15</zipkin-reporter-version>
+    <zipkin-version>2.12.1</zipkin-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.13</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
@@ -795,6 +795,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-util-json</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-api</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -831,6 +836,11 @@
 
       <!-- NOTE: auto-generated list of components when building platforms/camel-catalog -->
       <!-- camel components: START -->
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-activemq</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ahc</artifactId>
@@ -2287,6 +2297,11 @@
       <!-- camel starters: START -->
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-activemq-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-ahc-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3652,6 +3667,11 @@
         <artifactId>spi-annotations</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>meta-annotations</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- testing jars -->
       <dependency>
@@ -4515,6 +4535,16 @@
         <version>${awaitility-version}</version>
       </dependency>
       <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>java-hamcrest</artifactId>
+        <version>${hamcrest-version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
         <version>${mockito-version}</version>
@@ -4850,6 +4880,16 @@
 
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jaxb2-maven-plugin</artifactId>
+          <version>${jaxb2-maven-plugin-version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-plugin-plugin</artifactId>
+          <version>${maven-plugin-plugin-version}</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
@@ -5719,56 +5759,32 @@
         <jdk>[9,)</jdk>
       </activation>
       <properties>
-        <cxf.codegen.jvmArgs>--add-modules java.activation,java.xml.bind,java.xml.ws
-          --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED
-          --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED
-          --add-exports=java.xml/com.sun.org.apache.xerces.internal.impl.xs=ALL-UNNAMED
-          --add-exports=java.xml.bind/com.sun.xml.internal.bind.marshaller=ALL-UNNAMED --add-opens
-          java.xml.ws/javax.xml.ws.wsaddressing=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens
-          java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens
-          java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED
-        </cxf.codegen.jvmArgs>
-        <cxf.xjc.jvmArgs>--add-modules java.activation,java.xml.bind,java.xml.ws
-          --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED
-          --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED
-          --add-exports=java.xml/com.sun.org.apache.xerces.internal.impl.xs=ALL-UNNAMED
-          --add-exports=java.xml.bind/com.sun.xml.internal.bind.marshaller=ALL-UNNAMED --add-opens
-          java.xml.ws/javax.xml.ws.wsaddressing=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens
-          java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens
-          java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED
-        </cxf.xjc.jvmArgs>
         <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
-        <camel.surefire.fork.vmargs>--add-modules java.xml.bind,java.xml.ws,java.xml.ws.annotation,java.sql --add-opens
-          java.base/javax.net=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens
-          java.base/java.net=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED --add-opens
-          java.base/java.util.regex=ALL-UNNAMED --add-opens java.desktop/java.awt.font=ALL-UNNAMED --add-opens
-          java.base/java.lang.reflect=ALL-UNNAMED --add-opens java.base/java.text=ALL-UNNAMED --add-opens
-          java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens
-          java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED
-          --add-exports=java.xml.bind/com.sun.xml.internal.bind=ALL-UNNAMED
-          --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2=ALL-UNNAMED
-          --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime.reflect=ALL-UNNAMED
-          --add-exports=java.xml/com.sun.org.apache.xml.internal.serialize=ALL-UNNAMED
-          --add-exports=java.base/sun.net.util=ALL-UNNAMED --add-exports=java.base/sun.net.spi=ALL-UNNAMED
-        </camel.surefire.fork.vmargs>
       </properties>
       <build>
         <pluginManagement>
           <plugins>
             <plugin>
-              <groupId>org.apache.cxf</groupId>
-              <artifactId>cxf-codegen-plugin</artifactId>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>jaxb2-maven-plugin</artifactId>
               <dependencies>
                 <dependency>
-                  <groupId>javax.xml.bind</groupId>
-                  <artifactId>jaxb-api</artifactId>
-                  <version>${jaxb-version}</version>
+                  <groupId>jakarta.xml.bind</groupId>
+                  <artifactId>jakarta.xml.bind-api</artifactId>
+                  <version>${jakarta-jaxb-version}</version>
                 </dependency>
               </dependencies>
             </plugin>
             <plugin>
               <groupId>org.apache.camel</groupId>
               <artifactId>camel-package-maven-plugin</artifactId>
+              <dependencies>
+                <dependency>
+                  <groupId>jakarta.xml.bind</groupId>
+                  <artifactId>jakarta.xml.bind-api</artifactId>
+                  <version>${jakarta-jaxb-version}</version>
+                </dependency>
+              </dependencies>
             </plugin>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
@@ -5779,12 +5795,8 @@
                 <target>${jdk.version}</target>
                 <maxmem>512M</maxmem>
                 <fork>true</fork>
-                <compilerArgs>
-                  <arg>-J--add-modules</arg>
-                  <arg>-Jjava.xml.bind</arg>
-                  <!-- SB2 actuator endpoint requires MethodParameter metadata -->
-                  <arg>-parameters</arg>
-                </compilerArgs>
+                <showDeprecation>true</showDeprecation>
+                <showWarnings>true</showWarnings>
               </configuration>
             </plugin>
             <plugin>
@@ -5797,6 +5809,53 @@
           </plugins>
         </pluginManagement>
       </build>
+      <dependencies>
+        <dependency>
+          <groupId>javax.annotation</groupId>
+          <artifactId>javax.annotation-api</artifactId>
+          <version>1.3.1</version>
+        </dependency>
+        <dependency>
+          <groupId>javax.xml.ws</groupId>
+          <artifactId>jaxws-api</artifactId>
+          <version>2.3.0</version>
+          <exclusions>
+            <exclusion>
+              <groupId>javax.xml.bind</groupId>
+              <artifactId>jaxb-api</artifactId>
+            </exclusion>
+          </exclusions>
+        </dependency>
+        <dependency>
+          <groupId>jakarta.xml.bind</groupId>
+          <artifactId>jakarta.xml.bind-api</artifactId>
+          <version>${jakarta-jaxb-version}</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.activation</groupId>
+          <artifactId>javax.activation</artifactId>
+          <version>1.2.0</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+          <version>1.1.3</version>
+        </dependency>
+        <dependency>
+          <groupId>com.sun.xml.messaging.saaj</groupId>
+          <artifactId>saaj-impl</artifactId>
+          <version>1.4.0-b03</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.geronimo.specs</groupId>
+          <artifactId>geronimo-jta_1.1_spec</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.jboss.spec.javax.rmi</groupId>
+          <artifactId>jboss-rmi-api_1.0_spec</artifactId>
+          <version>1.0.6.Final</version>
+        </dependency>
+      </dependencies>
     </profile>
   </profiles>
 </project>

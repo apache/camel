@@ -95,7 +95,7 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
-        EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-s3://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
+        EC2Endpoint endpoint = (EC2Endpoint)component.createEndpoint("aws-ec2://testDomain?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
         
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());

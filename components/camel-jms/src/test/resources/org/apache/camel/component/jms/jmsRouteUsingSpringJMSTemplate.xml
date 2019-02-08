@@ -29,7 +29,7 @@
       <jmxAgent id="agent" disabled="true"/>
   </camelContext>
 
-  <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+  <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
     <property name="jmsOperations" ref="jmsTemplate"/>
   </bean>
   

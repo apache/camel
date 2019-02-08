@@ -1,3 +1,4 @@
+* xref:activemq-component.adoc[ActiveMQ Component]
 * xref:ahc-ws-component.adoc[AHC Websocket Component]
 * xref:ahc-component.adoc[AHC Component]
 * xref:amqp-component.adoc[AMQP Component]
@@ -20,6 +21,7 @@
 * xref:aws-ddb-component.adoc[AWS DynamoDB Component]
 * xref:aws-ddbstream-component.adoc[AWS DynamoDB Streams Component]
 * xref:aws-ec2-component.adoc[AWS EC2 Component]
+* xref:aws-ecs-component.adoc[AWS ECS Component]
 * xref:aws-eks-component.adoc[AWS EKS Component]
 * xref:aws-iam-component.adoc[AWS IAM Component]
 * xref:aws-kinesis-component.adoc[AWS Kinesis Component]

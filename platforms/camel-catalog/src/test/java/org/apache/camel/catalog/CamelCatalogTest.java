@@ -553,7 +553,7 @@ public class CamelCatalogTest {
     @Test
     public void validateActiveMQProperties() throws Exception {
         // add activemq as known component
-        catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
+        catalog.addComponent("activemq", "org.apache.camel.component.activemq.ActiveMQComponent");
 
         // activemq
         EndpointValidationResult result = catalog.validateEndpointProperties("activemq:temp-queue:cheese?jmsMessageType=Bytes");
@@ -981,7 +981,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testSimplePredicate() throws Exception {
-        LanguageValidationResult result = catalog.validateLanguagePredicate(null,  "simple","${body} == 'abc'");
+        LanguageValidationResult result = catalog.validateLanguagePredicate(null, "simple", "${body} == 'abc'");
         assertTrue(result.isSuccess());
         assertEquals("${body} == 'abc'", result.getText());
 
@@ -996,7 +996,7 @@ public class CamelCatalogTest {
 
     @Test
     public void testPredicatePlaceholder() throws Exception {
-        LanguageValidationResult result = catalog.validateLanguagePredicate(null,  "simple","${body} contains '{{danger}}'");
+        LanguageValidationResult result = catalog.validateLanguagePredicate(null, "simple", "${body} contains '{{danger}}'");
         assertTrue(result.isSuccess());
         assertEquals("${body} contains '{{danger}}'", result.getText());
 
