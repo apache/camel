@@ -69,7 +69,54 @@ An alternative is that some of the Camel
 link:../component.adoc[Components] supports configuring a custom header
 filter strategy.
 This allows you to implement the
-`org.apache.camel.spi.HeaderFilterStrategy` interface, where you can
-filter unwanted headers.
-Though it's often easier to use the `removeHeaders` in the Camel route as
-shown above.
+`org.apache.camel.spi.HeaderFilterStrategy` interface, where one can
+filter unwanted headers from the communication while not removing them from the
+Exchange. Though it's often easier to use the `removeHeaders` in the Camel route
+as shown above.
+
+Camel core offers a default filter strategy implementation, the
+DefaultHeaderFilterStrategy class, to which one can provide a regular expression
+pattern or a set of header names to be filtered out.
+
+[source,xml]
+----
+<bean class="org.apache.camel.impl.DefaultHeaderFilterStrategy" id="myFilter">
+    <property name="outFilter">
+        <set>
+            <value>unwantedHeaderName</value>
+        </set>
+    </property>
+</bean>
+...
+<setHeader headerName="allowedHeaderName"><constant>some metadata</constant></setHeader>
+<setHeader headerName="unwantedHeaderName"><constant>some private data</constant></setHeader>
+<to id="publish" uri="activemq:queue:destinationName?headerFilterStrategy=#myFilter"/>
+<log message="${header.unwantedHeaderName}"/>
+----
+
+The destination queue would receive a JMS message with the allowedHeaderName as
+JMS property. If the queue messages are consumed by a Camel route, then the
+exchange will have the allowedHeaderName as a header. The log would print "some
+private data" since the header has only been filtered out from the producer
+endpoint, but not removed from the Exchange.
+
+[[Howtoavoidsendingsomeorallmessageheaders-SelectingTheAcceptedHeaders]]
+==== Selecting the accepted headers
+
+The more steps a route has, more headers tend to be present in the exchange.
+When the number of headers is large, undetermined, or one can't know in advance
+which headers must be filtered out, it is desirable not to deliver by default
+the headers to the destination endpoint.
+
+In this case, one can filter out everything and selectively send only certain
+headers to the destination endpoint. The DefaultHeaderFilterStrategy behavior
+can be reversed so only certain headers are accepted through the filterOnMatch
+property.
+
+[source,xml]
+----
+<bean class="org.apache.camel.impl.DefaultHeaderFilterStrategy" id="myFilter">
+    <property name="filterOnMatch" value="false" />
+    ...
+</bean>
+----
