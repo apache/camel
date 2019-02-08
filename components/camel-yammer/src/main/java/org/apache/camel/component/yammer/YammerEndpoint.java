@@ -60,8 +60,6 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
         case USERS:
         case CURRENT:
             return new YammerUserPollingConsumer(this, processor);
-        case RELATIONSHIPS:
-            return new YammerRelationshipPollingConsumer(this, processor);
         default:
             throw new Exception(String.format("%s is not a valid Yammer function type.", config.getFunction()));
         }  
