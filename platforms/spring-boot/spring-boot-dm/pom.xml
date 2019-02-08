@@ -66,49 +66,22 @@
     <maven-checkstyle-plugin-version>3.0.0</maven-checkstyle-plugin-version>
     <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
 
+    <camel.osgi.manifest></camel.osgi.manifest>
   </properties>
 
   <build>
     <plugins>
-
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>${maven-checkstyle-plugin-version}</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-buildtools</artifactId>
-            <version>${project.version}</version>
-          </dependency>
-          <dependency>
-            <groupId>com.puppycrawl.tools</groupId>
-            <artifactId>checkstyle</artifactId>
-            <version>${maven-checkstyle-version}</version>
-          </dependency>
-        </dependencies>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
         <executions>
           <execution>
-            <id>default-cli</id>
-            <phase>validate</phase>
-            <configuration>
-              <includeResources>false</includeResources>
-              <configLocation>camel-checkstyle.xml</configLocation>
-              <consoleOutput>true</consoleOutput>
-              <failsOnError>${checkstyle.failOnViolation}</failsOnError>
-              <linkXRef>false</linkXRef>
-              <suppressionsLocation>camel-checkstyle-suppressions.xml</suppressionsLocation>
-              <encoding>UTF-8</encoding>
-              <sourceDirectories>
-                <sourceDirectory>${basedir}/src</sourceDirectory>
-              </sourceDirectories>
-              <headerLocation>header-java.txt</headerLocation>
-              <includes>**/*.java,**/*.groovy,**/*.scala,**/*.properties,**/*.xml,**/*.xsd</includes>
-              <excludes>**/archetype-resources/**/*.java,**/archetype-resources/**/*.groovy,**/archetype-resources/**/*.scala,**/archetype-resources/**/*.xml,**/org/json/simple/**/*.java</excludes>
-            </configuration>
-            <goals>
-              <goal>checkstyle</goal>
-            </goals>
+            <id>versions</id>
+            <phase/>
+          </execution>
+          <execution>
+            <id>bundle-manifest</id>
+            <phase/>
           </execution>
         </executions>
       </plugin>

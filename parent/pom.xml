@@ -782,6 +782,8 @@
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
     <camel.osgi.require.capability/>
     <camel.osgi.provide.capability/>
+
+    <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
   </properties>
 
   <dependencyManagement>
@@ -4896,7 +4898,7 @@
           <version>${maven-jar-plugin-version}</version>
           <configuration>
             <archive>
-              <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+              <manifestFile>${camel.osgi.manifest}</manifestFile>
             </archive>
           </configuration>
         </plugin>
