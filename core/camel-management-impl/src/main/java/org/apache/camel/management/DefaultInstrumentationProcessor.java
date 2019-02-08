@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.StopWatch;
 
 /**
