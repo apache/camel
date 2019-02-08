@@ -1,0 +1,48 @@
+[[jcache-policy]]
+== JCache Policy
+
+The JCachePolicy is an interceptor around a route that caches the "result of the route" - the message body - after the route is completed.
+  If next time a route is called with a "similar" Exchange, the cached value is used on the Exchange instead of executing the route.
+  The policy uses the JSR107/JCache API of a cache implementation.
+
+The policy takes a _key_ value from the received Exchange to store in the cache, by default the _key_ is also the message body.
+  For example if the route - having a JCachePolicy - receives an Exchange with a String body "fruit" and the body at the
+  end of the route is "apple", it stores a _key/value_ pair "fruit=apple" in the cache. If next time another exchange arrives
+  with a body "fruit", the value "apple" is taken from the cache instead of letting the route process the Exchange.
+
+Instead of using the message body as the cache key, it's possible to set a Camel Expression via _.setKeyExpression()_
+that will be used to determine the key.
+
+The policy needs a JCache cache, it can be set directly by _.setCache()_ or the policy will try to get or create the Cache
+  based on the other parameters set. See details and examples below.
+
+Similar caching solution is available for example in Spring with the @Cacheable annotation.
+
+==== JCachePolicy Parameters:
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cache* | The Cache to use to store the cached values. If this value is set, _cacheManager_, _cacheName_ and _cacheConfiguration_ is ignored. |  | Cache
+| *cacheManager* | The CacheManager to use to lookup or create the Cache. Used only if _cache_ is not set. | Try to find a CacheManager in CamelContext registry or calls the standard JCache _Caching.getCachingProvider().getCacheManager()_. | CacheManager
+| *cacheName* | Name of the cache. Get the Cache from cacheManager or create a new one if it doesn't exist. | RouteId of the route. | String
+| *cacheConfiguration* | JCache cache configuration to use if a new Cache is created | Default new _MutableConfiguration_ object. | CacheConfiguration
+| *keyExpression* | An Expression to evaluate to determine the cache key. | Exchange body | Expression
+| *enabled* | If policy is not enabled, no wrapper processor is added to the route. It has impact only during startup, not during runtime. It can be used to disable caching from configuration. | true | boolean
+|===
+
+## Determine cache to use
+
+[source,java]
+----------------------------
+new JCachePolicy();
+----------------------------
+
+## keyExpression
+
+The JCache policy...
+
+----
+new JCachePolicy();
+----
