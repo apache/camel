@@ -21,8 +21,10 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 
+import com.hazelcast.instance.HazelcastInstanceFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.junit.After;
 import org.junit.Test;
 
 //This test requires a registered CacheManager, but the others do not.
@@ -68,9 +70,21 @@ public class CacheManagerFromRegistryTest extends CachePolicyTestBase {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
+        //Register another CacheManager in registry
         registry.bind("cachemanager-hzsecond", Caching.getCachingProvider().getCacheManager(URI.create("hzsecond"), null));
 
         return registry;
+    }
+
+    @After
+    public void after() {
+        super.after();
+        CacheManager cacheManager = Caching.getCachingProvider().getCacheManager(URI.create("hzsecond"), null);
+        cacheManager.getCacheNames().forEach((s) -> cacheManager.destroyCache(s));
+        Caching.getCachingProvider().close(URI.create("hzsecond"), null);
+
+        //We need to shutdown the second instance using the Hazelcast api. close(URI,ClassLoader) doesn't do that.
+        HazelcastInstanceFactory.getHazelcastInstance("hzsecond").shutdown();
     }
 
 }

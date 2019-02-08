@@ -103,8 +103,10 @@ public class CachePolicyProcessor extends DelegateAsyncProcessor {
 
     @Override
     protected void doStop() throws Exception {
-        //Clear cache if stopped.
-        cache.clear();
+        //Clear cache if stopping.
+        if (!cache.isClosed()) {
+            cache.clear();
+        }
         super.doStop();
     }
 

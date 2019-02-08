@@ -209,19 +209,20 @@ public class CachePolicyProcessorTest extends CachePolicyTestBase {
                 cachePolicy.setCache(cache);
 
                 from("direct:cached-simple")
-                        .policy(cachePolicy)
-                        .to("mock:value");
+                    .policy(cachePolicy)
+                    .to("mock:value");
 
                 //Cache after exception handling
                 from("direct:cached-exception")
-                        .onException(Exception.class)
-                        .onWhen(exceptionMessage().isEqualTo("test"))
-                        .handled(true)
-                        .setBody(simple("handled-${body}"))
-                        .end()
-                        .policy(cachePolicy)
-                        .to("mock:value")
-                        .throwException(new Exception("test"));
+                    .onException(Exception.class)
+                    .onWhen(exceptionMessage().isEqualTo("test"))
+                    .handled(true)
+                    .setBody(simple("handled-${body}"))
+                    .end()
+
+                    .policy(cachePolicy)
+                    .to("mock:value")
+                    .throwException(new Exception("test"));
 
                 //Closed cache
                 cache = cacheManager.createCache("closed", new MutableConfiguration<>());
@@ -230,8 +231,8 @@ public class CachePolicyProcessorTest extends CachePolicyTestBase {
                 cachePolicy.setCache(cache);
 
                 from("direct:cached-closed")
-                        .policy(cachePolicy)
-                        .to("mock:value");
+                    .policy(cachePolicy)
+                    .to("mock:value");
 
 
                 //Use ${header.mykey} as the key
@@ -240,8 +241,8 @@ public class CachePolicyProcessorTest extends CachePolicyTestBase {
                 cachePolicy.setKeyExpression(simple("${header.mykey}"));
 
                 from("direct:cached-byheader")
-                        .policy(cachePolicy)
-                        .to("mock:value");
+                    .policy(cachePolicy)
+                    .to("mock:value");
 
                 //Use an invalid keyExpression
                 cachePolicy = new CachePolicy();
@@ -249,8 +250,8 @@ public class CachePolicyProcessorTest extends CachePolicyTestBase {
                 cachePolicy.setKeyExpression(simple("${unexpected}"));
 
                 from("direct:cached-invalidkey")
-                        .policy(cachePolicy)
-                        .to("mock:value");
+                    .policy(cachePolicy)
+                    .to("mock:value");
             }
         };
     }

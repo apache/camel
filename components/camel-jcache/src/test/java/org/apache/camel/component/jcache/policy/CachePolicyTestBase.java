@@ -58,5 +58,6 @@ public class CachePolicyTestBase extends CamelTestSupport {
         //The RouteBuilder code is called for every test, so we destroy cache after each test
         CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
         cacheManager.getCacheNames().forEach((s) -> cacheManager.destroyCache(s));
+        Caching.getCachingProvider().close();
     }
 }
