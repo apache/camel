@@ -28,9 +28,9 @@ import javax.cache.expiry.Duration;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class CachePolicyTest extends CachePolicyTestBase {
+public class JCachePolicyTest extends JCachePolicyTestBase {
 
-    //Set cache - this use cases is also covered by tests in CachePolicyProcessorTest
+    //Set cache - this use cases is also covered by tests in JCachePolicyProcessorTest
     @Test
     public void testSetCache() throws Exception {
         final String key = randomString();
@@ -154,74 +154,74 @@ public class CachePolicyTest extends CachePolicyTestBase {
 
                 //Set cache
                 Cache cache = cacheManager.createCache("setCache", new MutableConfiguration<>());
-                CachePolicy cachePolicy = new CachePolicy();
-                cachePolicy.setCache(cache);
+                JCachePolicy jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCache(cache);
 
                 from("direct:policy-cache")
-                        .policy(cachePolicy)
+                        .policy(jcachePolicy)
                         .to("mock:value");
 
                 //Set cacheManager, cacheName, cacheConfiguration
                 configuration = new MutableConfiguration<>();
                 configuration.setTypes(String.class, String.class);
                 configuration.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 60)));
-                cachePolicy = new CachePolicy();
-                cachePolicy.setCacheManager(cacheManager);
-                cachePolicy.setCacheName("setManagerNameConfiguration");
-                cachePolicy.setCacheConfiguration(configuration);
+                jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCacheManager(cacheManager);
+                jcachePolicy.setCacheName("setManagerNameConfiguration");
+                jcachePolicy.setCacheConfiguration(configuration);
 
                 from("direct:policy-manager-name-configuration")
-                        .policy(cachePolicy)
+                        .policy(jcachePolicy)
                         .to("mock:value");
 
                 //Set cacheManager, cacheName
-                cachePolicy = new CachePolicy();
-                cachePolicy.setCacheManager(cacheManager);
-                cachePolicy.setCacheName("setManagerName");
+                jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCacheManager(cacheManager);
+                jcachePolicy.setCacheName("setManagerName");
 
                 from("direct:policy-manager-name")
-                        .policy(cachePolicy)
+                        .policy(jcachePolicy)
                         .to("mock:value");
 
                 //Set cacheManager, cacheName - cache already exists
                 cache = cacheManager.createCache("setManagerNameExists", new MutableConfiguration<>());
                 cache.put("test", "dummy");
-                cachePolicy = new CachePolicy();
-                cachePolicy.setCacheManager(cacheManager);
-                cachePolicy.setCacheName("setManagerNameExists");
+                jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCacheManager(cacheManager);
+                jcachePolicy.setCacheName("setManagerNameExists");
 
                 from("direct:policy-manager-name-exists")
-                        .policy(cachePolicy)
+                        .policy(jcachePolicy)
                         .to("mock:value");
 
                 //Set cacheManager, cacheConfiguration
                 configuration = new MutableConfiguration<>();
                 configuration.setTypes(String.class, String.class);
                 configuration.setExpiryPolicyFactory(CreatedExpiryPolicy.factoryOf(new Duration(TimeUnit.MINUTES, 61)));
-                cachePolicy = new CachePolicy();
-                cachePolicy.setCacheManager(cacheManager);
-                cachePolicy.setCacheConfiguration(configuration);
+                jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCacheManager(cacheManager);
+                jcachePolicy.setCacheConfiguration(configuration);
 
                 from("direct:policy-manager-configuration").routeId("direct-policy-manager-configuration")
-                        .policy(cachePolicy)
+                        .policy(jcachePolicy)
                         .to("mock:value");
 
                 //Set cacheName - use CachingProvider to lookup CacheManager
-                cachePolicy = new CachePolicy();
-                cachePolicy.setCacheName("contextCacheManager");
+                jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCacheName("contextCacheManager");
 
                 from("direct:policy-default-manager")
-                        .policy(cachePolicy)
+                        .policy(jcachePolicy)
                         .to("mock:value");
 
                 //Not enabled
-                cachePolicy = new CachePolicy();
+                jcachePolicy = new JCachePolicy();
                 cache = cacheManager.createCache("notEnabled", new MutableConfiguration<>());
-                cachePolicy.setCache(cache);
-                cachePolicy.setEnabled(false);
+                jcachePolicy.setCache(cache);
+                jcachePolicy.setEnabled(false);
 
                 from("direct:policy-not-enabled")
-                        .policy(cachePolicy)
+                        .policy(jcachePolicy)
                         .to("mock:value");
             }
         };

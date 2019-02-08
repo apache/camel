@@ -43,10 +43,10 @@ import org.slf4j.LoggerFactory;
  * cacheName: Name of the cache to use or create. RouteId is used by default.
  * cacheConfiguration: CacheConfiguration used if a new cache is created. Using default MutableConfiguration if not set.
  * keyExpression: The Expression to generate the key for the cache. E.g simple("${header.username}")
- * enabled: If CachePolicy is not enabled, no policy is added to the route. Has an impact only during startup.
+ * enabled: If JCachePolicy is not enabled, no policy is added to the route. Has an impact only during startup.
  */
-public class CachePolicy implements Policy {
-    private static final Logger LOG = LoggerFactory.getLogger(CachePolicy.class);
+public class JCachePolicy implements Policy {
+    private static final Logger LOG = LoggerFactory.getLogger(JCachePolicy.class);
 
     private Cache cache;
     private CacheManager cacheManager;
@@ -62,7 +62,7 @@ public class CachePolicy implements Policy {
 
     @Override
     public Processor wrap(RouteContext routeContext, Processor processor) {
-        //Don't add CachePolicyProcessor if CachePolicy is disabled. This means enable/disable has impact only during startup
+        //Don't add JCachePolicyProcessor if JCachePolicy is disabled. This means enable/disable has impact only during startup
         if (!isEnabled()) {
             return processor;
         }
@@ -106,7 +106,7 @@ public class CachePolicy implements Policy {
         }
 
         //Create processor
-        return new CachePolicyProcessor(cache, keyExpression, processor);
+        return new JCachePolicyProcessor(cache, keyExpression, processor);
 
 
     }
@@ -161,7 +161,7 @@ public class CachePolicy implements Policy {
 
     @Override
     public String toString() {
-        return "CachePolicy{"
+        return "JCachePolicy{"
                 + "keyExpression=" + keyExpression
                 + ", enabled=" + enabled
                 + '}';

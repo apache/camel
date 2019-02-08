@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.junit.Test;
 
-public class CachePolicyProcessorTest extends CachePolicyTestBase {
+public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
     //Basic test to verify value gets cached and route is not executed for the second time
     @Test
@@ -205,11 +205,11 @@ public class CachePolicyProcessorTest extends CachePolicyTestBase {
 
                 //Simple cache - with default config
                 Cache cache = cacheManager.createCache("simple", new MutableConfiguration<>());
-                CachePolicy cachePolicy = new CachePolicy();
-                cachePolicy.setCache(cache);
+                JCachePolicy jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCache(cache);
 
                 from("direct:cached-simple")
-                    .policy(cachePolicy)
+                    .policy(jcachePolicy)
                     .to("mock:value");
 
                 //Cache after exception handling
@@ -220,37 +220,37 @@ public class CachePolicyProcessorTest extends CachePolicyTestBase {
                     .setBody(simple("handled-${body}"))
                     .end()
 
-                    .policy(cachePolicy)
+                    .policy(jcachePolicy)
                     .to("mock:value")
                     .throwException(new Exception("test"));
 
                 //Closed cache
                 cache = cacheManager.createCache("closed", new MutableConfiguration<>());
                 cache.close();
-                cachePolicy = new CachePolicy();
-                cachePolicy.setCache(cache);
+                jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCache(cache);
 
                 from("direct:cached-closed")
-                    .policy(cachePolicy)
+                    .policy(jcachePolicy)
                     .to("mock:value");
 
 
                 //Use ${header.mykey} as the key
-                cachePolicy = new CachePolicy();
-                cachePolicy.setCache(cacheManager.getCache("simple"));
-                cachePolicy.setKeyExpression(simple("${header.mykey}"));
+                jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCache(cacheManager.getCache("simple"));
+                jcachePolicy.setKeyExpression(simple("${header.mykey}"));
 
                 from("direct:cached-byheader")
-                    .policy(cachePolicy)
+                    .policy(jcachePolicy)
                     .to("mock:value");
 
                 //Use an invalid keyExpression
-                cachePolicy = new CachePolicy();
-                cachePolicy.setCache(cacheManager.getCache("simple"));
-                cachePolicy.setKeyExpression(simple("${unexpected}"));
+                jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCache(cacheManager.getCache("simple"));
+                jcachePolicy.setKeyExpression(simple("${unexpected}"));
 
                 from("direct:cached-invalidkey")
-                    .policy(cachePolicy)
+                    .policy(jcachePolicy)
                     .to("mock:value");
             }
         };

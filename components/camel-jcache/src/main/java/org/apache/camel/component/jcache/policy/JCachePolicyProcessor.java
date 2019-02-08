@@ -27,14 +27,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class CachePolicyProcessor extends DelegateAsyncProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(CachePolicyProcessor.class);
+public class JCachePolicyProcessor extends DelegateAsyncProcessor {
+    private static final Logger LOG = LoggerFactory.getLogger(JCachePolicyProcessor.class);
 
 
     private Cache cache;
     private Expression keyExpression;
 
-    public CachePolicyProcessor(Cache cache, Expression keyExpression, Processor processor) {
+    public JCachePolicyProcessor(Cache cache, Expression keyExpression, Processor processor) {
         super(processor);
         this.cache = cache;
         this.keyExpression = keyExpression;
@@ -42,7 +42,7 @@ public class CachePolicyProcessor extends DelegateAsyncProcessor {
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        LOG.debug("CachePolicy process started - cache:{}, exchange:{}", cache.getName(), exchange.getExchangeId());
+        LOG.debug("JCachePolicy process started - cache:{}, exchange:{}", cache.getName(), exchange.getExchangeId());
 
         //If cache is closed, just continue
         if (cache.isClosed()) {

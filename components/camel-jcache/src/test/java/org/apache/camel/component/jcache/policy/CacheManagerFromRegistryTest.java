@@ -28,7 +28,7 @@ import org.junit.After;
 import org.junit.Test;
 
 //This test requires a registered CacheManager, but the others do not.
-public class CacheManagerFromRegistryTest extends CachePolicyTestBase {
+public class CacheManagerFromRegistryTest extends JCachePolicyTestBase {
 
     //Register cacheManager in CamelContext. Set cacheName
     @Test
@@ -56,11 +56,11 @@ public class CacheManagerFromRegistryTest extends CachePolicyTestBase {
 
                 //Use the cacheManager registered in CamelContext. See createRegistry(). Set cacheName
                 //During the test JndiRegistry is used, so we add the cacheManager to JNDI. In Spring context a bean works.
-                CachePolicy cachePolicy = new CachePolicy();
-                cachePolicy.setCacheName("contextCacheManager");
+                JCachePolicy jcachePolicy = new JCachePolicy();
+                jcachePolicy.setCacheName("contextCacheManager");
 
                 from("direct:policy-context-manager")
-                        .policy(cachePolicy)
+                        .policy(jcachePolicy)
                         .to("mock:value");
             }
         };

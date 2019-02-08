@@ -29,7 +29,7 @@ import org.junit.Before;
 
 
 
-public class CachePolicyTestBase extends CamelTestSupport {
+public class JCachePolicyTestBase extends CamelTestSupport {
 
     @Before
     public void before() {
