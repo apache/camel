@@ -776,6 +776,14 @@ public class RestConfigurationDefinition {
     }
 
 
+    /**
+     * To specify whether to use X-Forward headers for Host and related setting
+     */
+    public RestConfigurationDefinition useXForwardHeaders(boolean useXForwardHeaders) {
+        setUseXForwardHeaders(useXForwardHeaders);
+        return this;
+    }
+
     // Implementation
     //-------------------------------------------------------------------------
 
@@ -909,6 +917,9 @@ public class RestConfigurationDefinition {
                 props.put(key, value);
             }
             answer.setCorsHeaders(props);
+        }
+        if (useXForwardHeaders != null) {
+            answer.setUseXForwardHeaders(useXForwardHeaders);
         }
         return answer;
     }
