@@ -36,9 +36,12 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
 
         comp.setLowerCase(true);
         assertEquals(true, comp.isLowerCase());
-        
+
         comp.setCaseInsensitive(true);
         assertEquals(true, comp.isCaseInsensitive());
+
+        comp.setFilterOnMatch(false);
+        assertEquals(false, comp.isFilterOnMatch());
     }
 
     @Test
@@ -94,12 +97,30 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertFalse(comp.applyFilterToCamelHeaders("bar", 123, exchange));
         assertTrue(comp.applyFilterToCamelHeaders("foo", "cheese", exchange));
     }
-    
+
+    @Test
+    public void testOutReverseFilterDefaultHeaderFilterStrategy() {
+        DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
+
+        comp.setFilterOnMatch(false);
+
+        Set<String> set = new HashSet<>();
+        set.add("foo");
+        comp.setOutFilter(set);
+
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader("bar", 123);
+        exchange.getIn().setHeader("foo", "cheese");
+
+        assertTrue(comp.applyFilterToCamelHeaders("bar", 123, exchange));
+        assertFalse(comp.applyFilterToCamelHeaders("foo", "cheese", exchange));
+    }
+
     @Test
     public void testCaseInsensitiveHeaderNameDoFilterDefaultHeaderFilterStrategy() {
         DefaultHeaderFilterStrategy comp = new DefaultHeaderFilterStrategy();
         comp.setCaseInsensitive(true);
-        
+
         Set<String> set = new HashSet<>();
         set.add("Content-Type");
         comp.setOutFilter(set);
@@ -111,5 +132,5 @@ public class DefaultHeaderFilterStrategyTest extends ContextTestSupport {
         assertTrue(comp.applyFilterToCamelHeaders("content-type", "application/xml", exchange));
         assertTrue(comp.applyFilterToCamelHeaders("Content-Type", "application/json", exchange));
     }
-    
+
 }
