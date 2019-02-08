@@ -34,10 +34,10 @@ import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
  */
 public final class CamelPropertiesHelper {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CamelContextHelper.class);
+
     private CamelPropertiesHelper() {
     }
-
-    private static final Logger LOG = LoggerFactory.getLogger(CamelContextHelper.class);
 
     /**
      * Sets the properties on the target bean.
