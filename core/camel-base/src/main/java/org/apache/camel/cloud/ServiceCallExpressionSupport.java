@@ -18,7 +18,6 @@ package org.apache.camel.cloud;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.cloud.ServiceCallConstants;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 

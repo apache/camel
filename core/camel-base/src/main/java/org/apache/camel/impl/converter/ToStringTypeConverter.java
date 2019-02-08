@@ -31,10 +31,10 @@ import org.apache.camel.support.TypeConverterSupport;
  */
 public class ToStringTypeConverter extends TypeConverterSupport {
 
-    static Set<Class<?>> MISS_TYPES = new HashSet<>();
+    static Set<Class<?>> missTypes = new HashSet<>();
 
     public static void registerMissType(Class clazz) {
-        MISS_TYPES.add(clazz);
+        missTypes.add(clazz);
     }
 
     static {
@@ -48,7 +48,7 @@ public class ToStringTypeConverter extends TypeConverterSupport {
     public <T> T convertTo(Class<T> toType, Exchange exchange, Object value) {
 
         // should not try to convert specific types
-        if (MISS_TYPES.stream().anyMatch(cl -> cl.isAssignableFrom(value.getClass()))) {
+        if (missTypes.stream().anyMatch(cl -> cl.isAssignableFrom(value.getClass()))) {
             return (T) MISS_VALUE;
         }
 
