@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Represents a map of values which timeout after a period of inactivity.
  */
-public interface TimeoutMap<K, V> extends Runnable {
+public interface TimeoutMap<K, V> {
 
     /**
      * Looks up the value in the map by the given key.
