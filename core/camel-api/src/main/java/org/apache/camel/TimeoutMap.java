@@ -30,13 +30,6 @@ public interface TimeoutMap<K, V> extends Runnable {
     V get(K key);
 
     /**
-     * Returns a copy of the keys in the map
-     *
-     * @return the keys
-     */
-    Object[] getKeys();
-
-    /**
      * Returns the size of the map
      *
      * @return the size
