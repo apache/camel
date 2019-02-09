@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * You must also invoke {@link #start()} to startup the timeout map, before its ready to be used.
  * And you must invoke {@link #stop()} to stop the map when no longer in use.
  */
-public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMap<K, V>, Runnable {
+public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMap<K, V> {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -128,7 +127,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
         return entry != null ? entry.getValue() : null;
     }
-    
+
     public int size() {
         return map.size();
     }
@@ -136,10 +135,10 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     /**
      * The timer task which purges old requests and schedules another poll
      */
-    public void run() {
-        // only run if allowed
+    private void purgeTask() {
+        // only purgeTask if allowed
         if (!isRunAllowed()) {
-            log.trace("Purge task not allowed to run");
+            log.trace("Purge task not allowed to purgeTask");
             return;
         }
 
@@ -147,7 +146,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         try {
             purge();
         } catch (Throwable t) {
-            // must catch and log exception otherwise the executor will now schedule next run
+            // must catch and log exception otherwise the executor will now schedule next purgeTask
             log.warn("Exception occurred during purge task. This exception will be ignored.", t);
         }
     }
@@ -233,7 +232,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
      * lets schedule each time to allow folks to change the time at runtime
      */
     protected void schedulePoll() {
-        future = executor.scheduleWithFixedDelay(this, 0, purgePollTime, TimeUnit.MILLISECONDS);
+        future = executor.scheduleWithFixedDelay(this::purgeTask, 0, purgePollTime, TimeUnit.MILLISECONDS);
     }
 
     /**
