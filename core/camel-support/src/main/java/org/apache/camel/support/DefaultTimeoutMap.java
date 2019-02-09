@@ -128,19 +128,6 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
         return entry != null ? entry.getValue() : null;
     }
-
-    public Object[] getKeys() {
-        Object[] keys;
-        lock.lock();
-        try {
-            Set<K> keySet = map.keySet();
-            keys = new Object[keySet.size()];
-            keySet.toArray(keys);
-        } finally {
-            lock.unlock();
-        }
-        return keys;
-    }
     
     public int size() {
         return map.size();

@@ -109,23 +109,6 @@ public class DefaultTimeoutMapTest extends Assert {
     }
 
     @Test
-    public void testDefaultTimeoutMapGetKeys() throws Exception {
-        DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<>(executor, 100);
-        map.start();
-        assertTrue(map.currentTime() > 0);
-
-        assertEquals(0, map.size());
-
-        map.put("A", 123, 50);
-        map.put("B", 456, 50);
-        assertEquals(2, map.size());
-
-        Object[] keys = map.getKeys();
-        assertNotNull(keys);
-        assertEquals(2, keys.length);
-    }
-
-    @Test
     public void testExecutor() throws Exception {
         ScheduledExecutorService e = Executors.newScheduledThreadPool(2);
 
