@@ -77,9 +77,4 @@ public interface TimeoutMap<K, V> {
      * @return the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
     V remove(K key);
-
-    /**
-     * Purges any old entries from the map
-     */
-    void purge();
 }
