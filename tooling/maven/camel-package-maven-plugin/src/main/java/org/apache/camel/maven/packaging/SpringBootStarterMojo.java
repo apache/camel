@@ -128,10 +128,7 @@ public class SpringBootStarterMojo extends AbstractMojo {
             Document pom = createBasePom();
 
             // Apply changes to the starter pom
-            long t0 = System.currentTimeMillis();
             fixExcludedDependencies(pom);
-            long t1 = System.currentTimeMillis();
-            getLog().warn("Timestamp (excluded dependencies): " + (System.currentTimeMillis() - t0) + " ms");
             fixAdditionalDependencies(pom);
             fixAdditionalRepositories(pom);
 
