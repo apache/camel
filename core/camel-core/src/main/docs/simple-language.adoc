@@ -15,53 +15,19 @@ of expression based script in your Camel routes.
 However for much more complex use cases you are generally recommended to
 choose a more expressive and powerful language such as:
 
-* <<spel-language,SpEL>>
-* <<mvel-component,Mvel>>
 * <<groovy-language,Groovy>>
-* JavaScript
-* <<el-language,EL>>
+* <<spel-language,SpEL>>
+* <<mvel-component,MVEL>>
 * <<ognl-language,OGNL>>
-* one of the supported link:scripting-languages.html[Scripting
-Languages]
 
 The simple language uses `${body`} placeholders for complex expressions
 where the expression contains constant literals. The $\{ } placeholders
 can be omitted if the expression is only the token itself.
 
-TIP: *Alternative syntax* From Camel 2.5 onwards you can also use the alternative syntax which
+TIP: *Alternative syntax* You can also use the alternative syntax which
 uses `$simple{ }` as placeholders. This can be used in situations to avoid clashes when using for example
 Spring property placeholder together with Camel.
 
-
-=== Simple Language Changes in Camel 2.9 onwards
-
-The <<simple-language,Simple>> language have been improved from Camel 2.9
-onwards to use a better syntax parser, which can do index precise error
-messages, so you know exactly what is wrong and where the problem is.
-For example if you have made a typo in one of the operators, then
-previously the parser would not be able to detect this, and cause the
-evaluation to be true. There are a few changes in the syntax which are
-no longer backwards compatible. When using <<simple-language,Simple>>
-language as a Predicate then the literal text
-*must* be enclosed in either single or double quotes. For example:
-`"${body} == 'Camel'"`. Notice how we have single quotes around the
-literal. The old style of using `"body"` and `"header.foo"` to refer to
-the message body and header is not supported anymore, and it is required to
-always use $\{ } tokens for the built-in functions.
-The range operator now requires the range to be in single quote as well
-as shown: `"${header.zip} between '30000..39999'"`.
-
-To get the body of the in message: `"body"`, or `"in.body"` or
-`"${body}"`.
-
-A complex expression must use $\{ } placeholders, such as:
-`"Hello ${in.header.name} how are you?"`.
-
-You can have multiple functions in the same expression:
-`"Hello ${in.header.name} this is ${in.header.me} speaking"`. +
- However you can *not* nest functions in Camel 2.8.x or older (i.e.
-having another $\{ } placeholder in an existing, is not allowed). +
- From *Camel 2.9* onwards you can nest functions.
 
 === Simple Language options
 
@@ -169,16 +135,9 @@ classname
 
 |in.headers |Map |*Camel 2.9:* refer to the input headers
 
-|property.foo |Object |*Deprecated:* refer to the foo property on the exchange
-
 |exchangeProperty.foo |Object |*Camel 2.15:* refer to the foo property on the exchange
 
-|property[foo] |Object |*Deprecated:* refer to the foo property on the exchange
-
 |exchangeProperty[foo] |Object |*Camel 2.15:* refer to the foo property on the exchange
-
-|property.foo.*OGNL* |Object |*Deprecated:* refer to the foo property on the exchange and invoke its
-value using a Camel OGNL expression.
 
 |exchangeProperty.foo.*OGNL* |Object |*Camel 2.15:* refer to the foo property on the exchange and invoke its
 value using a Camel OGNL expression.
@@ -218,10 +177,6 @@ Command accepts offsets such as: *now-24h* or *in.header.xxx+1h* or even *now+1h
 Specifying a method name you must use dot as separator. We also support
 the ?method=methodname syntax that is used by the <<bean-component,Bean>>
 component.
-
-|properties:_locations:key_ |String |*Deprecated (use properties-location instead) Camel 2.3:* Lookup a
-property with the given key. The `locations` option is optional. See
-more at Using PropertyPlaceholder.
 
 |properties-location:_http://locationskey[locations:key]_ |String |*Camel 2.14.1:* Lookup a property with the given key. The `locations`
 option is optional. See more at
@@ -519,12 +474,6 @@ And the following logical operators can be used to group expressions:
 [width="100%",cols="50%,50%",options="header",]
 |===
 |Operator |Description
-
-|and |*deprecated* use && instead. The logical and operator is used to group
-two expressions.
-
-|or |*deprecated* use \|\| instead. The logical or operator is used to group
-two expressions.
 
 |&& |*Camel 2.9:* The logical and operator is used to group two expressions.
 

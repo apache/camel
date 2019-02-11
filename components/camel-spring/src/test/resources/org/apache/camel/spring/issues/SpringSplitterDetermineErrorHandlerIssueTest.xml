@@ -88,8 +88,8 @@
            startupOrder="13">
       <from uri="direct:HandleException"/>
 
-      <log loggingLevel="INFO" message="[${property.LogPrefix}] EXCEPTION message: ${exception}"/>
-      <log loggingLevel="DEBUG" message="[${property.LogPrefix}] EXCEPTION stacktrace: ${exception.stacktrace}"/>
+      <log loggingLevel="INFO" message="[${exchangeProperty.LogPrefix}] EXCEPTION message: ${exception}"/>
+      <log loggingLevel="DEBUG" message="[${exchangeProperty.LogPrefix}] EXCEPTION stacktrace: ${exception.stacktrace}"/>
       <to uri="mock:handled"/>
       <stop/>
     </route>

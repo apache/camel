@@ -1785,10 +1785,10 @@ public final class ExpressionBuilder {
      * expressions
      *
      * @param expressions the expression to be concatenated dynamically
-     * @param desription the text description of the expression
+     * @param description the text description of the expression
      * @return an expression which when evaluated will return the concatenated values
      */
-    public static Expression concatExpression(final Collection<Expression> expressions, final String desription) {
+    public static Expression concatExpression(final Collection<Expression> expressions, final String description) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 StringBuilder buffer = new StringBuilder();
@@ -1803,8 +1803,8 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                if (desription != null) {
-                    return desription;
+                if (description != null) {
+                    return description;
                 } else {
                     return "concat" + expressions;
                 }

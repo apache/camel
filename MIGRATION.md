@@ -45,6 +45,10 @@ Deprecated APIs and Components
 
 All deprecated APIs and components from Camel 2.x has been removed in Camel 3.
 
+#### Simple language
+
+The `property` function was deprecated in Camel 2.x and has been removed. Use `exchangeProperty` as function name.
+
 Migration Camel applications
 ----------------------------
 
