@@ -159,6 +159,7 @@
                   </extraargs>
                 </wadlOption>
               </wadlOptions>
+              <skipGarbageCollection>true</skipGarbageCollection>
             </configuration>
           </execution>
         </executions>
