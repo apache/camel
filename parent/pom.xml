@@ -4930,6 +4930,7 @@
               <markGenerated>true</markGenerated>
               <faultSerialVersionUID>1</faultSerialVersionUID>
             </defaultOptions>
+            <skipGarbageCollection>true</skipGarbageCollection>
           </configuration>
           <dependencies>
             <!-- needed to add this to get around the following error on
