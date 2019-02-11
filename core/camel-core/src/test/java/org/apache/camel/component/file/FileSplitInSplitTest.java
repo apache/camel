@@ -88,15 +88,15 @@ public class FileSplitInSplitTest extends ContextTestSupport {
                     .split(body().tokenize(comma))
                         .parallelProcessing()
                         .streaming()
-                        .setProperty("split", new SimpleExpression("${property.CamelSplitIndex}"))
+                        .setProperty("split", new SimpleExpression("${exchangeProperty.CamelSplitIndex}"))
                         .split(body().tokenize(LS))
                             .parallelProcessing()
                             .streaming()
                             .setBody(body().append(":Status=OK").append(LS))
-                            .to("file:target/data/split/outbox?fileExist=Append&fileName=result${property.split}.txt")
+                            .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt")
                        .end()
-                       .setBody(new SimpleExpression("${property.split} complete"))
-                       .to("file:target/data/split/outbox?fileExist=Append&fileName=result${property.split}.txt")
+                       .setBody(new SimpleExpression("${exchangeProperty.split} complete"))
+                       .to("file:target/data/split/outbox?fileExist=Append&fileName=result${exchangeProperty.split}.txt")
                     .end().to("mock:result");
 
             }
