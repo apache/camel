@@ -18,34 +18,31 @@ package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SendLocationMessage extends OutgoingMessage {
-    @JsonProperty("longitude")
-    private double longitude;
+public class StopMessageLiveLocationMessage extends OutgoingMessage {
 
-    @JsonProperty("latitude")
-    private double latitude;
+    @JsonProperty("message_id")
+    private Long messageId;
 
-    @JsonProperty("live_period")
-    private Integer livePeriod;
+    @JsonProperty("inline_message_id")
+    private String inlineMessageId;
 
     @JsonProperty("reply_markup")
     private ReplyKeyboardMarkup replyKeyboardMarkup;
 
-    public SendLocationMessage(double latitude, double longitude) {
-        this.setLatitude(latitude);
-        this.setLongitude(longitude);
+    public Long getMessageId() {
+        return messageId;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setMessageId(Long messageId) {
+        this.messageId = messageId;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public String getInlineMessageId() {
+        return inlineMessageId;
     }
 
-    public void setLivePeriod(Integer livePeriod) {
-        this.livePeriod = livePeriod;
+    public void setInlineMessageId(String inlineMessageId) {
+        this.inlineMessageId = inlineMessageId;
     }
 
     public ReplyKeyboardMarkup getReplyKeyboardMarkup() {
@@ -58,14 +55,12 @@ public class SendLocationMessage extends OutgoingMessage {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("SendLocationMessage{");
-        sb.append("latitude=").append(latitude).append('\'');
-        sb.append(", longitude=").append(longitude).append('\'');
-        sb.append(", livePeriod=").append(livePeriod).append('\'');
-        sb.append(", disableNotification=").append(disableNotification).append('\'');
-        sb.append(", replyToMessageId=").append(replyToMessageId).append('\'');
+        final StringBuilder sb = new StringBuilder("StopMessageLiveLocationMessage{");
+        sb.append("message_id='").append(messageId).append('\'');
+        sb.append(", inlineMessageId=").append(inlineMessageId).append('\'');
         sb.append(", replyKeyboardMarkup=").append(replyKeyboardMarkup);
         sb.append('}');
         return sb.toString();
     }
 }
+
