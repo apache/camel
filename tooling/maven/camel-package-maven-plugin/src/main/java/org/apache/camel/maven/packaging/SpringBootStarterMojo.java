@@ -28,12 +28,12 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -57,29 +57,20 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.dependency.tree.DependencyNode;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilder;
-import org.apache.maven.shared.dependency.tree.DependencyTreeBuilderException;
-import org.apache.maven.shared.dependency.tree.traversal.CollectingDependencyNodeVisitor;
 
 /**
  * Generate Spring Boot starter for the component
  */
-@Mojo(name = "prepare-spring-boot-starter", threadSafe = true)
+@Mojo(name = "prepare-spring-boot-starter", threadSafe = true,
+        requiresDependencyCollection = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class SpringBootStarterMojo extends AbstractMojo {
 
     private static final String[] IGNORE_MODULES = {
@@ -114,21 +105,6 @@ public class SpringBootStarterMojo extends AbstractMojo {
     @Parameter(defaultValue = "${basedir}")
     protected File baseDir;
 
-    @Component
-    protected ArtifactFactory artifactFactory;
-
-    @Component
-    protected ArtifactMetadataSource artifactMetadataSource;
-
-    @Component
-    protected ArtifactCollector artifactCollector;
-
-    @Component
-    protected DependencyTreeBuilder treeBuilder;
-
-    @Parameter(defaultValue = "${localRepository}", readonly = true, required = true)
-    protected ArtifactRepository localRepository;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -146,11 +122,16 @@ public class SpringBootStarterMojo extends AbstractMojo {
                 starterDir.mkdirs();
             }
 
+
+
             // create the base pom.xml
             Document pom = createBasePom();
 
             // Apply changes to the starter pom
+            long t0 = System.currentTimeMillis();
             fixExcludedDependencies(pom);
+            long t1 = System.currentTimeMillis();
+            getLog().warn("Timestamp (excluded dependencies): " + (System.currentTimeMillis() - t0) + " ms");
             fixAdditionalDependencies(pom);
             fixAdditionalRepositories(pom);
 
@@ -361,31 +342,11 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
     }
 
-    private Set<String> filterIncludedArtifacts(Set<String> artifacts) throws DependencyTreeBuilderException {
+    private Set<String> filterIncludedArtifacts(Set<String> artifacts) {
         Set<String> included = new TreeSet<>();
 
-        ArtifactFilter artifactFilter = new ScopeArtifactFilter(null);
-
-        DependencyNode node = treeBuilder.buildDependencyTree(project, localRepository, artifactFactory, artifactMetadataSource, artifactFilter, artifactCollector);
-
-        CollectingDependencyNodeVisitor visitor = new CollectingDependencyNodeVisitor();
-
-        node.accept(visitor);
-
-        List<DependencyNode> nodes = visitor.getNodes();
-        for (DependencyNode dependencyNode : nodes) {
-            Artifact artifact = dependencyNode.getArtifact();
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Found dependency node: " + artifact.getGroupId() + ":" + artifact.getArtifactId() + ":" + artifact.getVersion() + " - scope=" + artifact.getScope());
-            }
-            if (!Artifact.SCOPE_TEST.equals(artifact.getScope()) && !Artifact.SCOPE_PROVIDED.equals(artifact.getScope())) {
-                String canonicalName = artifact.getGroupId() + ":" + artifact.getArtifactId();
-                if (artifacts.contains(canonicalName)) {
-                    getLog().debug(canonicalName + " marked for exclusion");
-                    included.add(canonicalName);
-                }
-            }
-        }
+        included.addAll(project.getArtifactMap().keySet());
+        included.retainAll(artifacts);
 
         return included;
     }
