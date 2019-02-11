@@ -165,7 +165,7 @@ exceptions (`Exchange.EXCEPTION_CAUGHT`) if the Exchange has any.
 Supported commands are: *now* for current timestamp, *in.header.xxx* or
 *header.xxx* to use the Date object in the IN header with the key xxx.
 *out.header.xxx* to use the Date object in the OUT header with the key xxx.
-*property.xxx* to use the Date object in the exchange property with the key xxx.
+*exchangeProperty.xxx* to use the Date object in the exchange property with the key xxx.
 *file* for the last modified timestamp of the file (available with a File consumer).
 Command accepts offsets such as: *now-24h* or *in.header.xxx+1h* or even *now+1h30m-100*.
 
