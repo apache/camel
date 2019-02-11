@@ -26,6 +26,7 @@ In Camel 2.x camel-core was one JAR file, which now has been splitup into many J
  
 Maven users of Apache Camel can keep using the dependency *camel-core* which will have transitive dependency on all of its modules, and therefore no migration is needed.
 However users whom wants to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
+You may find how to do that in the examples.
 
 TODO: we need camel-core-minimal dependency for just basic Camel
 
