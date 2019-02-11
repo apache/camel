@@ -21,8 +21,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.SendLocationMessage;
+import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 
-public class EditMessageLiveLocationUsage implements TelegramMethodUsage {
+public class LiveLocationUsage implements TelegramMethodUsage {
 
     private double latitude = 59.9386292;
     private double longitude = 30.3141308;
@@ -34,14 +35,21 @@ public class EditMessageLiveLocationUsage implements TelegramMethodUsage {
         MessageResult firstLocationMessage = template.requestBody("direct:start", msg, MessageResult.class);
         System.out.println(firstLocationMessage);
 
+        long messageId = firstLocationMessage.getMessage().getMessageId();
+
         double delta = 0.001;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             double positionDelta = delta * (i + 1);
             EditMessageLiveLocationMessage liveLocationMessage = new EditMessageLiveLocationMessage(latitude + positionDelta, longitude + positionDelta);
-            liveLocationMessage.setMessageId(firstLocationMessage.getMessage().getMessageId());
+            liveLocationMessage.setMessageId(messageId);
             MessageResult editedMessage = template.requestBody("direct:start", liveLocationMessage, MessageResult.class);
             System.out.println(editedMessage);
             Thread.sleep(3000);
         }
+
+        StopMessageLiveLocationMessage stopLiveLocationMessage = new StopMessageLiveLocationMessage();
+        stopLiveLocationMessage.setMessageId(messageId);
+        MessageResult stopMessage = template.requestBody("direct:start", stopLiveLocationMessage, MessageResult.class);
+        System.out.println(stopMessage);
     }
 }

@@ -18,9 +18,10 @@ package org.apache.camel.example.telegram;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.StartupListener;
-import org.apache.camel.example.telegram.usage.EditMessageLiveLocationUsage;
 import org.apache.camel.example.telegram.usage.GetUpdatesUsage;
+import org.apache.camel.example.telegram.usage.LiveLocationUsage;
 import org.apache.camel.example.telegram.usage.SendMessageUsage;
+import org.apache.camel.example.telegram.usage.SendVenueUsage;
 
 public class TelegramExamplesRunner implements StartupListener {
 
@@ -30,8 +31,9 @@ public class TelegramExamplesRunner implements StartupListener {
 
         // Methods usage examples
         new SendMessageUsage().run(context);
-        new EditMessageLiveLocationUsage().run(context);
+        new LiveLocationUsage().run(context);
         new GetUpdatesUsage().run(context);
+        new SendVenueUsage().run(context);
     }
 }
 
