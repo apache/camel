@@ -18,22 +18,33 @@ package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class SendLocationMessage extends OutgoingMessage {
+public class SendVenueMessage extends OutgoingMessage {
     @JsonProperty("longitude")
     private double longitude;
 
     @JsonProperty("latitude")
     private double latitude;
 
-    @JsonProperty("live_period")
-    private Integer livePeriod;
+    @JsonProperty("title")
+    private String title;
+
+    @JsonProperty("address")
+    private String address;
+
+    @JsonProperty("foursquare_id")
+    private String foursquareId;
+
+    @JsonProperty("foursquare_type")
+    private String foursquareType;
 
     @JsonProperty("reply_markup")
     private ReplyKeyboardMarkup replyKeyboardMarkup;
 
-    public SendLocationMessage(double latitude, double longitude) {
+    public SendVenueMessage(double latitude, double longitude, String title, String address) {
         this.setLatitude(latitude);
         this.setLongitude(longitude);
+        this.setTitle(title);
+        this.setAddress(address);
     }
 
     public void setLatitude(double latitude) {
@@ -44,8 +55,44 @@ public class SendLocationMessage extends OutgoingMessage {
         this.longitude = longitude;
     }
 
-    public void setLivePeriod(Integer livePeriod) {
-        this.livePeriod = livePeriod;
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getFoursquareId() {
+        return foursquareId;
+    }
+
+    public void setFoursquareId(String foursquareId) {
+        this.foursquareId = foursquareId;
+    }
+
+    public String getFoursquareType() {
+        return foursquareType;
+    }
+
+    public void setFoursquareType(String foursquareType) {
+        this.foursquareType = foursquareType;
     }
 
     public ReplyKeyboardMarkup getReplyKeyboardMarkup() {
@@ -61,7 +108,10 @@ public class SendLocationMessage extends OutgoingMessage {
         final StringBuilder sb = new StringBuilder("SendLocationMessage{");
         sb.append("latitude=").append(latitude).append('\'');
         sb.append(", longitude=").append(longitude).append('\'');
-        sb.append(", livePeriod=").append(livePeriod).append('\'');
+        sb.append(", title=").append(title).append('\'');
+        sb.append(", address=").append(address).append('\'');
+        sb.append(", foursquareId=").append(foursquareId).append('\'');
+        sb.append(", foursquareType=").append(foursquareType).append('\'');
         sb.append(", disableNotification=").append(disableNotification).append('\'');
         sb.append(", replyToMessageId=").append(replyToMessageId).append('\'');
         sb.append(", replyKeyboardMarkup=").append(replyKeyboardMarkup);

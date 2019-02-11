@@ -31,6 +31,8 @@ import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.SendLocationMessage;
+import org.apache.camel.component.telegram.model.SendVenueMessage;
+import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 
@@ -93,5 +95,17 @@ public interface RestBotAPI {
     @Path("/bot{authorizationToken}/editMessageLiveLocation")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    MessageResult editMessageLiveLocation(@PathParam("authorizationToken") String authorizationToken, EditMessageLiveLocationMessage location);
+    MessageResult editMessageLiveLocation(@PathParam("authorizationToken") String authorizationToken, EditMessageLiveLocationMessage message);
+
+    @POST
+    @Path("/bot{authorizationToken}/stopMessageLiveLocation")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    MessageResult stopMessageLiveLocation(@PathParam("authorizationToken") String authorizationToken, StopMessageLiveLocationMessage message);
+
+    @POST
+    @Path("/bot{authorizationToken}/sendVenue")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    MessageResult sendVenue(@PathParam("authorizationToken") String authorizationToken, SendVenueMessage location);
 }
