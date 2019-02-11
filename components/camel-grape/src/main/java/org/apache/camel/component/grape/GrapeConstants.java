@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.grape;
 
-public class GrapeConstants {
-
+public final class GrapeConstants {
+    
     public static final String GRAPE_COMMAND = "CamelGrapeCommand";
+    
+    private GrapeConstants() {  
+    }
 
 }

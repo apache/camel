@@ -26,6 +26,14 @@ public class MavenCoordinates {
 
     private final String classifier;
 
+    MavenCoordinates(String groupId, String artifactId, String version, String classifier) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+        this.classifier = classifier;
+    }
+    
+
     public static MavenCoordinates parseMavenCoordinates(String coordinates) {
         String[] coordinatesParts = coordinates.split("/");
         String clazzifier = "";
@@ -37,18 +45,7 @@ public class MavenCoordinates {
             clazzifier = coordinatesParts[3];
         }
 
-        return new MavenCoordinates(
-                coordinatesParts[0],
-                coordinatesParts[1],
-                coordinatesParts[2],
-                clazzifier);
-    }
-
-    MavenCoordinates(String groupId, String artifactId, String version, String classifier) {
-        this.groupId = groupId;
-        this.artifactId = artifactId;
-        this.version = version;
-        this.classifier = classifier;
+        return new MavenCoordinates(coordinatesParts[0], coordinatesParts[1], coordinatesParts[2], clazzifier);
     }
 
     public String getGroupId() {
