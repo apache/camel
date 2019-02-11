@@ -58,6 +58,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common")
     private String brokers;
     @UriParam(label = "common")
+    private String schemaRegistryURL;
+    @UriParam(label = "common")
     private String clientId;
     @UriParam(label = "common", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new KafkaHeaderFilterStrategy();
@@ -357,6 +359,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, ProducerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         addPropertyIfNotNull(props, ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, isEnableIdempotence());
         addPropertyIfNotNull(props, ProducerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
+        addPropertyIfNotNull(props, "schema.registry.url", getSchemaRegistryURL());
 
         // SSL
         applySslConfiguration(props, getSslContextParameters());
@@ -417,6 +420,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, ConsumerConfig.RECONNECT_BACKOFF_MS_CONFIG, getReconnectBackoffMs());
         addPropertyIfNotNull(props, ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         addPropertyIfNotNull(props, ConsumerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
+        addPropertyIfNotNull(props, "schema.registry.url", getSchemaRegistryURL());
 
         // SSL
         applySslConfiguration(props, getSslContextParameters());
@@ -774,6 +778,20 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     public void setBrokers(String brokers) {
         this.brokers = brokers;
     }
+
+    public String getSchemaRegistryURL() {
+		return schemaRegistryURL;
+	}
+
+    /**
+     * URL of the Kafka schema registry to use.
+     * The format is host1:port1,host2:port2.
+     * <p/>
+     * This option is known as <tt>schema.registry.url</tt> in the Kafka documentation.
+     */
+	public void setSchemaRegistryURL(String schemaRegistryURL) {
+		this.schemaRegistryURL = schemaRegistryURL;
+	}
 
     public String getCompressionCodec() {
         return compressionCodec;
