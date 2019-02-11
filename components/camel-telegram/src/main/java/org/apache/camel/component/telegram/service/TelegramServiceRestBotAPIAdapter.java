@@ -37,6 +37,8 @@ import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.model.SendLocationMessage;
+import org.apache.camel.component.telegram.model.SendVenueMessage;
+import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -82,6 +84,10 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             resultMessage = api.sendLocation(authorizationToken, (SendLocationMessage) message);
         } else if (message instanceof EditMessageLiveLocationMessage) {
             resultMessage = api.editMessageLiveLocation(authorizationToken, (EditMessageLiveLocationMessage) message);
+        } else if (message instanceof StopMessageLiveLocationMessage) {
+            resultMessage = api.stopMessageLiveLocation(authorizationToken, (StopMessageLiveLocationMessage) message);
+        } else if (message instanceof SendVenueMessage) {
+            resultMessage = api.sendVenue(authorizationToken, (SendVenueMessage) message);
         } else {
             throw new IllegalArgumentException("Unsupported message type " + (message != null ? message.getClass().getName() : null));
         }

@@ -21,6 +21,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.SendLocationMessage;
+import org.apache.camel.component.telegram.model.SendVenueMessage;
+import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.service.RestBotAPI;
 import org.apache.camel.component.telegram.service.TelegramServiceRestBotAPIAdapter;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
@@ -67,12 +69,36 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
     }
 
     @Test
+    public void testSendVenue() {
+        MessageResult expected = new MessageResult();
+        expected.setOk(true);
+        when(restBotAPI.sendVenue(anyString(), any(SendVenueMessage.class))).thenReturn(expected);
+
+        SendVenueMessage msg = new SendVenueMessage(latitude, longitude, "title", "address");
+        MessageResult actual = (MessageResult) service.sendMessage("mock-token", msg);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void testEditMessageLiveLocation() {
         MessageResult expected = new MessageResult();
         expected.setOk(true);
         when(restBotAPI.editMessageLiveLocation(anyString(), any(EditMessageLiveLocationMessage.class))).thenReturn(expected);
 
         EditMessageLiveLocationMessage msg = new EditMessageLiveLocationMessage(latitude, longitude);
+        MessageResult actual = (MessageResult) service.sendMessage("mock-token", msg);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testStopMessageLiveLocation() {
+        MessageResult expected = new MessageResult();
+        expected.setOk(true);
+        when(restBotAPI.stopMessageLiveLocation(anyString(), any(StopMessageLiveLocationMessage.class))).thenReturn(expected);
+
+        StopMessageLiveLocationMessage msg = new StopMessageLiveLocationMessage();
         MessageResult actual = (MessageResult) service.sendMessage("mock-token", msg);
 
         assertEquals(expected, actual);
