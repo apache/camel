@@ -131,3 +131,9 @@ The custom load balancer EIP has changed from `<custom>` to `<customLoadBalancer
 The XMLSecurity data format has renamed the attribute `keyOrTrustStoreParametersId` to `keyOrTrustStoreParametersRef` in the `<secureXML>` tag.
 
 The `<zipFile>` data format has been renamed to `<zipfile>`.
+
+
+Known Issues
+------------
+
+There is an issue with MDC logging and correctly transfering the Camel breadscrumb id's under certain situations with routing over asynchronous endpoints, due to the internal routing engine refactorings. This change also affects the `camel-zipkin` component, with may not correctly transfer the span id's when using MDC logging as well. 
