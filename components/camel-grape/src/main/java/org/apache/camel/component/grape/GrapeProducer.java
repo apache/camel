@@ -67,6 +67,9 @@ public class GrapeProducer extends DefaultProducer {
         case clearPatches:
             getEndpoint().getComponent().getPatchesRepository().clear();
             break;
+            
+        default:
+            break;
         }
     }
 
