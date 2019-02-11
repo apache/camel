@@ -1130,7 +1130,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Similar to startingDirectoryMustExist but this applies during polling recursive sub directories.
+     * Similar to the startingDirectoryMustExist option but this applies during polling (after starting the consumer).
      */
     public void setDirectoryMustExist(boolean directoryMustExist) {
         this.directoryMustExist = directoryMustExist;
