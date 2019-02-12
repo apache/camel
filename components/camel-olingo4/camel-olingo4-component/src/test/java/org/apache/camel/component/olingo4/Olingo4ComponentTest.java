@@ -33,6 +33,7 @@ import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
+import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
@@ -293,19 +294,26 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
      * Read entity set of the People object and filter already seen items on
      * subsequent exchanges Use a delay since the mock endpoint does not always
      * get the correct number of exchanges before being satisfied.
+     *
+     * Note:
+     * - consumer.splitResults is set to false since this ensures the first returned message
+     *   contains all the results. This is preferred for the purposes of this test. The default
+     *   will mean the first n messages contain the results (where n is the result total) then
+     *   subsequent messages will be empty
      */
     @Test
     public void testConsumerReadFilterAlreadySeen() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
-        String endpoint = "olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true";
+        String endpoint = "olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false";
         int expectedEntities = 20;
+        int expectedMsgCount = 3;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-alreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+
         final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders(endpoint, null, headers);
         assertNotNull(entities);
         assertEquals(expectedEntities, entities.getEntities().size());
 
-        int expectedMsgCount = 3;
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-alreadyseen");
-        mockEndpoint.expectedMessageCount(expectedMsgCount);
         mockEndpoint.assertIsSatisfied();
 
         for (int i = 0; i < expectedMsgCount; ++i) {
@@ -341,13 +349,14 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         int expectedEntities = 20;
         int expectedMsgCount = 3;
 
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:producer-noalreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+
         for (int i = 0; i < expectedMsgCount; ++i) {
             final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders(endpoint, null, headers);
             assertNotNull(entities);
         }
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:producer-noalreadyseen");
-        mockEndpoint.expectedMessageCount(expectedMsgCount);
         mockEndpoint.assertIsSatisfied();
 
         for (int i = 0; i < expectedMsgCount; ++i) {
@@ -373,13 +382,14 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
         int expectedEntities = 20;
         int expectedMsgCount = 3;
 
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:producer-alreadyseen");
+        mockEndpoint.expectedMessageCount(expectedMsgCount);
+
         for (int i = 0; i < expectedMsgCount; ++i) {
             final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders(endpoint, null, headers);
             assertNotNull(entities);
         }
 
-        MockEndpoint mockEndpoint = getMockEndpoint("mock:producer-alreadyseen");
-        mockEndpoint.expectedMessageCount(expectedMsgCount);
         mockEndpoint.assertIsSatisfied();
 
         for (int i = 0; i < expectedMsgCount; ++i) {
@@ -398,6 +408,51 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
                 // since the filterAlreadySeen property is true
                 //
                 assertEquals(0, set.getEntities().size());
+            }
+        }
+    }
+
+    /**
+     * Read entity set of the People object and split the results
+     * into individual messages
+     */
+    @Test
+    public void testConsumerReadSplitResults() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo4://read/People?consumer.splitResult=true";
+        int expectedEntities = 20;
+
+        int expectedMsgCount = 3;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult");
+        mockEndpoint.expectedMinimumMessageCount(expectedMsgCount);
+
+        final ClientEntitySet entities = (ClientEntitySet)requestBodyAndHeaders(endpoint, null, headers);
+        assertNotNull(entities);
+        assertEquals(expectedEntities, entities.getEntities().size());
+
+        mockEndpoint.assertIsSatisfied();
+        //
+        // At least 3 individual messages in the exchange,
+        // each containing a different entity.
+        //
+        for (int i = 0; i < expectedMsgCount; ++i) {
+            Object body = mockEndpoint.getExchanges().get(i).getIn().getBody();
+            assertTrue(body instanceof ClientEntity);
+            ClientEntity entity = (ClientEntity)body;
+            ClientProperty nameProperty = entity.getProperty("UserName");
+            assertNotNull(nameProperty);
+
+            switch(i) {
+            case 0:
+                assertEquals("russellwhyte", nameProperty.getValue().toString());
+                break;
+            case 1:
+                assertEquals("scottketchum", nameProperty.getValue().toString());
+                break;
+            case 2:
+                assertEquals("ronaldmundy", nameProperty.getValue().toString());
+                break;
+            default:
             }
         }
     }
@@ -453,7 +508,9 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
                 //
                 // Consumer endpoint
                 //
-                from("olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true").to("mock:consumer-alreadyseen");
+                from("olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false").to("mock:consumer-alreadyseen");
+
+                from("olingo4://read/People?consumer.splitResult=true").to("mock:consumer-splitresult");
             }
         };
     }
