@@ -26,5 +26,6 @@ public enum LambdaOperations {
     updateFunction,
     createEventSourceMapping,
     deleteEventSourceMapping,
-    listEventSourceMapping
+    listEventSourceMapping,
+    listTags
 }

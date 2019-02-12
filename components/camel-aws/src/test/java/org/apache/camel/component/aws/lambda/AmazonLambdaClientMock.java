@@ -286,7 +286,9 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public ListTagsResult listTags(ListTagsRequest listTagsRequest) {
-        throw new UnsupportedOperationException();
+        ListTagsResult result = new ListTagsResult();
+        result.addTagsEntry("test", "lambda-tag");
+        return result;
     }
 
     @Override

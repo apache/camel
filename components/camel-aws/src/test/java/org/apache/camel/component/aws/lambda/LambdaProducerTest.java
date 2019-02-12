@@ -26,6 +26,7 @@ import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
+import com.amazonaws.services.lambda.model.ListTagsResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.util.IOUtils;
 
@@ -197,6 +198,21 @@ public class LambdaProducerTest extends CamelTestSupport {
         ListEventSourceMappingsResult result = exchange.getOut().getBody(ListEventSourceMappingsResult.class);
         assertEquals(result.getEventSourceMappings().get(0).getFunctionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
     }
+    
+    @Test
+    public void lambdaListTagsTest() throws Exception {
+
+        Exchange exchange = template.send("direct:listTags", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_ARN, "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        ListTagsResult result = (ListTagsResult)exchange.getOut().getBody();
+        assertEquals("lambda-tag", result.getTags().get("test"));
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -225,6 +241,8 @@ public class LambdaProducerTest extends CamelTestSupport {
                 from("direct:deleteFunction").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=deleteFunction").to("mock:result");
 
                 from("direct:updateFunction").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=updateFunction").to("mock:result");
+                
+                from("direct:listTags").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listTags").to("mock:result");
 
                 from("direct:createEventSourceMapping").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=createEventSourceMapping").to("mock:result");
                 
