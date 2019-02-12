@@ -43,6 +43,8 @@ import com.amazonaws.services.lambda.model.InvokeResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsRequest;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
+import com.amazonaws.services.lambda.model.ListTagsRequest;
+import com.amazonaws.services.lambda.model.ListTagsResult;
 import com.amazonaws.services.lambda.model.TracingConfig;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeRequest;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
@@ -97,6 +99,9 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case listEventSourceMapping:
             listEventSourceMapping(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case listTags:
+            listTags(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -427,6 +432,25 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.listEventSourceMappings(request);
         } catch (AmazonServiceException ase) {
             log.trace("listEventSourceMapping command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void listTags(AWSLambda lambdaClient, Exchange exchange) {
+        ListTagsResult result;
+        try {
+            ListTagsRequest request = new ListTagsRequest();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN))) {
+                String resource = exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN, String.class);
+                request.withResource(resource);
+            } else {
+                throw new IllegalArgumentException("The resource ARN must be specified");
+            }
+            result = lambdaClient.listTags(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("listTags command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
