@@ -493,7 +493,7 @@ public class LambdaProducer extends DefaultProducer {
     }
     
     private void untagResource(AWSLambda lambdaClient, Exchange exchange) {
-       UntagResourceResult result;
+        UntagResourceResult result;
         try {
             UntagResourceRequest request = new UntagResourceRequest();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN))) {
