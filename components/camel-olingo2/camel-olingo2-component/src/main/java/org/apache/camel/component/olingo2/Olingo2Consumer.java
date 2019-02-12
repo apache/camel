@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.olingo2;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import org.apache.camel.Exchange;
@@ -27,6 +29,7 @@ import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiConsumer;
 import org.apache.camel.util.component.ApiConsumerHelper;
+import org.apache.olingo.odata2.api.ep.entry.ODataEntry;
 import org.apache.olingo.odata2.api.ep.feed.ODataFeed;
 
 
@@ -130,5 +133,21 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
         }
 
         resultIndex.index(result);
+    }
+
+    @Override
+    public Object splitResult(Object result) {
+        List<Object> splitResult = new ArrayList<>();
+
+        if (result instanceof ODataFeed) {
+            ODataFeed odataFeed = (ODataFeed) result;
+            for (ODataEntry entry : odataFeed.getEntries()) {
+                splitResult.add(entry);
+            }
+        } else if (result instanceof ODataEntry) {
+            splitResult.add(result);
+        }
+
+        return splitResult;
     }
 }
