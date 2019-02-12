@@ -16,23 +16,17 @@
  */
 package org.apache.camel.component.hl7;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.camel.model.language.ExpressionDefinition;
 
-@XmlRootElement(name = "terser")
-@XmlAccessorType(XmlAccessType.FIELD)
-class TerserExpression extends ExpressionDefinition {
+class Hl7TerserExpression extends ExpressionDefinition {
 
-    TerserExpression(String expression) {
+    Hl7TerserExpression(String expression) {
         super(expression);
     }
 
     @Override
     public String getLanguage() {
-        return "terser";
+        return "hl7terser";
     }
 
 }

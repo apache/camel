@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import static org.apache.camel.component.hl7.HL7.terser;
+import static org.apache.camel.component.hl7.HL7.hl7terser;
 
 
 public class TerserExpressionTest extends CamelTestSupport {
@@ -84,10 +84,10 @@ public class TerserExpressionTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:test1").transform(terser("PID-3-1")).to("mock:test1");
-                from("direct:test2").filter(terser("PID-3-1").isEqualTo(PATIENT_ID)).to("mock:test2");
-                from("direct:test3").filter(terser("PID-4-1").isNull()).to("mock:test3");
-                from("direct:test4").filter(terser("blorg gablorg").isNull()).to("mock:test3");
+                from("direct:test1").transform(hl7terser("PID-3-1")).to("mock:test1");
+                from("direct:test2").filter(hl7terser("PID-3-1").isEqualTo(PATIENT_ID)).to("mock:test2");
+                from("direct:test3").filter(hl7terser("PID-4-1").isNull()).to("mock:test3");
+                from("direct:test4").filter(hl7terser("blorg gablorg").isNull()).to("mock:test3");
                 from("direct:test5").bean(terserBean).to("mock:test5");
             }
         };
@@ -107,7 +107,7 @@ public class TerserExpressionTest extends CamelTestSupport {
     }
 
     public class TerserBean {
-        public String patientId(@Terser(value = "PID-3-1") String patientId) {
+        public String patientId(@Hl7Terser(value = "PID-3-1") String patientId) {
             return patientId;
         }
     }

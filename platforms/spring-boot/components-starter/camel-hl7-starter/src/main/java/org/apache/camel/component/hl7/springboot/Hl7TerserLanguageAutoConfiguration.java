@@ -22,7 +22,7 @@ import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.component.hl7.TerserLanguage;
+import org.apache.camel.component.hl7.Hl7TerserLanguage;
 import org.apache.camel.spi.HasId;
 import org.apache.camel.spi.LanguageCustomizer;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
@@ -53,22 +53,22 @@ import org.springframework.context.annotation.Scope;
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @Configuration
 @Conditional({ConditionalOnCamelContextAndAutoConfigurationBeans.class,
-        TerserLanguageAutoConfiguration.GroupConditions.class})
+        Hl7TerserLanguageAutoConfiguration.GroupConditions.class})
 @AutoConfigureAfter(CamelAutoConfiguration.class)
 @EnableConfigurationProperties({LanguageConfigurationProperties.class,
-        TerserLanguageConfiguration.class})
-public class TerserLanguageAutoConfiguration {
+        Hl7TerserLanguageConfiguration.class})
+public class Hl7TerserLanguageAutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory
-            .getLogger(TerserLanguageAutoConfiguration.class);
+            .getLogger(Hl7TerserLanguageAutoConfiguration.class);
     @Autowired
     private ApplicationContext applicationContext;
     @Autowired
     private CamelContext camelContext;
     @Autowired
-    private TerserLanguageConfiguration configuration;
+    private Hl7TerserLanguageConfiguration configuration;
     @Autowired(required = false)
-    private List<LanguageCustomizer<TerserLanguage>> customizers;
+    private List<LanguageCustomizer<Hl7TerserLanguage>> customizers;
 
     static class GroupConditions extends GroupCondition {
         public GroupConditions() {
@@ -78,10 +78,10 @@ public class TerserLanguageAutoConfiguration {
 
     @Bean(name = "hl7terser-language")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    @ConditionalOnMissingBean(TerserLanguage.class)
-    public TerserLanguage configureTerserLanguage() throws Exception {
-        TerserLanguage language = new TerserLanguage();
-        if (CamelContextAware.class.isAssignableFrom(TerserLanguage.class)) {
+    @ConditionalOnMissingBean(Hl7TerserLanguage.class)
+    public Hl7TerserLanguage configureHl7TerserLanguage() throws Exception {
+        Hl7TerserLanguage language = new Hl7TerserLanguage();
+        if (CamelContextAware.class.isAssignableFrom(Hl7TerserLanguage.class)) {
             CamelContextAware contextAware = CamelContextAware.class
                     .cast(language);
             if (contextAware != null) {
@@ -94,7 +94,7 @@ public class TerserLanguageAutoConfiguration {
         CamelPropertiesHelper.setCamelProperties(camelContext, language,
                 parameters, false);
         if (ObjectHelper.isNotEmpty(customizers)) {
-            for (LanguageCustomizer<TerserLanguage> customizer : customizers) {
+            for (LanguageCustomizer<Hl7TerserLanguage> customizer : customizers) {
                 boolean useCustomizer = (customizer instanceof HasId)
                         ? HierarchicalPropertiesEvaluator.evaluate(
                                 applicationContext.getEnvironment(),

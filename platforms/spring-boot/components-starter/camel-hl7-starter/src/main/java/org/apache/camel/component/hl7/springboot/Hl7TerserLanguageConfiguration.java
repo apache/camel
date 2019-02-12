@@ -27,7 +27,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Generated("org.apache.camel.maven.packaging.SpringBootAutoConfigurationMojo")
 @ConfigurationProperties(prefix = "camel.language.hl7terser")
-public class TerserLanguageConfiguration
+public class Hl7TerserLanguageConfiguration
         extends
             LanguageConfigurationPropertiesCommon {
 

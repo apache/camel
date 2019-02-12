@@ -32,8 +32,8 @@ public final class HL7 {
         // Helper class
     }
 
-    public static ValueBuilder terser(String expression) {
-        return new ValueBuilder(new TerserExpression(expression));
+    public static ValueBuilder hl7terser(String expression) {
+        return new ValueBuilder(new Hl7TerserExpression(expression));
     }
 
     public static ValueBuilder ack() {
