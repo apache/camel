@@ -49,6 +49,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.InputStreamDataSource;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.jaxrs.model.URITemplate;
+import org.apache.cxf.jaxrs.utils.AnnotationUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.MessageContentsList;
 
@@ -319,6 +320,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
          * @return A MethodSpec instance representing the method metadata relevant to the Camel binding process.
          */
         public static MethodSpec fromMethod(Method method) {
+            method = AnnotationUtils.getAnnotatedMethod(method.getDeclaringClass(), method);
             MethodSpec answer = new MethodSpec();
             
             Annotation[][] annotations = method.getParameterAnnotations();
