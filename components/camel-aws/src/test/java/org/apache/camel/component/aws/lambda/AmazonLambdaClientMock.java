@@ -308,7 +308,8 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public TagResourceResult tagResource(TagResourceRequest tagResourceRequest) {
-        throw new UnsupportedOperationException();
+        TagResourceResult res = new TagResourceResult();
+        return res;
     }
 
     @Override

@@ -18,6 +18,8 @@ package org.apache.camel.component.aws.lambda;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
@@ -27,6 +29,7 @@ import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.ListTagsResult;
+import com.amazonaws.services.lambda.model.TagResourceResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.util.IOUtils;
 
@@ -213,6 +216,24 @@ public class LambdaProducerTest extends CamelTestSupport {
         ListTagsResult result = (ListTagsResult)exchange.getOut().getBody();
         assertEquals("lambda-tag", result.getTags().get("test"));
     }
+    
+    @Test
+    public void tagResourceTest() throws Exception {
+
+        Exchange exchange = template.send("direct:tagResource", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> tags = new HashMap<String, String>();
+                tags.put("test", "added-tag");
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_ARN, "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_TAGS, tags);
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        TagResourceResult result = (TagResourceResult)exchange.getOut().getBody();
+        assertNotNull(result);
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -243,6 +264,8 @@ public class LambdaProducerTest extends CamelTestSupport {
                 from("direct:updateFunction").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=updateFunction").to("mock:result");
                 
                 from("direct:listTags").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listTags").to("mock:result");
+                
+                from("direct:tagResource").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=tagResource").to("mock:result");
 
                 from("direct:createEventSourceMapping").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=createEventSourceMapping").to("mock:result");
                 

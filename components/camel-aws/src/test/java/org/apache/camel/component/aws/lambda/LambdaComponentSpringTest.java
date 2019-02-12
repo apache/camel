@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.lambda;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
@@ -26,6 +28,7 @@ import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.ListTagsResult;
+import com.amazonaws.services.lambda.model.TagResourceResult;
 import com.amazonaws.util.IOUtils;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -172,6 +175,24 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         ListTagsResult result = (ListTagsResult)exchange.getOut().getBody();
         assertEquals("lambda-tag", result.getTags().get("test"));
+    }
+    
+    @Test
+    public void tagResourceTest() throws Exception {
+
+        Exchange exchange = template.send("direct:tagResource", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> tags = new HashMap<String, String>();
+                tags.put("test", "added-tag");
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_ARN, "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_TAGS, tags);
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        TagResourceResult result = (TagResourceResult)exchange.getOut().getBody();
+        assertNotNull(result);
     }
 
     @Override
