@@ -8,7 +8,7 @@
     },
     {
       "defaultValue": true,
-      "name": "camel.language.terser.enabled",
+      "name": "camel.language.hl7terser.enabled",
       "description": "Enable terser language",
       "type": "java.lang.Boolean"
     }
