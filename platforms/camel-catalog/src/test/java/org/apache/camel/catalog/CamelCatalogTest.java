@@ -103,6 +103,8 @@ public class CamelCatalogTest {
         assertTrue(names.contains("log"));
         assertTrue(names.contains("docker"));
         assertTrue(names.contains("jms"));
+        assertTrue(names.contains("activemq"));
+        assertTrue(names.contains("zookeeper-master"));
 
         names = catalog.findDataFormatNames();
         assertNotNull(names);
@@ -110,12 +112,18 @@ public class CamelCatalogTest {
         assertTrue(names.contains("hl7"));
         assertTrue(names.contains("jaxb"));
         assertTrue(names.contains("syslog"));
+        assertTrue(names.contains("asn1"));
+        assertTrue(names.contains("zipfile"));
 
         names = catalog.findLanguageNames();
         assertNotNull(names);
         assertTrue(names.contains("simple"));
         assertTrue(names.contains("groovy"));
         assertTrue(names.contains("mvel"));
+        assertTrue(names.contains("bean"));
+        assertTrue(names.contains("file"));
+        assertTrue(names.contains("xtokenize"));
+        assertTrue(names.contains("hl7terser"));
 
         names = catalog.findModelNames();
         assertNotNull(names);
@@ -125,6 +133,8 @@ public class CamelCatalogTest {
         assertTrue(names.contains("aggregate"));
         assertTrue(names.contains("split"));
         assertTrue(names.contains("loadBalance"));
+        assertTrue(names.contains("hystrix"));
+        assertTrue(names.contains("saga"));
     }
 
     @Test
