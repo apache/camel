@@ -30,7 +30,6 @@ import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.camel.builder.XMLTokenExpressionIterator;
 import org.junit.Assert;
 import org.junit.Test;
 
