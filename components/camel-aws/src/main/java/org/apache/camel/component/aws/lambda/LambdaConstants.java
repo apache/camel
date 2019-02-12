@@ -47,4 +47,5 @@ public interface LambdaConstants {
     String EVENT_SOURCE_BATCH_SIZE = "CamelAwsLambdaEventSourceBatchSize";
     String EVENT_SOURCE_UUID = "CamelAwsLambdaEventSourceUuid";
     String RESOURCE_ARN = "CamelAwsLambdaResourceArn";
+    String RESOURCE_TAGS = "CamelAwsLambdaResourceTags";
 }
