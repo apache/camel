@@ -61,7 +61,7 @@ import org.apache.camel.support.service.ServiceSupport;
  * concurrency then sub-sequent {@link Exchange} will continue to be routed, if there breakpoint already holds a
  * suspended {@link Exchange}.
  */
-public class BacklogDebugger extends ServiceSupport {
+public final class BacklogDebugger extends ServiceSupport {
 
     private long fallbackTimeout = 300;
     private final CamelContext camelContext;
