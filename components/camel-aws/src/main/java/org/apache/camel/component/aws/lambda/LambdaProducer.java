@@ -48,6 +48,8 @@ import com.amazonaws.services.lambda.model.ListTagsResult;
 import com.amazonaws.services.lambda.model.TagResourceRequest;
 import com.amazonaws.services.lambda.model.TagResourceResult;
 import com.amazonaws.services.lambda.model.TracingConfig;
+import com.amazonaws.services.lambda.model.UntagResourceRequest;
+import com.amazonaws.services.lambda.model.UntagResourceResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeRequest;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.services.lambda.model.VpcConfig;
@@ -472,8 +474,8 @@ public class LambdaProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("The resource ARN must be specified");
             }
-            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN))) {
-                Map<String, String> tags = exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN, Map.class);
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_TAGS))) {
+                Map<String, String> tags = exchange.getIn().getHeader(LambdaConstants.RESOURCE_TAGS, Map.class);
                 request.withTags(tags);
             } else {
                 throw new IllegalArgumentException("The tags must be specified");
