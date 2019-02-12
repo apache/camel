@@ -338,8 +338,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
     private Boolean useStringsForPicklists;
 
-    void processDescription(final File pkgDir, final SObjectDescription description, final GeneratorUtility utility,
-        final String generatedDate) throws IOException {
+    void processDescription(final File pkgDir, final SObjectDescription description, final GeneratorUtility utility) throws IOException {
 
         // generate a source file for SObject
         final VelocityContext context = new VelocityContext();
@@ -347,7 +346,6 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         context.put("utility", utility);
         context.put("esc", StringEscapeUtils.class);
         context.put("desc", description);
-        context.put("generatedDate", generatedDate);
         context.put("useStringsForPicklists", useStringsForPicklists);
 
         final String pojoFileName = description.getName() + JAVA_EXT;
@@ -483,7 +481,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 continue;
             }
             try {
-                processDescription(pkgDir, description, utility, generatedDate);
+                processDescription(pkgDir, description, utility);
             } catch (final IOException e) {
                 throw new MojoExecutionException("Unable to generate source files for: " + description.getName(), e);
             }

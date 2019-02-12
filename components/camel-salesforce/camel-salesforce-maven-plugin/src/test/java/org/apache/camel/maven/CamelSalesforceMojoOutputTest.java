@@ -54,7 +54,6 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
 public class CamelSalesforceMojoOutputTest {
-    private static final String FIXED_DATE = "Thu Mar 09 16:15:49 ART 2017";
     private static final String TEST_CALCULATED_FORMULA_FILE = "complex_calculated_formula.json";
     private static final String TEST_CASE_FILE = "case.json";
 
@@ -86,7 +85,7 @@ public class CamelSalesforceMojoOutputTest {
 
         mojo.descriptions = new ObjectDescriptions(client, 0, null, null, null, null, mojo.getLog());
 
-        mojo.processDescription(pkgDir, description, utility, FIXED_DATE);
+        mojo.processDescription(pkgDir, description, utility);
 
         for (final String source : sources) {
             String expected = fileNameAdapter.apply(source);
