@@ -39,4 +39,4 @@ Expression Language].
 [[Architecture-Diagram]]
 ==== Diagram
 
-image:images/architecture.data/camel-components.png[image]
+image:../assets/images/images/architecture.data/camel-components.png[image]
