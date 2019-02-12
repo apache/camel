@@ -42,26 +42,6 @@ pipeline {
 
     stages {
 
-        stage('Build & Deploy') {
-            when {
-                branch 'master'
-            }
-            steps {
-                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy"
-            }
-        }
-
-        stage('Build') {
-            when {
-                not {
-                    branch 'master'
-                }
-            }
-            steps {
-                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install"
-            }
-        }
-
         stage('Checks') {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
@@ -75,7 +55,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test"
+                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true clean install"
             }
             post {
                 always {
