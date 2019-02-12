@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 290 in 210 JAR artifacts (0 deprecated)
+Number of Components: 288 in 210 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -75,12 +75,6 @@ Number of Components: 290 in 210 JAR artifacts (0 deprecated)
 
 | link:camel-aws/src/main/docs/aws-ec2-component.adoc[AWS EC2] (camel-aws) +
 `aws-ec2:label` | 2.16 | The aws-ec2 is used for managing Amazon EC2 instances.
-
-| link:camel-aws/src/main/docs/aws-ecs-component.adoc[AWS ECS] (camel-aws) +
-`aws-ecs:label` | 3.0 | The aws-kms is used for managing Amazon ECS
-
-| link:camel-aws/src/main/docs/aws-eks-component.adoc[AWS EKS] (camel-aws) +
-`aws-eks:label` | 3.0 | The aws-kms is used for managing Amazon EKS
 
 | link:camel-aws/src/main/docs/aws-iam-component.adoc[AWS IAM] (camel-aws) +
 `aws-iam:label` | 2.23 | The aws-iam is used for managing Amazon IAM
@@ -320,7 +314,7 @@ Number of Components: 290 in 210 JAR artifacts (0 deprecated)
 `gora:name` | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
 | link:camel-grape/src/main/docs/grape-component.adoc[Grape] (camel-grape) +
-`grape:defaultCoordinates` | 2.16 | The grape component allows you to fetch, load and manage additional jars when CamelContext is running.
+`grape:defaultCoordinates` | 2.16 | Grape component allows you to fetch, load and manage additional jars when CamelContext is running.
 
 | link:camel-grpc/src/main/docs/grpc-component.adoc[gRPC] (camel-grpc) +
 `grpc:host:port/service` | 2.19 | The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
