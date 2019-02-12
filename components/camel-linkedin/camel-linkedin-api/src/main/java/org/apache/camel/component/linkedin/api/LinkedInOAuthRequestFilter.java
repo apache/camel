@@ -211,7 +211,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                     throw e;
                 }
                 //redirect from auth page leads to the new page with acceptance of access
-                nextLocation = AUTHORIZATION_URL_PREFIX+e.getResponse().getResponseHeaderValue(HttpHeaders.LOCATION);
+                nextLocation = AUTHORIZATION_URL_PREFIX + e.getResponse().getResponseHeaderValue(HttpHeaders.LOCATION);
             }
             if (nextLocation == null) {
                 throw new IllegalArgumentException("Redirect response query is null, check username, password and permissions");
