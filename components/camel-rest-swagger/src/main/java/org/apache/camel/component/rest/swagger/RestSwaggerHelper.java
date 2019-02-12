@@ -42,7 +42,7 @@ final class RestSwaggerHelper {
 
         if (!matcher.matches()) {
             throw new IllegalArgumentException(
-                "host must be an apsolute URI (e.g. http://api.example.com), given: `" + hostUri + "`");
+                "host must be an absolute URI (e.g. http://api.example.com), given: `" + hostUri + "`");
         }
 
         return hostUri;

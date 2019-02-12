@@ -88,9 +88,9 @@ public final class RestSwaggerComponent extends DefaultComponent implements SSLC
         defaultValue = "", label = "producer", required = "false")
     private String basePath = "";
 
-    @Metadata(description = "Name of the Camel component that will perform the requests. The compnent must be present"
+    @Metadata(description = "Name of the Camel component that will perform the requests. The component must be present"
         + " in Camel registry and it must implement RestProducerFactory service provider interface. If not set"
-        + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overriden in"
+        + " CLASSPATH is searched for single component that implements RestProducerFactory SPI. Can be overridden in"
         + " endpoint configuration.", label = "producer", required = "false")
     private String componentName;
 
@@ -98,7 +98,7 @@ public final class RestSwaggerComponent extends DefaultComponent implements SSLC
         description = "What payload type this component capable of consuming. Could be one type, like `application/json`"
             + " or multiple types as `application/json, application/xml; q=0.5` according to the RFC7231. This equates"
             + " to the value of `Accept` HTTP header. If set overrides any value found in the Swagger specification."
-            + " Can be overriden in endpoint configuration",
+            + " Can be overridden in endpoint configuration",
         label = "producer", required = "false")
     private String consumes;
 
@@ -106,14 +106,14 @@ public final class RestSwaggerComponent extends DefaultComponent implements SSLC
         + " `http[s]://hostname[:port]`. Can be configured at the endpoint, component or in the correspoding"
         + " REST configuration in the Camel Context. If you give this component a name (e.g. `petstore`) that"
         + " REST configuration is consulted first, `rest-swagger` next, and global configuration last. If set"
-        + " overrides any value found in the Swagger specification, RestConfiguration. Can be overriden in endpoint"
+        + " overrides any value found in the Swagger specification, RestConfiguration. Can be overridden in endpoint"
         + " configuration.", label = "producer", required = "false")
     private String host;
 
     @Metadata(
         description = "What payload type this component is producing. For example `application/json`"
             + " according to the RFC7231. This equates to the value of `Content-Type` HTTP header. If set overrides"
-            + " any value present in the Swagger specification. Can be overriden in endpoint configuration.",
+            + " any value present in the Swagger specification. Can be overridden in endpoint configuration.",
         label = "producer", required = "false")
     private String produces;
 
@@ -121,7 +121,7 @@ public final class RestSwaggerComponent extends DefaultComponent implements SSLC
         + " specification, but these can be overriden with properties on the component or endpoint level. If not"
         + " given the component tries to load `swagger.json` resource. Note that the `host` defined on the"
         + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
-        + " port in the URI syntax (i.e. `https://api.example.com:8080`). Can be overriden in endpoint"
+        + " port in the URI syntax (i.e. `https://api.example.com:8080`). Can be overridden in endpoint"
         + " configuration.", defaultValue = DEFAULT_SPECIFICATION_URI_STR, label = "producer", required = "false")
     private URI specificationUri;
 

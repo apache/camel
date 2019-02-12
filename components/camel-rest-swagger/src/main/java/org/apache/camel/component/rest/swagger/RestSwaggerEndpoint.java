@@ -128,10 +128,14 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
     @UriPath(
         description = "Path to the Swagger specification file. The scheme, host base path are taken from this"
-            + " specification, but these can be overriden with properties on the component or endpoint level. If not"
-            + " given the component tries to load `swagger.json` resource. Note that the `host` defined on the"
+            + " specification, but these can be overridden with properties on the component or endpoint level. If not"
+            + " given the component tries to load `swagger.json` resource from the classpath. Note that the `host` defined on the"
             + " component and endpoint of this Component should contain the scheme, hostname and optionally the"
-            + " port in the URI syntax (i.e. `https://api.example.com:8080`). Overrides component configuration.",
+            + " port in the URI syntax (i.e. `http://api.example.com:8080`). Overrides component configuration."
+            + " The Swagger specification can be loaded from different sources by prefixing with file: classpath: http: https:."
+            + " Support for https is limited to using the JDK installed UrlHandler, and as such it can be cumbersome to setup"
+            + " TLS/SSL certificates for https (such as setting a number of javax.net.ssl JVM system properties)."
+            + " How to do that consult the JDK documentation for UrlHandler.",
         defaultValue = RestSwaggerComponent.DEFAULT_SPECIFICATION_URI_STR,
         defaultValueNote = "By default loads `swagger.json` file", label = "producer")
     private URI specificationUri = RestSwaggerComponent.DEFAULT_SPECIFICATION_URI;
@@ -432,7 +436,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
 
         final boolean areTheSame = "rest-swagger".equals(assignedComponentName);
 
-        throw new IllegalStateException("Unable to determine destionation host for requests. The Swagger specification"
+        throw new IllegalStateException("Unable to determine destination host for requests. The Swagger specification"
             + " does not specify `scheme` and `host` parameters, the specification URI is not absolute with `http` or"
             + " `https` scheme, and no RestConfigurations configured with `scheme`, `host` and `port` were found for `"
             + (areTheSame ? "rest-swagger` component" : assignedComponentName + "` or `rest-swagger` components")
@@ -569,7 +573,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             final JsonNode node = mapper.readTree(stream);
 
             return swaggerParser.read(node);
-        } catch (final IOException e) {
+        } catch (Exception e) {
             // try Swaggers loader
             final Swagger swagger = swaggerParser.read(uriAsString);
 
@@ -580,7 +584,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException("The given Swagger specification could not be loaded from `" + uri
                 + "`. Tried loading using Camel's resource resolution and using Swagger's own resource resolution."
                 + " Swagger tends to swallow exceptions while parsing, try specifying Java system property `debugParser`"
-                + " (e.g. `-DdebugParser=true`), the exception that occured when loading using Camel's resource"
+                + " (e.g. `-DdebugParser=true`), the exception that occurred when loading using Camel's resource"
                 + " loader follows", e);
         }
     }
