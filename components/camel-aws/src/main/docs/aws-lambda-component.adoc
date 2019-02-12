@@ -195,6 +195,7 @@ The default is 3 seconds.|No
 - listEventSourceMapping
 - listTags
 - tagResource
+- untagResource
 
 ### Example
 

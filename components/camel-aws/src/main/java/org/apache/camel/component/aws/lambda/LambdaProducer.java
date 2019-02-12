@@ -110,6 +110,9 @@ public class LambdaProducer extends DefaultProducer {
         case tagResource:
             tagResource(getEndpoint().getAwsLambdaClient(), exchange);
             break;
+        case untagResource:
+            untagResource(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
         }
@@ -483,6 +486,31 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.tagResource(request);
         } catch (AmazonServiceException ase) {
             log.trace("listTags command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void untagResource(AWSLambda lambdaClient, Exchange exchange) {
+       UntagResourceResult result;
+        try {
+            UntagResourceRequest request = new UntagResourceRequest();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN))) {
+                String resource = exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN, String.class);
+                request.withResource(resource);
+            } else {
+                throw new IllegalArgumentException("The resource ARN must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_TAG_KEYS))) {
+                List<String> tagKeys = exchange.getIn().getHeader(LambdaConstants.RESOURCE_TAG_KEYS, List.class);
+                request.withTagKeys(tagKeys);
+            } else {
+                throw new IllegalArgumentException("The tag keys must be specified");
+            }
+            result = lambdaClient.untagResource(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("untagResource command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
