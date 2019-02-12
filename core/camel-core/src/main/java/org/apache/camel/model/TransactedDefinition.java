@@ -34,9 +34,6 @@ import org.apache.camel.spi.TransactedPolicy;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransactedDefinition extends OutputDefinition<TransactedDefinition> {
 
-    // TODO: Align this code with PolicyDefinition
-    // TODO: Camel 3 should be NoOutputDefinition
-
     // JAXB does not support changing the ref attribute from required to optional
     // if we extend PolicyDefinition so we must make a copy of the class
     @XmlTransient
