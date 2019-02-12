@@ -26,7 +26,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.apache.camel.component.hl7.HL7.ack;
-import static org.apache.camel.component.hl7.HL7.terser;
+import static org.apache.camel.component.hl7.HL7.hl7terser;
 
 public class AckExpressionTest extends CamelTestSupport {
 
@@ -93,10 +93,10 @@ public class AckExpressionTest extends CamelTestSupport {
                 from("direct:test1").transform(ack());
                 from("direct:test2").transform(ack(AcknowledgmentCode.CA));
                 from("direct:test3").onException(HL7Exception.class).handled(true).transform(ack()).end()
-                    .transform(terser("/.BLORG"));
+                    .transform(hl7terser("/.BLORG"));
                 from("direct:test4").onException(HL7Exception.class).handled(true)
                     .transform(ack(AcknowledgmentCode.AR, "Problem!", ErrorCode.APPLICATION_INTERNAL_ERROR)).end()
-                    .transform(terser("/.BLORG"));
+                    .transform(hl7terser("/.BLORG"));
                 from("direct:test5").transform(ack(AcknowledgmentCode.AR, "Problem!", ErrorCode.DATA_TYPE_ERROR));
             }
         };

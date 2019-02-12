@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 288 in 210 JAR artifacts (0 deprecated)
+Number of Components: 290 in 210 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -75,6 +75,12 @@ Number of Components: 288 in 210 JAR artifacts (0 deprecated)
 
 | link:camel-aws/src/main/docs/aws-ec2-component.adoc[AWS EC2] (camel-aws) +
 `aws-ec2:label` | 2.16 | The aws-ec2 is used for managing Amazon EC2 instances.
+
+| link:camel-aws/src/main/docs/aws-ecs-component.adoc[AWS ECS] (camel-aws) +
+`aws-ecs:label` | 3.0 | The aws-kms is used for managing Amazon ECS
+
+| link:camel-aws/src/main/docs/aws-eks-component.adoc[AWS EKS] (camel-aws) +
+`aws-eks:label` | 3.0 | The aws-kms is used for managing Amazon EKS
 
 | link:camel-aws/src/main/docs/aws-iam-component.adoc[AWS IAM] (camel-aws) +
 `aws-iam:label` | 2.23 | The aws-iam is used for managing Amazon IAM
@@ -314,7 +320,7 @@ Number of Components: 288 in 210 JAR artifacts (0 deprecated)
 `gora:name` | 2.14 | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
 | link:camel-grape/src/main/docs/grape-component.adoc[Grape] (camel-grape) +
-`grape:defaultCoordinates` | 2.16 | Grape component allows you to fetch, load and manage additional jars when CamelContext is running.
+`grape:defaultCoordinates` | 2.16 | The grape component allows you to fetch, load and manage additional jars when CamelContext is running.
 
 | link:camel-grpc/src/main/docs/grpc-component.adoc[gRPC] (camel-grpc) +
 `grpc:host:port/service` | 2.19 | The gRPC component allows to call and expose remote procedures via HTTP/2 with protobuf dataformat
@@ -998,7 +1004,7 @@ Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
 
 | link:../core/camel-core/src/main/docs/header-language.adoc[Header] (camel-core) | 1.5 | To use a Camel Message header in expressions or predicates.
 
-| link:camel-hl7/src/main/docs/terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
+| link:camel-hl7/src/main/docs/hl7terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
 
 | link:camel-script/src/main/docs/javaScript-language.adoc[JavaScript] (camel-script) | 1.0 | *deprecated* To use JavaScript in Camel expressions or predicates.
 

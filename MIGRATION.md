@@ -45,10 +45,6 @@ Deprecated APIs and Components
 
 All deprecated APIs and components from Camel 2.x has been removed in Camel 3.
 
-#### Simple language
-
-The `property` function was deprecated in Camel 2.x and has been removed. Use `exchangeProperty` as function name.
-
 Migration Camel applications
 ----------------------------
 
@@ -76,6 +72,13 @@ The method `includeRoutes` on `RouteBuilder` has been removed. This functionalit
 #### Generic Classes
 
 The class `JNDIContext` has been moved from `org.apache.camel.util.jndi.JNDIContext` in the camel-core JAR to `org.apache.camel.support.jndi.JNDIContext` and moved to the `camel-support` JAR.
+
+#### Languages
+
+The simple language `property` function was deprecated in Camel 2.x and has been removed. Use `exchangeProperty` as function name.
+
+The terser language has been renamed from terser to hl7terser.
+
 
 #### Helpers
 

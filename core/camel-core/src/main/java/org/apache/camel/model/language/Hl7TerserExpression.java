@@ -26,18 +26,18 @@ import org.apache.camel.spi.Metadata;
  * To use HL7 terser scripts in Camel expressions or predicates.
  */
 @Metadata(firstVersion = "2.11.0", label = "language,hl7", title = "HL7 Terser")
-@XmlRootElement(name = "terser")
+@XmlRootElement(name = "hl7terser")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TerserExpression extends ExpressionDefinition {
+public class Hl7TerserExpression extends ExpressionDefinition {
 
-    public TerserExpression() {
+    public Hl7TerserExpression() {
     }
 
-    public TerserExpression(String expression) {
+    public Hl7TerserExpression(String expression) {
         super(expression);
     }
 
     public String getLanguage() {
-        return "terser";
+        return "hl7terser";
     }
 }
