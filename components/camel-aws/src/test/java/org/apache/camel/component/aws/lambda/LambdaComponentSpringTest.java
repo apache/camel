@@ -25,6 +25,7 @@ import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
+import com.amazonaws.services.lambda.model.ListTagsResult;
 import com.amazonaws.util.IOUtils;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -156,6 +157,21 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         ListEventSourceMappingsResult result = exchange.getOut().getBody(ListEventSourceMappingsResult.class);
         assertEquals(result.getEventSourceMappings().get(0).getFunctionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+    }
+    
+    @Test
+    public void lambdaListTagsTest() throws Exception {
+
+        Exchange exchange = template.send("direct:listTags", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_ARN, "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        ListTagsResult result = (ListTagsResult)exchange.getOut().getBody();
+        assertEquals("lambda-tag", result.getTags().get("test"));
     }
 
     @Override
