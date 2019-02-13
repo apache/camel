@@ -3604,33 +3604,6 @@
       </dependency>
       <!-- camel starters: END -->
 
-      <!-- camel catalog -->
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-provider-karaf</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-provider-springboot</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-lucene</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-maven</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-
       <!-- camel commands -->
       <dependency>
         <groupId>org.apache.camel</groupId>
