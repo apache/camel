@@ -296,15 +296,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         super.doStart();
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        if (mongoConnection != null) {
-            LOG.debug("Closing connection");
-            mongoConnection.close();
-        }
-    }
-
     public Exchange createMongoDbExchange(DBObject dbObj) {
         Exchange exchange = super.createExchange();
         Message message = exchange.getIn();
