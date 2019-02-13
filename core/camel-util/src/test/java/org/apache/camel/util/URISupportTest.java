@@ -264,7 +264,6 @@ public class URISupportTest {
     public void testSanitizePathWithUserInfoAndColonPassword() {
         String path = "USERNAME:HARRISON:COLON@sftp.server.test";
         String expected = "USERNAME:xxxxxx@sftp.server.test";
-        System.out.println(URISupport.sanitizePath(path));
         assertEquals(expected, URISupport.sanitizePath(path));
     }
 
