@@ -29,7 +29,7 @@
 
   <artifactId>camel-catalog</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Camel Catalog</name>
+  <name>Camel :: Catalog :: Camel Catalog</name>
   <description>Camel Catalog</description>
 
   <properties>

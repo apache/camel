@@ -29,7 +29,7 @@
 
   <artifactId>camel-catalog-lucene</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Camel Catalog :: Lucene</name>
+  <name>Camel :: Catalog :: Catalog Lucene</name>
   <description>Camel Catalog Lucene</description>
 
   <properties>

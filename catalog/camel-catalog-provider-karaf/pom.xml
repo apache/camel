@@ -29,7 +29,7 @@
 
   <artifactId>camel-catalog-provider-karaf</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Camel Catalog :: Provider Karaf</name>
+  <name>Camel :: Catalog :: Camel Catalog Provider Karaf</name>
   <description>Camel Catalog Karaf</description>
 
   <properties>
