@@ -26,7 +26,7 @@ public class LambdaOperationsTest {
 
     @Test
     public void supportedOperationCount() {
-        assertEquals(12, LambdaOperations.values().length);
+        assertEquals(13, LambdaOperations.values().length);
     }
 
     @Test
@@ -43,6 +43,7 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.listTags, LambdaOperations.valueOf("listTags"));
         assertEquals(LambdaOperations.tagResource, LambdaOperations.valueOf("tagResource"));
         assertEquals(LambdaOperations.untagResource, LambdaOperations.valueOf("untagResource"));
+        assertEquals(LambdaOperations.publishVersion, LambdaOperations.valueOf("publishVersion"));
     }
 
     @Test
@@ -59,5 +60,6 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.listTags.toString(), "listTags");
         assertEquals(LambdaOperations.tagResource.toString(), "tagResource");
         assertEquals(LambdaOperations.untagResource.toString(), "untagResource");
+        assertEquals(LambdaOperations.publishVersion.toString(), "publishVersion");
     }
 }

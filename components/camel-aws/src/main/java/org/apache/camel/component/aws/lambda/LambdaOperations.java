@@ -29,5 +29,6 @@ public enum LambdaOperations {
     listEventSourceMapping,
     listTags,
     tagResource,
-    untagResource
+    untagResource,
+    publishVersion
 }
