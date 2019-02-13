@@ -21,10 +21,12 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import io.swagger.models.Operation;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
 
@@ -357,6 +359,25 @@ public class RestSwaggerEndpointTest {
         when(camelContext.getClassResolver()).thenReturn(new DefaultClassResolver());
 
         RestSwaggerEndpoint.loadSpecificationFrom(camelContext, URI.create("non-existant.json"));
+    }
+
+    @Test
+    public void shouldResolveUris() {
+        final RestSwaggerEndpoint endpoint = new RestSwaggerEndpoint();
+        endpoint.parameters = new HashMap<>();
+        endpoint.parameters.put("param1", "value1");
+
+        final Map<String, Parameter> pathParameters = new HashMap<>();
+        pathParameters.put("param1", new PathParameter().name("param1"));
+        pathParameters.put("param2", new PathParameter().name("param2"));
+
+        assertThat(endpoint.resolveUri("/path", pathParameters)).isEqualTo("/path");
+        assertThat(endpoint.resolveUri("/path/{param1}", pathParameters)).isEqualTo("/path/value1");
+        assertThat(endpoint.resolveUri("/{param1}/path", pathParameters)).isEqualTo("/value1/path");
+        assertThat(endpoint.resolveUri("/{param1}/path/{param2}", pathParameters)).isEqualTo("/value1/path/{param2}");
+        assertThat(endpoint.resolveUri("/{param1}/{param2}", pathParameters)).isEqualTo("/value1/{param2}");
+        assertThat(endpoint.resolveUri("/path/{param1}/to/{param2}/rest", pathParameters))
+            .isEqualTo("/path/value1/to/{param2}/rest");
     }
 
     @Test
