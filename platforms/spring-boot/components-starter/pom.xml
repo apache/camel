@@ -27,7 +27,7 @@
   </parent>
   <artifactId>components-starter</artifactId>
   <packaging>pom</packaging>
-  <name>Camel :: Components :: Starter</name>
+  <name>Camel :: Platforms :: Spring-Boot :: Components Starter</name>
   <description>Camel Components Starter</description>
   <!-- to support spring-boot auto configuration in the Camel components -->
   <dependencies>
