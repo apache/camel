@@ -498,8 +498,12 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
                 resolved.append('{').append(name).append('}');
             }
 
-            pos = end;
+            pos = end + 1;
             start = uriTemplate.indexOf('{', pos);
+        }
+
+        if (pos < uriTemplate.length()) {
+            resolved.append(uriTemplate.substring(pos));
         }
 
         return resolved.toString();
