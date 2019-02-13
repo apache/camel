@@ -29,7 +29,7 @@
 
   <artifactId>camel-catalog-maven</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Catalog :: Camel Catalog Maven</name>
+  <name>Camel :: Catalog :: Maven</name>
   <description>Camel Catalog Maven</description>
 
   <properties>
