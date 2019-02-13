@@ -29,7 +29,7 @@
 
   <artifactId>camel-google-drive</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: GoogleDrive</name>
+  <name>Camel :: Google Drive</name>
   <description>Camel Component for GoogleDrive</description>
 
   <properties>

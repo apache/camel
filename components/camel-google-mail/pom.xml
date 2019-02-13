@@ -29,7 +29,7 @@
 
   <artifactId>camel-google-mail</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: GoogleMail</name>
+  <name>Camel :: Google Mail</name>
   <description>Camel Component for GoogleMail</description>
 
   <properties>
