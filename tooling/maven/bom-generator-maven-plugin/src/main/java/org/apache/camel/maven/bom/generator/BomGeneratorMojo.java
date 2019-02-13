@@ -175,6 +175,13 @@ public class BomGeneratorMojo extends AbstractMojo {
             boolean accept = inclusions.matches(dep) && !exclusions.matches(dep);
             getLog().debug(dep + (accept ? " included in the BOM" : " excluded from BOM"));
 
+            // skip all camel-catalog as they should not be in the BOM
+            boolean catalog = dep.getArtifactId().startsWith("camel-catalog");
+            if (catalog) {
+                getLog().debug("Skipping camel-catalog dependency: " + dep.getArtifactId());
+                accept = false;
+            }
+
             if (accept) {
                 outDependencies.add(dep);
             }
