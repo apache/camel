@@ -46,6 +46,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

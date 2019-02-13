@@ -836,7 +836,7 @@
         <version>${project.version}</version>
       </dependency>
 
-      <!-- NOTE: auto-generated list of components when building platforms/camel-catalog -->
+      <!-- NOTE: auto-generated list of components when building camel catalog -->
       <!-- camel components: START -->
       <dependency>
         <groupId>org.apache.camel</groupId>
@@ -2295,7 +2295,7 @@
       </dependency>
       <!-- camel components: END -->
 
-      <!-- NOTE: auto-generated list of starter components when building platforms/camel-catalog -->
+      <!-- NOTE: auto-generated list of starter components when building camel catalog -->
       <!-- camel starters: START -->
       <dependency>
         <groupId>org.apache.camel</groupId>
