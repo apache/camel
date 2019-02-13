@@ -38,7 +38,6 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
-@SuppressWarnings({"executablestatementcount"})
 @SupportedAnnotationTypes({"org.apache.camel.Converter"})
 public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
 
