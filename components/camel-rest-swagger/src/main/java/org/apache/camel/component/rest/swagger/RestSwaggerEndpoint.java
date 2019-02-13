@@ -502,8 +502,12 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
                 resolved.append('{').append(name).append('}');
             }
 
-            pos = end;
+            pos = end + 1;
             start = uriTemplate.indexOf('{', pos);
+        }
+
+        if (pos < uriTemplate.length()) {
+            resolved.append(uriTemplate.substring(pos));
         }
 
         return resolved.toString();
@@ -573,7 +577,7 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             final JsonNode node = mapper.readTree(stream);
 
             return swaggerParser.read(node);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // try Swaggers loader
             final Swagger swagger = swaggerParser.read(uriAsString);
 
