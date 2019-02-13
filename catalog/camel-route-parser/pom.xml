@@ -29,7 +29,7 @@
   </parent>
 
   <artifactId>camel-route-parser</artifactId>
-  <name>Camel :: Tooling :: Camel Route Parser</name>
+  <name>Camel :: Catalog :: Camel Route Parser</name>
   <description>Java and XML source code parser for Camel routes</description>
 
   <dependencies>
