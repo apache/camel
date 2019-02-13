@@ -37,6 +37,7 @@ import org.apache.camel.support.service.ServiceHelper;
  * Processing will still occur synchronously but it will provide the required
  * notifications that the caller expects.
  */
+@SuppressWarnings("checkstyle")
 public final class AsyncProcessorConverterHelper {
     
     private AsyncProcessorConverterHelper() {
