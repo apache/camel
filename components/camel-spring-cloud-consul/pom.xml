@@ -32,7 +32,6 @@
   <description>Camel Cloud integration with Spring Cloud Consul</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.19.0</firstVersion>
     <label>spring,microservice</label>
 

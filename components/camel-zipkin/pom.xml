@@ -34,7 +34,6 @@
   <description>Distributed message tracing using Zipkin</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.18.0</firstVersion>
     <label>monitoring,microservice</label>
   </properties>

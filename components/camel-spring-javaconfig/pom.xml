@@ -32,7 +32,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.0.0</firstVersion>
     <label>spring</label>
     <title>Spring Java Configuration</title>

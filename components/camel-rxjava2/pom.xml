@@ -31,7 +31,6 @@
     <description>RxJava2 based back-end for Camel's reactive streams component</description>
 
     <properties>
-      <!-- use by camel-catalog -->
       <firstVersion>2.22.0</firstVersion>
       <label>reactive,streams</label>
 

@@ -32,7 +32,6 @@
   <description>Using Camel with CDI</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.10.0</firstVersion>
     <label>java</label>
     <title>CDI</title>

@@ -33,7 +33,6 @@
   <description>Rest-dsl support for using swagger api-doc</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.16.0</firstVersion>
     <label>rest,api</label>
 

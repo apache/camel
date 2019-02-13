@@ -34,7 +34,6 @@
   <description>Using Camel with Eclipse Kura (OSGi)</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.15.0</firstVersion>
     <label>iot,osgi</label>
 

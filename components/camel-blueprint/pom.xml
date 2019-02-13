@@ -33,7 +33,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.4.0</firstVersion>
     <label>java,osgi</label>
   </properties>
