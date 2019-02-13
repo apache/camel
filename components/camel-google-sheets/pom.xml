@@ -29,8 +29,8 @@
 
   <artifactId>camel-google-sheets</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: GoogleSheets</name>
-  <description>Camel Component for GoogleSheets</description>
+  <name>Camel :: Google Sheets</name>
+  <description>Camel Component for Google Sheets</description>
 
   <properties>
     <schemeName>google-sheets</schemeName>
