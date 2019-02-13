@@ -32,7 +32,6 @@
 
   <modules>
     <module>commands-core</module>
-    <module>commands-jolokia</module>
   </modules>
 
 </project>
