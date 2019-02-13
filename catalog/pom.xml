@@ -28,15 +28,19 @@
     <relativePath>../parent</relativePath>
   </parent>
 
-  <artifactId>platforms</artifactId>
-  <name>Camel :: Platforms</name>
-  <description>Camel Platforms</description>
+  <artifactId>catalog</artifactId>
+  <name>Camel :: Catalog</name>
+  <description>Camel Catalog</description>
   <packaging>pom</packaging>
 
   <modules>
-    <module>commands</module>
-    <module>karaf</module>
-    <module>spring-boot</module>
+    <!-- dummy used for testing catalog -->
+    <module>dummy-component</module>
+    <module>camel-catalog</module>
+    <module>camel-catalog-provider-karaf</module>
+    <module>camel-catalog-provider-springboot</module>
+    <module>camel-catalog-lucene</module>
+    <module>camel-catalog-maven</module>
   </modules>
 
 </project>

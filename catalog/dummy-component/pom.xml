@@ -23,13 +23,13 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>platforms</artifactId>
+    <artifactId>catalog</artifactId>
     <version>3.0.0-SNAPSHOT</version>
     <relativePath>..</relativePath>
   </parent>
 
   <artifactId>dummy-component</artifactId>
-  <name>Camel :: Platforms :: Dummy Component</name>
+  <name>Camel :: Catalog :: Dummy Component</name>
   <description>Camel Dummy Component</description>
   <packaging>jar</packaging>
 

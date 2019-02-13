@@ -148,6 +148,7 @@
     <module>components</module>
     <module>archetypes</module>
     <module>platforms</module>
+    <module>catalog</module>
     <module>tests</module>
     <module>examples</module>
     <module>docs</module>
