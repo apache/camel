@@ -3433,7 +3433,7 @@
       <dependency>
         <groupId>org.knowm.xchange</groupId>
         <artifactId>xchange-core</artifactId>
-        <version>4.3.14</version>
+        <version>4.3.15</version>
       </dependency>
       <dependency>
         <groupId>org.mozilla</groupId>

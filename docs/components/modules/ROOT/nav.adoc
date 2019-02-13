@@ -137,7 +137,7 @@
 * xref:headersmap.adoc[HeadersMap]
 * xref:hipchat-component.adoc[Hipchat Component]
 * xref:hl7-dataformat.adoc[HL7 DataFormat]
-* xref:terser-language.adoc[HL7 Terser Language]
+* xref:hl7terser-language.adoc[HL7 Terser Language]
 * xref:http4-component.adoc[HTTP4 Component]
 * xref:hystrix.adoc[Hystrix Component]
 * xref:ical-dataformat.adoc[iCal DataFormat]
