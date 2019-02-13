@@ -71,7 +71,7 @@ public class PrepareReleasePomMojo extends AbstractMojo {
     /**
      * The directory for spring boot starters
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../spring-boot/components-starter")
+    @Parameter(defaultValue = "${project.build.directory}/../../../platforms/spring-boot/components-starter")
     protected File startersDir;
 
     /**
