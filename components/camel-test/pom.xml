@@ -32,7 +32,6 @@
     <description>Camel unit testing</description>
 
     <properties>
-        <!-- use by camel-catalog -->
         <firstVersion>2.9.0</firstVersion>
         <label>testing,java</label>
 

@@ -32,7 +32,6 @@
   <description>Fast case-insensitive headers map implementation</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.20.0</firstVersion>
     <label>tooling</label>
 

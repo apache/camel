@@ -32,7 +32,6 @@
     <description>Using LevelDB as persistent EIP store</description>
 
     <properties>
-        <!-- use by camel-catalog -->
         <firstVersion>2.10.0</firstVersion>
         <label>database</label>
         <title>LevelDB</title>
