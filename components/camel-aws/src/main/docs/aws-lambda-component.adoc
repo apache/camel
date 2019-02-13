@@ -197,6 +197,7 @@ The default is 3 seconds.|No
 - tagResource
 - untagResource
 - publishVersion
+- listVersions
 
 ### Example
 
