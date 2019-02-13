@@ -333,23 +333,6 @@
     </dependencySet>
 
     <dependencySet>
-      <outputDirectory>/lib/tooling</outputDirectory>
-      <unpack>false</unpack>
-      <scope>runtime</scope>
-      <includes>
-        <include>org.apache.camel:camel-catalog</include>
-        <include>org.apache.camel:camel-catalog-lucene</include>
-        <include>org.apache.camel:camel-catalog-maven</include>
-        <include>org.apache.camel:camel-catalog-provider-karaf</include>
-        <include>org.apache.camel:camel-catalog-provider-springboot</include>
-        <include>org.apache.camel:camel-commands-core</include>
-        <include>org.apache.camel:camel-commands-jolokia</include>
-        <include>org.apache.camel.karaf:camel-karaf-commands</include>
-        <include>org.apache.camel:camel-route-parser</include>
-      </includes>
-    </dependencySet>
-
-    <dependencySet>
       <outputDirectory>/lib/spring-boot</outputDirectory>
       <unpack>false</unpack>
       <scope>runtime</scope>
