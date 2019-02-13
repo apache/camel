@@ -45,7 +45,7 @@ Deprecated APIs and Components
 
 All deprecated APIs and components from Camel 2.x has been removed in Camel 3.
 
-Migration Camel applications
+Migrating Camel applications
 ----------------------------
 
 The following API changes may affect your existing Camel applications, which needs to be migrated.
@@ -78,7 +78,6 @@ The class `JNDIContext` has been moved from `org.apache.camel.util.jndi.JNDICont
 The simple language `property` function was deprecated in Camel 2.x and has been removed. Use `exchangeProperty` as function name.
 
 The terser language has been renamed from terser to hl7terser.
-
 
 #### Helpers
 
@@ -139,6 +138,19 @@ The custom load balancer EIP has changed from `<custom>` to `<customLoadBalancer
 The XMLSecurity data format has renamed the attribute `keyOrTrustStoreParametersId` to `keyOrTrustStoreParametersRef` in the `<secureXML>` tag.
 
 The `<zipFile>` data format has been renamed to `<zipfile>`.
+
+
+Migrating Camel Maven Plugins
+-----------------------------
+
+The `camel-maven-plugin` has been splitup into two maven plugins:
+
+- camel-maven-plugin
+- camel-report-maven-plugin
+
+The former has the `run` goal, which is intended for quickly running Camel applications standalone.
+
+The `camel-report-maven-plugin` has the `validate` and `route-coverage` goals which is used for generating reports of your Camel projects such as validating Camel endpoint URIs and route coverage reports, etc.
 
 
 Known Issues
