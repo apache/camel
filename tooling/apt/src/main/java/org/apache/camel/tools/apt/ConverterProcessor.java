@@ -38,6 +38,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
+@SuppressWarnings({"executablestatementcount"})
 @SupportedAnnotationTypes({"org.apache.camel.Converter"})
 public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
 
@@ -53,13 +54,13 @@ public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
         }
 
         Comparator<TypeMirror> comparator = (o1, o2) -> processingEnv.getTypeUtils().isAssignable(o1, o2)
-                ? -1 : processingEnv.getTypeUtils().isAssignable(o2, o1) ? +1 : o1.toString().compareTo(o2.toString());
+            ? -1 : processingEnv.getTypeUtils().isAssignable(o2, o1) ? +1 : o1.toString().compareTo(o2.toString());
 
         Map<String, Map<TypeMirror, ExecutableElement>> converters = new TreeMap<>();
         TypeElement converterAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.Converter");
         for (Element element : roundEnv.getElementsAnnotatedWith(converterAnnotationType)) {
             if (element.getKind() == ElementKind.METHOD) {
-                ExecutableElement ee = (ExecutableElement) element;
+                ExecutableElement ee = (ExecutableElement)element;
                 TypeMirror to = ee.getReturnType();
                 TypeMirror from = ee.getParameters().get(0).asType();
                 String fromStr = toString(from);
@@ -79,7 +80,7 @@ public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
         List<ExecutableElement> fallbackConverters = new ArrayList<>();
         for (Element element : roundEnv.getElementsAnnotatedWith(fallbackAnnotationType)) {
             if (element.getKind() == ElementKind.METHOD) {
-                ExecutableElement ee = (ExecutableElement) element;
+                ExecutableElement ee = (ExecutableElement)element;
                 fallbackConverters.add(ee);
             }
         }
@@ -140,18 +141,17 @@ public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
                         if (ann.getAnnotationType().asElement() == converterAnnotationType) {
                             for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
                                 switch (entry.getKey().getSimpleName().toString()) {
-                                    case "allowNull":
-                                        allowNull = (Boolean) entry.getValue().getValue();
-                                        break;
-                                    default:
-                                        throw new IllegalStateException();
+                                case "allowNull":
+                                    allowNull = (Boolean)entry.getValue().getValue();
+                                    break;
+                                default:
+                                    throw new IllegalStateException();
                                 }
                             }
                         }
                     }
-                    writer.append("        converters.put(").append(to.getKey()).append(".class").append(", ")
-                            .append(toString(from.getKey())).append(".class, new SimpleTypeConverter(")
-                            .append(Boolean.toString(allowNull)).append(") {\n");
+                    writer.append("        converters.put(").append(to.getKey()).append(".class").append(", ").append(toString(from.getKey()))
+                        .append(".class, new SimpleTypeConverter(").append(Boolean.toString(allowNull)).append(") {\n");
                     writer.append("            @Override\n");
                     writer.append("            public Object doConvert(Exchange exchange, Object value) throws Exception {\n");
                     writer.append("                return ").append(toJava(from.getValue(), converterClasses)).append(";\n");
@@ -171,14 +171,14 @@ public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
                     if (ann.getAnnotationType().asElement() == fallbackAnnotationType) {
                         for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
                             switch (entry.getKey().getSimpleName().toString()) {
-                                case "allowNull":
-                                    allowNull = (Boolean) entry.getValue().getValue();
-                                    break;
-                                case "canPromote":
-                                    canPromote = (Boolean) entry.getValue().getValue();
-                                    break;
-                                default:
-                                    throw new IllegalStateException();
+                            case "allowNull":
+                                allowNull = (Boolean)entry.getValue().getValue();
+                                break;
+                            case "canPromote":
+                                canPromote = (Boolean)entry.getValue().getValue();
+                                break;
+                            default:
+                                throw new IllegalStateException();
                             }
                         }
                     }
