@@ -33,7 +33,6 @@
   <description>Camel Catalog Karaf</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.18.1</firstVersion>
     <label>tooling</label>
 
