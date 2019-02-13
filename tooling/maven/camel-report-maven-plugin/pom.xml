@@ -26,10 +26,10 @@
     <version>3.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-maven-plugin</artifactId>
+  <artifactId>camel-report-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Camel :: Maven Plugins :: Camel Maven Plugin</name>
-  <description>Maven plugin to run Camel standalone</description>
+  <name>Camel :: Maven Plugins :: Camel Report Maven Plugin</name>
+  <description>Maven plugin with tools to generate reports on your Camel projects</description>
 
   <dependencyManagement>
     <dependencies>
@@ -77,23 +77,41 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
+
+    <!-- camel-catalog -->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.camel</groupId>-->
+      <!--<artifactId>camel-catalog</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.camel</groupId>-->
+      <!--<artifactId>camel-catalog-lucene</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.camel</groupId>-->
+      <!--<artifactId>camel-catalog-maven</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+
+    <!-- camel route parser -->
+    <!--<dependency>-->
+      <!--<groupId>org.apache.camel</groupId>-->
+      <!--<artifactId>camel-route-parser</artifactId>-->
+      <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+
+    <!-- roaster java parser -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
+      <groupId>org.jboss.forge.roaster</groupId>
+      <artifactId>roaster-api</artifactId>
+      <version>${roaster-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring-javaconfig</artifactId>
-    </dependency>
-    <!-- camel-test-blueprint has Main class for running blueprint out of container -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-blueprint</artifactId>
-    </dependency>
-    <!-- camel-cdi has Main class for running CDI -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cdi</artifactId>
+      <groupId>org.jboss.forge.roaster</groupId>
+      <artifactId>roaster-jdt</artifactId>
+      <version>${roaster-version}</version>
     </dependency>
 
     <!-- logging -->
