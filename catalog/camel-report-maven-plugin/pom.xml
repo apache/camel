@@ -22,7 +22,7 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>maven-plugins</artifactId>
+    <artifactId>catalog</artifactId>
     <version>3.0.0-SNAPSHOT</version>
   </parent>
 
