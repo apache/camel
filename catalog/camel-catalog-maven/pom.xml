@@ -33,7 +33,6 @@
   <description>Camel Catalog Maven</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.18.0</firstVersion>
     <label>tooling</label>
 
