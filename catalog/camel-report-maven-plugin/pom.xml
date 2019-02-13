@@ -20,15 +20,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!-- NOTE parent need to point to camel maven plugins -->
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>catalog</artifactId>
+    <artifactId>maven-plugins</artifactId>
     <version>3.0.0-SNAPSHOT</version>
+    <relativePath>../../tooling/maven</relativePath>
   </parent>
 
   <artifactId>camel-report-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Camel :: Maven Plugins :: Camel Report Maven Plugin</name>
+  <name>Camel :: Catalog :: Camel Report Maven Plugin</name>
   <description>Maven plugin with tools to generate reports on your Camel projects</description>
 
   <dependencyManagement>
