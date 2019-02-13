@@ -45,6 +45,8 @@ import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.ListTagsRequest;
 import com.amazonaws.services.lambda.model.ListTagsResult;
+import com.amazonaws.services.lambda.model.ListVersionsByFunctionRequest;
+import com.amazonaws.services.lambda.model.ListVersionsByFunctionResult;
 import com.amazonaws.services.lambda.model.PublishVersionRequest;
 import com.amazonaws.services.lambda.model.PublishVersionResult;
 import com.amazonaws.services.lambda.model.TagResourceRequest;
@@ -117,6 +119,9 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case publishVersion:
             publishVersion(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case listVersions:
+            listVersions(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -535,6 +540,19 @@ public class LambdaProducer extends DefaultProducer {
                 request.withRevisionId(revisionId);
             } 
             result = lambdaClient.publishVersion(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("publishVersion command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void listVersions(AWSLambda lambdaClient, Exchange exchange) {
+        ListVersionsByFunctionResult result;
+        try {
+            ListVersionsByFunctionRequest request = new ListVersionsByFunctionRequest().withFunctionName(getConfiguration().getFunction());
+            result = lambdaClient.listVersionsByFunction(request);
         } catch (AmazonServiceException ase) {
             log.trace("publishVersion command returned the error code {}", ase.getErrorCode());
             throw ase;
