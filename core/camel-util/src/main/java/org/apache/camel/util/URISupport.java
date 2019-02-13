@@ -44,7 +44,7 @@ public final class URISupport {
     // Match the user password in the URI as second capture group
     // (applies to URI with authority component and userinfo token in the form
     // "user:password").
-    private static final Pattern USERINFO_PASSWORD = Pattern.compile("(.*://.*:)(.*)(@)");
+    private static final Pattern USERINFO_PASSWORD = Pattern.compile("(.*://.*?:)(.*)(@)");
 
     // Match the user password in the URI path as second capture group
     // (applies to URI path with authority component and userinfo token in the
