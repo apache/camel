@@ -28,7 +28,7 @@
     <relativePath>../../tooling/maven</relativePath>
   </parent>
 
-  <artifactId>camel-report-plugin</artifactId>
+  <artifactId>camel-report-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Camel :: Catalog :: Camel Report Maven Plugin</name>
   <description>Maven plugin with tools to generate reports on your Camel projects</description>
