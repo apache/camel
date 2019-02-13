@@ -302,6 +302,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
+
         if (loginConfig == null) {
             loginConfig = new SalesforceLoginConfig();
             loginConfig.setInstanceUrl(instanceUrl);
@@ -431,6 +433,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public void setInstanceUrl(String instanceUrl) {
         this.instanceUrl = instanceUrl;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
     }
 
     public void setLoginUrl(String loginUrl) {
