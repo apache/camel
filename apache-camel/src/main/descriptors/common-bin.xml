@@ -35,7 +35,7 @@
         <include>org.apache.camel:camel-support</include>
         <include>org.apache.camel:camel-core</include>
 
-        <!-- NOTE: auto-generated list of components when building platforms/camel-catalog -->
+        <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
         <include>org.apache.camel:camel-activemq</include>
         <include>org.apache.camel:camel-ahc</include>
@@ -354,7 +354,7 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
-        <!-- NOTE: auto-generated list of components when building platforms/camel-catalog -->
+        <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel starters: START -->
         <include>org.apache.camel:camel-activemq-starter</include>
         <include>org.apache.camel:camel-ahc-starter</include>

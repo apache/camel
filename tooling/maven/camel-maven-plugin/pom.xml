@@ -100,14 +100,17 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog-lucene</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog-maven</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- camel route parser -->
