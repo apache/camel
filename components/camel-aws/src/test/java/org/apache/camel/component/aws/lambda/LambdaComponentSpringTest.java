@@ -30,6 +30,7 @@ import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.ListTagsResult;
+import com.amazonaws.services.lambda.model.PublishVersionResult;
 import com.amazonaws.services.lambda.model.TagResourceResult;
 import com.amazonaws.services.lambda.model.UntagResourceResult;
 import com.amazonaws.util.IOUtils;
@@ -214,6 +215,23 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         UntagResourceResult result = (UntagResourceResult)exchange.getOut().getBody();
         assertNotNull(result);
+    }
+    
+    @Test
+    public void publishVersionTest() throws Exception {
+
+        Exchange exchange = template.send("direct:publishVersion", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.VERSION_DESCRIPTION, "This is my description");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        PublishVersionResult result = (PublishVersionResult)exchange.getOut().getBody();
+        assertNotNull(result);
+        assertEquals("GetHelloWithName", result.getFunctionName());
+        assertEquals("This is my description", result.getDescription());
     }
 
     @Override

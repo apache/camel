@@ -79,6 +79,11 @@
             <from uri="direct:untagResource"/>
             <to uri="aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=untagResource"/>
         </route>
+        
+        <route>
+            <from uri="direct:publishVersion"/>
+            <to uri="aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=publishVersion"/>
+        </route>
     </camelContext>
 
     <bean id="awsLambdaClient" class="org.apache.camel.component.aws.lambda.AmazonLambdaClientMock"/>

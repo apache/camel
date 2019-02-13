@@ -298,7 +298,10 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public PublishVersionResult publishVersion(PublishVersionRequest publishVersionRequest) {
-        throw new UnsupportedOperationException();
+        PublishVersionResult res = new PublishVersionResult();
+        res.setFunctionName(publishVersionRequest.getFunctionName());
+        res.setDescription(publishVersionRequest.getDescription());
+        return res;
     }
 
     @Override

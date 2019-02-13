@@ -31,6 +31,7 @@ import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.ListTagsResult;
+import com.amazonaws.services.lambda.model.PublishVersionResult;
 import com.amazonaws.services.lambda.model.TagResourceResult;
 import com.amazonaws.services.lambda.model.UntagResourceResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
@@ -256,6 +257,23 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertNotNull(result);
     }
 
+    @Test
+    public void publishVersionTest() throws Exception {
+
+        Exchange exchange = template.send("direct:publishVersion", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.VERSION_DESCRIPTION, "This is my description");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        PublishVersionResult result = (PublishVersionResult)exchange.getOut().getBody();
+        assertNotNull(result);
+        assertEquals("GetHelloWithName", result.getFunctionName());
+        assertEquals("This is my description", result.getDescription());
+    }
+    
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -289,6 +307,8 @@ public class LambdaProducerTest extends CamelTestSupport {
                 from("direct:tagResource").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=tagResource").to("mock:result");
                 
                 from("direct:untagResource").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=untagResource").to("mock:result");
+                
+                from("direct:publishVersion").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=publishVersion").to("mock:result");
 
                 from("direct:createEventSourceMapping").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=createEventSourceMapping").to("mock:result");
                 

@@ -45,6 +45,8 @@ import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.ListTagsRequest;
 import com.amazonaws.services.lambda.model.ListTagsResult;
+import com.amazonaws.services.lambda.model.PublishVersionRequest;
+import com.amazonaws.services.lambda.model.PublishVersionResult;
 import com.amazonaws.services.lambda.model.TagResourceRequest;
 import com.amazonaws.services.lambda.model.TagResourceResult;
 import com.amazonaws.services.lambda.model.TracingConfig;
@@ -112,6 +114,9 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case untagResource:
             untagResource(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case publishVersion:
+        	publishVersion(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -511,6 +516,27 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.untagResource(request);
         } catch (AmazonServiceException ase) {
             log.trace("untagResource command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void publishVersion(AWSLambda lambdaClient, Exchange exchange) {
+        PublishVersionResult result;
+        try {
+            PublishVersionRequest request = new PublishVersionRequest().withFunctionName(getConfiguration().getFunction());
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.VERSION_DESCRIPTION))) {
+                String description = exchange.getIn().getHeader(LambdaConstants.VERSION_DESCRIPTION, String.class);
+                request.withDescription(description);
+            } 
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.VERSION_REVISION_ID))) {
+                String revisionId = exchange.getIn().getHeader(LambdaConstants.VERSION_REVISION_ID, String.class);
+                request.withRevisionId(revisionId);
+            } 
+            result = lambdaClient.publishVersion(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("publishVersion command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
