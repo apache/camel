@@ -45,7 +45,7 @@ public class ParserTest extends CamelTestSupport {
 
     @Test
     public void shouldParseOk() {
-        Template template = parser.parseTemplate("addnumbers(INTEGER ${header.header1},VARCHAR ${property.property1},"
+        Template template = parser.parseTemplate("addnumbers(INTEGER ${header.header1},VARCHAR ${exchangeProperty.property1},"
                 + "BIGINT ${header.header2},INOUT INTEGER ${header.header3} inout1,OUT INTEGER out1)");
 
         Assert.assertEquals("addnumbers", template.getProcedureName());
