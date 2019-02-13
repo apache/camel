@@ -30,5 +30,6 @@ public enum LambdaOperations {
     listTags,
     tagResource,
     untagResource,
-    publishVersion
+    publishVersion,
+    listVersions
 }

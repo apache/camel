@@ -84,6 +84,11 @@
             <from uri="direct:publishVersion"/>
             <to uri="aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=publishVersion"/>
         </route>
+        
+        <route>
+            <from uri="direct:listVersions"/>
+            <to uri="aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&amp;operation=listVersions"/>
+        </route>
     </camelContext>
 
     <bean id="awsLambdaClient" class="org.apache.camel.component.aws.lambda.AmazonLambdaClientMock"/>

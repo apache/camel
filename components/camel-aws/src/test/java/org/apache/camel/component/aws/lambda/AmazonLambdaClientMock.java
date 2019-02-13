@@ -293,7 +293,12 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public ListVersionsByFunctionResult listVersionsByFunction(ListVersionsByFunctionRequest listVersionsByFunctionRequest) {
-        throw new UnsupportedOperationException();
+        ListVersionsByFunctionResult res = new ListVersionsByFunctionResult();
+        FunctionConfiguration conf = new FunctionConfiguration();
+        conf.setVersion("1");
+        conf.setFunctionName(listVersionsByFunctionRequest.getFunctionName());
+        res.setVersions(Collections.singleton(conf));
+        return res;
     }
 
     @Override
