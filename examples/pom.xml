@@ -195,10 +195,10 @@
         </executions>
       </plugin>
 
-      <!-- to validate Camel endpoints: mvn camel:validate -->
+      <!-- to validate Camel endpoints: mvn camel-report:validate -->
       <plugin>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
+        <artifactId>camel-report-maven-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
           <failOnError>false</failOnError>
