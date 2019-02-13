@@ -86,13 +86,11 @@ public class SpringAnnotationProcessorHelper {
         }
 
         // write json schema
-        processFile(processingEnv, packageName, fileName,
-                writer -> writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name));
+        processFile(processingEnv, packageName, fileName, writer -> writeJSonSchemeDocumentation(processingEnv, writer, roundEnv, classElement, rootElement, javaTypeName, name));
     }
 
-    protected void writeJSonSchemeDocumentation(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv,
-                                                TypeElement classElement, XmlRootElement rootElement,
-                                                String javaTypeName, String modelName) {
+    protected void writeJSonSchemeDocumentation(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement,
+                                                XmlRootElement rootElement, String javaTypeName, String modelName) {
         // gather eip information
         EipModel eipModel = findEipModelProperties(processingEnv, roundEnv, classElement, javaTypeName, modelName);
 
@@ -139,8 +137,8 @@ public class SpringAnnotationProcessorHelper {
             doc = sanitizeDescription(doc, false);
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
-                    entry.isDeprecated(), entry.getDeprecationNote(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(), entry.isAsPredicate(),
-                null, null, false));
+                                                  entry.isDeprecated(), entry.getDeprecationNote(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(),
+                                                  entry.getOneOfTypes(), entry.isAsPredicate(), null, null, false));
         }
         buffer.append("\n  }");
 
@@ -170,9 +168,11 @@ public class SpringAnnotationProcessorHelper {
             if (typeElement != null) {
                 String doc = elementUtils.getDocComment(typeElement);
                 if (doc != null) {
-                    // need to sanitize the description first (we only want a summary)
+                    // need to sanitize the description first (we only want a
+                    // summary)
                     doc = sanitizeDescription(doc, true);
-                    // the javadoc may actually be empty, so only change the doc if we got something
+                    // the javadoc may actually be empty, so only change the doc
+                    // if we got something
                     if (!Strings.isNullOrEmpty(doc)) {
                         model.setDescription(doc);
                     }
@@ -183,8 +183,8 @@ public class SpringAnnotationProcessorHelper {
         return model;
     }
 
-    protected void findClassProperties(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, Set<EipOption> eipOptions,
-                                       TypeElement originalClassType, TypeElement classElement, String prefix, String modelName) {
+    protected void findClassProperties(ProcessingEnvironment processingEnv, PrintWriter writer, RoundEnvironment roundEnv, Set<EipOption> eipOptions, TypeElement originalClassType,
+                                       TypeElement classElement, String prefix, String modelName) {
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
             for (VariableElement fieldElement : fieldElements) {
@@ -236,9 +236,8 @@ public class SpringAnnotationProcessorHelper {
         }
     }
 
-    private boolean processAttribute(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement originalClassType,
-                                     TypeElement classElement, VariableElement fieldElement,
-                                     String fieldName, XmlAttribute attribute, Set<EipOption> eipOptions, String prefix, String modelName) {
+    private boolean processAttribute(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement originalClassType, TypeElement classElement,
+                                     VariableElement fieldElement, String fieldName, XmlAttribute attribute, Set<EipOption> eipOptions, String prefix, String modelName) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         String name = attribute.name();
@@ -266,7 +265,8 @@ public class SpringAnnotationProcessorHelper {
         boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
         if (isEnum) {
             TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
-            // find all the enum constants which has the possible enum value that can be used
+            // find all the enum constants which has the possible enum value
+            // that can be used
             List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
             for (VariableElement var : fields) {
                 if (var.getKind() == ElementKind.ENUM_CONSTANT) {
@@ -296,8 +296,8 @@ public class SpringAnnotationProcessorHelper {
             }
         }
 
-        EipOption ep = new EipOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment,
-            deprecated, deprecationNote, isEnum, enums, false, null, false);
+        EipOption ep = new EipOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, false, null,
+                                     false);
         eipOptions.add(ep);
 
         return false;
@@ -306,8 +306,8 @@ public class SpringAnnotationProcessorHelper {
     /**
      * Special for processing an @XmlElement routes field
      */
-    private void processRoutes(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElement element,
-                               VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
+    private void processRoutes(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElement element, VariableElement fieldElement, String fieldName,
+                               Set<EipOption> eipOptions, String prefix) {
 
         TypeMirror fieldType = fieldElement.asType();
         String fieldTypeName = fieldType.toString();
@@ -315,16 +315,15 @@ public class SpringAnnotationProcessorHelper {
         Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("route");
 
-        EipOption ep = new EipOption("route", "Route", "element", fieldTypeName, false, "", "Contains the Camel routes",
-            false, null, false, null, true, oneOfTypes, false);
+        EipOption ep = new EipOption("route", "Route", "element", fieldTypeName, false, "", "Contains the Camel routes", false, null, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
     /**
      * Special for processing an @XmlElement rests field
      */
-    private void processRests(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElement element,
-                              VariableElement fieldElement, String fieldName, Set<EipOption> eipOptions, String prefix) {
+    private void processRests(RoundEnvironment roundEnv, TypeElement originalClassType, XmlElement element, VariableElement fieldElement, String fieldName,
+                              Set<EipOption> eipOptions, String prefix) {
 
         TypeMirror fieldType = fieldElement.asType();
         String fieldTypeName = fieldType.toString();
@@ -332,14 +331,13 @@ public class SpringAnnotationProcessorHelper {
         Set<String> oneOfTypes = new TreeSet<>();
         oneOfTypes.add("rest");
 
-        EipOption ep = new EipOption("rest", "Rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl",
-            false, null,  false, null, true, oneOfTypes, false);
+        EipOption ep = new EipOption("rest", "Rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, null, false, null, true,
+                                     oneOfTypes, false);
         eipOptions.add(ep);
     }
 
-    private void processElement(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv,
-                                TypeElement classElement, XmlElement element, XmlElementRef elementRef, VariableElement fieldElement,
-                                Set<EipOption> eipOptions, String prefix) {
+    private void processElement(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement classElement, XmlElement element, XmlElementRef elementRef,
+                                VariableElement fieldElement, Set<EipOption> eipOptions, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
 
         String fieldName;
@@ -371,7 +369,8 @@ public class SpringAnnotationProcessorHelper {
             boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
             if (isEnum) {
                 TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
-                // find all the enum constants which has the possible enum value that can be used
+                // find all the enum constants which has the possible enum value
+                // that can be used
                 List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
                 for (VariableElement var : fields) {
                     if (var.getKind() == ElementKind.ENUM_CONSTANT) {
@@ -422,13 +421,13 @@ public class SpringAnnotationProcessorHelper {
                 deprecationNote = metadata.deprecationNote();
             }
 
-            EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, oneOf, oneOfTypes, asPredicate);
+            EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, isEnum, enums, oneOf, oneOfTypes,
+                                         asPredicate);
             eipOptions.add(ep);
         }
     }
 
-    private void processElements(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv,
-                                 TypeElement classElement, XmlElements elements, VariableElement fieldElement,
+    private void processElements(ProcessingEnvironment processingEnv, RoundEnvironment roundEnv, TypeElement classElement, XmlElements elements, VariableElement fieldElement,
                                  Set<EipOption> eipOptions, String prefix) {
         Elements elementUtils = processingEnv.getElementUtils();
 
@@ -468,7 +467,8 @@ public class SpringAnnotationProcessorHelper {
                 deprecationNote = metadata.deprecationNote();
             }
 
-            EipOption ep = new EipOption(name, kind, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes, false);
+            EipOption ep = new EipOption(name, kind, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote, false, null, true, oneOfTypes,
+                                         false);
             eipOptions.add(ep);
         }
     }
@@ -566,8 +566,8 @@ public class SpringAnnotationProcessorHelper {
         private Set<String> oneOfTypes;
         private boolean asPredicate;
 
-        private EipOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String documentation,
-                          boolean deprecated, String deprecationNote, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes, boolean asPredicate) {
+        private EipOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String documentation, boolean deprecated,
+                          String deprecationNote, boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes, boolean asPredicate) {
             this.name = name;
             this.displayName = displayName;
             this.kind = kind;
@@ -649,7 +649,7 @@ public class SpringAnnotationProcessorHelper {
                 return false;
             }
 
-            EipOption that = (EipOption) o;
+            EipOption that = (EipOption)o;
 
             if (!name.equals(that.name)) {
                 return false;
