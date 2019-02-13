@@ -2830,6 +2830,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-route-parser</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
   </dependencies>
