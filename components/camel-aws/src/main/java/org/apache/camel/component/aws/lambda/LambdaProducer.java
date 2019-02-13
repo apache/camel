@@ -116,7 +116,7 @@ public class LambdaProducer extends DefaultProducer {
             untagResource(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         case publishVersion:
-        	publishVersion(getEndpoint().getAwsLambdaClient(), exchange);
+            publishVersion(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
