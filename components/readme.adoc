@@ -772,10 +772,10 @@ Number of Components: 290 in 210 JAR artifacts (0 deprecated)
 | link:camel-spring-ws/src/main/docs/spring-ws-component.adoc[Spring WebService] (camel-spring-ws) +
 `spring-ws:type:lookupKey:webServiceEndpointUri` | 2.6 | The spring-ws component is used for SOAP WebServices using Spring WebServices.
 
-| link:@@@ARTIFACTID@@@/src/main/docs/sql-component.adoc[SQL] (@@@ARTIFACTID@@@) +
+| link:camel-sql/src/main/docs/sql-component.adoc[SQL] (camel-sql) +
 `sql:query` | 1.4 | The sql component allows you to work with databases using JDBC SQL queries.
 
-| link:@@@ARTIFACTID@@@/src/main/docs/sql-stored-component.adoc[SQL Stored Procedure] (@@@ARTIFACTID@@@) +
+| link:camel-sql/src/main/docs/sql-stored-component.adoc[SQL Stored Procedure] (camel-sql) +
 `sql-stored:template` | 2.17 | The sql component allows you to work with databases using JDBC Stored Procedure queries.
 
 | link:camel-ssh/src/main/docs/ssh-component.adoc[SSH] (camel-ssh) +
