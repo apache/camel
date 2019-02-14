@@ -173,8 +173,8 @@
       </dependency>
       <dependency>
         <groupId>io.nessus</groupId>
-        <artifactId>nessus-ipfs</artifactId>
-        <version>1.0.0.Beta1</version>
+        <artifactId>nessus-ipfs-core</artifactId>
+        <version>1.0.0.Beta3</version>
       </dependency>
       <dependency>
         <groupId>javax.annotation</groupId>
