@@ -234,7 +234,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
     private Boolean useDataType = Boolean.FALSE;
-    private Boolean useBreadcrumb = Boolean.TRUE;
+    private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerBuilder;

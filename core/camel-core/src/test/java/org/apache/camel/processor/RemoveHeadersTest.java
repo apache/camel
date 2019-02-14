@@ -43,8 +43,7 @@ public class RemoveHeadersTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // breadcrumb is a header added as well so we expect 2
-        assertEquals(2, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
+        assertEquals(1, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
     }
 
     @Test
@@ -68,8 +67,7 @@ public class RemoveHeadersTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // breadcrumb is a header added as well so we expect 3
-        assertEquals(3, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
+        assertEquals(2, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
     }
 
     @Test
@@ -93,8 +91,7 @@ public class RemoveHeadersTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // breadcrumb is a header added as well so we expect 3
-        assertEquals(3, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
+        assertEquals(2, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
     }
 
     protected RouteBuilder createRouteBuilder() {

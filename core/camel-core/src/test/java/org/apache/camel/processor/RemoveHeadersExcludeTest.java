@@ -42,8 +42,7 @@ public class RemoveHeadersExcludeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there is also a breadcrumb header
-        assertEquals(2, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
+        assertEquals(1, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
     }
 
     @Test
@@ -66,8 +65,7 @@ public class RemoveHeadersExcludeTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // there is also a breadcrumb header
-        assertEquals(4, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
+        assertEquals(3, mock.getReceivedExchanges().get(0).getIn().getHeaders().size());
     }
 
     protected RouteBuilder createRouteBuilder() {
