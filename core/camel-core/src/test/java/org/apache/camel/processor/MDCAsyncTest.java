@@ -49,8 +49,9 @@ public class MDCAsyncTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // enable MDC
+                // enable MDC and breadcrumb
                 context.setUseMDCLogging(true);
+                context.setUseBreadcrumb(true);
 
                 MdcCheckerProcessor checker = new MdcCheckerProcessor();
                 

@@ -126,7 +126,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String useMDCLogging;
     @XmlAttribute
     private String useDataType;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
     private String useBreadcrumb;
     @XmlAttribute
     private String allowUseOriginalMessage;

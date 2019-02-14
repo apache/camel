@@ -133,8 +133,7 @@ public class PipelineTest extends ContextTestSupport {
                 exchange.getIn().setBody("test");
             }
         });
-        // there is always breadcrumb header
-        assertEquals("There should have no message header", 1, exchange.getOut().getHeaders().size());
+        assertEquals("There should have no message header", 0, exchange.getOut().getHeaders().size());
         assertEquals("There should have no attachments", 0, exchange.getOut().getAttachmentObjects().size());
         assertEquals("There should have no attachments", 0, exchange.getOut().getAttachments().size());
         assertEquals("Get a wrong message body", "test", exchange.getOut().getBody());

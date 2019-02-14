@@ -129,6 +129,11 @@ When using the option `groupedExchange` on the aggregator EIP then the output of
 is now longer also stored in the exchange property `Exchange.GROUPED_EXCHANGE`.
 This behaviour was already deprecated from Camel 2.13 onwards.
 
+### Other changes
+
+The default for use breadcrumbs has been changed from `true` to `false`.
+
+
 ### XML DSL Migration
 
 The XML DSL has been changed slightly.
