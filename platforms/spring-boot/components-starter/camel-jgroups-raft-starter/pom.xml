@@ -26,7 +26,7 @@
   </parent>
   <artifactId>camel-jgroups-raft-starter</artifactId>
   <packaging>jar</packaging>
-  <name>Spring-Boot Starter :: Camel :: jgroups-raft</name>
+  <name>Spring-Boot Starter :: Camel :: JGroups Raft</name>
   <description>Spring-Boot Starter for Camel jgroups-raft support</description>
   <dependencies>
     <dependency>
