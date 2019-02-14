@@ -19,11 +19,11 @@ package org.apache.camel.component.ipfs;
 import java.net.URI;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-
 import io.nessus.ipfs.client.DefaultIPFSClient;
 import io.nessus.ipfs.client.IPFSClient;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 
 public class IPFSComponent extends DefaultComponent {
 

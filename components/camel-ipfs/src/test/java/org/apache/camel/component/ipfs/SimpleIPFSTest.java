@@ -25,6 +25,11 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import io.nessus.ipfs.client.DefaultIPFSClient;
+import io.nessus.ipfs.client.IPFSClient;
+import io.nessus.ipfs.client.IPFSException;
+import io.nessus.utils.StreamUtils;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,11 +38,6 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
-
-import io.nessus.ipfs.client.DefaultIPFSClient;
-import io.nessus.ipfs.client.IPFSClient;
-import io.nessus.ipfs.client.IPFSException;
-import io.nessus.utils.StreamUtils;
 
 public class SimpleIPFSTest {
 
