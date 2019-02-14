@@ -19,12 +19,12 @@ package org.apache.camel.component.ipfs;
 import java.net.URI;
 import java.util.Map;
 
-import io.nessus.ipfs.IPFSClient;
-import io.nessus.ipfs.impl.DefaultIPFSClient;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+
+import io.nessus.ipfs.client.DefaultIPFSClient;
+import io.nessus.ipfs.client.IPFSClient;
 
 @Component("ipfs")
 public class IPFSComponent extends DefaultComponent {
@@ -65,6 +65,7 @@ public class IPFSComponent extends DefaultComponent {
     }
 
     private synchronized IPFSClient createClient(IPFSConfiguration config) {
-        return new DefaultIPFSClient(config.getIpfsHost(), config.getIpfsPort());
+        IPFSClient ipfsClient = new DefaultIPFSClient(config.getIpfsHost(), config.getIpfsPort());
+        return ipfsClient.connect();
     }
 }
