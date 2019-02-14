@@ -3,7 +3,7 @@
 
 The JCachePolicy is an interceptor around a route that caches the "result of the route" - the message body - after the route is completed.
   If next time the route is called with a "similar" Exchange, the cached value is used on the Exchange instead of executing the route.
-  The policy uses the JSR107/JCache API of a cache implementation.
+  The policy uses the JSR107/JCache API of a cache implementation, so it's required to add one (e.g. Hazelcast, Ehcache) to the classpath.
 
 The policy takes a _key_ value from the received Exchange to get or store values in the cache. By default the _key_ is the message body.
   For example if the route - having a JCachePolicy - receives an Exchange with a String body "fruit" and the body at the

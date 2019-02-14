@@ -61,6 +61,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.hazelcast</groupId>
       <artifactId>hazelcast</artifactId>
       <version>${hazelcast-version}</version>

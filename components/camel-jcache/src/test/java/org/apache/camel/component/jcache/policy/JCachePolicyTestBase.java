@@ -40,11 +40,11 @@ public class JCachePolicyTestBase extends CamelTestSupport {
                 e.getMessage().setBody(generateValue(e.getMessage().getBody(String.class))));
     }
 
-    protected String randomString() {
+    public static String randomString() {
         return UUID.randomUUID().toString();
     }
 
-    protected Cache lookupCache(String cacheName) {
+    public static Cache lookupCache(String cacheName) {
         //This will also open a closed cache
         return Caching.getCachingProvider().getCacheManager().getCache(cacheName);
     }
