@@ -220,7 +220,6 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals(expected, URISupport.sanitizeUri(uri));
     }
     
-    @Test
     public void testSanitizeUriWithUserInfoAndColonPassword() {
         String uri = "sftp://USERNAME:HARRISON:COLON@sftp.server.test";
         String expected = "sftp://USERNAME:xxxxxx@sftp.server.test";
@@ -233,7 +232,6 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals(expected, URISupport.sanitizePath(path));
     }
     
-    @Test
     public void testSanitizePathWithUserInfoAndColonPassword() {
         String path = "USERNAME:HARRISON:COLON@sftp.server.test";
         String expected = "USERNAME:xxxxxx@sftp.server.test";
