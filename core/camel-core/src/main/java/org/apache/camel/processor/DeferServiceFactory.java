@@ -43,6 +43,8 @@ public final class DeferServiceFactory {
      */
     public static Producer createProducer(Endpoint endpoint) throws Exception {
         Producer producer = new DeferProducer(endpoint);
+        producer = new UnitOfWorkProducer(producer);
+        producer = new EventNotifierProducer(producer);
         endpoint.getCamelContext().deferStartService(producer, true);
         return producer;
     }

@@ -21,6 +21,8 @@ import java.lang.reflect.Proxy;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.processor.DeferServiceFactory;
+import org.apache.camel.processor.EventNotifierProducer;
+import org.apache.camel.processor.UnitOfWorkProducer;
 
 /**
  * A helper class for creating proxies which delegate to Camel
@@ -53,7 +55,6 @@ public final class ProxyHelper {
      */
     public static <T> T createProxy(Endpoint endpoint, boolean binding, ClassLoader cl, Class<T>[] interfaceClasses, MethodInfoCache methodCache) throws Exception {
         Producer producer = DeferServiceFactory.createProducer(endpoint);
-        endpoint.getCamelContext().deferStartService(producer, true);
         return createProxyObject(endpoint, binding, producer, cl, interfaceClasses, methodCache);
     }
 
