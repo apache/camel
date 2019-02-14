@@ -26,6 +26,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
+import io.ipfs.multihash.Multihash;
+import io.nessus.ipfs.client.IPFSClient;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -35,9 +38,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
 
-import io.ipfs.multihash.Multihash;
-import io.nessus.ipfs.client.IPFSClient;
-
 /**
  * The camel-ipfs component provides access to the Interplanetary File System
  * (IPFS).
@@ -45,7 +45,7 @@ import io.nessus.ipfs.client.IPFSClient;
 @UriEndpoint(firstVersion = "2.23.0", scheme = "ipfs", title = "IPFS", syntax = "ipfs:host:port/cmd", producerOnly = true, label = "file,ipfs")
 public class IPFSEndpoint extends DefaultEndpoint {
 
-    static long DEFAULT_TIMEOUT = 10000L;
+    static long defaultTimeout = 10000L;
     
     @UriParam
     private final IPFSConfiguration configuration;
@@ -101,7 +101,7 @@ public class IPFSEndpoint extends DefaultEndpoint {
         Multihash mhash = Multihash.fromBase58(cid);
         Future<InputStream> future = ipfs().cat(mhash);
         try {
-            return future.get(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+            return future.get(defaultTimeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException ex) {
             throw new IOException("Cannot obtain: " + cid, ex);
         }
@@ -111,7 +111,7 @@ public class IPFSEndpoint extends DefaultEndpoint {
         Multihash mhash = Multihash.fromBase58(cid);
         Future<Path> future = ipfs().get(mhash, outdir);
         try {
-            return future.get(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
+            return future.get(defaultTimeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException ex) {
             throw new IOException("Cannot obtain: " + cid, ex);
         }
