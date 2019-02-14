@@ -25,18 +25,35 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import io.nessus.utils.StreamUtils;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Test;
+
+import io.nessus.ipfs.client.DefaultIPFSClient;
+import io.nessus.ipfs.client.IPFSClient;
+import io.nessus.ipfs.client.IPFSException;
+import io.nessus.utils.StreamUtils;
 
 public class SimpleIPFSTest {
 
+    IPFSClient ipfs;
+    
+    @Before
+    public void before() {
+        ipfs = new DefaultIPFSClient("127.0.0.1", 5001);
+        try {
+            ipfs.connect();
+        } catch (IPFSException ex) {
+            // ignore
+        }
+        Assume.assumeTrue(ipfs.hasConnection());
+    }
+    
     @Test
     public void ipfsVersion() throws Exception {
 
