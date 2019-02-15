@@ -163,6 +163,7 @@
 * xref:jaxb-dataformat.adoc[JAXB DataFormat]
 * xref:jbpm-component.adoc[JBPM Component]
 * xref:jcache-component.adoc[JCache Component]
+* xref:jcache-policy.adoc[JCache Policy]
 * xref:jclouds-component.adoc[JClouds Component]
 * xref:jcr-component.adoc[JCR Component]
 * xref:jdbc-component.adoc[JDBC Component]
