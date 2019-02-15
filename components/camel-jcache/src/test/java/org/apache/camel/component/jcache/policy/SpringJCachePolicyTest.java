@@ -40,8 +40,9 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
 
     @BeforeClass
     public static void beforeAll() {
-        System.setProperty("hazelcast.config","classpath:org/apache/camel/component/jcache/policy/hazelcast-spring.xml");
+        System.setProperty("hazelcast.config", "classpath:org/apache/camel/component/jcache/policy/hazelcast-spring.xml");
     }
+
     @AfterClass
     public static void afterAll() {
         System.clearProperty("hazelcast.config");
@@ -157,8 +158,6 @@ public class SpringJCachePolicyTest extends CamelSpringTestSupport {
         assertEquals(1, mock.getExchanges().size());
 
     }
-
-
 
 
 }

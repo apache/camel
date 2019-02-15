@@ -274,8 +274,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
 
                 from("direct:cached-simple")
                     .policy(jcachePolicy)
-                    .to("mock:value")
-                ;
+                    .to("mock:value");
 
                 //Example to wrap only part of the route
                 from("direct:cached-partial")
@@ -284,8 +283,7 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
                         .to("mock:value")
                     .end()
                     .log(LoggingLevel.DEBUG, LOG, "This is always called. body:${body}")
-                    .to("mock:unwrapped")
-                ;
+                    .to("mock:unwrapped");
 
                 //Cache after exception handling
                 from("direct:cached-exception")
