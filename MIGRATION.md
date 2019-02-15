@@ -48,9 +48,13 @@ All deprecated APIs and components from Camel 2.x has been removed in Camel 3.
 Migrating Camel applications
 ----------------------------
 
-The following API changes may affect your existing Camel applications, which needs to be migrated.
+### JMX
+
+If you run Camel standalone with just `camel-core` as dependency, and you want JMX enabled out of the box, then you need to add `camel-management-impl` as dependency.
 
 ### Moved APIs
+
+The following API changes may affect your existing Camel applications, which needs to be migrated.
 
 TODO: Should this be a table?
 TODO: Add the other moved classes/packages etc
