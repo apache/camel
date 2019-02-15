@@ -115,6 +115,46 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>${karaf4-version}</version>
+        <configuration>
+          <descriptors>
+            <descriptor>file://${project.build.directory}/classes/${features.file}</descriptor>
+            <!-- ideally, those profiles should be referenced in the features file -->
+            <descriptor>mvn:org.apache.karaf.features/framework/${karaf4-version}/xml/features</descriptor>
+            <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf4-version}/xml/features</descriptor>
+            <descriptor>mvn:org.apache.karaf.features/spring/${karaf4-version}/xml/features</descriptor>
+          </descriptors>
+          <distribution>org.apache.karaf.features:framework</distribution>
+          <javase>1.8</javase>
+          <framework>
+            <feature>framework</feature>
+          </framework>
+          <features>
+            <!-- camel-ignite requires to install apache ignite first -->
+            <feature>camel|camel-(?!(ignite|nats|pgevent|script-groovy|spring-redis|spring-security))*</feature>
+          </features>
+          <configuration>file://${project.build.directory}/classes/config.properties</configuration>
+        </configuration>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.wagon</groupId>
+            <artifactId>wagon-http-lightweight</artifactId>
+            <version>3.0.0</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
@@ -159,56 +199,21 @@
 
     <!-- validating using karaf 4.x -->
     <profile>
-      <id>validate</id>
+      <id>fastinstall</id>
+      <properties>
+        <features.verify.skip>true</features.verify.skip>
+      </properties>
+    </profile>
+    <profile>
+      <id>skipTests</id>
       <activation>
         <property>
-          <name>!skipTests</name>
+          <name>skipTests</name>
         </property>
       </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.karaf.tooling</groupId>
-            <artifactId>karaf-maven-plugin</artifactId>
-            <version>${karaf4-version}</version>
-            <configuration>
-              <descriptors>
-                <descriptor>file://${project.build.directory}/classes/${features.file}</descriptor>
-                <!-- ideally, those profiles should be referenced in the features file -->
-                <descriptor>mvn:org.apache.karaf.features/framework/${karaf4-version}/xml/features</descriptor>
-                <descriptor>mvn:org.apache.karaf.features/enterprise/${karaf4-version}/xml/features</descriptor>
-                <descriptor>mvn:org.apache.karaf.features/spring/${karaf4-version}/xml/features</descriptor>
-              </descriptors>
-              <distribution>org.apache.karaf.features:framework</distribution>
-              <javase>1.8</javase>
-              <framework>
-                <feature>framework</feature>
-              </framework>
-              <features>
-                <!-- camel-ignite requires to install apache ignite first -->
-                <feature>camel|camel-(?!(ignite|nats|pgevent|script-groovy|spring-redis|spring-security))*</feature>
-              </features>
-            <configuration>file://${project.build.directory}/classes/config.properties</configuration>
-            </configuration>
-            <executions>
-              <execution>
-                <id>validate</id>
-                <phase>process-resources</phase>
-                <goals>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-            </executions>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-http-lightweight</artifactId>
-                <version>3.0.0</version>
-              </dependency>
-            </dependencies>
-          </plugin>
-        </plugins>
-      </build>
+      <properties>
+        <features.verify.skip>true</features.verify.skip>
+      </properties>
     </profile>
 
   </profiles>

@@ -16,16 +16,18 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * Ensures a {@link Producer} is executed within an {@link org.apache.camel.spi.UnitOfWork}.
  */
-public final class UnitOfWorkProducer implements Producer {
+public final class UnitOfWorkProducer extends DefaultAsyncProducer {
 
     private final Producer producer;
     private final AsyncProcessor processor;
@@ -36,6 +38,7 @@ public final class UnitOfWorkProducer implements Producer {
      * @param producer the producer
      */
     public UnitOfWorkProducer(Producer producer) {
+        super(producer.getEndpoint());
         this.producer = producer;
         // wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(producer);
@@ -47,8 +50,9 @@ public final class UnitOfWorkProducer implements Producer {
         return producer.getEndpoint();
     }
 
-    public void process(final Exchange exchange) throws Exception {
-        processor.process(exchange);
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        return processor.process(exchange, callback);
     }
 
     public void start() throws Exception {

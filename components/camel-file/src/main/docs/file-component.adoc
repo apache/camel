@@ -89,7 +89,7 @@ with the following path and query parameters:
 | *preSort* (consumer) | When pre-sort is enabled then the consumer will sort the file and directory names during polling, that was retrieved from the file system. You may want to do this in case you need to operate on the files in a sorted order. The pre-sort is executed before the consumer starts to filter, and accept files to process by Camel. This option is default=false meaning disabled. | false | boolean
 | *recursive* (consumer) | If a directory, will look for files in all the sub-directories as well. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
-| *directoryMustExist* (consumer) | Similar to startingDirectoryMustExist but this applies during polling recursive sub directories. | false | boolean
+| *directoryMustExist* (consumer) | Similar to the startingDirectoryMustExist option but this applies during polling (after starting the consumer). | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *extendedAttributes* (consumer) | To define which file attributes of interest. Like posix:permissions,posix:owner,basic:lastAccessTime, it supports basic wildcard like posix:, basic:lastAccessTime |  | String

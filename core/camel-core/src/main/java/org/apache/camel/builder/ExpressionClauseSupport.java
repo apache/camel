@@ -26,6 +26,7 @@ import org.apache.camel.model.language.ExchangePropertyExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
+import org.apache.camel.model.language.Hl7TerserExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
 import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
@@ -35,7 +36,6 @@ import org.apache.camel.model.language.OgnlExpression;
 import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.model.language.SpELExpression;
-import org.apache.camel.model.language.TerserExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
@@ -554,8 +554,8 @@ public class ExpressionClauseSupport<T> {
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
-    public T terser(String text) {
-        return expression(new TerserExpression(text));
+    public T hl7terser(String text) {
+        return expression(new Hl7TerserExpression(text));
     }
 
     /**

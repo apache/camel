@@ -247,9 +247,23 @@ public class URISupportTest {
     }
 
     @Test
+    public void testSanitizeUriWithUserInfoAndColonPassword() {
+        String uri = "sftp://USERNAME:HARRISON:COLON@sftp.server.test";
+        String expected = "sftp://USERNAME:xxxxxx@sftp.server.test";
+        assertEquals(expected, URISupport.sanitizeUri(uri));
+    }
+
+    @Test
     public void testSanitizePathWithUserInfo() {
         String path = "GEORGE:HARRISON@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.PGM";
         String expected = "GEORGE:xxxxxx@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.PGM";
+        assertEquals(expected, URISupport.sanitizePath(path));
+    }
+
+    @Test
+    public void testSanitizePathWithUserInfoAndColonPassword() {
+        String path = "USERNAME:HARRISON:COLON@sftp.server.test";
+        String expected = "USERNAME:xxxxxx@sftp.server.test";
         assertEquals(expected, URISupport.sanitizePath(path));
     }
 

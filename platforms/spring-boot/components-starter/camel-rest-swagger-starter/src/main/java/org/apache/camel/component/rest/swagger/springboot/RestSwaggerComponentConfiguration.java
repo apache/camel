@@ -43,11 +43,11 @@ public class RestSwaggerComponentConfiguration
      */
     private String basePath;
     /**
-     * Name of the Camel component that will perform the requests. The compnent
+     * Name of the Camel component that will perform the requests. The component
      * must be present in Camel registry and it must implement
      * RestProducerFactory service provider interface. If not set CLASSPATH is
      * searched for single component that implements RestProducerFactory SPI.
-     * Can be overriden in endpoint configuration.
+     * Can be overridden in endpoint configuration.
      */
     private String componentName;
     /**
@@ -55,7 +55,7 @@ public class RestSwaggerComponentConfiguration
      * like application/json or multiple types as application/json,
      * application/xml; q=0.5 according to the RFC7231. This equates to the
      * value of Accept HTTP header. If set overrides any value found in the
-     * Swagger specification. Can be overriden in endpoint configuration
+     * Swagger specification. Can be overridden in endpoint configuration
      */
     private String consumes;
     /**
@@ -65,14 +65,14 @@ public class RestSwaggerComponentConfiguration
      * this component a name (e.g. petstore) that REST configuration is
      * consulted first, rest-swagger next, and global configuration last. If set
      * overrides any value found in the Swagger specification,
-     * RestConfiguration. Can be overriden in endpoint configuration.
+     * RestConfiguration. Can be overridden in endpoint configuration.
      */
     private String host;
     /**
      * What payload type this component is producing. For example
      * application/json according to the RFC7231. This equates to the value of
      * Content-Type HTTP header. If set overrides any value present in the
-     * Swagger specification. Can be overriden in endpoint configuration.
+     * Swagger specification. Can be overridden in endpoint configuration.
      */
     private String produces;
     /**
@@ -82,7 +82,7 @@ public class RestSwaggerComponentConfiguration
      * load swagger.json resource. Note that the host defined on the component
      * and endpoint of this Component should contain the scheme, hostname and
      * optionally the port in the URI syntax (i.e.
-     * https://api.example.com:8080). Can be overriden in endpoint
+     * https://api.example.com:8080). Can be overridden in endpoint
      * configuration.
      */
     private URI specificationUri;

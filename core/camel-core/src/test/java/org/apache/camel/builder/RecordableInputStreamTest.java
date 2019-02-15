@@ -19,7 +19,6 @@ package org.apache.camel.builder;
 
 import java.io.ByteArrayInputStream;
 
-import org.apache.camel.builder.RecordableInputStream;
 import org.junit.Assert;
 import org.junit.Test;
 

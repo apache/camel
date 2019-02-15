@@ -28,9 +28,6 @@ public class SendLocationMessage extends OutgoingMessage {
     @JsonProperty("live_period")
     private Integer livePeriod;
 
-    @JsonProperty("disable_notification")
-    private boolean disableNotification;
-
     @JsonProperty("reply_markup")
     private ReplyKeyboardMarkup replyKeyboardMarkup;
 
@@ -49,14 +46,6 @@ public class SendLocationMessage extends OutgoingMessage {
 
     public void setLivePeriod(Integer livePeriod) {
         this.livePeriod = livePeriod;
-    }
-
-    public boolean isDisableNotification() {
-        return disableNotification;
-    }
-
-    public void setDisableNotification(boolean disableNotification) {
-        this.disableNotification = disableNotification;
     }
 
     public ReplyKeyboardMarkup getReplyKeyboardMarkup() {

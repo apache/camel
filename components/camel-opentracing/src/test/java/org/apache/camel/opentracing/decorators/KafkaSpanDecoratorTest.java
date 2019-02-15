@@ -19,7 +19,6 @@ package org.apache.camel.opentracing.decorators;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
 
-import jdk.nashorn.internal.IntDeque;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

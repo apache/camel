@@ -49,13 +49,12 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.component.bean.BeanInvocation;
-import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.model.language.MethodCallExpression;
-import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.CamelContextHelper;
@@ -64,6 +63,7 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.GroupTokenIterator;
 import org.apache.camel.support.MessageHelper;
+import org.apache.camel.support.processor.DefaultExchangeFormatter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -1785,10 +1785,10 @@ public final class ExpressionBuilder {
      * expressions
      *
      * @param expressions the expression to be concatenated dynamically
-     * @param desription the text description of the expression
+     * @param description the text description of the expression
      * @return an expression which when evaluated will return the concatenated values
      */
-    public static Expression concatExpression(final Collection<Expression> expressions, final String desription) {
+    public static Expression concatExpression(final Collection<Expression> expressions, final String description) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 StringBuilder buffer = new StringBuilder();
@@ -1803,8 +1803,8 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                if (desription != null) {
-                    return desription;
+                if (description != null) {
+                    return description;
                 } else {
                     return "concat" + expressions;
                 }
@@ -1909,7 +1909,7 @@ public final class ExpressionBuilder {
                     if (date == null) {
                         throw new IllegalArgumentException("Cannot find java.util.Date object at command: " + command);
                     }
-                } else if (command.startsWith("property.") || command.startsWith("exchangeProperty.")) {
+                } else if (command.startsWith("exchangeProperty.")) {
                     String key = command.substring(command.lastIndexOf('.') + 1);
                     date = exchange.getProperty(key, Date.class);
                     if (date == null) {

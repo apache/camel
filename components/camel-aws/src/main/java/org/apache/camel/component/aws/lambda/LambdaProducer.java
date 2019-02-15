@@ -43,7 +43,17 @@ import com.amazonaws.services.lambda.model.InvokeResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsRequest;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
+import com.amazonaws.services.lambda.model.ListTagsRequest;
+import com.amazonaws.services.lambda.model.ListTagsResult;
+import com.amazonaws.services.lambda.model.ListVersionsByFunctionRequest;
+import com.amazonaws.services.lambda.model.ListVersionsByFunctionResult;
+import com.amazonaws.services.lambda.model.PublishVersionRequest;
+import com.amazonaws.services.lambda.model.PublishVersionResult;
+import com.amazonaws.services.lambda.model.TagResourceRequest;
+import com.amazonaws.services.lambda.model.TagResourceResult;
 import com.amazonaws.services.lambda.model.TracingConfig;
+import com.amazonaws.services.lambda.model.UntagResourceRequest;
+import com.amazonaws.services.lambda.model.UntagResourceResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeRequest;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.services.lambda.model.VpcConfig;
@@ -97,6 +107,21 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case listEventSourceMapping:
             listEventSourceMapping(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case listTags:
+            listTags(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case tagResource:
+            tagResource(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case untagResource:
+            untagResource(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case publishVersion:
+            publishVersion(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case listVersions:
+            listVersions(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -427,6 +452,109 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.listEventSourceMappings(request);
         } catch (AmazonServiceException ase) {
             log.trace("listEventSourceMapping command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void listTags(AWSLambda lambdaClient, Exchange exchange) {
+        ListTagsResult result;
+        try {
+            ListTagsRequest request = new ListTagsRequest();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN))) {
+                String resource = exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN, String.class);
+                request.withResource(resource);
+            } else {
+                throw new IllegalArgumentException("The resource ARN must be specified");
+            }
+            result = lambdaClient.listTags(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("listTags command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void tagResource(AWSLambda lambdaClient, Exchange exchange) {
+        TagResourceResult result;
+        try {
+            TagResourceRequest request = new TagResourceRequest();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN))) {
+                String resource = exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN, String.class);
+                request.withResource(resource);
+            } else {
+                throw new IllegalArgumentException("The resource ARN must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_TAGS))) {
+                Map<String, String> tags = exchange.getIn().getHeader(LambdaConstants.RESOURCE_TAGS, Map.class);
+                request.withTags(tags);
+            } else {
+                throw new IllegalArgumentException("The tags must be specified");
+            }
+            result = lambdaClient.tagResource(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("listTags command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void untagResource(AWSLambda lambdaClient, Exchange exchange) {
+        UntagResourceResult result;
+        try {
+            UntagResourceRequest request = new UntagResourceRequest();
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN))) {
+                String resource = exchange.getIn().getHeader(LambdaConstants.RESOURCE_ARN, String.class);
+                request.withResource(resource);
+            } else {
+                throw new IllegalArgumentException("The resource ARN must be specified");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.RESOURCE_TAG_KEYS))) {
+                List<String> tagKeys = exchange.getIn().getHeader(LambdaConstants.RESOURCE_TAG_KEYS, List.class);
+                request.withTagKeys(tagKeys);
+            } else {
+                throw new IllegalArgumentException("The tag keys must be specified");
+            }
+            result = lambdaClient.untagResource(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("untagResource command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void publishVersion(AWSLambda lambdaClient, Exchange exchange) {
+        PublishVersionResult result;
+        try {
+            PublishVersionRequest request = new PublishVersionRequest().withFunctionName(getConfiguration().getFunction());
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.VERSION_DESCRIPTION))) {
+                String description = exchange.getIn().getHeader(LambdaConstants.VERSION_DESCRIPTION, String.class);
+                request.withDescription(description);
+            } 
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.VERSION_REVISION_ID))) {
+                String revisionId = exchange.getIn().getHeader(LambdaConstants.VERSION_REVISION_ID, String.class);
+                request.withRevisionId(revisionId);
+            } 
+            result = lambdaClient.publishVersion(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("publishVersion command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void listVersions(AWSLambda lambdaClient, Exchange exchange) {
+        ListVersionsByFunctionResult result;
+        try {
+            ListVersionsByFunctionRequest request = new ListVersionsByFunctionRequest().withFunctionName(getConfiguration().getFunction());
+            result = lambdaClient.listVersionsByFunction(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("publishVersion command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

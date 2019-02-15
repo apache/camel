@@ -286,17 +286,27 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public ListTagsResult listTags(ListTagsRequest listTagsRequest) {
-        throw new UnsupportedOperationException();
+        ListTagsResult result = new ListTagsResult();
+        result.addTagsEntry("test", "lambda-tag");
+        return result;
     }
 
     @Override
     public ListVersionsByFunctionResult listVersionsByFunction(ListVersionsByFunctionRequest listVersionsByFunctionRequest) {
-        throw new UnsupportedOperationException();
+        ListVersionsByFunctionResult res = new ListVersionsByFunctionResult();
+        FunctionConfiguration conf = new FunctionConfiguration();
+        conf.setVersion("1");
+        conf.setFunctionName(listVersionsByFunctionRequest.getFunctionName());
+        res.setVersions(Collections.singleton(conf));
+        return res;
     }
 
     @Override
     public PublishVersionResult publishVersion(PublishVersionRequest publishVersionRequest) {
-        throw new UnsupportedOperationException();
+        PublishVersionResult res = new PublishVersionResult();
+        res.setFunctionName(publishVersionRequest.getFunctionName());
+        res.setDescription(publishVersionRequest.getDescription());
+        return res;
     }
 
     @Override
@@ -306,12 +316,14 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public TagResourceResult tagResource(TagResourceRequest tagResourceRequest) {
-        throw new UnsupportedOperationException();
+        TagResourceResult res = new TagResourceResult();
+        return res;
     }
 
     @Override
     public UntagResourceResult untagResource(UntagResourceRequest untagResourceRequest) {
-        throw new UnsupportedOperationException();
+        UntagResourceResult res = new UntagResourceResult();
+        return res;
     }
 
     @Override

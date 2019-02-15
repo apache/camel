@@ -1004,7 +1004,7 @@ Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
 
 | link:../core/camel-core/src/main/docs/header-language.adoc[Header] (camel-core) | 1.5 | To use a Camel Message header in expressions or predicates.
 
-| link:camel-hl7/src/main/docs/terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
+| link:camel-hl7/src/main/docs/hl7terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11 | To use HL7 terser scripts in Camel expressions or predicates.
 
 | link:camel-script/src/main/docs/javaScript-language.adoc[JavaScript] (camel-script) | 1.0 | *deprecated* To use JavaScript in Camel expressions or predicates.
 

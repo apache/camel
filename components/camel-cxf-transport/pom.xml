@@ -32,7 +32,6 @@
   <description>Camel Transport for Apache CXF </description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.8.0</firstVersion>
     <label>soap,webservice</label>
     <title>CXF Transport</title>

@@ -48,7 +48,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.spi.annotations.Component;
-import org.apache.camel.tools.apt.helper.CollectionStringBuffer;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
 import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
 import org.apache.camel.tools.apt.helper.Strings;
@@ -180,11 +179,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         }
         // the first scheme is the regular so only output if there is alternatives
         if (schemes != null && schemes.length > 1) {
-            CollectionStringBuffer csb = new CollectionStringBuffer(",");
-            for (String altScheme : schemes) {
-                csb.append(altScheme);
-            }
-            buffer.append("\n    \"alternativeSchemes\": \"").append(csb.toString()).append("\",");
+            buffer.append("\n    \"alternativeSchemes\": \"").append(String.join(",", schemes)).append("\",");
         }
         buffer.append("\n    \"syntax\": \"").append(componentModel.getSyntax()).append("\",");
         if (componentModel.getAlternativeSyntax() != null) {

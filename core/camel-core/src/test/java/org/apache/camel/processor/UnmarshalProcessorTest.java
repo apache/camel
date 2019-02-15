@@ -27,8 +27,8 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.DefaultMessage;
-import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.support.processor.UnmarshalProcessor;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.Test;
 
 public class UnmarshalProcessorTest extends TestSupport {

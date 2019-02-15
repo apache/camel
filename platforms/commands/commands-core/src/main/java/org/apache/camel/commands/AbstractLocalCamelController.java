@@ -37,8 +37,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
-import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -394,9 +394,9 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             MBeanServer mBeanServer = agent.getMBeanServer();
             Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + routeId + "\",*"), null);            
             for (ObjectName routeMBean : set) {
-            	
-            	// the route must be part of the camel context
-            	String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+
+                // the route must be part of the camel context
+                String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
                 if (camelId != null && camelId.equals(camelContextName)) {
                     String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{fullStats, includeProcessors}, new String[]{"boolean", "boolean"});
                     return xml;

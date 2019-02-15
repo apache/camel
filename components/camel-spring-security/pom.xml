@@ -32,7 +32,6 @@
   <description>Security using Spring Security</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.3.0</firstVersion>
     <label>security,spring</label>
 

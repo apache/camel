@@ -33,7 +33,6 @@
   <description>Camel unit testing with Spring</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.10.0</firstVersion>
     <label>testing,java,spring</label>
 

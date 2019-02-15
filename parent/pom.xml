@@ -186,10 +186,10 @@
     <ehcache-version>2.10.6</ehcache-version>
     <ehcache3-version>3.6.3</ehcache3-version>
     <ekstazi-maven-plugin-version>5.3.0</ekstazi-maven-plugin-version>
-    <elasticsearch-rest-sniffer-version>6.5.3</elasticsearch-rest-sniffer-version>
-    <elasticsearch-rest-cluster-runner-version>6.5.3.0</elasticsearch-rest-cluster-runner-version>
-    <elasticsearch-rest-version>6.5.3</elasticsearch-rest-version>
-    <elasticsearch-rest-bundle-version>6.1.1_1</elasticsearch-rest-bundle-version>
+    <elasticsearch-rest-sniffer-version>6.5.4</elasticsearch-rest-sniffer-version>
+    <elasticsearch-rest-cluster-runner-version>6.5.4.0</elasticsearch-rest-cluster-runner-version>
+    <elasticsearch-rest-version>6.5.4</elasticsearch-rest-version>
+    <elasticsearch-rest-bundle-version>6.5.4_1</elasticsearch-rest-bundle-version>
     <elsql-version>1.3</elsql-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <eddsa-version>0.3.0</eddsa-version>
@@ -377,7 +377,7 @@
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jettison-version>1.4.0</jettison-version>
     <jgit-version>5.2.1.201812262042-r</jgit-version>
-    <jgroups-version>4.0.16.Final</jgroups-version>
+    <jgroups-version>4.0.17.Final</jgroups-version>
     <jgroups-raft-version>0.4.2.Final</jgroups-raft-version>
     <jgroups-raft-jgroups-version>4.0.15.Final</jgroups-raft-jgroups-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
@@ -495,7 +495,7 @@
     <mock-javamail-version>1.9</mock-javamail-version>
     <mockwebserver-version>0.0.17</mockwebserver-version>
     <mockito-version>2.23.4</mockito-version>
-    <mongo-java-driver-version>3.10.0</mongo-java-driver-version>
+    <mongo-java-driver-version>3.10.1</mongo-java-driver-version>
     <mongo-hadoop-version>1.5.0</mongo-hadoop-version>
     <mqtt-client-version>1.14</mqtt-client-version>
     <msv-version>2013.6.1</msv-version>
@@ -506,7 +506,7 @@
     <mvel-version>2.4.2.Final</mvel-version>
     <mybatis-version>3.5.0</mybatis-version>
     <narayana-version>5.9.2.Final</narayana-version>
-    <nessus-version>1.0.0.Beta1</nessus-version>
+    <nessus-version>1.0.0.Beta4</nessus-version>
     <nsq-client-version>1.0.0.RC4</nsq-client-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <nekohtml-version>1.9.22</nekohtml-version>
@@ -515,7 +515,7 @@
     <netty-version>4.1.33.Final</netty-version>
     <netty-reactive-streams-version>2.0.0</netty-reactive-streams-version>
     <netty40-version>4.0.56.Final</netty40-version>
-    <networknt-json-schema-validator-version>1.0.1</networknt-json-schema-validator-version>
+    <networknt-json-schema-validator-version>1.0.3</networknt-json-schema-validator-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <objenesis-version>2.6</objenesis-version>
     <!-- should be in-sync with deltaspike -->
@@ -566,7 +566,7 @@
     <quickfixj-version>2.1.1</quickfixj-version>
     <rabbitmq-amqp-client-version>5.6.0</rabbitmq-amqp-client-version>
     <reactive-streams-version>1.0.2</reactive-streams-version>
-    <reactor-version>3.2.5.RELEASE</reactor-version>
+    <reactor-version>3.2.6.RELEASE</reactor-version>
     <reflections-version>0.9.11</reflections-version>
     <reflections-bundle-version>0.9.11_1</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
@@ -700,7 +700,7 @@
     <!-- xbean-asm4-bundle is used by openjpa -->
     <xbean-asm4-bundle-version>3.14</xbean-asm4-bundle-version>
     <xbean-asm5-shaded-version>4.5</xbean-asm5-shaded-version>
-    <xchange-version>4.3.14</xchange-version>
+    <xchange-version>4.3.15</xchange-version>
     <xerces-bundle-version>2.11.0_1</xerces-bundle-version>
     <xerces-version>2.11.0</xerces-version>
     <!-- needed to manage the xml-apis version in camel-xmljson -->
@@ -782,6 +782,8 @@
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
     <camel.osgi.require.capability/>
     <camel.osgi.provide.capability/>
+
+    <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
   </properties>
 
   <dependencyManagement>
@@ -834,7 +836,7 @@
         <version>${project.version}</version>
       </dependency>
 
-      <!-- NOTE: auto-generated list of components when building platforms/camel-catalog -->
+      <!-- NOTE: auto-generated list of components when building camel catalog -->
       <!-- camel components: START -->
       <dependency>
         <groupId>org.apache.camel</groupId>
@@ -2293,7 +2295,7 @@
       </dependency>
       <!-- camel components: END -->
 
-      <!-- NOTE: auto-generated list of starter components when building platforms/camel-catalog -->
+      <!-- NOTE: auto-generated list of starter components when building camel catalog -->
       <!-- camel starters: START -->
       <dependency>
         <groupId>org.apache.camel</groupId>
@@ -3628,6 +3630,11 @@
         <artifactId>camel-catalog-maven</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-route-parser</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- camel commands -->
       <dependency>
@@ -3636,18 +3643,8 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-commands-jolokia</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.camel.karaf</groupId>
         <artifactId>camel-karaf-commands</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-route-parser</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -4869,7 +4866,7 @@
 
       <dependency>
         <groupId>io.nessus</groupId>
-        <artifactId>nessus-ipfs</artifactId>
+        <artifactId>nessus-ipfs-client</artifactId>
         <version>${nessus-version}</version>
       </dependency>
     </dependencies>
@@ -4896,7 +4893,7 @@
           <version>${maven-jar-plugin-version}</version>
           <configuration>
             <archive>
-              <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+              <manifestFile>${camel.osgi.manifest}</manifestFile>
             </archive>
           </configuration>
         </plugin>
@@ -4928,6 +4925,7 @@
               <markGenerated>true</markGenerated>
               <faultSerialVersionUID>1</faultSerialVersionUID>
             </defaultOptions>
+            <skipGarbageCollection>true</skipGarbageCollection>
           </configuration>
           <dependencies>
             <!-- needed to add this to get around the following error on

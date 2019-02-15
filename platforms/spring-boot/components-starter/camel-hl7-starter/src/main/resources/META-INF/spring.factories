@@ -15,6 +15,7 @@
 ## limitations under the License.
 ## ---------------------------------------------------------------------------
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.hl7.springboot.TerserLanguageAutoConfiguration,\
-org.apache.camel.component.hl7.springboot.HL7DataFormatAutoConfiguration
+org.apache.camel.component.hl7.springboot.HL7DataFormatAutoConfiguration,\
+org.apache.camel.component.hl7.springboot.Hl7TerserLanguageAutoConfiguration
+
 

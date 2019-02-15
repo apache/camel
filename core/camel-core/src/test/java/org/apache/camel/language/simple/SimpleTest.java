@@ -245,12 +245,6 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
-    public void testSimplePropertyExpressions() throws Exception {
-        exchange.setProperty("medal", "gold");
-        assertExpression("${property.medal}", "gold");
-    }
-
-    @Test
     public void testSimpleExchangePropertyExpressions() throws Exception {
         exchange.setProperty("medal", "gold");
         assertExpression("${exchangeProperty.medal}", "gold");
@@ -435,7 +429,7 @@ public class SimpleTest extends LanguageTestSupport {
                 assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
             }
         }
-        assertExpression("${property.unknown[cool]}", null);
+        assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
 
     @Test
@@ -446,13 +440,13 @@ public class SimpleTest extends LanguageTestSupport {
         map.put("code", 4321);
         exchange.setProperty("wicket", map);
 
-        assertExpression("${property.wicket[cool]}", "Camel rocks");
-        assertExpression("${property.wicket[dude]}", "Hey dude");
-        assertExpression("${property.wicket[unknown]}", null);
-        assertExpression("${property.wicket[code]}", 4321);
+        assertExpression("${exchangeProperty.wicket[cool]}", "Camel rocks");
+        assertExpression("${exchangeProperty.wicket[dude]}", "Hey dude");
+        assertExpression("${exchangeProperty.wicket[unknown]}", null);
+        assertExpression("${exchangeProperty.wicket[code]}", 4321);
         // no header named unknown
-        assertExpression("${property?.unknown[cool]}", null);
-        assertExpression("${property.unknown[cool]}", null);
+        assertExpression("${exchangeProperty?.unknown[cool]}", null);
+        assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
 
     @Test
@@ -495,10 +489,10 @@ public class SimpleTest extends LanguageTestSupport {
     @Test
     public void testOGNLPropertyMapIllegalSyntax() throws Exception {
         try {
-            assertExpression("${property.foobar[bar}", null);
+            assertExpression("${exchangeProperty.foobar[bar}", null);
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
-            assertTrue(e.getMessage().startsWith("Valid syntax: ${exchangeProperty.OGNL} was: property.foobar[bar at location 0"));
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${exchangeProperty.OGNL} was: exchangeProperty.foobar[bar at location 0"));
         }
     }
 
@@ -559,10 +553,6 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${date:out.header.birthday}", outHeaderCalendar.getTime());
         assertExpression("${date:out.header.birthday:yyyyMMdd}", "19750521");
         assertExpression("${date:out.header.birthday+24h:yyyyMMdd}", "19750522");
-
-        assertExpression("${date:property.birthday}", propertyCalendar.getTime());
-        assertExpression("${date:property.birthday:yyyyMMdd}", "19760622");
-        assertExpression("${date:property.birthday+24h:yyyyMMdd}", "19760623");
 
         assertExpression("${date:exchangeProperty.birthday}", propertyCalendar.getTime());
         assertExpression("${date:exchangeProperty.birthday:yyyyMMdd}", "19760622");

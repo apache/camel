@@ -43,6 +43,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebClientOptions;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.WebResponse;
+import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -68,9 +69,11 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(LinkedInOAuthRequestFilter.class);
 
-    private static final String AUTHORIZATION_URL = "https://www.linkedin.com/uas/oauth2/authorization?"
+    private static final String AUTHORIZATION_URL_PREFIX = "https://www.linkedin.com";
+
+    private static final String AUTHORIZATION_URL =  AUTHORIZATION_URL_PREFIX + "/uas/oauth2/authorization?"
         + "response_type=code&client_id=%s&state=%s&redirect_uri=%s";
-    private static final String AUTHORIZATION_URL_WITH_SCOPE = "https://www.linkedin.com/uas/oauth2/authorization?"
+    private static final String AUTHORIZATION_URL_WITH_SCOPE = AUTHORIZATION_URL_PREFIX + "/uas/oauth2/authorization?"
         + "response_type=code&client_id=%s&state=%s&scope=%s&redirect_uri=%s";
 
     private static final String ACCESS_TOKEN_URL = "https://www.linkedin.com/uas/oauth2/accessToken?"
@@ -182,9 +185,8 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                     }
                 } while (!done);
             }
-
             // look for <div role="alert">
-            final HtmlDivision div = authPage.getFirstByXPath("//div[@role='alert']");
+            final HtmlDivision div = authPage.getFirstByXPath("//div[@role='alert'][not(contains(@class,'hidden'))]");
             if (div != null) {
                 throw new IllegalArgumentException("Error authorizing application: " + div.getTextContent());
             }
@@ -195,20 +197,42 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
             login.setText(oAuthParams.getUserName());
             final HtmlPasswordInput password = loginForm.getInputByName("session_password");
             password.setText(oAuthParams.getUserPassword());
-            final HtmlSubmitInput submitInput = (HtmlSubmitInput) loginForm.getElementsByAttribute("input", "type", "submit").get(0);
+            final HtmlButton submitInput = (HtmlButton) loginForm.getElementsByAttribute("button", "type", "submit").get(0);
 
             // validate CSRF and get authorization code
-            String redirectQuery;
+            String nextLocation = null;
             try {
                 final Page redirectPage = submitInput.click();
+            } catch (FailingHttpStatusCodeException e) {
+
+                // escalate non redirect errors
+                if (e.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY && e.getStatusCode() != HttpStatus.SC_SEE_OTHER) {
+                    throw e;
+                }
+                //redirect from auth page leads to the new page with acceptance of access
+                nextLocation = AUTHORIZATION_URL_PREFIX + e.getResponse().getResponseHeaderValue(HttpHeaders.LOCATION);
+            }
+            if (nextLocation == null) {
+                throw new IllegalArgumentException("Redirect response query is null, check username, password and permissions");
+            }
+
+            //Allow access page
+            HtmlPage allowAccessPage = null;
+            String redirectQuery;
+            try {
+                //if access is already allowed, redirection exception is thrown
+                allowAccessPage = webClient.getPage(nextLocation);
+                //in other cases, allow button has to be used
+                final HtmlForm redirectForm = allowAccessPage.getForms().get(1);
+                final HtmlButton allowButton = (HtmlButton) redirectForm.getElementsByAttribute("button", "type", "submit").get(0);
+                final Page redirectPage = allowButton.click();
                 redirectQuery = redirectPage.getUrl().getQuery();
             } catch (FailingHttpStatusCodeException e) {
                 // escalate non redirect errors
-                if (e.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY) {
+                if (e.getStatusCode() != HttpStatus.SC_MOVED_TEMPORARILY && e.getStatusCode() != HttpStatus.SC_SEE_OTHER) {
                     throw e;
                 }
-                final String location = e.getResponse().getResponseHeaderValue("Location");
-                redirectQuery = new URL(location).getQuery();
+                redirectQuery = new URL(e.getResponse().getResponseHeaderValue(HttpHeaders.LOCATION)).getQuery();
             }
             if (redirectQuery == null) {
                 throw new IllegalArgumentException("Redirect response query is null, check username, password and permissions");

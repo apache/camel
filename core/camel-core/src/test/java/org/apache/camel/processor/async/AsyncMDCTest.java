@@ -65,6 +65,8 @@ public class AsyncMDCTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // enable MDC
                 context.setUseMDCLogging(true);
+                // enable breadcrumb
+                context.setUseBreadcrumb(true);
 
                 context.addComponent("async", new MyAsyncComponent());
 
@@ -75,6 +77,7 @@ public class AsyncMDCTest extends ContextTestSupport {
                                 assertEquals(exchange.getExchangeId(), MDC.get(MDC_EXCHANGE_ID));
                                 assertEquals(exchange.getContext().getName(), MDC.get(MDC_CAMEL_CONTEXT_ID));
                                 assertEquals(exchange.getIn().getHeader(Exchange.BREADCRUMB_ID), MDC.get(MDC_BREADCRUMB_ID));
+                                assertNotNull(MDC.get(MDC_BREADCRUMB_ID));
                             }
                         })
                         .to("log:before")

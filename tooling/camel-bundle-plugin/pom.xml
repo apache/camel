@@ -27,8 +27,8 @@
   </parent>
 
   <artifactId>camel-bundle-plugin</artifactId>
-  <name>Camel :: Tooling OSGi Bundle :: Camel Bundle Plugin</name>
-  <description>Plugin for the maven-bundle-plugin</description>
+  <name>Camel :: Maven Plugins :: Camel Bundle Plugin</name>
+  <description>Camel maven-bundle-plugin (OSGi)</description>
 
   <dependencies>
 
@@ -37,6 +37,7 @@
       <artifactId>maven-bundle-plugin</artifactId>
       <version>${maven-bundle-plugin-version}</version>
     </dependency>
+
   </dependencies>
 
 </project>

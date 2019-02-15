@@ -16,8 +16,8 @@
  */
 package org.apache.camel.impl.cloud;
 
-import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.cloud.ServiceCallExpressionSupport;
+import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

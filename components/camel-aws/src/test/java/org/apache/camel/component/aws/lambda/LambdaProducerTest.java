@@ -18,6 +18,10 @@ package org.apache.camel.component.aws.lambda;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
@@ -26,6 +30,12 @@ import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
+import com.amazonaws.services.lambda.model.ListTagsResult;
+import com.amazonaws.services.lambda.model.ListVersionsByFunctionRequest;
+import com.amazonaws.services.lambda.model.ListVersionsByFunctionResult;
+import com.amazonaws.services.lambda.model.PublishVersionResult;
+import com.amazonaws.services.lambda.model.TagResourceResult;
+import com.amazonaws.services.lambda.model.UntagResourceResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.util.IOUtils;
 
@@ -197,7 +207,92 @@ public class LambdaProducerTest extends CamelTestSupport {
         ListEventSourceMappingsResult result = exchange.getOut().getBody(ListEventSourceMappingsResult.class);
         assertEquals(result.getEventSourceMappings().get(0).getFunctionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
     }
+    
+    @Test
+    public void lambdaListTagsTest() throws Exception {
 
+        Exchange exchange = template.send("direct:listTags", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_ARN, "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        ListTagsResult result = (ListTagsResult)exchange.getOut().getBody();
+        assertEquals("lambda-tag", result.getTags().get("test"));
+    }
+    
+    @Test
+    public void tagResourceTest() throws Exception {
+
+        Exchange exchange = template.send("direct:tagResource", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> tags = new HashMap<String, String>();
+                tags.put("test", "added-tag");
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_ARN, "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_TAGS, tags);
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        TagResourceResult result = (TagResourceResult)exchange.getOut().getBody();
+        assertNotNull(result);
+    }
+    
+    @Test
+    public void untagResourceTest() throws Exception {
+
+        Exchange exchange = template.send("direct:untagResource", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                List<String> tagKeys = new ArrayList<String>();
+                tagKeys.add("test");
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_ARN, "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
+                exchange.getIn().setHeader(LambdaConstants.RESOURCE_TAG_KEYS, tagKeys);
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        UntagResourceResult result = (UntagResourceResult)exchange.getOut().getBody();
+        assertNotNull(result);
+    }
+
+    @Test
+    public void publishVersionTest() throws Exception {
+
+        Exchange exchange = template.send("direct:publishVersion", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.VERSION_DESCRIPTION, "This is my description");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        PublishVersionResult result = (PublishVersionResult)exchange.getOut().getBody();
+        assertNotNull(result);
+        assertEquals("GetHelloWithName", result.getFunctionName());
+        assertEquals("This is my description", result.getDescription());
+    }
+    
+    @Test
+    public void listVersionsTest() throws Exception {
+
+        Exchange exchange = template.send("direct:listVersions", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.VERSION_DESCRIPTION, "This is my description");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        ListVersionsByFunctionResult result = (ListVersionsByFunctionResult)exchange.getOut().getBody();
+        assertNotNull(result);
+        assertEquals("GetHelloWithName", result.getVersions().get(0).getFunctionName());
+        assertEquals("1", result.getVersions().get(0).getVersion());
+    }
+    
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
@@ -225,6 +320,16 @@ public class LambdaProducerTest extends CamelTestSupport {
                 from("direct:deleteFunction").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=deleteFunction").to("mock:result");
 
                 from("direct:updateFunction").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=updateFunction").to("mock:result");
+                
+                from("direct:listTags").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listTags").to("mock:result");
+                
+                from("direct:tagResource").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=tagResource").to("mock:result");
+                
+                from("direct:untagResource").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=untagResource").to("mock:result");
+                
+                from("direct:publishVersion").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=publishVersion").to("mock:result");
+                
+                from("direct:listVersions").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listVersions").to("mock:result");
 
                 from("direct:createEventSourceMapping").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=createEventSourceMapping").to("mock:result");
                 

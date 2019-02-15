@@ -2,62 +2,8 @@
   "properties": [
     {
       "defaultValue": true,
-      "name": "camel.component.ref.enabled",
-      "description": "Enable ref component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.controlbus.enabled",
-      "description": "Enable controlbus component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.direct.enabled",
-      "description": "Enable direct component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.vm.enabled",
-      "description": "Enable vm component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
       "name": "camel.component.mock.enabled",
       "description": "Enable mock component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.browse.enabled",
-      "description": "Enable browse component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.direct-vm.enabled",
-      "description": "Enable direct-vm component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.file.enabled",
-      "description": "Enable file component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.language.enabled",
-      "description": "Enable language component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.timer.enabled",
-      "description": "Enable timer component",
       "type": "java.lang.Boolean"
     },
     {
@@ -74,80 +20,14 @@
     },
     {
       "defaultValue": true,
-      "name": "camel.component.seda.enabled",
-      "description": "Enable seda component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
       "name": "camel.component.dataset.enabled",
       "description": "Enable dataset component",
       "type": "java.lang.Boolean"
     },
     {
       "defaultValue": true,
-      "name": "camel.component.stub.enabled",
-      "description": "Enable stub component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.log.enabled",
-      "description": "Enable log component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.scheduler.enabled",
-      "description": "Enable scheduler component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.binding.enabled",
-      "description": "Enable binding component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.xslt.enabled",
-      "description": "Enable xslt component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
       "name": "camel.component.bean.enabled",
       "description": "Enable bean component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.dataformat.enabled",
-      "description": "Enable dataformat component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.rest-api.enabled",
-      "description": "Enable rest-api component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.rest.enabled",
-      "description": "Enable rest component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.validator.enabled",
-      "description": "Enable validator component",
-      "type": "java.lang.Boolean"
-    },
-    {
-      "defaultValue": true,
-      "name": "camel.component.properties.enabled",
-      "description": "Enable properties component",
       "type": "java.lang.Boolean"
     },
     {

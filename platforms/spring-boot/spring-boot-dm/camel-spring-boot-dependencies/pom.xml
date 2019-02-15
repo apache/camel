@@ -163,8 +163,8 @@
       </dependency>
       <dependency>
         <groupId>io.nessus</groupId>
-        <artifactId>nessus-ipfs</artifactId>
-        <version>1.0.0.Beta1</version>
+        <artifactId>nessus-ipfs-client</artifactId>
+        <version>1.0.0.Beta4</version>
       </dependency>
       <dependency>
         <groupId>javax.annotation</groupId>
@@ -573,31 +573,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-lucene</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-maven</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-provider-karaf</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-provider-springboot</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-cdi</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -654,11 +629,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-commands-core</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-commands-jolokia</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2255,11 +2225,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-route-parser</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-rss</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3433,7 +3398,7 @@
       <dependency>
         <groupId>org.knowm.xchange</groupId>
         <artifactId>xchange-core</artifactId>
-        <version>4.3.14</version>
+        <version>4.3.15</version>
       </dependency>
       <dependency>
         <groupId>org.mozilla</groupId>
