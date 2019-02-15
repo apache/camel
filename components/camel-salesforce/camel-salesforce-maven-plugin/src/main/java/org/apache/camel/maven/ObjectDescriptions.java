@@ -70,6 +70,10 @@ final class ObjectDescriptions {
         return descriptionOf(name).getFields().stream().filter(SObjectField::isExternalId).collect(Collectors.toList());
     }
 
+    boolean hasExternalIds(final String name) {
+        return descriptionOf(name).getFields().stream().anyMatch(SObjectField::isExternalId);
+    }
+
     Iterable<SObjectDescription> fetched() {
         return descriptions.values();
     }

@@ -79,6 +79,10 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             return descriptions.externalIdsOf(name);
         }
 
+        public boolean hasExternalIds(final String name) {
+            return descriptions.hasExternalIds(name);
+        }
+
         public String getEnumConstant(final String value) {
 
             // TODO add support for supplementary characters
@@ -112,7 +116,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 // the SObject class
                 return description.getName() + "_" + enumTypeName(field.getName());
             } else if (isMultiSelectPicklist(field)) {
-                if (useStringsForPicklists) {
+                if (Boolean.TRUE.equals(useStringsForPicklists)) {
                     return String.class.getName() + "[]";
                 }
 
@@ -376,14 +380,13 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
             for (final String reference : field.getReferenceTo()) {
                 final List<SObjectField> externalIds = descriptions.externalIdsOf(reference);
+                final String lookupClassName = reference + "_Lookup";
+
+                if (generatedLookupObjects.contains(lookupClassName)) {
+                    continue;
+                }
 
                 for (final SObjectField externalId : externalIds) {
-                    final String lookupClassName = reference + "_Lookup";
-
-                    if (generatedLookupObjects.contains(lookupClassName)) {
-                        continue;
-                    }
-
                     generatedLookupObjects.add(lookupClassName);
                     final String lookupClassFileName = lookupClassName + JAVA_EXT;
                     final File lookupClassFile = new File(pkgDir, lookupClassFileName);
