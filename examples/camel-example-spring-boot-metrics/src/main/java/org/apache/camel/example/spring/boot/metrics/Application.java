@@ -97,7 +97,7 @@ public class Application {
     
     @Bean
     MetricRegistry metricRegistry() {
-    	return new MetricRegistry();
+        return new MetricRegistry();
     }
 
     @Bean
