@@ -327,6 +327,14 @@ public class RestOperationParamDefinition {
     }
 
     /**
+     * Allowed values of the parameter when its an enum type
+     */
+    public RestOperationParamDefinition allowableValues(String allowableValues) {
+        setAllowableValues(Arrays.asList(allowableValues.split(",")));
+        return this;
+    }
+
+    /**
      * The parameter type such as body, form, header, path, query
      */
     public RestOperationParamDefinition type(RestParamType type) {
