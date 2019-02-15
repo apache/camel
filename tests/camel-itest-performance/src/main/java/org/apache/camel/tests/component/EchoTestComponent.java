@@ -17,6 +17,7 @@
 package org.apache.camel.tests.component;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -26,9 +27,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
+
 
 public class EchoTestComponent extends DefaultComponent {
 
@@ -76,5 +78,11 @@ public class EchoTestComponent extends DefaultComponent {
             // do nothing, echo is implicit
             return true;
         }
+
+		@Override
+		public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 }

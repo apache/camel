@@ -18,6 +18,7 @@ package org.apache.camel.tests.component;
 
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
@@ -30,11 +31,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.ExchangeHelper;
+
 
 public class PerformanceTestComponent extends DefaultComponent {
     public static final String HEADER_THREADS = "CamelPerfThreads";
@@ -144,5 +146,11 @@ public class PerformanceTestComponent extends DefaultComponent {
             callback.done(true);
             return true;
         }
+
+		@Override
+		public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 }
