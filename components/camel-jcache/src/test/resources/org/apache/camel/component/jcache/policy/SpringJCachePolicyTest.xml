@@ -26,16 +26,42 @@
     <bean id="jCachePolicy" class="org.apache.camel.component.jcache.policy.JCachePolicy">
         <property name="cacheName" value="spring"/>
     </bean>
-    
+    <bean id="jCachePolicyKeyExpression" class="org.apache.camel.component.jcache.policy.JCachePolicy">
+        <property name="cacheName" value="spring"/>
+        <property name="keyExpression">
+            <bean class="org.apache.camel.model.language.SimpleExpression">
+                <property name="expression" value="${header.mykey}"/>
+            </bean>
+        </property>
+    </bean>
+
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
-            <from uri="direct:policy-spring"/>
-            <policy ref="jCachePolicy">
-                <log message="Executing route, not found in cache. body:${body}"/>
+            <from uri="direct:spring"/>
+            <policy ref="jCachePolicy" >
                 <to uri="mock:spring"/>
             </policy>
-            <log message="This is always called. body:${body}"/>
         </route>
+
+        <route>
+            <from uri="direct:spring-partial"/>
+            <log message="Start - This is always called. body:${body}" loggingLevel="DEBUG" logName="org.apache.camel.component.jcache.policy.SpringJCachePolicyTest"/>
+            <policy ref="jCachePolicy" >
+                <log message="Executing route, not found in cache. body:${body}" loggingLevel="DEBUG" logName="org.apache.camel.component.jcache.policy.SpringJCachePolicyTest"/>
+                <to uri="mock:spring"/>
+            </policy>
+            <log message="End - This is always called. body:${body}" loggingLevel="DEBUG" logName="org.apache.camel.component.jcache.policy.SpringJCachePolicyTest"/>
+            <to uri="mock:unwrapped"/>
+        </route>
+
+        <route>
+            <from uri="direct:spring-byheader"/>
+            <policy ref="jCachePolicyKeyExpression">
+                <to uri="mock:spring"/>
+            </policy>
+        </route>
+
     </camelContext>
 
 </beans>

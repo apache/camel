@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config hazelcast-config-3.11.xsd" >
+
+    <cache name="spring">
+        <key-type class-name="java.lang.String"/>
+        <value-type class-name="java.lang.String"/>
+        <expiry-policy-factory>
+            <timed-expiry-policy-factory expiry-policy-type="CREATED" duration-amount="60" time-unit="MINUTES"/>
+        </expiry-policy-factory>
+    </cache>
+
+</hazelcast>
