@@ -27,8 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
+    private static final Logger LOG = LoggerFactory.getLogger(JCachePolicyProcessorTest.class);
 
     //Basic test to verify value gets cached and route is not executed for the second time
     @Test
@@ -277,10 +280,10 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
                 //Example to wrap only part of the route
                 from("direct:cached-partial")
                     .policy(jcachePolicy)
-                        .log(LoggingLevel.DEBUG,"Executing route, not found in cache. body:${body}")
+                        .log(LoggingLevel.DEBUG, LOG, "Executing route, not found in cache. body:${body}")
                         .to("mock:value")
                     .end()
-                    .log(LoggingLevel.DEBUG,"This is always called. body:${body}")
+                    .log(LoggingLevel.DEBUG, LOG, "This is always called. body:${body}")
                     .to("mock:unwrapped")
                 ;
 
