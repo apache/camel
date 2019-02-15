@@ -31,8 +31,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
 
     private static MockTracer tracer = new MockTracer(Propagator.TEXT_MAP);
