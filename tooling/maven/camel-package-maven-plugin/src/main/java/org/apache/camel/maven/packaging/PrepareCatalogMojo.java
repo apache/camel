@@ -216,10 +216,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // make sure to create out dir
         modelsOutDir.mkdirs();
+        // we only want to warn for duplicates if its a clean build
+        boolean warnDups = modelsOutDir.list() == null || modelsOutDir.list().length == 0;
 
         for (File file : jsonFiles) {
             File to = new File(modelsOutDir, file.getName());
-            if (to.exists()) {
+            if (warnDups && to.exists()) {
                 duplicateJsonFiles.add(to);
                 getLog().warn("Duplicate model name detected: " + to);
             }
@@ -385,12 +387,14 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // make sure to create out dir
         componentsOutDir.mkdirs();
+        // we only want to warn for duplicates if its a clean build
+        boolean warnDups = componentsOutDir.list() == null || componentsOutDir.list().length == 0;
 
         Set<String> alternativeSchemes = new HashSet<>();
 
         for (File file : jsonFiles) {
             File to = new File(componentsOutDir, file.getName());
-            if (to.exists()) {
+            if (warnDups && to.exists()) {
                 duplicateJsonFiles.add(to);
                 getLog().warn("Duplicate component name detected: " + to);
             }
@@ -568,10 +572,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // make sure to create out dir
         dataFormatsOutDir.mkdirs();
+        // we only want to warn for duplicates if its a clean build
+        boolean warnDups = dataFormatsOutDir.list() == null || dataFormatsOutDir.list().length == 0;
 
         for (File file : jsonFiles) {
             File to = new File(dataFormatsOutDir, file.getName());
-            if (to.exists()) {
+            if (warnDups && to.exists()) {
                 duplicateJsonFiles.add(to);
                 getLog().warn("Duplicate dataformat name detected: " + to);
             }
@@ -691,10 +697,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // make sure to create out dir
         languagesOutDir.mkdirs();
+        // we only want to warn for duplicates if its a clean build
+        boolean warnDups = languagesOutDir.list() == null || languagesOutDir.list().length == 0;
 
         for (File file : jsonFiles) {
             File to = new File(languagesOutDir, file.getName());
-            if (to.exists()) {
+            if (warnDups && to.exists()) {
                 duplicateJsonFiles.add(to);
                 getLog().warn("Duplicate language name detected: " + to);
             }
@@ -833,10 +841,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // make sure to create out dir
         othersOutDir.mkdirs();
+        // we only want to warn for duplicates if its a clean build
+        boolean warnDups = othersOutDir.list() == null || othersOutDir.list().length == 0;
 
         for (File file : jsonFiles) {
             File to = new File(othersOutDir, file.getName());
-            if (to.exists()) {
+            if (warnDups && to.exists()) {
                 duplicateJsonFiles.add(to);
                 getLog().warn("Duplicate other name detected: " + to);
             }
@@ -1025,6 +1035,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         // make sure to create out dir
         documentsOutDir.mkdirs();
+        // we only want to warn for duplicates if its a clean build
+        boolean warnDups = documentsOutDir.list() == null || documentsOutDir.list().length == 0;
 
         // use ascii doctor to convert the adoc files to html so we have documentation in this format as well
         Asciidoctor asciidoctor = Asciidoctor.Factory.create();
@@ -1033,7 +1045,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         for (File file : adocFiles) {
             File to = new File(documentsOutDir, file.getName());
-            if (to.exists()) {
+            if (warnDups && to.exists()) {
                 duplicateAdocFiles.add(to);
                 getLog().warn("Duplicate document name detected: " + to);
             }
