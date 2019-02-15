@@ -31,7 +31,6 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 
-
 public class EchoTestComponent extends DefaultComponent {
 
     @Override
@@ -45,7 +44,7 @@ public class EchoTestComponent extends DefaultComponent {
         protected EchoEndpoint(String uri, Component component) {
             super(uri, component);
         }
-        
+
         @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             // Component only supports Producers
@@ -79,10 +78,10 @@ public class EchoTestComponent extends DefaultComponent {
             return true;
         }
 
-		@Override
-		public CompletableFuture<Exchange> processAsync(Exchange exchange) {
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public CompletableFuture<Exchange> processAsync(Exchange exchange) {
+            // TODO Auto-generated method stub
+            return null;
+        }
     }
 }
