@@ -23,14 +23,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.apache.camel.test.karaf.CamelKarafTestSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
-@Ignore
 @RunWith(PaxExam.class)
 public class CamelGroovyTest extends AbstractFeatureTest {
 
