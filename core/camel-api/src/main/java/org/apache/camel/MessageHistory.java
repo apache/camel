@@ -16,8 +16,6 @@
  */
 package org.apache.camel;
 
-import java.util.Date;
-
 /**
  * Represents the history of a Camel {@link Message} how it was routed by the Camel routing engine.
  */
