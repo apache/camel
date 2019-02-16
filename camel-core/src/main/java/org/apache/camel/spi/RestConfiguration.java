@@ -44,6 +44,7 @@ public class RestConfiguration {
     private String scheme;
     private String host;
     private String apiHost;
+    private boolean useXForwardHeaders = true;
     private int port;
     private String contextPath;
     private String apiContextPath;
@@ -593,5 +594,27 @@ public class RestConfiguration {
      */
     public void setCorsHeaders(Map<String, String> corsHeaders) {
         this.corsHeaders = corsHeaders;
+    }
+
+    /**
+     * Whether to use X-FOWARD headers to set host etc. for Swagger.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     *
+     * @return whether to use X-FOWARD headers
+     */
+    public boolean isUseXForwardHeaders() {
+        return useXForwardHeaders;
+    }
+
+    /**
+     * WWhether to use X-FOWARD headers to set host etc. for Swagger.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     *
+     * @param useXForwardHeaders whether to use X-FOWARD headers
+     */
+    public void setUseXForwardHeaders(boolean useXForwardHeaders) {
+        this.useXForwardHeaders = useXForwardHeaders;
     }
 }
