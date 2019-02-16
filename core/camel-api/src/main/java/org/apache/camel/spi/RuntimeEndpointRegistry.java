@@ -28,7 +28,7 @@ public interface RuntimeEndpointRegistry extends StaticService {
     /**
      * Statistics gathered about the endpoint.
      */
-    public interface Statistic {
+    interface Statistic {
 
         /**
          * The endpoint uri
