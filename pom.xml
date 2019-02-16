@@ -210,6 +210,7 @@
                 <exclude>**/*.sh</exclude>
                 <exclude>**/*.bat</exclude>
                 <exclude>**/java9-maven-settings</exclude>
+                <exclude>**/*.pfx</exclude>
                 <!-- tooling json-simple parser -->
                 <exclude>**/src/main/java/org/json/simple/**</exclude>
                 <!-- tooling/camel-manual/src/styles/print.css use a different license -->
@@ -238,6 +239,8 @@
                 <!-- camel-salesforce BSD license from salesforce developers -->
                 <exclude>**/CometDReplayExtension.java</exclude>
                 <exclude>**/LICENSE-SALESFORCE.txt</exclude>
+                <!-- camel-as2 -->
+                <exclude>**/mdnDescription.vm</exclude>
                 <!-- camel-jbpm -->
                 <exclude>**/src/main/resources/*.wid</exclude>
                 <!-- camel website and user-manual -->
