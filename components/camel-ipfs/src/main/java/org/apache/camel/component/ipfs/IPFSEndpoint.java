@@ -22,8 +22,12 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
-import io.nessus.ipfs.IPFSClient;
+import io.ipfs.multihash.Multihash;
+import io.nessus.ipfs.client.IPFSClient;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -40,6 +44,8 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(firstVersion = "2.23.0", scheme = "ipfs", title = "IPFS", syntax = "ipfs:host:port/cmd", producerOnly = true, label = "file,ipfs")
 public class IPFSEndpoint extends DefaultEndpoint {
 
+    static long defaultTimeout = 10000L;
+    
     @UriParam
     private final IPFSConfiguration configuration;
 
@@ -86,17 +92,25 @@ public class IPFSEndpoint extends DefaultEndpoint {
     }
 
     List<String> ipfsAdd(Path path) throws IOException {
-        return ipfs().add(path);
+        List<Multihash> cids = ipfs().add(path);
+        return cids.stream().map(mh -> mh.toBase58()).collect(Collectors.toList());
     }
 
-    InputStream ipfsCat(String cid) throws IOException {
-        return ipfs().cat(cid);
-    }
-
-    Path ipfsGet(String cid, Path outdir) throws IOException {
-        Future<Path> future = ipfs().get(cid, outdir);
+    InputStream ipfsCat(String cid) throws IOException, TimeoutException {
+        Multihash mhash = Multihash.fromBase58(cid);
+        Future<InputStream> future = ipfs().cat(mhash);
         try {
-            return future.get();
+            return future.get(defaultTimeout, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException | ExecutionException ex) {
+            throw new IOException("Cannot obtain: " + cid, ex);
+        }
+    }
+
+    Path ipfsGet(String cid, Path outdir) throws IOException, TimeoutException {
+        Multihash mhash = Multihash.fromBase58(cid);
+        Future<Path> future = ipfs().get(mhash, outdir);
+        try {
+            return future.get(defaultTimeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException ex) {
             throw new IOException("Cannot obtain: " + cid, ex);
         }
