@@ -51,21 +51,21 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
      */
     public String getModel() {
         return model;
-    };
+    }
 
     /**
      * Get 'from' data type.
      */
     public DataType getFrom() {
         return from;
-    };
+    }
 
     /**
      * Get 'to' data type.
      */
     public DataType getTo() {
         return to;
-    };
+    }
 
     /**
      * Set data model.

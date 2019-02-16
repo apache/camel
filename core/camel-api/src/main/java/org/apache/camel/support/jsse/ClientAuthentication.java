@@ -32,5 +32,6 @@ public enum ClientAuthentication {
     /**
      * Client authentication required.
      */
-    REQUIRE;
+    REQUIRE
+
 }

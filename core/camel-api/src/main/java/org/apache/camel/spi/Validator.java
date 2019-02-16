@@ -50,7 +50,7 @@ public abstract class Validator extends ServiceSupport implements CamelContextAw
      */
     public DataType getType() {
         return type;
-    };
+    }
 
     /**
      * Set data type.
