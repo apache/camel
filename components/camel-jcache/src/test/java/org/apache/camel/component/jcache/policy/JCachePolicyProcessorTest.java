@@ -22,12 +22,16 @@ import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
+    private static final Logger LOG = LoggerFactory.getLogger(JCachePolicyProcessorTest.class);
 
     //Basic test to verify value gets cached and route is not executed for the second time
     @Test
@@ -51,6 +55,34 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
         assertEquals(generateValue(key), cache.get(key));
         assertEquals(generateValue(key), responseBody);
         assertEquals(1, mock.getExchanges().size());
+
+    }
+
+    //Verify policy applies only on the section of the route wrapped
+    @Test
+    public void testPartial() throws Exception {
+        final String key = randomString();
+        MockEndpoint mock = getMockEndpoint("mock:value");
+        MockEndpoint mockUnwrapped = getMockEndpoint("mock:unwrapped");
+
+        //Send first, key is not in cache
+        Object responseBody = this.template().requestBody("direct:cached-partial", key);
+
+        //We got back the value, mock was called once, value got cached.
+        Cache cache = lookupCache("simple");
+        assertEquals(generateValue(key), cache.get(key));
+        assertEquals(generateValue(key), responseBody);
+        assertEquals(1, mock.getExchanges().size());
+        assertEquals(1, mockUnwrapped.getExchanges().size());
+
+        //Send again, key is already in cache
+        responseBody = this.template().requestBody("direct:cached-partial", key);
+
+        //We got back the stored value, the mock was not called again, but the unwrapped mock was
+        assertEquals(generateValue(key), cache.get(key));
+        assertEquals(generateValue(key), responseBody);
+        assertEquals(1, mock.getExchanges().size());
+        assertEquals(2, mockUnwrapped.getExchanges().size());
 
     }
 
@@ -243,6 +275,15 @@ public class JCachePolicyProcessorTest extends JCachePolicyTestBase {
                 from("direct:cached-simple")
                     .policy(jcachePolicy)
                     .to("mock:value");
+
+                //Example to wrap only part of the route
+                from("direct:cached-partial")
+                    .policy(jcachePolicy)
+                        .log(LoggingLevel.DEBUG, LOG, "Executing route, not found in cache. body:${body}")
+                        .to("mock:value")
+                    .end()
+                    .log(LoggingLevel.DEBUG, LOG, "This is always called. body:${body}")
+                    .to("mock:unwrapped");
 
                 //Cache after exception handling
                 from("direct:cached-exception")
