@@ -245,6 +245,7 @@
                 <exclude>**/npm-shrinkwrap.json</exclude>
                 <exclude>**/package.json</exclude>
                 <exclude>**/user-manual/**</exclude>
+                <exclude>**/yarn.lock</exclude>
                 <!-- examples -->
                 <exclude>**/fabric8/*.yaml</exclude>
                 <exclude>**/src/main/resources/consul/services.json</exclude>
