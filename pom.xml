@@ -205,6 +205,7 @@
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**/*</exclude>
                 <exclude>**/*.adoc</exclude>
+                <exclude>**/*.adoc.template</exclude>
                 <exclude>**/*.md</exclude>
                 <exclude>**/*.sh</exclude>
                 <exclude>**/*.bat</exclude>
