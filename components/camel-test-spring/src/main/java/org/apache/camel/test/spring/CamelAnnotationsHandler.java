@@ -36,6 +36,7 @@ import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.CollectionStringBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -48,6 +49,33 @@ public final class CamelAnnotationsHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(CamelAnnotationsHandler.class);
 
     private CamelAnnotationsHandler() {
+    }
+
+    /**
+     * Handles @ExcludeRoutes to make it easier to exclude other routes when testing with Spring Boot.
+     *
+     * @param context the initialized Spring context
+     * @param testClass the test class being executed
+     */
+    public static void handleExcludeRoutesForSpringBoot(Class<?> testClass) {
+        if (testClass.isAnnotationPresent(ExcludeRoutes.class)) {
+            Class[] routes = testClass.getAnnotation(ExcludeRoutes.class).value();
+            // need to setup this as a JVM system property
+            CollectionStringBuffer csb = new CollectionStringBuffer(",");
+            for (Class clazz : routes) {
+                csb.append(clazz.getName());
+            }
+            String key = "CamelTestSpringExcludeRoutes";
+            String value = csb.toString();
+
+            String exists = System.getProperty(key);
+            if (exists != null) {
+                LOGGER.warn("Cannot use @ExcludeRoutes as JVM property " + key + " has already been set.");
+            } else {
+                LOGGER.info("@ExcludeRoutes annotation found. Setting up JVM property {}={}", key, value);
+                System.setProperty(key, value);
+            }
+        }
     }
 
     /**
@@ -116,7 +144,7 @@ public final class CamelAnnotationsHandler {
                     }
 
                     // turn off dumping one more time by removing the event listener (which would dump as well when Camel is stopping)
-                    // but this method was explict invoked to dump such as from afterTest callbacks from JUnit.
+                    // but this method was explicit invoked to dump such as from afterTest callbacks from JUnit.
                     RouteCoverageEventNotifier eventNotifier = camelContext.hasService(RouteCoverageEventNotifier.class);
                     if (eventNotifier != null) {
                         camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
@@ -239,7 +267,7 @@ public final class CamelAnnotationsHandler {
 
                 public void execute(String contextName, SpringCamelContext camelContext)
                         throws Exception {
-                    // resovle the property place holders of the mockEndpoints
+                    // resolve the property place holders of the mockEndpoints
                     String mockEndpointsValue = camelContext.resolvePropertyPlaceholders(mockEndpoints);
                     LOGGER.info("Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].", mockEndpointsValue, contextName);
                     camelContext.addRegisterEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsValue, true));
