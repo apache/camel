@@ -129,22 +129,29 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
 
 #if ( $utility.isLookup($field) )## IS LOOKUP
 #foreach ( $reference in $field.getReferenceTo() )## REFERENCE LOOP
-#foreach ( $externalIds in $utility.externalIdsOf($reference) )## EXTERNAL ID LOOP
-#set( $relationshipAsFieldName = $field.getRelationshipName() )
+#if ( $utility.hasExternalIds($reference) )## HAS EXTERNAL IDS
+#set( $fieldName = $field.getName() )
+#if ( $fieldName.endsWith("Id") )## PROPERTY IS ID
+#set( $jsonPropertyName = $fieldName.substring(0, $fieldName.length() - 2) )
+#elseif ( $fieldName.endsWith("__pc") )
+#set ( $jsonPropertyName = $fieldName.replace("__pc", "__pr") )
+#else
+#set( $jsonPropertyName = $fieldName.replace("__c", "__r") )
+#end## PROPERTY IS ID
 #set( $lookupObjectType = $reference )
-    private ${lookupObjectType}_Lookup $relationshipAsFieldName;
+    private ${lookupObjectType}_Lookup ${fieldName}_Lookup;
 
-    @JsonProperty("$relationshipAsFieldName")
-    public ${lookupObjectType}_Lookup get$relationshipAsFieldName() {
-        return this.$relationshipAsFieldName;
+    @JsonProperty("$jsonPropertyName")
+    public ${lookupObjectType}_Lookup get${fieldName}_Lookup() {
+        return this.${fieldName}_Lookup;
     }
 
-    @JsonProperty("$relationshipAsFieldName")
-    public void set$relationshipAsFieldName(${lookupObjectType}_Lookup $relationshipAsFieldName) {
-        this.$relationshipAsFieldName = $relationshipAsFieldName;
+    @JsonProperty("$jsonPropertyName")
+    public void set$fieldName(${lookupObjectType}_Lookup ${fieldName}_Lookup) {
+        this.${fieldName}_Lookup = ${fieldName}_Lookup;
     }
+#end## HAS EXTERNAL IDS
 #end## END REFERENCE LOOP
-#end## END EXTERNAL ID LOOP
 #end## END IS LOOKUP
 #end
 #end
