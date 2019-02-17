@@ -127,15 +127,17 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
         this.$propertyName = $propertyName;
     }
 
-#if ( $utility.isLookup($field) )## EXTERNAL ID
+#if ( $utility.isLookup($field) )## IS LOOKUP
 #foreach ( $reference in $field.getReferenceTo() )## REFERENCE LOOP
-#if ( $utility.hasExternalIds($reference) )## IS REFERENCE CONTAIN EXTERNAL ID
+#if ( $utility.hasExternalIds($reference) )## HAS EXTERNAL IDS
 #set( $fieldName = $field.getName() )
-#if ( $fieldName.endsWith("Id") )## JSON PROPERTY NAME SETTER
+#if ( $fieldName.endsWith("Id") )## PROPERTY IS ID
 #set( $jsonPropertyName = $fieldName.substring(0, $fieldName.length() - 2) )
+#elseif ( $fieldName.endsWith("__pc") )
+#set ( $jsonPropertyName = $fieldName.replace("__pc", "__pr") )
 #else
 #set( $jsonPropertyName = $fieldName.replace("__c", "__r") )
-#end
+#end## PROPERTY IS ID
 #set( $lookupObjectType = $reference )
     private ${lookupObjectType}_Lookup ${fieldName}_Lookup;
 
@@ -148,7 +150,7 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
     public void set$fieldName(${lookupObjectType}_Lookup ${fieldName}_Lookup) {
         this.${fieldName}_Lookup = ${fieldName}_Lookup;
     }
-#end## IS REFERENCE CONTAIN EXTERNAL ID
+#end## HAS EXTERNAL IDS
 #end## END REFERENCE LOOP
 #end## END IS LOOKUP
 #end
