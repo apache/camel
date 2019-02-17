@@ -274,7 +274,9 @@ public class RestSwaggerSupport {
 
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
-                setupXForwardedHeaders(swagger, headers);
+                if (configuration.isUseXForwardHeaders()) {
+                    setupXForwardedHeaders(swagger, headers);
+                }
 
                 if (!configuration.isApiVendorExtension()) {
                     clearVendorExtensions(swagger);
@@ -294,7 +296,9 @@ public class RestSwaggerSupport {
 
                 // read the rest-dsl into swagger model
                 Swagger swagger = reader.read(rests, route, swaggerConfig, contextId, classResolver);
-                setupXForwardedHeaders(swagger, headers);
+                if (configuration.isUseXForwardHeaders()) {
+                    setupXForwardedHeaders(swagger, headers);
+                }
 
                 if (!configuration.isApiVendorExtension()) {
                     clearVendorExtensions(swagger);
