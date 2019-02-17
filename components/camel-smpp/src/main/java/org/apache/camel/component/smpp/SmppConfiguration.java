@@ -121,9 +121,21 @@ public class SmppConfiguration implements Cloneable {
      * @param uri the full URI of the endpoint
      */
     public void configureFromURI(URI uri) {
-        setSystemId(uri.getUserInfo());
-        setHost(uri.getHost());
-        setPort(uri.getPort());
+        String userInfo = uri.getUserInfo();
+        if (userInfo != null) {
+            setSystemId(uri.getUserInfo());
+        }
+
+        String host = uri.getHost();
+        if (host != null) {
+            setHost(host);
+        }
+
+        int port = uri.getPort();
+        if (port > 0) {
+            setPort(port);
+        }
+
         if (uri.getScheme().startsWith("smpps")) {
             setUsingSSL(true);
         }
