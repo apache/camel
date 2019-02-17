@@ -369,7 +369,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     private boolean useOptionals;
 
     @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
-    private Boolean useStringsForPicklists;
+    Boolean useStringsForPicklists;
 
     void processDescription(final File pkgDir, final SObjectDescription description, final GeneratorUtility utility) throws IOException {
         useStringsForPicklists = (useStringsForPicklists == null ? Boolean.TRUE : useStringsForPicklists);
@@ -534,11 +534,11 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         }
     }
 
-    private void parsePicklistToEnums() {
+    void parsePicklistToEnums() {
         parsePicklistOverrideArgs(picklistToEnums, picklistsEnumToSObject);
     }
 
-    private void parsePicklistToStrings() {
+    void parsePicklistToStrings() {
         parsePicklistOverrideArgs(picklistToStrings, picklistsStringToSObject);
     }
 
