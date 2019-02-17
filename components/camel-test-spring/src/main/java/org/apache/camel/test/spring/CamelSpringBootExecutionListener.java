@@ -34,6 +34,10 @@ public class CamelSpringBootExecutionListener extends AbstractTestExecutionListe
         LOG.info("@RunWith(CamelSpringBootRunner.class) preparing: {}", testContext.getTestClass());
 
         Class<?> testClass = testContext.getTestClass();
+
+        // need to prepare this before we load spring application context
+        CamelAnnotationsHandler.handleExcludeRoutesForSpringBoot(testClass);
+
         // we are customizing the Camel context with
         // CamelAnnotationsHandler so we do not want to start it
         // automatically, which would happen when SpringCamelContext
