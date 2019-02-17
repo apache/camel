@@ -33,7 +33,6 @@ import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient.ResponseCallback;
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -89,7 +88,7 @@ public class CamelSalesforceMojoOutputTest {
         mojo.processDescription(pkgDir, description, utility, FIXED_DATE);
 
         for (final String source : sources) {
-            String expected = fileNameAdapter.apply(source);
+            final String expected = fileNameAdapter.apply(source);
 
             final File generatedFile = new File(pkgDir, source);
             final String generatedContent = FileUtils.readFileToString(generatedFile, StandardCharsets.UTF_8);
@@ -98,7 +97,7 @@ public class CamelSalesforceMojoOutputTest {
                 CamelSalesforceMojoOutputTest.class.getResource("/generated/" + expected), StandardCharsets.UTF_8);
 
             Assert.assertEquals("Generated source file in " + source
-                + " must be equal to the one present in test/resources/" + expected, generatedContent, expectedContent);
+                + " must be equal to the one present in test/resources/" + expected, expectedContent, generatedContent);
         }
     }
 
@@ -134,16 +133,6 @@ public class CamelSalesforceMojoOutputTest {
 
             return mapper.readValue(inputStream, SObjectDescription.class);
         }
-    }
-
-    static String java9CompatibilityAdapter(final String source) {
-        if (TestSupport.getJavaMajorVersion() >= 9
-            && (source.equals("Case.java") || source.equals("ComplexCalculatedFormula.java"))) {
-            // Content is the same, the ordering is a bit different.
-            return source + "-Java9";
-        }
-
-        return source;
     }
 
     static RestClient mockRestClient() {
@@ -196,7 +185,7 @@ public class CamelSalesforceMojoOutputTest {
 
     static Object[] testCase(final String json, final Consumer<GenerateMojo> mojoConfigurator, final String... sources)
         throws IOException {
-        return testCase(json, mojoConfigurator, CamelSalesforceMojoOutputTest::java9CompatibilityAdapter, sources);
+        return testCase(json, mojoConfigurator, Function.identity(), sources);
     }
 
     static Object[] testCase(final String json, final String... sources) throws IOException {
