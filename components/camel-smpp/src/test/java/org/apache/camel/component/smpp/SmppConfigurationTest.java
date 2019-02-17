@@ -125,7 +125,20 @@ public class SmppConfigurationTest {
         assertEquals(new Integer(2776), configuration.getPort());
         assertEquals("client", configuration.getSystemId());
     }
-    
+
+    @Test
+    public void hostPortAndSystemIdFromComponentConfigurationShouldBeUsedIfAbsentFromUri() throws URISyntaxException {
+        configuration.setHost("host");
+        configuration.setPort(123);
+        configuration.setSystemId("systemId");
+
+        configuration.configureFromURI(new URI("smpp://?password=pw"));
+
+        assertEquals("host", configuration.getHost());
+        assertEquals(new Integer(123), configuration.getPort());
+        assertEquals("systemId", configuration.getSystemId());
+    }
+
     @Test
     public void cloneShouldReturnAnEqualInstance() {
         setNoneDefaultValues(configuration);
