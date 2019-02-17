@@ -26,15 +26,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
@@ -44,8 +48,8 @@ import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.StringHelper;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -112,7 +116,7 @@ public class GenerateMojo extends AbstractSalesforceMojo {
                 // the SObject class
                 return description.getName() + "_" + enumTypeName(field.getName());
             } else if (isMultiSelectPicklist(field)) {
-                if (useStringsForPicklists) {
+                if (Boolean.TRUE.equals(useStringsForPicklists)) {
                     return String.class.getName() + "[]";
                 }
 
@@ -154,6 +158,10 @@ public class GenerateMojo extends AbstractSalesforceMojo {
             literals.clear();
             Collections.sort(result, (o1, o2) -> o1.getValue().compareTo(o2.getValue()));
             return result;
+        }
+
+        public boolean hasExternalIds(final String name) {
+            return descriptions.hasExternalIds(name);
         }
 
         public boolean hasMultiSelectPicklists(final SObjectDescription desc) {
@@ -228,11 +236,17 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         }
 
         public Set<Map.Entry<String, Object>> propertiesOf(final Object object) {
-            final Map<String, Object> properties = new HashMap<>();
+            final Map<String, Object> properties = new TreeMap<>();
             IntrospectionSupport.getProperties(object, properties, null, false);
 
+            final Function<Map.Entry<String, Object>, String> keyMapper = e -> StringUtils.capitalize(e.getKey());
+            final Function<Map.Entry<String, Object>, Object> valueMapper = Map.Entry::getValue;
+            final BinaryOperator<Object> mergeFunction = (u, v) -> {
+                throw new IllegalStateException(String.format("Duplicate key %s", u));
+            };
+            final Supplier<Map<String, Object>> mapSupplier = LinkedHashMap::new;
             return properties.entrySet().stream()
-                .collect(Collectors.toMap(e -> StringUtils.capitalize(e.getKey()), Map.Entry::getValue)).entrySet();
+                .collect(Collectors.toMap(keyMapper, valueMapper, mergeFunction, mapSupplier)).entrySet();
         }
 
         public void push(final String additional) {
@@ -338,7 +352,8 @@ public class GenerateMojo extends AbstractSalesforceMojo {
     @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
     private Boolean useStringsForPicklists;
 
-    void processDescription(final File pkgDir, final SObjectDescription description, final GeneratorUtility utility) throws IOException {
+    void processDescription(final File pkgDir, final SObjectDescription description, final GeneratorUtility utility)
+        throws IOException {
 
         // generate a source file for SObject
         final VelocityContext context = new VelocityContext();
@@ -376,14 +391,13 @@ public class GenerateMojo extends AbstractSalesforceMojo {
 
             for (final String reference : field.getReferenceTo()) {
                 final List<SObjectField> externalIds = descriptions.externalIdsOf(reference);
+                final String lookupClassName = reference + "_Lookup";
+
+                if (generatedLookupObjects.contains(lookupClassName)) {
+                    continue;
+                }
 
                 for (final SObjectField externalId : externalIds) {
-                    final String lookupClassName = reference + "_Lookup";
-
-                    if (generatedLookupObjects.contains(lookupClassName)) {
-                        continue;
-                    }
-
                     generatedLookupObjects.add(lookupClassName);
                     final String lookupClassFileName = lookupClassName + JAVA_EXT;
                     final File lookupClassFile = new File(pkgDir, lookupClassFileName);
@@ -474,8 +488,6 @@ public class GenerateMojo extends AbstractSalesforceMojo {
         getLog().info("Generating Java Classes...");
         // generate POJOs for every object description
         final GeneratorUtility utility = new GeneratorUtility();
-        // should we provide a flag to control timestamp generation?
-        final String generatedDate = new Date().toString();
         for (final SObjectDescription description : descriptions.fetched()) {
             if (Defaults.IGNORED_OBJECTS.contains(description.getName())) {
                 continue;
