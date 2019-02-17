@@ -491,6 +491,7 @@ bindings.
                     `file:` or `http:` to refer to resources to load from file or http url.
 |scheme | http|The scheme to use for exposing the REST service. Usually http or https is supported
 |host |- |The hostname to use for exposing the REST service.
+|useXForwardHeaders |true |Whether to use X-Forwarded-Host (or Host) from incoming HTTP Header to set the hostname
 |apiHost |- |Specific hostname for the API documentation (eg swagger)
 
              This can be used to override the generated host with this configured hostname

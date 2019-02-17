@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -58,6 +57,9 @@ public class RestConfigurationDefinition {
 
     @XmlAttribute
     private String apiHost;
+
+    @XmlAttribute @Metadata(defaultValue = "true", label = "consumer")
+    private Boolean useXForwardHeaders;
 
     @XmlAttribute
     private String port;
@@ -485,6 +487,19 @@ public class RestConfigurationDefinition {
         this.corsHeaders = corsHeaders;
     }
 
+    public Boolean getUseXForwardHeaders() {
+        return useXForwardHeaders;
+    }
+
+    /**
+     * Whether to use X-Forward headers for Host and related setting.
+     * <p/>
+     * The default value is true.
+     */
+    public void setUseXForwardHeaders(Boolean useXForwardHeaders) {
+        this.useXForwardHeaders = useXForwardHeaders;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
 
@@ -787,6 +802,13 @@ public class RestConfigurationDefinition {
         return corsHeaderProperty("Access-Control-Allow-Credentials", String.valueOf(corsAllowCredentials));
     }
 
+    /**
+     * To specify whether to use X-Forward headers for Host and related setting
+     */
+    public RestConfigurationDefinition useXForwardHeaders(boolean useXForwardHeaders) {
+        setUseXForwardHeaders(useXForwardHeaders);
+        return this;
+    }
 
     // Implementation
     //-------------------------------------------------------------------------
@@ -814,6 +836,9 @@ public class RestConfigurationDefinition {
         }
         if (host != null) {
             answer.setHost(CamelContextHelper.parseText(context, host));
+        }
+        if (useXForwardHeaders != null) {
+            answer.setUseXForwardHeaders(useXForwardHeaders);
         }
         if (apiHost != null) {
             answer.setApiHost(CamelContextHelper.parseText(context, apiHost));
