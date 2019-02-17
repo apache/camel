@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0-M1</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -147,7 +147,7 @@
     <camel.osgi.symbolic.name>${project.artifactId}</camel.osgi.symbolic.name>
     <skip.starting.camel.context>false</skip.starting.camel.context>
     <javax.servlet.api.version>4.0.1</javax.servlet.api.version>
-    <camel.osgi.export.pkg/>
+    <camel.osgi.export.pkg />
   </properties>
 
   <dependencyManagement>
@@ -239,7 +239,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>

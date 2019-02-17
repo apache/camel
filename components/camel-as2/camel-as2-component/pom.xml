@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-as2-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0-M1</version>
   </parent>
 
   <artifactId>camel-as2</artifactId>
@@ -138,13 +138,13 @@
  -->                </api>
               </apis>
               <!-- Specify global values for all APIs here, these are overridden at API level
-              <substitutions/>
-              <excludeConfigNames/>
-              <excludeConfigTypes/>
-              <extraOptions/>
-              <fromJavadoc/>
-              <aliases/>
-              <nullableOptions/>
+              <substitutions />
+              <excludeConfigNames />
+              <excludeConfigTypes />
+              <extraOptions />
+              <fromJavadoc />
+              <aliases />
+              <nullableOptions />
               -->
             </configuration>
           </execution>

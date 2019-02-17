@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-M1</version>
     </parent>
 
     <artifactId>camel-infinispan</artifactId>
@@ -208,12 +208,8 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <get
-                                         src="https://downloads.jboss.org/infinispan/${infinispan-version}/infinispan-server-${infinispan-version}.zip"
-                                         dest="${project.build.directory}/infinispan-server-${infinispan-version}.zip"/>
-                                        <unzip
-                                         src="${project.build.directory}/infinispan-server-${infinispan-version}.zip"
-                                         dest="${server.dir.parent}"/>
+                                        <get src="https://downloads.jboss.org/infinispan/${infinispan-version}/infinispan-server-${infinispan-version}.zip" dest="${project.build.directory}/infinispan-server-${infinispan-version}.zip" />
+                                        <unzip src="${project.build.directory}/infinispan-server-${infinispan-version}.zip" dest="${server.dir.parent}" />
                                    </target>
                                </configuration>
                            </execution>

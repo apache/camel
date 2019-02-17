@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-fhir-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0-M1</version>
   </parent>
   
   <artifactId>camel-fhir</artifactId>
@@ -159,7 +159,7 @@
                 <api>
                   <apiName>create</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirCreate</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                   <nullableOptions>
                     <nullableOption>url</nullableOption>
                     <nullableOption>preferReturn</nullableOption>
@@ -169,7 +169,7 @@
                 <api>
                   <apiName>delete</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirDelete</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                   <nullableOptions>
                     <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>
@@ -216,7 +216,7 @@
                 <api>
                   <apiName>patch</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirPatch</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                   <nullableOptions>
                     <nullableOption>preferReturn</nullableOption>
                     <nullableOption>extraParameters</nullableOption>
@@ -225,7 +225,7 @@
                 <api>
                   <apiName>read</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirRead</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                   <nullableOptions>
                     <nullableOption>ifVersionMatches</nullableOption>
                     <nullableOption>returnNull</nullableOption>
@@ -238,7 +238,7 @@
                 <api>
                   <apiName>search</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirSearch</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                   <nullableOptions>
                     <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>
@@ -246,7 +246,7 @@
                 <api>
                   <apiName>transaction</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirTransaction</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                   <nullableOptions>
                     <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>
@@ -254,7 +254,7 @@
                 <api>
                   <apiName>update</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirUpdate</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                   <nullableOptions>
                     <nullableOption>id</nullableOption>
                     <nullableOption>stringId</nullableOption>
@@ -265,7 +265,7 @@
                 <api>
                   <apiName>validate</apiName>
                   <proxyClass>org.apache.camel.component.fhir.api.FhirValidate</proxyClass>
-                  <fromJavadoc/>
+                  <fromJavadoc />
                   <nullableOptions>
                     <nullableOption>extraParameters</nullableOption>
                   </nullableOptions>

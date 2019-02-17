@@ -22,7 +22,7 @@
   <parent>
     <artifactId>components</artifactId>
     <groupId>org.apache.camel</groupId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0-M1</version>
   </parent>
 
   <artifactId>camel-solr</artifactId>
@@ -162,7 +162,7 @@
             </goals>
             <configuration>
               <target>
-                <delete dir="${basedir}/data" quiet="true"/>
+                <delete dir="${basedir}/data" quiet="true" />
               </target>
             </configuration>
           </execution>
