@@ -20,6 +20,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.spring.CamelSpringBootRunner;
+import org.apache.camel.test.spring.ExcludeRoutes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @RunWith(CamelSpringBootRunner.class)
 @SpringBootApplication()
-@SpringBootTest(classes = FooTest.class,
-    properties = {"camel.springboot.java-routes-exclude-pattern=**/Bar*,**/Drink*"})
-public class FooTest {
+@SpringBootTest(classes = FooTest.class)
+@ExcludeRoutes({BarRoute.class, DrinkRoute.class})
+public class FooExcludeRouteAnnotationTest {
 
     @Autowired
     ProducerTemplate producerTemplate;

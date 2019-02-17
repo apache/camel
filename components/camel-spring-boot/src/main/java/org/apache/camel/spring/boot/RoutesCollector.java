@@ -115,6 +115,24 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                             }
                         }
                     }
+                    // special support for testing with @ExcludeRoutes annotation with camel-test-spring
+                    exclude = System.getProperty("CamelTestSpringExcludeRoutes");
+                    // exclude take precedence over include
+                    if (match && ObjectHelper.isNotEmpty(exclude)) {
+                        // this property is a comma separated list of FQN class names, so we need to make
+                        // name as path so we can use ant patch matcher
+                        exclude = exclude.replace('.', '/');
+                        // there may be multiple separated by comma
+                        String[] parts = exclude.split(",");
+                        for (String part : parts) {
+                            // must negate when excluding, and hence !
+                            match = !matcher.match(part, name);
+                            LOG.trace("Java RoutesBuilder: {} exclude filter: {} -> {}", name, part, match);
+                            if (!match) {
+                                break;
+                            }
+                        }
+                    }
                     if (match && ObjectHelper.isNotEmpty(include)) {
                         // there may be multiple separated by comma
                         String[] parts = include.split(",");
