@@ -80,40 +80,14 @@ public class Asset extends AbstractDescribedSObjectBase {
         final SObjectDescription description = new SObjectDescription();
 
 
-        description.setMergeable(false);
-        description.setCreateable(true);
-        description.setQueryable(true);
-        description.setLabel("Asset");
-        description.setReplicateable(true);
-        description.setName("Asset");
-        description.setLayoutable(true);
-        description.setDeprecatedAndHidden(false);
-        description.setMruEnabled(true);
-        description.setSearchable(true);
-        description.setFeedEnabled(false);
-        description.setRetrieveable(true);
-        description.setCustomSetting(false);
-        description.setKeyPrefix("02i");
-        description.setUndeletable(true);
-        description.setSearchLayoutable("true");
-        description.setTriggerable(true);
-        description.setCustom(false);
-
-        final SObjectDescriptionUrls sObjectDescriptionUrls1 = new SObjectDescriptionUrls();
-        sObjectDescriptionUrls1.setDescribe("/services/data/v42.0/sobjects/Asset/describe");
-        sObjectDescriptionUrls1.setLayouts("/services/data/v42.0/sobjects/Asset/describe/layouts");
-        sObjectDescriptionUrls1.setSobject("/services/data/v42.0/sobjects/Asset");
-        sObjectDescriptionUrls1.setQuickActions("/services/data/v42.0/sobjects/Asset/quickActions");
-        sObjectDescriptionUrls1.setUiEditTemplate("https://eu11.salesforce.com/{ID}/e");
-        sObjectDescriptionUrls1.setDefaultValues("/services/data/v42.0/sobjects/Asset/defaultValues?recordTypeId&fields");
-        sObjectDescriptionUrls1.setRowTemplate("/services/data/v42.0/sobjects/Asset/{ID}");
-        sObjectDescriptionUrls1.setListviews("/services/data/v42.0/sobjects/Asset/listviews");
-        sObjectDescriptionUrls1.setCompactLayouts("/services/data/v42.0/sobjects/Asset/describe/compactLayouts");
-        sObjectDescriptionUrls1.setApprovalLayouts("/services/data/v42.0/sobjects/Asset/describe/approvalLayouts");
-        sObjectDescriptionUrls1.setUiNewRecord("https://eu11.salesforce.com/02i/e");
-        sObjectDescriptionUrls1.setUiDetailTemplate("https://eu11.salesforce.com/{ID}");
-        description.setUrls(sObjectDescriptionUrls1);
+        description.setActivateable(false);
         description.setCompactLayoutable(true);
+        description.setCreateable(true);
+        description.setCustom(false);
+        description.setCustomSetting(false);
+        description.setDeletable(true);
+        description.setDeprecatedAndHidden(false);
+        description.setFeedEnabled(false);
 
         final List<SObjectField> fields1 = new ArrayList<>();
         description.setFields(fields1);
@@ -127,10 +101,36 @@ public class Asset extends AbstractDescribedSObjectBase {
         final SObjectField sObjectField4 = createField("time", "time", "time", "xsd:time", 0, false, true, false, false, true, false, false);
         fields1.add(sObjectField4);
 
-        description.setActivateable(false);
+        description.setKeyPrefix("02i");
+        description.setLabel("Asset");
         description.setLabelPlural("Assets");
+        description.setLayoutable(true);
+        description.setMergeable(false);
+        description.setMruEnabled(true);
+        description.setName("Asset");
+        description.setQueryable(true);
+        description.setReplicateable(true);
+        description.setRetrieveable(true);
+        description.setSearchLayoutable("true");
+        description.setSearchable(true);
+        description.setTriggerable(true);
+        description.setUndeletable(true);
         description.setUpdateable(true);
-        description.setDeletable(true);
+
+        final SObjectDescriptionUrls sObjectDescriptionUrls1 = new SObjectDescriptionUrls();
+        sObjectDescriptionUrls1.setApprovalLayouts("/services/data/v42.0/sobjects/Asset/describe/approvalLayouts");
+        sObjectDescriptionUrls1.setCompactLayouts("/services/data/v42.0/sobjects/Asset/describe/compactLayouts");
+        sObjectDescriptionUrls1.setDefaultValues("/services/data/v42.0/sobjects/Asset/defaultValues?recordTypeId&fields");
+        sObjectDescriptionUrls1.setDescribe("/services/data/v42.0/sobjects/Asset/describe");
+        sObjectDescriptionUrls1.setLayouts("/services/data/v42.0/sobjects/Asset/describe/layouts");
+        sObjectDescriptionUrls1.setListviews("/services/data/v42.0/sobjects/Asset/listviews");
+        sObjectDescriptionUrls1.setQuickActions("/services/data/v42.0/sobjects/Asset/quickActions");
+        sObjectDescriptionUrls1.setRowTemplate("/services/data/v42.0/sobjects/Asset/{ID}");
+        sObjectDescriptionUrls1.setSobject("/services/data/v42.0/sobjects/Asset");
+        sObjectDescriptionUrls1.setUiDetailTemplate("https://eu11.salesforce.com/{ID}");
+        sObjectDescriptionUrls1.setUiEditTemplate("https://eu11.salesforce.com/{ID}/e");
+        sObjectDescriptionUrls1.setUiNewRecord("https://eu11.salesforce.com/02i/e");
+        description.setUrls(sObjectDescriptionUrls1);
 
         return description;
     }
