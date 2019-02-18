@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Date;
-
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 

@@ -18,7 +18,6 @@ package org.apache.camel.spi;
 
 import java.util.Collection;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.StaticService;
 
