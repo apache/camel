@@ -178,7 +178,7 @@
     <docker-java-bundle-version>3.0.14_1</docker-java-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>6.4.1</dozer-version>
-    <drools-version>7.14.0.Final</drools-version>
+    <drools-version>7.17.0.Final</drools-version>
     <dropbox-version>3.0.11</dropbox-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>
@@ -351,7 +351,7 @@
     <glassfish-jaxb-xjc-version>${jakarta-jaxb-version}</glassfish-jaxb-xjc-version>
     <jaxb2-maven-plugin-version>2.4</jaxb2-maven-plugin-version>
     <jaxen-version>1.1.6</jaxen-version>
-    <jbpm-version>7.14.0.Final</jbpm-version>
+    <jbpm-version>7.17.0.Final</jbpm-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jboss-logging-version>3.3.2.Final</jboss-logging-version>
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
@@ -434,7 +434,7 @@
     <kafka-bundle-version>2.1.0_1</kafka-bundle-version>
     <karaf2-version>2.4.4</karaf2-version>
     <karaf4-version>4.2.1</karaf4-version>
-    <kie-version>7.14.0.Final</kie-version>
+    <kie-version>7.17.0.Final</kie-version>
     <kubernetes-client-version>4.1.1</kubernetes-client-version>
     <kubernetes-model-version>4.1.1</kubernetes-model-version>
     <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
@@ -502,8 +502,7 @@
     <mustache-java-version>0.9.5</mustache-java-version>
     <mustache-guava-version>16.0</mustache-guava-version>
     <mustache-bundle-version>0.9.5_4</mustache-bundle-version>
-    <!-- mvel 2.4.3 does not work in OSGi: https://github.com/mvel/mvel/issues/178 -->
-    <mvel-version>2.4.2.Final</mvel-version>
+    <mvel-version>2.4.4.Final</mvel-version>
     <mybatis-version>3.5.0</mybatis-version>
     <narayana-version>5.9.2.Final</narayana-version>
     <nessus-version>1.0.0.Beta4</nessus-version>
@@ -541,7 +540,7 @@
     <opentracing-version>0.31.0</opentracing-version>
     <opentracing-tracerresolver-version>0.1.4</opentracing-tracerresolver-version>
     <ops4j-base-version>1.5.0</ops4j-base-version>
-    <optaplanner-version>7.14.0.Final</optaplanner-version>
+    <optaplanner-version>7.17.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <os-maven-plugin-version>1.6.0</os-maven-plugin-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
