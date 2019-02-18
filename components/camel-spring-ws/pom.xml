@@ -36,8 +36,13 @@
   <properties>
     <camel.osgi.import.before.defaults>
       org.springframework.beans.*;version="${spring-version-range}",
-      org.springframework.util.*;version="${spring-version-range}"
+      org.springframework.util.*;version="${spring-version-range}",
+      org.springframework.ws.*;version="[3,4)",
+      org.springframework.xml.*;version="[3,4)"
     </camel.osgi.import.before.defaults>
+    <!-- for some weird reason org.springframework.ws and org.springframework.xml
+          will have import-ranges of [2,3) by the bundle plugin, so we
+          need to override it here -->
   </properties>
 
   <dependencies>
