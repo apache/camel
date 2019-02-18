@@ -68,14 +68,15 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testFindLanguageNames() throws Exception {
-        List<String> names = catalog.findLanguageNames();
-
-        assertTrue(names.contains("simple"));
-        assertTrue(names.contains("spel"));
-        assertTrue(names.contains("xpath"));
-        assertTrue(names.contains("bean"));
-        assertFalse(names.contains("method"));
+    public void testFindComponentNames() throws Exception {
+        List<String> names = catalog.findComponentNames();
+        assertNotNull(names);
+        assertTrue(names.contains("file"));
+        assertTrue(names.contains("log"));
+        assertTrue(names.contains("docker"));
+        assertTrue(names.contains("jms"));
+        assertTrue(names.contains("activemq"));
+        assertTrue(names.contains("zookeeper-master"));
     }
 
     @Test
@@ -96,17 +97,8 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testFindNames() throws Exception {
-        List<String> names = catalog.findComponentNames();
-        assertNotNull(names);
-        assertTrue(names.contains("file"));
-        assertTrue(names.contains("log"));
-        assertTrue(names.contains("docker"));
-        assertTrue(names.contains("jms"));
-        assertTrue(names.contains("activemq"));
-        assertTrue(names.contains("zookeeper-master"));
-
-        names = catalog.findDataFormatNames();
+    public void testFindDataFormatNames() throws Exception {
+        List<String> names = catalog.findDataFormatNames();
         assertNotNull(names);
         assertTrue(names.contains("bindy-csv"));
         assertTrue(names.contains("hl7"));
@@ -114,9 +106,12 @@ public class CamelCatalogTest {
         assertTrue(names.contains("syslog"));
         assertTrue(names.contains("asn1"));
         assertTrue(names.contains("zipfile"));
+    }
 
-        names = catalog.findLanguageNames();
-        assertNotNull(names);
+    @Test
+    public void testFindLanguageNames() throws Exception {
+        List<String> names = catalog.findLanguageNames();
+
         assertTrue(names.contains("simple"));
         assertTrue(names.contains("groovy"));
         assertTrue(names.contains("mvel"));
@@ -124,8 +119,11 @@ public class CamelCatalogTest {
         assertTrue(names.contains("file"));
         assertTrue(names.contains("xtokenize"));
         assertTrue(names.contains("hl7terser"));
+    }
 
-        names = catalog.findModelNames();
+    @Test
+    public void testFindModelNames() throws Exception {
+        List<String> names = catalog.findModelNames();
         assertNotNull(names);
         assertTrue(names.contains("from"));
         assertTrue(names.contains("to"));
