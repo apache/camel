@@ -42,6 +42,15 @@ pipeline {
 
     stages {
 
+        stage('Build & Deploy') {
+            when {
+                branch 'master'
+            }
+            steps {
+                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean deploy"
+            }
+        }
+
         stage('Checks') {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
