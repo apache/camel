@@ -72,6 +72,7 @@
     <dependency>
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-mock</artifactId>
+      <version>1.2.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
