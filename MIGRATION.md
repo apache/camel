@@ -75,9 +75,35 @@ The method `includeRoutes` on `RouteBuilder` has been removed. This functionalit
 
 The exception `PredicateValidationException` has been moved from package `org.apache.camel.processor.validation` to `org.apache.camel.support.processor.validation.PredicateValidationException`.
 
+The class `org.apache.camel.util.toolbox.AggregationStrategies` has been moved to `org.apache.camel.builder.AggregationStrategies`.
+
+The class `org.apache.camel.processor.aggregate.AggregationStrategy` has been moved to `org.apache.camel.AggregationStrategy`.
+
+The class `org.apache.camel.processor.loadbalancer.SimpleLoadBalancerSupport` has been removed, instead use `org.apache.camel.processor.loadbalancer.LoadBalancerSupport`.
+
+#### AdviceWith
+
+Testing using `adviceWith` currently needs to be changed from:
+
+    context.getRouteDefinition("start").adviceWith(context, new RouteBuilder() {
+       ...
+    }
+
+to using style:
+
+    RouteReifier.adviceWith(context.getRouteDefinition("start"), context, new RouteBuilder() {
+        ...
+    }    
+
+We are planning on making this easier in 3.0.0-M2 onwards.
+
 #### Generic Classes
 
 The class `JNDIContext` has been moved from `org.apache.camel.util.jndi.JNDIContext` in the camel-core JAR to `org.apache.camel.support.jndi.JNDIContext` and moved to the `camel-support` JAR.
+
+#### EIPs
+
+The `circuitBreaker` load-blancer EIP was deprecated in Camel 2.x, and has been removed. Instead use Hystrix EIP as the load-balancer.
 
 #### Languages
 
