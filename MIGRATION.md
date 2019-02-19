@@ -106,6 +106,13 @@ The class `org.apache.camel.processor.aggregate.AggregationStrategy` has been mo
 
 The class `org.apache.camel.processor.loadbalancer.SimpleLoadBalancerSupport` has been removed, instead use `org.apache.camel.processor.loadbalancer.LoadBalancerSupport`.
 
+#### Starting and stopping routes
+
+The `startRoute`, `stopRoute`, `suspendRoute` and `resumeRoute` methods on `CamelContext` has been moved to the `RouteController` as shown below:
+
+    context.getRouteController().startRoute("myRoute");
+
+
 #### JMX events
 
 All the events from package `org.apache.camel.management.event` has been moved to the class `org.apache.camel.spi.CamelEvent` as sub-classes, for example the event for CamelContext started would be `CamelEvent.CamelContextStartedEvent`.
@@ -175,6 +182,9 @@ The class `RestProducerFactoryHelper` has been moved from `org.apache.camel.spi.
 The class `ServiceHelper` has been moved from `org.apache.camel.util.ServiceHelper` in the camel-core JAR to `org.apache.camel.support.service.ServiceHelper` and moved to the `camel-api` JAR.
 
 The class `UnitOfWorkHelper` has been moved from `org.apache.camel.util.UnitOfWorkHelper` in the camel-core JAR to `org.apache.camel.support.UnitOfWorkHelper` and moved to the `camel-support` JAR.
+
+The class `ThreadPoolRejectedPolicy` has been moved from `org.apache.camel.ThreadPoolRejectedPolicy` to `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
+
 
 #### Idempotent Repositories
 
