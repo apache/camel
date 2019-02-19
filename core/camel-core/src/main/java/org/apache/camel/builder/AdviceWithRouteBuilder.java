@@ -70,7 +70,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Mock all endpoints in the route (incl onException etc).
+     * Mock all endpoints.
      *
      * @throws Exception can be thrown if error occurred
      */
@@ -79,7 +79,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
     }
 
     /**
-     * Mock all endpoints in the route (incl onException etc) matching the given pattern.
+     * Mock all endpoints matching the given pattern.
      *
      * @param pattern the pattern(s).
      * @throws Exception can be thrown if error occurred
