@@ -97,7 +97,6 @@
     <bsh-version>2.0b6</bsh-version>
     <boon-version>0.34</boon-version>
     <bouncycastle-version>1.60</bouncycastle-version>
-    <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <box-java-sdk-version>2.10.0</box-java-sdk-version>
     <braintree-gateway-version>2.91.0</braintree-gateway-version>
     <brave-zipkin-version>5.6.1</brave-zipkin-version>

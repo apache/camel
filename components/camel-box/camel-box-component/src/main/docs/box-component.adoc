@@ -702,25 +702,31 @@ URI Options for _users_
 |===
 |Name |Type
 
-|defaultRequest |com.box.restclientv2.requestsbase.BoxDefaultRequestObject
+|email |String
 
-|emailAliasRequest |com.box.boxjavalibv2.requests.requestobjects.BoxEmailAliasRequestObject
+|emailAliasId |String
 
-|emailId |String
+|fields |String[]
 
 |filterTerm |String
 
 |folderId |String
 
-|simpleUserRequest |com.box.boxjavalibv2.requests.requestobjects.BoxSimpleUserRequestObject
+|force |boolean
 
-|userDeleteRequest |com.box.boxjavalibv2.requests.requestobjects.BoxUserDeleteRequestObject
+|info |com.box.sdk.BoxUser.Info
+
+|login |String
+
+|name |String
+
+|notifyUser |boolean
+
+|params |com.box.sdk.CreateUserParams
+
+|sourceUserId |String
 
 |userId |String
-
-|userRequest |com.box.boxjavalibv2.requests.requestobjects.BoxUserRequestObject
-
-|userUpdateLoginRequest |com.box.boxjavalibv2.requests.requestobjects.BoxUserUpdateLoginRequestObject
 |===
 
 === Consumer Endpoints:
