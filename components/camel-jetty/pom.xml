@@ -26,10 +26,10 @@
     <version>3.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-jetty9</artifactId>
+  <artifactId>camel-jetty</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Jetty9</name>
-  <description>Camel Jetty9 support</description>
+  <name>Camel :: Jetty</name>
+  <description>Camel Jetty support</description>
 
   <properties>
     <camel.osgi.import.before.defaults>
