@@ -48,6 +48,12 @@ All deprecated APIs and components from Camel 2.x has been removed in Camel 3.
 Migrating Camel applications
 ----------------------------
 
+### Removed components
+
+We have removed all deprecated components from Camel 2.x, also including the old `camel-http` component. Instead you can use `camel-http4`.
+
+We have also renamed `camel-jetty9` to `camel-jetty`.
+
 ### JMX
 
 If you run Camel standalone with just `camel-core` as dependency, and you want JMX enabled out of the box, then you need to add `camel-management-impl` as dependency.
