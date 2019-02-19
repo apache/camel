@@ -265,8 +265,6 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
             return "cql";
         } else if ("josql".equals(componentName)) {
             return "sql";
-        } else if ("jetty9".equals(componentName)) {
-            return "jetty";
         } else if ("juel".equals(componentName)) {
             return "el";
         } else if ("jsch".equals(componentName)) {

@@ -436,7 +436,7 @@ Number of Components: 290 in 210 JAR artifacts (0 deprecated)
 | link:camel-jdbc/src/main/docs/jdbc-component.adoc[JDBC] (camel-jdbc) +
 `jdbc:dataSourceName` | 1.2 | The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
 
-| link:camel-jetty9/src/main/docs/jetty-component.adoc[Jetty 9] (camel-jetty9) +
+| link:camel-jetty/src/main/docs/jetty-component.adoc[Jetty] (camel-jetty) +
 `jetty:httpUri` | 1.2 | The jetty component provides HTTP-based endpoints for consuming and producing HTTP requests.
 
 | link:camel-websocket/src/main/docs/websocket-component.adoc[Jetty Websocket] (camel-websocket) +

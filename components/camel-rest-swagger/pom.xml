@@ -106,9 +106,9 @@
       <exclusions>
         <exclusion>
           <!--
-           Adding `camel-jetty9` forces WireMock to use mixed Jetty
+           Adding `camel-jetty` forces WireMock to use mixed Jetty
            versions, here we exclude WireMocks Jetty dependencies so
-           that we only use the ones declared by the `jetty9` component
+           that we only use the ones declared by the `jetty` component
            -->
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>*</artifactId>
@@ -142,7 +142,7 @@
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty9</artifactId>
+      <artifactId>camel-jetty</artifactId>
       <scope>test</scope>
     </dependency>
 
