@@ -68,16 +68,17 @@ public class BillboardAggrTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:" + BASEPATH + "?noop=true")
+                //@formatter:off
+                from("file:" + BASEPATH + "?noop=true&idempotent=true")
                     .split(body().tokenize("\n")).streaming().parallelProcessing()
                         // skip first line with headers
-                        .choice().when(simple("${property.CamelSplitIndex} > 0"))
+                        .choice().when(simple("${exchangeProperty.CamelSplitIndex} > 0"))
                             .doTry()
                                 .unmarshal().bindy(BindyType.Csv, SongRecord.class)
                                 .to("seda:aggregate")
                             .doCatch(Exception.class)
                                 // malformed record trace
-                                .setBody(simple("${property.CamelSplitIndex}:${body}"))
+                                .setBody(simple("${exchangeProperty.CamelSplitIndex}:${body}"))
                                 .transform(body().append("\n")) 
                                 .to("file:" + BASEPATH + "?fileName=waste.log&fileExist=append")
                             .end();
@@ -87,6 +88,7 @@ public class BillboardAggrTest extends CamelTestSupport {
                     .aggregate(new MyAggregationStrategy()).header("artist")
                         .completionPredicate(header("CamelSplitComplete").isEqualTo(true))
                     .to("mock:result");
+                //@formatter:on
             }
         };
     }
