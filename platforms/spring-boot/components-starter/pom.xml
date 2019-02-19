@@ -215,7 +215,6 @@
     <module>camel-jdbc-starter</module>
     <module>camel-jetty-common-starter</module>
     <module>camel-jetty-starter</module>
-    <module>camel-jetty9-starter</module>
     <module>camel-jgroups-raft-starter</module>
     <module>camel-jgroups-starter</module>
     <module>camel-jibx-starter</module>

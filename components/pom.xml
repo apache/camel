@@ -68,7 +68,6 @@
     <module>camel-ipfs</module>
     <module>camel-jetty-common</module>
     <module>camel-jetty</module>
-    <module>camel-jetty9</module>
     <module>camel-undertow</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
