@@ -167,7 +167,7 @@
 * xref:jclouds-component.adoc[JClouds Component]
 * xref:jcr-component.adoc[JCR Component]
 * xref:jdbc-component.adoc[JDBC Component]
-* xref:jetty-component.adoc[Jetty 9 Component]
+* xref:jetty-component.adoc[Jetty Component]
 * xref:jgroups-raft-component.adoc[JGroups raft Component]
 * xref:jgroups-component.adoc[JGroups Component]
 * xref:jibx-dataformat.adoc[JiBX DataFormat]

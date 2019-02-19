@@ -1,7 +1,10 @@
 [[jetty-component]]
-== Jetty 9 Component
+== Jetty Component
 
 *Available as of Camel version 1.2*
+
+*Available as of Camel version 1.2*
+
 
 WARNING: The producer is deprecated - do not use. We only recommend using jetty as consumer (eg from jetty)
 
@@ -53,7 +56,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty 9 component supports 33 options, which are listed below.
+The Jetty component supports 33 options, which are listed below.
 
 
 
@@ -105,7 +108,7 @@ The Jetty 9 component supports 33 options, which are listed below.
 
 
 // endpoint options: START
-The Jetty 9 endpoint is configured using URI syntax:
+The Jetty endpoint is configured using URI syntax:
 
 ----
 jetty:httpUri
@@ -199,7 +202,7 @@ The component supports 34 options, which are listed below.
 | *camel.component.jetty.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
 | *camel.component.jetty.continuation-timeout* | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
 | *camel.component.jetty.enable-jmx* | If this option is true, Jetty JMX support will be enabled for this endpoint. | false | Boolean
-| *camel.component.jetty.enabled* | Enable jetty component | true | Boolean
+| *camel.component.jetty.enabled* | Whether to enable auto configuration of the jetty component. This is enabled by default. |  | Boolean
 | *camel.component.jetty.error-handler* | This option is used to set the ErrorHandler that Jetty server uses. The option is a org.eclipse.jetty.server.handler.ErrorHandler type. |  | String
 | *camel.component.jetty.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
 | *camel.component.jetty.http-binding* | Not to be used - use JettyHttpBinding instead. The option is a org.apache.camel.http.common.HttpBinding type. |  | String
