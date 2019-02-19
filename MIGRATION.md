@@ -64,7 +64,7 @@ For using `ManagedCamelContext` you now need to get this an extension from `Came
 
 ### Configuring global options on CamelContext
 
-In Camel 2.x we have deprecated `getProperties` on `CamelContext` in favour of `etGlobalOptions`, so you should migrate to:
+In Camel 2.x we have deprecated `getProperties` on `CamelContext` in favour of `getGlobalOptions`, so you should migrate to:
 
     context.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
     context.getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
