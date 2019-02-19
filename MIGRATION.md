@@ -139,7 +139,7 @@ The class `JNDIContext` has been moved from `org.apache.camel.util.jndi.JNDICont
 
 #### EIPs
 
-The `circuitBreaker` load-blancer EIP was deprecated in Camel 2.x, and has been removed. Instead use Hystrix EIP as the load-balancer.
+The `circuitBreaker` load-balancer EIP was deprecated in Camel 2.x, and has been removed. Instead use Hystrix EIP as the load-balancer.
 
 The class `ThreadPoolRejectedPolicy` has been moved from `org.apache.camel.ThreadPoolRejectedPolicy` to `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
 
