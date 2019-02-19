@@ -58,6 +58,25 @@ We have also renamed `camel-jetty9` to `camel-jetty`.
 
 If you run Camel standalone with just `camel-core` as dependency, and you want JMX enabled out of the box, then you need to add `camel-management-impl` as dependency.
 
+For using `ManagedCamelContext` you now need to get this an extension from `CamelContext` as follows:
+
+    ManagedCamelContext managed = camelContext.getExtension(ManagedCamelContext.class);
+
+### Configuring global options on CamelContext
+
+In Camel 2.x we have deprecated `getProperties` on `CamelContext` in favour of `etGlobalOptions`, so you should migrate to:
+
+    context.getGlobalOptions().put("CamelJacksonEnableTypeConverter", "true");
+    context.getGlobalOptions().put("CamelJacksonTypeConverterToPojo", "true");
+
+... and in XML:
+
+    <globalOptions>
+      <globalOption key="CamelJacksonEnableTypeConverter" value="true"/>
+      <globalOption key="CamelJacksonTypeConverterToPojo" value="true"/>
+    </globalOptions>
+
+
 ### Moved APIs
 
 The following API changes may affect your existing Camel applications, which needs to be migrated.
