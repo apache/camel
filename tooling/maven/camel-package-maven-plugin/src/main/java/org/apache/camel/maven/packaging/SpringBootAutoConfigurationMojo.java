@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
@@ -37,6 +38,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Generated;
@@ -90,6 +93,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 
+import static org.apache.camel.maven.packaging.AbstractGeneratorMojo.updateResource;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyDefaultValue;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyDescriptionValue;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyJavaType;
@@ -190,15 +194,42 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             return;
         }
 
-        executeModels();
-        executeComponent();
-        executeDataFormat();
-        executeLanguage();
+        executeAll();
     }
 
-    private void executeModels() throws MojoExecutionException, MojoFailureException {
-        final Set<File> files = PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json"));
+    private void executeAll() throws MojoExecutionException, MojoFailureException {
+        Map<File, Supplier<String>> files =
+                PackageHelper.findJsonFiles(buildDir, p -> p.isDirectory() || p.getName().endsWith(".json"))
+                        .stream().collect(Collectors.toMap(Function.identity(), s -> cache(() -> loadJson(s))));
 
+        executeModels(files);
+        executeComponent(files);
+        executeDataFormat(files);
+        executeLanguage(files);
+    }
+
+    private static String loadJson(File file) {
+        try (InputStream is = new FileInputStream(file)) {
+            return loadText(is);
+        } catch (IOException e) {
+            throw new IOError(e);
+        }
+    }
+
+    private static <T> Supplier<T> cache(Supplier<T> supplier) {
+        return new Supplier<T>() {
+            T value;
+            @Override
+            public T get() {
+                if (value == null) {
+                    value = supplier.get();
+                }
+                return value;
+            }
+        };
+    }
+
+    private void executeModels(Map<File, Supplier<String>> files) throws MojoExecutionException, MojoFailureException {
         String json;
 
         // Hystrix
@@ -547,20 +578,15 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             + "return definition;"
         );
 
-        sortImports(javaClass);
-
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
         writeSourceIfChanged(javaClass, fileName);
         writeComponentSpringFactorySource(packageName, name);
     }
 
-    private void executeComponent() throws MojoExecutionException, MojoFailureException {
+    private void executeComponent(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
         // find the component names
         Set<String> componentNames = new TreeSet<>();
         findComponentNames(buildDir, componentNames);
-
-        final Set<File> jsonFiles = new TreeSet<>();
-        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
 
         // create auto configuration for the components
         if (!componentNames.isEmpty()) {
@@ -603,13 +629,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void executeDataFormat() throws MojoExecutionException, MojoFailureException {
+    private void executeDataFormat(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
         // find the data format names
         List<String> dataFormatNames = findDataFormatNames();
-
-        final Set<File> jsonFiles = new TreeSet<>();
-        // we can reuse the component model filter
-        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
 
         // create auto configuration for the data formats
         if (!dataFormatNames.isEmpty()) {
@@ -649,13 +671,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void executeLanguage() throws MojoExecutionException, MojoFailureException {
+    private void executeLanguage(Map<File, Supplier<String>> jsonFiles) throws MojoExecutionException, MojoFailureException {
         // find the language names
         List<String> languageNames = findLanguageNames();
-
-        final Set<File> jsonFiles = new TreeSet<>();
-        // we can reuse the component model filter
-        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
 
         // create auto configuration for the languages
         if (!languageNames.isEmpty()) {
@@ -1871,70 +1889,30 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private static String loadModelJson(Set<File> jsonFiles, String modelName) {
-        try {
-            for (File file : jsonFiles) {
-                if (file.getName().equals(modelName + ".json")) {
-                    String json = loadText(new FileInputStream(file));
-                    boolean isModel = json.contains("\"kind\": \"model\"");
-                    if (isModel) {
-                        return json;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return null;
+    private static String loadModelJson(Map<File, Supplier<String>> jsonFiles, String modelName) {
+        return loadJsonOfType(jsonFiles, modelName, "model");
     }
 
-    private static String loadComponentJson(Set<File> jsonFiles, String componentName) {
-        try {
-            for (File file : jsonFiles) {
-                if (file.getName().equals(componentName + ".json")) {
-                    String json = loadText(new FileInputStream(file));
-                    boolean isComponent = json.contains("\"kind\": \"component\"");
-                    if (isComponent) {
-                        return json;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return null;
+    private static String loadComponentJson(Map<File, Supplier<String>> jsonFiles, String componentName) {
+        return loadJsonOfType(jsonFiles, componentName, "component");
     }
 
-    private static String loadDataFormatJson(Set<File> jsonFiles, String dataFormatName) {
-        try {
-            for (File file : jsonFiles) {
-                if (file.getName().equals(dataFormatName + ".json")) {
-                    String json = loadText(new FileInputStream(file));
-                    boolean isDataFormat = json.contains("\"kind\": \"dataformat\"");
-                    if (isDataFormat) {
-                        return json;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return null;
+    private static String loadDataFormatJson(Map<File, Supplier<String>> jsonFiles, String dataFormatName) {
+        return loadJsonOfType(jsonFiles, dataFormatName, "dataformat");
     }
 
-    private static String loadLanguageJson(Set<File> jsonFiles, String languageName) {
-        try {
-            for (File file : jsonFiles) {
-                if (file.getName().equals(languageName + ".json")) {
-                    String json = loadText(new FileInputStream(file));
-                    boolean isLanguage = json.contains("\"kind\": \"language\"");
-                    if (isLanguage) {
-                        return json;
-                    }
+    private static String loadLanguageJson(Map<File, Supplier<String>> jsonFiles, String languageName) {
+        return loadJsonOfType(jsonFiles, languageName, "language");
+    }
+
+    private static String loadJsonOfType(Map<File, Supplier<String>> jsonFiles, String modelName, String type) {
+        for (Map.Entry<File, Supplier<String>> entry : jsonFiles.entrySet()) {
+            if (entry.getKey().getName().equals(modelName + ".json")) {
+                String json = entry.getValue().get();
+                if (json.contains("\"kind\": \"" + type + "\"")) {
+                    return json;
                 }
             }
-        } catch (IOException e) {
-            // ignore
         }
         return null;
     }
@@ -2184,24 +2162,14 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         deleteFileOnMainArtifact(target);
 
         try {
-            InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt");
-            String header = loadText(is);
-            String code = source;
-            code = header + code;
+            String header;
+            try (InputStream is = getClass().getClassLoader().getResourceAsStream("license-header-java.txt")) {
+                header = loadText(is);
+            }
+            String code = header + source;
             getLog().debug("Source code generated:\n" + code);
 
-            if (target.exists()) {
-                String existing = FileUtils.readFileToString(target);
-                if (!code.equals(existing)) {
-                    FileUtils.write(target, code, false);
-                    getLog().info("Updated existing file: " + target);
-                } else {
-                    getLog().debug("No changes to existing file: " + target);
-                }
-            } else {
-                FileUtils.write(target, code);
-                getLog().info("Created file: " + target);
-            }
+            updateResource(null, target.toPath(), code);
         } catch (Exception e) {
             throw new MojoFailureException("IOError with file " + target, e);
         }
