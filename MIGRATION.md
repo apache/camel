@@ -106,9 +106,9 @@ The class `org.apache.camel.processor.aggregate.AggregationStrategy` has been mo
 
 The class `org.apache.camel.processor.loadbalancer.SimpleLoadBalancerSupport` has been removed, instead use `org.apache.camel.processor.loadbalancer.LoadBalancerSupport`.
 
-#### Starting and stopping routes
+#### Controlling routes
 
-The `startRoute`, `stopRoute`, `suspendRoute` and `resumeRoute` methods on `CamelContext` has been moved to the `RouteController` as shown below:
+The `startRoute`, `stopRoute`, `suspendRoute`, `resumeRoute`, `getRouteStatus`, and other related methods on `CamelContext` has been moved to the `RouteController` as shown below:
 
     context.getRouteController().startRoute("myRoute");
 
@@ -141,13 +141,19 @@ The class `JNDIContext` has been moved from `org.apache.camel.util.jndi.JNDICont
 
 The `circuitBreaker` load-blancer EIP was deprecated in Camel 2.x, and has been removed. Instead use Hystrix EIP as the load-balancer.
 
+The class `ThreadPoolRejectedPolicy` has been moved from `org.apache.camel.ThreadPoolRejectedPolicy` to `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
+
 #### Languages
 
 The simple language `property` function was deprecated in Camel 2.x and has been removed. Use `exchangeProperty` as function name.
 
 The terser language has been renamed from terser to hl7terser.
 
-#### Helpers
+#### JSSE
+
+The classes from `org.apache.camel.util.jsse` has been moved to `org.apache.camel.support.jsse`.
+
+#### Helpers and support
 
 The class `AsyncProcessorHelper` has been moved from `org.apache.camel.util.AsyncProcessorHelper` in the camel-core JAR to `org.apache.camel.support.AsyncProcessorHelper` and moved to the `camel-support` JAR.
 
@@ -183,7 +189,7 @@ The class `ServiceHelper` has been moved from `org.apache.camel.util.ServiceHelp
 
 The class `UnitOfWorkHelper` has been moved from `org.apache.camel.util.UnitOfWorkHelper` in the camel-core JAR to `org.apache.camel.support.UnitOfWorkHelper` and moved to the `camel-support` JAR.
 
-The class `ThreadPoolRejectedPolicy` has been moved from `org.apache.camel.ThreadPoolRejectedPolicy` to `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
+The class `org.apache.camel.impl.RoutePolicySupport` has been moved to `org.apache.camel.support.RoutePolicySupport`.
 
 
 #### Idempotent Repositories
@@ -196,9 +202,7 @@ The class `MemoryIdempotentRepository` has been moved from `org.apache.camel.pro
 
 The class `XsltAggregationStrategy` has been moved from `org.apache.camel.builder.XsltAggregationStrategy` in the camel-core JAR to `org.apache.camel.component.xslt.XsltAggregationStrategy` and moved to the `camel-xslt` JAR.
 
-When using the option `groupedExchange` on the aggregator EIP then the output of the aggregation
-is now longer also stored in the exchange property `Exchange.GROUPED_EXCHANGE`.
-This behaviour was already deprecated from Camel 2.13 onwards.
+When using the option `groupedExchange` on the aggregator EIP then the output of the aggregation is now longer also stored in the exchange property `Exchange.GROUPED_EXCHANGE`. This behaviour was already deprecated from Camel 2.13 onwards.
 
 ### Other changes
 
