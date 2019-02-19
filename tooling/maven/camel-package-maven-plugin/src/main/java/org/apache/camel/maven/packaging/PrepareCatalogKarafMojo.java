@@ -372,11 +372,9 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     }
 
                     // skip these special cases
-                    // (camel-jetty is a placeholder, as camel-jetty9 is the actual component)
                     boolean special = "camel-core-osgi".equals(dir.getName())
                         || "camel-core-xml".equals(dir.getName())
                         || "camel-http-common".equals(dir.getName())
-                        || "camel-jetty".equals(dir.getName())
                         || "camel-jetty-common".equals(dir.getName());
                     boolean special2 = "camel-as2".equals(dir.getName())
                         || "camel-box".equals(dir.getName())

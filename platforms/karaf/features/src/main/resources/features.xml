@@ -1129,16 +1129,12 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jdbc/${project.version}</bundle>
   </feature>
-  <feature name='camel-jetty9' version='${project.version}' start-level='50'>
+  <feature name='camel-jetty' version='${project.version}' start-level='50'>
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jetty-common/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-jetty9/${project.version}</bundle>
-  </feature>
-  <feature name='camel-jetty' version='${project.version}' start-level='50'>
-    <details>camel-jetty intend to work with jetty9, so this feature only works in the karaf container which support jetty9, e.g. karaf 4.x</details>
-    <feature>camel-jetty9</feature>
+    <bundle>mvn:org.apache.camel/camel-jetty/${project.version}</bundle>
   </feature>
   <feature name='camel-jgroups' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1969,7 +1965,7 @@
       adding sun.reflect in the JDK8 section of etc/jre.properties file
     </details>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-jetty9</feature>
+    <feature version='${project.version}'>camel-jetty</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.sparkjava-core/${spark-rest-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spark-rest/${project.version}</bundle>
   </feature>
