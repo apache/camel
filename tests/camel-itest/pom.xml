@@ -75,7 +75,7 @@
     </dependency>        
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty9</artifactId>
+      <artifactId>camel-jetty</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -306,7 +306,7 @@
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-jdk14</artifactId>
         </exclusion>
-        <!-- we use the version from camel-jetty9 -->
+        <!-- we use the version from camel-jetty -->
         <exclusion>
           <groupId>org.eclipse.jetty</groupId>
           <artifactId>jetty-util</artifactId>
