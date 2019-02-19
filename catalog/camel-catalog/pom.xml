@@ -33,6 +33,7 @@
   <description>Camel Catalog</description>
 
   <properties>
+    <camel.osgi.import.pkg>!org.apache.camel.util.json,*</camel.osgi.import.pkg>
     <!-- use by camel-catalog -->
     <firstVersion>2.15.0</firstVersion>
     <label>tooling</label>
@@ -248,18 +249,6 @@
             <phase>process-resources</phase>
           </execution>
         </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Export-Package>org.apache.camel.catalog*</Export-Package>
-            <Import-Package>org.apache.camel.language.simple;resolution:=optional,!org.json.simple,*</Import-Package>
-          </instructions>
-        </configuration>
       </plugin>
     </plugins>
 
