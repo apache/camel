@@ -41,7 +41,7 @@ import org.codehaus.plexus.util.IOUtil;
  * Parses ApiMethod signatures from Javadoc.
  */
 @Mojo(name = "fromJavadoc", requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
     static {
