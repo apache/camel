@@ -48,8 +48,7 @@ public class SedaComponentConfiguration
     private Integer concurrentConsumers = 1;
     /**
      * Sets the default queue factory. The option is a
-     * org.apache.camel.component
-     * .seda.BlockingQueueFactory<org.apache.camel.Exchange> type.
+     * org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> type.
      */
     private String defaultQueueFactory;
     /**
