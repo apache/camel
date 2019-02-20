@@ -30,6 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,9 @@ public class SqsProducer extends DefaultProducer {
 
     public SqsProducer(SqsEndpoint endpoint) throws NoFactoryAvailableException {
         super(endpoint);
+        if (endpoint.getConfiguration().isFifoQueue() && ObjectHelper.isEmpty(getEndpoint().getConfiguration().getMessageGroupIdStrategy())) {
+            throw new IllegalArgumentException("messageGroupIdStrategy must be set for FIFO queues.");
+        }
     }
 
     public void process(Exchange exchange) throws Exception {
