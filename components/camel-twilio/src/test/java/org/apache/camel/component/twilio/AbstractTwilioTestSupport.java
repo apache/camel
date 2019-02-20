@@ -52,12 +52,9 @@ public class AbstractTwilioTestSupport extends CamelTestSupport {
             options.put(entry.getKey().toString(), entry.getValue());
         }
 
-        final TwilioConfiguration configuration = new TwilioConfiguration();
-        IntrospectionSupport.setProperties(configuration, options);
-
         // add TwilioComponent to Camel context
         final TwilioComponent component = new TwilioComponent(context);
-        component.setConfiguration(configuration);
+        IntrospectionSupport.setProperties(component, options);
         context.addComponent("twilio", component);
 
         return context;
