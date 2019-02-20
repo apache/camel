@@ -14,7 +14,7 @@ routing rules in your IDE, whether in a Java, Scala or XML editor.
 
 Apache Camel uses link:../uris.adoc[URIs] to work directly with any kind of
 link:../transport.adoc[Transport] or messaging model such as
-<http-component,HTTP>>, link:activemq.adoc[ActiveMQ], <<jms-component,JMS>>,
+<<http-component,HTTP>>, link:activemq.adoc[ActiveMQ], <<jms-component,JMS>>,
 JBI, SCA, <<mina-component,MINA>> or <<cxf-component,CXF>>, as
 well as pluggable link:../component.adoc[Components] and
 link:../data-format.adoc[Data Format] options. Apache Camel is a small
