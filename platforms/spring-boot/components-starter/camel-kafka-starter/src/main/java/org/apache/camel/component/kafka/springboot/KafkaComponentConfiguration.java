@@ -305,9 +305,9 @@ public class KafkaComponentConfiguration
          */
         private String brokers;
         /**
-         * URL of the Kafka schema registry to use. The format is
-         * host1:port1,host2:port2. This option is known as schema.registry.url
-         * in the Kafka documentation.
+         * URL of the Confluent schema registry servers to use. The format is
+         * host1:port1,host2:port2. This is known as schema.registry.url in the
+         * Confluent documentation.
          */
         private String schemaRegistryURL;
         /**
