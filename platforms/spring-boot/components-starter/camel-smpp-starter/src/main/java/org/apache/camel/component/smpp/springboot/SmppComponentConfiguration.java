@@ -18,7 +18,6 @@ package org.apache.camel.component.smpp.springboot;
 
 import java.util.Map;
 import javax.annotation.Generated;
-import org.apache.camel.component.smpp.SmppComponent;
 import org.apache.camel.component.smpp.SmppSplittingPolicy;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.jsmpp.session.SessionStateListener;

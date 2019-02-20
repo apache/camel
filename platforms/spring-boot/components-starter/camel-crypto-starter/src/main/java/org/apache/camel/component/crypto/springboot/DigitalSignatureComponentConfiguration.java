@@ -89,8 +89,7 @@ public class DigitalSignatureComponentConfiguration
          * java.security.cert.Certificate Certificates} to be used in signing
          * and verifying exchanges. This value can be provided at runtime via
          * the message header
-         * org.apache.camel.component.crypto.DigitalSignatureConstants
-         * #KEYSTORE_ALIAS
+         * org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS
          */
         private String alias;
         /**
