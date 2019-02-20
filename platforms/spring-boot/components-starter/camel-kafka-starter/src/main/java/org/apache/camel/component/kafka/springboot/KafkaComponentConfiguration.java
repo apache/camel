@@ -372,9 +372,9 @@ public class KafkaComponentConfiguration
          * order and the first rule that matches a principal name is used to map
          * it to a short name. Any later rules in the list are ignored. By
          * default, principal names of the form {username}/{hostname}{REALM} are
-         * mapped to {username}. For more details on the format please see
-         * security authorization and acls. Multiple values can be separated by
-         * comma
+         * mapped to {username}. For more details on the format please see a
+         * href=\#security_authz\ security authorization and acls. Multiple
+         * values can be separated by comma
          */
         private String kerberosPrincipalToLocalRules = "DEFAULT";
         /**
@@ -436,8 +436,10 @@ public class KafkaComponentConfiguration
         private String saslKerberosServiceName;
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-         * For the valid values see
-         * http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml
+         * For the valid values see a href=
+         * http://www.iana.org/assignments/sasl-
+         * mechanisms/sasl-mechanisms.xhtmlhttp
+         * ://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml
          */
         private String saslMechanism = "GSSAPI";
         /**
