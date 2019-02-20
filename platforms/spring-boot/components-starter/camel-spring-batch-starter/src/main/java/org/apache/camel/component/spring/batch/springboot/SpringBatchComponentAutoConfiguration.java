@@ -77,8 +77,7 @@ public class SpringBatchComponentAutoConfiguration {
     @Lazy
     @Bean(name = "spring-batch-component")
     @ConditionalOnMissingBean(SpringBatchComponent.class)
-    public SpringBatchComponent configureSpringBatchComponent()
-            throws Exception {
+    public SpringBatchComponent configureSpringBatchComponent() throws Exception {
         SpringBatchComponent component = new SpringBatchComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();

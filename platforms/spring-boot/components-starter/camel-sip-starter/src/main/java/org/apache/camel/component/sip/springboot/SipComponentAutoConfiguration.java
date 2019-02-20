@@ -75,7 +75,7 @@ public class SipComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"sip-component", "sips-component"})
+    @Bean({"sip-component", "sips-component"})
     @ConditionalOnMissingBean(SipComponent.class)
     public SipComponent configureSipComponent() throws Exception {
         SipComponent component = new SipComponent();

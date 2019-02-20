@@ -75,7 +75,7 @@ public class CometdComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"cometd-component", "cometds-component"})
+    @Bean({"cometd-component", "cometds-component"})
     @ConditionalOnMissingBean(CometdComponent.class)
     public CometdComponent configureCometdComponent() throws Exception {
         CometdComponent component = new CometdComponent();

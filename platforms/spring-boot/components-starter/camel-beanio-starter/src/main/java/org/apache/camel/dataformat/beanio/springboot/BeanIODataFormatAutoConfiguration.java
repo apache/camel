@@ -79,8 +79,7 @@ public class BeanIODataFormatAutoConfiguration {
 
     @Bean(name = "beanio-dataformat-factory")
     @ConditionalOnMissingBean(BeanIODataFormat.class)
-    public DataFormatFactory configureBeanIODataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureBeanIODataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

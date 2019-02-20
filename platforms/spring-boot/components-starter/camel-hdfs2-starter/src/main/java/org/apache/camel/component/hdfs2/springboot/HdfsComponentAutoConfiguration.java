@@ -75,7 +75,7 @@ public class HdfsComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"hdfs-component", "hdfs2-component"})
+    @Bean({"hdfs-component", "hdfs2-component"})
     @ConditionalOnMissingBean(HdfsComponent.class)
     public HdfsComponent configureHdfsComponent() throws Exception {
         HdfsComponent component = new HdfsComponent();

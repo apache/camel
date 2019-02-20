@@ -75,7 +75,7 @@ public class SmppComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"smpp-component", "smpps-component"})
+    @Bean({"smpp-component", "smpps-component"})
     @ConditionalOnMissingBean(SmppComponent.class)
     public SmppComponent configureSmppComponent() throws Exception {
         SmppComponent component = new SmppComponent();
