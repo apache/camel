@@ -86,11 +86,7 @@ public class SqsComponent extends DefaultComponent {
         if (configuration.isExtendMessageVisibility() && (configuration.getVisibilityTimeout() == null)) {
             throw new IllegalArgumentException("Extending message visibility (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
         }
-        
-        if (configuration.isFifoQueue() && ObjectHelper.isEmpty(configuration.getMessageGroupIdStrategy())) {
-            throw new IllegalArgumentException("messageGroupIdStrategy must be set for FIFO queues.");
-        }
-        
+
         SqsEndpoint sqsEndpoint = new SqsEndpoint(uri, this, configuration);
         sqsEndpoint.setConsumerProperties(parameters);
         return sqsEndpoint;
