@@ -802,11 +802,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * URL of the Kafka schema registry to use. The format is
-     * host1:port1,host2:port2.
-     * <p/>
-     * This option is known as <tt>schema.registry.url</tt> in the Kafka
-     * documentation.
+     * URL of the Confluent schema registry servers to use. 
+     * The format is host1:port1,host2:port2. 
+     * This is known as schema.registry.url in the Confluent documentation.
      */
     public void setSchemaRegistryURL(String schemaRegistryURL) {
         this.schemaRegistryURL = schemaRegistryURL;
