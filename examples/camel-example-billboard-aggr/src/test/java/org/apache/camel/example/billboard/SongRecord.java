@@ -102,14 +102,14 @@ public class SongRecord {
     
     @Override
     public String toString() {
-        return "{" +
-            " rank='" + getRank() + "'" +
-            ", song='" + getSong() + "'" +
-            ", artist='" + getArtist() + "'" +
-            ", year='" + getYear() + "'" +
-            ", lyrics='" + getLyrics() + "'" +
-            ", source='" + getSource() + "'" +
-            "}";
+        return "{" 
+            + " rank='" + getRank() + "'" 
+            + ", song='" + getSong() + "'" 
+            + ", artist='" + getArtist() + "'" 
+            + ", year='" + getYear() + "'" 
+            + ", lyrics='" + getLyrics() + "'" 
+            + ", source='" + getSource() + "'" 
+            + "}";
     }
     
 }
