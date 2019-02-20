@@ -40,6 +40,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -70,28 +72,27 @@ public class SqsProducerTest {
     private Message outMessage;
     @Mock
     private Message inMessage;
-    
-    private SendMessageResult sendMessageResult;
+
     private SqsConfiguration sqsConfiguration;
     private SqsProducer underTest;
 
     @Before
     public void setup() throws Exception {
-        underTest = new SqsProducer(sqsEndpoint);
-        sendMessageResult = new SendMessageResult().withMD5OfMessageBody(MESSAGE_MD5).withMessageId(MESSAGE_ID);
         sqsConfiguration = new SqsConfiguration();
-        HeaderFilterStrategy headerFilterStrategy = new SqsHeaderFilterStrategy();
-        sqsConfiguration.setDelaySeconds(Integer.valueOf(0));
+        sqsConfiguration.setDelaySeconds( 0 );
         sqsConfiguration.setQueueName("queueName");
+        SendMessageResult sendMessageResult =
+            new SendMessageResult().withMD5OfMessageBody( MESSAGE_MD5 ).withMessageId( MESSAGE_ID );
+        when(amazonSQSClient.sendMessage(any(SendMessageRequest.class))).thenReturn( sendMessageResult );
         when(sqsEndpoint.getClient()).thenReturn(amazonSQSClient);
         when(sqsEndpoint.getConfiguration()).thenReturn(sqsConfiguration);
-        when(amazonSQSClient.sendMessage(any(SendMessageRequest.class))).thenReturn(sendMessageResult);
+        when(sqsEndpoint.getQueueUrl()).thenReturn(QUEUE_URL);
+        when(sqsEndpoint.getHeaderFilterStrategy()).thenReturn( new SqsHeaderFilterStrategy() );
         when(exchange.getIn()).thenReturn(inMessage);
         when(exchange.getPattern()).thenReturn(ExchangePattern.InOnly);
         when(exchange.getExchangeId()).thenReturn(SAMPLE_EXCHANGE_ID);
         when(inMessage.getBody(String.class)).thenReturn(SAMPLE_MESSAGE_BODY);
-        when(sqsEndpoint.getQueueUrl()).thenReturn(QUEUE_URL);
-        when(sqsEndpoint.getHeaderFilterStrategy()).thenReturn(headerFilterStrategy);
+        underTest = new SqsProducer(sqsEndpoint);
     }
 
     @Test
@@ -216,6 +217,19 @@ public class SqsProducerTest {
         verify(amazonSQSClient).sendMessage(capture.capture());
         
         assertEquals("CamelSingleMessageGroup", capture.getValue().getMessageGroupId());
+    }
+
+    @Test
+    public void itFailsWhenFifoQueueAndNoMessageGroupIdStrategySet() {
+        try
+        {
+            sqsConfiguration.setQueueName( "queueName.fifo" );
+            SqsProducer invalidProducer = new SqsProducer(sqsEndpoint);
+
+            fail( "Should have thrown an exception" );
+        } catch(Exception e) {
+            assertTrue("Bad error message: " + e.getMessage(), e.getMessage().startsWith("messageGroupIdStrategy must be set for FIFO queues"));
+        }
     }
     
     @Test
