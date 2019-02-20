@@ -79,8 +79,7 @@ public class CryptoDataFormatAutoConfiguration {
 
     @Bean(name = "crypto-dataformat-factory")
     @ConditionalOnMissingBean(CryptoDataFormat.class)
-    public DataFormatFactory configureCryptoDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureCryptoDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

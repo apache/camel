@@ -107,16 +107,15 @@ public class WebsocketComponentAutoConfiguration {
         if (ObjectHelper.isNotEmpty(customizers)) {
             for (ComponentCustomizer<WebsocketComponent> customizer : customizers) {
                 boolean useCustomizer = (customizer instanceof HasId)
-                        ? HierarchicalPropertiesEvaluator
-                                .evaluate(
-                                        applicationContext.getEnvironment(),
-                                        "camel.component.customizer",
-                                        "camel.component.atmosphere-websocket.customizer",
-                                        ((HasId) customizer).getId())
-                        : HierarchicalPropertiesEvaluator
-                                .evaluate(applicationContext.getEnvironment(),
-                                        "camel.component.customizer",
-                                        "camel.component.atmosphere-websocket.customizer");
+                        ? HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.component.customizer",
+                                "camel.component.atmosphere-websocket.customizer",
+                                ((HasId) customizer).getId())
+                        : HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.component.customizer",
+                                "camel.component.atmosphere-websocket.customizer");
                 if (useCustomizer) {
                     LOGGER.debug("Configure component {}, with customizer {}",
                             component, customizer);

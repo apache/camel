@@ -19,7 +19,6 @@ package org.apache.camel.component.infinispan.springboot;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Generated;
-import org.apache.camel.component.infinispan.InfinispanComponent;
 import org.apache.camel.component.infinispan.InfinispanCustomListener;
 import org.apache.camel.component.infinispan.InfinispanOperation;
 import org.apache.camel.component.infinispan.InfinispanQueryBuilder;

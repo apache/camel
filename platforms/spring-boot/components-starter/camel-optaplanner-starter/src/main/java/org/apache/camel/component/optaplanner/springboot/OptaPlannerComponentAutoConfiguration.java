@@ -77,8 +77,7 @@ public class OptaPlannerComponentAutoConfiguration {
     @Lazy
     @Bean(name = "optaplanner-component")
     @ConditionalOnMissingBean(OptaPlannerComponent.class)
-    public OptaPlannerComponent configureOptaPlannerComponent()
-            throws Exception {
+    public OptaPlannerComponent configureOptaPlannerComponent() throws Exception {
         OptaPlannerComponent component = new OptaPlannerComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();

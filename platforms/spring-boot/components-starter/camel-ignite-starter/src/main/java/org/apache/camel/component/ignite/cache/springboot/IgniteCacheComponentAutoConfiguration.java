@@ -77,8 +77,7 @@ public class IgniteCacheComponentAutoConfiguration {
     @Lazy
     @Bean(name = "ignite-cache-component")
     @ConditionalOnMissingBean(IgniteCacheComponent.class)
-    public IgniteCacheComponent configureIgniteCacheComponent()
-            throws Exception {
+    public IgniteCacheComponent configureIgniteCacheComponent() throws Exception {
         IgniteCacheComponent component = new IgniteCacheComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();

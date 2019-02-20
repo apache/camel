@@ -48,8 +48,7 @@ public class CryptoCmsComponentConfiguration
     /**
      * To configure the shared EnvelopedDataDecryptorConfiguration, which
      * determines the uri parameters for the decrypt operation. The option is a
-     * org.apache.camel.component.crypto.cms.crypt.
-     * EnvelopedDataDecryptorConfiguration type.
+     * org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration type.
      */
     private String envelopedDataDecryptorConfiguration;
     /**

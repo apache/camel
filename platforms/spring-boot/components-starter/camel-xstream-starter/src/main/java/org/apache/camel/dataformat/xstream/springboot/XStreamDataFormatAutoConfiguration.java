@@ -79,8 +79,7 @@ public class XStreamDataFormatAutoConfiguration {
 
     @Bean(name = "xstream-dataformat-factory")
     @ConditionalOnMissingBean(XStreamDataFormat.class)
-    public DataFormatFactory configureXStreamDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureXStreamDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

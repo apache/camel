@@ -105,18 +105,15 @@ public class JacksonXMLDataFormatAutoConfiguration {
                 if (ObjectHelper.isNotEmpty(customizers)) {
                     for (DataFormatCustomizer<JacksonXMLDataFormat> customizer : customizers) {
                         boolean useCustomizer = (customizer instanceof HasId)
-                                ? HierarchicalPropertiesEvaluator
-                                        .evaluate(
-                                                applicationContext
-                                                        .getEnvironment(),
-                                                "camel.dataformat.customizer",
-                                                "camel.dataformat.jacksonxml.customizer",
-                                                ((HasId) customizer).getId())
-                                : HierarchicalPropertiesEvaluator
-                                        .evaluate(applicationContext
-                                                .getEnvironment(),
-                                                "camel.dataformat.customizer",
-                                                "camel.dataformat.jacksonxml.customizer");
+                                ? HierarchicalPropertiesEvaluator.evaluate(
+                                        applicationContext.getEnvironment(),
+                                        "camel.dataformat.customizer",
+                                        "camel.dataformat.jacksonxml.customizer",
+                                        ((HasId) customizer).getId())
+                                : HierarchicalPropertiesEvaluator.evaluate(
+                                        applicationContext.getEnvironment(),
+                                        "camel.dataformat.customizer",
+                                        "camel.dataformat.jacksonxml.customizer");
                         if (useCustomizer) {
                             LOGGER.debug(
                                     "Configure dataformat {}, with customizer {}",

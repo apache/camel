@@ -75,7 +75,7 @@ public class WsComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"ahc-ws-component", "ahc-wss-component"})
+    @Bean({"ahc-ws-component", "ahc-wss-component"})
     @ConditionalOnMissingBean(WsComponent.class)
     public WsComponent configureWsComponent() throws Exception {
         WsComponent component = new WsComponent();

@@ -104,18 +104,15 @@ public class JsonDataFormatAutoConfiguration {
                 if (ObjectHelper.isNotEmpty(customizers)) {
                     for (DataFormatCustomizer<JsonDataFormat> customizer : customizers) {
                         boolean useCustomizer = (customizer instanceof HasId)
-                                ? HierarchicalPropertiesEvaluator
-                                        .evaluate(
-                                                applicationContext
-                                                        .getEnvironment(),
-                                                "camel.dataformat.customizer",
-                                                "camel.dataformat.json-xstream.customizer",
-                                                ((HasId) customizer).getId())
-                                : HierarchicalPropertiesEvaluator
-                                        .evaluate(applicationContext
-                                                .getEnvironment(),
-                                                "camel.dataformat.customizer",
-                                                "camel.dataformat.json-xstream.customizer");
+                                ? HierarchicalPropertiesEvaluator.evaluate(
+                                        applicationContext.getEnvironment(),
+                                        "camel.dataformat.customizer",
+                                        "camel.dataformat.json-xstream.customizer",
+                                        ((HasId) customizer).getId())
+                                : HierarchicalPropertiesEvaluator.evaluate(
+                                        applicationContext.getEnvironment(),
+                                        "camel.dataformat.customizer",
+                                        "camel.dataformat.json-xstream.customizer");
                         if (useCustomizer) {
                             LOGGER.debug(
                                     "Configure dataformat {}, with customizer {}",

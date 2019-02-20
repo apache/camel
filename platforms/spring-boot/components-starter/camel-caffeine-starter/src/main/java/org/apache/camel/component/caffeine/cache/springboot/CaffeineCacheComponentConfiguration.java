@@ -22,7 +22,6 @@ import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.RemovalListener;
 import com.github.benmanes.caffeine.cache.stats.StatsCounter;
 import org.apache.camel.component.caffeine.EvictionType;
-import org.apache.camel.component.caffeine.cache.CaffeineCacheComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
