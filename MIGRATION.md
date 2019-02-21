@@ -54,6 +54,10 @@ We have removed all deprecated components from Camel 2.x, also including the old
 
 We have also renamed `camel-jetty9` to `camel-jetty`.
 
+### ActiveMQ
+
+If you are using the `activemq-camel` component, then you should migrate to use `camel-activemq` component, where the component name has changed from `org.apache.activemq.camel.component.ActiveMQComponent` to `org.apache.camel.component.activemq.ActiveMQComponent`.
+
 ### JMX
 
 If you run Camel standalone with just `camel-core` as dependency, and you want JMX enabled out of the box, then you need to add `camel-management-impl` as dependency.
