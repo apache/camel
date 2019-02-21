@@ -63,6 +63,11 @@ public class RestConfigurationDefinitionProperties {
      */
     private String apiHost;
     /**
+     * Whether to use X-Forward headers for Host and related setting. The
+     * default value is true.
+     */
+    private Boolean useXForwardHeaders = true;
+    /**
      * The port number to use for exposing the REST service. Notice if you use
      * servlet component then the port number configured here does not apply, as
      * the port number in use is the actual port number the servlet component is
@@ -245,6 +250,14 @@ public class RestConfigurationDefinitionProperties {
 
     public void setApiHost(String apiHost) {
         this.apiHost = apiHost;
+    }
+
+    public Boolean getUseXForwardHeaders() {
+        return useXForwardHeaders;
+    }
+
+    public void setUseXForwardHeaders(Boolean useXForwardHeaders) {
+        this.useXForwardHeaders = useXForwardHeaders;
     }
 
     public String getPort() {
