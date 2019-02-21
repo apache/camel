@@ -167,6 +167,10 @@ public class MiloClientComponentConfiguration
          */
         private Long maxResponseMessageSize;
         /**
+         * The URL where the key should be loaded from
+         */
+        private String keyStoreUrl;
+        /**
          * The key store type
          */
         private String keyStoreType;
@@ -287,6 +291,14 @@ public class MiloClientComponentConfiguration
 
         public void setMaxResponseMessageSize(Long maxResponseMessageSize) {
             this.maxResponseMessageSize = maxResponseMessageSize;
+        }
+
+        public String getKeyStoreUrl() {
+            return keyStoreUrl;
+        }
+
+        public void setKeyStoreUrl(String keyStoreUrl) {
+            this.keyStoreUrl = keyStoreUrl;
         }
 
         public String getKeyStoreType() {

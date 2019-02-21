@@ -111,7 +111,7 @@ public class GoogleSheetsComponentConfiguration
         private String refreshToken;
         /**
          * Google Sheets application name. Example would be
-         * camel-google-sheets/1.0
+         * "camel-google-sheets/1.0"
          */
         private String applicationName;
 

@@ -25,6 +25,7 @@ import com.orbitz.consul.option.ConsistencyMode;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * The camel consul component allows you to work with Consul, a distributed,
@@ -185,8 +186,6 @@ public class ConsulComponentConfiguration
         private String url;
         /**
          * The data center
-         * 
-         * @deprecated replaced by {@link #setDatacenter(String)} ()}
          */
         @Deprecated
         private String dc;
