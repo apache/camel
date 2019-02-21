@@ -372,17 +372,10 @@ public class KafkaComponentConfiguration
          * (typically operating system usernames). The rules are evaluated in
          * order and the first rule that matches a principal name is used to map
          * it to a short name. Any later rules in the list are ignored. By
-<<<<<<< HEAD
-         * default, principal names of the form {username}/{hostname}{REALM} are
-         * mapped to {username}. For more details on the format please see a
-         * href=\#security_authz\ security authorization and acls. Multiple
-         * values can be separated by comma
-=======
          * default, principal names of the form {username}/{hostname}@{REALM}
          * are mapped to {username}. For more details on the format please see
          * <a href=\"#security_authz\"> security authorization and acls</a>.
          * <p/> Multiple values can be separated by comma
->>>>>>> Regen
          */
         private String kerberosPrincipalToLocalRules = "DEFAULT";
         /**
@@ -444,15 +437,8 @@ public class KafkaComponentConfiguration
         private String saslKerberosServiceName;
         /**
          * The Simple Authentication and Security Layer (SASL) Mechanism used.
-<<<<<<< HEAD
-         * For the valid values see a href=
-         * http://www.iana.org/assignments/sasl-
-         * mechanisms/sasl-mechanisms.xhtmlhttp
-         * ://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml
-=======
-         * For the valid values see <a
-         * href="http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml">http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml</a>
->>>>>>> Regen
+         * For the valid values see <a href=
+         * "http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml">http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml</a>
          */
         private String saslMechanism = "GSSAPI";
         /**

@@ -122,7 +122,7 @@ The component supports 10 options, which are listed below.
 | *camel.component.google-sheets.client-factory* | To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use BatchGoogleSheetsClientFactory. The option is a org.apache.camel.component.google.sheets.GoogleSheetsClientFactory type. |  | String
 | *camel.component.google-sheets.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-sheets.configuration.api-name* | What kind of operation to perform |  | GoogleSheetsApiName
-| *camel.component.google-sheets.configuration.application-name* | Google Sheets application name. Example would be camel-google-sheets/1.0 |  | String
+| *camel.component.google-sheets.configuration.application-name* | Google Sheets application name. Example would be "camel-google-sheets/1.0" |  | String
 | *camel.component.google-sheets.configuration.client-id* | Client ID of the sheets application |  | String
 | *camel.component.google-sheets.configuration.client-secret* | Client secret of the sheets application |  | String
 | *camel.component.google-sheets.configuration.method-name* | What sub operation to use for the selected operation |  | String

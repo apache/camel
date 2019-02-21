@@ -131,7 +131,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 34 options, which are listed below.
+The component supports 36 options, which are listed below.
 
 
 
@@ -154,6 +154,8 @@ The component supports 34 options, which are listed below.
 | *camel.component.aws-sqs.configuration.kms-master-key-id* | The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK. |  | String
 | *camel.component.aws-sqs.configuration.maximum-message-size* | The maximumMessageSize (in bytes) an SQS message can contain for this queue. |  | Integer
 | *camel.component.aws-sqs.configuration.message-attribute-names* | A list of message attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
+| *camel.component.aws-sqs.configuration.message-deduplication-id-strategy* | Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message. Can be one of the following options: *useExchangeId*, *useContentBasedDeduplication*. For the *useContentBasedDeduplication* option, no messageDeduplicationId will be set on the message. | useExchangeId | String
+| *camel.component.aws-sqs.configuration.message-group-id-strategy* | Only for FIFO queues. Strategy for setting the messageGroupId on the message. Can be one of the following options: *useConstant*, *useExchangeId*, *usePropertyValue*. For the *usePropertyValue* option, the value of property "CamelAwsMessageGroupId" will be used. |  | String
 | *camel.component.aws-sqs.configuration.message-retention-period* | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue. |  | Integer
 | *camel.component.aws-sqs.configuration.policy* | The policy for this queue |  | String
 | *camel.component.aws-sqs.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String

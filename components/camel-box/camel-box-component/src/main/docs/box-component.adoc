@@ -112,7 +112,7 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 17 options, which are listed below.
+The component supports 19 options, which are listed below.
 
 
 
@@ -121,11 +121,13 @@ The component supports 17 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.box.configuration.access-token-cache* | Custom Access Token Cache for storing and retrieving access tokens. |  | IAccessTokenCache
 | *camel.component.box.configuration.api-name* | What kind of operation to perform |  | BoxApiName
-| *camel.component.box.configuration.authentication-type* | The type of authentication for connection. Types of Authentication: STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens | APP_USER_AUTHENTICATION | String
+| *camel.component.box.configuration.authentication-type* | The type of authentication for connection. <p> Types of Authentication: <ul> <li>STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged)</li> <li>SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens</li> </ul> | APP_USER_AUTHENTICATION | String
 | *camel.component.box.configuration.client-id* | Box application client ID |  | String
 | *camel.component.box.configuration.client-secret* | Box application client secret |  | String
+| *camel.component.box.configuration.encryption-algorithm* | The type of encryption algorithm for JWT. <p> Supported Algorithms: <ul> <li>RSA_SHA_256</li> <li>RSA_SHA_384</li> <li>RSA_SHA_512</li> </ul> |  | EncryptionAlgorithm
 | *camel.component.box.configuration.enterprise-id* | The enterprise ID to use for an App Enterprise. |  | String
 | *camel.component.box.configuration.http-params* | Custom HTTP params for settings like proxy host |  | Map
+| *camel.component.box.configuration.max-cache-entries* | The maximum number of access tokens in cache. | 100 | Integer
 | *camel.component.box.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.box.configuration.private-key-file* | The private key for generating the JWT signature. |  | String
 | *camel.component.box.configuration.private-key-password* | The password for the private key. |  | String

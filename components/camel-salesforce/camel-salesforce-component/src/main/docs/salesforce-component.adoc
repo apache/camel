@@ -734,18 +734,18 @@ The component supports 85 options, which are listed below.
 | *camel.component.salesforce.config.apex-query-params* | Query params for APEX method |  | Map
 | *camel.component.salesforce.config.apex-url* | APEX method URL |  | String
 | *camel.component.salesforce.config.api-version* | Salesforce API version, defaults to SalesforceEndpointConfig.DEFAULT_VERSION |  | String
-| *camel.component.salesforce.config.approval* | The approval request for Approval API.  @param approval |  | ApprovalRequest
-| *camel.component.salesforce.config.approval-action-type* | Represents the kind of action to take: Submit, Approve, or Reject.  @param actionType |  | ApprovalRequest$Action
-| *camel.component.salesforce.config.approval-comments* | The comment to add to the history step associated with this request.  @param comments |  | String
-| *camel.component.salesforce.config.approval-context-actor-id* | The ID of the submitter who’s requesting the approval record.  @param contextActorId |  | String
-| *camel.component.salesforce.config.approval-context-id* | The ID of the item that is being acted upon.  @param contextId |  | String
-| *camel.component.salesforce.config.approval-next-approver-ids* | If the process requires specification of the next approval, the ID of the user to be assigned the next request.  @param nextApproverIds |  | List
-| *camel.component.salesforce.config.approval-process-definition-name-or-id* | The developer name or ID of the process definition.  @param processDefinitionNameOrId |  | String
-| *camel.component.salesforce.config.approval-skip-entry-criteria* | Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition name or ID isn’t null. If the process definition name or ID isn’t specified, this argument is ignored, and standard evaluation is followed based on process order. By default, the entry criteria isn’t skipped if it’s not set by this request.  @param skipEntryCriteria |  | Boolean
+| *camel.component.salesforce.config.approval* | The approval request for Approval API. |  | ApprovalRequest
+| *camel.component.salesforce.config.approval-action-type* | Represents the kind of action to take: Submit, Approve, or Reject. |  | ApprovalRequest$Action
+| *camel.component.salesforce.config.approval-comments* | The comment to add to the history step associated with this request. |  | String
+| *camel.component.salesforce.config.approval-context-actor-id* | The ID of the submitter who’s requesting the approval record. |  | String
+| *camel.component.salesforce.config.approval-context-id* | The ID of the item that is being acted upon. |  | String
+| *camel.component.salesforce.config.approval-next-approver-ids* | If the process requires specification of the next approval, the ID of the user to be assigned the next request. |  | List
+| *camel.component.salesforce.config.approval-process-definition-name-or-id* | The developer name or ID of the process definition. |  | String
+| *camel.component.salesforce.config.approval-skip-entry-criteria* | Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition name or ID isn’t null. If the process definition name or ID isn’t specified, this argument is ignored, and standard evaluation is followed based on process order. By default, the entry criteria isn’t skipped if it’s not set by this request. |  | Boolean
 | *camel.component.salesforce.config.backoff-increment* | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | Long
 | *camel.component.salesforce.config.batch-id* | Bulk API Batch ID |  | String
 | *camel.component.salesforce.config.content-type* | Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV |  | ContentType
-| *camel.component.salesforce.config.default-replay-id* | Default replayId setting if no value is found in initialReplayIdMap |  | Long
+| *camel.component.salesforce.config.default-replay-id* | Default replayId setting if no value is found in {@link #initialReplayIdMap} |  | Long
 | *camel.component.salesforce.config.format* | Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON |  | PayloadFormat
 | *camel.component.salesforce.config.http-client* | Custom Jetty Http Client to use to connect to Salesforce. |  | SalesforceHttpClient
 | *camel.component.salesforce.config.include-details* | Include details in Salesforce1 Analytics report, defaults to false. |  | Boolean
@@ -754,15 +754,15 @@ The component supports 85 options, which are listed below.
 | *camel.component.salesforce.config.job-id* | Bulk API Job ID |  | String
 | *camel.component.salesforce.config.limit* | Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation. |  | Integer
 | *camel.component.salesforce.config.max-backoff* | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect. |  | Long
-| *camel.component.salesforce.config.not-found-behaviour* | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL NotFoundBehaviour#NULL or should a exception be signaled on the exchange NotFoundBehaviour#EXCEPTION - the default. |  | NotFoundBehaviour
+| *camel.component.salesforce.config.not-found-behaviour* | Sets the behaviour of 404 not found status received from Salesforce API. Should the body be set to NULL {@link NotFoundBehaviour#NULL} or should a exception be signaled on the exchange {@link NotFoundBehaviour#EXCEPTION} - the default. |  | NotFoundBehaviour
 | *camel.component.salesforce.config.notify-for-fields* | Notify for fields, options are ALL, REFERENCED, SELECT, WHERE |  | NotifyForFieldsEnum
-| *camel.component.salesforce.config.notify-for-operation-create* | Notify for create operation, defaults to false (API version = 29.0) |  | Boolean
-| *camel.component.salesforce.config.notify-for-operation-delete* | Notify for delete operation, defaults to false (API version = 29.0) |  | Boolean
-| *camel.component.salesforce.config.notify-for-operation-undelete* | Notify for un-delete operation, defaults to false (API version = 29.0) |  | Boolean
-| *camel.component.salesforce.config.notify-for-operation-update* | Notify for update operation, defaults to false (API version = 29.0) |  | Boolean
-| *camel.component.salesforce.config.notify-for-operations* | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version 29.0) |  | NotifyForOperations Enum
+| *camel.component.salesforce.config.notify-for-operation-create* | Notify for create operation, defaults to false (API version >= 29.0) |  | Boolean
+| *camel.component.salesforce.config.notify-for-operation-delete* | Notify for delete operation, defaults to false (API version >= 29.0) |  | Boolean
+| *camel.component.salesforce.config.notify-for-operation-undelete* | Notify for un-delete operation, defaults to false (API version >= 29.0) |  | Boolean
+| *camel.component.salesforce.config.notify-for-operation-update* | Notify for update operation, defaults to false (API version >= 29.0) |  | Boolean
+| *camel.component.salesforce.config.notify-for-operations* | Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version < 29.0) |  | NotifyForOperations Enum
 | *camel.component.salesforce.config.object-mapper* | Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects. |  | ObjectMapper
-| *camel.component.salesforce.config.raw-payload* | Use raw payload String for request and response (either JSON or XML depending on format), instead of DTOs, false by default | false | Boolean
+| *camel.component.salesforce.config.raw-payload* | Use raw payload {@link String} for request and response (either JSON or XML depending on {@code format}), instead of DTOs, false by default | false | Boolean
 | *camel.component.salesforce.config.report-id* | Salesforce1 Analytics report Id |  | String
 | *camel.component.salesforce.config.report-metadata* | Salesforce1 Analytics report metadata for filtering |  | ReportMetadata
 | *camel.component.salesforce.config.result-id* | Bulk API Result ID |  | String
@@ -795,13 +795,13 @@ The component supports 85 options, which are listed below.
 | *camel.component.salesforce.lazy-login* | If set to true prevents the component from authenticating to Salesforce with the start of the component. You would generally set this to the (default) false and authenticate early and be immediately aware of any authentication issues. | false | Boolean
 | *camel.component.salesforce.login-config.client-id* | Salesforce connected application Consumer Key |  | String
 | *camel.component.salesforce.login-config.client-secret* | Salesforce connected application Consumer Secret |  | String
-| *camel.component.salesforce.login-config.instance-url* |  |  | String
+| *camel.component.salesforce.login-config.instance-url* | Configuration object for Salesforce login properties |  | String
 | *camel.component.salesforce.login-config.keystore* | Keystore parameters for keystore containing certificate and private key needed for OAuth 2.0 JWT Bearer Token Flow. |  | KeyStoreParameters
-| *camel.component.salesforce.login-config.lazy-login* | Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth token retrieval or generation is not done until the first API call |  | Boolean
-| *camel.component.salesforce.login-config.login-url* | Salesforce login URL, defaults to https://login.salesforce.com |  | String
+| *camel.component.salesforce.login-config.lazy-login* | Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth token retrieval or generation is not done until the first API call | false | Boolean
+| *camel.component.salesforce.login-config.login-url* | Salesforce login URL, defaults to https://login.salesforce.com | https://login.salesforce.com | String
 | *camel.component.salesforce.login-config.password* | Salesforce account password |  | String
 | *camel.component.salesforce.login-config.refresh-token* | Salesforce connected application Consumer token |  | String
-| *camel.component.salesforce.login-config.type* |  |  | AuthenticationType
+| *camel.component.salesforce.login-config.type* | Salesforce connected application Consumer token |  | AuthenticationType
 | *camel.component.salesforce.login-config.user-name* | Salesforce account user name |  | String
 | *camel.component.salesforce.login-url* | URL of the Salesforce instance used for authentication, by default set to https://login.salesforce.com | https://login.salesforce.com | String
 | *camel.component.salesforce.long-polling-transport-properties* | Used to set any properties that can be configured on the LongPollingTransport used by the BayeuxClient (CometD) used by the streaming api. The option is a java.util.Map<java.lang.String,java.lang.Object> type. |  | String
