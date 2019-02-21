@@ -434,7 +434,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             // did not throw expected error... fail!
             failed = true;
         } catch (AssertionError e) {
-            LOG.info("Caught expected failure: {}", e);
+            if (LOG.isDebugEnabled()) {
+                // log incl stacktrace
+                LOG.debug("Caught expected failure: " + e.getMessage(), e);
+            } else {
+                LOG.info("Caught expected failure: " + e.getMessage());
+            }
         }
         if (failed) {
             // fail() throws the AssertionError to indicate the test failed. 
@@ -455,7 +460,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             // did not throw expected error... fail!
             failed = true;
         } catch (AssertionError e) {
-            LOG.info("Caught expected failure: {}", e);
+            if (LOG.isDebugEnabled()) {
+                // log incl stacktrace
+                LOG.debug("Caught expected failure: " + e.getMessage(), e);
+            } else {
+                LOG.info("Caught expected failure: " + e.getMessage());
+            }
         }
         if (failed) { 
             // fail() throws the AssertionError to indicate the test failed. 
