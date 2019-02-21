@@ -160,6 +160,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
             // support old simple language syntax
             answer = SimpleBackwardsCompatibleParser.parsePredicate(expression, allowEscape);
+            if (answer != null) {
+                LOG.warn("Simple language is using deprecated syntax: {}. You should migrate to use newer syntax that uses ${xxx} style.", expression);
+            }
             if (answer == null) {
                 // use the new parser
                 SimplePredicateParser parser = new SimplePredicateParser(expression, allowEscape, cacheExpression);
@@ -184,6 +187,9 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
 
             // support old simple language syntax
             answer = SimpleBackwardsCompatibleParser.parseExpression(expression, allowEscape);
+            if (answer != null) {
+                LOG.warn("Simple language is using deprecated syntax: {}. You should migrate to use newer syntax that uses ${xxx} style.", expression);
+            }
             if (answer == null) {
                 // use the new parser
                 SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape, cacheExpression);
