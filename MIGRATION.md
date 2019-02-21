@@ -28,6 +28,28 @@ Maven users of Apache Camel can keep using the dependency *camel-core* which wil
 However users whom wants to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
 You may find how to do that in the examples.
 
+We have also modularized many of the core components and moved them out of `camel-core` to individual components:
+
+- camel-browse
+- camel-controlbus
+- camel-dataformat
+- camel-direct
+- camel-directvm
+- camel-file
+- camel-language
+- camel-log
+- camel-properties
+- camel-ref
+- camel-rest
+- camel-saga
+- camel-scheduler
+- camel-seda
+- camel-stub
+- camel-timer
+- camel-validator
+- camel-xslt
+
+TODO: there are some remainder components in camel-core we would like to modularize
 TODO: we need camel-core-minimal dependency for just basic Camel
 
 
@@ -247,3 +269,7 @@ Known Issues
 ------------
 
 There is an issue with MDC logging and correctly transfering the Camel breadscrumb id's under certain situations with routing over asynchronous endpoints, due to the internal routing engine refactorings. This change also affects the `camel-zipkin` component, with may not correctly transfer the span id's when using MDC logging as well. 
+
+The tracer feature does not work (the implementation from Camel 2.x was deprecated), and we plan to implemented a new and improved tracer.
+
+
