@@ -88,6 +88,7 @@
     <azure-storage-java-sdk-version>8.0.0</azure-storage-java-sdk-version>
     <azure-storage-java-sdk-bundle-version>8.0.0_1</azure-storage-java-sdk-bundle-version>
     <azure-guava-version>20.0</azure-guava-version>
+    <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <beanio-version>2.1.0</beanio-version>
     <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
