@@ -26,6 +26,7 @@ import org.ehcache.config.Configuration;
 import org.ehcache.event.EventFiring;
 import org.ehcache.event.EventOrdering;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 /**
  * The ehcache component enables you to perform caching operations using Ehcache
@@ -145,8 +146,6 @@ public class EhcacheComponentConfiguration
         private String configurationUri;
         /**
          * URI pointing to the Ehcache XML configuration file's location
-         * 
-         * @deprecated use {@link #setConfigurationUri(String)} instead
          */
         @Deprecated
         private String configUri;
@@ -194,13 +193,13 @@ public class EhcacheComponentConfiguration
          */
         private Map configurations;
         /**
-         * The cache key type, default java.lang.Object
+         * The cache key type, default "java.lang.Object"
          */
-        private String keyType = "java.lang.Object";
+        private Class keyType = java.lang.Object.class;
         /**
-         * The cache value type, default java.lang.Object
+         * The cache value type, default "java.lang.Object"
          */
-        private String valueType = "java.lang.Object";
+        private Class valueType = java.lang.Object.class;
 
         public String getConfigurationUri() {
             return configurationUri;
@@ -302,19 +301,19 @@ public class EhcacheComponentConfiguration
             this.configurations = configurations;
         }
 
-        public String getKeyType() {
+        public Class getKeyType() {
             return keyType;
         }
 
-        public void setKeyType(String keyType) {
+        public void setKeyType(Class keyType) {
             this.keyType = keyType;
         }
 
-        public String getValueType() {
+        public Class getValueType() {
             return valueType;
         }
 
-        public void setValueType(String valueType) {
+        public void setValueType(Class valueType) {
             this.valueType = valueType;
         }
     }
