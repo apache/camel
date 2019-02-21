@@ -102,14 +102,16 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 3 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.iec60870-client.default-connection-options.ignore-background-scan* | Whether background scan transmissions should be ignored. | true | Boolean
+| *camel.component.iec60870-client.default-connection-options.cause-source-address* | Whether to include the source address |  | Byte
+| *camel.component.iec60870-client.default-connection-options.data-module-options* | Whether to include the source address |  | DataModuleOptions
+| *camel.component.iec60870-client.default-connection-options.ignore-background-scan* | Whether to include the source address | true | Boolean
 | *camel.component.iec60870-client.enabled* | Whether to enable auto configuration of the iec60870-client component. This is enabled by default. |  | Boolean
 | *camel.component.iec60870-client.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===

@@ -88,13 +88,17 @@ with the following path and query parameters:
 === Spring Boot Auto-Configuration
 
 
-The component supports 2 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.google-pubsub.connection-factory.credentials-file-location* |  |  | String
+| *camel.component.google-pubsub.connection-factory.service-account* |  |  | String
+| *camel.component.google-pubsub.connection-factory.service-account-key* |  |  | String
+| *camel.component.google-pubsub.connection-factory.service-u-r-l* |  |  | String
 | *camel.component.google-pubsub.enabled* | Enable google-pubsub component | true | Boolean
 | *camel.component.google-pubsub.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===

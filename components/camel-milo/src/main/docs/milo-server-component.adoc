@@ -123,7 +123,7 @@ The component supports 21 options, which are listed below.
 | *camel.component.milo-server.bind-port* | The TCP port the server binds to |  | Integer
 | *camel.component.milo-server.build-info* | Server build info. The option is a org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo type. |  | String
 | *camel.component.milo-server.certificate-manager* | Server certificate manager. The option is a org.eclipse.milo.opcua.stack.core.application.CertificateManager type. |  | String
-| *camel.component.milo-server.certificate-validator* | Validator for client certificates. The option is a java.util.function.Supplier <org.eclipse.milo.opcua.stack.core.application.CertificateValidator> type. |  | String
+| *camel.component.milo-server.certificate-validator* | Validator for client certificates. The option is a java.util.function.Supplier<org.eclipse.milo.opcua.stack.core.application.CertificateValidator> type. |  | String
 | *camel.component.milo-server.default-certificate-validator* | Validator for client certificates using default file based approach |  | File
 | *camel.component.milo-server.enable-anonymous-authentication* | Enable anonymous authentication, disabled by default | false | Boolean
 | *camel.component.milo-server.enabled* | Enable milo-server component | true | Boolean

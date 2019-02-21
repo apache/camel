@@ -112,7 +112,7 @@ The component supports 14 options, which are listed below.
 | *camel.component.google-calendar.client-factory* | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleCalendarClientFactory. The option is a org.apache.camel.component.google.calendar.GoogleCalendarClientFactory type. |  | String
 | *camel.component.google-calendar.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-calendar.configuration.api-name* | What kind of operation to perform |  | GoogleCalendarApiName
-| *camel.component.google-calendar.configuration.application-name* | Google calendar application name. Example would be camel-google-calendar/1.0 |  | String
+| *camel.component.google-calendar.configuration.application-name* | Google calendar application name. Example would be "camel-google-calendar/1.0" |  | String
 | *camel.component.google-calendar.configuration.client-id* | Client ID of the calendar application |  | String
 | *camel.component.google-calendar.configuration.client-secret* | Client secret of the calendar application |  | String
 | *camel.component.google-calendar.configuration.email-address* | The emailAddress of the Google Service Account. |  | String
