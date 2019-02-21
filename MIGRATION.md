@@ -155,7 +155,7 @@ to using style:
 
     RouteReifier.adviceWith(context.getRouteDefinition("start"), context, new RouteBuilder() {
         ...
-    }    
+    }
 
 We are planning on making this easier in 3.0.0-M2 onwards.
 
