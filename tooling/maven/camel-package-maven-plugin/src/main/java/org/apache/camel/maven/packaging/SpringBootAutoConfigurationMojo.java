@@ -35,6 +35,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -764,7 +765,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation(Generated.class.getName()).setStringValue("value", SpringBootAutoConfigurationMojo.class.getName());
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
-        Set<JavaClass> nestedTypes = new HashSet<>();
+        Set<JavaClass> nestedTypes = new LinkedHashSet<>();
         for (ComponentOptionModel option : model.getComponentOptions()) {
 
             if (skipComponentOption(model, option)) {
@@ -1211,7 +1212,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                         .filter(m -> m.getName().matches("(get|is)[A-Z][a-zA-Z0-9]*"))
                         .collect(Collectors.toList());
                 allSetters.stream()
-                        .sorted(Comparator.comparing(m -> sourceCode.indexOf("void " + m.getName() + "(")))
+                        .sorted(Comparator.comparing(m -> getSetterPosition(sourceCode, m)))
                         .map(m -> Strings.uncapitalize(m.getName().substring(3)))
                         .forEach(fn -> {
                             Class<?> ft;
@@ -1295,6 +1296,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
         }
         return null;
+    }
+
+    private int getSetterPosition(String sourceCode, java.lang.reflect.Method m) {
+        int i0 = sourceCode.indexOf("void " + m.getName() + "(");
+        int i1 = sourceCode.indexOf(m.getDeclaringClass().getSimpleName() + " " + m.getName() + "(");
+        int l = sourceCode.length();
+        return Math.min(i0 > 0 ? i0 : l, i1 > 0 ? i1 : l);
     }
 
     private String getSetterJavaDoc(String sourceCode, String name) {
