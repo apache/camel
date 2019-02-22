@@ -80,26 +80,10 @@ public class GoogleBigQuerySQLComponentConfiguration
 
     public static class GoogleBigQueryConnectionFactoryNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory.class;
-        private String credentialsFileLocation;
-        private String serviceURL;
         private String serviceAccount;
         private String serviceAccountKey;
-
-        public String getCredentialsFileLocation() {
-            return credentialsFileLocation;
-        }
-
-        public void setCredentialsFileLocation(String credentialsFileLocation) {
-            this.credentialsFileLocation = credentialsFileLocation;
-        }
-
-        public String getServiceURL() {
-            return serviceURL;
-        }
-
-        public void setServiceURL(String serviceURL) {
-            this.serviceURL = serviceURL;
-        }
+        private String credentialsFileLocation;
+        private String serviceURL;
 
         public String getServiceAccount() {
             return serviceAccount;
@@ -115,6 +99,22 @@ public class GoogleBigQuerySQLComponentConfiguration
 
         public void setServiceAccountKey(String serviceAccountKey) {
             this.serviceAccountKey = serviceAccountKey;
+        }
+
+        public String getCredentialsFileLocation() {
+            return credentialsFileLocation;
+        }
+
+        public void setCredentialsFileLocation(String credentialsFileLocation) {
+            this.credentialsFileLocation = credentialsFileLocation;
+        }
+
+        public String getServiceURL() {
+            return serviceURL;
+        }
+
+        public void setServiceURL(String serviceURL) {
+            this.serviceURL = serviceURL;
         }
     }
 }
