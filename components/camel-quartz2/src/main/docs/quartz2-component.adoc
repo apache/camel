@@ -21,9 +21,6 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-*NOTE:* Quartz 2.x API is not compatible with Quartz 1.x. If you need to
-remain on old Quartz 1.x, please +
- use the old <<quartz-component,Quartz>> component instead.
 
 === URI format
 
