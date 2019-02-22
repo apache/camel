@@ -162,101 +162,6 @@ public class NettyHttpComponentConfiguration
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
-    public static class NettyHttpSecurityConfigurationNestedConfiguration {
-        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration.class;
-        /**
-         * Whether to enable authentication <p/> This is by default enabled.
-         */
-        private Boolean authenticate;
-        /**
-         * The supported restricted. <p/> Currently only Basic is supported.
-         */
-        private String constraint;
-        /**
-         * Sets the name of the realm to use.
-         */
-        private String realm;
-        /**
-         * Sets a {@link SecurityConstraint} to use for checking if a web
-         * resource is restricted or not <p/> By default this is <tt>null</tt>,
-         * which means all resources is restricted.
-         */
-        private SecurityConstraint securityConstraint;
-        /**
-         * Sets the {@link SecurityAuthenticator} to use for authenticating the
-         * {@link HttpPrincipal}.
-         */
-        private SecurityAuthenticator securityAuthenticator;
-        /**
-         * Sets a logging level to use for logging denied login attempts (incl
-         * stacktraces) <p/> This level is by default DEBUG.
-         */
-        private LoggingLevel loginDeniedLoggingLevel;
-        /**
-         * Sets a logging level to use for logging denied login attempts (incl
-         * stacktraces) <p/> This level is by default DEBUG.
-         */
-        private String roleClassName;
-
-        public Boolean getAuthenticate() {
-            return authenticate;
-        }
-
-        public void setAuthenticate(Boolean authenticate) {
-            this.authenticate = authenticate;
-        }
-
-        public String getConstraint() {
-            return constraint;
-        }
-
-        public void setConstraint(String constraint) {
-            this.constraint = constraint;
-        }
-
-        public String getRealm() {
-            return realm;
-        }
-
-        public void setRealm(String realm) {
-            this.realm = realm;
-        }
-
-        public SecurityConstraint getSecurityConstraint() {
-            return securityConstraint;
-        }
-
-        public void setSecurityConstraint(SecurityConstraint securityConstraint) {
-            this.securityConstraint = securityConstraint;
-        }
-
-        public SecurityAuthenticator getSecurityAuthenticator() {
-            return securityAuthenticator;
-        }
-
-        public void setSecurityAuthenticator(
-                SecurityAuthenticator securityAuthenticator) {
-            this.securityAuthenticator = securityAuthenticator;
-        }
-
-        public LoggingLevel getLoginDeniedLoggingLevel() {
-            return loginDeniedLoggingLevel;
-        }
-
-        public void setLoginDeniedLoggingLevel(
-                LoggingLevel loginDeniedLoggingLevel) {
-            this.loginDeniedLoggingLevel = loginDeniedLoggingLevel;
-        }
-
-        public String getRoleClassName() {
-            return roleClassName;
-        }
-
-        public void setRoleClassName(String roleClassName) {
-            this.roleClassName = roleClassName;
-        }
-    }
-
     public static class NettyHttpConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.netty4.http.NettyHttpConfiguration.class;
         /**
@@ -531,6 +436,101 @@ public class NettyHttpComponentConfiguration
 
         public void setUseRelativePath(Boolean useRelativePath) {
             this.useRelativePath = useRelativePath;
+        }
+    }
+
+    public static class NettyHttpSecurityConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration.class;
+        /**
+         * Whether to enable authentication <p/> This is by default enabled.
+         */
+        private Boolean authenticate;
+        /**
+         * The supported restricted. <p/> Currently only Basic is supported.
+         */
+        private String constraint;
+        /**
+         * Sets the name of the realm to use.
+         */
+        private String realm;
+        /**
+         * Sets a {@link SecurityConstraint} to use for checking if a web
+         * resource is restricted or not <p/> By default this is <tt>null</tt>,
+         * which means all resources is restricted.
+         */
+        private SecurityConstraint securityConstraint;
+        /**
+         * Sets the {@link SecurityAuthenticator} to use for authenticating the
+         * {@link HttpPrincipal}.
+         */
+        private SecurityAuthenticator securityAuthenticator;
+        /**
+         * Sets a logging level to use for logging denied login attempts (incl
+         * stacktraces) <p/> This level is by default DEBUG.
+         */
+        private LoggingLevel loginDeniedLoggingLevel;
+        /**
+         * Sets a logging level to use for logging denied login attempts (incl
+         * stacktraces) <p/> This level is by default DEBUG.
+         */
+        private String roleClassName;
+
+        public Boolean getAuthenticate() {
+            return authenticate;
+        }
+
+        public void setAuthenticate(Boolean authenticate) {
+            this.authenticate = authenticate;
+        }
+
+        public String getConstraint() {
+            return constraint;
+        }
+
+        public void setConstraint(String constraint) {
+            this.constraint = constraint;
+        }
+
+        public String getRealm() {
+            return realm;
+        }
+
+        public void setRealm(String realm) {
+            this.realm = realm;
+        }
+
+        public SecurityConstraint getSecurityConstraint() {
+            return securityConstraint;
+        }
+
+        public void setSecurityConstraint(SecurityConstraint securityConstraint) {
+            this.securityConstraint = securityConstraint;
+        }
+
+        public SecurityAuthenticator getSecurityAuthenticator() {
+            return securityAuthenticator;
+        }
+
+        public void setSecurityAuthenticator(
+                SecurityAuthenticator securityAuthenticator) {
+            this.securityAuthenticator = securityAuthenticator;
+        }
+
+        public LoggingLevel getLoginDeniedLoggingLevel() {
+            return loginDeniedLoggingLevel;
+        }
+
+        public void setLoginDeniedLoggingLevel(
+                LoggingLevel loginDeniedLoggingLevel) {
+            this.loginDeniedLoggingLevel = loginDeniedLoggingLevel;
+        }
+
+        public String getRoleClassName() {
+            return roleClassName;
+        }
+
+        public void setRoleClassName(String roleClassName) {
+            this.roleClassName = roleClassName;
         }
     }
 }

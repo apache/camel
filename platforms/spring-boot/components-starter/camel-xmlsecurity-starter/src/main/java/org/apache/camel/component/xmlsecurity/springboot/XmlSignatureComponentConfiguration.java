@@ -91,287 +91,6 @@ public class XmlSignatureComponentConfiguration
         this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
-    public static class XmlVerifierConfigurationNestedConfiguration {
-        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration.class;
-        /**
-         * Provides the key for validating the XML signature.
-         */
-        private KeySelector keySelector;
-        /**
-         * This interface allows the application to check the XML signature
-         * before the validation is executed. This step is recommended in
-         * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed
-         */
-        private XmlSignatureChecker xmlSignatureChecker;
-        /**
-         * Bean which maps the XML signature to the output-message after the
-         * validation. How this mapping should be done can be configured by the
-         * options outputNodeSearchType, outputNodeSearch, and
-         * removeSignatureElements. The default implementation offers three
-         * possibilities which are related to the three output node search types
-         * "Default", "ElementName", and "XPath". The default implementation
-         * determines a node which is then serialized and set to the body of the
-         * output message If the search type is "ElementName" then the output
-         * node (which must be in this case an element) is determined by the
-         * local name and namespace defined in the search value (see option
-         * outputNodeSearch). If the search type is "XPath" then the output node
-         * is determined by the XPath specified in the search value (in this
-         * case the output node can be of type "Element", "TextNode" or
-         * "Document"). If the output node search type is "Default" then the
-         * following rules apply: In the enveloped XML signature case (there is
-         * a reference with URI="" and transform
-         * "http://www.w3.org/2000/09/xmldsig#enveloped-signature"), the
-         * incoming XML document without the Signature element is set to the
-         * output message body. In the non-enveloped XML signature case, the
-         * message body is determined from a referenced Object; this is
-         * explained in more detail in chapter "Output Node Determination in
-         * Enveloping XML Signature Case".
-         */
-        private XmlSignature2Message xmlSignature2Message;
-        /**
-         * Handles the different validation failed situations. The default
-         * implementation throws specific exceptions for the different
-         * situations (All exceptions have the package name
-         * org.apache.camel.component.xmlsecurity.api and are a sub-class of
-         * XmlSignatureInvalidException. If the signature value validation
-         * fails, a XmlSignatureInvalidValueException is thrown. If a reference
-         * validation fails, a XmlSignatureInvalidContentHashException is
-         * thrown. For more detailed information, see the JavaDoc.
-         */
-        private ValidationFailedHandler validationFailedHandler;
-        /**
-         * Sets the output node search value for determining the node from the
-         * XML signature document which shall be set to the output message body.
-         * The class of the value depends on the type of the output node search.
-         * The output node search is forwarded to {@link XmlSignature2Message}.
-         */
-        private Object outputNodeSearch;
-        /**
-         * Determines the search type for determining the output node which is
-         * serialized into the output message bodyF. See {@link
-         * #setOutputNodeSearch(Object)}. The supported default search types you
-         * can find in {@link DefaultXmlSignature2Message}.
-         */
-        private String outputNodeSearchType = "Default";
-        /**
-         * Indicator whether the XML signature elements (elements with local
-         * name "Signature" and namesapce
-         * ""http://www.w3.org/2000/09/xmldsig#"") shall be removed from the
-         * document set to the output message. Normally, this is only necessary,
-         * if the XML signature is enveloped. The default value is {@link
-         * Boolean#FALSE}. This parameter is forwarded to {@link
-         * XmlSignature2Message}. <p> This indicator has no effect if the output
-         * node search is of type {@link
-         * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT}.F
-         */
-        private Boolean removeSignatureElements = false;
-        /**
-         * Enables secure validation. If true then secure validation is enabled.
-         */
-        private Boolean secureValidation = true;
-        /**
-         * Name of handler to
-         */
-        private String validationFailedHandlerName;
-        /**
-         * If you want to restrict the remote access via reference URIs, you can
-         * set an own dereferencer. Optional parameter. If not set the provider
-         * default dereferencer is used which can resolve URI fragments, HTTP,
-         * file and XPpointer URIs. <p> Attention: The implementation is
-         * provider dependent!
-         */
-        private URIDereferencer uriDereferencer;
-        /**
-         * You can set a base URI which is used in the URI dereferencing.
-         * Relative URIs are then concatenated with the base URI.
-         */
-        private String baseUri;
-        /**
-         * Sets the crypto context properties. See {@link
-         * XMLCryptoContext#setProperty(String, Object)}. Possible properties
-         * are defined in {@link XMLSignContext} an {@link XMLValidateContext}
-         * (see Supported Properties). <p> The following properties are set by
-         * default to the value {@link Boolean#TRUE} for the XML validation. If
-         * you want to switch these features off you must set the property value
-         * to {@link Boolean#FALSE}. <ul>
-         * <li><code>"org.jcp.xml.dsig.validateManifests"</code></li>
-         * <li><code>"javax.xml.crypto.dsig.cacheReference"</code></li> </ul>
-         */
-        private Map cryptoContextProperties;
-        /**
-         * Disallows that the incoming XML document contains DTD DOCTYPE
-         * declaration. The default value is {@link Boolean#TRUE}.
-         */
-        private Boolean disallowDoctypeDecl = true;
-        /**
-         * Indicator whether the XML declaration in the outgoing message body
-         * should be omitted. Default value is <code>false</code>. Can be
-         * overwritten by the header {@link
-         * XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION}.
-         */
-        private Boolean omitXmlDeclaration = false;
-        /**
-         * Determines if the XML signature specific headers be cleared after
-         * signing and verification. Defaults to true.
-         */
-        private Boolean clearHeaders = true;
-        /**
-         * Classpath to the XML Schema. Must be specified in the detached XML
-         * Signature case for determining the ID attributes, might be set in the
-         * enveloped and enveloping case. If set, then the XML document is
-         * validated with the specified XML schema. The schema resource URI can
-         * be overwritten by the header {@link
-         * XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI}.
-         */
-        private String schemaResourceUri;
-        /**
-         * The character encoding of the resulting signed XML document. If
-         * <code>null</code> then the encoding of the original XML document is
-         * used.
-         */
-        private String outputXmlEncoding;
-
-        public KeySelector getKeySelector() {
-            return keySelector;
-        }
-
-        public void setKeySelector(KeySelector keySelector) {
-            this.keySelector = keySelector;
-        }
-
-        public XmlSignatureChecker getXmlSignatureChecker() {
-            return xmlSignatureChecker;
-        }
-
-        public void setXmlSignatureChecker(
-                XmlSignatureChecker xmlSignatureChecker) {
-            this.xmlSignatureChecker = xmlSignatureChecker;
-        }
-
-        public XmlSignature2Message getXmlSignature2Message() {
-            return xmlSignature2Message;
-        }
-
-        public void setXmlSignature2Message(
-                XmlSignature2Message xmlSignature2Message) {
-            this.xmlSignature2Message = xmlSignature2Message;
-        }
-
-        public ValidationFailedHandler getValidationFailedHandler() {
-            return validationFailedHandler;
-        }
-
-        public void setValidationFailedHandler(
-                ValidationFailedHandler validationFailedHandler) {
-            this.validationFailedHandler = validationFailedHandler;
-        }
-
-        public Object getOutputNodeSearch() {
-            return outputNodeSearch;
-        }
-
-        public void setOutputNodeSearch(Object outputNodeSearch) {
-            this.outputNodeSearch = outputNodeSearch;
-        }
-
-        public String getOutputNodeSearchType() {
-            return outputNodeSearchType;
-        }
-
-        public void setOutputNodeSearchType(String outputNodeSearchType) {
-            this.outputNodeSearchType = outputNodeSearchType;
-        }
-
-        public Boolean getRemoveSignatureElements() {
-            return removeSignatureElements;
-        }
-
-        public void setRemoveSignatureElements(Boolean removeSignatureElements) {
-            this.removeSignatureElements = removeSignatureElements;
-        }
-
-        public Boolean getSecureValidation() {
-            return secureValidation;
-        }
-
-        public void setSecureValidation(Boolean secureValidation) {
-            this.secureValidation = secureValidation;
-        }
-
-        public String getValidationFailedHandlerName() {
-            return validationFailedHandlerName;
-        }
-
-        public void setValidationFailedHandlerName(
-                String validationFailedHandlerName) {
-            this.validationFailedHandlerName = validationFailedHandlerName;
-        }
-
-        public URIDereferencer getUriDereferencer() {
-            return uriDereferencer;
-        }
-
-        public void setUriDereferencer(URIDereferencer uriDereferencer) {
-            this.uriDereferencer = uriDereferencer;
-        }
-
-        public String getBaseUri() {
-            return baseUri;
-        }
-
-        public void setBaseUri(String baseUri) {
-            this.baseUri = baseUri;
-        }
-
-        public Map getCryptoContextProperties() {
-            return cryptoContextProperties;
-        }
-
-        public void setCryptoContextProperties(Map cryptoContextProperties) {
-            this.cryptoContextProperties = cryptoContextProperties;
-        }
-
-        public Boolean getDisallowDoctypeDecl() {
-            return disallowDoctypeDecl;
-        }
-
-        public void setDisallowDoctypeDecl(Boolean disallowDoctypeDecl) {
-            this.disallowDoctypeDecl = disallowDoctypeDecl;
-        }
-
-        public Boolean getOmitXmlDeclaration() {
-            return omitXmlDeclaration;
-        }
-
-        public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
-            this.omitXmlDeclaration = omitXmlDeclaration;
-        }
-
-        public Boolean getClearHeaders() {
-            return clearHeaders;
-        }
-
-        public void setClearHeaders(Boolean clearHeaders) {
-            this.clearHeaders = clearHeaders;
-        }
-
-        public String getSchemaResourceUri() {
-            return schemaResourceUri;
-        }
-
-        public void setSchemaResourceUri(String schemaResourceUri) {
-            this.schemaResourceUri = schemaResourceUri;
-        }
-
-        public String getOutputXmlEncoding() {
-            return outputXmlEncoding;
-        }
-
-        public void setOutputXmlEncoding(String outputXmlEncoding) {
-            this.outputXmlEncoding = outputXmlEncoding;
-        }
-    }
-
     public static class XmlSignerConfigurationNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration.class;
         /**
@@ -777,6 +496,287 @@ public class XmlSignatureComponentConfiguration
 
         public void setParentXpath(XPathFilterParameterSpec parentXpath) {
             this.parentXpath = parentXpath;
+        }
+
+        public URIDereferencer getUriDereferencer() {
+            return uriDereferencer;
+        }
+
+        public void setUriDereferencer(URIDereferencer uriDereferencer) {
+            this.uriDereferencer = uriDereferencer;
+        }
+
+        public String getBaseUri() {
+            return baseUri;
+        }
+
+        public void setBaseUri(String baseUri) {
+            this.baseUri = baseUri;
+        }
+
+        public Map getCryptoContextProperties() {
+            return cryptoContextProperties;
+        }
+
+        public void setCryptoContextProperties(Map cryptoContextProperties) {
+            this.cryptoContextProperties = cryptoContextProperties;
+        }
+
+        public Boolean getDisallowDoctypeDecl() {
+            return disallowDoctypeDecl;
+        }
+
+        public void setDisallowDoctypeDecl(Boolean disallowDoctypeDecl) {
+            this.disallowDoctypeDecl = disallowDoctypeDecl;
+        }
+
+        public Boolean getOmitXmlDeclaration() {
+            return omitXmlDeclaration;
+        }
+
+        public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
+            this.omitXmlDeclaration = omitXmlDeclaration;
+        }
+
+        public Boolean getClearHeaders() {
+            return clearHeaders;
+        }
+
+        public void setClearHeaders(Boolean clearHeaders) {
+            this.clearHeaders = clearHeaders;
+        }
+
+        public String getSchemaResourceUri() {
+            return schemaResourceUri;
+        }
+
+        public void setSchemaResourceUri(String schemaResourceUri) {
+            this.schemaResourceUri = schemaResourceUri;
+        }
+
+        public String getOutputXmlEncoding() {
+            return outputXmlEncoding;
+        }
+
+        public void setOutputXmlEncoding(String outputXmlEncoding) {
+            this.outputXmlEncoding = outputXmlEncoding;
+        }
+    }
+
+    public static class XmlVerifierConfigurationNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration.class;
+        /**
+         * Provides the key for validating the XML signature.
+         */
+        private KeySelector keySelector;
+        /**
+         * This interface allows the application to check the XML signature
+         * before the validation is executed. This step is recommended in
+         * http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed
+         */
+        private XmlSignatureChecker xmlSignatureChecker;
+        /**
+         * Bean which maps the XML signature to the output-message after the
+         * validation. How this mapping should be done can be configured by the
+         * options outputNodeSearchType, outputNodeSearch, and
+         * removeSignatureElements. The default implementation offers three
+         * possibilities which are related to the three output node search types
+         * "Default", "ElementName", and "XPath". The default implementation
+         * determines a node which is then serialized and set to the body of the
+         * output message If the search type is "ElementName" then the output
+         * node (which must be in this case an element) is determined by the
+         * local name and namespace defined in the search value (see option
+         * outputNodeSearch). If the search type is "XPath" then the output node
+         * is determined by the XPath specified in the search value (in this
+         * case the output node can be of type "Element", "TextNode" or
+         * "Document"). If the output node search type is "Default" then the
+         * following rules apply: In the enveloped XML signature case (there is
+         * a reference with URI="" and transform
+         * "http://www.w3.org/2000/09/xmldsig#enveloped-signature"), the
+         * incoming XML document without the Signature element is set to the
+         * output message body. In the non-enveloped XML signature case, the
+         * message body is determined from a referenced Object; this is
+         * explained in more detail in chapter "Output Node Determination in
+         * Enveloping XML Signature Case".
+         */
+        private XmlSignature2Message xmlSignature2Message;
+        /**
+         * Handles the different validation failed situations. The default
+         * implementation throws specific exceptions for the different
+         * situations (All exceptions have the package name
+         * org.apache.camel.component.xmlsecurity.api and are a sub-class of
+         * XmlSignatureInvalidException. If the signature value validation
+         * fails, a XmlSignatureInvalidValueException is thrown. If a reference
+         * validation fails, a XmlSignatureInvalidContentHashException is
+         * thrown. For more detailed information, see the JavaDoc.
+         */
+        private ValidationFailedHandler validationFailedHandler;
+        /**
+         * Sets the output node search value for determining the node from the
+         * XML signature document which shall be set to the output message body.
+         * The class of the value depends on the type of the output node search.
+         * The output node search is forwarded to {@link XmlSignature2Message}.
+         */
+        private Object outputNodeSearch;
+        /**
+         * Determines the search type for determining the output node which is
+         * serialized into the output message bodyF. See {@link
+         * #setOutputNodeSearch(Object)}. The supported default search types you
+         * can find in {@link DefaultXmlSignature2Message}.
+         */
+        private String outputNodeSearchType = "Default";
+        /**
+         * Indicator whether the XML signature elements (elements with local
+         * name "Signature" and namesapce
+         * ""http://www.w3.org/2000/09/xmldsig#"") shall be removed from the
+         * document set to the output message. Normally, this is only necessary,
+         * if the XML signature is enveloped. The default value is {@link
+         * Boolean#FALSE}. This parameter is forwarded to {@link
+         * XmlSignature2Message}. <p> This indicator has no effect if the output
+         * node search is of type {@link
+         * DefaultXmlSignature2Message#OUTPUT_NODE_SEARCH_TYPE_DEFAULT}.F
+         */
+        private Boolean removeSignatureElements = false;
+        /**
+         * Enables secure validation. If true then secure validation is enabled.
+         */
+        private Boolean secureValidation = true;
+        /**
+         * Name of handler to
+         */
+        private String validationFailedHandlerName;
+        /**
+         * If you want to restrict the remote access via reference URIs, you can
+         * set an own dereferencer. Optional parameter. If not set the provider
+         * default dereferencer is used which can resolve URI fragments, HTTP,
+         * file and XPpointer URIs. <p> Attention: The implementation is
+         * provider dependent!
+         */
+        private URIDereferencer uriDereferencer;
+        /**
+         * You can set a base URI which is used in the URI dereferencing.
+         * Relative URIs are then concatenated with the base URI.
+         */
+        private String baseUri;
+        /**
+         * Sets the crypto context properties. See {@link
+         * XMLCryptoContext#setProperty(String, Object)}. Possible properties
+         * are defined in {@link XMLSignContext} an {@link XMLValidateContext}
+         * (see Supported Properties). <p> The following properties are set by
+         * default to the value {@link Boolean#TRUE} for the XML validation. If
+         * you want to switch these features off you must set the property value
+         * to {@link Boolean#FALSE}. <ul>
+         * <li><code>"org.jcp.xml.dsig.validateManifests"</code></li>
+         * <li><code>"javax.xml.crypto.dsig.cacheReference"</code></li> </ul>
+         */
+        private Map cryptoContextProperties;
+        /**
+         * Disallows that the incoming XML document contains DTD DOCTYPE
+         * declaration. The default value is {@link Boolean#TRUE}.
+         */
+        private Boolean disallowDoctypeDecl = true;
+        /**
+         * Indicator whether the XML declaration in the outgoing message body
+         * should be omitted. Default value is <code>false</code>. Can be
+         * overwritten by the header {@link
+         * XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION}.
+         */
+        private Boolean omitXmlDeclaration = false;
+        /**
+         * Determines if the XML signature specific headers be cleared after
+         * signing and verification. Defaults to true.
+         */
+        private Boolean clearHeaders = true;
+        /**
+         * Classpath to the XML Schema. Must be specified in the detached XML
+         * Signature case for determining the ID attributes, might be set in the
+         * enveloped and enveloping case. If set, then the XML document is
+         * validated with the specified XML schema. The schema resource URI can
+         * be overwritten by the header {@link
+         * XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI}.
+         */
+        private String schemaResourceUri;
+        /**
+         * The character encoding of the resulting signed XML document. If
+         * <code>null</code> then the encoding of the original XML document is
+         * used.
+         */
+        private String outputXmlEncoding;
+
+        public KeySelector getKeySelector() {
+            return keySelector;
+        }
+
+        public void setKeySelector(KeySelector keySelector) {
+            this.keySelector = keySelector;
+        }
+
+        public XmlSignatureChecker getXmlSignatureChecker() {
+            return xmlSignatureChecker;
+        }
+
+        public void setXmlSignatureChecker(
+                XmlSignatureChecker xmlSignatureChecker) {
+            this.xmlSignatureChecker = xmlSignatureChecker;
+        }
+
+        public XmlSignature2Message getXmlSignature2Message() {
+            return xmlSignature2Message;
+        }
+
+        public void setXmlSignature2Message(
+                XmlSignature2Message xmlSignature2Message) {
+            this.xmlSignature2Message = xmlSignature2Message;
+        }
+
+        public ValidationFailedHandler getValidationFailedHandler() {
+            return validationFailedHandler;
+        }
+
+        public void setValidationFailedHandler(
+                ValidationFailedHandler validationFailedHandler) {
+            this.validationFailedHandler = validationFailedHandler;
+        }
+
+        public Object getOutputNodeSearch() {
+            return outputNodeSearch;
+        }
+
+        public void setOutputNodeSearch(Object outputNodeSearch) {
+            this.outputNodeSearch = outputNodeSearch;
+        }
+
+        public String getOutputNodeSearchType() {
+            return outputNodeSearchType;
+        }
+
+        public void setOutputNodeSearchType(String outputNodeSearchType) {
+            this.outputNodeSearchType = outputNodeSearchType;
+        }
+
+        public Boolean getRemoveSignatureElements() {
+            return removeSignatureElements;
+        }
+
+        public void setRemoveSignatureElements(Boolean removeSignatureElements) {
+            this.removeSignatureElements = removeSignatureElements;
+        }
+
+        public Boolean getSecureValidation() {
+            return secureValidation;
+        }
+
+        public void setSecureValidation(Boolean secureValidation) {
+            this.secureValidation = secureValidation;
+        }
+
+        public String getValidationFailedHandlerName() {
+            return validationFailedHandlerName;
+        }
+
+        public void setValidationFailedHandlerName(
+                String validationFailedHandlerName) {
+            this.validationFailedHandlerName = validationFailedHandlerName;
         }
 
         public URIDereferencer getUriDereferencer() {

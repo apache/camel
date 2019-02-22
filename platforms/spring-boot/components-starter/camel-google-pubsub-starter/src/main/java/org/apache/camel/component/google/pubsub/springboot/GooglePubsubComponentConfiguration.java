@@ -70,9 +70,9 @@ public class GooglePubsubComponentConfiguration
     public static class GooglePubsubConnectionFactoryNestedConfiguration {
         public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.google.pubsub.GooglePubsubConnectionFactory.class;
         private String credentialsFileLocation;
-        private String serviceAccountKey;
-        private String serviceAccount;
         private String serviceURL;
+        private String serviceAccount;
+        private String serviceAccountKey;
 
         public String getCredentialsFileLocation() {
             return credentialsFileLocation;
@@ -82,12 +82,12 @@ public class GooglePubsubComponentConfiguration
             this.credentialsFileLocation = credentialsFileLocation;
         }
 
-        public String getServiceAccountKey() {
-            return serviceAccountKey;
+        public String getServiceURL() {
+            return serviceURL;
         }
 
-        public void setServiceAccountKey(String serviceAccountKey) {
-            this.serviceAccountKey = serviceAccountKey;
+        public void setServiceURL(String serviceURL) {
+            this.serviceURL = serviceURL;
         }
 
         public String getServiceAccount() {
@@ -98,12 +98,12 @@ public class GooglePubsubComponentConfiguration
             this.serviceAccount = serviceAccount;
         }
 
-        public String getServiceURL() {
-            return serviceURL;
+        public String getServiceAccountKey() {
+            return serviceAccountKey;
         }
 
-        public void setServiceURL(String serviceURL) {
-            this.serviceURL = serviceURL;
+        public void setServiceAccountKey(String serviceAccountKey) {
+            this.serviceAccountKey = serviceAccountKey;
         }
     }
 }
