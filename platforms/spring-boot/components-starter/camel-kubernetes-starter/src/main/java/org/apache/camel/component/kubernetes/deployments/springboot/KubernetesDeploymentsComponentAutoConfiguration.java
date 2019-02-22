@@ -108,16 +108,15 @@ public class KubernetesDeploymentsComponentAutoConfiguration {
         if (ObjectHelper.isNotEmpty(customizers)) {
             for (ComponentCustomizer<KubernetesDeploymentsComponent> customizer : customizers) {
                 boolean useCustomizer = (customizer instanceof HasId)
-                        ? HierarchicalPropertiesEvaluator
-                                .evaluate(
-                                        applicationContext.getEnvironment(),
-                                        "camel.component.customizer",
-                                        "camel.component.kubernetes-deployments.customizer",
-                                        ((HasId) customizer).getId())
-                        : HierarchicalPropertiesEvaluator
-                                .evaluate(applicationContext.getEnvironment(),
-                                        "camel.component.customizer",
-                                        "camel.component.kubernetes-deployments.customizer");
+                        ? HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.component.customizer",
+                                "camel.component.kubernetes-deployments.customizer",
+                                ((HasId) customizer).getId())
+                        : HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.component.customizer",
+                                "camel.component.kubernetes-deployments.customizer");
                 if (useCustomizer) {
                     LOGGER.debug("Configure component {}, with customizer {}",
                             component, customizer);

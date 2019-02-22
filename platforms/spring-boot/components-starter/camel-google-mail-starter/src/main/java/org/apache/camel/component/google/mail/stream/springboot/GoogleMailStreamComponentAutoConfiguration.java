@@ -108,16 +108,15 @@ public class GoogleMailStreamComponentAutoConfiguration {
         if (ObjectHelper.isNotEmpty(customizers)) {
             for (ComponentCustomizer<GoogleMailStreamComponent> customizer : customizers) {
                 boolean useCustomizer = (customizer instanceof HasId)
-                        ? HierarchicalPropertiesEvaluator
-                                .evaluate(
-                                        applicationContext.getEnvironment(),
-                                        "camel.component.customizer",
-                                        "camel.component.google-mail-stream.customizer",
-                                        ((HasId) customizer).getId())
-                        : HierarchicalPropertiesEvaluator
-                                .evaluate(applicationContext.getEnvironment(),
-                                        "camel.component.customizer",
-                                        "camel.component.google-mail-stream.customizer");
+                        ? HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.component.customizer",
+                                "camel.component.google-mail-stream.customizer",
+                                ((HasId) customizer).getId())
+                        : HierarchicalPropertiesEvaluator.evaluate(
+                                applicationContext.getEnvironment(),
+                                "camel.component.customizer",
+                                "camel.component.google-mail-stream.customizer");
                 if (useCustomizer) {
                     LOGGER.debug("Configure component {}, with customizer {}",
                             component, customizer);

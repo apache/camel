@@ -79,8 +79,7 @@ public class FhirXmlDataFormatAutoConfiguration {
 
     @Bean(name = "fhirXml-dataformat-factory")
     @ConditionalOnMissingBean(FhirXmlDataFormat.class)
-    public DataFormatFactory configureFhirXmlDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureFhirXmlDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

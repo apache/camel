@@ -5475,6 +5475,7 @@
       <properties>
         <maven.test.skip.exec>true</maven.test.skip.exec>
         <assembly.skipAssembly>true</assembly.skipAssembly>
+        <fastinstall>true</fastinstall>
         <noassembly>true</noassembly>
       </properties>
     </profile>

@@ -103,7 +103,7 @@ public class GoogleSheetsStreamComponentConfiguration
         private String refreshToken;
         /**
          * Google sheets application name. Example would be
-         * camel-google-sheets/1.0
+         * "camel-google-sheets/1.0"
          */
         private String applicationName;
         /**

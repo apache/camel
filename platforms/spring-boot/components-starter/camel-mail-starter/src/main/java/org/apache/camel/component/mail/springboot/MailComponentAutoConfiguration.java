@@ -75,8 +75,7 @@ public class MailComponentAutoConfiguration {
     }
 
     @Lazy
-    @Bean(name = {"imap-component", "imaps-component", "pop3-component",
-            "pop3s-component", "smtp-component", "smtps-component"})
+    @Bean({"imap-component", "imaps-component", "pop3-component", "pop3s-component", "smtp-component", "smtps-component"})
     @ConditionalOnMissingBean(MailComponent.class)
     public MailComponent configureMailComponent() throws Exception {
         MailComponent component = new MailComponent();

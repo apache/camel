@@ -18,7 +18,6 @@ package org.apache.camel.component.aws.ddb.springboot;
 
 import javax.annotation.Generated;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import org.apache.camel.component.aws.ddb.DdbComponent;
 import org.apache.camel.component.aws.ddb.DdbOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;

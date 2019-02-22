@@ -131,7 +131,7 @@ The component supports 16 options, which are listed below.
 | *camel.component.google-sheets-stream.client-factory* | To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use BatchGoogleSheetsClientFactory. The option is a org.apache.camel.component.google.sheets.GoogleSheetsClientFactory type. |  | String
 | *camel.component.google-sheets-stream.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-sheets-stream.configuration.api-name* | Sets the apiName. |  | String
-| *camel.component.google-sheets-stream.configuration.application-name* | Google sheets application name. Example would be camel-google-sheets/1.0 |  | String
+| *camel.component.google-sheets-stream.configuration.application-name* | Google sheets application name. Example would be "camel-google-sheets/1.0" |  | String
 | *camel.component.google-sheets-stream.configuration.client-id* | Client ID of the sheets application |  | String
 | *camel.component.google-sheets-stream.configuration.client-secret* | Client secret of the sheets application |  | String
 | *camel.component.google-sheets-stream.configuration.include-grid-data* | True if grid data should be returned. | false | Boolean

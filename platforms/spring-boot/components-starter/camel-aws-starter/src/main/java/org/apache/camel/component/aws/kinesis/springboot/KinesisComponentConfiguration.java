@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.kinesis.springboot;
 import javax.annotation.Generated;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
-import org.apache.camel.component.aws.kinesis.KinesisComponent;
 import org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;

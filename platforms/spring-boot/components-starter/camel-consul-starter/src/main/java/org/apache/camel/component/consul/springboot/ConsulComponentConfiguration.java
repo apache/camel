@@ -186,8 +186,6 @@ public class ConsulComponentConfiguration
         private String url;
         /**
          * The data center
-         * 
-         * @deprecated replaced by {@link #setDatacenter(String)} ()}
          */
         @Deprecated
         private String dc;

@@ -190,7 +190,7 @@ public class SshComponent extends DefaultComponent {
      * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
      */
     @Deprecated
-    @Metadata(label = "security")
+    @Metadata(label = "security", deprecationNote = "As of version 2.11, replaced by certResource.")
     public void setCertFilename(String certFilename) {
         getConfiguration().setCertFilename(certFilename);
     }

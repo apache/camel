@@ -77,8 +77,7 @@ public class RestSwaggerComponentAutoConfiguration {
     @Lazy
     @Bean(name = "rest-swagger-component")
     @ConditionalOnMissingBean(RestSwaggerComponent.class)
-    public RestSwaggerComponent configureRestSwaggerComponent()
-            throws Exception {
+    public RestSwaggerComponent configureRestSwaggerComponent() throws Exception {
         RestSwaggerComponent component = new RestSwaggerComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();
