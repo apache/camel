@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 290 in 210 JAR artifacts (0 deprecated)
+Number of Components: 291 in 211 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -153,6 +153,9 @@ Number of Components: 290 in 210 JAR artifacts (0 deprecated)
 
 | link:camel-cassandraql/src/main/docs/cql-component.adoc[Cassandra CQL] (camel-cassandraql) +
 `cql:beanRef:hosts:port/keyspace` | 2.15 | The cql component aims at integrating Cassandra 2.0 using the CQL3 API (not the Thrift API).
+
+| link:camel-chatscript/src/main/docs/chatscript-component.adoc[ChatScript] (camel-chatscript) +
+`chatscript:host:port/botname` | 3.0 | Represents a ChatScript endpoint.
 
 | link:camel-chunk/src/main/docs/chunk-component.adoc[Chunk] (camel-chunk) +
 `chunk:resourceUri` | 2.15 | Transforms the message using a Chunk template.
