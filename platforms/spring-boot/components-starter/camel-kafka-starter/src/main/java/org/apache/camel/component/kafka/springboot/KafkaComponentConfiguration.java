@@ -307,7 +307,8 @@ public class KafkaComponentConfiguration
         /**
          * URL of the Confluent schema registry servers to use. The format is
          * host1:port1,host2:port2. This is known as schema.registry.url in the
-         * Confluent documentation.
+         * Confluent documentation. This option is only available in the
+         * Confluent Kafka product (not standard Apache Kafka)
          */
         private String schemaRegistryURL;
         /**
@@ -372,9 +373,9 @@ public class KafkaComponentConfiguration
          * order and the first rule that matches a principal name is used to map
          * it to a short name. Any later rules in the list are ignored. By
          * default, principal names of the form {username}/{hostname}{REALM} are
-         * mapped to {username}. For more details on the format please see a
-         * href=\#security_authz\ security authorization and acls. Multiple
-         * values can be separated by comma
+         * mapped to {username}. For more details on the format please see the
+         * security authorization and acls documentation.. Multiple values can
+         * be separated by comma
          */
         private String kerberosPrincipalToLocalRules = "DEFAULT";
         /**
