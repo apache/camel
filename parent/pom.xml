@@ -471,8 +471,8 @@
     <maven-jar-plugin-version>3.1.1</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
-    <maven-plugin-plugin-version>3.5.2</maven-plugin-plugin-version>
-    <maven-plugin-annotations-version>3.5</maven-plugin-annotations-version>
+    <maven-plugin-plugin-version>3.6.0</maven-plugin-plugin-version>
+    <maven-plugin-annotations-version>3.6.0</maven-plugin-annotations-version>
     <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
     <maven-remote-resources-plugin-version>1.5</maven-remote-resources-plugin-version>
     <!-- resources plugin needed by Camel maven archetypes -->
