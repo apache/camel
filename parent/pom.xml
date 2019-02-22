@@ -468,7 +468,7 @@
     <maven-checkstyle-version>7.6.1</maven-checkstyle-version>
     <maven-owasp-plugin-version>4.0.2</maven-owasp-plugin-version>
     <maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
-    <maven-jar-plugin-version>3.0.2</maven-jar-plugin-version>
+    <maven-jar-plugin-version>3.1.1</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
     <maven-plugin-plugin-version>3.5.2</maven-plugin-plugin-version>
