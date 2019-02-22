@@ -24,7 +24,7 @@
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
     <version>3.0.0-SNAPSHOT</version>
-</parent>
+  </parent>
     
   <groupId>org.apache.camel.component</groupId>
   <artifactId>camel-chatscript</artifactId>
@@ -34,9 +34,8 @@
   <description>Camel support for ChatScript</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.chatscript.*</camel.osgi.export.pkg>
-    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=chatscript</camel.osgi.export.service>
-</properties>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
