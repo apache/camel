@@ -79,8 +79,7 @@ public class ZipFileDataFormatAutoConfiguration {
 
     @Bean(name = "zipfile-dataformat-factory")
     @ConditionalOnMissingBean(ZipFileDataFormat.class)
-    public DataFormatFactory configureZipFileDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureZipFileDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

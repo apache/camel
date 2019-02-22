@@ -79,8 +79,7 @@ public class BarcodeDataFormatAutoConfiguration {
 
     @Bean(name = "barcode-dataformat-factory")
     @ConditionalOnMissingBean(BarcodeDataFormat.class)
-    public DataFormatFactory configureBarcodeDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureBarcodeDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

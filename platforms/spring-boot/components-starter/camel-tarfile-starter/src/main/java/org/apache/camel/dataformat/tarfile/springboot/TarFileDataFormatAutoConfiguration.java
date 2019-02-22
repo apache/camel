@@ -79,8 +79,7 @@ public class TarFileDataFormatAutoConfiguration {
 
     @Bean(name = "tarfile-dataformat-factory")
     @ConditionalOnMissingBean(TarFileDataFormat.class)
-    public DataFormatFactory configureTarFileDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureTarFileDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

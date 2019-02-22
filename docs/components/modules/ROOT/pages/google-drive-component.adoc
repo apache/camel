@@ -137,7 +137,7 @@ The component supports 11 options, which are listed below.
 | *camel.component.google-drive.client-factory* | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory. The option is a org.apache.camel.component.google.drive.GoogleDriveClientFactory type. |  | String
 | *camel.component.google-drive.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-drive.configuration.api-name* | What kind of operation to perform |  | GoogleDriveApiName
-| *camel.component.google-drive.configuration.application-name* | Google drive application name. Example would be camel-google-drive/1.0 |  | String
+| *camel.component.google-drive.configuration.application-name* | Google drive application name. Example would be "camel-google-drive/1.0" |  | String
 | *camel.component.google-drive.configuration.client-id* | Client ID of the drive application |  | String
 | *camel.component.google-drive.configuration.client-secret* | Client secret of the drive application |  | String
 | *camel.component.google-drive.configuration.method-name* | What sub operation to use for the selected operation |  | String

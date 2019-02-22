@@ -115,7 +115,7 @@ public class S3ComponentConfiguration
         private Long partSize = 26214400L;
         /**
          * If it is true, camel will upload the file with multi part format, the
-         * part size is decided by the option of partSize
+         * part size is decided by the option of `partSize`
          */
         private Boolean multiPartUpload = false;
         /**
@@ -127,8 +127,8 @@ public class S3ComponentConfiguration
          */
         private String secretKey;
         /**
-         * Reference to a com.amazonaws.services.s3.AmazonS3 in the
-         * link:registry.htmlRegistry.
+         * Reference to a `com.amazonaws.services.s3.AmazonS3` in the
+         * link:registry.html[Registry].
          */
         private AmazonS3 amazonS3Client;
         /**
@@ -163,11 +163,12 @@ public class S3ComponentConfiguration
         /**
          * Delete objects from S3 after they have been retrieved. The delete is
          * only performed if the Exchange is committed. If a rollback occurs,
-         * the object is not deleted. If this option is false, then the same
-         * objects will be retrieve over and over again on the polls. Therefore
-         * you need to use the Idempotent Consumer EIP in the route to filter
-         * out duplicates. You can filter using the S3Constants#BUCKET_NAME and
-         * S3Constants#KEY headers, or only the S3Constants#KEY header.
+         * the object is not deleted. <p/> If this option is false, then the
+         * same objects will be retrieve over and over again on the polls.
+         * Therefore you need to use the Idempotent Consumer EIP in the route to
+         * filter out duplicates. You can filter using the {@link
+         * S3Constants#BUCKET_NAME} and {@link S3Constants#KEY} headers, or only
+         * the {@link S3Constants#KEY} header.
          */
         private Boolean deleteAfterRead = true;
         /**
@@ -176,17 +177,17 @@ public class S3ComponentConfiguration
         private Boolean deleteAfterWrite = false;
         /**
          * The policy for this queue to set in the
-         * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
+         * `com.amazonaws.services.s3.AmazonS3#setBucketPolicy()` method.
          */
         private String policy;
         /**
          * The storage class to set in the
-         * com.amazonaws.services.s3.model.PutObjectRequest request.
+         * `com.amazonaws.services.s3.model.PutObjectRequest` request.
          */
         private String storageClass;
         /**
          * Sets the server-side encryption algorithm when encrypting the object
-         * using AWS-managed keys. For example use AES256.
+         * using AWS-managed keys. For example use <tt>AES256</tt>.
          */
         private String serverSideEncryption;
         /**
@@ -251,6 +252,11 @@ public class S3ComponentConfiguration
          * Define if Force Global Bucket Access enabled is true or false
          */
         private Boolean forceGlobalBucketAccessEnabled = false;
+        /**
+         * Set whether the S3 client should expect to load credentials on an EC2
+         * instance or to expect static credentials to be passed in.
+         */
+        private Boolean useIAMCredentials = false;
 
         public Long getPartSize() {
             return partSize;
@@ -484,6 +490,14 @@ public class S3ComponentConfiguration
         public void setForceGlobalBucketAccessEnabled(
                 Boolean forceGlobalBucketAccessEnabled) {
             this.forceGlobalBucketAccessEnabled = forceGlobalBucketAccessEnabled;
+        }
+
+        public Boolean getUseIAMCredentials() {
+            return useIAMCredentials;
+        }
+
+        public void setUseIAMCredentials(Boolean useIAMCredentials) {
+            this.useIAMCredentials = useIAMCredentials;
         }
     }
 }

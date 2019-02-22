@@ -20,7 +20,6 @@ import java.util.List;
 import javax.annotation.Generated;
 import io.atomix.catalyst.transport.Address;
 import org.apache.camel.component.atomix.client.map.AtomixMap.Action;
-import org.apache.camel.component.atomix.client.map.AtomixMapComponent;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

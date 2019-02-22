@@ -253,6 +253,21 @@ public class SqsComponentConfiguration
          * Define if Server Side Encryption is enabled or not on the queue
          */
         private Boolean serverSideEncryptionEnabled = false;
+        /**
+         * Only for FIFO queues. Strategy for setting the messageGroupId on the
+         * message. Can be one of the following options: *useConstant*,
+         * *useExchangeId*, *usePropertyValue*. For the *usePropertyValue*
+         * option, the value of property "CamelAwsMessageGroupId" will be used.
+         */
+        private String messageGroupIdStrategy;
+        /**
+         * Only for FIFO queues. Strategy for setting the messageDeduplicationId
+         * on the message. Can be one of the following options: *useExchangeId*,
+         * *useContentBasedDeduplication*. For the
+         * *useContentBasedDeduplication* option, no messageDeduplicationId will
+         * be set on the message.
+         */
+        private String messageDeduplicationIdStrategy = "useExchangeId";
 
         public String getAmazonAWSHost() {
             return amazonAWSHost;
@@ -487,6 +502,23 @@ public class SqsComponentConfiguration
         public void setServerSideEncryptionEnabled(
                 Boolean serverSideEncryptionEnabled) {
             this.serverSideEncryptionEnabled = serverSideEncryptionEnabled;
+        }
+
+        public String getMessageGroupIdStrategy() {
+            return messageGroupIdStrategy;
+        }
+
+        public void setMessageGroupIdStrategy(String messageGroupIdStrategy) {
+            this.messageGroupIdStrategy = messageGroupIdStrategy;
+        }
+
+        public String getMessageDeduplicationIdStrategy() {
+            return messageDeduplicationIdStrategy;
+        }
+
+        public void setMessageDeduplicationIdStrategy(
+                String messageDeduplicationIdStrategy) {
+            this.messageDeduplicationIdStrategy = messageDeduplicationIdStrategy;
         }
     }
 }

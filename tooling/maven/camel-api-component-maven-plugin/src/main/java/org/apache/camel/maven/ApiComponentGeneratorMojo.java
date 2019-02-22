@@ -33,7 +33,7 @@ import org.apache.velocity.VelocityContext;
  * Generates Camel Component based on a collection of APIs.
  */
 @Mojo(name = "fromApis", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
-        defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+        defaultPhase = LifecyclePhase.GENERATE_SOURCES, threadSafe = true)
 public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     /**

@@ -89,7 +89,9 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     }
 
     public static void refresh(BuildContext buildContext, Path file) {
-        buildContext.refresh(file.toFile());
+        if (buildContext != null) {
+            buildContext.refresh(file.toFile());
+        }
     }
 
     public static void updateResource(BuildContext buildContext, Path out, String data) {

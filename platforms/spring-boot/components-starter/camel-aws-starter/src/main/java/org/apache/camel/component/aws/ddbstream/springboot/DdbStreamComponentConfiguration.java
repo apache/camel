@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.ddbstream.springboot;
 import javax.annotation.Generated;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
 import com.amazonaws.services.dynamodbv2.model.ShardIteratorType;
-import org.apache.camel.component.aws.ddbstream.DdbStreamComponent;
 import org.apache.camel.component.aws.ddbstream.SequenceNumberProvider;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -77,8 +77,7 @@ public class BlobServiceComponentAutoConfiguration {
     @Lazy
     @Bean(name = "azure-blob-component")
     @ConditionalOnMissingBean(BlobServiceComponent.class)
-    public BlobServiceComponent configureBlobServiceComponent()
-            throws Exception {
+    public BlobServiceComponent configureBlobServiceComponent() throws Exception {
         BlobServiceComponent component = new BlobServiceComponent();
         component.setCamelContext(camelContext);
         Map<String, Object> parameters = new HashMap<>();

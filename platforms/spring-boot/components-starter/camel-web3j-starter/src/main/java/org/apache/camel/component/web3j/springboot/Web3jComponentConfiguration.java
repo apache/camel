@@ -181,6 +181,21 @@ public class Web3jComponentConfiguration
          */
         private BigInteger position;
         /**
+         * The block number, or the string "latest" for the last mined block or
+         * "pending", "earliest" for not yet mined transactions.
+         */
+        private String fromBlock = "latest";
+        /**
+         * The block number, or the string "latest" for the last mined block or
+         * "pending", "earliest" for not yet mined transactions.
+         */
+        private String toBlock = "latest";
+        /**
+         * The block number, or the string "latest" for the last mined block or
+         * "pending", "earliest" for not yet mined transactions.
+         */
+        private String atBlock = "latest";
+        /**
          * Contract address or a list of addresses.
          */
         private List addresses;
@@ -409,6 +424,30 @@ public class Web3jComponentConfiguration
 
         public void setPosition(BigInteger position) {
             this.position = position;
+        }
+
+        public String getFromBlock() {
+            return fromBlock;
+        }
+
+        public void setFromBlock(String fromBlock) {
+            this.fromBlock = fromBlock;
+        }
+
+        public String getToBlock() {
+            return toBlock;
+        }
+
+        public void setToBlock(String toBlock) {
+            this.toBlock = toBlock;
+        }
+
+        public String getAtBlock() {
+            return atBlock;
+        }
+
+        public void setAtBlock(String atBlock) {
+            this.atBlock = atBlock;
         }
 
         public List getAddresses() {

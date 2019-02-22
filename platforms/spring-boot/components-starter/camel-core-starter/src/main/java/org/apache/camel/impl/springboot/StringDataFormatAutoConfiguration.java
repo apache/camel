@@ -79,8 +79,7 @@ public class StringDataFormatAutoConfiguration {
 
     @Bean(name = "string-dataformat-factory")
     @ConditionalOnMissingBean(StringDataFormat.class)
-    public DataFormatFactory configureStringDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureStringDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {
