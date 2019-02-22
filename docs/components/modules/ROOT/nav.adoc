@@ -54,6 +54,7 @@
 * xref:caffeine-loadcache-component.adoc[Caffeine LoadCache Component]
 * xref:cql-component.adoc[Cassandra CQL Component]
 * xref:cdi.adoc[Camel CDI]
+* xref:chatscript-component.adoc[ChatScript Component]
 * xref:chunk-component.adoc[Chunk Component]
 * xref:cm-sms-component.adoc[CM SMS Gateway Component]
 * xref:cmis-component.adoc[CMIS Component]
