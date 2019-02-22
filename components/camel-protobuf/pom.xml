@@ -152,6 +152,7 @@
             </goals>
             <configuration>
               <protocArtifact>com.google.protobuf:protoc:${protobuf-version}:exe:${os.detected.classifier}</protocArtifact>
+              <checkStaleness>true</checkStaleness>
               <skip>${skipTests}</skip>
             </configuration>
           </execution>
