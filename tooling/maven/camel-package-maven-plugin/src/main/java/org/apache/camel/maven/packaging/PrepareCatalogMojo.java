@@ -59,7 +59,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final String[] EXCLUDE_DOC_FILES = {
         "camel-core-osgi", "camel-core-xml",
-        "camel-http-common", "camel-jetty", "camel-jetty-common"
+        "camel-http-common", "camel-jetty-common"
     };
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
