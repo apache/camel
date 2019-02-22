@@ -177,6 +177,18 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-kafka-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
 
 The component supports 99 options, which are listed below.
 
@@ -217,7 +229,7 @@ The component supports 99 options, which are listed below.
 | *camel.component.kafka.configuration.kafka-header-serializer* | Sets custom KafkaHeaderDeserializer for serialization camel headers values to kafka headers values. |  | KafkaHeaderSerializer
 | *camel.component.kafka.configuration.kerberos-before-relogin-min-time* | Login thread sleep time between refresh attempts. | 60000 | Integer
 | *camel.component.kafka.configuration.kerberos-init-cmd* | Kerberos kinit command path. Default is /usr/bin/kinit | /usr/bin/kinit | String
-| *camel.component.kafka.configuration.kerberos-principal-to-local-rules* | A list of rules for mapping from principal names to short names (typically operating system usernames). The rules are evaluated in order and the first rule that matches a principal name is used to map it to a short name. Any later rules in the list are ignored. By default, principal names of the form {username}/{hostname}{REALM} are mapped to {username}. For more details on the format please see a href=\#security_authz\ security authorization and acls. Multiple values can be separated by comma | DEFAULT | String
+| *camel.component.kafka.configuration.kerberos-principal-to-local-rules* | A list of rules for mapping from principal names to short names (typically operating system usernames). The rules are evaluated in order and the first rule that matches a principal name is used to map it to a short name. Any later rules in the list are ignored. By default, principal names of the form {username}/{hostname}{REALM} are mapped to {username}. For more details on the format please see the security authorization and acls documentation.. Multiple values can be separated by comma | DEFAULT | String
 | *camel.component.kafka.configuration.kerberos-renew-jitter* | Percentage of random jitter added to the renewal time. |  | Double
 | *camel.component.kafka.configuration.kerberos-renew-window-factor* | Login thread will sleep until the specified window factor of time from last refresh to ticket's expiry has been reached, at which time it will try to renew the ticket. |  | Double
 | *camel.component.kafka.configuration.key* | The record key (or null if no key is specified). If this option has been configured then it take precedence over header KafkaConstants#KEY |  | String
@@ -252,7 +264,7 @@ The component supports 99 options, which are listed below.
 | *camel.component.kafka.configuration.sasl-jaas-config* | Expose the kafka sasl.jaas.config parameter Example: org.apache.kafka.common.security.plain.PlainLoginModule required username=USERNAME password=PASSWORD; |  | String
 | *camel.component.kafka.configuration.sasl-kerberos-service-name* | The Kerberos principal name that Kafka runs as. This can be defined either in Kafka's JAAS config or in Kafka's config. |  | String
 | *camel.component.kafka.configuration.sasl-mechanism* | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see a href= http://www.iana.org/assignments/sasl- mechanisms/sasl-mechanisms.xhtmlhttp ://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml | GSSAPI | String
-| *camel.component.kafka.configuration.schema-registry-u-r-l* | URL of the Confluent schema registry servers to use. The format is host1:port1,host2:port2. This is known as schema.registry.url in the Confluent documentation. |  | String
+| *camel.component.kafka.configuration.schema-registry-u-r-l* | URL of the Confluent schema registry servers to use. The format is host1:port1,host2:port2. This is known as schema.registry.url in the Confluent documentation. This option is only available in the Confluent Kafka product (not standard Apache Kafka) |  | String
 | *camel.component.kafka.configuration.security-protocol* | Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT and SSL are supported | PLAINTEXT | String
 | *camel.component.kafka.configuration.seek-to* | Set if KafkaConsumer will read from beginning or end on startup: beginning : read from beginning end : read from end This is replacing the earlier property seekToBeginning |  | String
 | *camel.component.kafka.configuration.send-buffer-bytes* | Socket write buffer size | 131072 | Integer
