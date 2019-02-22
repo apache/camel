@@ -76,4 +76,6 @@ with the following path and query parameters:
 | *chatUserName* (username) | Username who initializes the CS conversation. To be set when chat is initialized from camel route |  | String
 |===
 // endpoint options: END
+
 // spring-boot-auto-configure options: START
+// spring-boot-auto-configure options: END

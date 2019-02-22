@@ -39,12 +39,12 @@ import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DE
 @UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botname",  producerOnly = true, label = "ai,chatscript")
 public class ChatScriptEndpoint extends DefaultEndpoint { 
     @UriPath (description = "Hostname or IP of the server on which CS server is running") 
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String host;
     @UriPath(description = "Port on which ChatScript is listening to", defaultValue = "" + DEFAULT_PORT)
     private int port;
     @UriPath(description = "Name of the Bot in CS to converse with")
-    @Metadata(required = "true")
+    @Metadata(required = true)
     private String botName;
     @UriParam(description = "Username who initializes the CS conversation. To be set when chat is initialized from camel route", label = "username")
     private String chatUserName;
