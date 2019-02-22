@@ -58,8 +58,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common")
     private String brokers;
     @UriParam(label = "common")
-    private String schemaRegistryURL;
-    @UriParam(label = "common")
     private String clientId;
     @UriParam(label = "common", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy = new KafkaHeaderFilterStrategy();
@@ -314,6 +312,10 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "common,security", secret = true)
     // sasl.jaas.config
     private String saslJaasConfig;
+
+    // Confluent only options
+    @UriParam(label = "confluent")
+    private String schemaRegistryURL;
 
     public KafkaConfiguration() {
     }
@@ -805,6 +807,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * URL of the Confluent schema registry servers to use. 
      * The format is host1:port1,host2:port2. 
      * This is known as schema.registry.url in the Confluent documentation.
+     * <p/>
+     * This option is only available in the Confluent Kafka product (not standard Apache Kafka)
      */
     public void setSchemaRegistryURL(String schemaRegistryURL) {
         this.schemaRegistryURL = schemaRegistryURL;
@@ -952,8 +956,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * and the first rule that matches a principal name is used to map it to a
      * short name. Any later rules in the list are ignored. By default,
      * principal names of the form {username}/{hostname}@{REALM} are mapped to
-     * {username}. For more details on the format please see <a
-     * href=\"#security_authz\"> security authorization and acls</a>.
+     * {username}. For more details on the format please see the security authorization and acls documentation..
      * <p/>
      * Multiple values can be separated by comma
      */
