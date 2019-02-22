@@ -166,7 +166,6 @@ public final class PackageHelper {
             boolean special = "camel-core-osgi".equals(name)
                 || "camel-core-xml".equals(name)
                 || "camel-http-common".equals(name)
-                || "camel-jetty".equals(name)
                 || "camel-jetty-common".equals(name);
             boolean special2 = "camel-as2".equals(name)
                 || "camel-box".equals(name)
