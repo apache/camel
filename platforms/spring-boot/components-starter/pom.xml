@@ -240,6 +240,7 @@
     <module>camel-jmx-starter</module>
     <module>camel-johnzon-starter</module>
     <module>camel-jolt-starter</module>
+    <module>camel-jooq-starter</module>
     <module>camel-jpa-starter</module>
     <module>camel-jsch-starter</module>
     <module>camel-json-validator-starter</module>
