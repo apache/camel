@@ -395,6 +395,7 @@
         <jolt-version>0.1.1</jolt-version>
         <jolt-bundle-version>0.1.1_1</jolt-bundle-version>
         <jool-version>0.9.12</jool-version>
+        <jooq-version>3.11.9</jooq-version>
         <johnzon-version>1.1.11</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
         <josql-bundle-version>1.5_5</josql-bundle-version>
@@ -551,6 +552,7 @@
         <pax-logging-version>1.8.6</pax-logging-version>
         <pdfbox-version>2.0.14</pdfbox-version>
         <pgjdbc-ng-driver-version>0.7.1</pgjdbc-ng-driver-version>
+        <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
         <protobuf-version>3.5.1</protobuf-version>
         <protobuf-javanano-version>3.1.0</protobuf-javanano-version>
         <protobuf-maven-plugin-version>0.5.1</protobuf-maven-plugin-version>
@@ -642,6 +644,7 @@
         <spring-xml-bundle-version>3.0.6.RELEASE_1</spring-xml-bundle-version>
         <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
         <spymemcached-version>2.12.0</spymemcached-version>
+        <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>2.7.5</squareup-okhttp-version>
         <squareup-okhttp-bundle-version>2.7.5_1</squareup-okhttp-bundle-version>
         <squareup-okio-bundle-version>1.15.0_1</squareup-okio-bundle-version>
@@ -1557,6 +1560,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jolt</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jooq</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3041,6 +3049,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jolt-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jooq-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -5335,7 +5348,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>properties-maven-plugin</artifactId>
-                    <version>1.0-alpha-2</version>
+                    <version>${properties-maven-plugin-version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>

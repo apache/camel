@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <import resource="classpath:jooq-spring.xml" />
+
+    <!-- Configure component -->
+    <bean id="jooq" class="org.apache.camel.component.jooq.JooqComponent">
+        <property name="configuration">
+            <bean id="jooqConfiguration" class="org.apache.camel.component.jooq.JooqConfiguration">
+                <property name="databaseConfiguration" ref="jooqConfig"/>
+            </bean>
+        </property>
+    </bean>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <!-- Create and store entity -->
+        <route id="insert-route">
+            <from uri="direct:insert"/>
+            <transform>
+                <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="generate"/>
+            </transform>
+            <!-- Send entity to endpoint -->
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord" />
+        </route>
+
+        <!-- Create JOOQ ResultQuery and fetch -->
+        <route id="execute-route">
+            <from uri="direct:fetch"/>
+            <transform>
+                <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="select"/>
+            </transform>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch" />
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- Create JOOQ Query end execute -->
+        <route id="query-route">
+            <from uri="direct:execute"/>
+            <transform>
+                <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="delete"/>
+            </transform>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute" />
+            <log message="Executed ${body}"/>
+        </route>
+    </camelContext>
+</beans>
