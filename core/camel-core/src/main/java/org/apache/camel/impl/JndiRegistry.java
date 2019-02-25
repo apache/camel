@@ -126,6 +126,7 @@ public class JndiRegistry implements Registry {
         return answer;
     }
 
+    @Override
     public void bind(String name, Object object) {
         try {
             getContext().bind(name, object);
