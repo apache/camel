@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.Registry;
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
@@ -30,11 +31,11 @@ import org.osgi.service.blueprint.reflect.BeanMetadata;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.ReferenceMetadata;
 
-public class BlueprintContainerRegistry implements Registry {
+public class BlueprintContainerBeanRepository implements BeanRepository {
 
     private final BlueprintContainer blueprintContainer;
 
-    public BlueprintContainerRegistry(BlueprintContainer blueprintContainer) {
+    public BlueprintContainerBeanRepository(BlueprintContainer blueprintContainer) {
         this.blueprintContainer = blueprintContainer;
     }
 
