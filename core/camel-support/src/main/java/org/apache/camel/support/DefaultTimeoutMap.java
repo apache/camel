@@ -34,6 +34,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.TimeoutMap.Listener.Type.Evict;
+import static org.apache.camel.TimeoutMap.Listener.Type.Put;
+import static org.apache.camel.TimeoutMap.Listener.Type.Remove;
+
 /**
  * Default implementation of the {@link TimeoutMap}.
  * <p/>
@@ -55,6 +59,8 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     private volatile ScheduledFuture<?> future;
     private final long purgePollTime;
     private final Lock lock;
+
+    private final List<Listener<K,V>> listeners = new ArrayList<>(2);
 
     public DefaultTimeoutMap(ScheduledExecutorService executor) {
         this(executor, 1000);
@@ -89,43 +95,49 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
         return entry.getValue();
     }
-    
+
     public V put(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
         lock.lock();
         try {
             updateExpireTime(entry);
             TimeoutMapEntry<K, V> result = map.put(key, entry);
-            return result != null ? result.getValue() : null;
+            return unwrap(result);
         } finally {
             lock.unlock();
+            emitEvent(Put, key, value);
         }
     }
     
     public V putIfAbsent(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
+        TimeoutMapEntry<K, V> result = null;
         lock.lock();
         try {
             updateExpireTime(entry);
             //Just make sure we don't override the old entry
-            TimeoutMapEntry<K, V> result = map.putIfAbsent(key, entry);
-            return result != null ? result.getValue() : null;
+            result = map.putIfAbsent(key, entry);
+            return unwrap(result);
         } finally {
             lock.unlock();
+            if (result != entry) {
+                emitEvent(Put, key, value); // conditional on map being changed
+            }
         }
     }
 
     public V remove(K key) {
-        TimeoutMapEntry<K, V> entry;
-
+        V value = null;
         lock.lock();
         try {
-            entry = map.remove(key);
+            value = unwrap(map.remove(key));
+            return value;
         } finally {
             lock.unlock();
+            if ( value!= null ) {
+                emitEvent(Remove, key, value); // conditional on map being changed
+            }
         }
-
-        return entry != null ? entry.getValue() : null;
     }
 
     public int size() {
@@ -151,7 +163,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
     }
 
-    public void purge() {
+    protected void purge() {
         log.trace("There are {} in the timeout map", map.size());
         if (map.isEmpty()) {
             return;
@@ -159,8 +171,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         
         long now = currentTime();
 
-        List<TimeoutMapEntry<K, V>> expired = new ArrayList<>();
-
+        List<TimeoutMapEntry<K, V>> expired = new ArrayList<>(map.size());
         lock.lock();
         try {
             // need to find the expired entries and add to the expired list
@@ -186,31 +197,16 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
                     }
                 });
 
-                List<K> evicts = new ArrayList<>(expired.size());
-                try {
-                    // now fire eviction notification
-                    for (TimeoutMapEntry<K, V> entry : expired) {
-                        boolean evict = false;
-                        try {
-                            evict = onEviction(entry.getKey(), entry.getValue());
-                        } catch (Throwable t) {
-                            log.warn("Exception happened during eviction of entry ID {}, won't evict and will continue trying: {}", 
-                                    entry.getValue(), t);
-                        }
-                        if (evict) {
-                            // okay this entry should be evicted
-                            evicts.add(entry.getKey());
-                        }
-                    }
-                } finally {
-                    // and must remove from list after we have fired the notifications
-                    for (K key : evicts) {
-                        map.remove(key);
-                    }
+                // and must remove from list after we have fired the notifications
+                for (TimeoutMapEntry<K, V> entry : expired) {
+                    map.remove(entry.getKey());
                 }
             }
         } finally {
             lock.unlock();
+            for (TimeoutMapEntry<K, V> entry : expired) {
+                emitEvent(Evict, entry.getKey(), entry.getValue());
+            }
         }
     }
 
@@ -228,6 +224,25 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     // Implementation methods
     // -------------------------------------------------------------------------
 
+    private static <K,V> V unwrap( TimeoutMapEntry<K, V> entry ) {
+        return entry == null ? null : entry.getValue();
+    }
+
+    @Override
+    public void addListener(Listener<K, V> listener) {
+        this.listeners.add(listener);
+    }
+
+    private void emitEvent(Listener.Type type, K key, V value) {
+        for (Listener<K, V> listener : listeners) {
+            try {
+                listener.timeoutMapEvent(type, key, value);
+            } catch (Throwable t) {
+                // Ignore
+            }
+        }
+    }
+
     /**
      * lets schedule each time to allow folks to change the time at runtime
      */
@@ -239,10 +254,6 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
      * A hook to allow derivations to avoid evicting the current entry
      */
     protected boolean isValidForEviction(TimeoutMapEntry<K, V> entry) {
-        return true;
-    }
-
-    public boolean onEviction(K key, V value) {
         return true;
     }
 
