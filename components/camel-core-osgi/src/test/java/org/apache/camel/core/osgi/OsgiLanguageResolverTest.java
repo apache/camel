@@ -22,8 +22,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.junit.Test;
 
 public class OsgiLanguageResolverTest extends CamelOsgiTestSupport {
@@ -38,8 +39,8 @@ public class OsgiLanguageResolverTest extends CamelOsgiTestSupport {
 
     @Test
     public void testOsgiResolverFindLanguageFallbackTest() throws IOException {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("fuffy-language", new SampleLanguage(true));
+        Registry registry = new DefaultRegistry();
+        registry.bind("fuffy-language", new SampleLanguage(true));
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 
@@ -51,9 +52,9 @@ public class OsgiLanguageResolverTest extends CamelOsgiTestSupport {
 
     @Test
     public void testOsgiResolverFindLanguageDoubleFallbackTest() throws IOException {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("fuffy", new SampleLanguage(false));
-        registry.put("fuffy-language", new SampleLanguage(true));
+        Registry registry = new DefaultRegistry();
+        registry.bind("fuffy", new SampleLanguage(false));
+        registry.bind("fuffy-language", new SampleLanguage(true));
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 

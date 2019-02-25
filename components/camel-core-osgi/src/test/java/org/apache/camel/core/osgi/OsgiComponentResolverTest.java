@@ -21,7 +21,8 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.junit.Test;
 
 public class OsgiComponentResolverTest extends CamelOsgiTestSupport {
@@ -37,8 +38,8 @@ public class OsgiComponentResolverTest extends CamelOsgiTestSupport {
 
     @Test
     public void testOsgiResolverFindComponentFallbackTest() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("allstar-component", new SampleComponent(true));
+        Registry registry = new DefaultRegistry();
+        registry.bind("allstar-component", new SampleComponent(true));
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 
@@ -50,9 +51,9 @@ public class OsgiComponentResolverTest extends CamelOsgiTestSupport {
 
     @Test
     public void testOsgiResolverFindLanguageDoubleFallbackTest() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("allstar", new SampleComponent(false));
-        registry.put("allstar-component", new SampleComponent(true));
+        Registry registry = new DefaultRegistry();
+        registry.bind("allstar", new SampleComponent(false));
+        registry.bind("allstar-component", new SampleComponent(true));
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 

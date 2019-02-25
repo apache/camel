@@ -22,8 +22,9 @@ import java.io.OutputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.junit.Test;
 
 public class OsgiDataFormatResolverTest extends CamelOsgiTestSupport {
@@ -31,8 +32,8 @@ public class OsgiDataFormatResolverTest extends CamelOsgiTestSupport {
 
     @Test
     public void testOsgiResolverFindDataFormatFallbackTest() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("allstar-dataformat", new SampleDataFormat(true));
+        Registry registry = new DefaultRegistry();
+        registry.bind("allstar-dataformat", new SampleDataFormat(true));
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 
@@ -44,9 +45,9 @@ public class OsgiDataFormatResolverTest extends CamelOsgiTestSupport {
 
     @Test
     public void testOsgiResolverFindLanguageDoubleFallbackTest() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("allstar", new SampleDataFormat(false));
-        registry.put("allstar-dataformat", new SampleDataFormat(true));
+        Registry registry = new DefaultRegistry();
+        registry.bind("allstar", new SampleDataFormat(false));
+        registry.bind("allstar-dataformat", new SampleDataFormat(true));
 
         CamelContext camelContext = new DefaultCamelContext(registry);
 

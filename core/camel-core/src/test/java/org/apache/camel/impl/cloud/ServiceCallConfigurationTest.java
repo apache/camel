@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;

@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Assert;
 import org.junit.Test;
 
