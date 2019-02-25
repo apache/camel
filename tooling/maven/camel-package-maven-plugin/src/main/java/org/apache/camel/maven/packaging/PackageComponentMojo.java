@@ -147,7 +147,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
                         text = text.replaceFirst(" {4}\"deprecated\": false,", "    \"deprecated\": true,");
                     }
 
-                    writeText(file, text);
+                    updateResource(null, file.toPath(), text);
                 } catch (IOException e) {
                     throw new MojoExecutionException("Failed to update file " + file + ". Reason: " + e, e);
                 }
