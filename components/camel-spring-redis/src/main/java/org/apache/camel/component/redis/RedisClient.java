@@ -469,7 +469,7 @@ public class RedisClient {
     
     public Long geoadd(String key, double latitude, double longitude, Object member) {
         Point point = new Point(latitude,  longitude);
-        return redisTemplate.opsForGeo().add(key, point , member);
+        return redisTemplate.opsForGeo().add(key, point, member);
     }
     
     public Distance geodist(String key, Object member1, Object member2) {
