@@ -775,11 +775,21 @@ public abstract class CamelTestSupport extends TestSupport {
         return context;
     }
 
+    /**
+     * @deprecated expected to be not in use by default soon.
+     */
+    @Deprecated
     protected JndiRegistry createRegistry() throws Exception {
+        LOG.warn("The method createRegistry() in camel-test is deprecated. You can bind beans directly from Camel Registry instead");
         return new JndiRegistry(createJndiContext());
     }
 
+    /**
+     * @deprecated expected to be not in use by default soon.
+     */
+    @Deprecated
     protected Context createJndiContext() throws Exception {
+        LOG.warn("The method createJndiContext() in camel-test is deprecated. You can bind beans directly from Camel Registry instead");
         Properties properties = new Properties();
 
         // jndi.properties is optional
