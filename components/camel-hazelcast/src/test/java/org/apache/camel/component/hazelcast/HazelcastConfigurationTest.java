@@ -26,7 +26,7 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.hazelcast.map.HazelcastMapComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
