@@ -119,7 +119,15 @@ public class DefaultCamelContext extends AbstractCamelContext {
         super(registry);
     }
 
-    @Deprecated
+    /**
+     * Creates the {@link CamelContext} and allows to control whether the context
+     * should automatic initialize or not.
+     * <p/>
+     * This is used by some Camel components such as camel-cdi and camel-blueprint, however
+     * this constructor is not intended for regular Camel end users.
+     *
+     * @param init whether to automatic initialize.
+     */
     public DefaultCamelContext(boolean init) {
         super(init);
     }
