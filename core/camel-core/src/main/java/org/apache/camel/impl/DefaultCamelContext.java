@@ -40,6 +40,7 @@ import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -70,6 +71,8 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
+import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.SimpleRegistry;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -77,22 +80,34 @@ import org.apache.camel.spi.ValidatorRegistry;
 public class DefaultCamelContext extends AbstractCamelContext {
 
     /**
-     * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
-     * but will silently fallback and use {@link SimpleRegistry} if JNDI cannot be used.
+     * Creates the {@link CamelContext} using {@link DefaultRegistry} as registry.
      * <p/>
-     * Use one of the other constructors to force use an explicit registry / JNDI.
+     * Use one of the other constructors to force use an explicit registry.
      */
     public DefaultCamelContext() {
         super();
     }
 
     /**
+     * Creates the {@link CamelContext} using the given {@link BeanRepository}
+     * as first-choice repository, and the {@link SimpleRegistry} as fallback, via
+     * the {@link DefaultRegistry} implementation.
+     *
+     * @param repository the bean repository.
+     */
+    public DefaultCamelContext(BeanRepository repository) {
+        super(new DefaultRegistry(repository));
+    }
+
+    /**
      * Creates the {@link CamelContext} using the given JNDI context as the registry
      *
      * @param jndiContext the JNDI context
+     * @deprecated create a new {@link JndiRegistry} and use the constructor that accepts this registry.
      */
+    @Deprecated
     public DefaultCamelContext(Context jndiContext) {
-        super(jndiContext);
+        this(new JndiRegistry(jndiContext));
     }
 
     /**
@@ -104,6 +119,7 @@ public class DefaultCamelContext extends AbstractCamelContext {
         super(registry);
     }
 
+    @Deprecated
     public DefaultCamelContext(boolean init) {
         super(init);
     }

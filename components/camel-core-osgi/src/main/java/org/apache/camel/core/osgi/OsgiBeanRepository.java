@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -37,14 +37,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The OsgiServiceRegistry support to get the service object from the bundle context
+ * The OSGi {@link BeanRepository} support to lookup beans from the OSGi service registry from its bundle context.
  */
-public class OsgiServiceRegistry extends LifecycleStrategySupport implements Registry, Service, ServiceListener {
-    private static final Logger LOG = LoggerFactory.getLogger(OsgiServiceRegistry.class);
+public class OsgiBeanRepository extends LifecycleStrategySupport implements BeanRepository, Service, ServiceListener {
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiBeanRepository.class);
     private final BundleContext bundleContext;
     private final Map<ServiceReference<?>, AtomicLong> serviceReferenceUsageMap = new ConcurrentHashMap<>();
     
-    public OsgiServiceRegistry(BundleContext bc) {
+    public OsgiBeanRepository(BundleContext bc) {
         bundleContext = bc;
         bundleContext.addServiceListener(this);
     }

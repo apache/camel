@@ -21,20 +21,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.BeanRepository;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
 /**
- * A {@link Registry} implementation which looks up the objects in the Spring
+ * A {@link BeanRepository} implementation which looks up the objects in the Spring
  * {@link ApplicationContext}
  */
-public class ApplicationContextRegistry implements Registry {
+public class ApplicationContextBeanRepository implements BeanRepository {
     private ApplicationContext applicationContext;
 
-    public ApplicationContextRegistry(ApplicationContext applicationContext) {
+    public ApplicationContextBeanRepository(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 

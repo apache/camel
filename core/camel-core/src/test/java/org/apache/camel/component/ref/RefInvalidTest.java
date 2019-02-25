@@ -22,7 +22,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 
 public class RefInvalidTest extends ContextTestSupport {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.support;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +26,10 @@ import org.apache.camel.spi.Registry;
 
 /**
  * A {@link Map}-based registry.
+ * <p/>
+ * Favour using {@link DefaultRegistry} instead of this.
+ *
+ * @see DefaultRegistry
  */
 public class SimpleRegistry extends HashMap<String, Object> implements Registry {
 
