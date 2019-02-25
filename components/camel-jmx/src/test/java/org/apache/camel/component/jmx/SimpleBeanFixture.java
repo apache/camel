@@ -33,7 +33,7 @@ import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.apache.camel.component.jmx.beans.SimpleBean;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.After;
 import org.junit.Before;
 

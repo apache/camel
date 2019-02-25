@@ -19,7 +19,7 @@ package org.apache.camel.component.aws.ddbstream;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
