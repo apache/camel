@@ -169,6 +169,7 @@ import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResolverHelper;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -313,16 +314,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
      */
     public AbstractCamelContext() {
         this(true);
-    }
-
-    /**
-     * Creates the {@link CamelContext} using the given JNDI context as the registry
-     *
-     * @param jndiContext the JNDI context
-     */
-    public AbstractCamelContext(Context jndiContext) {
-        this();
-        setJndiContext(jndiContext);
     }
 
     /**
@@ -2572,16 +2563,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             }
         }
         return null;
-    }
-
-    /**
-     * Sets the registry to the given JNDI context
-     *
-     * @param jndiContext is the JNDI context to use as the registry
-     * @see #setRegistry(Registry)
-     */
-    public void setJndiContext(Context jndiContext) {
-        setRegistry(new JndiRegistry(jndiContext));
     }
 
     public void setRegistry(Registry registry) {

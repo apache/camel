@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.direct.DirectComponent;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 
 public class CamelContextDeadlockTest {

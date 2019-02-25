@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Before;
 import org.junit.Test;
 
