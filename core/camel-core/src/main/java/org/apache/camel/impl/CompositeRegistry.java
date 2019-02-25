@@ -48,6 +48,7 @@ public class CompositeRegistry implements Registry {
         return registryList;
     }
 
+    @Override
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         T answer = null;
         RuntimeCamelException ex = null;
@@ -74,6 +75,7 @@ public class CompositeRegistry implements Registry {
         }
     }
 
+    @Override
     public Object lookupByName(String name) {
         Object answer = null;
         for (Registry registry : registryList) {
@@ -85,6 +87,7 @@ public class CompositeRegistry implements Registry {
         return answer;
     }
 
+    @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> answer = Collections.emptyMap();
         for (Registry registry : registryList) {
@@ -96,6 +99,7 @@ public class CompositeRegistry implements Registry {
         return answer;
     }
 
+    @Override
     public <T> Set<T> findByType(Class<T> type) {
         Set<T> answer = Collections.emptySet();
         for (Registry registry : registryList) {
@@ -107,4 +111,19 @@ public class CompositeRegistry implements Registry {
         return answer;
     }
 
+    @Override
+    public void bind(String id, Object bean) {
+        Throwable t = null;
+        for (Registry registry : registryList) {
+            try {
+                registry.bind(id, bean);
+                return;
+            } catch (Throwable e) {
+                t = e;
+            }
+        }
+        if (t != null) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(t);
+        }
+    }
 }

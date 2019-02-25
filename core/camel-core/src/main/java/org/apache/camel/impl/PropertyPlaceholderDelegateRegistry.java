@@ -38,6 +38,7 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
         this.delegate = delegate;
     }
 
+    @Override
     public Object lookupByName(String name) {
         try {
             // Must avoid attempting placeholder resolution when looking up
@@ -51,6 +52,7 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
         }
     }
 
+    @Override
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         try {
             // Must avoid attempting placeholder resolution when looking up
@@ -64,12 +66,19 @@ public class PropertyPlaceholderDelegateRegistry implements Registry {
         }
     }
 
+    @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         return delegate.findByTypeWithName(type);
     }
 
+    @Override
     public <T> Set<T> findByType(Class<T> type) {
         return delegate.findByType(type);
+    }
+
+    @Override
+    public void bind(String id, Object bean) {
+        delegate.bind(id, bean);
     }
 
     public Registry getRegistry() {

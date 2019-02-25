@@ -31,10 +31,12 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
 
     private static final long serialVersionUID = -3739035212761568984L;
 
+    @Override
     public Object lookupByName(String name) {
         return get(name);
     }
 
+    @Override
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         Object answer = lookupByName(name);
 
@@ -52,6 +54,7 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
         }
     }
 
+    @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> result = new HashMap<>();
         for (Map.Entry<String, Object> entry : entrySet()) {
@@ -62,6 +65,7 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
         return result;
     }
 
+    @Override
     public <T> Set<T> findByType(Class<T> type) {
         Set<T> result = new HashSet<>();
         for (Map.Entry<String, Object> entry : entrySet()) {
@@ -72,4 +76,8 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
         return result;
     }
 
+    @Override
+    public void bind(String id, Object bean) {
+        put(id, bean);
+    }
 }

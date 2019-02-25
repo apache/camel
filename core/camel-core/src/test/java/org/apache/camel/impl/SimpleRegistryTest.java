@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
 import java.util.Map;
 
 import org.apache.camel.NoSuchBeanException;
@@ -29,8 +30,8 @@ public class SimpleRegistryTest extends Assert {
     @Before
     public void setUp() throws Exception {
         registry = new SimpleRegistry();
-        registry.put("a", "b");
-        registry.put("c", 1);
+        registry.bind("a", "b");
+        registry.bind("c", 1);
     }
 
     @Test
@@ -77,4 +78,13 @@ public class SimpleRegistryTest extends Assert {
         assertEquals(0, map.size());
     }
 
+    @Test
+    public void testBind() {
+        Object foo = "foo";
+        registry.bind("c", foo);
+        assertEquals(3, registry.size());
+        assertSame(foo, registry.get("c"));
+    }
+
 }
+
