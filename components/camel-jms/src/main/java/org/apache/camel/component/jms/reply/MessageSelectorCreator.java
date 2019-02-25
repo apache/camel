@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.reply;
 
 import java.util.concurrent.ConcurrentSkipListSet;
 
+import org.apache.camel.TimeoutMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,21 +26,22 @@ import org.slf4j.LoggerFactory;
  * A creator which can build the JMS message selector query string to use
  * with a shared reply-to queue, so we can select the correct messages we expect as replies.
  */
-public class MessageSelectorCreator implements CorrelationListener {
+public class MessageSelectorCreator {
     protected static final Logger LOG = LoggerFactory.getLogger(MessageSelectorCreator.class);
-    protected final CorrelationTimeoutMap timeoutMap;
+    protected final TimeoutMap<String, ?> timeoutMap;
     protected final ConcurrentSkipListSet<String> correlationIds;
     protected volatile boolean dirty = true;
     protected StringBuilder expression;
 
     public MessageSelectorCreator(CorrelationTimeoutMap timeoutMap) {
         this.timeoutMap = timeoutMap;
-        this.timeoutMap.setListener(this);
+        this.timeoutMap.addListener((type, cid, value) -> timeoutEvent(type, cid));
         // create local set of correlation ids, as its easier to keep track
         // using the listener so we can flag the dirty flag upon changes
         // must support concurrent access
         this.correlationIds = new ConcurrentSkipListSet<>();
     }
+
 
     public synchronized String get() {
         if (!dirty) {
@@ -70,18 +72,18 @@ public class MessageSelectorCreator implements CorrelationListener {
         return answer;
     }
 
-    public void onPut(String key) {
+    // Changes to live correlation-ids invalidate existing message selector
+    private void timeoutEvent(TimeoutMap.Listener.Type type, String cid) {
+        switch (type) {
+            case Remove:
+            case Evict:
+                correlationIds.remove(cid);
+                break;
+            case Put:
+            default:
+                correlationIds.add(cid);
+        }
         dirty = true;
-        correlationIds.add(key);
     }
 
-    public void onRemove(String key) {
-        dirty = true;
-        correlationIds.remove(key);
-    }
-
-    public void onEviction(String key) {
-        dirty = true;
-        correlationIds.remove(key);
-    }
 }
