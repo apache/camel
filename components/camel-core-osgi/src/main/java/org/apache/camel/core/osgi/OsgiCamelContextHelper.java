@@ -17,7 +17,6 @@
 package org.apache.camel.core.osgi;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -30,11 +29,9 @@ public final class OsgiCamelContextHelper {
         // helper class
     }
     
-    public static void osgiUpdate(DefaultCamelContext camelContext, BundleContext bundleContext, OsgiBeanRepository beanRepository) {
+    public static void osgiUpdate(DefaultCamelContext camelContext, BundleContext bundleContext) {
         ObjectHelper.notNull(bundleContext, "BundleContext");
 
-        LOG.debug("Using OsgiBeanRepository");
-        camelContext.setRegistry(new DefaultRegistry(beanRepository));
         LOG.debug("Using OsgiCamelContextNameStrategy");
         camelContext.setNameStrategy(new OsgiCamelContextNameStrategy(bundleContext));
         LOG.debug("Using OsgiManagementNameStrategy");
@@ -51,9 +48,6 @@ public final class OsgiCamelContextHelper {
         camelContext.setLanguageResolver(new OsgiLanguageResolver(bundleContext));
         LOG.debug("Using OsgiDataFormatResolver");
         camelContext.setDataFormatResolver(new OsgiDataFormatResolver(bundleContext));
-
-        // Need to clean up the OSGi service when camel context is closed.
-        camelContext.addLifecycleStrategy(beanRepository);
     }
     
 }

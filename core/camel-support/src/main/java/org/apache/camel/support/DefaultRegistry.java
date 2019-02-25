@@ -16,6 +16,9 @@
  */
 package org.apache.camel.support;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +32,7 @@ import org.apache.camel.spi.Registry;
  */
 public class DefaultRegistry implements Registry {
 
-    private final BeanRepository repository;
+    private List<BeanRepository> repositories;
     private final Registry simple = new SimpleRegistry();
 
     /**
@@ -44,55 +47,68 @@ public class DefaultRegistry implements Registry {
      * Will fallback and use {@link SimpleRegistry} as internal registry if the beans cannot be found in the first
      * choice bean repository.
      *
-     * @param repository the first choice repository such as Spring, JNDI, OSGi etc.
+     * @param repositories the first choice repositories such as Spring, JNDI, OSGi etc.
      */
-    public DefaultRegistry(BeanRepository repository) {
-        this.repository = repository;
+    public DefaultRegistry(BeanRepository... repositories) {
+        if (repositories != null) {
+            this.repositories = new ArrayList<>(Arrays.asList(repositories));
+        }
     }
 
     @Override
     public void bind(String id, Object bean) {
-        // favour use the real repository
-        if (repository != null && repository instanceof Registry) {
-            ((Registry) repository).bind(id, bean);
-        } else {
-            simple.bind(id, bean);
-        }
+        simple.bind(id, bean);
     }
 
     @Override
     public Object lookupByName(String name) {
-        Object answer = repository != null ? repository.lookupByName(name) : null;
-        if (answer == null) {
-            answer = simple.lookupByName(name);
+        if (repositories != null) {
+            for (BeanRepository r : repositories) {
+                Object answer = r.lookupByName(name);
+                if (answer != null) {
+                    return answer;
+                }
+            }
         }
-        return answer;
+        return simple.lookupByName(name);
     }
 
     @Override
     public <T> T lookupByNameAndType(String name, Class<T> type) {
-        T answer = repository != null ? repository.lookupByNameAndType(name, type) : null;
-        if (answer == null) {
-            answer = simple.lookupByNameAndType(name, type);
+        if (repositories != null) {
+            for (BeanRepository r : repositories) {
+                T answer = r.lookupByNameAndType(name, type);
+                if (answer != null) {
+                    return answer;
+                }
+            }
         }
-        return answer;
+        return simple.lookupByNameAndType(name, type);
     }
 
     @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        Map<String, T> answer = repository != null ? repository.findByTypeWithName(type) : null;
-        if (answer == null) {
-            answer = simple.findByTypeWithName(type);
+        if (repositories != null) {
+            for (BeanRepository r : repositories) {
+                Map<String, T> answer = r.findByTypeWithName(type);
+                if (answer != null) {
+                    return answer;
+                }
+            }
         }
-        return answer;
+        return simple.findByTypeWithName(type);
     }
 
     @Override
     public <T> Set<T> findByType(Class<T> type) {
-        Set<T> answer = repository != null ? repository.findByType(type) : null;
-        if (answer == null) {
-            answer = simple.findByType(type);
+        if (repositories != null) {
+            for (BeanRepository r : repositories) {
+                Set<T> answer = r.findByType(type);
+                if (answer != null) {
+                    return answer;
+                }
+            }
         }
-        return answer;
+        return simple.findByType(type);
     }
 }
