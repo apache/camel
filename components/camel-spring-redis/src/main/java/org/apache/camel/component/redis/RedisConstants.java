@@ -43,4 +43,7 @@ public interface RedisConstants {
     String MAX = "CamelRedis.Max";
     String INCREMENT = "CamelRedis.Increment";
     String WITHSCORE = "CamelRedis.WithScore";
+    String LATITUDE = "CamelRedis.Latitude";
+    String LONGITUDE = "CamelRedis.Longitude";
+    String RADIUS = "CamelRedis.Radius";
 }
