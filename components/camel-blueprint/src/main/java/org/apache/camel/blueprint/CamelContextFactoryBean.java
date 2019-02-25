@@ -248,7 +248,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     @Override
     protected <S> S getBeanForType(Class<S> clazz) {
-        Collection<S> objects = BlueprintContainerRegistry.lookupByType(blueprintContainer, clazz).values();
+        Collection<S> objects = BlueprintContainerBeanRepository.lookupByType(blueprintContainer, clazz).values();
         if (objects.size() == 1) {
             return objects.iterator().next();
         }
