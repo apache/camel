@@ -76,18 +76,6 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
-When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
-
-[source,xml]
-----
-<dependency>
-  <groupId>org.apache.camel</groupId>
-  <artifactId>camel-spring-redis-starter</artifactId>
-  <version>x.x.x</version>
-  <!-- use the same version as your Camel core version -->
-</dependency>
-----
-
 
 The component supports 2 options, which are listed below.
 
@@ -355,6 +343,18 @@ milliseconds |CamelRedis.Key (String), CamelRedis.Timestamp (Long) |Boolean
 |`TTL` |Get the time to live for a key |CamelRedis.Key (String) |Long
 
 |`MOVE` |Move a key to another database |CamelRedis.Key (String), CamelRedis.Db (Integer) |Boolean
+|=======================================================================
+
+[width="100%",cols="20%,20%,20%,60%",options="header",]
+|=======================================================================
+|Geo Commands |Description |Parameters |Result
+
+|`GEOADD` |Adds the specified geospatial items (latitude, longitude, name) to the specified key |CamelRedis.Key (String), CamelRedis.Latitude (Double), CamelRedis.Longitude (Double), CamelRedis.Value (Object) |Long
+|`GEODIST` |Return the distance between two members in the geospatial index for the specified key  |CamelRedis.Key (String), CamelRedis.Values (Object[]) |Distance
+|`GEOHASH` |Return valid Geohash strings representing the position of an element in the geospatial index for the specified key |CamelRedis.Key (String), CamelRedis.Value (Object) |List<String>
+|`GEOPOS` |Return the positions (longitude,latitude) of an element in the geospatial index for the specified key |CamelRedis.Key (String), CamelRedis.Value (Object) |List<Point>
+|`GEORADIUS` |Return the  element in the geospatial index for the specified key which are within the borders of the area specified with the center location and the maximum distance from the center (the radius) |CamelRedis.Key (String), CamelRedis.Latitude (Double), CamelRedis.Longitude (Double), CamelRedis.Radius (Double), CamelRedis.Count (Integer) |GeoResults
+|`GEORADIUSBYMEMBER` |This command is exactly like GEORADIUS with the sole difference that instead of taking, as the center of the area to query, a longitude and latitude value, it takes the name of a member already existing inside the geospatial index for the specified key |CamelRedis.Key (String), CamelRedis.Value (Object), CamelRedis.Radius (Double), CamelRedis.Count (Integer) |GeoResults
 |=======================================================================
 
 [width="100%",cols="20%,20%,20%,60%",options="header",]
