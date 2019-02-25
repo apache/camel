@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 105 (2 deprecated)
+Number of Examples: 103 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -218,14 +218,6 @@ Number of Examples: 105 (2 deprecated)
 | link:camel-example-twitter-websocket-blueprint/README.md[Twitter Websocket Blueprint] (camel-example-twitter-websocket-blueprint) | Social | An example that pushes new tweets to a web page using web-socket
 
 | link:camel-example-cdi-test/README.md[CDI Test] (camel-example-cdi-test) | Testing | An example illustrating Camel CDI testing features
-
-| link:camel-example-reportincident/README.md[Report Incident] (camel-example-reportincident) | Tutorial | *deprecated* An example based on real life use case for reporting incidents using webservice that are transformed
-    and send as emails to a backing system
-  
-
-| link:camel-example-reportincident-wssecurity/README.md[Report Incident WS-Security] (camel-example-reportincident-wssecurity) | Tutorial | *deprecated* An example based on real life use case for reporting incidents using webservice that are transformed
-    and send as emails to a backing system. Client calling the WebService is authentified through WS-Security
-  
 
 | link:camel-example-cxf/README.md[CXF] (camel-example-cxf) | WebService | An example which demonstrates the use of the Camel CXF component
 
