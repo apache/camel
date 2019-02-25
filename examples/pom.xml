@@ -88,7 +88,6 @@
     <module>camel-example-rabbitmq</module>
     <module>camel-example-reactive-streams</module>
     <module>camel-example-reload</module>
-    <module>camel-example-reportincident-wssecurity</module>
     <module>camel-example-rest-producer</module>
     <module>camel-example-rest-swagger</module>
     <module>camel-example-restlet-jdbc</module>
