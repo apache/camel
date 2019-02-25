@@ -105,7 +105,6 @@
     <c3p0-bundle-version>0.9.5.3_1</c3p0-bundle-version>
     <caffeine-version>2.6.2</caffeine-version>
     <californium-version>1.0.6</californium-version>
-    <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <cassandra-driver-version>3.6.0</cassandra-driver-version>
     <cassandra-driver-guava-version>19.0</cassandra-driver-guava-version>
     <cassandra-version>3.7</cassandra-version>

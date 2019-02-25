@@ -46,17 +46,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-tx</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.servicemix.bundles</groupId>
-      <artifactId>org.apache.servicemix.bundles.cglib</artifactId>
-      <version>${cglib-bundle-version}</version>
     </dependency>
 
     <!-- test dependencies -->
@@ -67,14 +56,9 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>${camel-test-spring-artifactId}</artifactId>
+      <artifactId>camel-test-spring</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>jsr250-api</artifactId>
-      <scope>test</scope>
-    </dependency>  
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
