@@ -35,6 +35,7 @@ public class AllRedisProcessorsCreator implements RedisProcessorsCreator {
         this.processors.putAll(new SortedSetsRedisProcessorsCreator().getProcessors(redisClient, exchangeConverter));
         this.processors.putAll(new StringsRedisProcessorsCreator().getProcessors(redisClient, exchangeConverter));
         this.processors.putAll(new TransactionRedisProcessorsCreator().getProcessors(redisClient, exchangeConverter));
+        this.processors.putAll(new GeoRedisProcessorsCreator().getProcessors(redisClient, exchangeConverter));
     }
 
     public Map<Command, Processor> getRedisProcessors() {
