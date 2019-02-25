@@ -18,17 +18,15 @@ package org.apache.camel.cdi;
 
 import java.util.Map;
 import java.util.Set;
-
-import static java.util.stream.Collectors.toMap;
-
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.BeanRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toMap;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
@@ -37,16 +35,16 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 import static org.apache.camel.util.StringHelper.notEmpty;
 
 /**
- * The {@link Registry} used by Camel to perform lookup into the CDI {@link BeanManager}.
+ * The {@link BeanRepository} used by Camel to perform lookup into the CDI {@link BeanManager}.
  */
 @Vetoed
-final class CdiCamelRegistry implements Registry {
+final class CdiCamelBeanRepository implements BeanRepository {
 
-    private final Logger logger = LoggerFactory.getLogger(CdiCamelRegistry.class);
+    private final Logger logger = LoggerFactory.getLogger(CdiCamelBeanRepository.class);
 
     private final BeanManager manager;
 
-    CdiCamelRegistry(BeanManager manager) {
+    CdiCamelBeanRepository(BeanManager manager) {
         this.manager = manager;
     }
 
