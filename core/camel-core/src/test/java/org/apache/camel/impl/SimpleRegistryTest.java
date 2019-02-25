@@ -82,8 +82,9 @@ public class SimpleRegistryTest extends Assert {
     @Test
     public void testBind() {
         Object foo = "foo";
+        // will override
         registry.bind("c", foo);
-        assertEquals(3, registry.size());
+        assertEquals(2, registry.size());
         assertSame(foo, registry.get("c"));
     }
 

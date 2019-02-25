@@ -21,10 +21,9 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.CompositeRegistry;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 
 /**
  * A command line tool for booting up a CamelContext
@@ -32,7 +31,7 @@ import org.apache.camel.spi.Registry;
 public class Main extends MainSupport {
 
     protected static Main instance;
-    protected final SimpleRegistry registry = new SimpleRegistry();
+    protected final Registry registry = new DefaultRegistry();
 
     public Main() {
     }
@@ -63,7 +62,7 @@ public class Main extends MainSupport {
      * @param bean the object to bind
      */
     public void bind(String name, Object bean) {
-        registry.put(name, bean);
+        registry.bind(name, bean);
     }
 
     /**
@@ -73,7 +72,7 @@ public class Main extends MainSupport {
      * @see Registry#lookupByName(String)
      */
     public Object lookup(String name) {
-        return registry.get(name);
+        return registry.lookupByName(name);
     }
 
     /**
@@ -98,7 +97,6 @@ public class Main extends MainSupport {
     }
 
     /**
-     * 
      * Gets or creates the {@link org.apache.camel.CamelContext} this main class is using.
      * 
      * It just create a new CamelContextMap per call, please don't use it to access the camel context that will be ran by main.
@@ -152,24 +150,12 @@ public class Main extends MainSupport {
         Map<String, CamelContext> answer = new HashMap<>();
 
         CamelContext camelContext = createContext();
-        if (registry.size() > 0) {
-            // set the registry through which we've already bound some beans
-            if (DefaultCamelContext.class.isAssignableFrom(camelContext.getClass())) {
-                CompositeRegistry compositeRegistry = new CompositeRegistry();
-                // make sure camel look up the Object from the registry first
-                compositeRegistry.addRegistry(registry);
-                // use the camel old registry as a fallback
-                compositeRegistry.addRegistry(((DefaultCamelContext) camelContext).getRegistry());
-                ((DefaultCamelContext) camelContext).setRegistry(compositeRegistry);
-            }
-        }
-
         answer.put("camel-1", camelContext);
         return answer;
     }
 
     protected CamelContext createContext() {
-        return new DefaultCamelContext();
+        return new DefaultCamelContext(registry);
     }
 
 }
