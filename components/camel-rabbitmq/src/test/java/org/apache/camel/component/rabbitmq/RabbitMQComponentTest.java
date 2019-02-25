@@ -22,7 +22,7 @@ import java.util.Map;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 import org.mockito.Mockito;
 
