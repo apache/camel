@@ -100,7 +100,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Adapts this {@link org.apache.camel.CamelContext} to the specialized type.
      * <p/>
-     * For example to adapt to {@link org.apache.camel.model.ModelCamelContext},
+     * For example to adapt to <tt>ModelCamelContext</tt>,
      * or <tt>SpringCamelContext</tt>, or <tt>CdiCamelContext</tt>, etc.
      *
      * @param type the type to adapt to
@@ -108,7 +108,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     <T extends CamelContext> T adapt(Class<T> type);
 
+    // TODO: Document these methods
     <T> T getExtension(Class<T> type);
+
     <T> void setExtension(Class<T> type, T module);
 
     /**
@@ -677,8 +679,8 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     TypeConverterRegistry getTypeConverterRegistry();
 
     /**
-     * Returns the registry used to lookup components by name and type such as the Spring ApplicationContext,
-     * JNDI or the OSGi Service Registry
+     * Returns the registry used to lookup components by name and type such as SimpleRegistry, Spring ApplicationContext,
+     * JNDI, or the OSGi Service Registry.
      *
      * @return the registry
      */
@@ -687,7 +689,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Returns the registry used to lookup components by name and as the given type
      *
-     * @param type the registry type such as {@link org.apache.camel.impl.JndiRegistry}
+     * @param type the registry type such as org.apache.camel.impl.JndiRegistry
      * @return the registry, or <tt>null</tt> if the given type was not found as a registry implementation
      */
     <T> T getRegistry(Class<T> type);
