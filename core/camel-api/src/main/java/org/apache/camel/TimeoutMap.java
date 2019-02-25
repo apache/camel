@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Represents a map of values which timeout after a period of inactivity.
  */
-public interface TimeoutMap<K, V> {
+public interface TimeoutMap<K, V> extends Service {
 
     /**
      * Looks up the value in the map by the given key.
@@ -50,7 +50,8 @@ public interface TimeoutMap<K, V> {
     
     /**
      * Adds the key value pair into the map if the specified key is not already associated with a value
-     * such that some time after the given timeout the entry will be evicted
+     * such that some time after the given timeout the entry will be evicted. Expiry time of an existing mapping
+     * is left unchanged.
      *
      * @param key   the key
      * @param value the value
@@ -61,20 +62,32 @@ public interface TimeoutMap<K, V> {
     V putIfAbsent(K key, V value, long timeoutMillis);
 
     /**
-     * Callback when the value has been evicted
-     *
-     * @param key the key
-     * @param value the value
-     * @return <tt>true</tt> to remove the evicted value,
-     *         or <tt>false</tt> to veto the eviction and thus keep the value.
-     */
-    boolean onEviction(K key, V value);
-
-    /**
      * Removes the object with the given key
      *
      * @param key  key for the object to remove
      * @return the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
     V remove(K key);
+
+    /**
+     * Assign the (singular) {@link Listener}
+     *
+     * @param listener the new listener
+     */
+    void addListener(Listener<K, V> listener);
+
+    @FunctionalInterface
+    interface Listener<K, V> {
+
+        enum Type { Put, Remove, Evict }
+
+        /**
+         * Callback when the map changes content
+         *
+         * @param key the item key
+         * @param value the item value
+         */
+        void timeoutMapEvent(Type type, K key, V value);
+
+    }
 }
