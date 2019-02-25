@@ -103,7 +103,7 @@
     <build-helper-maven-plugin-version>1.12</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.3</c3p0-version>
     <c3p0-bundle-version>0.9.5.3_1</c3p0-bundle-version>
-    <caffeine-version>2.6.2</caffeine-version>
+    <caffeine-version>2.7.0</caffeine-version>
     <californium-version>1.0.6</californium-version>
     <cassandra-driver-version>3.6.0</cassandra-driver-version>
     <cassandra-driver-guava-version>19.0</cassandra-driver-guava-version>
