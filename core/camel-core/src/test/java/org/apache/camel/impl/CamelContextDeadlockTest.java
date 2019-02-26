@@ -19,15 +19,14 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.component.direct.DirectComponent;
-import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 
 public class CamelContextDeadlockTest {
 
     @Test(timeout = 5000)
     public void testComponentDeadlock() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("sql-connector", new DirectComponent() {
+        CamelContext context = new DefaultCamelContext();
+        context.getRegistry().bind("sql-connector", new DirectComponent() {
                 @Override
                 protected void doStart() throws Exception {
                     Component delegate = new DirectComponent();
@@ -41,7 +40,6 @@ public class CamelContextDeadlockTest {
             }
         );
 
-        CamelContext context = new DefaultCamelContext(registry);
         context.start();
         context.getComponent("sql-connector", true, true);
         context.stop();

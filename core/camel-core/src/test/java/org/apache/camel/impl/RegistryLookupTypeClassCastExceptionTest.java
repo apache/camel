@@ -18,7 +18,8 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.DefaultRegistry;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,25 +30,24 @@ public class RegistryLookupTypeClassCastExceptionTest extends Assert {
 
     @Test
     public void testLookupOk() throws Exception {
-        SimpleRegistry simple = new SimpleRegistry();
+        Registry registry = new DefaultRegistry();
 
         MyClass my = new MyClass();
-        simple.put("my", my);
+        registry.bind("my", my);
 
-        assertEquals(my, simple.lookupByName("my"));
-        assertEquals(my, simple.lookupByNameAndType("my", MyClass.class));
+        assertEquals(my, registry.lookupByName("my"));
+        assertEquals(my, registry.lookupByNameAndType("my", MyClass.class));
 
-        assertNull(simple.lookupByName("foo"));
-        assertNull(simple.lookupByNameAndType("foo", MyClass.class));
+        assertNull(registry.lookupByName("foo"));
+        assertNull(registry.lookupByNameAndType("foo", MyClass.class));
     }
 
     @Test
     public void testCamelContextLookupOk() throws Exception {
-        SimpleRegistry simple = new SimpleRegistry();
-        CamelContext context = new DefaultCamelContext(simple);
+        CamelContext context = new DefaultCamelContext();
 
         MyClass my = new MyClass();
-        simple.put("my", my);
+        context.getRegistry().bind("my", my);
 
         assertEquals(my, context.getRegistry().lookupByName("my"));
         assertEquals(my, context.getRegistry().lookupByNameAndType("my", MyClass.class));
@@ -58,13 +58,13 @@ public class RegistryLookupTypeClassCastExceptionTest extends Assert {
 
     @Test
     public void testLookupClassCast() throws Exception {
-        SimpleRegistry simple = new SimpleRegistry();
+        Registry registry = new DefaultRegistry();
 
         MyClass my = new MyClass();
-        simple.put("my", my);
+        registry.bind("my", my);
 
         try {
-            simple.lookupByNameAndType("my", String.class);
+            registry.lookupByNameAndType("my", String.class);
             fail("Should have thrown exception");
         } catch (NoSuchBeanException e) {
             assertEquals("my", e.getName());
@@ -74,11 +74,10 @@ public class RegistryLookupTypeClassCastExceptionTest extends Assert {
 
     @Test
     public void testCamelContextLookupClassCast() throws Exception {
-        SimpleRegistry simple = new SimpleRegistry();
-        CamelContext context = new DefaultCamelContext(simple);
+        CamelContext context = new DefaultCamelContext();
 
         MyClass my = new MyClass();
-        simple.put("my", my);
+        context.getRegistry().bind("my", my);
 
         try {
             context.getRegistry().lookupByNameAndType("my", String.class);
