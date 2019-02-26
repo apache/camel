@@ -307,10 +307,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
 
     /**
-     * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
-     * but will silently fallback and use {@link SimpleRegistry} if JNDI cannot be used.
+     * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
      * <p/>
-     * Use one of the other constructors to force use an explicit registry / JNDI.
+     * Use one of the other constructors to force use an explicit registry.
      */
     public AbstractCamelContext() {
         this(true);
