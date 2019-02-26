@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class DefaultRegistry implements Registry {
      * Creates a default registry that only uses {@link SimpleRegistry} as the repository.
      */
     public DefaultRegistry() {
-        this(null);
+        // noop
     }
 
     /**
@@ -55,6 +56,19 @@ public class DefaultRegistry implements Registry {
     public DefaultRegistry(BeanRepository... repositories) {
         if (repositories != null) {
             this.repositories = new ArrayList<>(Arrays.asList(repositories));
+        }
+    }
+
+    /**
+     * Creates a registry that uses the given {@link BeanRepository} as first choice bean repository to lookup beans.
+     * Will fallback and use {@link SimpleRegistry} as internal registry if the beans cannot be found in the first
+     * choice bean repository.
+     *
+     * @param repositories the first choice repositories such as Spring, JNDI, OSGi etc.
+     */
+    public DefaultRegistry(Collection<BeanRepository> repositories) {
+        if (repositories != null) {
+            this.repositories = new ArrayList<>(repositories);
         }
     }
 
