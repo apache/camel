@@ -25,6 +25,8 @@ import java.util.concurrent.locks.Lock;
  */
 public class NoLock implements Lock {
 
+    public static final Lock INSTANCE = new NoLock();
+
     @Override
     public void lock() {
     }
