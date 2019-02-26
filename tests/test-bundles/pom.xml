@@ -152,7 +152,7 @@
                             <properties>
                                 <addLicense>true</addLicense>
                                 <addArtifact>true</addArtifact>
-                                <projectName>Apache ServiceMix</projectName>
+                                <projectName>Apache Camel</projectName>
                             </properties>
                         </configuration>
                     </execution>
@@ -163,5 +163,6 @@
    
    <modules>
      <module>mock-javamail_1.7</module>
+     <module>camel-validator-test-resources</module>
    </modules>
 </project>
