@@ -38,6 +38,9 @@ import org.apache.camel.support.jndi.CamelInitialContextFactory;
  * A {@link Registry} implementation which looks up the objects in JNDI
  */
 public class JndiRegistry implements Registry {
+
+    // TODO: move to camel-support, and make it bean repository
+
     private Context context;
     private Map environment;
     private final boolean standalone;
