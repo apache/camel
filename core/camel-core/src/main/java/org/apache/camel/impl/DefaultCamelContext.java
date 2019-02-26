@@ -176,15 +176,7 @@ public class DefaultCamelContext extends AbstractCamelContext {
      * Lazily create a default implementation
      */
     protected Registry createRegistry() {
-        JndiRegistry jndi = new JndiRegistry();
-        try {
-            // getContext() will force setting up JNDI
-            jndi.getContext();
-            return jndi;
-        } catch (Throwable e) {
-            log.debug("Cannot create javax.naming.InitialContext due " + e.getMessage() + ". Will fallback and use SimpleRegistry instead. This exception is ignored.", e);
-            return new SimpleRegistry();
-        }
+        return new DefaultRegistry();
     }
 
     protected ManagementStrategy createManagementStrategy() {
