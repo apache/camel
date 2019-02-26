@@ -98,7 +98,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     public static final String COMPLETED_BY_TIMEOUT = "timeout";
     public static final String COMPLETED_BY_FORCE = "force";
 
-    private Lock lock;
+    private volatile Lock lock;
     private final AtomicBoolean aggregateRepositoryWarned = new AtomicBoolean();
     private final CamelContext camelContext;
     private final AsyncProcessor processor;
@@ -1116,12 +1116,15 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
         @Override
         public void purge() {
-            // must acquire the shared aggregation lock to be able to purge
-            lock.lock();
-            try {
-                super.purge();
-            } finally {
-                lock.unlock();
+            // wait for lock to be created
+            if (lock != null) {
+                // must acquire the shared aggregation lock to be able to purge
+                lock.lock();
+                try {
+                    super.purge();
+                } finally {
+                    lock.unlock();
+                }
             }
         }
 
@@ -1399,7 +1402,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         if (getCompletionInterval() > 0) {
             log.info("Using CompletionInterval to run every {} millis.", getCompletionInterval());
             if (getTimeoutCheckerExecutorService() == null) {
-                setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_TIMEOUT_CHECKER, 1));
+                setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, AGGREGATE_TIMEOUT_CHECKER));
                 shutdownTimeoutCheckerExecutorService = true;
             }
             // trigger completion based on interval
@@ -1410,7 +1413,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
             log.info("Using CompletionTimeout to trigger after {} millis of inactivity.", getCompletionTimeout());
             if (getTimeoutCheckerExecutorService() == null) {
-                setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_TIMEOUT_CHECKER, 1));
+                setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, AGGREGATE_TIMEOUT_CHECKER));
                 shutdownTimeoutCheckerExecutorService = true;
             }
             // check for timed out aggregated messages once every second
