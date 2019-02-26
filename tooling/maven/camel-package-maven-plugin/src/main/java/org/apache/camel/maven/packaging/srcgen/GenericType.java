@@ -1,20 +1,18 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.maven.packaging.srcgen;
 
@@ -24,49 +22,48 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.maven.plugin.MojoFailureException;
 
 @SuppressWarnings("rawtypes")
 public class GenericType {
 
-    private final static GenericType ALL = new GenericType(Object.class);
+    private static final GenericType ALL = new GenericType(Object.class);
 
     private static final GenericType[] EMPTY = new GenericType[0];
 
-    private static final Map<String, Class> primitiveClasses = new HashMap<>();
-
-    static {
-        primitiveClasses.put("int", int.class);
-        primitiveClasses.put("short", short.class);
-        primitiveClasses.put("long", long.class);
-        primitiveClasses.put("byte", byte.class);
-        primitiveClasses.put("char", char.class);
-        primitiveClasses.put("float", float.class);
-        primitiveClasses.put("double", double.class);
-        primitiveClasses.put("boolean", boolean.class);
-        primitiveClasses.put("void", void.class);
-    }
+    private static final Map<String, Class> PRIMITIVE_CLASSES = new HashMap<>();
 
     enum BoundType {
-        Exact,
-        Extends,
-        Super
+        Exact, Extends, Super
     }
-
+    
     private final Class clazz;
     private GenericType[] parameters;
     private BoundType boundType;
+    
+    
+    static {
+        PRIMITIVE_CLASSES.put("int", int.class);
+        PRIMITIVE_CLASSES.put("short", short.class);
+        PRIMITIVE_CLASSES.put("long", long.class);
+        PRIMITIVE_CLASSES.put("byte", byte.class);
+        PRIMITIVE_CLASSES.put("char", char.class);
+        PRIMITIVE_CLASSES.put("float", float.class);
+        PRIMITIVE_CLASSES.put("double", double.class);
+        PRIMITIVE_CLASSES.put("boolean", boolean.class);
+        PRIMITIVE_CLASSES.put("void", void.class);
+    }
 
-	public GenericType(Type type) {
-		this(getConcreteClass(type), parametersOf(type));
-	}
+    public GenericType(Type type) {
+        this(getConcreteClass(type), parametersOf(type));
+    }
 
     public GenericType(Class clazz, GenericType... parameters) {
-	    this(clazz, BoundType.Exact, parameters);
+        this(clazz, BoundType.Exact, parameters);
     }
+
     public GenericType(Class clazz, BoundType boundType, GenericType... parameters) {
         this.clazz = clazz;
         this.parameters = parameters;
@@ -96,7 +93,7 @@ public class GenericType {
         }
         // Primitive
         if (isPrimitive(type)) {
-            return new GenericType(primitiveClasses.get(type));
+            return new GenericType(PRIMITIVE_CLASSES.get(type));
         }
         // Extends
         if (type.startsWith("? extends ")) {
@@ -121,7 +118,7 @@ public class GenericType {
     }
 
     static boolean isPrimitive(String type) {
-        return primitiveClasses.containsKey(type);
+        return PRIMITIVE_CLASSES.containsKey(type);
     }
 
     private static Class<?> loadClass(ClassLoader loader, String loadClassName) throws ClassNotFoundException {
@@ -160,8 +157,7 @@ public class GenericType {
 
     @Override
     public String toString() {
-        if (parameters.length == 0 && boundType == BoundType.Extends
-                && clazz == Object.class) {
+        if (parameters.length == 0 && boundType == BoundType.Extends && clazz == Object.class) {
             return "?";
         }
         StringBuilder sb = new StringBuilder();
@@ -192,11 +188,21 @@ public class GenericType {
         return sb.toString();
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((boundType == null) ? 0 : boundType.hashCode());
+        result = prime * result + ((clazz == null) ? 0 : clazz.hashCode());
+        result = prime * result + Arrays.hashCode(parameters);
+        return result;
+    }
+
     public boolean equals(Object object) {
         if (!(object instanceof GenericType)) {
             return false;
         }
-        GenericType other = (GenericType) object;
+        GenericType other = (GenericType)object;
         if (getRawClass() != other.getRawClass()) {
             return false;
         }
@@ -204,7 +210,7 @@ public class GenericType {
             return false;
         }
         if (parameters == null) {
-            return (other.parameters == null);
+            return other.parameters == null;
         } else {
             if (other.parameters == null) {
                 return false;
@@ -234,75 +240,75 @@ public class GenericType {
 
     static BoundType boundType(Type type) {
         if (type instanceof WildcardType) {
-            WildcardType wct = (WildcardType) type;
-            return wct.getLowerBounds().length == 0
-                    ? BoundType.Extends : BoundType.Super;
+            WildcardType wct = (WildcardType)type;
+            return wct.getLowerBounds().length == 0 ? BoundType.Extends : BoundType.Super;
         }
         return BoundType.Exact;
     }
 
-    static GenericType[] parametersOf(Type type ) {
-		if ( type instanceof Class ) {
-		    Class clazz = (Class) type;
-		    if (clazz.isArray()) {
+    static GenericType[] parametersOf(Type type) {
+        if (type instanceof Class) {
+            Class clazz = (Class)type;
+            if (clazz.isArray()) {
                 GenericType t = new GenericType(clazz.getComponentType());
                 if (t.size() > 0) {
-		            return new GenericType[] { t };
+                    return new GenericType[] {t};
                 } else {
                     return EMPTY;
                 }
-		    } else {
-		        return EMPTY;
-		    }
-		}
-        if ( type instanceof ParameterizedType ) {
-            ParameterizedType pt = (ParameterizedType) type;
-            Type [] parameters = pt.getActualTypeArguments();
+            } else {
+                return EMPTY;
+            }
+        }
+        if (type instanceof ParameterizedType) {
+            ParameterizedType pt = (ParameterizedType)type;
+            Type[] parameters = pt.getActualTypeArguments();
             GenericType[] gts = new GenericType[parameters.length];
-            for ( int i =0; i<gts.length; i++) {
+            for (int i = 0; i < gts.length; i++) {
                 gts[i] = new GenericType(parameters[i]);
             }
             return gts;
         }
-        if ( type instanceof GenericArrayType ) {
-            return new GenericType[] { new GenericType(((GenericArrayType) type).getGenericComponentType()) };
+        if (type instanceof GenericArrayType) {
+            return new GenericType[] {new GenericType(((GenericArrayType)type).getGenericComponentType())};
         }
         if (type instanceof WildcardType) {
             return EMPTY;
         }
         throw new IllegalStateException();
-	}
+    }
 
-	static Class<?> getConcreteClass(Type type) {
-		Type ntype = collapse(type);
-		if ( ntype instanceof Class )
-			return (Class<?>) ntype;
+    static Class<?> getConcreteClass(Type type) {
+        Type ntype = collapse(type);
+        if (ntype instanceof Class) {
+            return (Class<?>)ntype;
+        }
+        if (ntype instanceof ParameterizedType) {
+            return getConcreteClass(collapse(((ParameterizedType)ntype).getRawType()));
+        }
+        throw new RuntimeException("Unknown type " + type);
+    }
 
-		if ( ntype instanceof ParameterizedType )
-			return getConcreteClass(collapse(((ParameterizedType)ntype).getRawType()));
-
-		throw new RuntimeException("Unknown type " + type );
-	}
-
-	static Type collapse(Type target) {
-		if (target instanceof Class || target instanceof ParameterizedType ) {
-			return target;
-		} else if (target instanceof TypeVariable) {
-			return collapse(((TypeVariable<?>) target).getBounds()[0]);
-		} else if (target instanceof GenericArrayType) {
-			Type t = collapse(((GenericArrayType) target)
-					.getGenericComponentType());
-			while ( t instanceof ParameterizedType )
-				t = collapse(((ParameterizedType)t).getRawType());
-			return Array.newInstance((Class<?>)t, 0).getClass();
-		} else if (target instanceof WildcardType) {
-			WildcardType wct = (WildcardType) target;
-			if (wct.getLowerBounds().length == 0)
-				return collapse(wct.getUpperBounds()[0]);
-			else
-				return collapse(wct.getLowerBounds()[0]);
-		}
-		throw new RuntimeException("Huh? " + target);
-	}
+    static Type collapse(Type target) {
+        if (target instanceof Class || target instanceof ParameterizedType) {
+            return target;
+        } else if (target instanceof TypeVariable) {
+            return collapse(((TypeVariable<?>)target).getBounds()[0]);
+        } else if (target instanceof GenericArrayType) {
+            Type t = collapse(((GenericArrayType)target).getGenericComponentType());
+            while (t instanceof ParameterizedType) {
+                t = collapse(((ParameterizedType)t).getRawType());
+            }
+            return Array.newInstance((Class<?>)t, 0).getClass();
+        } else if (target instanceof WildcardType) {
+            WildcardType wct = (WildcardType)target;
+            if (wct.getLowerBounds().length == 0) {
+                return collapse(wct.getUpperBounds()[0]);
+            } else {
+                return collapse(wct.getLowerBounds()[0]);
+            }
+        }
+        throw new RuntimeException("Huh? " + target);
+    }
 
 }
