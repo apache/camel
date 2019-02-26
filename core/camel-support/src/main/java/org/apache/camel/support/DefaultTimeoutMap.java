@@ -71,7 +71,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     }
 
     public DefaultTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, boolean useLock) {
-        this(executor, requestMapPollTimeMillis, useLock ? new ReentrantLock() : new NoLock());
+        this(executor, requestMapPollTimeMillis, useLock ? new ReentrantLock() : NoLock.INSTANCE);
     }
 
     public DefaultTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, Lock lock) {
