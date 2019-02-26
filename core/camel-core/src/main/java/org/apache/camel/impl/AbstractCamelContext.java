@@ -44,8 +44,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import javax.naming.Context;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.AsyncProcessor;
@@ -169,7 +167,6 @@ import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResolverHelper;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -2546,11 +2543,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     public <T> T getRegistry(Class<T> type) {
         Registry reg = getRegistry();
 
-        // unwrap the property placeholder delegate
-        if (reg instanceof PropertyPlaceholderDelegateRegistry) {
-            reg = ((PropertyPlaceholderDelegateRegistry) reg).getRegistry();
-        }
-
         if (type.isAssignableFrom(reg.getClass())) {
             return type.cast(reg);
         }
@@ -2558,9 +2550,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public void setRegistry(Registry registry) {
-        // wrap the registry so we always do property placeholder lookups
-        if (!(registry instanceof PropertyPlaceholderDelegateRegistry)) {
-            registry = new PropertyPlaceholderDelegateRegistry(this, registry);
+        if (registry instanceof CamelContextAware) {
+            ((CamelContextAware) registry).setCamelContext(this);
         }
         this.registry = registry;
     }

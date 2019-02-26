@@ -24,6 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.Registry;
 
@@ -35,8 +38,9 @@ import org.apache.camel.spi.Registry;
  * Notice that beans in the fallback registry are not managed by the first-choice registry, so these beans
  * may not support dependency injection and other features that the first-choice registry may offer.
  */
-public class DefaultRegistry implements Registry {
+public class DefaultRegistry implements Registry, CamelContextAware {
 
+    private CamelContext camelContext;
     private List<BeanRepository> repositories;
     private final Registry simple = new SimpleRegistry();
 
@@ -73,6 +77,16 @@ public class DefaultRegistry implements Registry {
         }
     }
 
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     /**
      * Gets the bean repositories.
      *
@@ -93,6 +107,16 @@ public class DefaultRegistry implements Registry {
 
     @Override
     public Object lookupByName(String name) {
+        try {
+            // Must avoid attempting placeholder resolution when looking up
+            // the properties component or else we end up in an infinite loop.
+            if (camelContext != null && !name.equals("properties")) {
+                name = camelContext.resolvePropertyPlaceholders(name);
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+
         if (repositories != null) {
             for (BeanRepository r : repositories) {
                 Object answer = r.lookupByName(name);
@@ -106,6 +130,16 @@ public class DefaultRegistry implements Registry {
 
     @Override
     public <T> T lookupByNameAndType(String name, Class<T> type) {
+        try {
+            // Must avoid attempting placeholder resolution when looking up
+            // the properties component or else we end up in an infinite loop.
+            if (camelContext != null && !name.equals("properties")) {
+                name = camelContext.resolvePropertyPlaceholders(name);
+            }
+        } catch (Exception e) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+
         if (repositories != null) {
             for (BeanRepository r : repositories) {
                 T answer = r.lookupByNameAndType(name, type);

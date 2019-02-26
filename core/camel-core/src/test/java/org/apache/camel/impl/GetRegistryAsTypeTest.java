@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.SimpleRegistry;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,10 +31,11 @@ public class GetRegistryAsTypeTest extends Assert {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        JndiRegistry jndi = context.getRegistry(JndiRegistry.class);
-        assertNotNull(jndi);
+        assertNotNull(context.getRegistry(DefaultRegistry.class));
+        assertNotNull(context.getRegistry());
 
         assertNull(context.getRegistry(Map.class));
+        assertNull(context.getRegistry(JndiRegistry.class));
         assertNull(context.getRegistry(SimpleRegistry.class));
 
         context.stop();
