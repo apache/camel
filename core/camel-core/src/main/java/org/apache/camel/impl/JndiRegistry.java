@@ -44,6 +44,10 @@ public class JndiRegistry extends JndiBeanRepository implements Registry {
         super(context);
     }
 
+    public JndiRegistry(boolean standalone) {
+        super(standalone);
+    }
+
     @Override
     public void bind(String name, Object object) {
         try {

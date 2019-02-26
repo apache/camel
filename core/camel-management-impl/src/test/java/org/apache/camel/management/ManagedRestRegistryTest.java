@@ -17,7 +17,6 @@
 package org.apache.camel.management;
 
 import java.util.Set;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
@@ -26,17 +25,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 
 public class ManagedRestRegistryTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("dummy-test", new DummyRestConsumerFactory());
-        return new DefaultCamelContext(registry);
+        CamelContext context = super.createCamelContext();
+        context.getRegistry().bind("dummy-test", new DummyRestConsumerFactory());
+        return context;
     }
 
     @Test
