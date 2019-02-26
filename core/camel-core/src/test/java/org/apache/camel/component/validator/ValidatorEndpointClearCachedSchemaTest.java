@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +41,6 @@ import org.slf4j.LoggerFactory;
 public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ValidatorEndpointClearCachedSchemaTest.class);
-
-    private SimpleRegistry simpleReg;
 
     private CamelContext context;
 
@@ -90,10 +87,7 @@ public class ValidatorEndpointClearCachedSchemaTest extends ContextTestSupport {
         String handlerPackageSystemProp = "java.protocol.handler.pkgs";
         String customUrlHandlerPackage = "org.apache.camel.urlhandler";
         registerSystemProperty(handlerPackageSystemProp, customUrlHandlerPackage, "|");
-
-        simpleReg = new SimpleRegistry();
-        context = new DefaultCamelContext(simpleReg);
-        return context;
+        return new DefaultCamelContext();
     }
 
     @Override

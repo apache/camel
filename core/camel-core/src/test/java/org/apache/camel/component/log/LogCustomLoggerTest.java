@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.SimpleRegistry;
 import org.apache.logging.log4j.Level;
 import org.junit.Before;
 import org.junit.Test;
@@ -117,7 +116,7 @@ public class LogCustomLoggerTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return new DefaultCamelContext(new SimpleRegistry());
+        return new DefaultCamelContext();
     }
 
 }

@@ -22,17 +22,15 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 
 public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("dummy-test", new DummyRestConsumerFactory());
-        return new DefaultCamelContext(registry);
+        CamelContext context = super.createCamelContext();
+        context.getRegistry().bind("dummy-test", new DummyRestConsumerFactory());
+        return context;
     }
 
     @Test

@@ -24,7 +24,6 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.support.SimpleRegistry;
 import org.junit.Test;
 
 /**
@@ -71,11 +70,9 @@ public class XsltCustomErrorListenerTest extends TestSupport {
     @Test
     public void testErrorListener() throws Exception {
         try {
-            SimpleRegistry registry = new SimpleRegistry();
-            registry.put("myListener", listener);
-
             RouteBuilder builder = createRouteBuilder();
-            CamelContext context = new DefaultCamelContext(registry);
+            CamelContext context = new DefaultCamelContext();
+            context.getRegistry().bind("myListener", listener);
             context.addRoutes(builder);
             context.start();
 

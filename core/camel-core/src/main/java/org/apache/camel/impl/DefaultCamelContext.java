@@ -72,7 +72,6 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.DefaultRegistry;
-import org.apache.camel.support.SimpleRegistry;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -90,7 +89,7 @@ public class DefaultCamelContext extends AbstractCamelContext {
 
     /**
      * Creates the {@link CamelContext} using the given {@link BeanRepository}
-     * as first-choice repository, and the {@link SimpleRegistry} as fallback, via
+     * as first-choice repository, and the {@link org.apache.camel.support.SimpleRegistry} as fallback, via
      * the {@link DefaultRegistry} implementation.
      *
      * @param repository the bean repository.
