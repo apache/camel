@@ -26,8 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CafeRouteSpringTest extends CafeRouteBuilderTest {
     private AbstractApplicationContext applicationContext;
-   
-    
+
     @Before
     public void setUp() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("META-INF/camel-routes.xml");
