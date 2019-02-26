@@ -25,9 +25,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import io.nessus.ipfs.client.DefaultIPFSClient;
-import io.nessus.ipfs.client.IPFSClient;
-import io.nessus.ipfs.client.IPFSException;
 import io.nessus.utils.StreamUtils;
 
 import org.apache.camel.CamelContext;
@@ -36,24 +33,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Assume;
-import org.junit.Before;
 import org.junit.Test;
 
 public class SimpleIPFSTest {
 
-    IPFSClient ipfs;
-    
-    @Before
-    public void before() {
-        ipfs = new DefaultIPFSClient("127.0.0.1", 5001);
-        try {
-            ipfs.connect();
-        } catch (IPFSException ex) {
-            // ignore
-        }
-        Assume.assumeTrue(ipfs.hasConnection());
-    }
-    
     @Test
     public void ipfsVersion() throws Exception {
 
@@ -68,8 +51,8 @@ public class SimpleIPFSTest {
         });
 
         camelctx.start();
-        assumeIPFS(camelctx);
-
+        assumeIPFSAvailable(camelctx);
+        
         try {
             ProducerTemplate producer = camelctx.createProducerTemplate();
             String resA = producer.requestBody("direct:startA", null, String.class);
@@ -96,12 +79,11 @@ public class SimpleIPFSTest {
             }
         });
 
-        Path path = Paths.get("src/test/resources/html/index.html");
-
         camelctx.start();
-        assumeIPFS(camelctx);
-
+        assumeIPFSAvailable(camelctx);
+        
         try {
+            Path path = Paths.get("src/test/resources/html/index.html");
             ProducerTemplate producer = camelctx.createProducerTemplate();
             String res = producer.requestBody("direct:start", path, String.class);
             Assert.assertEquals(hash, res);
@@ -124,12 +106,11 @@ public class SimpleIPFSTest {
             }
         });
 
-        Path path = Paths.get("src/test/resources/html");
-
         camelctx.start();
-        assumeIPFS(camelctx);
-
+        assumeIPFSAvailable(camelctx);
+        
         try {
+            Path path = Paths.get("src/test/resources/html");
             ProducerTemplate producer = camelctx.createProducerTemplate();
             List<String> res = producer.requestBody("direct:start", path, List.class);
             Assert.assertEquals(10, res.size());
@@ -153,8 +134,8 @@ public class SimpleIPFSTest {
         });
 
         camelctx.start();
-        assumeIPFS(camelctx);
-
+        assumeIPFSAvailable(camelctx);
+        
         try {
             ProducerTemplate producer = camelctx.createProducerTemplate();
             InputStream res = producer.requestBody("direct:start", hash, InputStream.class);
@@ -178,8 +159,8 @@ public class SimpleIPFSTest {
         });
 
         camelctx.start();
-        assumeIPFS(camelctx);
-
+        assumeIPFSAvailable(camelctx);
+        
         try {
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Path res = producer.requestBody("direct:start", hash, Path.class);
@@ -204,8 +185,8 @@ public class SimpleIPFSTest {
         });
 
         camelctx.start();
-        assumeIPFS(camelctx);
-
+        assumeIPFSAvailable(camelctx);
+        
         try {
             ProducerTemplate producer = camelctx.createProducerTemplate();
             Path res = producer.requestBody("direct:start", hash, Path.class);
@@ -223,8 +204,11 @@ public class SimpleIPFSTest {
         Assert.assertEquals("The quick brown fox jumps over the lazy dog.", new String(baos.toByteArray()));
     }
 
-    private void assumeIPFS(CamelContext camelctx) {
-        IPFSComponent comp = camelctx.getComponent("ipfs", IPFSComponent.class);
-        Assume.assumeTrue(comp.getIPFSClient().hasConnection());
+    private void assumeIPFSAvailable(CamelContext camelctx) throws Exception {
+        IPFSEndpoint ipfsEp = camelctx.getEndpoints().stream()
+                .filter(ep -> ep instanceof IPFSEndpoint)
+                .map(ep -> (IPFSEndpoint)ep)
+                .findFirst().get();
+        Assume.assumeTrue(ipfsEp.getIPFSClient().hasConnection());
     }
 }

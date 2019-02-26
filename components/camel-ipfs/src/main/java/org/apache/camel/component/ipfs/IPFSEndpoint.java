@@ -27,7 +27,9 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import io.ipfs.multihash.Multihash;
+import io.nessus.ipfs.client.DefaultIPFSClient;
 import io.nessus.ipfs.client.IPFSClient;
+import io.nessus.ipfs.client.IPFSException;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -36,6 +38,8 @@ import org.apache.camel.component.ipfs.IPFSConfiguration.IPFSCommand;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The camel-ipfs component provides access to the Interplanetary File System
@@ -44,16 +48,39 @@ import org.apache.camel.spi.UriParam;
 @UriEndpoint(firstVersion = "2.23.0", scheme = "ipfs", title = "IPFS", syntax = "ipfs:host:port/cmd", producerOnly = true, label = "file,ipfs")
 public class IPFSEndpoint extends DefaultEndpoint {
 
-    static long defaultTimeout = 10000L;
+    public static final long DEFAULT_TIMEOUT = 10000L;
+    
+    private static final Logger LOG = LoggerFactory.getLogger(IPFSComponent.class);
     
     @UriParam
-    private final IPFSConfiguration configuration;
+    private final IPFSConfiguration config;
 
-    public IPFSEndpoint(String uri, IPFSComponent component, IPFSConfiguration configuration) {
+    private IPFSClient client;
+
+    public IPFSEndpoint(String uri, IPFSComponent component, IPFSConfiguration config) {
         super(uri, component);
-        this.configuration = configuration;
+        this.config = config;
+        this.client = createClient(config);
     }
 
+    public IPFSClient getIPFSClient() {
+        return client;
+    }
+
+    public void setClient(IPFSClient client) {
+        this.client = client;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        try {
+            client.connect();
+        } catch (IPFSException ex) {
+            LOG.warn(ex.getMessage());
+        }
+    }
+    
     @Override
     public IPFSComponent getComponent() {
         return (IPFSComponent)super.getComponent();
@@ -75,11 +102,11 @@ public class IPFSEndpoint extends DefaultEndpoint {
     }
 
     IPFSConfiguration getConfiguration() {
-        return configuration;
+        return config;
     }
 
     IPFSCommand getCommand() {
-        String cmd = configuration.getIpfsCmd();
+        String cmd = config.getIpfsCmd();
         try {
             return IPFSCommand.valueOf(cmd);
         } catch (IllegalArgumentException ex) {
@@ -100,7 +127,7 @@ public class IPFSEndpoint extends DefaultEndpoint {
         Multihash mhash = Multihash.fromBase58(cid);
         Future<InputStream> future = ipfs().cat(mhash);
         try {
-            return future.get(defaultTimeout, TimeUnit.MILLISECONDS);
+            return future.get(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException ex) {
             throw new IOException("Cannot obtain: " + cid, ex);
         }
@@ -110,13 +137,21 @@ public class IPFSEndpoint extends DefaultEndpoint {
         Multihash mhash = Multihash.fromBase58(cid);
         Future<Path> future = ipfs().get(mhash, outdir);
         try {
-            return future.get(defaultTimeout, TimeUnit.MILLISECONDS);
+            return future.get(DEFAULT_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException | ExecutionException ex) {
             throw new IOException("Cannot obtain: " + cid, ex);
         }
     }
 
     private IPFSClient ipfs() {
-        return getComponent().getIPFSClient();
+        if (!client.hasConnection()) {
+            client.connect();
+        }
+        return client;
+    }
+    
+    private IPFSClient createClient(IPFSConfiguration config) {
+        IPFSClient ipfsClient = new DefaultIPFSClient(config.getIpfsHost(), config.getIpfsPort());
+        return ipfsClient;
     }
 }
