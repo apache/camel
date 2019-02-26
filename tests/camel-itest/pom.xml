@@ -31,16 +31,6 @@
   <name>Camel :: Integration Tests :: Non OSGi</name>
   <description>Performs cross component integration tests</description>
 
-  <repositories>
-
-    <!-- required for validator tests -->
-    <repository>
-      <id>camel-validator-test-repo</id>
-      <name>This project repository contains camel-validator-test-resources-1.0.0.jar</name>
-      <url>file://${basedir}/lib</url>
-    </repository>
-  </repositories>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -365,9 +355,9 @@
   	
     <!-- for validator tests, the artifact itself is included inside the project repository 'camel-validator-test-repo' above -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
+      <groupId>org.apache.camel.tests</groupId>
       <artifactId>camel-validator-test-resources</artifactId>
-      <version>1.0.0</version>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- Narayana XA TX manager -->
