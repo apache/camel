@@ -195,12 +195,7 @@ public class DefaultCamelContext extends AbstractCamelContext {
     }
 
     protected UuidGenerator createUuidGenerator() {
-        if (System.getProperty("com.google.appengine.runtime.environment") != null) {
-            // either "Production" or "Development"
-            return new JavaUuidGenerator();
-        } else {
-            return new DefaultUuidGenerator();
-        }
+        return new DefaultUuidGenerator();
     }
 
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
