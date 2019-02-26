@@ -1,0 +1,110 @@
+[[service-component]]
+== Service Component
+
+*Available as of Camel version 2.22*
+
+
+### Using the service endpoint
+
+
+### URI format
+
+[source]
+----
+service:serviceName:endpoint[?options]
+----
+
+
+### Options
+
+// component options: START
+The Service component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *service* (advanced) | Inject the service to use. |  | ServiceRegistry
+| *serviceSelector* (advanced) | Inject the service selector used to lookup the ServiceRegistry to use. |  | Selector
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Service endpoint is configured using URI syntax:
+
+----
+service:serviceName:delegateUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *delegateUri* | *Required* The endpoint uri to expose as service |  | String
+|===
+
+
+==== Query Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-service-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.service.enabled* | Whether to enable auto configuration of the service component. This is enabled by default. |  | Boolean
+| *camel.component.service.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.service.service* | Inject the service to use. The option is a org.apache.camel.cloud.ServiceRegistry type. |  | String
+| *camel.component.service.service-selector* | Inject the service selector used to lookup the ServiceRegistry to use. The option is a org.apache.camel.cloud.ServiceRegistry.Selector type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+### Implementations
+
+Camel provide the following ServiceRegistry implementations:
+
+- camel-consul
+- camel-zookeeper
+- camel-spring-cloud
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started

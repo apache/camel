@@ -1,0 +1,20 @@
+[[CamelContext-CamelContext]]
+=== CamelContext
+
+The
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/CamelContext.html[CamelContext]
+represents a single Camel routing rulebase. You use the CamelContext in
+a similar way to the Spring
+http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/context/ApplicationContext.html[ApplicationContext].
+
+See link:lifecycle.adoc[Lifecycle] to understand the overall lifecycle
+of the CamelContext.
+
+[[CamelContext-SeeAlso]]
+==== See Also
+
+* link:route-builder.adoc[RouteBuilder]
+* link:routes.adoc[Routes]
+* link:lifecycle.adoc[Lifecycle]
+* link:architecture.adoc[Architecture]
+

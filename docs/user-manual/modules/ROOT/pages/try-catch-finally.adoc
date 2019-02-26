@@ -1,0 +1,131 @@
+[[TryCatchFinally-TryCatchFinally]]
+=== Try ... Catch ... Finally
+
+Camel supports the Java equivalent of try .. catch and finally directly
+in the DSL.
+It aims to work like its Java sisters but with more power. Especially in
+Camel 2.0 where we gave this feature an overhaul.
+
+In Camel we prefix the keywords with `do` to avoid having same keyword
+as Java. So we have:
+
+* `doTry`
+* `doCatch`
+* `doFinally`
+* `end` to end the block in Java DSL
+
+Notice this document is based on how it works in Camel 2.0. In Camel 1.x
+this feature isn't as powerful and it uses a slight different keyword
+names.
+
+===== Camel error handling is disabled
+
+When using `doTry .. doCatch .. doFinally` then the regular Camel
+link:error-handler.adoc[Error Handler] does not apply. That means any
+`onException` or the likes does not trigger. The reason is that
+`doTry .. doCatch .. doFinally` is in fact its own error handler and
+that it aims to mimic and work like how try/catch/finally works in Java.
+
+[[TryCatchFinally-AboutdoCatchanditspoweroverJava]]
+==== About `doCatch` and its power over Java
+
+The `doCatch` in Camel is empowered over its Java sister.
+
+First of all you can define multiple exceptions to catch in a single
+block.
+
+And second of all an important aspect over the regular Java counter
+parts is that Camel will check in the exception hierarchy when it
+matches a thrown exception against the `doCatch` blocks. The reasons is
+that many times the original caused exceptions is wrapped by other
+wrapper exceptions, typically transposing the exception from a checked
+to a runtime exception.
+Camel for instance does this by wrapped it in a `RuntimeCamelException`.
+So if the original caused exception is an `java.io.IOException` then
+Camel will still match a `doCatch` block defined with an
+`java.io.IOException`. And just like Java the order in which you have
+multiple `doCatch` blocks matter. Camel will iterate from the top going
+down and use the first `doCatch` that matches the exception. The reason
+is to keep it similar to the regular java and how it selects a catch
+block. This differers from the link:exception-clause.adoc[Exception
+Clause] that has a more intelligent exception selection strategy among
+multiple `onException` definitions, where it also consider the delta in
+the exception hierarchy to select the best definition.
+
+A third feature is that you can attach a `onWhen` predicate to signal if
+the catch should trigger or not at runtime.
+
+And to simulate _rethrowing_ an exception from a `doCatch` you should
+use the `handled` predicate. If its evaluated to `false` Camel will
+reattach the exception on the link:exchange.adoc[Exchange].
+
+[[TryCatchFinally-UsingtrycatchfinallyinJavaDSL]]
+==== Using try .. catch .. finally in Java DSL
+
+In the route below we have all keywords in action. As the code is based
+on a unit test we route using <<mock-component,Mock>>.
+
+https://github.com/apache/camel/tree/master/camel-core/src/test/java/org/apache/camel/processor/TryProcessorMultipleExceptionTest.java[TryProcessorMultipleExceptionTest.java]
+
+And in the route below we want to indicate if an IOException occured we
+want to route it elsewhere and at the same time keep the exception so
+the original caller is notified about this exception. To do this we need
+to not _rethrow_ the exception and this is why we use *handled* and set
+it to false to indicate, no we did not handle it so please keep the
+exception.
+The 2nd exception block can be omitted but as the code is based on an
+unit test we want to test the behavior non `IOException` as well.
+
+https://github.com/apache/camel/tree/master/camel-core/src/test/java/org/apache/camel/processor/TryProcessorHandledTest.java[TryProcessorHandledTest.java]
+
+And finally we have an example of the `onWhen` predicate in action. We
+can attach it to a `doCatch` block and at runtime determine if the block
+should be triggered or not.
+In our case we only want to trigger if the caused exception message
+contains the *damn* word.
+
+https://github.com/apache/camel/tree/master/camel-core/src/test/java/org/apache/camel/processor/TryProcessorOnWhenTest.java[TryProcessorOnWhenTest.java]
+
+===== Use end() to end the block
+
+Notice when using Java DSL we must use `end()` to indicate where the try
+.. catch .. finally block ends. As the example above has a finally, then
+the `end()` should be at the end of the finally block. If we are not
+using a finally, then the `end()` should be at the end of the `doCatch`
+to indicate the end there.
+
+[[TryCatchFinally-Usingtry..catch..finallyinSpringDSL]]
+==== Using try .. catch .. finally in Spring DSL
+
+We show the three sample samples using Spring DSL instead.
+
+In the route below we have all keywords in action. As the code is based
+on a unit test we route using <<mock-component,Mock>>.
+
+https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorMultipleExceptionTest.xml[SpringTryProcessorMultipleExceptionTest.xml]
+
+And in the route below we want to indicate if an IOException occured we
+want to route it elsewhere and at the same time keep the exception so
+the original caller is notified about this exception. To do this we need
+to not _rethrow_ the exception and this is why we use *handled* and set
+it to false to indicate, no we did not handle it so please keep the
+exception.
+The 2nd exception block can be omitted but as the code is based on an
+unit test we want to test the behavior non `IOException` as well.
+
+https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorHandledTest.xml[SpringTryProcessorHandledTest.xml]
+
+And finally we have an example of the `onWhen` predicate in action. We
+can attach it to a `doCatch` block and at runtime determine if the block
+should be triggered or not.
+In our case we only want to trigger if the caused exception message
+contains the *damn* word.
+
+https://github.com/apache/camel/tree/master/components/camel-spring/src/test/resources/org/apache/camel/spring/processor/SpringTryProcessorOnWhenTest.xml[SpringTryProcessorOnWhenTest.xml]
+
+[[TryCatchFinally-SeeAlso]]
+==== See Also
+
+* link:error-handling-in-camel.adoc[Error handling in Camel]
+* link:error-handler.adoc[Error Handler]
+* link:exception-clause.adoc[Exception Clause]

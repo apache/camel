@@ -1,0 +1,193 @@
+[[scheduler-component]]
+== Scheduler Component
+
+*Available as of Camel version 2.15*
+
+The *scheduler:* component is used to generate message exchanges when a
+scheduler fires. This component is similar to the
+ <<timer-component,Timer>> component, but it offers more functionality in
+terms of scheduling. Also this component uses
+JDK `ScheduledExecutorService`. Where as the timer uses a JDK `Timer`.
+
+You can only consume events from this endpoint.
+
+=== URI format
+
+[source]
+----
+scheduler:name[?options]
+----
+
+Where `name` is the name of the scheduler, which is created and shared
+across endpoints. So if you use the same name for all your scheduler
+endpoints, only one scheduler thread pool and thread will be used - but
+you can configure the thread pool to allow more concurrent threads.
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+*Note:* The IN body of the generated exchange is `null`. So
+`exchange.getIn().getBody()` returns `null`.
+
+=== Options
+
+// component options: START
+The Scheduler component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *concurrentTasks* (scheduler) | Number of threads used by the scheduling thread pool. Is by default using a single thread | 1 | int
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The Scheduler endpoint is configured using URI syntax:
+
+----
+scheduler:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* The name of the scheduler |  | String
+|===
+
+
+==== Query Parameters (20 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *concurrentTasks* (scheduler) | Number of threads used by the scheduling thread pool. Is by default using a single thread | 1 | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-scheduler-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.scheduler.concurrent-tasks* | Number of threads used by the scheduling thread pool. Is by default using a single thread | 1 | Integer
+| *camel.component.scheduler.enabled* | Whether to enable auto configuration of the scheduler component. This is enabled by default. |  | Boolean
+| *camel.component.scheduler.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+=== More information
+
+This component is a scheduler
+http://camel.apache.org/polling-consumer.html[Polling Consumer] where
+you can find more information about the options above, and examples at
+the http://camel.apache.org/polling-consumer.html[Polling
+Consumer] page.
+
+=== Exchange Properties
+
+When the timer is fired, it adds the following information as properties
+to the `Exchange`:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|Name |Type |Description
+
+|`Exchange.TIMER_NAME` |`String` |The value of the `name` option.
+
+|`Exchange.TIMER_FIRED_TIME` |`Date` |The time when the consumer fired.
+|===
+
+=== Sample
+
+To set up a route that generates an event every 60 seconds:
+
+[source,java]
+----
+from("scheduler://foo?delay=60s").to("bean:myBean?method=someMethodName");
+----
+
+The above route will generate an event and then invoke the
+`someMethodName` method on the bean called `myBean` in the
+Registry such as JNDI or Spring.
+
+And the route in Spring DSL:
+
+[source,xml]
+----
+<route>
+  <from uri="scheduler://foo?delay=60s"/>
+  <to uri="bean:myBean?method=someMethodName"/>
+</route>
+----
+
+=== Forcing the scheduler to trigger immediately when completed
+
+To let the scheduler trigger as soon as the previous task is complete,
+you can set the option `greedy=true`. But beware then the scheduler will
+keep firing all the time. So use this with caution.
+
+=== Forcing the scheduler to be idle
+
+There can be use cases where you want the scheduler to trigger and be
+greedy. But sometimes you want "tell the scheduler" that there was no
+task to poll, so the scheduler can change into idle mode using the
+backoff options. To do this you would need to set a property on the
+exchange with the key `Exchange.SCHEDULER_POLLED_MESSAGES` to a boolean
+value of false. This will cause the consumer to indicate that there was
+no messages polled. 
+
+The consumer will otherwise as by default return 1 message polled to the
+scheduler, every time the consumer has completed processing the
+exchange.
+
+=== See Also
+
+* <<timer-component,Timer>>
+* <<quartz-component,Quartz>>

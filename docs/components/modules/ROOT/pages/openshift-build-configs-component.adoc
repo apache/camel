@@ -1,0 +1,65 @@
+[[openshift-build-configs-component]]
+== Openshift Build Config Component
+
+*Available as of Camel version 2.17*
+
+The *OpenShift Build Config* component is one of link:kubernetes.html[Kubernetes Components] which
+provides a producer to execute kubernetes build config operations. 
+
+
+### Component Options
+
+// component options: START
+The Openshift Build Config component has no options.
+// component options: END
+
+
+### Endpoint Options
+
+// endpoint options: START
+The Openshift Build Config endpoint is configured using URI syntax:
+
+----
+openshift-build-configs:masterUrl
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *masterUrl* | *Required* Kubernetes Master url |  | String
+|===
+
+
+==== Query Parameters (20 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *apiVersion* (producer) | The Kubernetes API Version to use |  | String
+| *dnsDomain* (producer) | The dns domain, used for ServiceCall EIP |  | String
+| *kubernetesClient* (producer) | Default KubernetesClient to use if provided |  | KubernetesClient
+| *operation* (producer) | Producer operation to do on Kubernetes |  | String
+| *portName* (producer) | The port name, used for ServiceCall EIP |  | String
+| *portProtocol* (producer) | The port protocol, used for ServiceCall EIP | tcp | String
+| *connectionTimeout* (advanced) | Connection timeout in milliseconds to use when making requests to the Kubernetes API server. |  | Integer
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *caCertData* (security) | The CA Cert Data |  | String
+| *caCertFile* (security) | The CA Cert File |  | String
+| *clientCertData* (security) | The Client Cert Data |  | String
+| *clientCertFile* (security) | The Client Cert File |  | String
+| *clientKeyAlgo* (security) | The Key Algorithm used by the client |  | String
+| *clientKeyData* (security) | The Client Key data |  | String
+| *clientKeyFile* (security) | The Client Key file |  | String
+| *clientKeyPassphrase* (security) | The Client Key Passphrase |  | String
+| *oauthToken* (security) | The Auth Token |  | String
+| *password* (security) | Password to connect to Kubernetes |  | String
+| *trustCerts* (security) | Define if the certs we used are trusted anyway or not |  | Boolean
+| *username* (security) | Username to connect to Kubernetes |  | String
+|===
+// endpoint options: END

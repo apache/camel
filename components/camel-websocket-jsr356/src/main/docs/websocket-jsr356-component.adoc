@@ -1,0 +1,100 @@
+[[websocket-jsr356-component]]
+== Javax Websocket Component
+*Available as of Camel version 2.23*
+*Available as of Camel version 2.23*
+
+
+*Available as of Camel version 2.23*
+
+The *jsr356* component provides websocket
+endpoints for communicating with clients using
+JSR356 (javax).
+
+
+### URI format
+
+To consume from the local instance on a particular `path` the messages:
+
+[source,java]
+----
+websocket-jsr356://${path}
+----
+
+To consume from a remote instance - i.e. Camel will be a client - on a particular `uri` the messages:
+
+[source,java]
+----
+websocket-jsr356://${uri}
+----
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+### Websocket Options
+
+
+// component options: START
+The Javax Websocket component has no options.
+// component options: END
+
+// endpoint options: START
+The Javax Websocket endpoint is configured using URI syntax:
+
+----
+websocket-jsr356:/resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *websocketPathOrUri* | If a path (/foo) it will deploy locally the endpoint, if an uri it will connect to the corresponding server |  | String
+|===
+
+
+==== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *context* (common) | the servlet context to use (represented by its path) |  | String
+| *sessionCount* (common) | Used when the endpoint is in client mode to populate a pool of sessions |  | int
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-websocket-jsr356-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.websocket-jsr356.enabled* | Whether to enable auto configuration of the websocket-jsr356 component. This is enabled by default. |  | Boolean
+| *camel.component.websocket-jsr356.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END

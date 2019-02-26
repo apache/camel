@@ -1,0 +1,170 @@
+[[google-mail-stream-component]]
+== Google Mail Stream Component
+
+*Available as of Camel version 2.22*
+
+The Google Mail component provides access
+to http://gmail.com/[Gmail] via
+the https://developers.google.com/gmail/api/v1/reference/[Google Mail
+Web APIs].
+
+Google Mail uses
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
+user data. Before you can use this component, you will need
+to https://developers.google.com/gmail/api/auth/web-server[create an
+account and generate OAuth credentials]. Credentials comprise of a
+clientId, clientSecret, and a refreshToken. A handy resource for
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+------------------------------------------------------
+    <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-google-mail</artifactId>
+            <version>2.22-SNAPSHOT</version>
+    </dependency>
+
+------------------------------------------------------
+
+### URI Format
+
+The GoogleMail Component uses the following URI format:
+
+--------------------------------------------------------
+        google-mail-stream://index?[options]
+
+--------------------------------------------------------
+
+### GoogleMailStreamComponent
+
+
+// component options: START
+The Google Mail Stream component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The configuration |  | GoogleMailStream Configuration
+| *clientFactory* (advanced) | The client Factory |  | GoogleMailClient Factory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The Google Mail Stream endpoint is configured using URI syntax:
+
+----
+google-mail-stream:index
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *index* | Specifies an index for the endpoint |  | String
+|===
+
+
+==== Query Parameters (28 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessToken* (consumer) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *applicationName* (consumer) | Google mail application name. Example would be camel-google-mail/1.0 |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *clientId* (consumer) | Client ID of the mail application |  | String
+| *clientSecret* (consumer) | Client secret of the mail application |  | String
+| *labels* (consumer) | Comma separated list of labels to take into account |  | String
+| *markAsRead* (consumer) | Mark the message as read once it has been consumed | false | boolean
+| *maxResults* (consumer) | Max results to be returned | 10 | long
+| *query* (consumer) | The query to execute on gmail box | is:unread | String
+| *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-mail-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 13 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.google-mail-stream.client-factory* | The client Factory. The option is a org.apache.camel.component.google.mail.GoogleMailClientFactory type. |  | String
+| *camel.component.google-mail-stream.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *camel.component.google-mail-stream.configuration.application-name* | Google mail application name. Example would be "camel-google-mail/1.0" |  | String
+| *camel.component.google-mail-stream.configuration.client-id* | Client ID of the mail application |  | String
+| *camel.component.google-mail-stream.configuration.client-secret* | Client secret of the mail application |  | String
+| *camel.component.google-mail-stream.configuration.index* | Specifies an index for the endpoint |  | String
+| *camel.component.google-mail-stream.configuration.labels* | Comma separated list of labels to take into account |  | String
+| *camel.component.google-mail-stream.configuration.mark-as-read* | Mark the message as read once it has been consumed | false | Boolean
+| *camel.component.google-mail-stream.configuration.max-results* | Max results to be returned | 10 | Long
+| *camel.component.google-mail-stream.configuration.query* | The query to execute on gmail box | is:unread | String
+| *camel.component.google-mail-stream.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+| *camel.component.google-mail-stream.enabled* | Whether to enable auto configuration of the google-mail-stream component. This is enabled by default. |  | Boolean
+| *camel.component.google-mail-stream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+### Consumer
+
+The consumer will poll by default with the query "is:unread" and maxResults equals to 10.
+
+For example
+
+[source,java]
+---------------------------------------------------------
+from("google-mail-stream://test?markAsRead=true&delay=5000&maxResults=5&labels=GitHub,Apache").to("mock:result");
+---------------------------------------------------------
+
+This route will consume unread messages with labels Github and Apache and it will mark the messages as read.
+
+   

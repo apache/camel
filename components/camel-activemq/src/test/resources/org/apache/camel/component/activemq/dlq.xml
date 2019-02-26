@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
+    ">
+
+    <bean id="transactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
+      <property name="connectionFactory" ref="pooledConnectionFactory"/>
+    </bean>
+
+      <bean id="localJMS" class="org.apache.camel.component.activemq.ActiveMQComponent">
+            <property name="connectionFactory" ref="pooledConnectionFactory"/>
+            <property name="transactionManager" ref="transactionManager"/>
+            <property name="transacted" value="true"/>
+      </bean>
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route id="orders">
+            <from uri="localJMS:fidEtpOrders" />
+            <transacted/>
+            <!-- <log loggingLevel="INFO" message="from activemq:fidessaTrades: ${body}" /> -->
+            <bean ref="canError" method="enrich" />
+            <wireTap uri="localJMS:ordersTap" />
+            <to uri="localJMS:fidessaOrders" />
+        </route>
+    </camelContext>
+
+   <bean id="activemqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+       <property name="brokerURL" value="vm://testDlq" />
+       <property name="redeliveryPolicy" ref="redeliveryPolicy"/>
+   </bean>
+
+   <bean id="redeliveryPolicy" class="org.apache.activemq.RedeliveryPolicy">
+       <property name="maximumRedeliveries" value="1"/>
+   </bean>
+
+   <bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory">
+       <property name="maxConnections" value="8" />
+       <property name="connectionFactory" ref="activemqConnectionFactory" />
+   </bean>
+
+   <!--  only for jta - not jms tm
+   bean id="resourceManager" class="org.apache.activemq.jms.pool.GenericResourceManager" init-method="recoverResource">
+         <property name="transactionManager" ref="transactionManager" />
+         <property name="connectionFactory" ref="activemqConnectionFactory" />
+         <property name="resourceName" value="activemq.default" />
+   </bean -->
+
+    <bean id="canError" class="org.apache.camel.component.activemq.DlqTest$CanError"/>
+</beans>

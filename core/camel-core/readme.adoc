@@ -1,0 +1,104 @@
+==== Components
+
+
+
+
+
+// components: START
+Number of Components: 5 in 1 JAR artifacts (0 deprecated)
+
+[width="100%",cols="4,1,5",options="header"]
+|===
+| Component | Available From | Description
+
+| link:src/main/docs/bean-component.adoc[Bean] (camel-core) +
+`bean:beanName` | 1.0 | The bean component is for invoking Java beans from Camel.
+
+| link:src/main/docs/class-component.adoc[Class] (camel-core) +
+`class:beanName` | 2.4 | The Class Component is for invoking Java Classes (Java beans) from Camel.
+
+| link:src/main/docs/dataset-component.adoc[Dataset] (camel-core) +
+`dataset:name` | 1.3 | The dataset component provides a mechanism to easily perform load & soak testing of your system.
+
+| link:src/main/docs/mock-component.adoc[Mock] (camel-core) +
+`mock:name` | 1.0 | The mock component is used for testing routes and mediation rules using mocks.
+
+| link:src/main/docs/test-component.adoc[Test] (camel-core) +
+`test:name` | 1.3 | The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+
+|===
+// components: END
+
+
+
+
+
+
+==== Data Formats
+
+
+
+
+
+// dataformats: START
+Number of Data Formats: 4 in 35 JAR artifacts (0 deprecated)
+
+[width="100%",cols="4,1,5",options="header"]
+|===
+| Data Format | Available From | Description
+
+| link:src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0 | The GZip data format is a message compression and de-compression format (which works with the popular gzip/gunzip tools).
+
+| link:src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12 | Serialization is a data format which uses the standard Java Serialization mechanism to unmarshal a binary payload into Java objects or to marshal Java objects into a binary blob.
+
+| link:src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12 | String data format is a textual based format that supports character encoding.
+
+| link:src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12 | Zip Deflate Compression data format is a message compression and de-compression format (not zip files).
+|===
+// dataformats: END
+
+
+
+
+
+
+
+==== Expression Languages
+
+
+
+
+
+// languages: START
+Number of Languages: 10 in 1 JAR artifacts (0 deprecated)
+
+[width="100%",cols="4,1,5",options="header"]
+|===
+| Language | Available From | Description
+
+| link:src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3 | To use a Java bean (aka method call) in Camel expressions or predicates.
+
+| link:src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | To use a constant value in Camel expressions or predicates.
+
+| link:src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | To use a Camel Exchange property in expressions or predicates.
+
+| link:src/main/docs/file-language.adoc[File] (camel-core) | 1.1 | For expressions and predicates using the file/simple language
+
+| link:src/main/docs/header-language.adoc[Header] (camel-core) | 1.5 | To use a Camel Message header in expressions or predicates.
+
+| link:src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8 | Reference to an existing Camel expression or predicate, which is looked up from the Camel registry.
+
+| link:src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | To use Camels built-in Simple language in Camel expressions or predicates.
+
+| link:src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | To use Camel message body or header with a tokenizer in Camel expressions or predicates.
+
+| link:src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | To use Camel message body or header with a XML tokenizer in Camel expressions or predicates.
+
+| link:src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | To use XPath (XML) in Camel expressions or predicates.
+|===
+// languages: END
+
+
+
+
+

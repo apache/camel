@@ -1,0 +1,220 @@
+[[toD-eip]]
+== To D EIP
+
+There is a new `.toD` / `<toD>` that allows to send a message to a dynamic
+computed <<Endpoint-Endpoints,Endpoint>> using one or
+more link:expression.html[Expression] that are concat together. By
+default the <<simple-language,Simple>> language is used to compute
+the endpoint.
+
+=== Options
+
+// eip options: START
+The To D EIP supports 5 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uri* | *Required* The uri of the endpoint to send to. The uri can be dynamic computed using the org.apache.camel.language.simple.SimpleLanguage expression. |  | String
+| *pattern* | Sets the optional ExchangePattern used to invoke this endpoint |  | ExchangePattern
+| *cacheSize* | Sets the maximum size used by the org.apache.camel.spi.ConsumerCache which is used to cache and reuse producers. |  | Integer
+| *ignoreInvalidEndpoint* | Ignore the invalidate endpoint exception when try to create a producer with that endpoint | false | Boolean
+| *allowOptimisedComponents* | Whether to allow components to optimise toD if they are org.apache.camel.spi.SendDynamicAware. | true | Boolean
+|===
+// eip options: END
+
+=== Samples
+
+For example to send a message to a endpoint defined by a
+header you can do as shown below:
+
+[source,java]
+----
+from("direct:start")
+  .toD("${header.foo}");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <toD uri="${header.foo}"/>
+</route>
+----
+
+You can also prefix the uri with a value because by default the uri is
+evaluated using the <<simple-language,Simple>> language
+
+[source,java]
+----
+from("direct:start")
+  .toD("mock:${header.foo}");
+----
+
+And in XML:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <toD uri="mock:${header.foo"/>
+</route>
+----
+
+In the example above we compute an endpoint that has prefix "mock:" and
+then the header foo is appended. So for example if the header foo has
+value order, then the endpoint is computed as "mock:order".
+
+You can also use other languages than <<simple-language,Simple>> such
+as <<xpath-language,XPath>> - this requires to prefix with language: as
+shown below (simple language is the default language). If you do not
+specify language: then the endpoint is a component name. And in some
+cases there is both a component and language with the same name such as
+xquery.
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <toD uri="language:xpath:/order/@uri"/>
+</route>
+----
+
+This is done by specifying the name of the language followed by a colon.
+
+[source,java]
+----
+from("direct:start")
+  .toD("language:xpath:/order/@uri");
+----
+
+You can also concat multiple <<language-component,Language>>(s) together
+using the plus sign `+` such as shown below:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <toD uri="jms:${header.base}+language:xpath:/order/@id"/>
+</route>
+----
+
+In the example above the uri is a combination
+of <<simple-language,Simple>> language and <<simple-language,XPath>> where
+the first part is simple (simple is default language). And then the plus
+sign separate to another language, where we specify the language name
+followed by a colon
+
+[source,java]
+----
+from("direct:start")
+  .toD("jms:${header.base}+language:xpath:/order/@id");
+----
+
+You can concat as many languages as you want, just separate them with
+the plus sign
+
+=== Avoid creating endless dynamic endpoints which takes up resources
+
+When using dynamic computed endpoints with `toD` then you may compute a lot of dynamic endpoints,
+which results in an overhead of resources in use, by each dynamic endpoint uri, and its associated producer.
+
+For example HTTP based endpoints where you may have dynamic values in URI parameters when calling the HTTP service, such as:
+
+[source,java]
+----
+from("direct:login")
+  .toD("http:myloginserver:8080/login?userid=${header.userName}");
+----
+
+In the example above then the parameter `userid` is dynamic computed, and would result in one instance of endpoint and producer
+for each different userid. To avoid having too many dynamic endpoints you can configure `toD` to reduce its cache size, for example:
+
+[source,java]
+----
+from("direct:login")
+  .toD("http:myloginserver:8080/login?cacheSize=10&userid=${header.userName}");
+----
+
+where the cache is 10. *Important* this will only reduce the endpoint cache of the `toD` that has a chance
+of being reused in case a message is routed with the same `userName` header. Therefore reducing the cache size
+will not solve the _endless dynamic endoints_ problem. Instead you should use static endpoints with `to` and
+provide the dynamic parts in Camel message headers (if possible).
+
+The example above can resolve via static endpoints, or from Camel 2.22 onwards via optimised components (see further below)
+
+==== Using static endpoints
+
+In the example above then the parameter `userid` is dynamic computed, and would result in one instance of endpoint and producer
+for each different userid. To avoid having too dynamic endpoints you use a single static endpoint and use headers to provide the dynamic parts:
+
+[source,java]
+----
+from("direct:login")
+  .setHeader(Exchange.HTTP_PATH, constant("/login"))
+  .setHeader(Exchange.HTTP_QUERY, simple("userid=${header.userName}"))
+  .toD("http:myloginserver:8080");
+----
+
+If you are using Camel 2.22 onwards then you can use its optimised components for `toD` that can _solve_ this out of the box,
+as documented next.
+
+=== Using optimised components
+
+But a better solution would be if the HTTP component could be optimised to handle the variations of dynamic computed endpoint uris.
+This is now possible with *Camel 2.22* onwards, where the following components has been optimised for `toD`:
+
+- camel-http
+- camel-http4
+- camel-jetty
+- camel-netty4-http
+- camel-undertow
+
+For the optimisation to work, then:
+
+1. The optimisation is detected and activated during startup of the Camel routes with `toD`'s.
+2. The dynamic uri in `toD` must provide the component name as either static or resolved via property placeholders.
+3. The supported components must be on the classpath.
+
+The HTTP based components will be optimised to use the same hostname:port for each endpoint, and the dynamic values
+for context-path and query parameters will be provided as headers:
+
+For example this route:
+
+[source,java]
+----
+from("direct:login")
+  .toD("http:myloginserver:8080/login?userid=${header.userName}");
+----
+
+will essentially be optimised to (pseudo route):
+
+[source,java]
+----
+from("direct:login")
+  .setHeader(Exchange.HTTP_PATH, expression("/login"))
+  .setHeader(Exchange.HTTP_QUERY, expression("userid=${header.userName}"))
+  .toD("http:myloginserver:8080")
+  .removeHeader(Exchange.HTTP_PATH)
+  .removeHeader(Exchange.HTTP_QUERY);
+----
+
+Where _expression_ will be evaluated dynamically. Notice how the uri in `toD` is now static (`http:myloginserver:8080`).
+This optimisation allows Camel to reuse the same endpoint and its associated producer for all dynamic variations.
+This yields much lower resource overhead as the same http producer will be used for all the different variations of userid's.
+
+NOTE: When the optimised component is in use, then you cannot use the headers `Exchange.HTTP_PATH` and `Exchange.HTTP_QUERY`
+to provide dynamic values to override the uri in `toD`. If you want to use these headers, then use the plain `to` DSL instead.
+In other words these headers are used internally by `toD` to carry the dynamic details of the endpoint.
+
+In case of problems then you can turn on DEBUG logging level on `org.apache.camel.processor.SendDynamicProcessor` which will log
+during startup if `toD` was optimised, or if there was a failure loading the optimised component, with a stacktrace logged.
+
+[source,text]
+----
+Detected SendDynamicAware component: http optimising toD: http:myloginserver:8080/login?userid=${header.userName}
+----
+
+

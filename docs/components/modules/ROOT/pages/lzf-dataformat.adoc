@@ -1,0 +1,99 @@
+[[lzf-dataformat]]
+== LZF Deflate Compression DataFormat
+
+*Available as of Camel version 2.17*
+
+The
+LZF https://cwiki.apache.org/confluence/display/CAMEL/Data+Format[Data
+Format] is a message compression and de-compression format. It uses the
+LZF deflate algorithm. Messages marshalled using LZF compression can be
+unmarshalled using LZF decompression just prior to being consumed at the
+endpoint. The compression capability is quite useful when you deal with
+large XML and Text based payloads or when you read messages previously
+comressed using LZF algotithm.
+
+### Options
+
+// dataformat options: START
+The LZF Deflate Compression dataformat supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2s,1m,1m,6",options="header"]
+|===
+| Name | Default | Java Type | Description
+| usingParallelCompression | false | Boolean | Enable encoding (compress) using multiple processing cores.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
+|===
+// dataformat options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-lzf-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.dataformat.lzf.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
+| *camel.dataformat.lzf.enabled* | Enable lzf dataformat | true | Boolean
+| *camel.dataformat.lzf.using-parallel-compression* | Enable encoding (compress) using multiple processing cores. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+ND
+
+### Marshal
+
+In this example we marshal a regular text/XML payload to a compressed
+payload employing LZF compression format and send it an ActiveMQ queue
+called MY_QUEUE.
+
+[source,java]
+-------------------------------------------------------------------
+from("direct:start").marshal().lzf().to("activemq:queue:MY_QUEUE");
+-------------------------------------------------------------------
+
+### Unmarshal
+
+In this example we unmarshal a LZF payload from an ActiveMQ queue called
+MY_QUEUE to its original format, and forward it for processing to
+the `UnGZippedMessageProcessor`.
+
+[source,java]
+----------------------------------------------------------------------------------------------
+from("activemq:queue:MY_QUEUE").unmarshal().lzf().process(new UnCompressedMessageProcessor());
+----------------------------------------------------------------------------------------------
+
+### Dependencies
+
+To useLZF compression in your camel routes you need to add a dependency
+on *camel-lzf* which implements this data format.
+
+If you use Maven you can just add the following to your `pom.xml`,
+substituting the version number for the latest & greatest release
+(see https://cwiki.apache.org/confluence/display/CAMEL/Download[the
+download page for the latest versions]).
+
+[source,xml]
+----------------------------------------------------------
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-lzf</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----------------------------------------------------------

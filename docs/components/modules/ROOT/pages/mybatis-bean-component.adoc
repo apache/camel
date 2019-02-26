@@ -1,0 +1,181 @@
+[[mybatis-bean-component]]
+== MyBatis Bean Component
+
+*Available as of Camel version 2.22*
+
+The *mybatis-bean:* component allows you to query, insert, update and
+delete data in a relational database using http://mybatis.org/[MyBatis] bean annotations.
+
+This component can **only** be used as a producer. If you want to consume
+from MyBatis then use the regular **mybatis** component.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-mybatis</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+This component will by default load the MyBatis SqlMapConfig file from
+the root of the classpath with the expected name of
+`SqlMapConfig.xml`. +
+ If the file is located in another location, you will need to configure
+the `configurationUri` option on the `MyBatisComponent` component.
+
+=== Options
+
+// component options: START
+The MyBatis Bean component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *sqlSessionFactory* (advanced) | To use the SqlSessionFactory |  | SqlSessionFactory
+| *configurationUri* (producer) | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The MyBatis Bean endpoint is configured using URI syntax:
+
+----
+mybatis-bean:beanName:methodName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *beanName* | *Required* Name of the bean with the MyBatis annotations. This can either by a type alias or a FQN class name. |  | String
+| *methodName* | *Required* Name of the method on the bean that has the SQL query to be executed. |  | String
+|===
+
+
+==== Query Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *executorType* (producer) | The executor type to be used while executing statements. simple - executor does nothing special. reuse - executor reuses prepared statements. batch - executor reuses statements and batches updates. | SIMPLE | ExecutorType
+| *inputHeader* (producer) | User the header value for input parameters instead of the message body. By default, inputHeader == null and the input parameters are taken from the message body. If outputHeader is set, the value is used and query parameters will be taken from the header instead of the body. |  | String
+| *outputHeader* (producer) | Store the query result in a header instead of the message body. By default, outputHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If outputHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. Setting outputHeader will also omit populating the default CamelMyBatisResult header since it would be the same as outputHeader all the time. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-mybatis-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mybatis-bean.configuration-uri* | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
+| *camel.component.mybatis-bean.enabled* | Whether to enable auto configuration of the mybatis-bean component. This is enabled by default. |  | Boolean
+| *camel.component.mybatis-bean.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.mybatis-bean.sql-session-factory* | To use the SqlSessionFactory. The option is a org.apache.ibatis.session.SqlSessionFactory type. |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+=== Message Headers
+
+Camel will populate the result message, either IN or OUT with a header
+with the statement used:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|===
+|Header |Type |Description
+
+|`CamelMyBatisResult` |`Object` |The *response* returned from MtBatis in any of the operations. For
+instance an `INSERT` could return the auto-generated key, or number of
+rows etc.
+|===
+
+=== Message Body
+
+The response from MyBatis will only be set as the body if it's a
+`SELECT` statement. That means, for example, for `INSERT` statements
+Camel will not replace the body. This allows you to continue routing and
+keep the original body. The response from MyBatis is always stored in
+the header with the key `CamelMyBatisResult`.
+
+=== Samples
+
+For example if you wish to consume beans from a JMS queue and insert
+them into a database you could do the following:
+
+[source,java]
+----
+from("activemq:queue:newAccount")
+  .to("mybatis-bean:AccountService:insertBeanAccount");
+----
+
+Notice we have to specify the bean name and method name, as we need to instruct
+Camel which kind of operation to invoke.
+
+Where `AccountService` is the type alias for the bean that has the MyBatis
+bean annotations. You can configure type alias in the SqlMapConfig file:
+
+[source,xml]
+----
+    <typeAliases>
+        <typeAlias alias="Account" type="org.apache.camel.component.mybatis.Account"/>
+        <typeAlias alias="AccountService" type="org.apache.camel.component.mybatis.bean.AccountService"/>
+    </typeAliases>
+----
+[source]
+
+On the `AccountService` bean you can declare the MyBatis mappins using annotations as shown:
+
+[source,java]
+----
+public interface AccountService {
+
+    @Select("select ACC_ID as id, ACC_FIRST_NAME as firstName, ACC_LAST_NAME as lastName"
+        + ", ACC_EMAIL as emailAddress from ACCOUNT where ACC_ID = #{id}")
+    Account selectBeanAccountById(@Param("id") int no);
+
+    @Select("select * from ACCOUNT order by ACC_ID")
+    @ResultMap("Account.AccountResult")
+    List<Account> selectBeanAllAccounts();
+
+    @Insert("insert into ACCOUNT (ACC_ID,ACC_FIRST_NAME,ACC_LAST_NAME,ACC_EMAIL)"
+        + " values (#{id}, #{firstName}, #{lastName}, #{emailAddress})")
+    void insertBeanAccount(Account account);
+
+}
+----
+

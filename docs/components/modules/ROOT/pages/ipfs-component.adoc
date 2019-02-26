@@ -1,0 +1,108 @@
+[[ipfs-component]]
+== IPFS Component
+
+*Available as of Camel version 2.23*
+
+The *ipfs:* component provides access to the Interplanetary File System https://ipfs.io/[(IPFS)].
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-ipfs</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+---------------------------------
+ipfs://cmd?options
+---------------------------------
+
+### Options
+
+// component options: START
+The IPFS component has no options.
+// component options: END
+
+// endpoint options: START
+The IPFS endpoint is configured using URI syntax:
+
+----
+ipfs:host:port/cmd
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ipfsCmd* | The ipfs command |  | String
+|===
+
+
+==== Query Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *outdir* (producer) | The ipfs output directory |  | Path
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-ipfs-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.ipfs.enabled* | Whether to enable auto configuration of the ipfs component. This is enabled by default. |  | Boolean
+| *camel.component.ipfs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+### Karaf support
+
+Actually this component is not supported in Karaf
+
+### Message Headers
+
+[TODO]
+
+### Samples
+
+In this sample we add a file to IPFS, get a file from IPFS and finally access the content of an IPFS file. 
+
+[source,java]
+---------------------------------------------------------------------------------------------
+from("direct:start").to("ipfs:add")
+from("direct:start").to("ipfs:get?outdir=target")
+from("direct:start").to("ipfs:cat");
+---------------------------------------------------------------------------------------------

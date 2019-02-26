@@ -1,0 +1,199 @@
+==== Enterprise Integration Patterns
+
+Camel supports most of the link:http://www.eaipatterns.com/toc.html[Enterprise Integration Patterns] from the excellent book by link:http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Gregor%20Hohpe[Gregor Hohpe] and link:http://www.amazon.com/exec/obidos/search-handle-url/105-9796798-8100401?%5Fencoding=UTF8&search-type=ss&index=books&field-author=Bobby%20Woolf[Bobby Woolf].
+
+// eips: START
+Number of EIPs: 62 (0 deprecated)
+
+[width="100%",cols="4,6",options="header"]
+|===
+| EIP | Description
+
+| link:src/main/docs/eips/aggregate-eip.adoc[Aggregate] +
+`<aggregate>` | Aggregates many messages into a single message
+
+| link:src/main/docs/eips/batch-config-eip.adoc[Batch-config] +
+`<batch-config>` | Configures batch-processing resequence eip.
+
+| link:src/main/docs/eips/bean-eip.adoc[Bean] +
+`<bean>` | Calls a java bean
+
+| link:src/main/docs/eips/choice-eip.adoc[Choice] +
+`<choice>` | Routes messages based on a series of predicates
+
+| link:src/main/docs/eips/claimCheck-eip.adoc[Claim Check] +
+`<claimCheck>` | The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.
+
+| link:src/main/docs/eips/convertBodyTo-eip.adoc[Convert Body To] +
+`<convertBodyTo>` | Converts the message body to another type
+
+| link:src/main/docs/eips/customLoadBalancer-eip.adoc[Custom Load Balancer] +
+`<customLoadBalancer>` | Custom load balancer
+
+| link:src/main/docs/eips/delay-eip.adoc[Delay] +
+`<delay>` | Delays processing for a specified length of time
+
+| link:src/main/docs/eips/dynamicRouter-eip.adoc[Dynamic Router] +
+`<dynamicRouter>` | Routes messages based on dynamic rules
+
+| link:src/main/docs/eips/enrich-eip.adoc[Enrich] +
+`<enrich>` | Enriches a message with data from a secondary resource
+
+| link:src/main/docs/eips/failover-eip.adoc[Failover] +
+`<failover>` | Failover load balancer
+
+| link:src/main/docs/eips/filter-eip.adoc[Filter] +
+`<filter>` | Filter out messages based using a predicate
+
+| link:src/main/docs/eips/from-eip.adoc[From] +
+`<from>` | Act as a message source as input to a route
+
+| link:src/main/docs/eips/hystrix-eip.adoc[Hystrix] +
+`<hystrix>` | Hystrix Circuit Breaker EIP
+
+| link:src/main/docs/eips/hystrixConfiguration-eip.adoc[Hystrix Configuration] +
+`<hystrixConfiguration>` | Hystrix Circuit Breaker EIP configuration
+
+| link:src/main/docs/eips/idempotentConsumer-eip.adoc[Idempotent Consumer] +
+`<idempotentConsumer>` | Filters out duplicate messages
+
+| link:src/main/docs/eips/inOnly-eip.adoc[In Only] +
+`<inOnly>` | Marks the exchange pattern for the route to one way
+
+| link:src/main/docs/eips/inOut-eip.adoc[In Out] +
+`<inOut>` | Marks the exchange pattern for the route to request/reply
+
+| link:src/main/docs/eips/loadBalance-eip.adoc[Load Balance] +
+`<loadBalance>` | Balances message processing among a number of nodes
+
+| link:src/main/docs/eips/log-eip.adoc[Log] +
+`<log>` | Logs the defined message to the logger
+
+| link:src/main/docs/eips/loop-eip.adoc[Loop] +
+`<loop>` | Processes a message multiple times
+
+| link:src/main/docs/eips/marshal-eip.adoc[Marshal] +
+`<marshal>` | Marshals data into a specified format for transmission over a transport or component
+
+| link:src/main/docs/eips/multicast-eip.adoc[Multicast] +
+`<multicast>` | Routes the same message to multiple paths either sequentially or in parallel.
+
+| link:src/main/docs/eips/onFallback-eip.adoc[On Fallback] +
+`<onFallback>` | Route to be executed when Hystrix EIP executes fallback
+
+| link:src/main/docs/eips/otherwise-eip.adoc[Otherwise] +
+`<otherwise>` | Route to be executed when all other choices evaluate to false
+
+| link:src/main/docs/eips/pipeline-eip.adoc[Pipeline] +
+`<pipeline>` | Routes the message to a sequence of processors.
+
+| link:src/main/docs/eips/pollEnrich-eip.adoc[Poll Enrich] +
+`<pollEnrich>` | Enriches messages with data polled from a secondary resource
+
+| link:src/main/docs/eips/process-eip.adoc[Process] +
+`<process>` | Calls a Camel processor
+
+| link:src/main/docs/eips/random-eip.adoc[Random] +
+`<random>` | Random load balancer
+
+| link:src/main/docs/eips/recipientList-eip.adoc[Recipient List] +
+`<recipientList>` | Routes messages to a number of dynamically specified recipients (dynamic to)
+
+| link:src/main/docs/eips/removeHeader-eip.adoc[Remove Header] +
+`<removeHeader>` | Removes a named header from the message
+
+| link:src/main/docs/eips/removeHeaders-eip.adoc[Remove Headers] +
+`<removeHeaders>` | Removes message headers whose name matches a specified pattern
+
+| link:src/main/docs/eips/removeProperties-eip.adoc[Remove Properties] +
+`<removeProperties>` | Removes message exchange properties whose name matches a specified pattern
+
+| link:src/main/docs/eips/removeProperty-eip.adoc[Remove Property] +
+`<removeProperty>` | Removes a named property from the message exchange
+
+| link:src/main/docs/eips/resequence-eip.adoc[Resequence] +
+`<resequence>` | Resequences (re-order) messages based on an expression
+
+| link:src/main/docs/eips/rollback-eip.adoc[Rollback] +
+`<rollback>` | Forces a rollback by stopping routing the message
+
+| link:src/main/docs/eips/roundRobin-eip.adoc[Round Robin] +
+`<roundRobin>` | Round robin load balancer
+
+| link:src/main/docs/eips/routingSlip-eip.adoc[Routing Slip] +
+`<routingSlip>` | Routes a message through a series of steps that are pre-determined (the slip)
+
+| link:src/main/docs/eips/saga-eip.adoc[Saga] +
+`<saga>` | Enables sagas on the route
+
+| link:src/main/docs/eips/sample-eip.adoc[Sample] +
+`<sample>` | Extract a sample of the messages passing through a route
+
+| link:src/main/docs/eips/script-eip.adoc[Script] +
+`<script>` | Executes a script from a language which does not change the message body.
+
+| link:src/main/docs/eips/serviceCall-eip.adoc[Service Call] +
+`<serviceCall>` | To call remote services
+
+| link:src/main/docs/eips/setBody-eip.adoc[Set Body] +
+`<setBody>` | Sets the contents of the message body
+
+| link:src/main/docs/eips/setFaultBody-eip.adoc[Set Fault Body] +
+`<setFaultBody>` | Sets the contents of a fault message's body
+
+| link:src/main/docs/eips/setHeader-eip.adoc[Set Header] +
+`<setHeader>` | Sets the value of a message header
+
+| link:src/main/docs/eips/setProperty-eip.adoc[Set Property] +
+`<setProperty>` | Sets a named property on the message exchange
+
+| link:src/main/docs/eips/sort-eip.adoc[Sort] +
+`<sort>` | Sorts the contents of the message
+
+| link:src/main/docs/eips/split-eip.adoc[Split] +
+`<split>` | Splits a single message into many sub-messages.
+
+| link:src/main/docs/eips/sticky-eip.adoc[Sticky] +
+`<sticky>` | Sticky load balancer
+
+| link:src/main/docs/eips/stop-eip.adoc[Stop] +
+`<stop>` | Stops the processing of the current message
+
+| link:src/main/docs/eips/stream-config-eip.adoc[Stream-config] +
+`<stream-config>` | Configures stream-processing resequence eip.
+
+| link:src/main/docs/eips/threads-eip.adoc[Threads] +
+`<threads>` | Specifies that all steps after this node are processed asynchronously
+
+| link:src/main/docs/eips/throttle-eip.adoc[Throttle] +
+`<throttle>` | Controls the rate at which messages are passed to the next node in the route
+
+| link:src/main/docs/eips/to-eip.adoc[To] +
+`<to>` | Sends the message to a static endpoint
+
+| link:src/main/docs/eips/toD-eip.adoc[To D] +
+`<toD>` | Sends the message to a dynamic endpoint
+
+| link:src/main/docs/eips/topic-eip.adoc[Topic] +
+`<topic>` | Topic load balancer
+
+| link:src/main/docs/eips/transform-eip.adoc[Transform] +
+`<transform>` | Transforms the message body based on an expression
+
+| link:src/main/docs/eips/unmarshal-eip.adoc[Unmarshal] +
+`<unmarshal>` | Converts the message data received from the wire into a format that Apache Camel processors can consume
+
+| link:src/main/docs/eips/validate-eip.adoc[Validate] +
+`<validate>` | Validates a message based on an expression
+
+| link:src/main/docs/eips/weighted-eip.adoc[Weighted] +
+`<weighted>` | Weighted load balancer
+
+| link:src/main/docs/eips/when-eip.adoc[When] +
+`<when>` | Triggers a route when an expression evaluates to true
+
+| link:src/main/docs/eips/wireTap-eip.adoc[Wire Tap] +
+`<wireTap>` | Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
+
+|===
+// eips: END

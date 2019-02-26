@@ -1,0 +1,8 @@
+MDN for -
+ Message ID: $requestHeaders["Message-Id"]
+  Subject: $requestHeaders["Subject"]
+  Date: $requestHeaders["Date"]
+  From: $requestHeaders["AS2-From"]
+  To: $requestHeaders["AS2-To"]
+  Received on: $responseHeaders["Date"]
+ Status: $dispositionType 

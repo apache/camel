@@ -1,0 +1,219 @@
+[[controlbus-component]]
+== Control Bus Component
+
+*Available as of Camel version 2.11*
+
+The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
+EIP patterns allows for the
+integration system to be monitored and managed from within the
+framework.
+
+image:ControlBus.gif[image]
+
+Use a Control Bus to manage an enterprise integration system. The
+Control Bus uses the same messaging mechanism used by the application
+data, but uses separate channels to transmit data that is relevant to
+the management of components involved in the message flow.
+
+In Camel you can manage and monitor using JMX, or
+by using a Java API from the `CamelContext`, or from the
+`org.apache.camel.api.management` package, +
+ or use the event notifier which has an example
+here.
+
+From Camel 2.11 onwards we have introduced a new
+<<controlbus-component,ControlBus Component>> that allows you to
+send messages to a control bus Endpoint that reacts
+accordingly.
+
+=== ControlBus Component
+
+*Available as of Camel 2.11*
+
+The *controlbus:* component provides easy management of Camel
+applications based on the <<controlbus-component,Control Bus>> EIP
+pattern. 
+For example, by sending a message to an Endpoint
+you can control the lifecycle of routes, or gather performance
+statistics.
+
+[source]
+----
+controlbus:command[?options]
+----
+
+Where *command* can be any string to identify which type of command to
+use.
+
+=== Commands
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Command |Description
+
+|`route` |To control routes using the `routeId` and `action` parameter.
+
+|`language` |Allows you to specify a <<language-component,Language>> to use for
+evaluating the message body. If there is any result from the evaluation,
+then the result is put in the message body.
+|===
+
+=== Options
+
+
+// component options: START
+The Control Bus component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Control Bus endpoint is configured using URI syntax:
+
+----
+controlbus:command:language
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *command* | *Required* Command can be either route or language |  | String
+| *language* | Allows you to specify the name of a Language to use for evaluating the message body. If there is any result from the evaluation, then the result is put in the message body. |  | Language
+|===
+
+
+==== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *action* (producer) | To denote an action that can be either: start, stop, or status. To either start or stop a route, or to get the status of the route as output in the message body. You can use suspend and resume from Camel 2.11.1 onwards to either suspend or resume a route. And from Camel 2.11.1 onwards you can use stats to get performance statics returned in XML format; the routeId option can be used to define which route to get the performance stats for, if routeId is not defined, then you get statistics for the entire CamelContext. The restart action will restart the route. |  | String
+| *async* (producer) | Whether to execute the control bus task asynchronously. Important: If this option is enabled, then any result from the task is not set on the Exchange. This is only possible if executing tasks synchronously. | false | boolean
+| *loggingLevel* (producer) | Logging level used for logging when task is done, or if any exceptions occurred during processing the task. | INFO | LoggingLevel
+| *restartDelay* (producer) | The delay in millis to use when restarting a route. | 1000 | int
+| *routeId* (producer) | To specify a route by its id. The special keyword current indicates the current route. |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-controlbus-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.controlbus.enabled* | Whether to enable auto configuration of the controlbus component. This is enabled by default. |  | Boolean
+| *camel.component.controlbus.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+=== Using route command
+
+The route command allows you to do common tasks on a given route very
+easily, for example to start a route, you can send an empty message to
+this endpoint:
+
+[source,java]
+----
+template.sendBody("controlbus:route?routeId=foo&action=start", null);
+----
+
+To get the status of the route, you can do:
+
+[source,java]
+----
+String status = template.requestBody("controlbus:route?routeId=foo&action=status", null, String.class);
+----
+
+[[ControlBus-Gettingperformancestatistics]]
+=== Getting performance statistics
+
+*Available as of Camel 2.11.1*
+
+This requires JMX to be enabled (is by default) then you can get the
+performance statics per route, or for the
+CamelContext. For example to get the statics for
+a route named foo, we can do:
+
+[source,java]
+----
+String xml = template.requestBody("controlbus:route?routeId=foo&action=stats", null, String.class);
+----
+
+The returned statics is in XML format. Its the same data you can get
+from JMX with the `dumpRouteStatsAsXml` operation on the
+`ManagedRouteMBean`.
+
+To get statics for the entire CamelContext you
+just omit the routeId parameter as shown below:
+
+[source,java]
+----
+String xml = template.requestBody("controlbus:route?action=stats", null, String.class);
+----
+
+=== Using Simple language
+
+You can use the <<simple-language,Simple>> language with the control bus,
+for example to stop a specific route, you can send a message to the
+`"controlbus:language:simple"` endpoint containing the following
+message:
+
+[source,java]
+----
+template.sendBody("controlbus:language:simple", "${camelContext.getRouteController().stopRoute('myRoute')}");
+----
+
+As this is a void operation, no result is returned. However, if you want
+the route status you can do:
+
+[source,java]
+----
+String status = template.requestBody("controlbus:language:simple", "${camelContext.getRouteStatus('myRoute')}", String.class);
+----
+
+It's easier to use the `route` command to control lifecycle of
+routes. The `language` command allows you to execute a language script
+that has stronger powers such as <<groovy-language,Groovy>> or to some
+extend the <<simple-language,Simple>> language.
+
+For example to shutdown Camel itself you can do:
+
+[source,java]
+----
+template.sendBody("controlbus:language:simple?async=true", "${camelContext.stop()}");
+----
+
+We use `async=true` to stop Camel asynchronously as otherwise we
+would be trying to stop Camel while it was in-flight processing the
+message we sent to the control bus component.
+
+TIP: You can also use other languages such as <<groovy-language,Groovy>>, etc.

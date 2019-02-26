@@ -1,0 +1,151 @@
+[[corda-component]]
+== corda Component
+
+*Available as of Camel version 2.23*
+
+
+The *Corda* blockchain component uses the https://www.corda.net/[corda] rpc client
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-corda</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+=== URI Format
+
+[source,text]
+----
+corda://<host:port>[?options]
+----
+
+=== Corda Options
+
+
+// component options: START
+The corda component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (common) | Default configuration |  | CordaConfiguration
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The corda endpoint is configured using URI syntax:
+
+----
+corda:url
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* | *Required* URL to the corda node |  | CordaConfiguration
+|===
+
+
+==== Query Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-corda-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 14 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.corda.configuration.arguments* |  |  | Object[]
+| *camel.component.corda.configuration.contract-state-class* |  |  | Class
+| *camel.component.corda.configuration.flow-loci-class* |  |  | Class
+| *camel.component.corda.configuration.host* |  |  | String
+| *camel.component.corda.configuration.operation* |  |  | String
+| *camel.component.corda.configuration.page-specification* |  |  | PageSpecification
+| *camel.component.corda.configuration.password* |  |  | String
+| *camel.component.corda.configuration.port* |  |  | Integer
+| *camel.component.corda.configuration.process-snapshot* |  |  | Boolean
+| *camel.component.corda.configuration.query-criteria* |  |  | QueryCriteria
+| *camel.component.corda.configuration.sort* |  |  | Sort
+| *camel.component.corda.configuration.username* |  |  | String
+| *camel.component.corda.enabled* | Enable corda component | true | Boolean
+| *camel.component.corda.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+
+### Message Headers
+
+[width="100%",cols="10%,90%",options="header",]
+|=======================================================================
+|Header |Description
+
+|`All URI options` |All URI options can also be set as exchange headers.
+
+|=======================================================================
+
+
+
+### Samples
+
+Subscribe for new vault state changes:
+
+[source,java]
+---------------------------------------------------------------------------------------------
+from("corda://localhost:10006?username=user1&password=test?operation=VAULT_TRACK&contractStateClass=#contractStateClass")
+    .to("jms:queue:vault");
+---------------------------------------------------------------------------------------------
+
+Read the node information:
+
+[source,java]
+--------------------------------------------------------
+from("direct:start")
+    .to("corda://localhost:10006?username=user1&password=test?operation=NODE_INFO");
+--------------------------------------------------------

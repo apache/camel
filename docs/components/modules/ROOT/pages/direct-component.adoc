@@ -1,0 +1,153 @@
+[[direct-component]]
+== Direct Component
+
+*Available as of Camel version 1.0*
+
+The *direct:* component provides direct, synchronous invocation of any
+consumers when a producer sends a message exchange. +
+ This endpoint can be used to connect existing routes in the *same*
+camel context.
+
+TIP: *Asynchronous*
+The <<seda-component,SEDA>> component provides asynchronous invocation of
+any consumers when a producer sends a message exchange.
+
+TIP: *Connection to other camel contexts*
+The <<vm-component,VM>> component provides connections between Camel
+contexts as long they run in the same *JVM*.
+
+=== URI format
+
+[source]
+----
+direct:someName[?options]
+----
+
+Where *someName* can be any string to uniquely identify the endpoint
+
+=== Options
+
+
+
+// component options: START
+The Direct component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *block* (producer) | If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active. | true | boolean
+| *timeout* (producer) | The timeout value to use if block is enabled. | 30000 | long
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The Direct endpoint is configured using URI syntax:
+
+----
+direct:name
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name of direct endpoint |  | String
+|===
+
+
+==== Query Parameters (7 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *block* (producer) | If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active. | true | boolean
+| *failIfNoConsumers* (producer) | Whether the producer should fail by throwing an exception, when sending to a DIRECT endpoint with no active consumers. | false | boolean
+| *timeout* (producer) | The timeout value to use if block is enabled. | 30000 | long
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-direct-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.direct.block* | If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active. | true | Boolean
+| *camel.component.direct.enabled* | Whether to enable auto configuration of the direct component. This is enabled by default. |  | Boolean
+| *camel.component.direct.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.direct.timeout* | The timeout value to use if block is enabled. | 30000 | Long
+|===
+// spring-boot-auto-configure options: END
+
+=== Samples
+
+In the route below we use the direct component to link the two routes
+together:
+
+[source,java]
+----
+from("activemq:queue:order.in")
+    .to("bean:orderServer?method=validate")
+    .to("direct:processOrder");
+
+from("direct:processOrder")
+    .to("bean:orderService?method=process")
+    .to("activemq:queue:order.out");
+----
+
+And the sample using spring DSL:
+
+[source,xml]
+----
+<route>
+ <from uri="activemq:queue:order.in"/>
+ <to uri="bean:orderService?method=validate"/>
+ <to uri="direct:processOrder"/>
+</route>
+
+<route>
+ <from uri="direct:processOrder"/>
+ <to uri="bean:orderService?method=process"/>
+ <to uri="activemq:queue:order.out"/>
+</route>
+----
+
+See also samples from the <<seda-component,SEDA>> component, how they can
+be used together.
+
+=== See Also
+
+* <<seda-component,SEDA>>
+* <<vm-component,VM>>

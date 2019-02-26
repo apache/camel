@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:spring="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <route id="initial-consume-reply1">
+            <from uri="amqPRO:queue:incoming1"/>
+            <to uri="amqPRO:queue:service1?replyToType=Temporary&amp;requestTimeout=35000" pattern="InOut"/>
+            <log message="After inOut via temp: body ${body}"/>
+            <to uri="seda:consumer"/>
+        </route>
+
+        <route id="consume-process-reply1">
+            <from uri="amqCON:queue:service1"/>
+            <choice>
+                <when>
+                    <simple>${body} contains 'What is your name?'</simple>
+                    <transform>
+                        <simple>bobbie!</simple>
+                    </transform>
+                </when>
+                <otherwise>
+                    <transform>
+                        <simple>If you don't ask me my name, I'm not going to tell you!</simple>
+                    </transform>
+                </otherwise>
+            </choice>
+            <log message="${body}"/>
+        </route>
+    </camelContext>
+
+    <bean id="CON" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://CON?create=false"/>
+    </bean>
+
+    <bean id="PRO" class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://PRO??create=false"/>
+    </bean>
+
+    <bean id="consumeFrom" class="org.apache.camel.component.activemq.CamelDestination">
+        <property name="uri" value="seda:consumer"/>
+    </bean>
+
+    <bean id="camelTemplate" class="org.apache.camel.spring.CamelProducerTemplateFactoryBean"/>
+
+    <bean id="amqPRO" class="org.apache.camel.component.activemq.ActiveMQComponent">
+        <property name="brokerURL" value="vm://PRO?create=false"></property>
+    </bean>
+
+    <bean id="amqCON" class="org.apache.camel.component.activemq.ActiveMQComponent">
+        <property name="brokerURL" value="vm://CON?create=false"></property>
+    </bean>
+
+
+</beans>

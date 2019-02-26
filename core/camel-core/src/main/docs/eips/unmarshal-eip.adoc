@@ -1,0 +1,43 @@
+[[unmarshal-eip]]
+== Unmarshal EIP
+
+If you receive a message from one of the Camel link:https://github.com/apache/camel/tree/master/components[Components] such as link:https://github.com/apache/camel/blob/master/camel-core/src/main/docs/file-component.adoc[File], link:https://github.com/apache/camel/blob/master/components/camel-http/src/main/docs/http-component.adoc[HTTP] or link:https://github.com/apache/camel/blob/master/components/camel-jms/src/main/docs/jms-component.adoc[JMS] you often want to unmarshal the payload into some bean so that you can process it using some link:https://github.com/apache/camel/blob/master/docs/user-manual/en/bean-integration.adoc[Bean Integration] or perform link:https://github.com/apache/camel/blob/master/docs/user-manual/en/expression.adoc#predicate[Predicate] evaluation and so forth. To do this use the *unmarshal* word in the link:https://github.com/apache/camel/blob/master/docs/user-manual/en/dsl.adoc[DSL] in Java or the link:https://github.com/apache/camel/blob/master/docs/user-manual/en/camel-configuration-utilities.adoc#xml-configuration[Xml Configuration].
+
+== Options
+
+// eip options: START
+The Unmarshal EIP supports 1 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *dataFormatType* | *Required* The data format to be used |  | DataFormatDefinition
+|===
+// eip options: END
+
+=== Samples
+
+For example
+
+[source,java]
+----
+DataFormat jaxb = new JaxbDataFormat("com.acme.model");
+
+from("activemq:My.Queue").
+  unmarshal(jaxb).
+  to("mqseries:Another.Queue");
+----
+
+The above uses a named DataFormat of _jaxb_ which is configured with a number of Java package names. You can if you prefer use a named reference to a data format which can then be defined in your link:https://github.com/apache/camel/blob/master/docs/user-manual/en/registry.adoc[Registry] such as via your link:spring.html[Spring] XML file.
+
+You can also use the DSL itself to define the data format as you use it.
+For example the following uses Java serialization to unmarshal a binary
+file then send it as an ObjectMessage to link:https://github.com/apache/camel/tree/master/docs/user-manual/en/activemq.adoc[ActiveMQ]
+
+[source,java]
+----
+from("file://foo/bar").
+  unmarshal().serialization().
+  to("activemq:Some.Queue");
+----
+

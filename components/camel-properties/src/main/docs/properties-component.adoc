@@ -1,0 +1,1043 @@
+[[properties-component]]
+== Properties Component
+
+*Available as of Camel version 2.3*
+
+=== URI format
+
+[source]
+----
+properties:key[?options]
+----
+
+Where *key* is the key for the property to lookup
+
+=== Options
+
+// component options: START
+The Properties component supports 17 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *locations* (common) | A list of locations to load properties. This option will override any default locations and only use the locations from this option. |  | List
+| *location* (common) | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
+| *encoding* (common) | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by java.util.Properties#load(java.io.InputStream) |  | String
+| *propertiesResolver* (common) | To use a custom PropertiesResolver |  | PropertiesResolver
+| *propertiesParser* (common) | To use a custom PropertiesParser |  | PropertiesParser
+| *cache* (common) | Whether or not to cache loaded properties. The default value is true. | true | boolean
+| *propertyPrefix* (advanced) | Optional prefix prepended to property names before resolution. |  | String
+| *propertySuffix* (advanced) | Optional suffix appended to property names before resolution. |  | String
+| *fallbackToUnaugmented Property* (advanced) | If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false, only the augmented property name is searched. | true | boolean
+| *defaultFallbackEnabled* (common) | If false, the component does not attempt to find a default for the key by looking after the colon separator. | true | boolean
+| *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | boolean
+| *prefixToken* (advanced) | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_PREFIX_TOKEN). | {{ | String
+| *suffixToken* (advanced) | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_SUFFIX_TOKEN). | }} | String
+| *initialProperties* (advanced) | Sets initial properties which will be used before any locations are resolved. |  | Properties
+| *overrideProperties* (advanced) | Sets a special list of override properties that take precedence and will use first, if a property exist. |  | Properties
+| *systemPropertiesMode* (common) | Sets the system property mode. | 2 | int
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The Properties endpoint is configured using URI syntax:
+
+----
+properties:key
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *key* | *Required* Property key to use as placeholder |  | String
+|===
+
+
+==== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ignoreMissingLocation* (common) | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | boolean
+| *locations* (common) | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-properties-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 18 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.properties.cache* | Whether or not to cache loaded properties. The default value is true. | true | Boolean
+| *camel.component.properties.default-fallback-enabled* | If false, the component does not attempt to find a default for the key by looking after the colon separator. | true | Boolean
+| *camel.component.properties.enabled* | Whether to enable auto configuration of the properties component. This is enabled by default. |  | Boolean
+| *camel.component.properties.encoding* | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by java.util.Properties#load(java.io.InputStream) |  | String
+| *camel.component.properties.fallback-to-unaugmented-property* | If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false, only the augmented property name is searched. | true | Boolean
+| *camel.component.properties.ignore-missing-location* | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | Boolean
+| *camel.component.properties.initial-properties* | Sets initial properties which will be used before any locations are resolved. The option is a java.util.Properties type. |  | String
+| *camel.component.properties.location* | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option. |  | String
+| *camel.component.properties.locations* | A list of locations to load properties. This option will override any default locations and only use the locations from this option. |  | List
+| *camel.component.properties.override-properties* | Sets a special list of override properties that take precedence and will use first, if a property exist. The option is a java.util.Properties type. |  | String
+| *camel.component.properties.prefix-token* | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_PREFIX_TOKEN). | {{ | String
+| *camel.component.properties.properties-parser* | To use a custom PropertiesParser. The option is a org.apache.camel.component.properties.PropertiesParser type. |  | String
+| *camel.component.properties.properties-resolver* | To use a custom PropertiesResolver. The option is a org.apache.camel.component.properties.PropertiesResolver type. |  | String
+| *camel.component.properties.property-prefix* | Optional prefix prepended to property names before resolution. |  | String
+| *camel.component.properties.property-suffix* | Optional suffix appended to property names before resolution. |  | String
+| *camel.component.properties.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.properties.suffix-token* | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_SUFFIX_TOKEN). | }} | String
+| *camel.component.properties.system-properties-mode* | Sets the system property mode. | 2 | Integer
+|===
+// spring-boot-auto-configure options: END
+
+[TIP]
+**Resolving property from Java code** +
+You can use the method `resolvePropertyPlaceholders` on the
+`CamelContext` to resolve a property from any Java code.
+
+=== Using PropertyPlaceholder
+
+*Available as of Camel 2.3*
+
+Camel now provides a new `PropertiesComponent` in *camel-core* which
+allows you to use property placeholders when defining Camel
+Endpoint URIs.
+
+This works much like you would do if using Spring's
+`<property-placeholder>` tag. However Spring have a limitation which
+prevents 3rd party frameworks to leverage Spring property placeholders
+to the fullest. See more at
+link:how-do-i-use-spring-property-placeholder-with-camel-xml.html[How do
+I use Spring Property Placeholder with Camel XML].
+
+[TIP]
+**Bridging Spring and Camel property placeholders** +
+From Camel 2.10 onwards, you can bridge the Spring property placeholder
+with Camel, see further below for more details.
+
+The property placeholder is generally in use when doing:
+
+* lookup or creating endpoints
+* lookup of beans in the Registry
+* additional supported in Spring XML (see below in examples)
+* using Blueprint PropertyPlaceholder with Camel
+<<properties-component,Properties>> component
+* using `@PropertyInject` to inject a property in a POJO
+* *Camel 2.14.1* Using default value if a property does not exists
+* *Camel 2.14.1* Include out of the box functions, to lookup property
+values from OS environment variables, JVM system properties, or the
+service idiom.
+* *Camel 2.14.1* Using custom functions, which can be plugged into the
+property component.
+
+=== Syntax
+
+The syntax to use Camel's property placeholder is to use `{{key}}` for
+example `{{file.uri}}` where `file.uri` is the property key.
+
+You can use property placeholders in parts of the endpoint URI's which
+for example you can use placeholders for parameters in the URIs.
+
+From **Camel 2.14.1** onwards you can specify a default value to use if
+a property with the key does not exists, eg `file.url:/some/path` where
+the default value is the text after the colon (eg /some/path).
+
+NOTE: Do not use colon in the property key. The colon is used as a separator
+token when you are providing a default value, which is supported from
+*Camel 2.14.1* onwards.
+
+=== PropertyResolver
+
+Camel provides a pluggable mechanism which allows 3rd part to provide
+their own resolver to lookup properties. Camel provides a default
+implementation
+`org.apache.camel.component.properties.DefaultPropertiesResolver` which
+is capable of loading properties from the file system, classpath or
+Registry. You can prefix the locations with either:
+
+* `ref:` *Camel 2.4:* to lookup in the Registry
+* `file:` to load the from file system
+* `classpath:` to load from classpath (this is also the default if no
+prefix is provided)
+* `blueprint:` *Camel 2.7:* to use a specific OSGi blueprint placeholder
+service
+
+=== Defining location
+
+The `PropertiesResolver` need to know a location(s) where to resolve the
+properties. You can define 1 to many locations. If you define the
+location in a single String property you can separate multiple locations
+with comma such as:
+
+[source,java]
+----
+pc.setLocation("com/mycompany/myprop.properties,com/mycompany/other.properties");
+----
+
+*Available as of Camel 2.19.0*
+
+You can set which location can be discarded if missing by by setting the ``optional`` attribute, which is false by default, i.e:
+
+[source,java]
+----
+pc.setLocations(
+    "com/mycompany/override.properties;optional=true"
+    "com/mycompany/defaults.properties");
+----
+
+=== Using system and environment variables in locations
+
+*Available as of Camel 2.7*
+
+The location now supports using placeholders for JVM system properties
+and OS environments variables.
+
+For example:
+
+[source]
+----
+location=file:${karaf.home}/etc/foo.properties
+----
+
+In the location above we defined a location using the file scheme using
+the JVM system property with key `karaf.home`.
+
+To use an OS environment variable instead you would have to prefix with
+env:
+
+[source]
+----
+location=file:${env:APP_HOME}/etc/foo.properties
+----
+
+Where `APP_HOME` is an OS environment.
+
+You can have multiple placeholders in the same location, such as:
+
+[source]
+----
+location=file:${env:APP_HOME}/etc/${prop.name}.properties
+----
+
+#=== Using system and environment variables to configure property prefixes and suffixes
+
+*Available as of Camel 2.12.5, 2.13.3, 2.14.0*
+
+`propertyPrefix`, `propertySuffix` configuration properties support
+using placeholders for JVM system properties and OS environments
+variables.
+
+For example. if `PropertiesComponent` is configured with the following
+properties file:
+
+[source]
+----
+dev.endpoint = result1
+test.endpoint = result2
+----
+
+Then with the following route definition:
+
+[source,java]
+----
+PropertiesComponent pc = context.getComponentComponent();
+pc.setPropertyPrefix("${stage}.");
+// ...
+context.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("direct:start").to("properties:mock:{{endpoint}}");
+    }
+});
+----
+
+it is possible to change the target endpoint by changing system
+property `stage` either to `dev` (the message will be routed
+to `mock:result1`) or `test` (the message will be routed
+to `mock:result2`).
+
+=== Configuring in Java DSL
+
+You have to create and register the `PropertiesComponent` under the name
+`properties` such as:
+
+[source,java]
+----
+PropertiesComponent pc = new PropertiesComponent();
+pc.setLocation("classpath:com/mycompany/myprop.properties");
+context.addComponent("properties", pc);
+----
+
+=== Configuring in Spring XML
+
+Spring XML offers two variations to configure. You can define a spring
+bean as a `PropertiesComponent` which resembles the way done in Java
+DSL. Or you can use the `<propertyPlaceholder>` tag.
+
+[source,xml]
+----
+<bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent">
+    <property name="location" value="classpath:com/mycompany/myprop.properties"/>
+</bean>
+----
+
+Using the `<propertyPlaceholder>` tag makes the configuration a bit more
+fresh such as:
+
+[source,xml]
+----
+<camelContext ...>
+   <propertyPlaceholder id="properties" location="com/mycompany/myprop.properties"/>
+</camelContext>
+----
+
+Setting the properties location through the location tag works just fine but sometime you have a number of resources to take into account and starting from *Camel 2.19.0* you can set the properties location with a dedicated propertiesLocation:
+
+[source,xml]
+----
+<camelContext ...>
+  <propertyPlaceholder id="myPropertyPlaceholder">
+    <propertiesLocation
+      resolver = "classpath"
+      path     = "com/my/company/something/my-properties-1.properties"
+      optional = "false"/>
+    <propertiesLocation
+      resolver = "classpath"
+      path     = "com/my/company/something/my-properties-2.properties"
+      optional = "false"/>
+    <propertiesLocation
+      resolver = "file"
+      path     = "${karaf.home}/etc/my-override.properties"
+      optional = "true"/>
+   </propertyPlaceholder>
+</camelContext>
+----
+
+[TIP]
+**Specifying the cache option inside XML** +
+Camel 2.10 onwards supports specifying a value for the cache option both
+inside the Spring as well as the Blueprint XML.
+
+=== Using a Properties from the Registry
+
+*Available as of Camel 2.4* +
+For example in OSGi you may want to expose a service which returns the
+properties as a `java.util.Properties` object.
+
+Then you could setup the <<properties-component,Properties>> component as
+follows:
+
+[source,xml]
+----
+ <propertyPlaceholder id="properties" location="ref:myProperties"/>
+----
+
+Where `myProperties` is the id to use for lookup in the OSGi registry.
+Notice we use the `ref:` prefix to tell Camel that it should lookup the
+properties for the Registry.
+
+=== Examples using properties component
+
+When using property placeholders in the endpoint URIs you can either use
+the `properties:` component or define the placeholders directly in the
+URI. We will show example of both cases, starting with the former.
+
+[source,java]
+----
+// properties
+cool.end=mock:result
+
+// route
+from("direct:start").to("properties:{{cool.end}}");
+----
+
+You can also use placeholders as a part of the endpoint uri:
+
+[source,java]
+----
+// properties
+cool.foo=result
+
+// route
+from("direct:start").to("properties:mock:{{cool.foo}}");
+----
+
+In the example above the to endpoint will be resolved to `mock:result`.
+
+You can also have properties with refer to each other such as:
+
+[source,java]
+----
+// properties
+cool.foo=result
+cool.concat=mock:{{cool.foo}}
+
+// route
+from("direct:start").to("properties:mock:{{cool.concat}}");
+----
+
+Notice how `cool.concat` refer to another property.
+
+The `properties:` component also offers you to override and provide a
+location in the given uri using the `locations` option:
+
+[source,java]
+----
+   from("direct:start").to("properties:bar.end?locations=com/mycompany/bar.properties");
+----
+
+=== Examples
+
+You can also use property placeholders directly in the endpoint uris
+without having to use `properties:`.
+
+[source,java]
+----
+// properties
+cool.foo=result
+
+// route
+from("direct:start").to("mock:{{cool.foo}}");
+----
+
+And you can use them in multiple wherever you want them:
+
+[source,java]
+----
+// properties
+cool.start=direct:start
+cool.showid=true
+cool.result=result
+
+// route
+from("{{cool.start}}")
+    .to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
+    .to("mock:{{cool.result}}");
+----
+
+You can also your property placeholders when using
+ProducerTemplate for example:
+
+[source,java]
+----
+template.sendBody("{{cool.start}}", "Hello World");
+----
+
+=== Example with <<simple-language,Simple>> language
+
+The <<simple-language,Simple>> language now also support using property
+placeholders, for example in the route below:
+
+[source,java]
+----
+// properties
+cheese.quote=Camel rocks
+
+// route
+from("direct:start")
+    .transform().simple("Hi ${body} do you think ${properties:cheese.quote}?");
+----
+
+You can also specify the location in the <<simple-language,Simple>>
+language for example:
+
+[source,java]
+----
+// bar.properties
+bar.quote=Beer tastes good
+
+// route
+from("direct:start")
+    .transform().simple("Hi ${body}. ${properties:com/mycompany/bar.properties:bar.quote}.");
+----
+
+=== Additional property placeholder supported in Spring XML
+
+The property placeholders is also supported in many of the Camel Spring
+XML tags such as
+`<package>, <packageScan>, <contextScan>, <jmxAgent>, <endpoint>, <routeBuilder>, <proxy>`
+and the others.
+
+The example below has property placeholder in the `<jmxAgent>` tag:
+
+You can also define property placeholders in the various attributes on
+the `<camelContext>` tag such as `trace` as shown here:
+
+=== Overriding a property setting using a JVM System Property
+
+*Available as of Camel 2.5* +
+It is possible to override a property value at runtime using a JVM
+System property without the need to restart the application to pick up
+the change. This may also be accomplished from the command line by
+creating a JVM System property of the same name as the property it
+replaces with a new value. An example of this is given below
+
+[source,java]
+----
+PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+pc.setCache(false);
+
+System.setProperty("cool.end", "mock:override");
+System.setProperty("cool.result", "override");
+
+context.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("direct:start").to("properties:cool.end");
+        from("direct:foo").to("properties:mock:{{cool.result}}");
+    }
+});
+context.start();
+
+getMockEndpoint("mock:override").expectedMessageCount(2);
+
+template.sendBody("direct:start", "Hello World");
+template.sendBody("direct:foo", "Hello Foo");
+
+System.clearProperty("cool.end");
+System.clearProperty("cool.result");
+
+assertMockEndpointsSatisfied();
+----
+
+=== Using property placeholders for any kind of attribute in the XML DSL
+
+*Available as of Camel 2.7*
+
+NOTE: If you use OSGi Blueprint then this only works from *2.11.1* or *2.10.5*
+onwards.
+
+Previously it was only the `xs:string` type attributes in the XML DSL
+that support placeholders. For example often a timeout attribute would
+be a `xs:int` type and thus you cannot set a string value as the
+placeholder key. This is now possible from Camel 2.7 onwards using a
+special placeholder namespace.
+
+In the example below we use the `prop` prefix for the namespace
+`http://camel.apache.org/schema/placeholder` by which we can use the
+`prop` prefix in the attributes in the XML DSLs. Notice how we use that
+in the Multicast to indicate that the option
+`stopOnException` should be the value of the placeholder with the key
+"stop".
+
+In our properties file we have the value defined as
+
+[source]
+----
+stop=true
+----
+
+=== Using Blueprint property placeholder with Camel routes
+
+*Available as of Camel 2.7*
+
+Camel supports Blueprint
+which also offers a property placeholder service. Camel supports
+convention over configuration, so all you have to do is to define the
+OSGi Blueprint property placeholder in the XML file as shown below:
+
+[source,xml]
+----
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xsi:schemaLocation="
+           http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+    <!-- OSGI blueprint property placeholder -->
+    <cm:property-placeholder id="myblueprint.placeholder" persistent-id="camel.blueprint">
+        <!-- list some properties as needed -->
+        <cm:default-properties>
+            <cm:property name="result" value="mock:result"/>
+        </cm:default-properties>
+    </cm:property-placeholder>
+
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+        <!-- in the route we can use {{ }} placeholders which will lookup in blueprint
+             as Camel will auto detect the OSGi blueprint property placeholder and use it -->
+        <route>
+            <from uri="direct:start"/>
+            <to uri="mock:foo"/>
+            <to uri="{{result}}"/>
+        </route>
+    </camelContext>
+</blueprint>
+----
+
+==== Using OSGi blueprint property placeholders in Camel routes
+
+By default Camel detects and uses OSGi blueprint property placeholder
+service. You can disable this by setting the attribute
+`useBlueprintPropertyResolver` to false on the `<camelContext>`
+definition.
+
+==== About placeholder syntax
+
+Notice how we can use the Camel syntax for placeholders `{{` and `}}` in the
+Camel route, which will lookup the value from OSGi blueprint.
+
+The blueprint syntax for placeholders is `${ }`. So outside the
+`<camelContext>` you must use the `${ }` syntax. Where as inside
+`<camelContext>` you must use `{{` and `}}` syntax.
+
+OSGi blueprint allows you to configure the syntax, so you can actually
+align those if you want.
+
+You can also explicit refer to a specific OSGi blueprint property
+placeholder by its id. For that you need to use the Camel's
+`<propertyPlaceholder>` as shown in the example below:
+
+[source,xml]
+----
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xsi:schemaLocation="
+           http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+    <!-- OSGI blueprint property placeholder -->
+    <cm:property-placeholder id="myblueprint.placeholder" persistent-id="camel.blueprint">
+        <!-- list some properties as needed -->
+        <cm:default-properties>
+            <cm:property name="prefix.result" value="mock:result"/>
+        </cm:default-properties>
+    </cm:property-placeholder>
+
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+        <!-- using Camel properties component and refer to the blueprint property placeholder by its id -->
+        <propertyPlaceholder id="properties" location="blueprint:myblueprint.placeholder"
+                             prefixToken="[[" suffixToken="]]"
+                             propertyPrefix="prefix."/>
+
+        <!-- in the route we can use {{ }} placeholders which will lookup in blueprint -->
+        <route>
+            <from uri="direct:start"/>
+            <to uri="mock:foo"/>
+            <to uri="[[result]]"/>
+        </route>
+    </camelContext>
+</blueprint>
+----
+
+
+=== Explicit referring to a OSGi blueprint placeholder in Camel
+
+Notice how we use the `blueprint` scheme to refer to the OSGi blueprint
+placeholder by its id. This allows you to mix and match, for example you
+can also have additional schemes in the location. For example to load a
+file from the classpath you can do:
+
+[source]
+----
+location="blueprint:myblueprint.placeholder,classpath:myproperties.properties"
+----
+
+Each location is separated by comma.
+
+=== Overriding Blueprint property placeholders outside CamelContext
+
+*Available as of Camel 2.10.4*
+
+When using Blueprint property placeholder in the Blueprint XML file, you
+can declare the properties directly in the XML file as shown below:
+
+Notice that we have a `<bean>` which refers to one of the properties. And
+in the Camel route we refer to the other using the `{{` and `}}` notation.
+
+Now if you want to override these Blueprint properties from an unit
+test, you can do this as shown below:
+
+To do this we override and implement the
+`useOverridePropertiesWithConfigAdmin` method. We can then put the
+properties we want to override on the given props parameter. And the
+return value *must* be the `persistence-id` of the
+`<cm:property-placeholder>` tag, which you define in the blueprint XML
+file.
+
+=== Using .cfg or .properties file for Blueprint property placeholders
+
+*Available as of Camel 2.10.4*
+
+When using Blueprint property placeholder in the Blueprint XML file, you
+can declare the properties in a `.properties` or `.cfg` file. If you use
+Apache ServieMix / Karaf then this container has a convention that it
+loads the properties from a file in the etc directory with the naming
+`etc/pid.cfg`, where `pid` is the `persistence-id`.
+
+For example in the blueprint XML file we have the
+`persistence-id="stuff"`, which mean it will load the configuration file
+as `etc/stuff.cfg`.
+
+Now if you want to unit test this blueprint XML file, then you can
+override the `loadConfigAdminConfigurationFile` and tell Camel which
+file to load as shown below:
+
+Notice that this method requires to return a `String[]` with 2 values. The
+1st value is the path for the configuration file to load.
+The 2nd value is the `persistence-id` of the `<cm:property-placeholder>`
+tag.
+
+The `stuff.cfg` file is just a plain properties file with the property
+placeholders such as:
+
+[source]
+----
+== this is a comment
+greeting=Bye
+----
+
+=== Using .cfg file and overriding properties for Blueprint property placeholders
+
+You can do both as well. Here is a complete example. First we have the
+Blueprint XML file:
+
+And in the unit test class we do as follows:
+
+And the `etc/stuff.cfg` configuration file contains
+
+[source]
+----
+greeting=Bye
+echo=Yay
+destination=mock:result
+----
+
+=== Bridging Spring and Camel property placeholders
+
+*Available as of Camel 2.10*
+
+The Spring Framework does not allow 3rd party frameworks such as Apache
+Camel to seamless hook into the Spring property placeholder mechanism.
+However you can easily bridge Spring and Camel by declaring a Spring
+bean with the type
+`org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer`, which
+is a Spring
+`org.springframework.beans.factory.config.PropertyPlaceholderConfigurer`
+type.
+
+To bridge Spring and Camel you must define a single bean as shown below:
+
+*Bridging Spring and Camel property placeholders*
+
+You *must not* use the spring <context:property-placeholder> namespace
+at the same time; this is not possible.
+
+After declaring this bean, you can define property placeholders using
+both the Spring style, and the Camel style within the <camelContext> tag
+as shown below:
+
+*Using bridge property placeholders*
+
+Notice how the hello bean is using pure Spring property placeholders
+using the `${ }` notation. And in the Camel routes we use the Camel
+placeholder notation with `{{` and `}}`.
+
+=== Clashing Spring property placeholders with Camels Simple language
+
+Take notice when using Spring bridging placeholder then the spring `${ }`
+syntax clashes with the <<simple-language,Simple>> in Camel, and therefore
+take care. For example:
+
+[source,xml]
+----
+<setHeader headerName="Exchange.FILE_NAME">
+  <simple>{{file.rootdir}}/${in.header.CamelFileName}</simple>
+</setHeader>
+----
+
+clashes with Spring property placeholders, and you should use `$simple{ }`
+to indicate using the <<simple-language,Simple>> language in Camel.
+
+[source,xml]
+----
+<setHeader headerName="Exchange.FILE_NAME">
+  <simple>{{file.rootdir}}/$simple{in.header.CamelFileName}</simple>
+</setHeader>
+----
+
+An alternative is to configure the `PropertyPlaceholderConfigurer` with
+`ignoreUnresolvablePlaceholders` option to `true`.
+
+=== Overriding properties from Camel test kit
+
+*Available as of Camel 2.10*
+
+When Testing with Camel and using the
+<<properties-component,Properties>> component, you may want to be able to
+provide the properties to be used from directly within the unit test
+source code. +
+This is now possible from Camel 2.10 onwards, as the Camel test kits, eg
+`CamelTestSupport` class offers the following methods
+
+* `useOverridePropertiesWithPropertiesComponent`
+* `ignoreMissingLocationWithPropertiesComponent`
+
+So for example in your unit test classes, you can override the
+`useOverridePropertiesWithPropertiesComponent` method and return a
+`java.util.Properties` that contains the properties which should be
+preferred to be used.
+
+==== Providing properties from within unit test source
+
+This can be done from any of the Camel Test kits, such as camel-test,
+camel-test-spring, and camel-test-blueprint.
+
+The `ignoreMissingLocationWithPropertiesComponent` can be used to
+instruct Camel to ignore any locations which was not discoverable, for
+example if you run the unit test, in an environment that does not have
+access to the location of the properties.
+
+=== Using @PropertyInject
+
+*Available as of Camel 2.12*
+
+Camel allows to inject property placeholders in POJOs using the
+`@PropertyInject` annotation which can be set on fields and setter
+methods.
+
+For example you can use that with `RouteBuilder` classes, such as shown
+below:
+
+[source,java]
+----
+public class MyRouteBuilder extends RouteBuilder {
+
+    @PropertyInject("hello")
+    private String greeting;
+
+    @Override
+    public void configure() throws Exception {
+        from("direct:start")
+            .transform().constant(greeting)
+            .to("{{result}}");
+    }
+
+}
+----
+
+Notice we have annotated the greeting field with `@PropertyInject` and
+define it to use the key `"hello"`. Camel will then lookup the property
+with this key and inject its value, converted to a String type.
+
+You can also use multiple placeholders and text in the key, for example
+we can do:
+
+[source,java]
+----
+@PropertyInject("Hello {{name}} how are you?")
+private String greeting;
+----
+
+This will lookup the placeholder with they key `"name"`.
+
+You can also add a default value if the key does not exists, such as:
+
+[source,java]
+----
+@PropertyInject(value = "myTimeout", defaultValue = "5000")
+private int timeout;
+----
+
+=== Using out of the box functions
+
+*Available as of Camel 2.14.1*
+
+The <<properties-component,Properties>> component includes the following
+functions out of the box
+
+* `env` - A function to lookup the property from OS environment variables
+* `sys` - A function to lookup the property from Java JVM system
+properties
+* `service` - A function to lookup the property from OS environment
+variables using the service naming idiom
+* `service.name` - **Camel 2.16.1: **A function to lookup the
+property from OS environment variables using the service naming idiom
+returning the hostname part only
+* `service.port` - **Camel 2.16.1: **A function to lookup the
+property from OS environment variables using the service naming idiom
+returning the port part only
+
+As you can see these functions is intended to make it easy to lookup
+values from the environment. As they are provided out of the box, they
+can easily be used as shown below:
+
+[source,xml]
+----
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+    <route>
+      <from uri="direct:start"/>
+      <to uri="{`{env:SOMENAME}`}"/>
+      <to uri="{`{sys:MyJvmPropertyName}`}"/>
+    </route>
+  </camelContext>
+----
+
+You can use default values as well, so if the property does not exists,
+you can define a default value as shown below, where the default value
+is a `log:foo` and `log:bar` value.
+
+[source,xml]
+----
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+    <route>
+      <from uri="direct:start"/>
+      <to uri="{`{env:SOMENAME:log:foo}`}"/>
+      <to uri="{`{sys:MyJvmPropertyName:log:bar}`}"/>
+    </route>
+  </camelContext>
+----
+
+ 
+
+The service function is for looking up a service which is defined using
+OS environment variables using the service naming idiom, to refer to a
+service location using `hostname : port`
+
+* __NAME__**_SERVICE_HOST**
+* __NAME__**_SERVICE_PORT**
+
+in other words the service uses `_SERVICE_HOST` and `_SERVICE_PORT` as
+prefix. So if the service is named FOO, then the OS environment
+variables should be set as
+
+[source]
+----
+export $FOO_SERVICE_HOST=myserver
+export $FOO_SERVICE_PORT=8888
+----
+
+For example if the FOO service a remote HTTP service, then we can refer
+to the service in the Camel endpoint uri, and use
+the <<http-component,HTTP>> component to make the HTTP call:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+  <route>
+    <from uri="direct:start"/>
+    <to uri="http://{`{service:FOO}`}/myapp"/>
+  </route>
+</camelContext>
+----
+
+And we can use default values if the service has not been defined, for
+example to call a service on localhost, maybe for unit testing etc
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+  <route>
+    <from uri="direct:start"/>
+    <to uri="http://{`{service:FOO:localhost:8080}`}/myapp"/>
+  </route>
+</camelContext>
+----
+
+=== Using custom functions
+
+*Available as of Camel 2.14.1*
+
+The <<properties-component,Properties>> component allow to plugin 3rd party
+functions which can be used during parsing of the property placeholders.
+These functions are then able to do custom logic to resolve the
+placeholders, such as looking up in databases, do custom computations,
+or whatnot. The name of the function becomes the prefix used in the
+placeholder. This is best illustrated in the example code below
+
+[source,xml]
+----
+<bean id="beerFunction" class="MyBeerFunction"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+  <propertyPlaceholder id="properties">
+    <propertiesFunction ref="beerFunction"/>
+  </propertyPlaceholder>
+
+  <route>
+    <from uri="direct:start"/>
+    <to uri="{`{beer:FOO}`}"/>
+    <to uri="{`{beer:BAR}`}"/>
+  </route>
+</camelContext>
+----
+
+NOTE: from *camel 2.19.0* the location attribute (on propertyPlaceholder tag) is not more mandatory
+
+Here we have a Camel XML route where we have defined the
+`<propertyPlaceholder>` to use a custom function, which we refer to be the
+bean id - eg the `beerFunction`. As the beer function uses `"beer"` as its
+name, then the placeholder syntax can trigger the beer function by
+starting with `beer:value`.
+
+The implementation of the function is only two methods as shown below:
+
+[source,java]
+----
+public static final class MyBeerFunction implements PropertiesFunction {
+
+    @Override
+    public String getName() {
+        return "beer";
+    }
+
+    @Override
+    public String apply(String remainder) {
+        return "mock:" + remainder.toLowerCase();
+    }
+}
+----
+
+The function must implement
+the `org.apache.camel.component.properties.PropertiesFunction`
+interface. The method `getName` is  the name of the function, eg beer.
+And the `apply` method is where we implement the custom logic to do. As
+the sample code is from an unit test, it just returns a value to refer
+to a mock endpoint.
+
+To register a custom function from Java code is as shown below:
+
+[source,java]
+----
+PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+pc.addFunction(new MyBeerFunction());
+----
+ 
+
+=== See Also
+
+* <<properties-component,Properties>> component
+* Jasypt for using encrypted values (eg passwords) in
+the properties

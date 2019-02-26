@@ -1,0 +1,246 @@
+[[loadBalance-eip]]
+== Load Balance EIP
+
+The Load Balancer Pattern allows you to delegate to one of a number of endpoints using a variety of different load balancing policies.
+
+== Built-in load balancing policies
+
+Camel provides the following policies out-of-the-box:
+
+[width="100%",cols="3,6",options="header"]
+|=======================================================================
+| Policy | Description
+| Round Robin | The exchanges are selected from in a round robin fashion. This is a well known and classic policy, which spreads the load evenly.
+| Random | A random endpoint is selected for each exchange.
+| Sticky | Sticky load balancing using an Expression to calculate a correlation key to perform the sticky load balancing; rather like jsessionid in the web or JMSXGroupID in JMS.
+| Topic | Topic which sends to all destinations (rather like JMS Topics)
+| Failover | In case of failures the exchange will be tried on the next endpoint.
+| Weighted Round-Robin | *Camel 2.5*: The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to the others. In addition to the weight, endpoint selection is then further refined using *round-robin* distribution based on weight.
+| Weighted Random | *Camel 2.5*: The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to others.In addition to the weight, endpoint selection is then further refined using *random* distribution based on weight.
+| Custom | *Camel 2.8*: From *Camel 2.8* onwards the preferred way of using a custom Load Balancer is to use this policy, as the ref attribute is not supported anymore.
+| Circuit Breaker | *Camel 2.14*: Implements the Circuit Breaker pattern as described in "Release it!" book.
+|=======================================================================
+
+=== Options
+
+// eip options: START
+The Load Balance EIP supports 2 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *loadBalancerType* | *Required* The load balancer to be used |  | LoadBalancerDefinition
+| *inheritErrorHandler* | Sets whether or not to inherit the configured error handler. The default value is true. You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you want to use a custom error handler strategy. | false | Boolean
+|===
+// eip options: END
+
+
+=== Round Robin
+
+The round robin load balancer is not meant to work with failover, for that you should use the dedicated *failover* load balancer. The round robin load balancer will only change to next endpoint per message.
+The round robin load balancer is stateful as it keeps state of which endpoint to use next time.
+
+Here is a little example:
+
+[source,java]
+----
+from("direct:start")
+    .loadBalance().roundRobin()
+        .to("mock:x")
+        .to("mock:y")
+        .to("mock:z")
+    .end() // end load balancer
+----
+
+And in XML:
+[source,xml]
+----
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <loadBalance>
+        <roundRobin/>
+        <to uri="mock:x"/>
+        <to uri="mock:y"/>
+        <to uri="mock:z"/>
+    </loadBalance>
+  </route>
+</camelContext>
+----
+
+The above example loads balance requests from *direct:start* to one of the available *mock endpoint* instances, in this case using a round robin policy.
+
+=== Failover
+
+The failover load balancer is capable of trying the next processor in case an Exchange failed with an exception during processing.
+You can constrain the failover to activate only when one exception of a list you specify occurs. If you do not specify a list any exception will cause fail over to occur. This balancer uses the same strategy for matching exceptions as the Exception Clause does for the `onException`.
+
+TIP: **Enable stream caching if using streams:**
+If you use streaming then you should enable Stream caching when using the failover load balancer. This is needed so the stream can be re-read after failing over to the next processor.
+
+Here is a sample to failover only if a IOException related exception was thrown:
+[source,java]
+----
+from("direct:start")
+    // here we will load balance if IOException was thrown
+    // any other kind of exception will result in the Exchange as failed
+    // to failover over any kind of exception we can just omit the exception
+    // in the failOver DSL
+    .loadBalance().failover(IOException.class)
+        .to("mock:x")
+        .to("mock:y")
+        .to("mock:z");
+----
+You can specify multiple exceptions to failover as the option is varargs, for instance:
+
+[source,java]
+----
+// enable maximum redelivery so failover can react
+errorHandler(defaultErrorHandler().maximumRedeliveries(5));
+
+from("direct:foo").
+    loadBalance().failover(IOException.class, MyOtherException.class)
+        .to("direct:a")
+        .to("direct:b");
+----
+
+And in XML:
+
+Failover can also be used from Spring DSL and you configure it as:
+[source,xml]
+----
+<route errorHandlerRef="myErrorHandler">
+   <from uri="direct:foo"/>
+   <loadBalance>
+       <failover>
+           <exception>java.io.IOException</exception>
+           <exception>com.mycompany.MyOtherException</exception>
+       </failover>
+       <to uri="direct:a"/>
+       <to uri="direct:b"/>
+   </loadBalance>
+ </route>
+----
+
+=== Using failover in round robin mode
+
+An example using Java DSL:
+[source,java]
+----
+from("direct:start")
+    // Use failover load balancer in stateful round robin mode
+    // which mean it will failover immediately in case of an exception
+    // as it does NOT inherit error handler. It will also keep retrying as
+    // its configured to newer exhaust.
+    .loadBalance().failover(-1, false, true)
+        .to("direct:bad")
+        .to("direct:bad2")
+        .to("direct:good")
+        .to("direct:good2");
+----
+
+And the same example using Spring XML:
+[source,xml]
+----
+<route>
+    <from uri="direct:start"/>
+    <loadBalance>
+        <!-- failover using stateful round robin,
+             which will keep retrying forever those 4 endpoints until success.
+             You can set the maximumFailoverAttempt to break out after X attempts -->
+        <failover roundRobin="true"/>
+        <to uri="direct:bad"/>
+        <to uri="direct:bad2"/>
+        <to uri="direct:good"/>
+        <to uri="direct:good2"/>
+    </loadBalance>
+</route>
+----
+
+TIP: *Disabled inheritErrorHandler*: You can configure `inheritErrorHandler=false` if you want to failover to the next endpoint as fast as possible.
+By disabling the Error Handler you ensure it does not _intervene_ which allows the `failover` load balancer to handle failover asap.
+By also enabling `roundRobin` mode, then it will keep retrying until it success. You can then configure the `maximumFailoverAttempts` option to a high value to let it eventually exhaust (give up) and fail.
+
+=== Weighted Round-Robin and Random Load Balancing
+
+*Available as of Camel 2.5*
+
+In many enterprise environments where server nodes of unequal processing power & performance characteristics are utilized to host services and processing endpoints, it is frequently necessary to distribute processing load based on their individual server capabilities so that some endpoints are not unfairly burdened with requests. Obviously simple round-robin or random load balancing do not alleviate problems of this nature. A Weighted Round-Robin and/or Weighted Random load balancer can be used to address this problem.
+The weighted load balancing policy allows you to specify a processing load distribution ratio for each server with respect to others. You can specify this as a positive processing weight for each server. A larger number indicates that the server can handle a larger load. The weight is utilized to determine the payload distribution ratio to different processing endpoints with respect to others.
+
+The parameters that can be used are
+
+[width="100%",cols="3,1,2,6",options="header"]
+|=======================================================================
+| Option | Type | Default | Description
+| roundRobin | boolean | false | The default value for round-robin is false. In the absence of this setting or parameter the load balancing algorithm used is random.
+| distributionRatio | String | none | The distributionRatio is a delimited String consisting on integer weights separated by delimiters for example "2,3,5". The distributionRatio must match the number of endpoints and/or processors specified in the load balancer list.
+| distributionRatioDelimiter | String | , | The distributionRatioDelimiter is the delimiter used to specify the distributionRatio. If this attribute is not specified a default delimiter "," is expected as the delimiter used for specifying the distributionRatio.
+|=======================================================================
+
+=== Using Weighted round-robin & random load balancing
+
+*Available as of Camel 2.5*
+
+An example using Java DSL:
+[source,java]
+----
+List<integer> distributionRatio = new ArrayList<integer>();
+distributionRatio.add(4);
+distributionRatio.add(2);
+distributionRatio.add(1);
+
+// round-robin
+from("direct:start")
+    .loadBalance().weighted(true, distributionRatio)
+    .to("mock:x", "mock:y", "mock:z");
+
+//random
+from("direct:start")
+    .loadBalance().weighted(false, distributionRatio)
+    .to("mock:x", "mock:y", "mock:z");
+----
+
+And the same example using Spring XML:
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <loadBalance>
+    <weighted roundRobin="false"
+              distributionRatio="4 2 1"/>
+      <to uri="mock:x"/>
+      <to uri="mock:y"/>
+      <to uri="mock:z"/>
+  </loadBalance>
+</route>
+----
+
+An example using Java DSL:
+[source,java]
+----
+// round-robin
+from("direct:start")
+    .loadBalance().weighted(true, "4:2:1" distributionRatioDelimiter=":")
+    .to("mock:x", "mock:y", "mock:z");
+
+//random
+from("direct:start")
+    .loadBalance().weighted(false, "4,2,1")
+    .to("mock:x", "mock:y", "mock:z");
+----
+
+And the same example using Spring XML:
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <loadBalance>
+    <weighted roundRobin="false"
+              distributionRatio="4-2-1" distributionRatioDelimiter="-" />
+      <to uri="mock:x"/>
+      <to uri="mock:y"/>
+      <to uri="mock:z"/>
+  </loadBalance>
+</route>
+----

@@ -1,0 +1,124 @@
+[[nsq-component]]
+== NSQ Component
+
+*Available as of Camel version 2.23*
+
+*Available as of Camel version 2.23*
+
+
+
+http://nsq.io/[NSQ] is a realtime distributed messaging platform.
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component.
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-nsq</artifactId>
+    <!-- use the same version as your Camel core version -->
+    <version>x.y.z</version>
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+----------------------
+nsq:servers[?options]
+----------------------
+
+Where *servers* represents the list of NSQ servers - nsqlookupd servers in the case of a consumer and nsqd servers in the case of a producer.
+
+### Options
+
+
+// component options: START
+The NSQ component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The NSQ endpoint is configured using URI syntax:
+
+----
+nsq:lookupServer
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *servers* | *Required* The hostnames of one or more nsqlookupd servers (consumer) or nsqd servers (producer). |  | String
+|===
+
+
+==== Query Parameters (16 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *topic* (common) | *Required* The name of topic we want to use |  | String
+| *userAgent* (common) | A String to identify the kind of client |  | String
+| *autoFinish* (consumer) | Automatically finish the NSQ message when it is retrieved from the quese and before the Exchange is processed. | true | Boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *channel* (consumer) | The name of channel we want to use |  | String
+| *lookupInterval* (consumer) | The lookup retry interval | 5000 | long
+| *lookupServerPort* (consumer) | The port of the nsqdlookupd server | 4161 | int
+| *messageTimeout* (consumer) | The NSQ message timeout for a consumer. | -1 | long
+| *poolSize* (consumer) | Consumer pool size | 10 | int
+| *requeueInterval* (consumer) | The requeue interval | -1 | long
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *port* (producer) | The port of the nsqd server | 4150 | int
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *secure* (security) | Set secure option indicating TLS is required | false | boolean
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-nsq-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.nsq.enabled* | Whether to enable auto configuration of the nsq component. This is enabled by default. |  | Boolean
+| *camel.component.nsq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.nsq.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END

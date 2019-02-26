@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>catalog</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camel-catalog</artifactId>
+  <packaging>jar</packaging>
+  <name>Camel :: Catalog :: Camel Catalog</name>
+  <description>Camel Catalog</description>
+
+  <properties>
+    <camel.osgi.import.pkg>!org.apache.camel.util.json,*</camel.osgi.import.pkg>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.15.0</firstVersion>
+    <label>tooling</label>
+  </properties>
+
+  <dependencies>
+
+    <!-- required dependencies by camel-catalog -->
+    <!-- we shade our patched ordered json-simple parser -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-util-json</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for testing simple language parser -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for testing jsonpath language -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jsonpath</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- for testing activemq component -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-activemq</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+
+      <!-- copy catalog source code from camel-core -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>${maven-resources-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>target/generated-sources/java/org/apache/camel/catalog</outputDirectory>
+              <overwrite>true</overwrite>
+              <resources>
+                <resource>
+                  <directory>../../core/camel-api/src/main/java/org/apache/camel/runtimecatalog</directory>
+                  <!-- the following files are maintained in camel-api and not here, so they are copied over -->
+                  <includes>
+                    <include>EndpointValidationResult.java</include>
+                    <include>JSonSchemaResolver.java</include>
+                    <include>LanguageValidationResult.java</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>../../core/camel-base/src/main/java/org/apache/camel/runtimecatalog/impl</directory>
+                  <!-- the following files are maintained in camel-base and not here, so they are copied over -->
+                  <includes>
+                    <include>AbstractCamelCatalog.java</include>
+                    <include>CamelContextJsonSchemaResolver.java</include>
+                    <include>CatalogHelper.java</include>
+                    <include>Pair.java</include>
+                    <include>SuggestionStrategy.java</include>
+                    <include>TimePatternConverter.java</include>
+                    <include>UnsafeUriCharactersEncoder.java</include>
+                    <include>URISupport.java</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>../../core/camel-support/src/main/java/org/apache/camel/support</directory>
+                  <!-- the following files are maintained in camel-base and not here, so they are copied over -->
+                  <includes>
+                    <include>JSonSchemaHelper.java</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- rename runtimecatalog to catalog which is the package name we use here -->
+      <plugin>
+        <groupId>com.google.code.maven-replacer-plugin</groupId>
+        <artifactId>replacer</artifactId>
+        <version>1.5.3</version>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>replace</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includes>
+            <include>${basedir}/target/generated-sources/java/org/apache/camel/catalog/**.java</include>
+          </includes>
+          <replacements>
+            <replacement>
+              <token>org.apache.camel.runtimecatalog.impl</token>
+              <value>org.apache.camel.catalog</value>
+            </replacement>
+            <replacement>
+              <token>org.apache.camel.runtimecatalog</token>
+              <value>org.apache.camel.catalog</value>
+            </replacement>
+            <replacement>
+              <token>org.apache.camel.support</token>
+              <value>org.apache.camel.catalog</value>
+            </replacement>
+          </replacements>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.7</version>
+        <executions>
+          <execution>
+            <id>add-source</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${basedir}/target/generated-sources/java</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- shade caffeine cache for faster Camel and spi-annotations as needed by everybody -->
+      <!-- shade json-simple for parsing Camel component JSon schema files -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.apache.camel:camel-util-json</include>
+                </includes>
+              </artifactSet>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- generate and include all components in the catalog -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <!-- prepare the catalog, readme files, etc. -->
+            <goals>
+              <goal>prepare-catalog</goal>
+              <goal>prepare-user-guide</goal>
+              <goal>prepare-readme</goal>
+              <goal>prepare-parent-pom</goal>
+              <goal>prepare-release-pom</goal>
+            </goals>
+            <phase>process-resources</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+  </build>
+
+</project>

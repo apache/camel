@@ -1,0 +1,161 @@
+[[language-component]]
+== Language Component
+
+*Available as of Camel version 2.5*
+
+The language component allows you to send Exchange
+to an endpoint which executes a script by any of the supported
+Languages in Camel. +
+ By having a component to execute language scripts, it allows more
+dynamic routing capabilities. For example by using the
+Routing Slip or link:dynamic-router.html[Dynamic
+Router] EIPs you can send messages to `language` endpoints where the
+script is dynamic defined as well.
+
+This component is provided out of the box in `camel-core` and hence no
+additional JARs is needed. You only have to include additional Camel
+components if the language of choice mandates it, such as using
+<<groovy-language,Groovy>> or <<groovy-language,JavaScript>> languages.
+
+=== URI format
+
+[source]
+----
+language://languageName[:script][?options]
+----
+
+And from Camel 2.11 onwards you can refer to an external resource for
+the script using same notation as supported by the other
+<<language-component,Language>>s in Camel
+
+[source]
+----
+language://languageName:resource:scheme:location][?options]
+----
+
+=== URI Options
+
+
+// component options: START
+The Language component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Language endpoint is configured using URI syntax:
+
+----
+language:languageName:resourceUri
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *languageName* | *Required* Sets the name of the language to use |  | String
+| *resourceUri* | Path to the resource, or a reference to lookup a bean in the Registry to use as the resource |  | String
+|===
+
+
+==== Query Parameters (6 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *binary* (producer) | Whether the script is binary content or text content. By default the script is read as text content (eg java.lang.String) | false | boolean
+| *cacheScript* (producer) | Whether to cache the compiled script and reuse Notice reusing the script can cause side effects from processing one Camel org.apache.camel.Exchange to the next org.apache.camel.Exchange. | false | boolean
+| *contentCache* (producer) | Sets whether to use resource content cache or not | false | boolean
+| *script* (producer) | Sets the script to execute |  | String
+| *transform* (producer) | Whether or not the result of the script should be used as message body. This options is default true. | true | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-language-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.language.enabled* | Whether to enable auto configuration of the language component. This is enabled by default. |  | Boolean
+| *camel.component.language.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+=== Message Headers
+
+The following message headers can be used to affect the behavior of the
+component
+
+[width="100%",cols="10%,90%",options="header",]
+|===
+|Header |Description
+
+|`CamelLanguageScript` |The script to execute provided in the header. Takes precedence over
+script configured on the endpoint.
+|===
+
+=== Examples
+
+For example you can use the <<simple-language,Simple>> language to
+Message Translator a message:
+
+In case you want to convert the message body type you can do this as
+well:
+
+You can also use the <<groovy-language,Groovy>> language, such as this
+example where the input message will by multiplied with 2:
+
+You can also provide the script as a header as shown below. Here we use
+<<xpath-language,XPath>> language to extract the text from the `<foo>`
+tag.
+
+[source,java]
+----
+Object out = producer.requestBodyAndHeader("language:xpath", "<foo>Hello World</foo>", Exchange.LANGUAGE_SCRIPT, "/foo/text()");
+assertEquals("Hello World", out);
+----
+
+=== Loading scripts from resources
+
+*Available as of Camel 2.9*
+
+You can specify a resource uri for a script to load in either the
+endpoint uri, or in the `Exchange.LANGUAGE_SCRIPT` header. +
+ The uri must start with one of the following schemes: file:,
+classpath:, or http:
+
+For example to load a script from the classpath:
+
+By default the script is loaded once and cached. However you can disable
+the `contentCache` option and have the script loaded on each
+evaluation. +
+ For example if the file myscript.txt is changed on disk, then the
+updated script is used:
+
+From *Camel 2.11* onwards you can refer to the resource similar to the
+other <<language-component,Language>>s in Camel by prefixing with
+`"resource:"` as shown below:

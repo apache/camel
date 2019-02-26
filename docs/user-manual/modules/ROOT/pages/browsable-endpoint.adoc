@@ -1,0 +1,16 @@
+[[BrowsableEndpoint-BrowsableEndpoint]]
+=== BrowsableEndpoint
+
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/spi/BrowsableEndpoint.html[BrowsableEndpoint]
+is an extension interface an Endpoint may implement
+to support the browsing of the Message exchanges
+which are pending or have been sent on it.
+
+Some example implementations include
+
+* <<jms-component,JMS>> for queues only (as of 1.3.0)
+* List
+* <<mock-component,Mock>>
+* <<seda-component,Seda>>
+* <<vm-component,VM>>
+

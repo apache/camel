@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+    <context:annotation-config/>
+
+    <context:property-placeholder properties-ref="inlineSharedValues"/>
+
+    <bean id="inlineSharedValues"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <!-- we want to match the producer connection pool with the concurrentConsumers.
+                     Increase this to get concurrent parallel transactions -->
+                <prop key="concurrentSends">5</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- from broker -->
+    <bean id="cfPub" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <!-- we don't want mesages to go to the DLQ, hense infinite redeliveries -->
+        <property name="brokerURL"
+                  value="failover:(tcp://localhost:61616)?jms.redeliveryPolicy.maximumRedeliveries=-1"/>
+    </bean>
+
+    <bean id="pooledCfPub" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="1"/>
+        <property name="connectionFactory" ref="cfPub"/>
+    </bean>
+
+    <bean id="activemq-pub" class="org.apache.camel.component.activemq.ActiveMQComponent">
+        <property name="connectionFactory" ref="pooledCfPub"/>
+        <property name="transacted" value="true"/>
+        <property name="concurrentConsumers" value="${concurrentSends}"/>
+        <property name="cacheLevelName" value="CACHE_CONSUMER"/>
+    </bean>
+
+    <!-- to broker -->
+    <bean id="cfSub" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="failover:(tcp://localhost:61617)"/>
+        <property name="disableTimeStampsByDefault" value="true"/>
+        <property name="copyMessageOnSend" value="false"/>
+    </bean>
+
+    <bean id="pooledCfSub" class="org.apache.activemq.pool.PooledConnectionFactory">
+        <property name="maxConnections" value="${concurrentSends}"/>
+        <property name="connectionFactory" ref="cfSub"/>
+    </bean>
+
+    <bean id="activemq-sub" class="org.apache.camel.component.activemq.ActiveMQComponent">
+        <property name="connectionFactory" ref="pooledCfSub"/>
+        <property name="forceSendOriginalMessage" value="true"/>
+    </bean>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring" id="camel-bridge">
+        <route id="move-route">
+            <from uri="activemq-pub:queue:from"/>
+            <to uri="activemq-sub:queue:to"/>
+        </route>
+    </camelContext>
+
+</beans>

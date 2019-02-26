@@ -1,0 +1,167 @@
+[[google-bigquery-sql-component]]
+== Google BigQuery Standard SQL Component
+*Available as of Camel version 2.23*
+*Available as of Camel version 2.23*
+
+
+
+The Google Bigquery SQL component provides access
+to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
+the https://developers.google.com/apis-explorer/#p/bigquery/v2/bigquery.jobs.query[Google Client Services API].
+
+The current implementation supports only standard SQL
+https://cloud.google.com/bigquery/docs/reference/standard-sql/dml-syntax[DML queries].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,xml]
+------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-bigquery</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+
+------------------------------------------------------
+
+[[GoogleBigQuery-AuthenticationConfiguration]]
+
+=== Authentication Configuration
+
+Google BigQuery component authentication is targeted for use with the GCP Service Accounts.
+For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
+
+Google security credentials can be set explicitly via one of the two options:
+
+* Service Account Email and Service Account Key (PEM format)
+* GCP credentials file location
+
+If both are set, the Service Account Email/Key will take precedence.
+
+Or implicitly, where the connection factory falls back on
+https://developers.google.com/identity/protocols/application-default-credentials#howtheywork[Application Default Credentials].
+
+*OBS!* The location of the default credentials file is configurable - via GOOGLE_APPLICATION_CREDENTIALS environment variable.
+
+Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
+
+=== URI Format
+
+[source,text]
+--------------------------------------------------------
+        google-bigquery-sql://project-id:query?[options]
+--------------------------------------------------------
+
+Examples:
+[source,text]
+--------------------------------------------------------
+        google-bigquery-sql://project-17248459:delete * from test.table where id=@myId
+        google-bigquery-sql://project-17248459:delete * from ${datasetId}.${tableId} where id=@myId
+--------------------------------------------------------
+where
+
+ * parameters in form ${name} are extracted from message headers and formed the translated query
+ * parameters in form @name are extracted from body or message headers and sent to Google Bigquery
+
+You can externalize your SQL queries to files in the classpath or file system as shown:
+[source,text]
+--------------------------------------------------------
+        google-bigquery-sql://project-17248459::classpath:delete.sql
+--------------------------------------------------------
+
+
+
+=== Options
+
+// component options: START
+The Google BigQuery Standard SQL component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *projectId* (producer) | Google Cloud Project Id |  | String
+| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQuery ConnectionFactory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Google BigQuery Standard SQL endpoint is configured using URI syntax:
+
+----
+google-bigquery-sql:query
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *projectId* | *Required* Google Cloud Project Id |  | String
+| *query* | *Required* BigQuery standard SQL query |  | String
+|===
+
+
+==== Query Parameters (2 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used. |  | GoogleBigQuery ConnectionFactory
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-bigquery-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.google-bigquery-sql.connection-factory.credentials-file-location* |  |  | String
+| *camel.component.google-bigquery-sql.connection-factory.service-account* |  |  | String
+| *camel.component.google-bigquery-sql.connection-factory.service-account-key* |  |  | String
+| *camel.component.google-bigquery-sql.connection-factory.service-u-r-l* |  |  | String
+| *camel.component.google-bigquery-sql.enabled* | Whether to enable auto configuration of the google-bigquery-sql component. This is enabled by default. |  | Boolean
+| *camel.component.google-bigquery-sql.project-id* | Google Cloud Project Id |  | String
+| *camel.component.google-bigquery-sql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+=== Ouput Message Headers
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Name |Type |Description
+|`CamelGoogleBigQueryTranslatedQuery` |`String` | Preprocessed query text
+|=======================================================================
+
+
+=== Producer Endpoints
+
+Google BigQuery SQL endpoint expects the payload to be either empty or a map of query parameters.

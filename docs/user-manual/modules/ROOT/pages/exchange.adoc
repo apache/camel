@@ -1,0 +1,20 @@
+[[Exchange-MessageExchange]]
+=== Message Exchange
+
+To support various message exchange patterns
+like one way Event Message and
+Request Reply messages Camel uses an
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Exchange.html[Exchange]
+interface which has a *pattern* property which can be set to *InOnly*
+for an Event Message which has a single inbound
+Message, or *InOut* for a
+Request Reply where there is an inbound and
+outbound Message.
+
+[[Exchange-SeeAlso]]
+==== See Also
+
+* Event Message
+* Request Reply
+* Exchange Pattern
+* Message

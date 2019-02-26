@@ -1,0 +1,174 @@
+[[google-calendar-stream-component]]
+== Google Calendar Stream Component
+
+*Available as of Camel version 2.23*
+
+The Google Calendar component provides access
+to https://calendar.google.com[Calendar] via
+the https://developers.google.com/calendar/overview[Google Calendar
+Web APIs].
+
+Google Calendar uses
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
+user data. Before you can use this component, you will need
+to https://developers.google.com/calendar/auth[create an
+account and generate OAuth credentials]. Credentials comprise of a
+clientId, clientSecret, and a refreshToken. A handy resource for
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+------------------------------------------------------
+    <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-google-calendar</artifactId>
+            <version>2.23.0</version>
+    </dependency>
+
+------------------------------------------------------
+
+### URI Format
+
+The Google Calendar Component uses the following URI format:
+
+--------------------------------------------------------
+        google-calendar-stream://index?[options]
+
+--------------------------------------------------------
+
+### GoogleCalendarStreamComponent
+
+
+// component options: START
+The Google Calendar Stream component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The configuration |  | GoogleCalendarStream Configuration
+| *clientFactory* (advanced) | The client Factory |  | GoogleCalendarClient Factory
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The Google Calendar Stream endpoint is configured using URI syntax:
+
+----
+google-calendar-stream:index
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *index* | Specifies an index for the endpoint |  | String
+|===
+
+
+==== Query Parameters (30 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessToken* (consumer) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *applicationName* (consumer) | Google Calendar application name. Example would be camel-google-calendar/1.0 |  | String
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *calendarId* (consumer) | The calendarId to be used | primary | String
+| *clientId* (consumer) | Client ID of the calendar application |  | String
+| *clientSecret* (consumer) | Client secret of the calendar application |  | String
+| *considerLastUpdate* (consumer) | Take into account the lastUpdate of the last event polled as start date for the next poll | false | boolean
+| *consumeFromNow* (consumer) | Consume events in the selected calendar from now on | true | boolean
+| *maxResults* (consumer) | Max results to be returned | 10 | int
+| *query* (consumer) | The query to execute on calendar |  | String
+| *refreshToken* (consumer) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+| *scopes* (consumer) | Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/calendar/auth for more info. |  | List
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-calendar-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 15 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.google-calendar-stream.client-factory* | The client Factory. The option is a org.apache.camel.component.google.calendar.GoogleCalendarClientFactory type. |  | String
+| *camel.component.google-calendar-stream.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| *camel.component.google-calendar-stream.configuration.application-name* | Google Calendar application name. Example would be "camel-google-calendar/1.0" |  | String
+| *camel.component.google-calendar-stream.configuration.calendar-id* | The calendarId to be used | primary | String
+| *camel.component.google-calendar-stream.configuration.client-id* | Client ID of the calendar application |  | String
+| *camel.component.google-calendar-stream.configuration.client-secret* | Client secret of the calendar application |  | String
+| *camel.component.google-calendar-stream.configuration.consider-last-update* | Take into account the lastUpdate of the last event polled as start date for the next poll | false | Boolean
+| *camel.component.google-calendar-stream.configuration.consume-from-now* | Consume events in the selected calendar from now on | true | Boolean
+| *camel.component.google-calendar-stream.configuration.index* | Specifies an index for the endpoint |  | String
+| *camel.component.google-calendar-stream.configuration.max-results* | Max results to be returned | 10 | Integer
+| *camel.component.google-calendar-stream.configuration.query* | The query to execute on calendar |  | String
+| *camel.component.google-calendar-stream.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+| *camel.component.google-calendar-stream.configuration.scopes* | Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/calendar/auth for more info. |  | List
+| *camel.component.google-calendar-stream.enabled* | Whether to enable auto configuration of the google-calendar-stream component. This is enabled by default. |  | Boolean
+| *camel.component.google-calendar-stream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+
+### Consumer
+
+The consumer will poll by default with maxResults equals to 5.
+
+For example
+
+[source,java]
+---------------------------------------------------------
+from("google-calendar-stream://test?markAsRead=true&delay=5000&maxResults=5").to("mock:result");
+---------------------------------------------------------
+
+This route will consume the next five events starting from the date of polling.
+
+   

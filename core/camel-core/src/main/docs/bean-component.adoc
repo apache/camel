@@ -1,0 +1,169 @@
+[[bean-component]]
+== Bean Component
+
+*Available as of Camel version 1.0*
+
+The *bean:* component binds beans to Camel message exchanges.
+
+=== URI format
+
+[source]
+----
+bean:beanName[?options]
+----
+
+Where *beanID* can be any string which is used to look up the bean in
+the Registry
+
+=== Options
+
+
+// component options: START
+The Bean component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+// endpoint options: START
+The Bean endpoint is configured using URI syntax:
+
+----
+bean:beanName
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *beanName* | *Required* Sets the name of the bean to invoke |  | String
+|===
+
+
+==== Query Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *method* (producer) | Sets the name of the method to invoke on the bean |  | String
+| *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
+| *parameters* (advanced) | Used for configuring additional properties on the bean |  | Map
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+=== Using
+
+The object instance that is used to consume messages must be explicitly
+registered with the Registry. For example, if you
+are using Spring you must define the bean in the Spring configuration,
+`spring.xml`; or if you don't use Spring, by registering the bean in
+JNDI.
+
+Error formatting macro: snippet: java.lang.IndexOutOfBoundsException:
+Index: 20, Size: 20
+
+Once an endpoint has been registered, you can build Camel routes that
+use it to process exchanges.
+
+A *bean:* endpoint cannot be defined as the input to the route; i.e. you
+cannot consume from it, you can only route from some inbound message
+Endpoint to the bean endpoint as output. So consider
+using a *direct:* or *queue:* endpoint as the input.
+
+You can use the `createProxy()` methods on
+http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/bean/ProxyHelper.html[ProxyHelper]
+to create a proxy that will generate BeanExchanges and send them to any
+endpoint:
+
+And the same route using Spring DSL:
+
+[source,xml]
+----------------------------
+<route>
+   <from uri="direct:hello">
+   <to uri="bean:bye"/>
+</route>
+----------------------------
+
+=== Bean as endpoint
+
+Camel also supports invoking <<bean-component,Bean>> as an Endpoint. In the
+route below:
+
+What happens is that when the exchange is routed to the `myBean` Camel
+will use the Bean Binding to invoke the bean. +
+ The source for the bean is just a plain POJO:
+
+Camel will use Bean Binding to invoke the
+`sayHello` method, by converting the Exchange's In body to the `String`
+type and storing the output of the method on the Exchange Out body.
+
+=== Java DSL bean syntax
+
+Java DSL comes with syntactic sugar for the <<bean-component,Bean>>
+component. Instead of specifying the bean explicitly as the endpoint
+(i.e. `to("bean:beanName")`) you can use the following syntax:
+
+[source,java]
+-------------------------------------------------------
+// Send message to the bean endpoint
+// and invoke method resolved using Bean Binding.
+from("direct:start").beanRef("beanName");
+
+// Send message to the bean endpoint
+// and invoke given method.
+from("direct:start").beanRef("beanName", "methodName");
+-------------------------------------------------------
+
+Instead of passing name of the reference to the bean (so that Camel will
+lookup for it in the registry), you can specify the bean itself:
+
+[source,java]
+---------------------------------------------------------------
+// Send message to the given bean instance.
+from("direct:start").bean(new ExampleBean());
+
+// Explicit selection of bean method to be invoked.
+from("direct:start").bean(new ExampleBean(), "methodName");
+
+// Camel will create the instance of bean and cache it for you.
+from("direct:start").bean(ExampleBean.class);
+---------------------------------------------------------------
+
+=== Bean Binding
+
+How bean methods to be invoked are chosen (if they are not specified
+explicitly through the *method* parameter) and how parameter values are
+constructed from the Message are all defined by the
+Bean Binding mechanism which is used throughout
+all of the various Bean Integration
+mechanisms in Camel.
+
+=== See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* <<class-component,Class>> component
+* Bean Binding
+* Bean Integration
