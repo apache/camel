@@ -316,6 +316,22 @@
               <goal>run</goal>
             </goals>
           </execution>
+          <execution>
+            <id>Create JAR for test</id>
+            <phase>process-test-classes</phase>
+            <configuration>
+              <target>
+                <echo>Create some jars for testing</echo>
+                <jar destfile="${project.build.directory}/test-classes/package+scan+test.jar" update="true">
+                  <fileset dir="${project.build.directory}/test-classes/" includes="**/Test.class" />
+                </jar>
+                <copy file="${project.build.directory}/test-classes/package+scan+test.jar" tofile="${project.build.directory}/test-classes/package_scan_test.jar"/>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
         </executions>
       </plugin>
       
