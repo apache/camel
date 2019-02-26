@@ -819,7 +819,9 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
-     * @deprecated expected to be not in use by default soon.
+     * @deprecated use createCamelRegistry if you want to control which registry to use, however
+     * if you need to bind beans to the registry then this is possible already with the bind method on registry,
+     * and there is no need to use JndiRegistry and override this method.
      */
     @Deprecated
     protected Context createJndiContext() throws Exception {
