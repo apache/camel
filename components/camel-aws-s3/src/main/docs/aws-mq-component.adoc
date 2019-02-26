@@ -1,0 +1,183 @@
+[[aws-mq-component]]
+== AWS MQ Component
+
+*Available as of Camel version 2.21*
+
+The EC2 component supports create, run, start, stop and terminate
+https://aws.amazon.com/it/mq/[AWS MQ] instances.
+
+Prerequisites
+
+You must have a valid Amazon Web Services developer account, and be
+signed up to use Amazon MQ. More information are available at
+https://aws.amazon.com/it/mq/[Amazon MQ].
+
+### URI Format
+
+[source,java]
+-------------------------
+aws-mq://label[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+### URI Options
+
+
+// component options: START
+The AWS MQ component supports 5 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (advanced) | The AWS MQ default configuration |  | MQConfiguration
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *region* (producer) | The region in which MQ client needs to work |  | String
+| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+|===
+// component options: END
+
+
+
+
+// endpoint options: START
+The AWS MQ endpoint is configured using URI syntax:
+
+----
+aws-mq:label
+----
+
+with the following path and query parameters:
+
+==== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *label* | *Required* Logical name |  | String
+|===
+
+
+==== Query Parameters (8 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *accessKey* (producer) | Amazon AWS Access Key |  | String
+| *amazonMqClient* (producer) | To use a existing configured AmazonMQClient as client |  | AmazonMQ
+| *operation* (producer) | *Required* The operation to perform. It can be listBrokers,createBroker,deleteBroker |  | MQOperations
+| *proxyHost* (producer) | To define a proxy host when instantiating the MQ client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the MQ client |  | Integer
+| *region* (producer) | The region in which MQ client needs to work |  | String
+| *secretKey* (producer) | Amazon AWS Secret Key |  | String
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+=== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-aws-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 12 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.aws-mq.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-mq.configuration.access-key* | Amazon AWS Access Key |  | String
+| *camel.component.aws-mq.configuration.amazon-mq-client* | To use a existing configured AmazonMQClient as client |  | AmazonMQ
+| *camel.component.aws-mq.configuration.operation* | The operation to perform. It can be listBrokers,createBroker,deleteBroker |  | MQOperations
+| *camel.component.aws-mq.configuration.proxy-host* | To define a proxy host when instantiating the MQ client |  | String
+| *camel.component.aws-mq.configuration.proxy-port* | To define a proxy port when instantiating the MQ client |  | Integer
+| *camel.component.aws-mq.configuration.region* | The region in which MQ client needs to work |  | String
+| *camel.component.aws-mq.configuration.secret-key* | Amazon AWS Secret Key |  | String
+| *camel.component.aws-mq.enabled* | Whether to enable auto configuration of the aws-mq component. This is enabled by default. |  | Boolean
+| *camel.component.aws-mq.region* | The region in which MQ client needs to work |  | String
+| *camel.component.aws-mq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.aws-mq.secret-key* | Amazon AWS Secret Key |  | String
+|===
+// spring-boot-auto-configure options: END
+
+
+
+
+Required EC2 component options
+
+You have to provide the amazonEc2Client in the
+Registry or your accessKey and secretKey to access
+the https://aws.amazon.com/it/ec2/[Amazon EC2] service.
+
+### Usage
+
+#### Message headers evaluated by the MQ producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsMQMaxResults` |`String` |The number of results that must be retrieved from listBrokers operation
+
+|`CamelAwsMQBrokerName` |`String` |The broker name
+
+|`CamelAwsMQOperation` |`String` |The operation we want to perform
+
+|`CamelAwsMQBrokerId` |`String` |The broker id
+
+|`CamelAwsMQBrokerDeploymentMode` |`String` |The deployment mode for the broker in the createBroker operation
+
+|`CamelAwsMQBrokerInstanceType` |`String` |The instance type for the EC2 machine in the createBroker operation
+
+|`CamelAwsMQBrokerEngine` |`String` |The Broker Engine for MQ. Default is ACTIVEMQ
+
+|`CamelAwsMQBrokerEngineVersion` |`String` |The Broker Engine Version for MQ. Currently you can choose between 5.15.6 and 5.15.0 of ACTIVEMQ
+
+|`CamelAwsMQBrokerUsers` |`List<User>` |The list of users for MQ
+
+|`CamelAwsMQBrokerPubliclyAccessible` |`Boolean` |If the MQ instance must be publicly available or not. Default is false.
+|=======================================================================
+
+Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-aws</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.16 or higher).
+
+### See Also
+
+* Configuring Camel
+* Component
+* Endpoint
+* Getting Started
+
+* AWS Component
