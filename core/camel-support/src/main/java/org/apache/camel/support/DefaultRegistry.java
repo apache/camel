@@ -29,6 +29,9 @@ import org.apache.camel.spi.Registry;
  * The default {@link Registry} which supports using a given first-choice repository to lookup the beans,
  * such as Spring, JNDI, OSGi etc. And to use a secondary {@link SimpleRegistry} as the fallback repository
  * to lookup and bind beans.
+ * <p/>
+ * Notice that beans in the fallback registry are not managed by the first-choice registry, so these beans
+ * may not support dependency injection and other features that the first-choice registry may offer.
  */
 public class DefaultRegistry implements Registry {
 
