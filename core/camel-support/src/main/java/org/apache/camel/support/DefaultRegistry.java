@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,6 +70,19 @@ public class DefaultRegistry implements Registry {
     public DefaultRegistry(Collection<BeanRepository> repositories) {
         if (repositories != null) {
             this.repositories = new ArrayList<>(repositories);
+        }
+    }
+
+    /**
+     * Gets the bean repositories.
+     *
+     * @return the bean repositories, or <tt>null</tt> if none are in use.
+     */
+    public List<BeanRepository> getRepositories() {
+        if (repositories == null) {
+            return null;
+        } else {
+            return Collections.unmodifiableList(repositories);
         }
     }
 
