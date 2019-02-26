@@ -2553,13 +2553,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
         if (type.isAssignableFrom(reg.getClass())) {
             return type.cast(reg);
-        } else if (reg instanceof CompositeRegistry) {
-            List<Registry> list = ((CompositeRegistry) reg).getRegistryList();
-            for (Registry r : list) {
-                if (type.isAssignableFrom(r.getClass())) {
-                    return type.cast(r);
-                }
-            }
         }
         return null;
     }
