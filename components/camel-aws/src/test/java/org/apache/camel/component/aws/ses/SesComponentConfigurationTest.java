@@ -17,9 +17,6 @@
 package org.apache.camel.component.aws.ses;
 
 import com.amazonaws.regions.Regions;
-
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -28,9 +25,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         AmazonSESClientMock mock = new AmazonSESClientMock();
-        
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
-            .bind("amazonSESClient", mock);
+
+        context.getRegistry().bind("amazonSESClient", mock);
         
         SesComponent component = new SesComponent(context);
         SesEndpoint endpoint = (SesEndpoint) component.createEndpoint("aws-ses://from@example.com?amazonSESClient=#amazonSESClient&accessKey=xxx&secretKey=yyy");
@@ -63,9 +59,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
         AmazonSESClientMock mock = new AmazonSESClientMock();
-        
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
-            .bind("amazonSESClient", mock);
+
+        context.getRegistry().bind("amazonSESClient", mock);
         
         SesComponent component = new SesComponent(context);
         SesEndpoint endpoint = (SesEndpoint) component.createEndpoint("aws-ses://from@example.com?"
@@ -84,9 +79,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
         AmazonSESClientMock mock = new AmazonSESClientMock();
-        
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
-            .bind("amazonSESClient", mock);
+
+        context.getRegistry().bind("amazonSESClient", mock);
         
         SesComponent component = new SesComponent(context);
         SesEndpoint endpoint = (SesEndpoint) component.createEndpoint("aws-ses://from@example.com?amazonSESClient=#amazonSESClient&accessKey=xxx"
@@ -160,9 +154,8 @@ public class SesComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         AmazonSESClientMock mock = new AmazonSESClientMock();
-        
-        ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry())
-            .bind("amazonSESClient", mock);
+
+        context.getRegistry().bind("amazonSESClient", mock);
         
         SesComponent component = new SesComponent(context);
         component.createEndpoint("aws-ses://from@example.com?amazonSESClient=#amazonSESClient");
