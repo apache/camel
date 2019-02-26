@@ -27,7 +27,10 @@ import org.apache.camel.spi.Registry;
  * A {@link Registry} which delegates to the real registry.
  * <p/>
  * This is used to ensure that Camel performs property placeholder resolution on every lookup.
+ *
+ * @deprecated move this logic to DefaultRegistry
  */
+@Deprecated
 public class PropertyPlaceholderDelegateRegistry implements Registry {
 
     private final CamelContext context;
