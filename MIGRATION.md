@@ -136,6 +136,14 @@ The class `org.apache.camel.processor.aggregate.AggregationStrategy` has been mo
 
 The class `org.apache.camel.processor.loadbalancer.SimpleLoadBalancerSupport` has been removed, instead use `org.apache.camel.processor.loadbalancer.LoadBalancerSupport`.
 
+#### camel-test
+
+If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer nessasary, and instead
+you should just use the `bind` method from the `Registry` API which you can call directly from `CamelContext`, such as:
+
+    context.getRegistry().bind("myId", myBean);
+    
+
 #### Controlling routes
 
 The `startRoute`, `stopRoute`, `suspendRoute`, `resumeRoute`, `getRouteStatus`, and other related methods on `CamelContext` has been moved to the `RouteController` as shown below:
