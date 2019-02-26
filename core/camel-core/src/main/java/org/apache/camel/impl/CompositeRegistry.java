@@ -28,7 +28,10 @@ import org.apache.camel.spi.Registry;
 
 /**
  * This registry will look up the object with the sequence of the registry list until it finds the Object.
+ *
+ * @deprecated use {@link org.apache.camel.support.DefaultRegistry}
  */
+@Deprecated
 public class CompositeRegistry implements Registry {
     private final List<Registry> registryList;
     
