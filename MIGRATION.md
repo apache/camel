@@ -114,6 +114,8 @@ TODO: Add the other moved classes/packages etc
 
 The class `SimpleRegistry` is moved from `org.apache.camel.impl` to `org.apache.camel.support`. Also you should favour using the `org.apache.camel.support.DefaultRegistry` instead.
 
+The class `CompositeRegistry` has been deleted. Instead use `DefaultRegistry`.
+
 The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. If you have built custom Camel components that may have used some of these APIs you would then need to migrate.
 
 All the classes in `org.apache.camel.util.component` has been moved from the camel-core JAR to the package `org.apache.camel.support.component` in the `camel-support` JAR.

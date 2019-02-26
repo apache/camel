@@ -54,22 +54,4 @@ public class GetRegistryAsTypeTest extends Assert {
         context.stop();
     }
 
-    @Test
-    public void testComposite() throws Exception {
-        CompositeRegistry cr = new CompositeRegistry();
-        cr.addRegistry(new SimpleRegistry());
-        cr.addRegistry(new JndiRegistry());
-
-        CamelContext context = new DefaultCamelContext(cr);
-        context.start();
-
-        CompositeRegistry comp = context.getRegistry(CompositeRegistry.class);
-        assertNotNull(comp);
-        SimpleRegistry simple = context.getRegistry(SimpleRegistry.class);
-        assertNotNull(simple);
-        JndiRegistry jndi = context.getRegistry(JndiRegistry.class);
-        assertNotNull(jndi);
-
-        context.stop();
-    }
 }
