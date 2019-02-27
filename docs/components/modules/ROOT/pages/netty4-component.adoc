@@ -453,12 +453,11 @@ Using Basic SSL/TLS configuration on the Jetty Component
 
 [source,java]
 ----
-JndiRegistry registry = new JndiRegistry(createJndiContext());
+Registry registry = context.getRegistry();
 registry.bind("password", "changeit");
 registry.bind("ksf", new File("src/test/resources/keystore.jks"));
 registry.bind("tsf", new File("src/test/resources/keystore.jks"));
 
-context.createRegistry(registry);
 context.addRoutes(new RouteBuilder() {
   public void configure() {
       String netty_ssl_endpoint =
