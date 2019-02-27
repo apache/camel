@@ -59,6 +59,7 @@
         <include>org.apache.camel:camel-aws-eks</include>
         <include>org.apache.camel:camel-aws-iam</include>
         <include>org.apache.camel:camel-aws-kinesis</include>
+        <include>org.apache.camel:camel-aws-kms</include>
         <include>org.apache.camel:camel-aws-s3</include>
         <include>org.apache.camel:camel-aws-xray</include>
         <include>org.apache.camel:camel-azure</include>
@@ -384,6 +385,7 @@
         <include>org.apache.camel:camel-aws-eks-starter</include>
         <include>org.apache.camel:camel-aws-iam-starter</include>
         <include>org.apache.camel:camel-aws-kinesis-starter</include>
+        <include>org.apache.camel:camel-aws-kms-starter</include>
         <include>org.apache.camel:camel-aws-s3-starter</include>
         <include>org.apache.camel:camel-aws-xray-starter</include>
         <include>org.apache.camel:camel-azure-starter</include>
