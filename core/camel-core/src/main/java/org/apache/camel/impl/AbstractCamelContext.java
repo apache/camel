@@ -33,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -134,6 +135,7 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
@@ -339,9 +341,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public void doInit() {
-        // setup management strategy first since end users may use it to add event notifiers
+        // setup management first since end users may use it to add event notifiers
         // using the management strategy before the CamelContext has been started
-        this.managementStrategy = createManagementStrategy();
+        setupManagement(null);
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
@@ -4219,13 +4221,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public ManagementStrategy getManagementStrategy() {
-        if (managementStrategy == null) {
-            synchronized (lock) {
-                if (managementStrategy == null) {
-                    setManagementStrategy(createManagementStrategy());
-                }
-            }
-        }
         return managementStrategy;
     }
 
@@ -4238,8 +4233,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             disableJMX = true;
         } else if (isInit()) {
             disableJMX = true;
-            managementStrategy = createManagementStrategy();
-            lifecycleStrategies.clear();
+            // we are still in initializing mode, so we can disable JMX, by setting up management again
+            setupManagement(null);
         } else {
             throw new IllegalStateException("Disabling JMX can only be done when CamelContext has not been started");
         }
@@ -4247,6 +4242,31 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public boolean isJMXDisabled() {
         return disableJMX;
+    }
+
+    public void setupManagement(Map<String, Object> options) {
+        ManagementStrategyFactory factory = new DefaultManagementStrategyFactory();
+        if (!isJMXDisabled()) {
+            try {
+                ServiceLoader<ManagementStrategyFactory> loader = ServiceLoader.load(ManagementStrategyFactory.class);
+                Iterator<ManagementStrategyFactory> iterator = loader.iterator();
+                if (iterator.hasNext()) {
+                    factory = iterator.next();
+                }
+            } catch (Exception e) {
+                log.warn("Cannot create JMX lifecycle strategy. Will fallback and disable JMX.", e);
+            }
+        }
+
+        log.debug("Setting up management with factory: {}", factory);
+        try {
+            ManagementStrategy strategy = factory.create(this, options);
+            LifecycleStrategy lifecycle = factory.createLifecycle(this);
+            factory.setupManagement(this, strategy, lifecycle);
+        } catch (Exception e) {
+            log.warn("Error setting up management due " + e.getMessage());
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
     }
 
     public InflightRepository getInflightRepository() {
@@ -4691,8 +4711,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     protected abstract FactoryFinderResolver createFactoryFinderResolver();
 
     protected abstract ClassResolver createClassResolver();
-
-    protected abstract ManagementStrategy createManagementStrategy();
 
     protected abstract ProcessorFactory createProcessorFactory();
 

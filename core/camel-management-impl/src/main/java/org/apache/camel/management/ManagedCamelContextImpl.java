@@ -31,6 +31,9 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementStrategy;
 
+/**
+ * JMX capable {@link CamelContext}.
+ */
 public class ManagedCamelContextImpl implements ManagedCamelContext {
 
     private final CamelContext camelContext;

@@ -189,7 +189,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         if (outputs == null) {
             outputs = new HashMap<>();
         }
-        if (getCamelContext().getManagementStrategy().getManagementAgent() != null) {
+        if (getCamelContext().getManagementStrategy() != null && getCamelContext().getManagementStrategy().getManagementAgent() != null) {
             extended = getCamelContext().getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         }
         if (extended) {

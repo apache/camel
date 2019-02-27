@@ -1115,6 +1115,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void disableJMX() throws IllegalStateException;
 
     /**
+     * Setup management according to whether JMX is enabled or disabled.
+     *
+     * @param options optional parameters to configure {@link org.apache.camel.spi.ManagementAgent}.
+     */
+    void setupManagement(Map<String, Object> options);
+
+    /**
      * Gets the inflight repository
      *
      * @return the repository

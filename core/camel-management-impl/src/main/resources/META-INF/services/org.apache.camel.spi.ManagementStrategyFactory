@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-org.apache.camel.management.DefaultManagementStrategyFactory
+org.apache.camel.management.JmxManagementStrategyFactory

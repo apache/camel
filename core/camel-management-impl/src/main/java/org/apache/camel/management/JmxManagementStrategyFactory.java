@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.management;
 
 import java.util.Map;
 
@@ -22,27 +22,34 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
+import org.apache.camel.support.IntrospectionSupport;
 
 /**
  * Factory for creating {@link ManagementStrategy}
  */
-public class DefaultManagementStrategyFactory implements ManagementStrategyFactory {
+public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
 
-    @Override
-    public ManagementStrategy create(CamelContext context, Map<String, Object> properties) throws Exception {
-        return new DefaultManagementStrategy(context);
+    public ManagementStrategy create(CamelContext context, Map<String, Object> options) throws Exception {
+        DefaultManagementAgent agent = new DefaultManagementAgent(context);
+        if (options != null) {
+            IntrospectionSupport.setProperties(agent, options);
+        }
+
+        return new JmxManagementStrategy(context, agent);
     }
 
     @Override
     public LifecycleStrategy createLifecycle(CamelContext context) throws Exception {
-        // not in use for non JMX
-        return null;
+        return new JmxManagementLifecycleStrategy(context);
     }
 
     @Override
     public void setupManagement(CamelContext camelContext, ManagementStrategy strategy, LifecycleStrategy lifecycle) {
         camelContext.setManagementStrategy(strategy);
-        // no need to add a lifecycle strategy as we do not need one as JMX is disabled
-        camelContext.setManagementStrategy(new DefaultManagementStrategy());
+
+        // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
+        camelContext.getLifecycleStrategies().clear();
+        camelContext.addLifecycleStrategy(lifecycle);
     }
+
 }

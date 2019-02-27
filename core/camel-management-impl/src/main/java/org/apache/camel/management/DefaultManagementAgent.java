@@ -48,6 +48,7 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.support.management.DefaultManagementMBeanAssembler;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.InetAddressUtil;

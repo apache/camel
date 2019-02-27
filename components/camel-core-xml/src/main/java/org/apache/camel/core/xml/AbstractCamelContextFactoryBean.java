@@ -50,9 +50,6 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.impl.DefaultManagementStrategy;
-import org.apache.camel.management.DefaultManagementAgent;
-import org.apache.camel.management.DefaultManagementLifecycleStrategy;
-import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;
@@ -500,65 +497,57 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().setManagementStrategy(new DefaultManagementStrategy());
         } else if (camelJMXAgent != null) {
             LOG.info("JMXAgent enabled: {}", camelJMXAgent);
-            DefaultManagementAgent agent = new DefaultManagementAgent(getContext());
 
+            Map<String, Object> properties = new HashMap<>();
             if (camelJMXAgent.getConnectorPort() != null) {
-                agent.setConnectorPort(CamelContextHelper.parseInteger(getContext(), camelJMXAgent.getConnectorPort()));
+                properties.put("connectorPort", CamelContextHelper.parseInteger(getContext(), camelJMXAgent.getConnectorPort()));
             }
             if (camelJMXAgent.getCreateConnector() != null) {
-                agent.setCreateConnector(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getCreateConnector()));
+                properties.put("createConnector", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getCreateConnector()));
             }
             if (camelJMXAgent.getMbeanObjectDomainName() != null) {
-                agent.setMBeanObjectDomainName(CamelContextHelper.parseText(getContext(), camelJMXAgent.getMbeanObjectDomainName()));
-            }
-            if (camelJMXAgent.getMbeanServerDefaultDomain() != null) {
-                agent.setMBeanServerDefaultDomain(CamelContextHelper.parseText(getContext(), camelJMXAgent.getMbeanServerDefaultDomain()));
+                properties.put("mbeanObjectDomainName", CamelContextHelper.parseText(getContext(), camelJMXAgent.getMbeanObjectDomainName()));
             }
             if (camelJMXAgent.getRegistryPort() != null) {
-                agent.setRegistryPort(CamelContextHelper.parseInteger(getContext(), camelJMXAgent.getRegistryPort()));
+                properties.put("registryPort", CamelContextHelper.parseInteger(getContext(), camelJMXAgent.getRegistryPort()));
             }
             if (camelJMXAgent.getServiceUrlPath() != null) {
-                agent.setServiceUrlPath(CamelContextHelper.parseText(getContext(), camelJMXAgent.getServiceUrlPath()));
+                properties.put("serviceUrlPath", CamelContextHelper.parseText(getContext(), camelJMXAgent.getServiceUrlPath()));
             }
             if (camelJMXAgent.getUsePlatformMBeanServer() != null) {
-                agent.setUsePlatformMBeanServer(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getUsePlatformMBeanServer()));
+                properties.put("usePlatformMBeanServer", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getUsePlatformMBeanServer()));
             }
             if (camelJMXAgent.getOnlyRegisterProcessorWithCustomId() != null) {
-                agent.setOnlyRegisterProcessorWithCustomId(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getOnlyRegisterProcessorWithCustomId()));
+                properties.put("onlyRegisterProcessorWithCustomId", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getOnlyRegisterProcessorWithCustomId()));
             }
             if (camelJMXAgent.getRegisterAlways() != null) {
-                agent.setRegisterAlways(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getRegisterAlways()));
+                properties.put("registerAlways", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getRegisterAlways()));
             }
             if (camelJMXAgent.getRegisterNewRoutes() != null) {
-                agent.setRegisterNewRoutes(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getRegisterNewRoutes()));
+                properties.put("registerNewRoutes", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getRegisterNewRoutes()));
             }
             if (camelJMXAgent.getIncludeHostName() != null) {
-                agent.setIncludeHostName(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getIncludeHostName()));
+                properties.put("includeHostName", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getIncludeHostName()));
             }
             if (camelJMXAgent.getUseHostIPAddress() != null) {
-                agent.setUseHostIPAddress(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getUseHostIPAddress()));
+                properties.put("useHostIPAddress", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getUseHostIPAddress()));
             }
             if (camelJMXAgent.getMask() != null) {
-                agent.setMask(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getMask()));
+                properties.put("mask", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getMask()));
             }
             if (camelJMXAgent.getLoadStatisticsEnabled() != null) {
-                agent.setLoadStatisticsEnabled(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getLoadStatisticsEnabled()));
+                properties.put("loadStatisticsEnabled", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getLoadStatisticsEnabled()));
             }
             if (camelJMXAgent.getEndpointRuntimeStatisticsEnabled() != null) {
-                agent.setEndpointRuntimeStatisticsEnabled(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getEndpointRuntimeStatisticsEnabled()));
+                properties.put("endpointRuntimeStatisticsEnabled", CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getEndpointRuntimeStatisticsEnabled()));
             }
             if (camelJMXAgent.getStatisticsLevel() != null) {
                 String level = CamelContextHelper.parseText(getContext(), camelJMXAgent.getStatisticsLevel());
                 ManagementStatisticsLevel msLevel = getContext().getTypeConverter().mandatoryConvertTo(ManagementStatisticsLevel.class, level);
-                agent.setStatisticsLevel(msLevel);
+                properties.put("statisticsLevel", msLevel);
             }
 
-            ManagementStrategy managementStrategy = new ManagedManagementStrategy(getContext(), agent);
-            getContext().setManagementStrategy(managementStrategy);
-
-            // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
-            getContext().getLifecycleStrategies().clear();
-            getContext().addLifecycleStrategy(new DefaultManagementLifecycleStrategy(getContext()));
+            getContext().setupManagement(properties);
         }
     }
 

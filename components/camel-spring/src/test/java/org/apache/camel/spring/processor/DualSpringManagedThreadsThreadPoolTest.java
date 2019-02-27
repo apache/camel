@@ -31,6 +31,11 @@ public class DualSpringManagedThreadsThreadPoolTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/processor/SpringDualManagedThreadsThreadPoolTest.xml");
     }
 
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
     @Test
     public void testDualManagedThreadPool() throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
