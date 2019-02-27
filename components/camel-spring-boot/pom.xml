@@ -68,6 +68,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
     </dependency>
+    <!-- JMX is enabled by default -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-management-impl</artifactId>
+    </dependency>
 
     <!-- Optional Spring web support -->
     <dependency>
