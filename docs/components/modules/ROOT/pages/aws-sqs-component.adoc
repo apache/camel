@@ -136,7 +136,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-aws-starter</artifactId>
+  <artifactId>camel-aws-sqs-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -182,7 +182,7 @@ The component supports 36 options, which are listed below.
 | *camel.component.aws-sqs.configuration.server-side-encryption-enabled* | Define if Server Side Encryption is enabled or not on the queue | false | Boolean
 | *camel.component.aws-sqs.configuration.visibility-timeout* | The duration (in seconds) that the received messages are hidden from subsequent retrieve requests after being retrieved by a ReceiveMessage request to set in the com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only make sense if its different from defaultVisibilityTimeout. It changes the queue visibility timeout attribute permanently. |  | Integer
 | *camel.component.aws-sqs.configuration.wait-time-seconds* | Duration in seconds (0 to 20) that the ReceiveMessage action call will wait until a message is in the queue to include in the response. |  | Integer
-| *camel.component.aws-sqs.enabled* | Enable aws-sqs component | true | Boolean
+| *camel.component.aws-sqs.enabled* | Whether to enable auto configuration of the aws-sqs component. This is enabled by default. |  | Boolean
 | *camel.component.aws-sqs.region* | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
 | *camel.component.aws-sqs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-sqs.secret-key* | Amazon AWS Secret Key |  | String
@@ -310,7 +310,7 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws</artifactId>
+    <artifactId>camel-aws-sqs</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------

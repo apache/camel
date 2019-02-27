@@ -90,7 +90,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-aws-starter</artifactId>
+  <artifactId>camel-aws-kinesis-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -112,7 +112,7 @@ The component supports 12 options, which are listed below.
 | *camel.component.aws-kinesis-firehose.configuration.region* | The region in which Kinesis client needs to work |  | String
 | *camel.component.aws-kinesis-firehose.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-kinesis-firehose.configuration.stream-name* | Name of the stream |  | String
-| *camel.component.aws-kinesis-firehose.enabled* | Enable aws-kinesis-firehose component | true | Boolean
+| *camel.component.aws-kinesis-firehose.enabled* | Whether to enable auto configuration of the aws-kinesis-firehose component. This is enabled by default. |  | Boolean
 | *camel.component.aws-kinesis-firehose.region* | Amazon AWS Region |  | String
 | *camel.component.aws-kinesis-firehose.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-kinesis-firehose.secret-key* | Amazon AWS Secret Key |  | String
