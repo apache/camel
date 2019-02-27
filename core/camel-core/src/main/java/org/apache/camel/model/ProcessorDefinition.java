@@ -3087,7 +3087,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Adds a onComplection {@link org.apache.camel.spi.Synchronization} hook that invoke this route as
+     * Adds a onCompletion {@link org.apache.camel.spi.Synchronization} hook that invoke this route as
      * a callback when the {@link org.apache.camel.Exchange} has finished being processed.
      * The hook invoke callbacks for either onComplete or onFailure.
      * <p/>
