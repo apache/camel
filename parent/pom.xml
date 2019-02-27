@@ -925,6 +925,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws-ec2</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-s3</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2385,6 +2390,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-ddb-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws-ec2-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

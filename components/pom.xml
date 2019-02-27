@@ -95,6 +95,7 @@
     <module>camel-aws</module>
     <module>camel-aws-cw</module>
     <module>camel-aws-ddb</module>
+    <module>camel-aws-ec2</module>
     <module>camel-aws-s3</module>
     <module>camel-aws-xray</module>
     <module>camel-azure</module>
