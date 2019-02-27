@@ -117,6 +117,7 @@
     <module>camel-aws-cw-starter</module>
     <module>camel-aws-ddb-starter</module>
     <module>camel-aws-ec2-starter</module>
+    <module>camel-aws-ecs-starter</module>
     <module>camel-aws-s3-starter</module>
     <module>camel-aws-starter</module>
     <module>camel-aws-xray-starter</module>
