@@ -109,6 +109,10 @@
           <groupId>org.apache.velocity</groupId>
           <artifactId>velocity</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
