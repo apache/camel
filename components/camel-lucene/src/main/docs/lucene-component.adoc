@@ -197,19 +197,11 @@ RouteBuilder builder = new RouteBuilder() {
 
 [source,java]
 -----------------------------------------------------------------
-@Override
-protected JndiRegistry createRegistry() throws Exception {
-  JndiRegistry registry =
-         new JndiRegistry(createJndiContext());
-  registry.bind("whitespace", new File("./whitespaceIndexDir"));
-  registry.bind("load_dir",
-        new File("src/test/resources/sources"));
-  registry.bind("whitespaceAnalyzer",
-        new WhitespaceAnalyzer());
-  return registry;
-}
-...
 CamelContext context = new DefaultCamelContext(createRegistry());
+Registry registry = context.getRegistry();
+registry.bind("whitespace", new File("./whitespaceIndexDir"));
+registry.bind("load_dir", new File("src/test/resources/sources"));
+registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer());
 -----------------------------------------------------------------
 
 #### Example 2: Performing searches using a Query Producer

@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.azure.queue;
 
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Properties;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 
 import com.microsoft.azure.storage.OperationContext;
 import com.microsoft.azure.storage.StorageCredentials;
@@ -100,9 +96,4 @@ public class QueueServiceProducerTest {
         return context;
     }
 
-    private Context createJndiContext() throws Exception {
-        Properties properties = new Properties();
-        properties.put("java.naming.factory.initial", "org.apache.camel.support.jndi.CamelInitialContextFactory");
-        return new InitialContext(new Hashtable<>(properties));
-    }
 }
