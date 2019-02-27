@@ -17,16 +17,8 @@
 package org.apache.camel.component.velocity;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.JndiRegistry;
 
 public class VelocityFileLetterWithPropertyTest extends VelocityLetterTest {
-    
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry =  new JndiRegistry(createJndiContext());
-        registry.bind("properties", new PropertiesComponent());
-        return registry;
-    }
     
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
