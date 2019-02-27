@@ -52,6 +52,7 @@
         <include>org.apache.camel:camel-atomix</include>
         <include>org.apache.camel:camel-avro</include>
         <include>org.apache.camel:camel-aws</include>
+        <include>org.apache.camel:camel-aws-s3</include>
         <include>org.apache.camel:camel-aws-xray</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-barcode</include>
@@ -369,6 +370,7 @@
         <include>org.apache.camel:camel-atomix-starter</include>
         <include>org.apache.camel:camel-avro-starter</include>
         <include>org.apache.camel:camel-aws-starter</include>
+        <include>org.apache.camel:camel-aws-s3-starter</include>
         <include>org.apache.camel:camel-aws-xray-starter</include>
         <include>org.apache.camel:camel-azure-starter</include>
         <include>org.apache.camel:camel-barcode-starter</include>
