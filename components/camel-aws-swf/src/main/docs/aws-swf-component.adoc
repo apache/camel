@@ -110,7 +110,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-aws-starter</artifactId>
+  <artifactId>camel-aws-swf-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -152,7 +152,7 @@ The component supports 32 options, which are listed below.
 | *camel.component.aws-swf.configuration.version* | The workflow or activity event version to use. |  | String
 | *camel.component.aws-swf.configuration.workflow-list* | The list name to consume workflows from. |  | String
 | *camel.component.aws-swf.configuration.workflow-type-registration-options* | Workflow registration options |  | WorkflowType RegistrationOptions
-| *camel.component.aws-swf.enabled* | Enable aws-swf component | true | Boolean
+| *camel.component.aws-swf.enabled* | Whether to enable auto configuration of the aws-swf component. This is enabled by default. |  | Boolean
 | *camel.component.aws-swf.region* | Amazon AWS Region. |  | String
 | *camel.component.aws-swf.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-swf.secret-key* | Amazon AWS Secret Key. |  | String

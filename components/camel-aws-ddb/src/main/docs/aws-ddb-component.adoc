@@ -93,7 +93,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-aws-starter</artifactId>
+  <artifactId>camel-aws-ddb-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -121,7 +121,7 @@ The component supports 18 options, which are listed below.
 | *camel.component.aws-ddb.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-ddb.configuration.table-name* | The name of the table currently worked with. |  | String
 | *camel.component.aws-ddb.configuration.write-capacity* | The provisioned throughput to reserved for writing resources to your table |  | Long
-| *camel.component.aws-ddb.enabled* | Enable aws-ddb component | true | Boolean
+| *camel.component.aws-ddb.enabled* | Whether to enable auto configuration of the aws-ddb component. This is enabled by default. |  | Boolean
 | *camel.component.aws-ddb.region* | The region in which DDB client needs to work |  | String
 | *camel.component.aws-ddb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-ddb.secret-key* | Amazon AWS Secret Key |  | String

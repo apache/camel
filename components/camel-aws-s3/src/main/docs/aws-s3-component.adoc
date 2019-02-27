@@ -147,7 +147,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-aws-starter</artifactId>
+  <artifactId>camel-aws-s3-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -192,7 +192,7 @@ The component supports 35 options, which are listed below.
 | *camel.component.aws-s3.configuration.use-aws-k-m-s* | Define if KMS must be used or not | false | Boolean
 | *camel.component.aws-s3.configuration.use-encryption* | Define if encryption must be used or not | false | Boolean
 | *camel.component.aws-s3.configuration.use-i-a-m-credentials* | Set whether the S3 client should expect to load credentials on an EC2 instance or to expect static credentials to be passed in. | false | Boolean
-| *camel.component.aws-s3.enabled* | Enable aws-s3 component | true | Boolean
+| *camel.component.aws-s3.enabled* | Whether to enable auto configuration of the aws-s3 component. This is enabled by default. |  | Boolean
 | *camel.component.aws-s3.region* | The region where the bucket is located. This option is used in the com.amazonaws.services.s3.model.CreateBucketRequest. |  | String
 | *camel.component.aws-s3.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-s3.secret-key* | Amazon AWS Secret Key |  | String

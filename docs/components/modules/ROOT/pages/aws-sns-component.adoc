@@ -98,7 +98,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-aws-starter</artifactId>
+  <artifactId>camel-aws-sns-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -127,7 +127,7 @@ The component supports 19 options, which are listed below.
 | *camel.component.aws-sns.configuration.subscribe-s-n-sto-s-q-s* | Define if the subscription between SNS Topic and SQS must be done or not | false | Boolean
 | *camel.component.aws-sns.configuration.topic-arn* | The Amazon Resource Name (ARN) assigned to the created topic. |  | String
 | *camel.component.aws-sns.configuration.topic-name* | The name of the topic |  | String
-| *camel.component.aws-sns.enabled* | Enable aws-sns component | true | Boolean
+| *camel.component.aws-sns.enabled* | Whether to enable auto configuration of the aws-sns component. This is enabled by default. |  | Boolean
 | *camel.component.aws-sns.region* | The region in which SNS client needs to work |  | String
 | *camel.component.aws-sns.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-sns.secret-key* | Amazon AWS Secret Key |  | String
@@ -225,7 +225,7 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws</artifactId>
+    <artifactId>camel-aws-sns</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------
