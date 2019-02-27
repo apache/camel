@@ -101,6 +101,7 @@
     <module>camel-aws-iam</module>
     <module>camel-aws-kinesis</module>
     <module>camel-aws-kms</module>
+    <module>camel-aws-lambda</module>
     <module>camel-aws-s3</module>
     <module>camel-aws-xray</module>
     <module>camel-azure</module>
