@@ -225,6 +225,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-aws-sqs</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-aws-xray</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1695,6 +1700,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-aws-sns-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-aws-sqs-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
