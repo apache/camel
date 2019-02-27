@@ -84,6 +84,7 @@
     <awaitility-version>3.1.6</awaitility-version>
     <aws-java-sdk-bundle-version>1.11.483_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.11.483</aws-java-sdk-version>
+    <aws-java-sdk-swf-libs>1.11.22</aws-java-sdk-swf-libs>
     <aws-xray-version>2.2.1</aws-xray-version>
     <axiom-version>1.2.14</axiom-version>
     <azure-storage-java-sdk-version>8.0.0</azure-storage-java-sdk-version>
