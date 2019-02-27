@@ -940,6 +940,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws-iam</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-kinesis</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2420,6 +2425,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-eks-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-aws-iam-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
