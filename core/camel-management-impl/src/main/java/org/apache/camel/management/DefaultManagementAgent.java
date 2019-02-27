@@ -45,6 +45,7 @@ import javax.management.remote.JMXServiceURL;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.support.service.ServiceHelper;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
 import org.junit.Before;

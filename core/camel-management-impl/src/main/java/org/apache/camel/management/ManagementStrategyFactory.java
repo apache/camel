@@ -17,6 +17,7 @@
 package org.apache.camel.management;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.DefaultManagementStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.slf4j.Logger;

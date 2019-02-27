@@ -18,7 +18,7 @@ package org.apache.camel.test.spring;
 
 import java.lang.reflect.Method;
 
-import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.spring.SpringCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

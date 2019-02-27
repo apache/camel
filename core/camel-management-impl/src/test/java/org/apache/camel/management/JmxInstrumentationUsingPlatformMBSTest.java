@@ -23,6 +23,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.junit.Before;
 import org.junit.Test;
 
