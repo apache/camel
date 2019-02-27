@@ -333,6 +333,9 @@ public abstract class CamelTestSupport extends TestSupport {
 
         assertNotNull("No context found!", context);
 
+        // add custom beans
+        bindToRegistry(context.getRegistry());
+
         // reduce default shutdown timeout to avoid waiting for 300 seconds
         context.getShutdownStrategy().setTimeout(getShutdownTimeout());
 
@@ -380,6 +383,7 @@ public abstract class CamelTestSupport extends TestSupport {
             pc.setIgnoreMissingLocation(ignore);
         }
 
+        // prepare for in-between tests
         postProcessTest();
 
         if (isUseRouteBuilder()) {
@@ -796,6 +800,13 @@ public abstract class CamelTestSupport extends TestSupport {
             context = new DefaultCamelContext();
         }
         return context;
+    }
+
+    /**
+     * Allows to bind custom beans to the Camel {@link Registry}.
+     */
+    protected void bindToRegistry(Registry registry) throws Exception {
+        // noop
     }
 
     /**
