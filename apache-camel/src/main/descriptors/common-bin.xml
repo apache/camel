@@ -55,6 +55,7 @@
         <include>org.apache.camel:camel-aws-cw</include>
         <include>org.apache.camel:camel-aws-ddb</include>
         <include>org.apache.camel:camel-aws-ec2</include>
+        <include>org.apache.camel:camel-aws-ecs</include>
         <include>org.apache.camel:camel-aws-s3</include>
         <include>org.apache.camel:camel-aws-xray</include>
         <include>org.apache.camel:camel-azure</include>
@@ -376,6 +377,7 @@
         <include>org.apache.camel:camel-aws-cw-starter</include>
         <include>org.apache.camel:camel-aws-ddb-starter</include>
         <include>org.apache.camel:camel-aws-ec2-starter</include>
+        <include>org.apache.camel:camel-aws-ecs-starter</include>
         <include>org.apache.camel:camel-aws-s3-starter</include>
         <include>org.apache.camel:camel-aws-xray-starter</include>
         <include>org.apache.camel:camel-azure-starter</include>
