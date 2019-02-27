@@ -461,7 +461,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aws-java-sdk/${aws-java-sdk-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-aws-sns/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-aws-sqs/${project.version}</bundle>
   </feature>
   <feature name='camel-aws-swf' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
