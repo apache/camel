@@ -93,6 +93,7 @@
     <module>camel-atomix</module>
     <module>camel-avro</module>
     <module>camel-aws</module>
+    <module>camel-aws-cw</module>
     <module>camel-aws-s3</module>
     <module>camel-aws-xray</module>
     <module>camel-azure</module>
