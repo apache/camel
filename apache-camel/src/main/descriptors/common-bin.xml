@@ -65,6 +65,7 @@
         <include>org.apache.camel:camel-aws-s3</include>
         <include>org.apache.camel:camel-aws-sdb</include>
         <include>org.apache.camel:camel-aws-ses</include>
+        <include>org.apache.camel:camel-aws-sns</include>
         <include>org.apache.camel:camel-aws-xray</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-barcode</include>
@@ -395,6 +396,7 @@
         <include>org.apache.camel:camel-aws-s3-starter</include>
         <include>org.apache.camel:camel-aws-sdb-starter</include>
         <include>org.apache.camel:camel-aws-ses-starter</include>
+        <include>org.apache.camel:camel-aws-sns-starter</include>
         <include>org.apache.camel:camel-aws-xray-starter</include>
         <include>org.apache.camel:camel-azure-starter</include>
         <include>org.apache.camel:camel-barcode-starter</include>
