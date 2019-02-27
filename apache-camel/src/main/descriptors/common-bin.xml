@@ -67,6 +67,7 @@
         <include>org.apache.camel:camel-aws-ses</include>
         <include>org.apache.camel:camel-aws-sns</include>
         <include>org.apache.camel:camel-aws-sqs</include>
+        <include>org.apache.camel:camel-aws-swf</include>
         <include>org.apache.camel:camel-aws-xray</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-barcode</include>
@@ -399,6 +400,7 @@
         <include>org.apache.camel:camel-aws-ses-starter</include>
         <include>org.apache.camel:camel-aws-sns-starter</include>
         <include>org.apache.camel:camel-aws-sqs-starter</include>
+        <include>org.apache.camel:camel-aws-swf-starter</include>
         <include>org.apache.camel:camel-aws-xray-starter</include>
         <include>org.apache.camel:camel-azure-starter</include>
         <include>org.apache.camel:camel-barcode-starter</include>
