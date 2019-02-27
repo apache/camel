@@ -65,7 +65,7 @@ When used as a consumer, receiving streaming events, the URI scheme is:
 salesforce:topic?options
 ----
 
-When used as a producer, invoking the Salesforce RSET APIs, the URI
+When used as a producer, invoking the Salesforce REST APIs, the URI
 scheme is:
 
 [source,java]
