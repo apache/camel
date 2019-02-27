@@ -166,6 +166,12 @@
       <artifactId>camel-xslt</artifactId>
     </dependency>
 
+    <!-- lets include JMX out of the box -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-management-impl</artifactId>
+    </dependency>
+
     <!-- required dependencies by camel-core -->
     <!-- which we shade into camel-core so its available for everybody out of the box -->
     <dependency>
