@@ -345,7 +345,7 @@ public interface ManagementAgent extends Service {
      */
     void setStatisticsLevel(ManagementStatisticsLevel level);
 
-    /**
+    /**                   §
      * Gets the statistics level
      *
      * @return the level
