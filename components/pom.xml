@@ -105,6 +105,7 @@
     <module>camel-aws-mq</module>
     <module>camel-aws-s3</module>
     <module>camel-aws-sdb</module>
+    <module>camel-aws-ses</module>
     <module>camel-aws-xray</module>
     <module>camel-azure</module>
     <module>camel-base64</module>
