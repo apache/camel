@@ -128,6 +128,7 @@
     <module>camel-aws-sdb-starter</module>
     <module>camel-aws-ses-starter</module>
     <module>camel-aws-sns-starter</module>
+    <module>camel-aws-sqs-starter</module>
     <module>camel-aws-starter</module>
     <module>camel-aws-xray-starter</module>
     <module>camel-azure-starter</module>
