@@ -126,6 +126,10 @@ In Camel 2.x we have deprecated `getProperties` on `CamelContext` in favour of `
     </globalOptions>
 
 
+### Main class
+
+The `Main` class from `camel-core`, `camel-spring` and `camel-cdi` has been modified to only support a single `CamelContext` which was really its intention, but there was some old crufy code for multiple Camels. The method `getCamelContextMap` has been removed, and there is just a `getCamelContext` method now.
+
 ### Moved APIs
 
 The following API changes may affect your existing Camel applications, which needs to be migrated.

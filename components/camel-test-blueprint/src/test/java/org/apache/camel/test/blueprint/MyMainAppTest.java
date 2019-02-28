@@ -16,15 +16,10 @@
  */
 package org.apache.camel.test.blueprint;
 
-
-
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
-
+import static org.junit.Assert.assertNotNull;
 
 public class MyMainAppTest {
 
@@ -38,15 +33,11 @@ public class MyMainAppTest {
         Main main = new Main();
         run(main);
         
-        Map<String, CamelContext> contexts = main.getCamelContextMap();
-        // we should get at least one CamelContext
-        assertTrue("We should get at least one camelcontext", contexts.size() >= 1);
-        
-        
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
     }
 
     public void run(Main main) throws Exception {
-        
         main.setBundleName("MyMainBundle");
         // as we run this test without packing ourselves as bundle, then include ourselves
         main.setIncludeSelfAsBundle(true);

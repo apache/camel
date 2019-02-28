@@ -43,10 +43,7 @@ public class MainTest extends Assert {
         });
         main.start();
 
-        List<CamelContext> contextList = main.getCamelContexts();
-        assertNotNull(contextList);
-        assertEquals("size", 1, contextList.size());
-        CamelContext camelContext = contextList.get(0);
+        CamelContext camelContext = main.getCamelContext();
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         // in case we add more files in src/test/data

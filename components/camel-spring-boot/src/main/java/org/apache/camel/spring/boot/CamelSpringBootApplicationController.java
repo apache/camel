@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring.boot;
 
-import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.PreDestroy;
@@ -45,8 +43,8 @@ public class CamelSpringBootApplicationController {
             }
 
             @Override
-            protected Map<String, CamelContext> getCamelContextMap() {
-                return Collections.singletonMap("camelContext", camelContext);
+            protected CamelContext createCamelContext() {
+                return camelContext;
             }
 
             @Override
