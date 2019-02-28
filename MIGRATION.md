@@ -303,8 +303,8 @@ The `camel-report-maven-plugin` has the `validate` and `route-coverage` goals wh
 Known Issues
 ------------
 
-There is an issue with MDC logging and correctly transfering the Camel breadscrumb id's under certain situations with routing over asynchronous endpoints, due to the internal routing engine refactorings. This change also affects the `camel-zipkin` component, with may not correctly transfer the span id's when using MDC logging as well. 
+There is an issue with MDC logging and correctly transfering the Camel breadscrumb id's under certain situations with routing over asynchronous endpoints, due to the internal routing engine refactorings. This change also affects the `camel-zipkin` component, which may not correctly transfer the span id's when using MDC logging as well. 
 
-The tracer feature does not work (the implementation from Camel 2.x was deprecated), and we plan to implemented a new and improved tracer.
+The tracer feature does not work (the implementation from Camel 2.x was deprecated), and we plan to implement a new and improved tracer.
 
 
