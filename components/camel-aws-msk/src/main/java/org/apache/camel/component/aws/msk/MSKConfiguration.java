@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.aws.msk;
 
+import com.amazonaws.services.kafka.AWSKafka;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
-
-import com.amazonaws.services.kafka.AWSKafka;
 
 @UriParams
 public class MSKConfiguration implements Cloneable {

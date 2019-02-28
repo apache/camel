@@ -102,7 +102,7 @@ public class MSKProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void createCluster(AWSKafka mskClient, Exchange exchange) {
         CreateClusterRequest request = new CreateClusterRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSKConstants.CLUSTER_NAME))) {
@@ -124,8 +124,8 @@ public class MSKProducer extends DefaultProducer {
             throw new IllegalArgumentException("Kafka Version must be specified");
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSKConstants.BROKER_NODES_GROUP_INFO))) {
-        	BrokerNodeGroupInfo brokerNodesGroupInfo = exchange.getIn().getHeader(MSKConstants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
-			request.withBrokerNodeGroupInfo(brokerNodesGroupInfo);
+            BrokerNodeGroupInfo brokerNodesGroupInfo = exchange.getIn().getHeader(MSKConstants.BROKER_NODES_GROUP_INFO, BrokerNodeGroupInfo.class);
+            request.withBrokerNodeGroupInfo(brokerNodesGroupInfo);
         } else {
             throw new IllegalArgumentException("BrokerNodeGroupInfo must be specified");
         }
@@ -139,7 +139,7 @@ public class MSKProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     private void deleteCluster(AWSKafka mskClient, Exchange exchange) {
         DeleteClusterRequest request = new DeleteClusterRequest();
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSKConstants.CLUSTER_ARN))) {
@@ -158,7 +158,7 @@ public class MSKProducer extends DefaultProducer {
         Message message = getMessageForResponse(exchange);
         message.setBody(result);
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
             Message out = exchange.getOut();
