@@ -17,7 +17,7 @@
 package org.apache.camel.component.aws.kms;
 
 /**
- * Constants used in Camel AWS MQ module
+ * Constants used in Camel AWS KMS module
  */
 public interface KMSConstants {
     String OPERATION                = "CamelAwsKMSOperation";
