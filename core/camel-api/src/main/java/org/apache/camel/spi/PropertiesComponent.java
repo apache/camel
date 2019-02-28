@@ -49,4 +49,17 @@ public interface PropertiesComponent extends Component {
      */
     void setLocation(String location);
 
+    /**
+     * Adds the list of locations to the current locations, where to load properties.
+     * You can use comma to separate multiple locations.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    void addLocation(String location);
+
+    /**
+     * Whether to silently ignore if a location cannot be located, such as a properties file not found.
+     */
+    void setIgnoreMissingLocation(boolean ignoreMissingLocation);
+
+
 }
