@@ -90,13 +90,16 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private List<PropertiesLocation> locations = Collections.emptyList();
 
+    private transient String propertyPrefixResolved;
+
+    @Metadata
     private boolean ignoreMissingLocation;
+    @Metadata
     private String encoding;
     @Metadata(defaultValue = "true")
     private boolean cache = true;
     @Metadata(label = "advanced")
     private String propertyPrefix;
-    private transient String propertyPrefixResolved;
     @Metadata(label = "advanced")
     private String propertySuffix;
     private transient String propertySuffixResolved;
@@ -275,6 +278,20 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         }
 
         setLocations(locations);
+    }
+
+    public void addLocation(String location) {
+        if (location != null) {
+            List<PropertiesLocation> newLocations = new ArrayList<>();
+            for (String loc : location.split(",")) {
+                newLocations.add(new PropertiesLocation(loc));
+            }
+            List<PropertiesLocation> current = getLocations();
+            if (!current.isEmpty()) {
+                newLocations.addAll(0, current);
+            }
+            setLocations(newLocations);
+        }
     }
 
     /**

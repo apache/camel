@@ -16,8 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -91,7 +89,21 @@ public class MainTest extends Assert {
         endpoint.assertIsSatisfied();
         main.stop();
     }
-    
+
+    @Test
+    public void testOptionalProperties() throws Exception {
+        // lets make a simple route
+        Main main = new Main();
+        main.addRouteBuilder(new MyRouteBuilder());
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        // should load application.properties from classpath
+        assertEquals("World", camelContext.resolvePropertyPlaceholders("{{hello}}"));
+
+        main.stop();
+    }
+
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {

@@ -157,6 +157,13 @@ public abstract class MainSupport extends ServiceSupport {
                 setFileWatchDirectory(parameter);
             }
         });
+        addOption(new ParameterOption("pl", "propertiesLocation",
+            "Sets location(s) to load properties, such as from classpath or file system.",
+            "propertiesLocation") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setPropertyPlaceholderLocations(parameter);
+            }
+        });
     }
 
     /**
@@ -450,8 +457,8 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * A list of locations to load properties. You can use comma to separate multiple locations.
-     * This option will override any default locations and only use the locations from this option.
+     * A list of locations to add for loading properties.
+     * You can use comma to separate multiple locations.
      */
     public void setPropertyPlaceholderLocations(String location) {
         this.propertyPlaceholderLocations = location;
@@ -574,7 +581,14 @@ public abstract class MainSupport extends ServiceSupport {
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
         if (propertyPlaceholderLocations != null) {
             PropertiesComponent pc = camelContext.getPropertiesComponent();
-            pc.setLocation(propertyPlaceholderLocations);
+            pc.addLocation(propertyPlaceholderLocations);
+            LOG.info("Using properties from: {}", propertyPlaceholderLocations);
+        } else {
+            // lets default to application.properties and ignore if its missing
+            PropertiesComponent pc = camelContext.getPropertiesComponent();
+            pc.addLocation("classpath:application.properties");
+            pc.setIgnoreMissingLocation(true);
+            LOG.info("Using optional properties from classpath:application.properties");
         }
         if (trace) {
             camelContext.setTracing(true);
