@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -30,7 +31,9 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -225,7 +228,26 @@ public class Main extends org.apache.camel.main.MainSupport {
         if (parentContext != null) {
             return new ClassPathXmlApplicationContext(args, parentContext);
         } else {
-            return new ClassPathXmlApplicationContext(args);
+            // okay no application context specified so lets look for either
+            // classpath xml or annotation based
+            if (routeBuilderClasses != null) {
+                AnnotationConfigApplicationContext ac = new AnnotationConfigApplicationContext();
+                ac.register(SpringCamelContext.class);
+                Set<String> packages = new LinkedHashSet<>();
+                String[] classes = routeBuilderClasses.split(",");
+                for (String clazz : classes) {
+                    if (clazz.contains(".")) {
+                        String packageName = clazz.substring(0, clazz.lastIndexOf("."));
+                        packages.add(packageName);
+                    }
+                }
+                LOG.info("Using Spring annotation scanning in packages: {}", packages);
+                ac.scan(packages.toArray(new String[packages.size()]));
+                ac.refresh();
+                return ac;
+            } else {
+                return new ClassPathXmlApplicationContext();
+            }
         }
     }
 
