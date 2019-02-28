@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -61,11 +59,12 @@ public abstract class MainSupport extends ServiceSupport {
     protected int durationMaxMessages;
     protected TimeUnit timeUnit = TimeUnit.SECONDS;
     protected boolean trace;
+
+    protected CamelContext camelContext;
     protected List<RouteBuilder> routeBuilders = new ArrayList<>();
     protected String routeBuilderClasses;
     protected String fileWatchDirectory;
     protected boolean fileWatchDirectoryRecursively;
-    protected final List<CamelContext> camelContexts = new ArrayList<>();
     protected ProducerTemplate camelTemplate;
     protected boolean hangupInterceptorEnabled = true;
     protected int durationHitExitCode = DEFAULT_EXIT_CODE;
@@ -520,8 +519,8 @@ public abstract class MainSupport extends ServiceSupport {
         System.out.println();
     }
 
-    public List<CamelContext> getCamelContexts() {
-        return camelContexts;
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 
     public List<RouteBuilder> getRouteBuilders() {
@@ -534,7 +533,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     public List<RouteDefinition> getRouteDefinitions() {
         List<RouteDefinition> answer = new ArrayList<>();
-        for (CamelContext camelContext : camelContexts) {
+        if (camelContext != null) {
             answer.addAll(camelContext.adapt(ModelCamelContext.class).getRouteDefinitions());
         }
         return answer;
@@ -549,16 +548,11 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected abstract ProducerTemplate findOrCreateCamelTemplate();
 
-    protected abstract Map<String, CamelContext> getCamelContextMap();
+    protected abstract CamelContext createCamelContext();
 
-    protected void postProcessContext() throws Exception {
-        Map<String, CamelContext> map = getCamelContextMap();
-        Set<Map.Entry<String, CamelContext>> entries = map.entrySet();
-        for (Map.Entry<String, CamelContext> entry : entries) {
-            CamelContext camelContext = entry.getValue();
-            camelContexts.add(camelContext);
-            postProcessCamelContext(camelContext);
-        }
+    protected void initCamelContext() throws Exception {
+        camelContext = createCamelContext();
+        postProcessCamelContext(camelContext);
     }
 
     public ModelJAXBContextFactory getModelJAXBContextFactory() {

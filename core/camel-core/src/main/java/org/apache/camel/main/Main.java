@@ -16,7 +16,6 @@
  */
 package org.apache.camel.main;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -96,35 +95,19 @@ public class Main extends MainSupport {
         return registry.findByTypeWithName(type);
     }
 
-    /**
-     * Gets or creates the {@link org.apache.camel.CamelContext} this main class is using.
-     * 
-     * It just create a new CamelContextMap per call, please don't use it to access the camel context that will be ran by main.
-     * If you want to setup the CamelContext please use MainListener to get the new created camel context.
-     */
-    public CamelContext getOrCreateCamelContext() {
-        // force init
-        Map<String, CamelContext> map = getCamelContextMap();
-        if (map.size() >= 1) {
-            return map.values().iterator().next();
-        } else {
-            throw new IllegalStateException("Error creating CamelContext");
-        }
-    }
-
     // Implementation methods
     // -------------------------------------------------------------------------
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        postProcessContext();
-        if (getCamelContexts().size() > 0) {
+        initCamelContext();
+        if (getCamelContext() != null) {
             try {
-                getCamelContexts().get(0).start();
                 // if we were veto started then mark as completed
+                getCamelContext().start();
             } finally {
-                if (getCamelContexts().get(0).isVetoStarted()) {
+                if (getCamelContext().isVetoStarted()) {
                     completed();
                 }
             }
@@ -133,28 +116,20 @@ public class Main extends MainSupport {
 
     protected void doStop() throws Exception {
         super.doStop();
-        if (getCamelContexts().size() > 0) {
-            getCamelContexts().get(0).stop();
+        if (getCamelContext() != null) {
+            getCamelContext().stop();
         }
     }
 
     protected ProducerTemplate findOrCreateCamelTemplate() {
-        if (getCamelContexts().size() > 0) {
-            return getCamelContexts().get(0).createProducerTemplate();
+        if (getCamelContext() != null) {
+            return getCamelContext().createProducerTemplate();
         } else {
             return null;
         }
     }
 
-    protected Map<String, CamelContext> getCamelContextMap() {
-        Map<String, CamelContext> answer = new HashMap<>();
-
-        CamelContext camelContext = createContext();
-        answer.put("camel-1", camelContext);
-        return answer;
-    }
-
-    protected CamelContext createContext() {
+    protected CamelContext createCamelContext() {
         return new DefaultCamelContext(registry);
     }
 

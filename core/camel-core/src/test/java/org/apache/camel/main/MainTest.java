@@ -32,13 +32,12 @@ public class MainTest extends Assert {
         Main main = new Main();
         main.addRouteBuilder(new MyRouteBuilder());
         main.enableTrace();
-        main.bind("foo", new Integer(31));
+        main.bind("foo", 31);
         main.start();
 
-        List<CamelContext> contextList = main.getCamelContexts();
-        assertNotNull(contextList);
-        assertEquals("Did not get the expected count of Camel contexts", 1, contextList.size());
-        CamelContext camelContext = contextList.get(0);
+        CamelContext camelContext = main.getCamelContext();
+
+        assertNotNull(camelContext);
         assertEquals("Could not find the registry bound object", 31, camelContext.getRegistry().lookupByName("foo"));
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
@@ -58,13 +57,11 @@ public class MainTest extends Assert {
         main.addRouteBuilder(new MyRouteBuilder());
         main.disableHangupSupport();
         main.enableTrace();
-        main.bind("foo", new Integer(31));
+        main.bind("foo", 31);
         main.start();
 
-        List<CamelContext> contextList = main.getCamelContexts();
-        assertNotNull(contextList);
-        assertEquals("Did not get the expected count of Camel contexts", 1, contextList.size());
-        CamelContext camelContext = contextList.get(0);
+        CamelContext camelContext = main.getCamelContext();
+
         assertEquals("Could not find the registry bound object", 31, camelContext.getRegistry().lookupByName("foo"));
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
@@ -84,11 +81,8 @@ public class MainTest extends Assert {
         main.parseArguments(new String[]{"-r", "org.apache.camel.main.MainTest$MyRouteBuilder"});
         main.start();
 
-        List<CamelContext> contextList = main.getCamelContexts();
-        assertNotNull(contextList);
-        assertEquals("Did not get the expected count of Camel contexts", 1, contextList.size());
-        CamelContext camelContext = contextList.get(0);
-        
+        CamelContext camelContext = main.getCamelContext();
+
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMinimumMessageCount(1);
 

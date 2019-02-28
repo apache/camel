@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -145,6 +144,17 @@ public class Main extends org.apache.camel.main.MainSupport {
     // -------------------------------------------------------------------------
 
     @Override
+    protected CamelContext createCamelContext() {
+        Map<String, SpringCamelContext> camels = applicationContext.getBeansOfType(SpringCamelContext.class);
+        if (camels.size() > 1) {
+            throw new IllegalArgumentException("Multiple CamelContext detected. This Main class only supports single CamelContext");
+        } else if (camels.size() == 1) {
+            return camels.values().iterator().next();
+        }
+        return null;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         try {
             super.doStart();
@@ -164,13 +174,11 @@ public class Main extends org.apache.camel.main.MainSupport {
             LOG.debug("Starting Spring ApplicationContext: {}", applicationContext.getId());
             applicationContext.start();
 
-            postProcessContext();
+            initCamelContext();
         } finally {
-            if (camelContexts != null && !camelContexts.isEmpty()) {
-                // if we were veto started then mark as completed
-                if (getCamelContexts().get(0).isVetoStarted()) {
-                    completed();
-                }
+            // if we were veto started then mark as completed
+            if (getCamelContext() != null && getCamelContext().isVetoStarted()) {
+                completed();
             }
         }
     }
@@ -192,10 +200,10 @@ public class Main extends org.apache.camel.main.MainSupport {
         if (names != null && names.length > 0) {
             return getApplicationContext().getBean(names[0], ProducerTemplate.class);
         }
-        if (getCamelContexts().isEmpty()) {
-            throw new IllegalArgumentException("No CamelContexts are available so cannot create a ProducerTemplate!");
+        if (getCamelContext() == null) {
+            throw new IllegalArgumentException("No CamelContext are available so cannot create a ProducerTemplate!");
         }
-        return getCamelContexts().get(0).createProducerTemplate();
+        return getCamelContext().createProducerTemplate();
     }
 
     protected AbstractApplicationContext createDefaultApplicationContext() throws IOException {
@@ -219,18 +227,6 @@ public class Main extends org.apache.camel.main.MainSupport {
         } else {
             return new ClassPathXmlApplicationContext(args);
         }
-    }
-
-    protected Map<String, CamelContext> getCamelContextMap() {
-        Map<String, SpringCamelContext> map = applicationContext.getBeansOfType(SpringCamelContext.class);
-        Set<Map.Entry<String, SpringCamelContext>> entries = map.entrySet();
-        Map<String, CamelContext> answer = new HashMap<>();
-        for (Map.Entry<String, SpringCamelContext> entry : entries) {
-            String name = entry.getKey();
-            CamelContext camelContext = entry.getValue();
-            answer.put(name, camelContext);
-        }
-        return answer;
     }
 
     protected AbstractApplicationContext createAdditionalLocationsFromClasspath() throws IOException {
