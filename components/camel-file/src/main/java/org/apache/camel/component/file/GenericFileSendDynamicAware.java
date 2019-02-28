@@ -49,16 +49,37 @@ public abstract class GenericFileSendDynamicAware implements SendDynamicAware {
 
     @Override
     public String resolveStaticUri(Exchange exchange, DynamicAwareEntry entry) throws Exception {
+        boolean fileName = entry.getProperties().containsKey("fileName");
+        boolean tempFileName = entry.getProperties().containsKey("tempFileName");
+        boolean idempotentKey = entry.getProperties().containsKey("idempotentKey");
         boolean move = entry.getProperties().containsKey("move");
         boolean moveFailed = entry.getProperties().containsKey("moveFailed");
         boolean preMove = entry.getProperties().containsKey("preMove");
         boolean moveExisting = entry.getProperties().containsKey("moveExisting");
         // if any of the above are in use, then they should not be pre evaluated
         // and we need to rebuild a new uri with them as-is
-        if (move || moveFailed || preMove || moveExisting) {
+        if (fileName || tempFileName || idempotentKey || move || moveFailed || preMove || moveExisting) {
             Map<String, String> params = new LinkedHashMap<>(entry.getProperties());
 
             Map<String, Object> originalParams = URISupport.parseQuery(entry.getOriginalUri());
+            if (fileName) {
+                Object val = originalParams.get("fileName");
+                if (val != null) {
+                    params.put("fileName", val.toString());
+                }
+            }
+            if (tempFileName) {
+                Object val = originalParams.get("tempFileName");
+                if (val != null) {
+                    params.put("tempFileName", val.toString());
+                }
+            }
+            if (idempotentKey) {
+                Object val = originalParams.get("idempotentKey");
+                if (val != null) {
+                    params.put("idempotentKey", val.toString());
+                }
+            }
             if (move) {
                 Object val = originalParams.get("move");
                 if (val != null) {
