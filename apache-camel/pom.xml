@@ -195,12 +195,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-aws-msk</artifactId>
+      <artifactId>camel-aws-mq</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-aws-mq</artifactId>
+      <artifactId>camel-aws-msk</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -1679,12 +1679,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-aws-msk-starter</artifactId>
+      <artifactId>camel-aws-mq-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-aws-mq-starter</artifactId>
+      <artifactId>camel-aws-msk-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
