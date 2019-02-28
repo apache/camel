@@ -41,11 +41,8 @@ public class JmxManagementStrategy extends DefaultManagementStrategy {
 
     public JmxManagementStrategy(CamelContext context, ManagementAgent managementAgent) {
         super(context, managementAgent);
-        context.setExtension(
-                ManagedCamelContext.class,
-                new ManagedCamelContextImpl(context));
-        // must add management lifecycle strategy
-        context.getLifecycleStrategies().add(0, new JmxManagementLifecycleStrategy(context));
+        // add JMX capable CamelContext as extension
+        context.setExtension(ManagedCamelContext.class, new ManagedCamelContextImpl(context));
     }
 
     public void manageObject(Object managedObject) throws Exception {

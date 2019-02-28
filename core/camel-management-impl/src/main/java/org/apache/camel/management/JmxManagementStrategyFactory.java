@@ -25,7 +25,7 @@ import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.support.IntrospectionSupport;
 
 /**
- * Factory for creating {@link ManagementStrategy}
+ * Factory for creating JMX {@link ManagementStrategy}.
  */
 public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
 
@@ -46,10 +46,12 @@ public class JmxManagementStrategyFactory implements ManagementStrategyFactory {
     @Override
     public void setupManagement(CamelContext camelContext, ManagementStrategy strategy, LifecycleStrategy lifecycle) {
         camelContext.setManagementStrategy(strategy);
-
-        // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
-        camelContext.getLifecycleStrategies().clear();
-        camelContext.addLifecycleStrategy(lifecycle);
+        // must add management lifecycle strategy as first choice
+        if (!camelContext.getLifecycleStrategies().isEmpty()) {
+            // camel-spring/camel-blueprint may re-initialize JMX during startup, so remove any previous
+            camelContext.getLifecycleStrategies().removeIf(s -> s instanceof JmxManagementLifecycleStrategy);
+        }
+        camelContext.getLifecycleStrategies().add(0, lifecycle);
     }
 
 }

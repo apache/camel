@@ -24,7 +24,7 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 
 /**
- * Factory for creating {@link ManagementStrategy}
+ * Factory for creating non JMX {@link ManagementStrategy}.
  */
 public class DefaultManagementStrategyFactory implements ManagementStrategyFactory {
 
@@ -42,9 +42,5 @@ public class DefaultManagementStrategyFactory implements ManagementStrategyFacto
     @Override
     public void setupManagement(CamelContext camelContext, ManagementStrategy strategy, LifecycleStrategy lifecycle) {
         camelContext.setManagementStrategy(strategy);
-        camelContext.setManagementStrategy(new DefaultManagementStrategy());
-        // need to clear the lifecycle strategy as CamelContext will default enable JMX, and
-        // to turn this off we need no JMX lifecycle strategy to exists (at this time there is only this one)
-        camelContext.getLifecycleStrategies().clear();
     }
 }
