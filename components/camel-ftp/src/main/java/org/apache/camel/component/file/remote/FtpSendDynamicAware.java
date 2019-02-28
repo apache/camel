@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.component.file.remote;
 
+import org.apache.camel.component.file.GenericFileSendDynamicAware;
 import org.apache.camel.spi.annotations.SendDynamic;
 
-@SendDynamic("file")
-public class FileSendDynamicAware extends GenericFileSendDynamicAware {
+@SendDynamic("ftp")
+public class FtpSendDynamicAware extends GenericFileSendDynamicAware {
 }
