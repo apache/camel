@@ -21,31 +21,13 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 @RunWith(PaxExam.class)
-public class CamelAwsTest extends BaseKarafTest {
+public class CamelAwsMskTest extends BaseKarafTest {
 
-    public static final String COMPONENT = extractName(CamelAwsTest.class);
+    public static final String COMPONENT = extractName(CamelAwsMskTest.class);
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT, "aws-cw");
-        testComponent(COMPONENT, "aws-ddb");
-        testComponent(COMPONENT, "aws-ddbstream");
-        testComponent(COMPONENT, "aws-ec2");
-        testComponent(COMPONENT, "aws-ecs");
-        testComponent(COMPONENT, "aws-eks");
-        testComponent(COMPONENT, "aws-iam");
-        testComponent(COMPONENT, "aws-kinesis");
-        testComponent(COMPONENT, "aws-kinesis-firehose");
-        testComponent(COMPONENT, "aws-kms");
-        testComponent(COMPONENT, "aws-lambda");
-        testComponent(COMPONENT, "aws-mq");
-        testComponent(COMPONENT, "aws-msk");
-        testComponent(COMPONENT, "aws-s3");
-        testComponent(COMPONENT, "aws-sdb");
-        testComponent(COMPONENT, "aws-ses");
-        testComponent(COMPONENT, "aws-sns");
-        testComponent(COMPONENT, "aws-sqs");
-        testComponent(COMPONENT, "aws-swf");
+    	testComponent(COMPONENT);
     }
 
 }
