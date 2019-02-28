@@ -61,6 +61,7 @@
         <include>org.apache.camel:camel-aws-kms</include>
         <include>org.apache.camel:camel-aws-lambda</include>
         <include>org.apache.camel:camel-aws-mq</include>
+        <include>org.apache.camel:camel-aws-msk</include>
         <include>org.apache.camel:camel-aws-s3</include>
         <include>org.apache.camel:camel-aws-sdb</include>
         <include>org.apache.camel:camel-aws-ses</include>
@@ -393,6 +394,7 @@
         <include>org.apache.camel:camel-aws-kms-starter</include>
         <include>org.apache.camel:camel-aws-lambda-starter</include>
         <include>org.apache.camel:camel-aws-mq-starter</include>
+        <include>org.apache.camel:camel-aws-msk-starter</include>
         <include>org.apache.camel:camel-aws-s3-starter</include>
         <include>org.apache.camel:camel-aws-sdb-starter</include>
         <include>org.apache.camel:camel-aws-ses-starter</include>
