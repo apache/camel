@@ -80,6 +80,29 @@ We have also renamed `camel-jetty9` to `camel-jetty`.
 
 If you are using the `activemq-camel` component, then you should migrate to use `camel-activemq` component, where the component name has changed from `org.apache.activemq.camel.component.ActiveMQComponent` to `org.apache.camel.component.activemq.ActiveMQComponent`.
 
+### AWS 
+
+The component `camel-aws` has been splitted in multiple components:
+
+- camel-aws-cw
+- camel-aws-ddb (which contains both ddb and ddbstreams components)
+- camel-aws-ec2
+- camel-aws-ecs
+- camel-aws-eks
+- camel-aws-iam
+- camel-aws-kinesis (which contains both kinesis and kinesis-firehose components)
+- camel-aws-kms
+- camel-aws-lambda
+- camel-aws-mq
+- camel-aws-s3
+- camel-aws-sdb
+- camel-aws-ses
+- camel-aws-sns
+- camel-aws-sqs
+- camel-aws-swf
+
+So you'll have to add explicitly the dependencies for these components. From the OSGi perspective, there is still a `camel-aws` Karaf feature, which includes all the components features.
+
 ### JMX
 
 If you run Camel standalone with just `camel-core` as dependency, and you want JMX enabled out of the box, then you need to add `camel-management-impl` as dependency.
@@ -137,27 +160,6 @@ The class `org.apache.camel.processor.aggregate.AggregationStrategy` has been mo
 The class `org.apache.camel.processor.loadbalancer.SimpleLoadBalancerSupport` has been removed, instead use `org.apache.camel.processor.loadbalancer.LoadBalancerSupport`.
 
 The class `org.apache.camel.management.JmxSystemPropertyKeys` has been moved to `org.apache.camel.api.management.JmxSystemPropertyKeys`.
-
-The component camel-aws has been splitted in multiple components:
-
-- camel-aws-cw
-- camel-aws-ddb (which contains both ddb and ddbstreams components)
-- camel-aws-ec2
-- camel-aws-ecs
-- camel-aws-eks
-- camel-aws-iam
-- camel-aws-kinesis (which contains both kinesis and kinesis-firehose components)
-- camel-aws-kms
-- camel-aws-lambda
-- camel-aws-mq
-- camel-aws-s3
-- camel-aws-sdb
-- camel-aws-ses
-- camel-aws-sns
-- camel-aws-sqs
-- camel-aws-swf
-
-So you'll have to add explicitly the dependencies for these components. From the OSGi perspective, there is still a `camel-aws` Karaf feature, which includes all the components.
 
 #### camel-test
 
