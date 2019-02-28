@@ -5,31 +5,31 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.component.file.remote;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class FileProducerToDMoveExistingTest extends ContextTestSupport {
+/**
+ *
+ */
+public class FtpProducerToDMoveExistingTest extends FtpServerTestSupport {
 
-    @Override
-    public void setUp() throws Exception {
-        deleteDirectory("target/out");
-        super.setUp();
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/${header.myDir}?password=admin&fileExist=Move&moveExisting=old-${file:onlyname}";
     }
 
     @Test
@@ -44,8 +44,8 @@ public class FileProducerToDMoveExistingTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFileExists("target/out/old-hello.txt");
-        assertFileExists("target/out/hello.txt");
+        assertFileExists(FTP_ROOT_DIR + "/out/old-hello.txt");
+        assertFileExists(FTP_ROOT_DIR + "/out/hello.txt");
     }
 
     @Override
@@ -54,9 +54,11 @@ public class FileProducerToDMoveExistingTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .toD("file:target/${header.myDir}?fileExist=Move&moveExisting=target/out/old-${file:onlyname}")
+                    .toD(getFtpUrl())
                     .to("mock:result");
             }
         };
     }
+
+
 }
