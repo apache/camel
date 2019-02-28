@@ -28,6 +28,7 @@
 * xref:aws-kms-component.adoc[AWS KMS Component]
 * xref:aws-lambda-component.adoc[AWS Lambda Component]
 * xref:aws-mq-component.adoc[AWS MQ Component]
+* xref:aws-msk-component.adoc[AWS MSK Component]
 * xref:aws-s3-component.adoc[AWS S3 Storage Service Component]
 * xref:aws-sdb-component.adoc[AWS SimpleDB Component]
 * xref:aws-cw-component.adoc[AWS CloudWatch Component]
