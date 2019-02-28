@@ -44,17 +44,16 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
+    <!-- camel-test may need JMX for some functions -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-management-impl</artifactId>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
 
-    <!-- optional dependencies for running tests -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-management-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
