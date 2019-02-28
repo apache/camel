@@ -225,10 +225,11 @@
         <artifactId>maven-plugin-plugin</artifactId>
         <configuration>
           <goalPrefix>camel-servicenow</goalPrefix>          
+          <mojoDependencies></mojoDependencies>
         </configuration>
         <executions>
           <execution>
-            <id>mojo-descriptor</id>
+            <id>default-descriptor</id>
             <goals>
               <goal>descriptor</goal>
             </goals>

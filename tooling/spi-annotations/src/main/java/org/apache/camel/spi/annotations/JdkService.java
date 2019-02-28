@@ -25,10 +25,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.TYPE })
-public @interface ServiceFactory {
+@ServiceFactory(ServiceFactory.JDK_SERVICE)
+public @interface JdkService {
 
-    String JDK_SERVICE = "#jdk#";
-
-    String value();
+    Class value();
 
 }
