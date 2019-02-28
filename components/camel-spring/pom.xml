@@ -186,6 +186,7 @@
           <include>**/*</include>
         </includes>
       </resource>
+      <!--
       <resource>
         <directory>src/main/resources</directory>
         <includes>
@@ -193,9 +194,44 @@
         </includes>
         <filtering>true</filtering>
       </resource>
+      -->
     </resources>
 
     <plugins>
+
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>jaxb-list</id>
+            <goals>
+              <goal>generate-jaxb-list</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-generated-resources-jaxb</id>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/jaxb</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
       <plugin>
@@ -308,12 +344,32 @@
             <configuration>
               <target>
                 <echo>Copying XSD schema to be included in JAR</echo>
-                <copy file="${project.build.directory}/classes/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" />
-                <copy file="${project.build.directory}/classes/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" />
-                <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/spring/v${camel.schema.version}" />
+                <copy file="${project.build.directory}/classes/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring.xsd" preservelastmodified="true" />
+                <copy file="${project.build.directory}/classes/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" preservelastmodified="true" />
+                <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" token="&quot;http://camel.apache.org/schema/spring&quot;" value="&quot;http://camel.apache.org/schema/spring/v${camel.schema.version}&quot;" preservelastmodified="true" />
                 <!-- copy modified schemas back again in classes so they are included in the JAR -->
-                <copy todir="${project.build.directory}/classes">
+                <copy todir="${project.build.directory}/classes" preservelastmodified="true">
                   <fileset dir="${project.build.directory}/schema" />
+                </copy>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>copy-spring-meta-filter</id>
+            <phase>process-resources</phase>
+            <configuration>
+              <target>
+                <echo>Copying spring meta files</echo>
+                <copy todir="${project.build.directory}/spring-meta" preservelastmodified="true">
+                  <fileset dir="${project.basedir}/src/main/resources" />
+                </copy>
+                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers" token="\\${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
+                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas" token="\\${camel.schema.version}" value="${camel.schema.version}" preservelastmodified="true" />
+                <copy todir="${project.build.directory}/classes" preservelastmodified="true">
+                  <fileset dir="${project.build.directory}/spring-meta" />
                 </copy>
               </target>
             </configuration>

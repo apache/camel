@@ -335,7 +335,9 @@
         <includes>
           <include>**/*</include>
         </includes>
-        <filtering>true</filtering>
+        <excludes>
+          <exclude>META-INF/spring.*</exclude>
+        </excludes>
       </resource>
     </resources>
 
@@ -434,6 +436,34 @@
             </configuration>
             <goals>
               <goal>wsdl2java</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-spring-meta-filter</id>
+            <phase>process-resources</phase>
+            <configuration>
+              <target>
+                <echo>Copying spring meta files</echo>
+                <copy todir="${project.build.directory}/spring-meta" preservelastmodified="true">
+                  <fileset dir="${project.basedir}/src/main/resources">
+                    <include name="**/spring.*"/>
+                  </fileset>
+                </copy>
+                <replace file="${project.build.directory}/spring-meta/META-INF/spring.handlers" token="\\${project.version}" value="${project.version}" preservelastmodified="true" />
+                <replace file="${project.build.directory}/spring-meta/META-INF/spring.schemas" token="\\${project.version}" value="${project.version}" preservelastmodified="true" />
+                <copy todir="${project.build.directory}/classes" preservelastmodified="true">
+                  <fileset dir="${project.build.directory}/spring-meta" />
+                </copy>
+              </target>
+            </configuration>
+            <goals>
+              <goal>run</goal>
             </goals>
           </execution>
         </executions>

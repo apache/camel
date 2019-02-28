@@ -105,8 +105,8 @@
 
       <!-- to generate API Javadoc -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-javadoc-plugin</artifactId>
         <executions>
           <execution>
             <id>add-javadoc</id>
