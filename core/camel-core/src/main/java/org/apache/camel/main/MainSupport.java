@@ -568,12 +568,16 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
         if (routeBuilderClasses != null) {
-            // get the list of route builder classes
             String[] routeClasses = routeBuilderClasses.split(",");
             for (String routeClass : routeClasses) {
                 Class<?> routeClazz = camelContext.getClassResolver().resolveClass(routeClass);
-                RouteBuilder builder = (RouteBuilder) routeClazz.newInstance();
-                getRouteBuilders().add(builder);
+                // lets use Camel's injector so the class has some support for dependency injection
+                Object builder = camelContext.getInjector().newInstance(routeClazz);
+                if (builder instanceof RouteBuilder) {
+                    getRouteBuilders().add((RouteBuilder) builder);
+                } else {
+                    LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
+                }
             }
         }
     }
@@ -643,6 +647,16 @@ public abstract class MainSupport extends ServiceSupport {
 
     public void addRouteBuilder(RouteBuilder routeBuilder) {
         getRouteBuilders().add(routeBuilder);
+    }
+
+    public void addRouteBuilder(Class routeBuilder) {
+        String existing = routeBuilderClasses;
+        if (existing != null) {
+            existing = existing + "," + routeBuilder.getName();
+        } else {
+            existing = routeBuilder.getName();
+        }
+        setRouteBuilderClasses(existing);
     }
 
     public abstract class Option {
