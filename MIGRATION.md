@@ -138,6 +138,27 @@ The class `org.apache.camel.processor.loadbalancer.SimpleLoadBalancerSupport` ha
 
 The class `org.apache.camel.management.JmxSystemPropertyKeys` has been moved to `org.apache.camel.api.management.JmxSystemPropertyKeys`.
 
+The component camel-aws has been splitted in multiple components:
+
+- camel-aws-cw
+- camel-aws-ddb (which contains both ddb and ddbstreams components)
+- camel-aws-ec2
+- camel-aws-ecs
+- camel-aws-eks
+- camel-aws-iam
+- camel-aws-kinesis (which contains both kinesis and kinesis-firehose components)
+- camel-aws-kms
+- camel-aws-lambda
+- camel-aws-mq
+- camel-aws-s3
+- camel-aws-sdb
+- camel-aws-ses
+- camel-aws-sns
+- camel-aws-sqs
+- camel-aws-swf
+
+So you'll have to add explicitly the dependencies for these components. From the OSGi perspective, there is still a `camel-aws` Karaf feature, which includes all the components.
+
 #### camel-test
 
 If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer nessasary, and instead
