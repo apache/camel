@@ -143,7 +143,7 @@ the https://aws.amazon.com/ecs/[Amazon ECS] service.
 
 #### ECS Producer operations
 
-Camel-AWS EKS component provides the following operation on the producer side:
+Camel-AWS ECS component provides the following operation on the producer side:
 
 - listClusters
 - createCluster
@@ -165,7 +165,7 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
+where `${camel-version}` must be replaced by the actual version of Camel
 (3.0.0 or higher).
 
 ### See Also
