@@ -32,7 +32,7 @@ import org.springframework.test.context.ContextConfiguration;
 import static org.awaitility.Awaitility.await;
 
 @ContextConfiguration
-public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends SpringRunWithTestSupport {
+public class SimpleLanguageWithSpringPropertyPlaceholderRouteTest extends SpringRunWithTestSupport {
     
     @Produce(uri = "direct:startSimple")
     protected ProducerTemplate template;
@@ -48,7 +48,7 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends SpringR
     public void replaceSimpleExpression() throws Exception {
         template.sendBody("Test");
 
-        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertFileExists("target/outBoxSimple/"));
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertDirectoryExists("target/outBoxSimple/"));
     }
     
     @Ignore(value = "disabled because of https://jira.springsource.org/browse/SPR-7593")
