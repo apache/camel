@@ -52,7 +52,6 @@ public interface ManagementStrategyFactory {
      * @param camelContext  the camel context
      * @param strategy      the management strategy
      * @param lifecycle      the associated lifecycle strategy (optional)
-     * @throws Exception is thrown if error setting up management
      */
     void setupManagement(CamelContext camelContext, ManagementStrategy strategy, LifecycleStrategy lifecycle);
 
