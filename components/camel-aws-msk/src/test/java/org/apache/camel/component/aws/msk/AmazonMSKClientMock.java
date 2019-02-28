@@ -29,7 +29,6 @@ import com.amazonaws.services.kafka.model.DeleteClusterResult;
 import com.amazonaws.services.kafka.model.ListClustersRequest;
 import com.amazonaws.services.kafka.model.ListClustersResult;
 
-
 public class AmazonMSKClientMock extends AbstractAWSKafka {
 
     public AmazonMSKClientMock() {
@@ -46,7 +45,7 @@ public class AmazonMSKClientMock extends AbstractAWSKafka {
         result.setClusterInfoList(info);
         return result;
     }
-    
+
     @Override
     public CreateClusterResult createCluster(CreateClusterRequest request) {
         CreateClusterResult result = new CreateClusterResult();
@@ -54,12 +53,12 @@ public class AmazonMSKClientMock extends AbstractAWSKafka {
         result.setState(ClusterState.CREATING.name());
         return result;
     }
-    
+
     @Override
     public DeleteClusterResult deleteCluster(DeleteClusterRequest request) {
-         DeleteClusterResult res = new DeleteClusterResult();
-         res.setClusterArn(request.getClusterArn());
-         res.setState(ClusterState.DELETING.name());
-         return res;
+        DeleteClusterResult res = new DeleteClusterResult();
+        res.setClusterArn(request.getClusterArn());
+        res.setState(ClusterState.DELETING.name());
+        return res;
     }
 }

@@ -18,25 +18,22 @@ package org.apache.camel.component.aws.msk;
 
 import com.amazonaws.regions.Regions;
 
-import org.apache.camel.component.aws.msk.MSKComponent;
-import org.apache.camel.component.aws.msk.MSKEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class MSKComponentConfigurationTest extends CamelTestSupport {
 
-    
     @Test
     public void createEndpointWithComponentElements() throws Exception {
         MSKComponent component = new MSKComponent(context);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         MSKEndpoint endpoint = (MSKEndpoint)component.createEndpoint("aws-msk://label");
-        
+
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
-    
+
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
         MSKComponent component = new MSKComponent(context);
@@ -44,10 +41,10 @@ public class MSKComponentConfigurationTest extends CamelTestSupport {
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
         MSKEndpoint endpoint = (MSKEndpoint)component.createEndpoint("aws-msk://label?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
-        
+
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
     }
-    
+
 }
