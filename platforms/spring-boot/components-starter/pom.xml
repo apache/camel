@@ -124,6 +124,7 @@
     <module>camel-aws-kms-starter</module>
     <module>camel-aws-lambda-starter</module>
     <module>camel-aws-mq-starter</module>
+    <module>camel-aws-msk-starter</module>
     <module>camel-aws-s3-starter</module>
     <module>camel-aws-sdb-starter</module>
     <module>camel-aws-ses-starter</module>
