@@ -453,6 +453,7 @@ public abstract class TestSupport extends Assert {
     public static void assertFileExists(String filename) {
         File file = new File(filename);
         assertTrue("File " + filename + " should exist", file.exists());
+        assertTrue("File " + filename + " should be a file", file.isFile());
     }
 
     /**
