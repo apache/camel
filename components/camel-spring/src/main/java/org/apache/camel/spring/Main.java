@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -31,7 +30,6 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -246,7 +244,7 @@ public class Main extends org.apache.camel.main.MainSupport {
                 ac.refresh();
                 return ac;
             } else {
-                return new ClassPathXmlApplicationContext();
+                return new ClassPathXmlApplicationContext(args);
             }
         }
     }
