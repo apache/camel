@@ -113,8 +113,7 @@ public class PackageJaxbMojo extends AbstractGeneratorMojo {
             if (project.getCompileSourceRoots().stream()
                     .map(Paths::get)
                     .map(p -> p.resolve(fn))
-                    .findAny()
-                    .isPresent()) {
+                    .anyMatch(Files::isRegularFile)) {
                 continue;
             }
             Path file = jaxbIndexDir.resolve(fn);
