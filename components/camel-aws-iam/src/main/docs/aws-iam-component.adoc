@@ -72,9 +72,9 @@ with the following path and query parameters:
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *iamClient* (producer) | To use a existing configured AWS IAM as client |  | AmazonIdentity ManagementClient
 | *operation* (producer) | *Required* The operation to perform |  | IAMOperations
-| *proxyHost* (producer) | To define a proxy host when instantiating the KMS client |  | String
-| *proxyPort* (producer) | To define a proxy port when instantiating the KMS client |  | Integer
-| *region* (producer) | The region in which KMS client needs to work |  | String
+| *proxyHost* (producer) | To define a proxy host when instantiating the IAM client |  | String
+| *proxyPort* (producer) | To define a proxy port when instantiating the IAM client |  | Integer
+| *region* (producer) | The region in which IAM client needs to work |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
