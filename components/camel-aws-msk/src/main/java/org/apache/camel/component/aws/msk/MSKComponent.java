@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For working with Amazon KMS.
+ * For working with Amazon MSK.
  */
 @Component("aws-msk")
 public class MSKComponent extends DefaultComponent {
@@ -79,7 +79,7 @@ public class MSKComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS KMS default configuration
+     * The AWS MSK default configuration
      */
     public void setConfiguration(MSKConfiguration configuration) {
         this.configuration = configuration;
@@ -112,7 +112,7 @@ public class MSKComponent extends DefaultComponent {
     }
 
     /**
-     * The region in which KMS client needs to work
+     * The region in which MSK client needs to work
      */
     public void setRegion(String region) {
         configuration.setRegion(region);

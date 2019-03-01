@@ -37,7 +37,7 @@ public class MSKProducerTest extends CamelTestSupport {
     private MockEndpoint mock;
 
     @Test
-    public void kmsListClustersTest() throws Exception {
+    public void mskListClustersTest() throws Exception {
 
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClusters", new Processor() {

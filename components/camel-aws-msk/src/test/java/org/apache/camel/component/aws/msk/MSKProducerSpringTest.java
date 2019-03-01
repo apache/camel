@@ -36,7 +36,7 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
     private MockEndpoint mock;
 
     @Test
-    public void kmsListKeysTest() throws Exception {
+    public void mskListKeysTest() throws Exception {
 
         mock.expectedMessageCount(1);
         Exchange exchange = template.request("direct:listClusters", new Processor() {

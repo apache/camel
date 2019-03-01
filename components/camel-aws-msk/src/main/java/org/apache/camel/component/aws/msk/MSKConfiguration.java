@@ -95,7 +95,7 @@ public class MSKConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the KMS client
+     * To define a proxy host when instantiating the MSK client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -106,7 +106,7 @@ public class MSKConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the KMS client
+     * To define a proxy port when instantiating the MSK client
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -117,7 +117,7 @@ public class MSKConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which KMS client needs to work
+     * The region in which MSK client needs to work
      */
     public void setRegion(String region) {
         this.region = region;
