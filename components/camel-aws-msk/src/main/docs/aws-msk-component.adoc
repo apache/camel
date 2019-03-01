@@ -107,12 +107,12 @@ The component supports 12 options, which are listed below.
 | *camel.component.aws-msk.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-msk.configuration.msk-client* | To use a existing configured AWS MSK as client |  | AWSKafka
 | *camel.component.aws-msk.configuration.operation* | The operation to perform |  | MSKOperations
-| *camel.component.aws-msk.configuration.proxy-host* | To define a proxy host when instantiating the KMS client |  | String
-| *camel.component.aws-msk.configuration.proxy-port* | To define a proxy port when instantiating the KMS client |  | Integer
-| *camel.component.aws-msk.configuration.region* | The region in which KMS client needs to work |  | String
+| *camel.component.aws-msk.configuration.proxy-host* | To define a proxy host when instantiating the MSK client |  | String
+| *camel.component.aws-msk.configuration.proxy-port* | To define a proxy port when instantiating the MSK client |  | Integer
+| *camel.component.aws-msk.configuration.region* | The region in which MSK client needs to work |  | String
 | *camel.component.aws-msk.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-msk.enabled* | Whether to enable auto configuration of the aws-msk component. This is enabled by default. |  | Boolean
-| *camel.component.aws-msk.region* | The region in which KMS client needs to work |  | String
+| *camel.component.aws-msk.region* | The region in which MSK client needs to work |  | String
 | *camel.component.aws-msk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-msk.secret-key* | Amazon AWS Secret Key |  | String
 |===

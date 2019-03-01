@@ -111,7 +111,7 @@ The component supports 12 options, which are listed below.
 | *camel.component.aws-eks.configuration.region* | The region in which EKS client needs to work |  | String
 | *camel.component.aws-eks.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-eks.enabled* | Whether to enable auto configuration of the aws-eks component. This is enabled by default. |  | Boolean
-| *camel.component.aws-eks.region* | The region in which KMS client needs to work |  | String
+| *camel.component.aws-eks.region* | The region in which EKS client needs to work |  | String
 | *camel.component.aws-eks.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-eks.secret-key* | Amazon AWS Secret Key |  | String
 |===
