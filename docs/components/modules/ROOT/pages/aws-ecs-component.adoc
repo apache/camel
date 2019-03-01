@@ -33,10 +33,10 @@ The AWS ECS component supports 5 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | The AWS KMS default configuration |  | ECSConfiguration
+| *configuration* (advanced) | The AWS ECS default configuration |  | ECSConfiguration
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
-| *region* (producer) | The region in which KMS client needs to work |  | String
+| *region* (producer) | The region in which ECS client needs to work |  | String
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -88,7 +88,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-aws-starter</artifactId>
+  <artifactId>camel-aws-ecs-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -111,7 +111,7 @@ The component supports 12 options, which are listed below.
 | *camel.component.aws-ecs.configuration.region* | The region in which ECS client needs to work |  | String
 | *camel.component.aws-ecs.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-ecs.enabled* | Whether to enable auto configuration of the aws-ecs component. This is enabled by default. |  | Boolean
-| *camel.component.aws-ecs.region* | The region in which KMS client needs to work |  | String
+| *camel.component.aws-ecs.region* | The region in which ECS client needs to work |  | String
 | *camel.component.aws-ecs.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-ecs.secret-key* | Amazon AWS Secret Key |  | String
 |===
@@ -143,7 +143,7 @@ the https://aws.amazon.com/ecs/[Amazon ECS] service.
 
 #### ECS Producer operations
 
-Camel-AWS EKS component provides the following operation on the producer side:
+Camel-AWS ECS component provides the following operation on the producer side:
 
 - listClusters
 - createCluster
@@ -160,12 +160,12 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws</artifactId>
+    <artifactId>camel-aws-ecs</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
+where `${camel-version}` must be replaced by the actual version of Camel
 (3.0.0 or higher).
 
 ### See Also
