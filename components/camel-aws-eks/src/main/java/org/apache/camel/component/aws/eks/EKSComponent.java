@@ -78,7 +78,7 @@ public class EKSComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS KMS default configuration
+     * The AWS EKS default configuration
      */
     public void setConfiguration(EKSConfiguration configuration) {
         this.configuration = configuration;
@@ -111,7 +111,7 @@ public class EKSComponent extends DefaultComponent {
     }
 
     /**
-     * The region in which KMS client needs to work
+     * The region in which EKS client needs to work
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
