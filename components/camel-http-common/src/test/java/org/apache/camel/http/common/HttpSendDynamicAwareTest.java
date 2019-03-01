@@ -75,7 +75,7 @@ public class HttpSendDynamicAwareTest {
     @Test
     public void testHttpsPort443ParseUri() {
         this.httpSendDynamicAware.setScheme("https");
-        DynamicAwareEntry entry = new DynamicAwareEntry("https://localhost:443/test", null, null,null);
+        DynamicAwareEntry entry = new DynamicAwareEntry("https://localhost:443/test", null, null, null);
         String[] result = httpSendDynamicAware.parseUri(entry);
         assertEquals("Parse should not port if https and port 443 specified", "localhost", result[0]);
     }
