@@ -108,9 +108,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     <T extends CamelContext> T adapt(Class<T> type);
 
-    // TODO: Document these methods
+    /**
+     * Gets the extension of the given type.
+     *
+     * @param type  the type of the extension
+     * @return the extension, or <tt>null</tt> if no extension has been installed.
+     */
     <T> T getExtension(Class<T> type);
 
+    /**
+     * Allows to install custom extensions to the Camel context.
+     *
+     * @param type   the type of the extension
+     * @param module the instance of the extension
+     */
     <T> void setExtension(Class<T> type, T module);
 
     /**
