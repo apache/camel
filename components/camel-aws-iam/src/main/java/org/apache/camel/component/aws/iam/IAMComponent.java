@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * For working with Amazon KMS.
+ * For working with Amazon IAM.
  */
 @Component("aws-iam")
 public class IAMComponent extends DefaultComponent {
