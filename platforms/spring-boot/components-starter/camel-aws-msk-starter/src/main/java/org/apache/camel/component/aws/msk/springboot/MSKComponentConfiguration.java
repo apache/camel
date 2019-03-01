@@ -39,7 +39,7 @@ public class MSKComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * The AWS KMS default configuration
+     * The AWS MSK default configuration
      */
     private MSKConfigurationNestedConfiguration configuration;
     /**
@@ -51,7 +51,7 @@ public class MSKComponentConfiguration
      */
     private String secretKey;
     /**
-     * The region in which KMS client needs to work
+     * The region in which MSK client needs to work
      */
     private String region;
     /**
@@ -122,15 +122,15 @@ public class MSKComponentConfiguration
          */
         private MSKOperations operation;
         /**
-         * To define a proxy host when instantiating the KMS client
+         * To define a proxy host when instantiating the MSK client
          */
         private String proxyHost;
         /**
-         * To define a proxy port when instantiating the KMS client
+         * To define a proxy port when instantiating the MSK client
          */
         private Integer proxyPort;
         /**
-         * The region in which KMS client needs to work
+         * The region in which MSK client needs to work
          */
         private String region;
 
