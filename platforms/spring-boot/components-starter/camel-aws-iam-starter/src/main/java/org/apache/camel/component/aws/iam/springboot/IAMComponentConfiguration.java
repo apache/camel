@@ -122,15 +122,15 @@ public class IAMComponentConfiguration
          */
         private IAMOperations operation;
         /**
-         * To define a proxy host when instantiating the KMS client
+         * To define a proxy host when instantiating the IAM client
          */
         private String proxyHost;
         /**
-         * To define a proxy port when instantiating the KMS client
+         * To define a proxy port when instantiating the IAM client
          */
         private Integer proxyPort;
         /**
-         * The region in which KMS client needs to work
+         * The region in which IAM client needs to work
          */
         private String region;
 
