@@ -80,7 +80,7 @@ public class ECSProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (ecsProducerToString == null) {
-            ecsProducerToString = "KMSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            ecsProducerToString = "ECSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return ecsProducerToString;
     }

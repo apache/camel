@@ -78,7 +78,7 @@ public class ECSComponent extends DefaultComponent {
     }
 
     /**
-     * The AWS KMS default configuration
+     * The AWS ECS default configuration
      */
     public void setConfiguration(ECSConfiguration configuration) {
         this.configuration = configuration;
