@@ -65,7 +65,7 @@ public class IAMEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        iamClient = configuration.getIamClient() != null ? configuration.getIamClient() : createKMSClient();
+        iamClient = configuration.getIamClient() != null ? configuration.getIamClient() : createIAMClient();
     }
 
     @Override
@@ -86,7 +86,7 @@ public class IAMEndpoint extends ScheduledPollEndpoint {
         return iamClient;
     }
 
-    AmazonIdentityManagement createKMSClient() {
+    AmazonIdentityManagement createIAMClient() {
         AmazonIdentityManagement client = null;
         ClientConfiguration clientConfiguration = null;
         AmazonIdentityManagementClientBuilder clientBuilder = null;

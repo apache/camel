@@ -95,7 +95,7 @@ public class IAMConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy host when instantiating the KMS client
+     * To define a proxy host when instantiating the IAM client
      */
     public void setProxyHost(String proxyHost) {
         this.proxyHost = proxyHost;
@@ -106,7 +106,7 @@ public class IAMConfiguration implements Cloneable {
     }
 
     /**
-     * To define a proxy port when instantiating the KMS client
+     * To define a proxy port when instantiating the IAM client
      */
     public void setProxyPort(Integer proxyPort) {
         this.proxyPort = proxyPort;
@@ -117,7 +117,7 @@ public class IAMConfiguration implements Cloneable {
     }
 
     /**
-     * The region in which KMS client needs to work
+     * The region in which IAM client needs to work
      */
     public void setRegion(String region) {
         this.region = region;
