@@ -6004,5 +6004,12 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+      <id>faster-builds</id>
+      <properties>
+        <cxf-codegen-plugin-version>3.1.1-SNAPSHOT</cxf-codegen-plugin-version>
+        <maven-bundle-plugin-version>4.1.1-SNAPSHOT</maven-bundle-plugin-version>
+      </properties>
+    </profile>
   </profiles>
 </project>
