@@ -111,7 +111,7 @@ public class ECSComponent extends DefaultComponent {
     }
 
     /**
-     * The region in which KMS client needs to work
+     * The region in which ECS client needs to work
      */
     public void setRegion(String region) {
         configuration.setRegion(region);
