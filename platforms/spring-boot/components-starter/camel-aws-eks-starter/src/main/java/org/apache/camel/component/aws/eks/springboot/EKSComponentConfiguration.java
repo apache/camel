@@ -39,7 +39,7 @@ public class EKSComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * The AWS KMS default configuration
+     * The AWS EKS default configuration
      */
     private EKSConfigurationNestedConfiguration configuration;
     /**
@@ -51,7 +51,7 @@ public class EKSComponentConfiguration
      */
     private String secretKey;
     /**
-     * The region in which KMS client needs to work
+     * The region in which EKS client needs to work
      */
     private String region;
     /**
