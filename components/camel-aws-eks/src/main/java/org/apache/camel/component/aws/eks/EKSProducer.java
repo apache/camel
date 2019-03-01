@@ -81,7 +81,7 @@ public class EKSProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (eksProducerToString == null) {
-            eksProducerToString = "KMSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            eksProducerToString = "EKSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
         }
         return eksProducerToString;
     }
