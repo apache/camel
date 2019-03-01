@@ -39,7 +39,7 @@ public class ECSComponentConfiguration
      */
     private Boolean enabled;
     /**
-     * The AWS KMS default configuration
+     * The AWS ECS default configuration
      */
     private ECSConfigurationNestedConfiguration configuration;
     /**
