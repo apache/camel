@@ -88,7 +88,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-aws-starter</artifactId>
+  <artifactId>camel-aws-ec2-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -110,7 +110,7 @@ The component supports 12 options, which are listed below.
 | *camel.component.aws-ec2.configuration.proxy-port* | To define a proxy port when instantiating the EC2 client |  | Integer
 | *camel.component.aws-ec2.configuration.region* | The region in which EC2 client needs to work |  | String
 | *camel.component.aws-ec2.configuration.secret-key* | Amazon AWS Secret Key |  | String
-| *camel.component.aws-ec2.enabled* | Enable aws-ec2 component | true | Boolean
+| *camel.component.aws-ec2.enabled* | Whether to enable auto configuration of the aws-ec2 component. This is enabled by default. |  | Boolean
 | *camel.component.aws-ec2.region* | The region in which EC2 client needs to work |  | String
 | *camel.component.aws-ec2.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-ec2.secret-key* | Amazon AWS Secret Key |  | String
@@ -166,12 +166,12 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws</artifactId>
+    <artifactId>camel-aws-ec2</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
+where `${camel-version}` must be replaced by the actual version of Camel
 (2.16 or higher).
 
 ### See Also

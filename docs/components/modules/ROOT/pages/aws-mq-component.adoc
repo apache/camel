@@ -88,7 +88,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 <dependency>
   <groupId>org.apache.camel</groupId>
-  <artifactId>camel-aws-starter</artifactId>
+  <artifactId>camel-aws-mq-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
 </dependency>
@@ -120,11 +120,11 @@ The component supports 12 options, which are listed below.
 
 
 
-Required EC2 component options
+Required MQ component options
 
-You have to provide the amazonEc2Client in the
+You have to provide the amazonMqClient in the
 Registry or your accessKey and secretKey to access
-the https://aws.amazon.com/it/ec2/[Amazon EC2] service.
+the https://aws.amazon.com/it/mq/[Amazon MQ] service.
 
 ### Usage
 
@@ -165,12 +165,12 @@ Maven users will need to add the following dependency to their pom.xml.
 ---------------------------------------
 <dependency>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-aws</artifactId>
+    <artifactId>camel-aws-mq</artifactId>
     <version>${camel-version}</version>
 </dependency>
 ---------------------------------------
 
-where `${camel-version`} must be replaced by the actual version of Camel
+where `${camel-version}` must be replaced by the actual version of Camel
 (2.16 or higher).
 
 ### See Also
