@@ -34,6 +34,8 @@
         <include>org.apache.camel:camel-base</include>
         <include>org.apache.camel:camel-support</include>
         <include>org.apache.camel:camel-core</include>
+        <include>org.apache.camel:camel-core-osgi</include>
+        <include>org.apache.camel:camel-core-xml</include>
 
         <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
@@ -95,8 +97,6 @@
         <include>org.apache.camel:camel-consul</include>
         <include>org.apache.camel:camel-controlbus</include>
         <include>org.apache.camel:camel-corda</include>
-        <include>org.apache.camel:camel-core-osgi</include>
-        <include>org.apache.camel:camel-core-xml</include>
         <include>org.apache.camel:camel-couchbase</include>
         <include>org.apache.camel:camel-couchdb</include>
         <include>org.apache.camel:camel-crypto</include>
