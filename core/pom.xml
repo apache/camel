@@ -41,6 +41,8 @@
     <module>camel-management-impl</module>
     <module>camel-base</module>
     <module>camel-core</module>
+    <module>camel-core-osgi</module>
+    <module>camel-core-xml</module>
   </modules>
 
   <build>

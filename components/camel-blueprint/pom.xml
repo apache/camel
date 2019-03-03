@@ -310,7 +310,7 @@
                         <include name="org/apache/camel/blueprint/package-info.java"/>
                         <include name="org/apache/camel/util/blueprint/**/*.java"/>
                       </fileset>
-                      <fileset dir="${basedir}/../camel-core-xml/src/main/java">
+                      <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java">
                         <include name="org/apache/camel/core/xml/*.java"/>
                         <include name="org/apache/camel/core/xml/util/**/*.java"/>
                       </fileset>
@@ -340,8 +340,8 @@
                     <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
                     <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
                          update="true">
-                      <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*"/>
-                      <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*"/>
+                      <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java" includes="**/*"/>
+                      <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java" includes="**/*"/>
                       <fileset dir="${basedir}/src/main/java" includes="**/*"/>
                     </jar>
                   </target>
@@ -484,8 +484,8 @@
                     <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
                     <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
                          update="true">
-                      <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*"/>
-                      <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*"/>
+                      <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java" includes="**/*"/>
+                      <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java" includes="**/*"/>
                     </jar>
                   </target>
                 </configuration>

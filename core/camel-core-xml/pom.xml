@@ -22,75 +22,41 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>components</artifactId>
+    <artifactId>core</artifactId>
     <version>3.0.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-core-osgi</artifactId>
-  <name>Camel :: Core OSGi</name>
-  <packaging>jar</packaging>
-  <description>Using Camel with OSGi</description>
-  
+  <artifactId>camel-core-xml</artifactId>
+  <name>Camel :: Core XML</name>
+  <description>Camel Core XML support</description>
+
   <properties>
-    <camel.osgi.import>
-      org.osgi.service.event;resolution:=optional,
-      *
-    </camel.osgi.import>
-    <camel.osgi.provide.capability>
-      osgi.extender; osgi.extender="org.apache.camel"; uses:="org.apache.camel.core.osgi.impl";
-      version:Version="$(version;==;${camel.osgi.version.clean})"
-    </camel.osgi.provide.capability>
-    <camel.osgi.activator>
-      org.apache.camel.core.osgi.impl.Activator
-    </camel.osgi.activator>
   </properties>
 
   <dependencies>
-
-    <!-- core required: org.apache.camel.impl, org.apache.camel.impl.converter -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>osgi.cmpn</artifactId>
-      <scope>provided</scope>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>spi-annotations</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>osgi.core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- for testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-mock</artifactId>
-      <version>1.2.1</version>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj-version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
- 
   </dependencies>
-
 </project>
