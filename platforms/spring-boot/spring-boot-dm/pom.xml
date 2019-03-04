@@ -105,7 +105,7 @@
           <quiet>true</quiet>
           <bottom>Apache Camel</bottom>
           <detectOfflineLinks>false</detectOfflineLinks>
-          <javadocVersion>${jdk.version}</javadocVersion>
+          <javadocVersion>1.8.0</javadocVersion>
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>

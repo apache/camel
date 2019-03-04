@@ -106,8 +106,9 @@
               <source>${jdk.version}</source>
               <quiet>true</quiet>
               <detectOfflineLinks>false</detectOfflineLinks>
-              <javadocVersion>${jdk.version}</javadocVersion>
+              <javadocVersion>1.8.0</javadocVersion>
               <encoding>UTF-8</encoding>
+              <doclint>none</doclint>
             </configuration>
           </execution>
         </executions>
