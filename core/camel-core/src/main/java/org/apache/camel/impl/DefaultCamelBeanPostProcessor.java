@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.apache.camel.BeanInject;
+import org.apache.camel.BindRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
@@ -31,6 +32,8 @@ import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 /**
  * A bean post processor which implements the <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
@@ -83,6 +86,16 @@ public class DefaultCamelBeanPostProcessor {
 
         injectFields(bean, beanName);
         injectMethods(bean, beanName);
+
+        // the bean may also need to be registered into the registry
+        BindRegistry bind = bean.getClass().getAnnotation(BindRegistry.class);
+        if (bind != null) {
+            String name = bind.name();
+            if (isEmpty(name)) {
+                name = bean.getClass().getSimpleName();
+            }
+            camelContext.getRegistry().bind(name, bean);
+        }
 
         if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
             CamelContextAware contextAware = (CamelContextAware)bean;
@@ -189,8 +202,23 @@ public class DefaultCamelBeanPostProcessor {
                 if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
                     injectField(field, produce.uri(), produce.ref(), produce.property(), bean, beanName, produce.binding());
                 }
+
+                BindRegistry bind = field.getAnnotation(BindRegistry.class);
+                if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
+                    bindRegistry(field, bind.name(), bean, beanName);
+                }
             }
         });
+    }
+
+    private void bindRegistry(Field field, String name, Object bean, String beanName) {
+        if (isEmpty(name)) {
+            name = field.getName();
+        }
+        Object value = ReflectionHelper.getField(field, bean);
+        if (value != null) {
+            camelContext.getRegistry().bind(name, value);
+        }
     }
 
     public void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
