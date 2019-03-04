@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
+import org.apache.camel.BindRegistry;
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Produce;
@@ -38,6 +40,14 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("seda:input", "Hello World");
         assertMockEndpointsSatisfied();
+
+        // should register the beans in the registry via @BindRegistry
+        Object bean = context.getRegistry().lookupByName("myCoolBean");
+        assertNotNull(bean);
+        assertIsInstanceOf(MySerialBean.class, bean);
+        bean = context.getRegistry().lookupByName("FooService");
+        assertNotNull(bean);
+        assertIsInstanceOf(FooService.class, bean);
     }
 
     @Override
@@ -47,12 +57,15 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
         postProcessor = new DefaultCamelBeanPostProcessor(context);
     }
 
+    @BindRegistry
     public class FooService {
 
         private String fooEndpoint;
         private String barEndpoint;
         @Produce
         private ProducerTemplate bar;
+        @BindRegistry(name = "myCoolBean")
+        private MySerialBean myBean = new MySerialBean();
 
         public String getFooEndpoint() {
             return fooEndpoint;

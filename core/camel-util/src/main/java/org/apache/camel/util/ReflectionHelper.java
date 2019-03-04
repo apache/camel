@@ -157,4 +157,22 @@ public final class ReflectionHelper {
         }
     }
 
+    public static Object getField(Field f, Object instance) {
+        try {
+            boolean oldAccessible = f.isAccessible();
+            boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
+            if (shouldSetAccessible) {
+                f.setAccessible(true);
+            }
+            Object answer = f.get(instance);
+            if (shouldSetAccessible) {
+                f.setAccessible(oldAccessible);
+            }
+            return answer;
+        } catch (Exception ex) {
+            // ignore
+        }
+        return null;
+    }
+
 }
