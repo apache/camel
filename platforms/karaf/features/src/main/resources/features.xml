@@ -2126,6 +2126,10 @@
     <feature version='${project.version}'>camel-script</feature>
     <bundle>mvn:org.codehaus.groovy/groovy/${groovy-version}</bundle>
     <bundle>mvn:org.codehaus.groovy/groovy-jsr223/${groovy-version}</bundle>
+    <bundle dependency='true'>mvn:org.ow2.asm/asm-commons/${asm-version}</bundle>
+    <bundle dependency='true'>mvn:org.ow2.asm/asm-tree/${asm-version}</bundle>
+    <bundle dependency='true'>mvn:org.ow2.asm/asm/${asm-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.aries/org.apache.aries.util/${aries-util-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/${aries-spifly-version}</bundle>
   </feature>
   <feature name='camel-script' version='${project.version}' start-level='50'>
