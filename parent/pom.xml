@@ -5514,6 +5514,7 @@
         <extensions>false</extensions>
         <configuration>
           <supportIncrementalBuild>true</supportIncrementalBuild>
+          <noWarningProjectTypes>pom</noWarningProjectTypes>
           <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
           <instructions>
             <Bundle-Name>${project.artifactId}</Bundle-Name>
