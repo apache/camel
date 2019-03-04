@@ -18,26 +18,36 @@ package org.apache.camel.main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Component;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +80,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected int durationHitExitCode = DEFAULT_EXIT_CODE;
     protected ReloadStrategy reloadStrategy;
     protected String propertyPlaceholderLocations;
+    protected boolean autoConfigurationEnabled = true;
 
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
@@ -464,6 +475,29 @@ public abstract class MainSupport extends ServiceSupport {
         this.propertyPlaceholderLocations = location;
     }
 
+    public boolean isAutoConfigurationEnabled() {
+        return autoConfigurationEnabled;
+    }
+
+    /**
+     * Whether auto configuration of components/dataformats/languages is enabled or not.
+     * When enabled the configuration parameters are loaded from the properties component
+     * and configured as defaults (similar to spring-boot auto-configuration). You can prefix
+     * the parameters in the properties file with:
+     * - camel.component.name.option1=value1
+     * - camel.component.name.option2=value2
+     * - camel.dataformat.name.option1=value1
+     * - camel.dataformat.name.option2=value2
+     * - camel.language.name.option1=value1
+     * - camel.language.name.option2=value2
+     * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
+     * <p/>
+     * This option is default enabled.
+     */
+    public void setAutoConfigurationEnabled(boolean autoConfigurationEnabled) {
+        this.autoConfigurationEnabled = autoConfigurationEnabled;
+    }
+
     public boolean isTrace() {
         return trace;
     }
@@ -632,6 +666,12 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
+        // conventional configuration via properties to allow configuring options on
+        // component, dataformat, and languages (like spring-boot auto-configuration)
+        if (autoConfigurationEnabled) {
+            autoConfigurationFromProperties(camelContext);
+        }
+
         // try to load the route builders from the routeBuilderClasses
         loadRouteBuilders(camelContext);
         for (RouteBuilder routeBuilder : routeBuilders) {
@@ -642,6 +682,62 @@ public abstract class MainSupport extends ServiceSupport {
         // allow to do configuration before its started
         for (MainListener listener : listeners) {
             listener.configure(camelContext);
+        }
+    }
+
+    protected void autoConfigurationFromProperties(CamelContext camelContext) throws Exception {
+        // load properties
+        Properties prop = camelContext.getPropertiesComponent().loadProperties();
+
+        Map<Object, Map<String, Object>> properties = new LinkedHashMap<>();
+
+        for (String key : prop.stringPropertyNames()) {
+            int dot = key.indexOf(".", 16);
+            if (key.startsWith("camel.component.") && dot > 0) {
+                // grab component name
+                String name = key.substring(16, dot);
+                Component component = camelContext.getComponent(name);
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(dot + 1);
+                Map<String, Object> values = properties.getOrDefault(component, new LinkedHashMap<>());
+                values.put(option, value);
+                properties.put(component, values);
+            }
+            dot = key.indexOf(".", 17);
+            if (key.startsWith("camel.dataformat.") && dot > 0) {
+                // grab component name
+                String name = key.substring(17, dot);
+                DataFormat dataformat = camelContext.resolveDataFormat(name);
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(dot + 1);
+                Map<String, Object> values = properties.getOrDefault(dataformat, new LinkedHashMap<>());
+                values.put(option, value);
+                properties.put(dataformat, values);
+            }
+            dot = key.indexOf(".", 15);
+            if (key.startsWith("camel.language.") && dot > 0) {
+                // grab component name
+                String name = key.substring(15, dot);
+                Language language = camelContext.resolveLanguage(name);
+                // grab the value
+                String value = prop.getProperty(key);
+                String option = key.substring(dot + 1);
+                Map<String, Object> values = properties.getOrDefault(language, new LinkedHashMap<>());
+                values.put(option, value);
+                properties.put(language, values);
+            }
+        }
+
+        if (!properties.isEmpty()) {
+            long total = properties.values().stream().mapToLong(Map::size).sum();
+            LOG.info("Auto configuring {} components/dataformat/languages from loaded properties: {}", properties.size(), total);
+        }
+
+        for (Object obj : properties.keySet()) {
+            Map<String, Object> values = properties.get(obj);
+            setCamelProperties(camelContext, obj, values, true);
         }
     }
 
@@ -657,6 +753,40 @@ public abstract class MainSupport extends ServiceSupport {
             existing = routeBuilder.getName();
         }
         setRouteBuilderClasses(existing);
+    }
+
+    private static boolean setCamelProperties(CamelContext context, Object target, Map<String, Object> properties, boolean failIfNotSet) throws Exception {
+        ObjectHelper.notNull(context, "context");
+        ObjectHelper.notNull(target, "target");
+        ObjectHelper.notNull(properties, "properties");
+        boolean rc = false;
+        Iterator it = properties.entrySet().iterator();
+
+        while(it.hasNext()) {
+            Map.Entry<String, Object> entry = (Map.Entry)it.next();
+            String name = entry.getKey();
+            Object value = entry.getValue();
+            String stringValue = value != null ? value.toString() : null;
+            boolean hit = false;
+            if (EndpointHelper.isReferenceParameter(stringValue)) {
+                hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, (Object)null, stringValue, true);
+            } else if (value != null) {
+                try {
+                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value);
+                } catch (IllegalArgumentException var12) {
+                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, (Object)null, stringValue, true);
+                }
+            }
+
+            if (hit) {
+                it.remove();
+                rc = true;
+            } else if (failIfNotSet) {
+                throw new IllegalArgumentException("Cannot configure option [" + name + "] with value [" + stringValue + "] as the bean class [" + ObjectHelper.classCanonicalName(target) + "] has no suitable setter method, or not possible to lookup a bean with the id [" + stringValue + "] in Camel registry");
+            }
+        }
+
+        return rc;
     }
 
     public abstract class Option {

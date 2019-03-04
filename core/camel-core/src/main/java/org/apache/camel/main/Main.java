@@ -25,7 +25,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 
 /**
- * A command line tool for booting up a CamelContext
+ * A Main class for booting up Camel in standalone mode.
  */
 public class Main extends MainSupport {
 

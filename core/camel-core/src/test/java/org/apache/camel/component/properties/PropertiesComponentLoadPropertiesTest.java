@@ -51,7 +51,7 @@ public class PropertiesComponentLoadPropertiesTest extends ContextTestSupport {
         Properties prop = pc.loadProperties("application.properties", "example.properties");
 
         assertNotNull(prop);
-        assertEquals(2, prop.size());
+        assertEquals(5, prop.size());
 
         assertEquals("World", prop.getProperty("hello"));
         assertEquals("2000", prop.getProperty("millisecs"));
