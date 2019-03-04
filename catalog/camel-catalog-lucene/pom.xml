@@ -36,6 +36,9 @@
     <firstVersion>2.17.0</firstVersion>
     <label>tooling</label>
 
+    <camel.osgi.import.additional>
+      org.apache.lucene.*;version="${lucene-version-range}"
+    </camel.osgi.import.additional>
     <camel.osgi.export.pkg>
       org.apache.camel.catalog.lucene
     </camel.osgi.export.pkg>

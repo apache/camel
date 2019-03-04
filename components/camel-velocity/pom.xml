@@ -33,6 +33,9 @@
     <description>Camel Velocity support</description>
 
     <properties>
+	<camel.osgi.import.additional>
+		org.apache.velocity.*;version="[1.6.2,2)"
+	</camel.osgi.import.additional>
     </properties>
 
     <dependencies>

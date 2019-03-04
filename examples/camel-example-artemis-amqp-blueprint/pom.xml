@@ -36,6 +36,9 @@
 
   <properties>
     <category>Messaging</category>
+    <camel.osgi.import.additional>
+      org.apache.qpid.*;version="[0.20,1)",
+    </camel.osgi.import.additional>
   </properties>
 
   <dependencies>

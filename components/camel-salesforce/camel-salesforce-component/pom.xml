@@ -34,6 +34,11 @@
   <description>Camel Salesforce support</description>
 
   <properties>
+    <camel.osgi.import.additional>
+      com.thoughtworks.xstream.*;version="[1.4.7,2)",
+      org.eclipse.jetty.*;version="[9.3,10)",
+      org.mortbay.cometd.*;version="[6.1,7)"
+    </camel.osgi.import.additional>
     <camel.osgi.private.pkg>org.apache.camel.component.salesforce.internal.*</camel.osgi.private.pkg>
     <salesforce.component.root>..</salesforce.component.root>
   </properties>

@@ -32,6 +32,9 @@
   <description>Camel FlatPack support</description>
 
   <properties>
+    <camel.osgi.import.additional>
+      net.sf.flatpack.*;version="[3.1.1,4)"
+    </camel.osgi.import.additional>
   </properties>
 
   <dependencies>

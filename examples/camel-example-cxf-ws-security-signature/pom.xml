@@ -35,6 +35,9 @@
   <properties>
     <category>WebService</category>
     <title>CXF using WS-Security Signature</title>
+    <camel.osgi.import.additional>
+      org.apache.cxf.*;version="${cxf-version-range}"
+    </camel.osgi.import.additional>
   </properties>
 
   <dependencies>

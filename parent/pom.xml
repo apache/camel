@@ -732,30 +732,6 @@
     </camel.osgi.import.strict.version>
     <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
     <camel.osgi.import.defaults>
-      !org.springframework.boot.*,
-      !org.springframework.context.annotation.*;resolution:=optional,
-      org.osgi.framework;version="[1.5,2)",
-      org.osgi.framework.wiring;version="[1.0,2)",
-      org.springframework.ws.*;version="[2,3)",
-      org.springframework.xml.*;version="[2,3)",
-      org.springframework.*;version="${spring-version-range}",
-      org.apache.cxf.*;version="${cxf-version-range}",
-      org.apache.qpid.*;version="[0.20,1)",
-      org.apache.abdera.*;version="[0.4,2)",
-      org.apache.commons.httpclient.*;version="[3.1,4.0)",
-      org.apache.velocity.*;version="[1.6.2,2)",
-      org.eclipse.jetty.*;version="[9.3,10)",
-      com.thoughtworks.xstream.*;version="[1.4.7,2)",
-      org.antlr.stringtemplate.*;version="[3.0,4)",
-      org.ccil.cowan.tagsoup.*;version="[1.2,2)",
-      org.mortbay.cometd.*;version="[6.1,7)",
-      org.slf4j.*;version="[1.7,2)",
-      net.sf.flatpack.*;version="[3.1.1,4)",
-      net.sf.saxon.*;version="[9.9.0,10)",
-      freemarker.*;version="[2.3.15,3)",
-      javax.persistence.*;version="[1.1,3)",
-      org.apache.lucene.*;version="${lucene-version-range}",
-      org.apache.solr.*;version="${solr-version-range}",
     </camel.osgi.import.defaults>
     <camel.osgi.import.before.defaults/>
     <camel.osgi.import.additional/>

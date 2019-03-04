@@ -33,6 +33,9 @@
   <properties>
     <java.awt.headless>true</java.awt.headless>
     <solr-test-framework-jetty-version>9.4.11.v20180605</solr-test-framework-jetty-version>
+    <camel.osgi.import.additional>
+      org.apache.solr.*;version="${solr-version-range}"
+    </camel.osgi.import.additional>
   </properties>
 
   <dependencies>
