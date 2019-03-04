@@ -30,12 +30,10 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.TimeoutMap;
 import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
-import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -269,8 +267,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         // timeout map to use for purging messages which have timed out, while waiting for an expected reply
         // when doing request/reply over JMS
         log.trace("Using timeout checker interval with {} millis", endpoint.getRequestTimeoutCheckerInterval());
-        TimeoutMap<String, ReplyHandler> timeoutMap = new DefaultTimeoutMap<>(scheduledExecutorService, endpoint.getRequestTimeoutCheckerInterval());
-        correlation = new CorrelationTimeoutMap(timeoutMap, executorService);
+        correlation = new CorrelationTimeoutMap(scheduledExecutorService, endpoint.getRequestTimeoutCheckerInterval(), executorService);
         ServiceHelper.startService(correlation);
 
         // create JMS listener and start it
