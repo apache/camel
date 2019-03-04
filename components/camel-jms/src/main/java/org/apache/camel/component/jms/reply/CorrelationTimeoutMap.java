@@ -22,6 +22,8 @@ import java.util.function.BiConsumer;
 
 import org.apache.camel.support.DefaultTimeoutMap;
 
+import static org.apache.camel.TimeoutMap.Listener.Type.*;
+
 /**
  * A {@link org.apache.camel.TimeoutMap} which is used to track reply messages which
  * has been timed out, and thus should trigger the waiting {@link org.apache.camel.Exchange} to
@@ -46,16 +48,13 @@ class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
     }
 
     private void listener(Listener.Type type, String key, ReplyHandler handler) {
-        switch (type) {
-            case Put:
-                log.trace("Added correlationID: {}", key);
-                break;
-            case Remove:
-                log.trace("Removed correlationID: {}", key);
-                break;
-            case Evict:
-                evictionTask.accept(handler, key);
-                log.trace("Evicted correlationID: {}", key);
+        if (type == Put) {
+            log.trace("Added correlationID: {}", key);
+        } else if (type == Remove) {
+            log.trace("Removed correlationID: {}", key);
+        } else if (type == Evict) {
+            evictionTask.accept(handler, key);
+            log.trace("Evicted correlationID: {}", key);
         }
     }
 
