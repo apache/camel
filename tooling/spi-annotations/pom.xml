@@ -34,6 +34,9 @@
   <description>Annotations for Camel Endpoint developers</description>
 
   <properties>
+    <camel.osgi.import.pkg>
+      *
+    </camel.osgi.import.pkg>
     <camel.osgi.export.pkg>
       org.apache.camel.spi;
       org.apache.camel.spi.annotations

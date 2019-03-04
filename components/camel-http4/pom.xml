@@ -34,7 +34,6 @@
   <properties>
     <!-- CAMEL-7010 Now we move to HttpClient 4.3 API -->
     <camel.osgi.import.before.defaults>
-      javax.servlet.*;version="${servlet-version-range}",
       org.apache.http.*;version="[4.3,5)"
     </camel.osgi.import.before.defaults>
   </properties>

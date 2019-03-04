@@ -33,6 +33,7 @@
 
   <properties>
     <camel.osgi.import.before.defaults>
+      org.eclipse.jetty.*;version="[9.3,10)",
       javax.servlet.*;version="${servlet-version-range}"
     </camel.osgi.import.before.defaults>
   </properties>

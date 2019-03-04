@@ -37,6 +37,9 @@
     <category>EIP</category>
     <title>Loan Broker WebService</title>
 
+    <camel.osgi.import.additional>
+      org.apache.cxf.*;version="${cxf-version-range}"
+    </camel.osgi.import.additional>
     <camel.osgi.export.pkg>
       org.apache.camel.loanbroker.*
     </camel.osgi.export.pkg>

@@ -35,7 +35,6 @@
   <properties>
     <camel.osgi.import>
       !org.apache.camel.ical.*,
-      net.fortuna.ical.*,
       ${camel.osgi.import.defaults},
       *
     </camel.osgi.import>

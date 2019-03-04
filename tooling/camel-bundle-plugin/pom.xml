@@ -30,6 +30,12 @@
   <name>Camel :: Maven Plugins :: Camel Bundle Plugin</name>
   <description>Camel maven-bundle-plugin (OSGi)</description>
 
+  <properties>
+    <camel.osgi.import.pkg>
+      *
+    </camel.osgi.import.pkg>
+  </properties>
+
   <dependencies>
 
     <dependency>

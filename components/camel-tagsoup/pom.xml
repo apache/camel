@@ -32,6 +32,9 @@
   <description>Camel TagSoup support</description>
 
   <properties>
+    <camel.osgi.import.additional>
+      org.ccil.cowan.tagsoup.*;version="[1.2,2)"
+    </camel.osgi.import.additional>
   </properties>
 
   <dependencies>

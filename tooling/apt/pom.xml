@@ -33,6 +33,9 @@
   <description>Processes Camel endpoint source code</description>
 
   <properties>
+    <camel.osgi.import.pkg>
+      *
+    </camel.osgi.import.pkg>
     <camel.osgi.export.pkg>
       !*
     </camel.osgi.export.pkg>

@@ -33,6 +33,9 @@
   <packaging>jar</packaging>
 
   <properties>
+    <camel.osgi.import.pkg>
+      *
+    </camel.osgi.import.pkg>
   </properties>
 
   <dependencies>

@@ -36,6 +36,9 @@
     <firstVersion>2.18.0</firstVersion>
     <label>tooling</label>
 
+    <camel.osgi.import.additional>
+      org.apache.commons.httpclient.*;version="[3.1,4.0)"
+    </camel.osgi.import.additional>
     <camel.osgi.export.pkg>
       org.apache.camel.catalog.maven
     </camel.osgi.export.pkg>

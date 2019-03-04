@@ -35,7 +35,6 @@
 
   <properties>
     <camel.osgi.import.before.defaults>
-      org.apache.camel.*
       com.google.common.base;version="[11,14)",
       org.apache.hadoop.conf;version="[1,2)"
     </camel.osgi.import.before.defaults>
