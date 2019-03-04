@@ -831,6 +831,16 @@
         <artifactId>camel-core</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core-osgi</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core-xml</artifactId>
+        <version>${project.version}</version>
+      </dependency>
 
       <!-- NOTE: auto-generated list of components when building camel catalog -->
       <!-- camel components: START -->
@@ -1132,16 +1142,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-corda</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-core-osgi</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-core-xml</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
