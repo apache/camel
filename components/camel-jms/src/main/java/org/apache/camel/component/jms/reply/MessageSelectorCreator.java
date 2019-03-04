@@ -22,6 +22,8 @@ import org.apache.camel.TimeoutMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.TimeoutMap.Listener.Type.*;
+
 /**
  * A creator which can build the JMS message selector query string to use
  * with a shared reply-to queue, so we can select the correct messages we expect as replies.
@@ -74,14 +76,10 @@ public class MessageSelectorCreator {
 
     // Changes to live correlation-ids invalidate existing message selector
     private void timeoutEvent(TimeoutMap.Listener.Type type, String cid) {
-        switch (type) {
-            case Remove:
-            case Evict:
-                correlationIds.remove(cid);
-                break;
-            case Put:
-            default:
-                correlationIds.add(cid);
+        if (type==Put) {
+            correlationIds.add(cid);
+        } else if (type == Remove || type == Evict) {
+            correlationIds.remove(cid);
         }
         dirty = true;
     }
