@@ -19,7 +19,9 @@ package org.apache.camel.main;
 import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.seda.SedaComponent;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,6 +44,13 @@ public class MainIoCTest extends Assert {
         main.getCamelTemplate().sendBody("direct:start", "<message>1</message>");
 
         endpoint.assertIsSatisfied();
+
+        // should also auto-configure direct/seda components from application.properties
+        SedaComponent seda = camelContext.getComponent("seda", SedaComponent.class);
+        assertEquals(500, seda.getQueueSize());
+        assertEquals(2, seda.getConcurrentConsumers());
+        DirectComponent direct = camelContext.getComponent("direct", DirectComponent.class);
+        assertEquals(1234, direct.getTimeout());
 
         main.stop();
     }

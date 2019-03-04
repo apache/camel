@@ -506,7 +506,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
                 }
             }
 
-            return  component;
+            return component;
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot auto create component: " + name, e);
         } finally {
