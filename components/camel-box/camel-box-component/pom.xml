@@ -57,10 +57,17 @@
       <version>${box-java-sdk-version}</version>
     </dependency>
 
+   <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient4-version}</version>
+   </dependency>
+
+
     <dependency>
-      <groupId>net.sourceforge.htmlunit</groupId>
-      <artifactId>htmlunit</artifactId>
-      <version>${htmlunit-version}</version>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>${jsoup-version}</version>
     </dependency>
 
     <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
