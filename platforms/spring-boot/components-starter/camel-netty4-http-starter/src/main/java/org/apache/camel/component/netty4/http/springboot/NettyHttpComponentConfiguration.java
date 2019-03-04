@@ -276,12 +276,6 @@ public class NettyHttpComponentConfiguration
          */
         private Integer maxHeaderSize = 8192;
         /**
-         * The maximum length of all headers. If the sum of the length of each
-         * header exceeds this value, a {@link
-         * io.netty.handler.codec.TooLongFrameException} will be raised.
-         */
-        private Boolean allowDefaultCodec = true;
-        /**
          * The status codes which are considered a success response. The values
          * are inclusive. Multiple ranges can be defined, separated by comma,
          * e.g. <tt>200-204,209,301-304</tt>. Each range must be a single number
@@ -412,14 +406,6 @@ public class NettyHttpComponentConfiguration
 
         public void setMaxHeaderSize(Integer maxHeaderSize) {
             this.maxHeaderSize = maxHeaderSize;
-        }
-
-        public Boolean getAllowDefaultCodec() {
-            return allowDefaultCodec;
-        }
-
-        public void setAllowDefaultCodec(Boolean allowDefaultCodec) {
-            this.allowDefaultCodec = allowDefaultCodec;
         }
 
         public String getOkStatusCodeRange() {
