@@ -5000,6 +5000,11 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-javadoc-plugin</artifactId>
+          <version>${project.version}</version>
+        </plugin>
+        <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>jaxb2-maven-plugin</artifactId>
           <version>${jaxb2-maven-plugin-version}</version>
@@ -5214,7 +5219,7 @@
             <quiet>true</quiet>
             <bottom>Apache Camel</bottom>
             <detectOfflineLinks>false</detectOfflineLinks>
-            <javadocVersion>${jdk.version}</javadocVersion>
+            <javadocVersion>1.8.0</javadocVersion>
             <encoding>UTF-8</encoding>
           </configuration>
         </plugin>
