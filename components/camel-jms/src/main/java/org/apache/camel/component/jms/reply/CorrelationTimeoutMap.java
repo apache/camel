@@ -17,10 +17,10 @@
 package org.apache.camel.component.jms.reply;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.function.BiConsumer;
 
-import org.apache.camel.TimeoutMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.DefaultTimeoutMap;
 
 /**
  * A {@link org.apache.camel.TimeoutMap} which is used to track reply messages which
@@ -28,83 +28,45 @@ import org.slf4j.LoggerFactory;
  * timeout as well. Zero (or negative) timeout means infinite but is actually encoded as {@link Integer#MAX_VALUE}
  * which is 24 days.
  */
-public class CorrelationTimeoutMap implements TimeoutMap<String, ReplyHandler> {
+class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
-    private static final Logger log = LoggerFactory.getLogger(CorrelationTimeoutMap.class);
-    private final ExecutorService executorService;
-    private final TimeoutMap<String, ReplyHandler> delegate;
+    private final BiConsumer<ReplyHandler, String> evictionTask;
 
-    public CorrelationTimeoutMap(TimeoutMap<String, ReplyHandler> delegate, ExecutorService executorService) {
-        this.delegate = delegate;
-        delegate.addListener(this::onEviction);
-        this.executorService = executorService;
+    CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, ExecutorService executorService) {
+        super(executor, requestMapPollTimeMillis);
+        // Support synchronous or asynchronous handling of evictions
+        evictionTask = executorService == null ?
+                ReplyHandler::onTimeout :
+                (handler, key) -> executorService.submit(() -> handler.onTimeout(key));
+        addListener(this::listener);
     }
 
     private static long encode(long timeoutMillis) {
         return timeoutMillis > 0 ? timeoutMillis : Integer.MAX_VALUE; // TODO why not Long.MAX_VALUE!
     }
 
-    private void onEviction(Listener.Type type, String key, ReplyHandler handler) {
-        if (type == Listener.Type.Evict) {
-            if (executorService != null) {
-                executorService.submit(() -> handler.onTimeout(key));
-            } else {
-                // run task synchronously
-                handler.onTimeout(key);
-            }
-            log.trace("Evicted correlationID: {}", key);
+    private void listener(Listener.Type type, String key, ReplyHandler handler) {
+        switch (type) {
+            case Put:
+                log.trace("Added correlationID: {}", key);
+                break;
+            case Remove:
+                log.trace("Removed correlationID: {}", key);
+                break;
+            case Evict:
+                evictionTask.accept(handler, key);
+                log.trace("Evicted correlationID: {}", key);
         }
-    }
-
-    @Override
-    public ReplyHandler get(String key) {
-        ReplyHandler answer = delegate.get(key);
-        log.trace("Get correlationID: {} -> {}", key, answer != null);
-        return answer;
     }
 
     @Override
     public ReplyHandler put(String key, ReplyHandler value, long timeoutMillis) {
-        ReplyHandler result = delegate.put(key, value, encode(timeoutMillis));
-        log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
-        return result;
+        return super.put(key, value, encode(timeoutMillis));
     }
 
     @Override
     public ReplyHandler putIfAbsent(String key, ReplyHandler value, long timeoutMillis) {
-        ReplyHandler result = delegate.putIfAbsent(key, value, encode(timeoutMillis));
-        if (result == null) {
-            log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
-        } else {
-            log.trace("Duplicate correlationID: {} detected", key);
-        }
-        return result;
+        return super.putIfAbsent(key, value, encode(timeoutMillis));
     }
 
-    @Override
-    public ReplyHandler remove(String key) {
-        ReplyHandler answer = delegate.remove(key);
-        log.trace("Removed correlationID: {} -> {}", key, answer != null);
-        return answer;
-    }
-
-    @Override
-    public int size() {
-        return delegate.size();
-    }
-
-    @Override
-    public void addListener(Listener<String, ReplyHandler> listener) {
-        delegate.addListener(listener);
-    }
-
-    @Override
-    public void start() throws Exception {
-        delegate.start();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        delegate.stop();
-    }
 }
