@@ -762,7 +762,7 @@ public abstract class MainSupport extends ServiceSupport {
         boolean rc = false;
         Iterator it = properties.entrySet().iterator();
 
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             Map.Entry<String, Object> entry = (Map.Entry)it.next();
             String name = entry.getKey();
             Object value = entry.getValue();
@@ -782,7 +782,8 @@ public abstract class MainSupport extends ServiceSupport {
                 it.remove();
                 rc = true;
             } else if (failIfNotSet) {
-                throw new IllegalArgumentException("Cannot configure option [" + name + "] with value [" + stringValue + "] as the bean class [" + ObjectHelper.classCanonicalName(target) + "] has no suitable setter method, or not possible to lookup a bean with the id [" + stringValue + "] in Camel registry");
+                throw new IllegalArgumentException("Cannot configure option [" + name + "] with value [" + stringValue + "] as the bean class [" 
+                + ObjectHelper.classCanonicalName(target) + "] has no suitable setter method, or not possible to lookup a bean with the id [" + stringValue + "] in Camel registry");
             }
         }
 
