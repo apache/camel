@@ -244,14 +244,13 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 33 options, which are listed below.
+The component supports 32 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.netty4-http.configuration.allow-default-codec* | The maximum length of all headers. If the sum of the length of each header exceeds this value, a {@link io.netty.handler.codec.TooLongFrameException} will be raised. | true | Boolean
 | *camel.component.netty4-http.configuration.bridge-endpoint* | If the option is true, the producer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the producer send all the fault response back. The consumer working in the bridge mode will skip the gzip compression and WWW URL form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange). | false | Boolean
 | *camel.component.netty4-http.configuration.chunked-max-content-length* | Value in bytes the max content length per chunked frame received on the Netty HTTP server. | 1048576 | Integer
 | *camel.component.netty4-http.configuration.compression* | Allow using gzip/deflate for compression on the Netty HTTP server if the client supports it from the HTTP headers. | false | Boolean
