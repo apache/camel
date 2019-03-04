@@ -170,15 +170,26 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
         return parseUri(uri, locations);
     }
 
-    public String parseUri(String uri, String... uris) throws Exception {
+    public String parseUri(String uri, String... locations) throws Exception {
         return parseUri(
             uri,
-            uris != null
-                ? Arrays.stream(uris).map(PropertiesLocation::new).collect(Collectors.toList())
+            locations != null
+                ? Arrays.stream(locations).map(PropertiesLocation::new).collect(Collectors.toList())
                 : Collections.emptyList());
     }
 
-    public String parseUri(String uri, List<PropertiesLocation> paths) throws Exception {
+    public Properties loadProperties() throws Exception {
+        return doLoadProperties(locations);
+    }
+
+    public Properties loadProperties(String... locations) throws Exception {
+        if (locations != null) {
+            return doLoadProperties(Arrays.stream(locations).map(PropertiesLocation::new).collect(Collectors.toList()));
+        }
+        return new Properties();
+    }
+
+    protected Properties doLoadProperties(List<PropertiesLocation> paths) throws Exception {
         Properties prop = new Properties();
 
         // use initial properties
@@ -212,6 +223,12 @@ public class PropertiesComponent extends DefaultComponent implements org.apache.
             override.putAll(overrideProperties);
             prop = override;
         }
+
+        return prop;
+    }
+
+    protected String parseUri(String uri, List<PropertiesLocation> paths) throws Exception {
+        Properties prop = doLoadProperties(paths);
 
         // enclose tokens if missing
         if (!uri.contains(prefixToken) && !uri.startsWith(prefixToken)) {
