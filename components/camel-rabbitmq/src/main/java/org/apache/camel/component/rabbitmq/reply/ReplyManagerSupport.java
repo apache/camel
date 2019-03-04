@@ -30,7 +30,6 @@ import org.apache.camel.TimeoutMap;
 import org.apache.camel.component.rabbitmq.RabbitMQConstants;
 import org.apache.camel.component.rabbitmq.RabbitMQEndpoint;
 import org.apache.camel.component.rabbitmq.RabbitMQMessageConverter;
-import org.apache.camel.support.DefaultTimeoutMap;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -229,8 +228,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         // timeout map to use for purging messages which have timed out, while waiting for an expected reply
         // when doing request/reply over JMS
         log.debug("Using timeout checker interval with {} millis", endpoint.getRequestTimeoutCheckerInterval());
-        TimeoutMap<String, ReplyHandler> timeoutMap = new DefaultTimeoutMap<>(executorService, endpoint.getRequestTimeoutCheckerInterval());
-        correlation = new CorrelationTimeoutMap(timeoutMap);
+        correlation = new CorrelationTimeoutMap(executorService, endpoint.getRequestTimeoutCheckerInterval());
         ServiceHelper.startService(correlation);
 
         // create listener and start it

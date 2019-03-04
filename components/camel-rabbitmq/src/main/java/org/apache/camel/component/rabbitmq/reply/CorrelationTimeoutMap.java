@@ -16,91 +16,53 @@
  */
 package org.apache.camel.component.rabbitmq.reply;
 
-import org.apache.camel.TimeoutMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.concurrent.ScheduledExecutorService;
+
+import org.apache.camel.support.DefaultTimeoutMap;
 
 /**
  * A {@link org.apache.camel.TimeoutMap} which is used to track reply messages which
  * has been timed out, and thus should trigger the waiting {@link org.apache.camel.Exchange} to
  * timeout as well.
  */
-public class CorrelationTimeoutMap implements TimeoutMap<String, ReplyHandler> {
+class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
-    private static final Logger log = LoggerFactory.getLogger(CorrelationTimeoutMap.class);
-    private final TimeoutMap<String, ReplyHandler> delegate;
-
-    public CorrelationTimeoutMap(TimeoutMap<String, ReplyHandler> delegate) {
-        this.delegate = delegate;
-        delegate.addListener(this::onEviction);
+    CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
+        super(executor, requestMapPollTimeMillis);
+        addListener(this::listener);
     }
 
     private static long encode(long timeoutMillis) {
         return timeoutMillis > 0 ? timeoutMillis : Integer.MAX_VALUE; // TODO why not Long.MAX_VALUE!
     }
 
-    private void onEviction(Listener.Type type, String key, ReplyHandler handler) {
-        if (type == Listener.Type.Evict) {
-            try {
-                handler.onTimeout(key);
-            } catch (Throwable e) {
-                // must ignore so we ensure we evict the element
-                log.warn("Error processing onTimeout for correlationID: " + key + " due: " + e.getMessage() + ". This exception is ignored.", e);
-            }
-            log.trace("Evicted correlationID: {}", key);
+    private void listener(Listener.Type type, String key, ReplyHandler handler) {
+        switch (type) {
+            case Put:
+                log.trace("Added correlationID: {}", key);
+                break;
+            case Remove:
+                log.trace("Removed correlationID: {}", key);
+                break;
+            case Evict:
+                try {
+                    handler.onTimeout(key);
+                } catch (Throwable e) {
+                    // must ignore so we ensure we evict the element
+                    log.warn("Error processing onTimeout for correlationID: " + key + " due: " + e.getMessage() + ". This exception is ignored.", e);
+                }
+                log.trace("Evicted correlationID: {}", key);
         }
-    }
-
-    @Override
-    public ReplyHandler get(String key) {
-        ReplyHandler answer = delegate.get(key);
-        log.trace("Get correlationID: {} -> {}", key, answer != null);
-        return answer;
     }
 
     @Override
     public ReplyHandler put(String key, ReplyHandler value, long timeoutMillis) {
-        ReplyHandler result = delegate.put(key, value, encode(timeoutMillis));
-        log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
-        return result;
+        return super.put(key, value, encode(timeoutMillis));
     }
 
     @Override
     public ReplyHandler putIfAbsent(String key, ReplyHandler value, long timeoutMillis) {
-        ReplyHandler result = delegate.putIfAbsent(key, value, encode(timeoutMillis));
-        if (result == null) {
-            log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
-        } else {
-            log.trace("Duplicate correlationID: {} detected", key);
-        }
-        return result;
-    }
-
-    @Override
-    public ReplyHandler remove(String key) {
-        ReplyHandler answer = delegate.remove(key);
-        log.trace("Removed correlationID: {} -> {}", key, answer != null);
-        return answer;
-    }
-
-    @Override
-    public int size() {
-        return delegate.size();
-    }
-
-    @Override
-    public void addListener(Listener<String, ReplyHandler> listener) {
-        delegate.addListener(listener);
-    }
-
-    @Override
-    public void start() throws Exception {
-        delegate.start();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        delegate.stop();
+        return super.putIfAbsent(key, value, encode(timeoutMillis));
     }
 
 }
