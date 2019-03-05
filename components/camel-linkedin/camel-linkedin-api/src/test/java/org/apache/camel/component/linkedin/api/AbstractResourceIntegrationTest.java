@@ -111,9 +111,6 @@ public abstract class AbstractResourceIntegrationTest extends Assert {
             } catch (Exception ignore) {
             }
         }
-        if (requestFilter != null) {
-            requestFilter.close();
-        }
         // TODO save and load token from test-options.properties
     }
 
