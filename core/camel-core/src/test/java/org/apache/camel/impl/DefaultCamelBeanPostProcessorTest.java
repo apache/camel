@@ -71,7 +71,7 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
         private MySerialBean myBean = new MySerialBean();
 
         @BindToRegistry
-        public FooBar doSomething(String s) {
+        public FooBar doSomething() {
             return new FooBar();
         }
 
