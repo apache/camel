@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.aws.s3;
 
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.S3Object;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,43 +27,38 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentGetObjectTest extends CamelTestSupport {
-    
+
     @EndpointInject(uri = "direct:listBuckets")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     private AmazonS3ClientMock client;
-    
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(0);
-        
+
         template.send("direct:getObject", new Processor() {
-			
-			@Override
-			public void process(Exchange exchange) throws Exception {
-				exchange.getIn().setHeader(S3Constants.KEY, "test");
-				
-			}
-		});
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(S3Constants.KEY, "test");
+
+            }
+        });
         assertMockEndpointsSatisfied();
-        
+
     }
-    
-    private void assertResultExchange(Exchange resultExchange) {
-        S3Object s3Object = resultExchange.getIn().getBody(S3Object.class);
-        assertNull(s3Object);
-    }
-    
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
-        
+
         client = new AmazonS3ClientMock();
         registry.bind("amazonS3Client", client);
-        
+
         return registry;
     }
 
@@ -77,11 +68,9 @@ public class S3ComponentGetObjectTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&operation=getObject";
-                
-                from("direct:getObject")
-                    .to(awsEndpoint)
-                    .to("mock:result");
-                
+
+                from("direct:getObject").to(awsEndpoint).to("mock:result");
+
             }
         };
     }
