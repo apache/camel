@@ -48,6 +48,9 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
         bean = context.getRegistry().lookupByName("FooService");
         assertNotNull(bean);
         assertIsInstanceOf(FooService.class, bean);
+        bean = context.getRegistry().lookupByName("doSomething");
+        assertNotNull(bean);
+        assertIsInstanceOf(FooBar.class, bean);
     }
 
     @Override
@@ -66,6 +69,11 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
         private ProducerTemplate bar;
         @BindToRegistry(name = "myCoolBean")
         private MySerialBean myBean = new MySerialBean();
+
+        @BindToRegistry
+        public FooBar doSomething(String s) {
+            return new FooBar();
+        }
 
         public String getFooEndpoint() {
             return fooEndpoint;
