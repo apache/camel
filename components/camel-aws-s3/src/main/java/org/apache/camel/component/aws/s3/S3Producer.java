@@ -41,6 +41,7 @@ import com.amazonaws.services.s3.model.CopyObjectResult;
 import com.amazonaws.services.s3.model.DeleteBucketRequest;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadRequest;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
 import com.amazonaws.services.s3.model.ObjectListing;
@@ -48,6 +49,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.SSEAwsKeyManagementParams;
 import com.amazonaws.services.s3.model.StorageClass;
 import com.amazonaws.services.s3.model.UploadPartRequest;
@@ -107,6 +109,9 @@ public class S3Producer extends DefaultProducer {
                 break;
             case listObjects:
                 listObjects(getEndpoint().getS3Client(), exchange);
+                break;
+            case getObject:
+                getObject(getEndpoint().getS3Client(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -381,6 +386,27 @@ public class S3Producer extends DefaultProducer {
 
         DeleteBucketRequest deleteBucketRequest = new DeleteBucketRequest(bucketName);
         s3Client.deleteBucket(deleteBucketRequest);
+    }
+    
+    private void getObject(AmazonS3 s3Client, Exchange exchange) {
+        String bucketName;
+        String sourceKey;
+        bucketName = exchange.getIn().getHeader(S3Constants.BUCKET_NAME, String.class);
+        if (ObjectHelper.isEmpty(bucketName)) {
+            bucketName = getConfiguration().getBucketName();
+        }
+        sourceKey = exchange.getIn().getHeader(S3Constants.KEY, String.class);
+        if (ObjectHelper.isEmpty(bucketName)) {
+            throw new IllegalArgumentException("Bucket Name must be specified for deleteObject Operation");
+        }
+        if (ObjectHelper.isEmpty(sourceKey)) {
+            throw new IllegalArgumentException("Source Key must be specified for deleteObject Operation");
+        }
+        GetObjectRequest req = new GetObjectRequest(bucketName, sourceKey);
+        S3Object res = s3Client.getObject(req);
+        
+        Message message = getMessageForResponse(exchange);
+        message.setBody(res.getObjectContent());
     }
     
     private void listObjects(AmazonS3 s3Client, Exchange exchange) {
