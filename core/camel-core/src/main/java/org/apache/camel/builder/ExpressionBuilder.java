@@ -728,10 +728,20 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(propertyName).evaluate(exchange, String.class);
-                String answer = System.getenv(text.toUpperCase());
+                String answer = null;
+                if (text != null) {
+                    // lookup OS env with upper case key
+                    text = text.toUpperCase();
+                    answer = System.getenv(text);
+                    // some OS do not support dashes in keys, so replace with underscore
+                    if (answer == null) {
+                        String noDashKey = text.replace('-', '_');
+                        answer = System.getenv(noDashKey);
+                    }
+                }
+
                 if (answer == null) {
-                    String text2 = simpleExpression(defaultValue).evaluate(exchange, String.class);
-                    answer = text2;
+                    answer = simpleExpression(defaultValue).evaluate(exchange, String.class);
                 }
                 return answer;
             }
