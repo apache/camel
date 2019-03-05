@@ -327,12 +327,26 @@ public class DefaultCamelBeanPostProcessor {
             throw new IllegalArgumentException("@BindToRegistry on class: " + method.getDeclaringClass()
                 + " method: " + method.getName() + " with void return type is not allowed");
         }
-        // TODO: Add support for some bean parameter bindings, like CamelContext,Registry and auto-lookup of by type in registry
-        if (method.getParameterCount() != 0) {
+        Object parameters = null;
+        if (method.getParameterCount() == 1) {
+            // the parameter can only be
+            Class type = method.getParameterTypes()[0];
+            if (type.isAssignableFrom(CamelContext.class)) {
+                parameters = camelContext;
+            } else {
+                throw new IllegalArgumentException("@BindToRegistry on class: " + method.getDeclaringClass()
+                    + " method: " + method.getName() + " only support CamelContext as parameter type");
+            }
+        } else if (method.getParameterCount() > 1) {
             throw new IllegalArgumentException("@BindToRegistry on class: " + method.getDeclaringClass()
                 + " method: " + method.getName() + " with method parameters is not allowed");
         }
-        Object value = invokeMethod(method, bean);
+        Object value;
+        if (parameters != null) {
+            value = invokeMethod(method, bean, parameters);
+        } else {
+            value = invokeMethod(method, bean);
+        }
         if (value != null) {
             camelContext.getRegistry().bind(name, value);
         }
