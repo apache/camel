@@ -37,9 +37,9 @@ class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
     CorrelationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis, ExecutorService executorService) {
         super(executor, requestMapPollTimeMillis);
         // Support synchronous or asynchronous handling of evictions
-        evictionTask = executorService == null ?
-                ReplyHandler::onTimeout :
-                (handler, key) -> executorService.submit(() -> handler.onTimeout(key));
+        evictionTask = executorService == null
+                ? ReplyHandler::onTimeout
+                : (handler, key) -> executorService.submit(() -> handler.onTimeout(key));
         addListener(this::listener);
     }
 

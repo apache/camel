@@ -76,7 +76,7 @@ public class MessageSelectorCreator {
 
     // Changes to live correlation-ids invalidate existing message selector
     private void timeoutEvent(TimeoutMap.Listener.Type type, String cid) {
-        if (type==Put) {
+        if (type == Put) {
             correlationIds.add(cid);
         } else if (type == Remove || type == Evict) {
             correlationIds.remove(cid);
