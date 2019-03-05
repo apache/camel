@@ -79,7 +79,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected CamelContext camelContext;
     protected List<RouteBuilder> routeBuilders = new ArrayList<>();
-    protected Class configurationClass;
+    protected List<Class> configurationClasses;
     protected String routeBuilderClasses;
     protected String fileWatchDirectory;
     protected boolean fileWatchDirectoryRecursively;
@@ -112,9 +112,9 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
-    protected MainSupport(Class configurationClass) {
+    protected MainSupport(Class... configurationClasses) {
         this();
-        this.configurationClass = configurationClass;
+        addConfigurationClass(configurationClasses);
     }
 
     protected MainSupport() {
@@ -429,16 +429,23 @@ public abstract class MainSupport extends ServiceSupport {
         return exitCode.get();
     }
 
-    public Class getConfigurationClass() {
-        return configurationClass;
+    public List<Class> getConfigurationClasses() {
+        return configurationClasses;
     }
 
     /**
-     * Sets optional configuration class which allows to do any initial configuration.
+     * Sets optional configuration classes which allows to do any initial configuration.
      * The class can/should have a method named <tt>configure</tt> which is called.
      */
-    public void setConfigurationClass(Class configurationClass) {
-        this.configurationClass = configurationClass;
+    public void setConfigurationClasses(List<Class> configurationClasses) {
+        this.configurationClasses = configurationClasses;
+    }
+
+    public void addConfigurationClass(Class... configurationClasses) {
+        if (this.configurationClasses == null) {
+            this.configurationClasses = new ArrayList<>();
+        }
+        this.configurationClasses.addAll(Arrays.asList(configurationClasses));
     }
 
     public String getRouteBuilderClasses() {
@@ -516,6 +523,11 @@ public abstract class MainSupport extends ServiceSupport {
      * - camel.language.name.option1=value1
      * - camel.language.name.option2=value2
      * Where name is the name of the component, dataformat or language such as seda,direct,jaxb.
+     * <p/>
+     * The auto configuration also works for any options on components
+     * that is a complex type (not standard Java type) and there has been an explicit single
+     * bean instance registered to the Camel registry via the {@link org.apache.camel.spi.Registry#bind(String, Object)} method
+     * or by using the {@link org.apache.camel.BindToRegistry} annotation style.
      * <p/>
      * This option is default enabled.
      */
@@ -691,14 +703,16 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
-        if (configurationClass != null) {
-            // create instance of configuration class as it may do dependency injection and bind to registry
-            Object config = camelContext.getInjector().newInstance(configurationClass);
-            // invoke configure method if exists
-            Method method = findMethod(configurationClass, "configure");
-            if (method != null) {
-                log.info("Calling configure method on configuration class: {}", configurationClass);
-                invokeMethod(method, config);
+        if (configurationClasses != null) {
+            for (Class clazz : configurationClasses) {
+                // create instance of configuration class as it may do dependency injection and bind to registry
+                Object config = camelContext.getInjector().newInstance(clazz);
+                // invoke configure method if exists
+                Method method = findMethod(clazz, "configure");
+                if (method != null) {
+                    log.info("Calling configure method on configuration class: {}", clazz.getName());
+                    invokeMethod(method, config);
+                }
             }
         }
 
@@ -841,12 +855,18 @@ public abstract class MainSupport extends ServiceSupport {
         getRouteBuilders().add(routeBuilder);
     }
 
-    public void addRouteBuilder(Class routeBuilder) {
+    public void addRouteBuilder(Class... routeBuilder) {
         String existing = routeBuilderClasses;
-        if (existing != null) {
-            existing = existing + "," + routeBuilder.getName();
-        } else {
-            existing = routeBuilder.getName();
+        if (existing == null) {
+            existing = "";
+        }
+        if (routeBuilder != null) {
+            for (Class clazz : routeBuilder) {
+                if (!existing.isEmpty()) {
+                    existing = existing + ",";
+                }
+                existing = existing + clazz.getName();
+            }
         }
         setRouteBuilderClasses(existing);
     }

@@ -34,7 +34,9 @@ public class MainIoCTest extends Assert {
     @Test
     public void testMainIoC() throws Exception {
         // use configuration class
-        Main main = new Main(MyConfiguration.class);
+        Main main = new Main();
+        // add the configuration
+        main.addConfigurationClass(MyConfiguration.class);
         // add as class so we get IoC
         main.addRouteBuilder(MyRouteBuilder.class);
         main.start();
