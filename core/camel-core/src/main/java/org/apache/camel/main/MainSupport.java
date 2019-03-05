@@ -796,6 +796,7 @@ public abstract class MainSupport extends ServiceSupport {
                         if (lookup.size() == 1) {
                             v = lookup.iterator().next();
                             try {
+                                LOG.info("Auto configuring option: {} on component: {} as one instance of type: {} registered in the Camel Registry", k, name, type.getName());
                                 IntrospectionSupport.setProperty(camelContext, component, k, v);
                             } catch (Exception e) {
                                 LOG.warn("Cannot auto configure option: " + k + " on component: " + name + " due to " + e.getMessage());
@@ -819,7 +820,7 @@ public abstract class MainSupport extends ServiceSupport {
 
             private boolean isComplexType(Class type) {
                 // lets consider all non java as complex types
-                return !type.getName().startsWith("java");
+                return type != null && !type.isPrimitive() && !type.getName().startsWith("java");
             }
 
             private Class getGetterType(Component component, String key) {
