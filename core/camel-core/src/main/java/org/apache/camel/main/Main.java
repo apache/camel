@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.support.DefaultRegistry;
 
 /**
  * A Main class for booting up Camel in standalone mode.
@@ -30,7 +29,7 @@ import org.apache.camel.support.DefaultRegistry;
 public class Main extends MainSupport {
 
     protected static Main instance;
-    protected final Registry registry = new DefaultRegistry();
+    protected final MainRegistry registry = new MainRegistry();
 
     public Main() {
     }
