@@ -64,13 +64,6 @@ public class FhirXmlDataFormatConfiguration
      */
     private Boolean omitResourceId = false;
     /**
-     * If provided, tells the parse which resource types to apply {link
-     * #setEncodeElements(Set) encode elements} to. Any resource types not
-     * specified here will be encoded completely, with no elements excluded. The
-     * option is a java.util.Set<java.lang.String> type.
-     */
-    private String encodeElementsAppliesToResourceTypes;
-    /**
      * If set to true (default is false), the values supplied to
      * setEncodeElements(Set) will not be applied to the root resource
      * (typically a Bundle), but will be applied to any sub-resources contained
@@ -180,15 +173,6 @@ public class FhirXmlDataFormatConfiguration
 
     public void setOmitResourceId(Boolean omitResourceId) {
         this.omitResourceId = omitResourceId;
-    }
-
-    public String getEncodeElementsAppliesToResourceTypes() {
-        return encodeElementsAppliesToResourceTypes;
-    }
-
-    public void setEncodeElementsAppliesToResourceTypes(
-            String encodeElementsAppliesToResourceTypes) {
-        this.encodeElementsAppliesToResourceTypes = encodeElementsAppliesToResourceTypes;
     }
 
     public Boolean getEncodeElementsAppliesToChildResourcesOnly() {
