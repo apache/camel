@@ -1575,10 +1575,6 @@
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-core</feature>
     <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
-    <bundle dependency='true'>mvn:org.eclipse.jetty/jetty-util/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.jetty/jetty-io/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.jetty/jetty-client/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.jetty/jetty-http/${jetty-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-api/${jetty-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-common/${jetty-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-client/${jetty-version}</bundle>
@@ -1591,14 +1587,11 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.htmlunit/${htmlunit-bundle-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:net.sourceforge.cssparser/cssparser/0.9.18</bundle>
     <bundle dependency='true'>wrap:mvn:org.w3c.css/sac/1.3</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:net.sourceforge.nekohtml/nekohtml/${nekohtml-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:net.sourceforge.htmlunit/neko-htmlunit/${htmlunit-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:net.sourceforge.htmlunit/htmlunit-core-js/${htmlunit-core-js-version}</bundle>
+    <bundle dependency='true'>mvn:org.jsoup/jsoup/${jsoup-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>

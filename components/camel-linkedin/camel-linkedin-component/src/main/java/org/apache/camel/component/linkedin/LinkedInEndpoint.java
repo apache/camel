@@ -169,7 +169,6 @@ public class LinkedInEndpoint extends AbstractApiEndpoint<LinkedInApiName, Linke
         }
 
         if (requestFilter != null) {
-            getComponent().closeRequestFilter(requestFilter);
             requestFilter = null;
         }
     }
