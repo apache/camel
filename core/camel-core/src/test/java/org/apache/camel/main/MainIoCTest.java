@@ -76,7 +76,9 @@ public class MainIoCTest extends Assert {
         private CamelContext camel;
 
         @BindToRegistry
-        public BlockingQueueFactory queueFactory() {
+        public BlockingQueueFactory queueFactory(CamelContext myCamel) {
+            // we can optionally include camel context as parameter
+            Assert.assertNotNull(myCamel);
             return new PriorityBlockingQueueFactory();
         }
 
