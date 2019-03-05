@@ -25,11 +25,11 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
-/*
- * XML configuration test
+/**
+ * Only for testing XML DSL. All basic tests are located here: {@link JooqProducerTest}, {@link JooqConsumerTest}.
  */
 @ContextConfiguration(locations = {"/jooq-spring.xml", "/camel-context.xml"})
-public class JooqXMLProducerTest extends BaseJooqTest {
+public class JooqXMLTest extends BaseJooqTest {
 
     @Autowired
     CamelContext context;

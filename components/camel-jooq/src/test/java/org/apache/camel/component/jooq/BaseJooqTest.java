@@ -18,6 +18,7 @@ package org.apache.camel.component.jooq;
 
 import java.nio.file.Files;
 import java.sql.Connection;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.jooq.DSLContext;
 import org.junit.Before;

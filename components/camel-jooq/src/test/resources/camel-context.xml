@@ -23,7 +23,7 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <import resource="classpath:jooq-spring.xml" />
+    <import resource="classpath:jooq-spring.xml"/>
 
     <!-- Configure component -->
     <bean id="jooq" class="org.apache.camel.component.jooq.JooqComponent">
@@ -42,7 +42,7 @@
                 <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="generate"/>
             </transform>
             <!-- Send entity to endpoint -->
-            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord" />
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord"/>
         </route>
 
         <!-- Create JOOQ ResultQuery and fetch -->
@@ -51,7 +51,7 @@
             <transform>
                 <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="select"/>
             </transform>
-            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch" />
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch"/>
             <log message="Fetched ${body}"/>
         </route>
 
@@ -61,8 +61,14 @@
             <transform>
                 <method ref="org.apache.camel.component.jooq.beans.BookStoreRecordBean" method="delete"/>
             </transform>
-            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute" />
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute"/>
             <log message="Executed ${body}"/>
+        </route>
+
+        <!-- Consume entity -->
+        <route id="queue-route">
+            <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?consumeDelete=false"/>
+            <log message="Consumed ${body}"/>
         </route>
     </camelContext>
 </beans>

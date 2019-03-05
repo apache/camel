@@ -76,9 +76,13 @@ public class JooqComponentConfiguration
         private JooqOperation operation;
         private Configuration databaseConfiguration;
         /**
-         * JOOQ entity class
+         * JOOQ entity class.
          */
         private Class entityType;
+        /**
+         * Delete entity after it is consumed.
+         */
+        private Boolean consumeDelete = true;
 
         public JooqOperation getOperation() {
             return operation;
@@ -102,6 +106,14 @@ public class JooqComponentConfiguration
 
         public void setEntityType(Class entityType) {
             this.entityType = entityType;
+        }
+
+        public Boolean getConsumeDelete() {
+            return consumeDelete;
+        }
+
+        public void setConsumeDelete(Boolean consumeDelete) {
+            this.consumeDelete = consumeDelete;
         }
     }
 }

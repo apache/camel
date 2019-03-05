@@ -18,9 +18,12 @@
 package org.apache.camel.component.jooq;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.jooq.Configuration;
+import org.jooq.Table;
+import org.jooq.UpdatableRecord;
 
 @UriParams
 public class JooqConfiguration implements Cloneable {
@@ -28,8 +31,11 @@ public class JooqConfiguration implements Cloneable {
     @UriPath(description = "Type of operation to execute on query: execute, fetch, etc.", label = "Operation", name = "operation", displayName = "Operation")
     private JooqOperation operation = JooqOperation.NONE;
 
-    @UriPath(name = "entityType", description = "JOOQ entity class", label = "Entity type", displayName = "Entity type")
+    @UriPath(name = "entityType", description = "JOOQ entity class.", label = "Entity type", displayName = "Entity type")
     private Class<?> entityType;
+
+    @UriParam(label = "consumer", defaultValue = "true", description = "Delete entity after it is consumed.")
+    private boolean consumeDelete = true;
 
     private Configuration databaseConfiguration;
 
@@ -58,6 +64,14 @@ public class JooqConfiguration implements Cloneable {
 
     public void setEntityType(Class<?> entityType) {
         this.entityType = entityType;
+    }
+
+    public boolean isConsumeDelete() {
+        return consumeDelete;
+    }
+
+    public void setConsumeDelete(boolean consumeDelete) {
+        this.consumeDelete = consumeDelete;
     }
 
     public JooqConfiguration copy() {
