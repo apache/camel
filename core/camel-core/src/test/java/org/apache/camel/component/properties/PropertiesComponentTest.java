@@ -621,6 +621,29 @@ public class PropertiesComponentTest extends ContextTestSupport {
     }
 
     @Test
+    public void testPropertiesComponentEnvOverrideIfDash() throws Exception {
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setEnvironmentVariableMode(PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE);
+        pc.setLocation("org/apache/camel/component/properties/env.properties");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // will fallback and lookup as FOO_SERVICE_HOST
+                from("direct:foo").to("mock:{{FOO-SERVICE_host}}");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:hello").expectedMessageCount(0);
+        getMockEndpoint("mock:myserver").expectedMessageCount(1);
+
+        template.sendBody("direct:foo", "Hello Foo");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
     public void testPropertiesComponentEnvFallback() throws Exception {
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         pc.setEnvironmentVariableMode(PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK);

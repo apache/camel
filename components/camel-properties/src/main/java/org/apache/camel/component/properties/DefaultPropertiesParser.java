@@ -318,7 +318,14 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                 }
             }
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
-                value = System.getenv(key);
+                // lookup OS env with upper case key
+                String upperKey = key.toUpperCase();
+                value = System.getenv(upperKey);
+                // some OS do not support dashes in keys, so replace with underscore
+                if (value == null) {
+                    String noDashKey = upperKey.replace('-', '_');
+                    value = System.getenv(noDashKey);
+                }
                 if (value != null) {
                     log.debug("Found a environment property: {} with value: {} to be used.", key, value);
                 }
@@ -338,7 +345,14 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                 }
             }
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK) {
-                value = System.getenv(key);
+                // lookup OS env with upper case key
+                String upperKey = key.toUpperCase();
+                value = System.getenv(upperKey);
+                // some OS do not support dashes in keys, so replace with underscore
+                if (value == null) {
+                    String noDashKey = upperKey.replace('-', '_');
+                    value = System.getenv(noDashKey);
+                }
                 if (value != null) {
                     log.debug("Found a environment property: {} with value: {} to be used.", key, value);
                 }
