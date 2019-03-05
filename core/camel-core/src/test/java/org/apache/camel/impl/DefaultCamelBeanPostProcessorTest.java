@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.BindRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Produce;
@@ -57,14 +57,14 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
         postProcessor = new DefaultCamelBeanPostProcessor(context);
     }
 
-    @BindRegistry
+    @BindToRegistry
     public class FooService {
 
         private String fooEndpoint;
         private String barEndpoint;
         @Produce
         private ProducerTemplate bar;
-        @BindRegistry(name = "myCoolBean")
+        @BindToRegistry(name = "myCoolBean")
         private MySerialBean myBean = new MySerialBean();
 
         public String getFooEndpoint() {
