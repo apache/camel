@@ -34,7 +34,7 @@ public class Main extends MainSupport {
     public Main() {
     }
 
-    public Main(Class configurationClass) {
+    public Main(Class... configurationClass) {
         super(configurationClass);
     }
 
