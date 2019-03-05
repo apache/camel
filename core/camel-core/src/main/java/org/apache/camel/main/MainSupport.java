@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -52,6 +53,9 @@ import org.apache.camel.util.concurrent.ThreadHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.ObjectHelper.invokeMethod;
+import static org.apache.camel.util.ReflectionHelper.findMethod;
+
 /**
  * Base class for main implementations to allow starting up a JVM with Camel embedded.
  */
@@ -72,6 +76,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected CamelContext camelContext;
     protected List<RouteBuilder> routeBuilders = new ArrayList<>();
+    protected Class configurationClass;
     protected String routeBuilderClasses;
     protected String fileWatchDirectory;
     protected boolean fileWatchDirectoryRecursively;
@@ -102,6 +107,11 @@ public abstract class MainSupport extends ServiceSupport {
                 log.warn("Error during stopping the main instance.", ex);
             }
         }
+    }
+
+    protected MainSupport(Class configurationClass) {
+        this();
+        this.configurationClass = configurationClass;
     }
 
     protected MainSupport() {
@@ -416,6 +426,22 @@ public abstract class MainSupport extends ServiceSupport {
         return exitCode.get();
     }
 
+    public Class getConfigurationClass() {
+        return configurationClass;
+    }
+
+    /**
+     * Sets optional configuration class which allows to do any initial configuration.
+     * The class can/should have a method named <tt>configure</tt> which is called.
+     */
+    public void setConfigurationClass(Class configurationClass) {
+        this.configurationClass = configurationClass;
+    }
+
+    public String getRouteBuilderClasses() {
+        return routeBuilderClasses;
+    }
+
     public void setRouteBuilderClasses(String builders) {
         this.routeBuilderClasses = builders;
     }
@@ -444,10 +470,6 @@ public abstract class MainSupport extends ServiceSupport {
      */
     public void setFileWatchDirectoryRecursively(boolean fileWatchDirectoryRecursively) {
         this.fileWatchDirectoryRecursively = fileWatchDirectoryRecursively;
-    }
-
-    public String getRouteBuilderClasses() {
-        return routeBuilderClasses;
     }
 
     public ReloadStrategy getReloadStrategy() {
@@ -670,6 +692,17 @@ public abstract class MainSupport extends ServiceSupport {
         // component, dataformat, and languages (like spring-boot auto-configuration)
         if (autoConfigurationEnabled) {
             autoConfigurationFromProperties(camelContext);
+        }
+
+        if (configurationClass != null) {
+            // create instance of configuration class as it may do dependency injection and bind to registry
+            Object config = camelContext.getInjector().newInstance(configurationClass);
+            // invoke configure method if exists
+            Method method = findMethod(configurationClass, "configure");
+            if (method != null) {
+                log.info("Calling configure method on configuration class: {}", configurationClass);
+                invokeMethod(method, config);
+            }
         }
 
         // try to load the route builders from the routeBuilderClasses

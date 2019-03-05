@@ -294,6 +294,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
     public Object getInjectionBeanValue(Class<?> type, String name) {
         if (ObjectHelper.isEmpty(name)) {
+            // is it camel context itself?
+            if (type.isAssignableFrom(camelContext.getClass())) {
+                return camelContext;
+            }
             Set<?> found = getCamelContext().getRegistry().findByType(type);
             if (found == null || found.isEmpty()) {
                 throw new NoSuchBeanException(name, type.getName());
