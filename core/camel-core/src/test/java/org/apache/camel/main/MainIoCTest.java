@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,7 +30,8 @@ public class MainIoCTest extends Assert {
 
     @Test
     public void testMainIoC() throws Exception {
-        Main main = new Main();
+        // use configuration class
+        Main main = new Main(MyConfiguration.class);
         // add as class so we get IoC
         main.addRouteBuilder(MyRouteBuilder.class);
         main.start();
@@ -52,7 +54,20 @@ public class MainIoCTest extends Assert {
         DirectComponent direct = camelContext.getComponent("direct", DirectComponent.class);
         assertEquals(1234, direct.getTimeout());
 
+        // should have called the configure class
+        assertEquals("123", camelContext.getGlobalOptions().get("foo"));
+
         main.stop();
+    }
+
+    public static class MyConfiguration {
+
+        @BeanInject
+        private CamelContext camel;
+
+        public void configure() {
+            camel.getGlobalOptions().put("foo", "123");
+        }
     }
 
     public static class MyRouteBuilder extends RouteBuilder {

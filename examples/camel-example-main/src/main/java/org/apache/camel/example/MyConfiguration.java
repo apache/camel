@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,26 +16,25 @@
  */
 package org.apache.camel.example;
 
-import org.apache.camel.main.Main;
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.PropertyInject;
 
 /**
- * Main class that boot the Camel application
+ * Class to configure the Camel application.
  */
-public final class MyApplication {
+public class MyConfiguration {
 
-    private MyApplication() {
+    @PropertyInject("hi")
+    private String hi;
+
+    @BindToRegistry
+    public MyBean myBean() {
+        // this will create an instance of this bean with the name of the method (eg myBean)
+        return new MyBean(hi);
     }
 
-    public static void main(String[] args) throws Exception {
-        // use Camels Main class
-        Main main = new Main();
-        // lets use a configuration class
-        // properties are automatic loaded from application.properties
-        main.setConfigurationClass(MyConfiguration.class);
-        // and add the routes
-        main.addRouteBuilder(MyRouteBuilder.class);
-        // now keep the application running until the JVM is terminated (ctrl + c or sigterm)
-        main.run(args);
+    public void configure() {
+        // this method is optional and can be removed if no additional configuration is needed.
     }
 
 }

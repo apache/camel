@@ -35,6 +35,10 @@ public class Main extends MainSupport {
     public Main() {
     }
 
+    public Main(Class configurationClass) {
+        super(configurationClass);
+    }
+
     public static void main(String... args) throws Exception {
         Main main = new Main();
         instance = main;
