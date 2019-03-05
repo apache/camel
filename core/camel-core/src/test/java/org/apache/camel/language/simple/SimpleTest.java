@@ -265,6 +265,14 @@ public class SimpleTest extends LanguageTestSupport {
     }
     
     @Test
+    public void testSimpleSystemEnvironmentExpressionsIfDash() throws Exception {
+        String foo = System.getenv("FOO_SERVICE_HOST");
+        if (foo != null) {
+            assertExpression("${sysenv.FOO-SERVICE-HOST}", foo);
+        }
+    }
+
+    @Test
     public void testSimpleSystemEnvironmentExpressionsIfLowercase() throws Exception {
         String path = System.getenv("PATH");
         if (path != null) {

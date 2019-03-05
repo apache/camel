@@ -245,6 +245,10 @@ location=file:${env:APP_HOME}/etc/foo.properties
 
 Where `APP_HOME` is an OS environment.
 
+NOTE: Some OS'es (such as Linux) do not support dashes in environment variable names,
+so here we are using `APP_HOME`. But if you specify `APP-HOME` then Camel 3 will automatic lookup
+the value as `APP_HOME` (with underscore) as fallback.
+
 You can have multiple placeholders in the same location, such as:
 
 [source]
