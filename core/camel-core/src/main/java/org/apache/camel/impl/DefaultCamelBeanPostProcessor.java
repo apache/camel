@@ -28,11 +28,11 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.support.ObjectHelper.invokeMethod;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 /**
@@ -205,20 +205,10 @@ public class DefaultCamelBeanPostProcessor {
 
                 BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
                 if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
-                    bindRegistry(field, bind.name(), bean, beanName);
+                    bindToRegistry(field, bind.name(), bean, beanName);
                 }
             }
         });
-    }
-
-    private void bindRegistry(Field field, String name, Object bean, String beanName) {
-        if (isEmpty(name)) {
-            name = field.getName();
-        }
-        Object value = ReflectionHelper.getField(field, bean);
-        if (value != null) {
-            camelContext.getRegistry().bind(name, value);
-        }
     }
 
     public void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
@@ -273,6 +263,11 @@ public class DefaultCamelBeanPostProcessor {
         if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
             setterInjection(method, bean, beanName, produce.uri(), produce.ref(), produce.property());
         }
+
+        BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
+        if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
+            bindToRegistry(method, bind.name(), bean, beanName);
+        }
     }
 
     public void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef, String endpointProperty) {
@@ -284,7 +279,7 @@ public class DefaultCamelBeanPostProcessor {
                 String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
                 Object value = getPostProcessorHelper().getInjectionValue(parameterTypes[0], endpointUri, endpointRef, endpointProperty,
                         propertyName, bean, beanName);
-                ObjectHelper.invokeMethod(method, bean, value);
+                invokeMethod(method, bean, value);
             }
         }
     }
@@ -298,20 +293,48 @@ public class DefaultCamelBeanPostProcessor {
             } else {
                 String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
                 Object value = getPostProcessorHelper().getInjectionPropertyValue(parameterTypes[0], propertyValue, propertyDefaultValue, propertyName, bean, beanName);
-                ObjectHelper.invokeMethod(method, bean, value);
+                invokeMethod(method, bean, value);
             }
         }
     }
 
     public void setterBeanInjection(Method method, String name, Object bean, String beanName) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        if (parameterTypes != null) {
-            if (parameterTypes.length != 1) {
-                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
-            } else {
-                Object value = getPostProcessorHelper().getInjectionBeanValue(parameterTypes[0], name);
-                ObjectHelper.invokeMethod(method, bean, value);
-            }
+        if (parameterTypes.length != 1) {
+            LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
+        } else {
+            Object value = getPostProcessorHelper().getInjectionBeanValue(parameterTypes[0], name);
+            invokeMethod(method, bean, value);
+        }
+    }
+
+    private void bindToRegistry(Field field, String name, Object bean, String beanName) {
+        if (isEmpty(name)) {
+            name = field.getName();
+        }
+        Object value = ReflectionHelper.getField(field, bean);
+        if (value != null) {
+            camelContext.getRegistry().bind(name, value);
+        }
+    }
+
+    private void bindToRegistry(Method method, String name, Object bean, String beanName) {
+        if (isEmpty(name)) {
+            name = method.getName();
+        }
+        Class<?> returnType = method.getReturnType();
+        if (returnType == null || returnType == Void.TYPE) {
+            throw new IllegalArgumentException("@BindToRegistry on class: " + method.getDeclaringClass()
+                + " method: " + method.getName() + " with void return type is not allowed");
+        }
+        // TODO: Add support for some bean parameter bindings, like CamelContext,Registry and auto-lookup of by type in registry
+        if (method.getParameterCount() != 0) {
+            throw new IllegalArgumentException("@BindToRegistry on class: " + method.getDeclaringClass()
+                + " method: " + method.getName() + " with method parameters is not allowed");
+        }
+        Object value = invokeMethod(method, bean);
+        if (value != null) {
+            camelContext.getRegistry().bind(name, value);
         }
     }
 
