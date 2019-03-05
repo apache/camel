@@ -27,7 +27,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.jooq.Query;
@@ -129,7 +128,7 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) {
-        return new DefaultConsumer(this, processor);
+        return new JooqConsumer(this, processor);
     }
 
     @Override
