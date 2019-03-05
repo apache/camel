@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
-public @interface BindRegistry {
+public @interface BindToRegistry {
     String name() default "";
     String context() default "";
 }

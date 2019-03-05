@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import org.apache.camel.BeanInject;
-import org.apache.camel.BindRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
@@ -88,7 +88,7 @@ public class DefaultCamelBeanPostProcessor {
         injectMethods(bean, beanName);
 
         // the bean may also need to be registered into the registry
-        BindRegistry bind = bean.getClass().getAnnotation(BindRegistry.class);
+        BindToRegistry bind = bean.getClass().getAnnotation(BindToRegistry.class);
         if (bind != null) {
             String name = bind.name();
             if (isEmpty(name)) {
@@ -203,7 +203,7 @@ public class DefaultCamelBeanPostProcessor {
                     injectField(field, produce.uri(), produce.ref(), produce.property(), bean, beanName, produce.binding());
                 }
 
-                BindRegistry bind = field.getAnnotation(BindRegistry.class);
+                BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
                 if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
                     bindRegistry(field, bind.name(), bean, beanName);
                 }
