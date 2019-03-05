@@ -17,11 +17,14 @@
 package org.apache.camel.main;
 
 import org.apache.camel.BeanInject;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.seda.BlockingQueueFactory;
+import org.apache.camel.component.seda.PriorityBlockingQueueFactory;
 import org.apache.camel.component.seda.SedaComponent;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,6 +60,11 @@ public class MainIoCTest extends Assert {
         // should have called the configure class
         assertEquals("123", camelContext.getGlobalOptions().get("foo"));
 
+        // and seda should have been auto-configured by type
+        Object qf = seda.getDefaultQueueFactory();
+        assertNotNull(qf);
+        assertTrue(qf instanceof PriorityBlockingQueueFactory);
+
         main.stop();
     }
 
@@ -64,6 +72,11 @@ public class MainIoCTest extends Assert {
 
         @BeanInject
         private CamelContext camel;
+
+        @BindToRegistry
+        public BlockingQueueFactory queueFactory() {
+            return new PriorityBlockingQueueFactory();
+        }
 
         public void configure() {
             camel.getGlobalOptions().put("foo", "123");

@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,12 +19,14 @@ package org.apache.camel.main;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -46,6 +48,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -122,16 +125,16 @@ public abstract class MainSupport extends ServiceSupport {
             }
         });
         addOption(new ParameterOption("r", "routers",
-                 "Sets the router builder classes which will be loaded while starting the camel context",
-                 "routerBuilderClasses") {
+            "Sets the router builder classes which will be loaded while starting the camel context",
+            "routerBuilderClasses") {
             @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setRouteBuilderClasses(parameter);
             }
         });
         addOption(new ParameterOption("d", "duration",
-                "Sets the time duration (seconds) that the application will run for before terminating.",
-                "duration") {
+            "Sets the time duration (seconds) that the application will run for before terminating.",
+            "duration") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 // skip second marker to be backwards compatible
                 if (parameter.endsWith("s") || parameter.endsWith("S")) {
@@ -141,15 +144,15 @@ public abstract class MainSupport extends ServiceSupport {
             }
         });
         addOption(new ParameterOption("dm", "durationMaxMessages",
-                "Sets the duration of maximum number of messages that the application will process before terminating.",
-                "durationMaxMessages") {
+            "Sets the duration of maximum number of messages that the application will process before terminating.",
+            "durationMaxMessages") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setDurationMaxMessages(Integer.parseInt(parameter));
             }
         });
         addOption(new ParameterOption("di", "durationIdle",
-                "Sets the idle time duration (seconds) duration that the application can be idle before terminating.",
-                "durationIdle") {
+            "Sets the idle time duration (seconds) duration that the application can be idle before terminating.",
+            "durationIdle") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 // skip second marker to be backwards compatible
                 if (parameter.endsWith("s") || parameter.endsWith("S")) {
@@ -164,15 +167,15 @@ public abstract class MainSupport extends ServiceSupport {
             }
         });
         addOption(new ParameterOption("e", "exitcode",
-                "Sets the exit code if duration was hit",
-                "exitcode")  {
+            "Sets the exit code if duration was hit",
+            "exitcode") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setDurationHitExitCode(Integer.parseInt(parameter));
             }
         });
         addOption(new ParameterOption("watch", "fileWatch",
-                "Sets a directory to watch for file changes to trigger reloading routes on-the-fly",
-                "fileWatch") {
+            "Sets a directory to watch for file changes to trigger reloading routes on-the-fly",
+            "fileWatch") {
             @Override
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setFileWatchDirectory(parameter);
@@ -458,11 +461,11 @@ public abstract class MainSupport extends ServiceSupport {
     public void setFileWatchDirectory(String fileWatchDirectory) {
         this.fileWatchDirectory = fileWatchDirectory;
     }
-    
+
     public boolean isFileWatchDirectoryRecursively() {
         return fileWatchDirectoryRecursively;
     }
-    
+
     /**
      * Sets the flag to watch directory of XML file changes recursively to trigger live reload of Camel routes.
      * <p/>
@@ -688,12 +691,6 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
-        // conventional configuration via properties to allow configuring options on
-        // component, dataformat, and languages (like spring-boot auto-configuration)
-        if (autoConfigurationEnabled) {
-            autoConfigurationFromProperties(camelContext);
-        }
-
         if (configurationClass != null) {
             // create instance of configuration class as it may do dependency injection and bind to registry
             Object config = camelContext.getInjector().newInstance(configurationClass);
@@ -703,6 +700,13 @@ public abstract class MainSupport extends ServiceSupport {
                 log.info("Calling configure method on configuration class: {}", configurationClass);
                 invokeMethod(method, config);
             }
+        }
+
+        // conventional configuration via properties to allow configuring options on
+        // component, dataformat, and languages (like spring-boot auto-configuration)
+        if (autoConfigurationEnabled) {
+            autoConfigurationFromRegistry(camelContext);
+            autoConfigurationFromProperties(camelContext);
         }
 
         // try to load the route builders from the routeBuilderClasses
@@ -774,6 +778,64 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
+    protected void autoConfigurationFromRegistry(CamelContext camelContext) throws Exception {
+        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
+            @Override
+            public void onComponentAdd(String name, Component component) {
+                // when adding a component then support auto-configuring complex types
+                // by looking up from registry, such as DataSource etc
+                Map<String, Object> properties = new LinkedHashMap<>();
+                IntrospectionSupport.getProperties(component, properties, null);
+
+                // lookup complex types
+                properties.forEach((k, v) -> {
+                    // if the property has not been set and its a complex type (not simple or string etc)
+                    Class type = getGetterType(component, k);
+                    if (isComplexType(type)) {
+                        Set lookup = findBindingByType(camelContext, type);
+                        if (lookup.size() == 1) {
+                            v = lookup.iterator().next();
+                            try {
+                                IntrospectionSupport.setProperty(camelContext, component, k, v);
+                            } catch (Exception e) {
+                                LOG.warn("Cannot auto configure option: " + k + " on component: " + name + " due to " + e.getMessage());
+                            }
+                        }
+                    }
+                });
+            }
+
+            /**
+             * Finds any explicit bean bindings that has been added to the registry.
+             * This means that if there are any, then they have been added by the end user
+             * and we should favour using the bean if there is a single instance bound for the type.
+             */
+            private Set findBindingByType(CamelContext camelContext, Class type) {
+                if (camelContext.getRegistry() instanceof MainRegistry) {
+                    return ((MainRegistry) camelContext.getRegistry()).findBindingsByType(type);
+                }
+                return Collections.EMPTY_SET;
+            }
+
+            private boolean isComplexType(Class type) {
+                // lets consider all non java as complex types
+                return !type.getName().startsWith("java");
+            }
+
+            private Class getGetterType(Component component, String key) {
+                try {
+                    Method getter = IntrospectionSupport.getPropertyGetter(component.getClass(), key);
+                    if (getter != null) {
+                        return getter.getReturnType();
+                    }
+                } catch (NoSuchMethodException e) {
+                    // ignore
+                }
+                return null;
+            }
+        });
+    }
+
     public void addRouteBuilder(RouteBuilder routeBuilder) {
         getRouteBuilders().add(routeBuilder);
     }
@@ -796,18 +858,18 @@ public abstract class MainSupport extends ServiceSupport {
         Iterator it = properties.entrySet().iterator();
 
         while (it.hasNext()) {
-            Map.Entry<String, Object> entry = (Map.Entry)it.next();
+            Map.Entry<String, Object> entry = (Map.Entry) it.next();
             String name = entry.getKey();
             Object value = entry.getValue();
             String stringValue = value != null ? value.toString() : null;
             boolean hit = false;
             if (EndpointHelper.isReferenceParameter(stringValue)) {
-                hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, (Object)null, stringValue, true);
+                hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, (Object) null, stringValue, true);
             } else if (value != null) {
                 try {
                     hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, value);
                 } catch (IllegalArgumentException var12) {
-                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, (Object)null, stringValue, true);
+                    hit = IntrospectionSupport.setProperty(context, context.getTypeConverter(), target, name, (Object) null, stringValue, true);
                 }
             }
 
@@ -815,75 +877,75 @@ public abstract class MainSupport extends ServiceSupport {
                 it.remove();
                 rc = true;
             } else if (failIfNotSet) {
-                throw new IllegalArgumentException("Cannot configure option [" + name + "] with value [" + stringValue + "] as the bean class [" 
-                + ObjectHelper.classCanonicalName(target) + "] has no suitable setter method, or not possible to lookup a bean with the id [" + stringValue + "] in Camel registry");
+                throw new IllegalArgumentException("Cannot configure option [" + name + "] with value [" + stringValue + "] as the bean class ["
+                    + ObjectHelper.classCanonicalName(target) + "] has no suitable setter method, or not possible to lookup a bean with the id [" + stringValue + "] in Camel registry");
             }
         }
 
         return rc;
     }
 
-    public abstract class Option {
-        private String abbreviation;
-        private String fullName;
-        private String description;
+public abstract class Option {
+    private String abbreviation;
+    private String fullName;
+    private String description;
 
-        protected Option(String abbreviation, String fullName, String description) {
-            this.abbreviation = "-" + abbreviation;
-            this.fullName = "-" + fullName;
-            this.description = description;
-        }
-
-        public boolean processOption(String arg, LinkedList<String> remainingArgs) {
-            if (arg.equalsIgnoreCase(abbreviation) || fullName.startsWith(arg)) {
-                doProcess(arg, remainingArgs);
-                return true;
-            }
-            return false;
-        }
-
-        public String getAbbreviation() {
-            return abbreviation;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getFullName() {
-            return fullName;
-        }
-
-        public String getInformation() {
-            return "  " + getAbbreviation() + " or " + getFullName() + " = " + getDescription();
-        }
-
-        protected abstract void doProcess(String arg, LinkedList<String> remainingArgs);
+    protected Option(String abbreviation, String fullName, String description) {
+        this.abbreviation = "-" + abbreviation;
+        this.fullName = "-" + fullName;
+        this.description = description;
     }
 
-    public abstract class ParameterOption extends Option {
-        private String parameterName;
-
-        protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
-            super(abbreviation, fullName, description);
-            this.parameterName = parameterName;
+    public boolean processOption(String arg, LinkedList<String> remainingArgs) {
+        if (arg.equalsIgnoreCase(abbreviation) || fullName.startsWith(arg)) {
+            doProcess(arg, remainingArgs);
+            return true;
         }
-
-        protected void doProcess(String arg, LinkedList<String> remainingArgs) {
-            if (remainingArgs.isEmpty()) {
-                System.err.println("Expected fileName for ");
-                showOptions();
-                completed();
-            } else {
-                String parameter = remainingArgs.removeFirst();
-                doProcess(arg, parameter, remainingArgs);
-            }
-        }
-
-        public String getInformation() {
-            return "  " + getAbbreviation() + " or " + getFullName() + " <" + parameterName + "> = " + getDescription();
-        }
-
-        protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);
+        return false;
     }
+
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getInformation() {
+        return "  " + getAbbreviation() + " or " + getFullName() + " = " + getDescription();
+    }
+
+    protected abstract void doProcess(String arg, LinkedList<String> remainingArgs);
+}
+
+public abstract class ParameterOption extends Option {
+    private String parameterName;
+
+    protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
+        super(abbreviation, fullName, description);
+        this.parameterName = parameterName;
+    }
+
+    protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+        if (remainingArgs.isEmpty()) {
+            System.err.println("Expected fileName for ");
+            showOptions();
+            completed();
+        } else {
+            String parameter = remainingArgs.removeFirst();
+            doProcess(arg, parameter, remainingArgs);
+        }
+    }
+
+    public String getInformation() {
+        return "  " + getAbbreviation() + " or " + getFullName() + " <" + parameterName + "> = " + getDescription();
+    }
+
+    protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);
+}
 }

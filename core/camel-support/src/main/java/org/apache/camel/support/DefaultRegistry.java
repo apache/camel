@@ -40,9 +40,9 @@ import org.apache.camel.spi.Registry;
  */
 public class DefaultRegistry implements Registry, CamelContextAware {
 
-    private CamelContext camelContext;
-    private List<BeanRepository> repositories;
-    private final Registry simple = new SimpleRegistry();
+    protected CamelContext camelContext;
+    protected List<BeanRepository> repositories;
+    protected final Registry simple = new SimpleRegistry();
 
     /**
      * Creates a default registry that only uses {@link SimpleRegistry} as the repository.
