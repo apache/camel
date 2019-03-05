@@ -16,26 +16,14 @@
  */
 package org.apache.camel.example;
 
-import org.apache.camel.main.Main;
+import org.apache.camel.builder.RouteBuilder;
 
-/**
- * Main class that boot the Camel application
- */
-public final class MyApplication {
+public class MyRouteBuilder extends RouteBuilder {
 
-    private MyApplication() {
+    @Override
+    public void configure() throws Exception {
+        from("quartz2:foo?cron={{myCron}}")
+            .bean("myBean")
+            .log("${body}");
     }
-
-    public static void main(String[] args) throws Exception {
-        // use Camels Main class
-        Main main = new Main();
-        // lets use a configuration class
-        // properties are automatic loaded from application.properties
-        main.setConfigurationClass(MyConfiguration.class);
-        // and add the routes
-        main.addRouteBuilder(MyRouteBuilder.class);
-        // now keep the application running until the JVM is terminated (ctrl + c or sigterm)
-        main.run(args);
-    }
-
 }
