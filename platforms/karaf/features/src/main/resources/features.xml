@@ -2328,6 +2328,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-ws-support/${spring-ws-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-ws-security/${spring-ws-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-xml/${spring-xml-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.saaj-api-1.3/${servicemix-specs-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-ws/${project.version}</bundle>
   </feature>
   <feature name='camel-sql' version='${project.version}' start-level='50'>
