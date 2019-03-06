@@ -21,12 +21,13 @@ import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.junit.Before;
 import org.junit.Test;
 
 public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
 
-    private DefaultCamelBeanPostProcessor postProcessor;
+    private CamelBeanPostProcessor postProcessor;
 
     @Test
     public void testPostProcessor() throws Exception {
@@ -57,7 +58,7 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        postProcessor = new DefaultCamelBeanPostProcessor(context);
+        postProcessor = context.getBeanPostProcessor();
     }
 
     @BindToRegistry

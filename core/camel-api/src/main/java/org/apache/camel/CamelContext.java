@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
@@ -711,6 +712,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the injector
      */
     Injector getInjector();
+
+    /**
+     * Returns the bean post processor used to do any bean customization.
+     *
+     * @return the bean post processor.
+     */
+    CamelBeanPostProcessor getBeanPostProcessor();
 
     /**
      * Returns the management mbean assembler

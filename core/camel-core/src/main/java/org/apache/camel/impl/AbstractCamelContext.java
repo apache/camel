@@ -109,6 +109,7 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
 import org.apache.camel.spi.ClassResolver;
@@ -252,6 +253,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private volatile TypeConverter typeConverter;
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile Injector injector;
+    private volatile CamelBeanPostProcessor beanPostProcessor;
     private volatile ComponentResolver componentResolver;
     private volatile LanguageResolver languageResolver;
     private volatile DataFormatResolver dataFormatResolver;
@@ -2485,6 +2487,21 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         this.injector = doAddService(injector);
     }
 
+    public CamelBeanPostProcessor getBeanPostProcessor() {
+        if (beanPostProcessor == null) {
+            synchronized (lock) {
+                if (beanPostProcessor == null) {
+                    setBeanPostProcessor(createBeanPostProcessor());
+                }
+            }
+        }
+        return beanPostProcessor;
+    }
+
+    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
+        this.beanPostProcessor = doAddService(beanPostProcessor);
+    }
+
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
         return managementMBeanAssembler;
     }
@@ -4697,6 +4714,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     protected abstract TypeConverterRegistry createTypeConverterRegistry();
 
     protected abstract Injector createInjector();
+
+    protected abstract CamelBeanPostProcessor createBeanPostProcessor();
 
     protected abstract ComponentResolver createComponentResolver();
 
