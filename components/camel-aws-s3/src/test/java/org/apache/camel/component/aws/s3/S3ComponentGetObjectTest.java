@@ -38,7 +38,7 @@ public class S3ComponentGetObjectTest extends CamelTestSupport {
 
     @Test
     public void sendIn() throws Exception {
-        result.expectedMessageCount(0);
+        result.expectedMessageCount(1);
 
         template.send("direct:getObject", new Processor() {
 
