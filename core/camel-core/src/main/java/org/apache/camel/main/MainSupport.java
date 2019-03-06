@@ -35,17 +35,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
-import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.support.EndpointHelper;
@@ -635,15 +632,10 @@ public abstract class MainSupport extends ServiceSupport {
         postProcessCamelContext(camelContext);
     }
 
-    public ModelJAXBContextFactory getModelJAXBContextFactory() {
-        return new DefaultModelJAXBContextFactory();
-    }
-
     protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
         // lets use Camel's bean post processor on any existing route builder classes
         // so the instance has some support for dependency injection
-        // TODO: We should have this hidden behind an interface, so we can do bean post processing via camel-api
-        DefaultCamelBeanPostProcessor postProcessor = new DefaultCamelBeanPostProcessor(getCamelContext());
+        CamelBeanPostProcessor postProcessor = camelContext.getBeanPostProcessor();
         for (RouteBuilder routeBuilder : getRouteBuilders()) {
             postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
             postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());

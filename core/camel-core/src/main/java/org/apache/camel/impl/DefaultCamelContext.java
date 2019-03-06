@@ -42,6 +42,7 @@ import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.runtimecatalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanRepository;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -164,6 +165,13 @@ public class DefaultCamelContext extends AbstractCamelContext {
             // lets use the default injector
             return new DefaultInjector(this);
         }
+    }
+
+    /**
+     * Lazily create a default bean post processor
+     */
+    protected CamelBeanPostProcessor createBeanPostProcessor() {
+        return new DefaultCamelBeanPostProcessor(this);
     }
 
     /**
