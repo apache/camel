@@ -277,6 +277,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             if (beanPostProcessor instanceof CamelBeanPostProcessor) {
                 ((CamelBeanPostProcessor) beanPostProcessor).setCamelContext(getContext());
             }
+            // register the bean post processor on camel context
+            if (beanPostProcessor instanceof org.apache.camel.spi.CamelBeanPostProcessor) {
+                context.setBeanPostProcessor((org.apache.camel.spi.CamelBeanPostProcessor) beanPostProcessor);
+            }
         }
     }
 

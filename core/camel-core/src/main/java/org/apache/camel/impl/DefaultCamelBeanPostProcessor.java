@@ -32,6 +32,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ReflectionHelper;
@@ -57,7 +58,7 @@ import static org.apache.camel.util.ObjectHelper.isEmpty;
  * Components such as <tt>camel-spring</tt>, and <tt>camel-blueprint</tt> can leverage this post processor to hook in Camel
  * bean post processing into their bean processing framework.
  */
-public class DefaultCamelBeanPostProcessor {
+public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
 
     protected static final Logger LOG = LoggerFactory.getLogger(DefaultCamelBeanPostProcessor.class);
     protected CamelPostProcessorHelper camelPostProcessorHelper;
@@ -70,18 +71,6 @@ public class DefaultCamelBeanPostProcessor {
         this.camelContext = camelContext;
     }
 
-    /**
-     * Apply this post processor to the given new bean instance <i>before</i> any bean
-     * initialization callbacks (like <code>afterPropertiesSet</code>
-     * or a custom init-method). The bean will already be populated with property values.
-     * The returned bean instance may be a wrapper around the original.
-     *
-     * @param bean the new bean instance
-     * @param beanName the name of the bean
-     * @return the bean instance to use, either the original or a wrapped one; if
-     * <code>null</code>, no subsequent BeanPostProcessors will be invoked
-     * @throws Exception is thrown if error post processing bean
-     */
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws Exception {
         LOG.trace("Camel bean processing before initialization for bean: {}", beanName);
 
@@ -110,18 +99,6 @@ public class DefaultCamelBeanPostProcessor {
         return bean;
     }
 
-    /**
-     * Apply this post processor to the given new bean instance <i>after</i> any bean
-     * initialization callbacks (like <code>afterPropertiesSet</code>
-     * or a custom init-method). The bean will already be populated with property values.
-     * The returned bean instance may be a wrapper around the original.
-     *
-     * @param bean the new bean instance
-     * @param beanName the name of the bean
-     * @return the bean instance to use, either the original or a wrapped one; if
-     * <code>null</code>, no subsequent BeanPostProcessors will be invoked
-     * @throws Exception is thrown if error post processing bean
-     */
     public Object postProcessAfterInitialization(Object bean, String beanName) throws Exception {
         LOG.trace("Camel bean processing after initialization for bean: {}", beanName);
 
