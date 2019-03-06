@@ -78,8 +78,9 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected CamelContext camelContext;
     protected List<RouteBuilder> routeBuilders = new ArrayList<>();
-    protected List<Class> configurationClasses;
     protected String routeBuilderClasses;
+    protected List<Object> configurations = new ArrayList<>();
+    protected String configurationClasses;
     protected String fileWatchDirectory;
     protected boolean fileWatchDirectoryRecursively;
     protected ProducerTemplate camelTemplate;
@@ -428,23 +429,32 @@ public abstract class MainSupport extends ServiceSupport {
         return exitCode.get();
     }
 
-    public List<Class> getConfigurationClasses() {
+    public String getConfigurationClasses() {
         return configurationClasses;
     }
 
-    /**
-     * Sets optional configuration classes which allows to do any initial configuration.
-     * The class can/should have a method named <tt>configure</tt> which is called.
-     */
-    public void setConfigurationClasses(List<Class> configurationClasses) {
-        this.configurationClasses = configurationClasses;
+    public void setConfigurationClasses(String configurations) {
+        this.configurationClasses = configurations;
     }
 
-    public void addConfigurationClass(Class... configurationClasses) {
-        if (this.configurationClasses == null) {
-            this.configurationClasses = new ArrayList<>();
+    public void addConfigurationClass(Class... configuration) {
+        String existing = configurationClasses;
+        if (existing == null) {
+            existing = "";
         }
-        this.configurationClasses.addAll(Arrays.asList(configurationClasses));
+        if (configuration != null) {
+            for (Class clazz : configuration) {
+                if (!existing.isEmpty()) {
+                    existing = existing + ",";
+                }
+                existing = existing + clazz.getName();
+            }
+        }
+        setConfigurationClasses(existing);
+    }
+
+    public void addConfiguration(Object configuration) {
+        configurations.add(configuration);
     }
 
     public String getRouteBuilderClasses() {
@@ -608,6 +618,14 @@ public abstract class MainSupport extends ServiceSupport {
         this.routeBuilders = routeBuilders;
     }
 
+    public List<Object> getConfigurations() {
+        return configurations;
+    }
+
+    public void setConfigurations(List<Object> configurations) {
+        this.configurations = configurations;
+    }
+
     public List<RouteDefinition> getRouteDefinitions() {
         List<RouteDefinition> answer = new ArrayList<>();
         if (camelContext != null) {
@@ -652,6 +670,35 @@ public abstract class MainSupport extends ServiceSupport {
                 } else {
                     LOG.warn("Class {} is not a RouteBuilder class", routeClazz);
                 }
+            }
+        }
+    }
+
+    protected void loadConfigurations(CamelContext camelContext) throws Exception {
+        // lets use Camel's bean post processor on any existing configuration classes
+        // so the instance has some support for dependency injection
+        CamelBeanPostProcessor postProcessor = camelContext.getBeanPostProcessor();
+        for (Object configuration : getConfigurations()) {
+            postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());
+            postProcessor.postProcessAfterInitialization(configuration, configuration.getClass().getName());
+        }
+
+        if (configurationClasses != null) {
+            String[] configClasses = configurationClasses.split(",");
+            for (String configClass : configClasses) {
+                Class<?> configClazz = camelContext.getClassResolver().resolveClass(configClass);
+                // lets use Camel's injector so the class has some support for dependency injection
+                Object config = camelContext.getInjector().newInstance(configClazz);
+                getConfigurations().add(config);
+            }
+        }
+
+        for (Object config : getConfigurations()) {
+            // invoke configure method if exists
+            Method method = findMethod(config.getClass(), "configure");
+            if (method != null) {
+                log.info("Calling configure method on configuration class: {}", config.getClass().getName());
+                invokeMethod(method, config);
             }
         }
     }
@@ -706,18 +753,8 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
-        if (configurationClasses != null) {
-            for (Class<?> clazz : configurationClasses) {
-                // create instance of configuration class as it may do dependency injection and bind to registry
-                Object config = camelContext.getInjector().newInstance(clazz);
-                // invoke configure method if exists
-                Method method = findMethod(clazz, "configure");
-                if (method != null) {
-                    log.info("Calling configure method on configuration class: {}", clazz.getName());
-                    invokeMethod(method, config);
-                }
-            }
-        }
+        // try to load configurations
+        loadConfigurations(camelContext);
 
         // conventional configuration via properties to allow configuring options on
         // component, dataformat, and languages (like spring-boot auto-configuration)
@@ -726,7 +763,7 @@ public abstract class MainSupport extends ServiceSupport {
             autoConfigurationFromProperties(camelContext);
         }
 
-        // try to load the route builders from the routeBuilderClasses
+        // try to load the route builders
         loadRouteBuilders(camelContext);
         for (RouteBuilder routeBuilder : routeBuilders) {
             camelContext.addRoutes(routeBuilder);
