@@ -318,14 +318,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
                 }
             }
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_OVERRIDE) {
-                // lookup OS env with upper case key
-                String upperKey = key.toUpperCase();
-                value = System.getenv(upperKey);
-                // some OS do not support dashes in keys, so replace with underscore
-                if (value == null) {
-                    String noDashKey = upperKey.replace('-', '_');
-                    value = System.getenv(noDashKey);
-                }
+                value = lookupEnvironmentVariable(key);
                 if (value != null) {
                     log.debug("Found a environment property: {} with value: {} to be used.", key, value);
                 }
@@ -346,13 +339,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             }
             if (value == null && envMode == PropertiesComponent.ENVIRONMENT_VARIABLES_MODE_FALLBACK) {
                 // lookup OS env with upper case key
-                String upperKey = key.toUpperCase();
-                value = System.getenv(upperKey);
-                // some OS do not support dashes in keys, so replace with underscore
-                if (value == null) {
-                    String noDashKey = upperKey.replace('-', '_');
-                    value = System.getenv(noDashKey);
-                }
+                value = lookupEnvironmentVariable(key);
                 if (value != null) {
                     log.debug("Found a environment property: {} with value: {} to be used.", key, value);
                 }
@@ -360,6 +347,22 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
 
             return parseProperty(key, value, properties);
         }
+    }
+
+    /**
+     * Lookup the OS environment variable in a safe manner by
+     * using upper case keys and underscore instead of dash.
+     */
+    private static String lookupEnvironmentVariable(String key) {
+        // lookup OS env with upper case key
+        String upperKey = key.toUpperCase();
+        String value = System.getenv(upperKey);
+        // some OS do not support dashes in keys, so replace with underscore
+        if (value == null) {
+            String noDashKey = upperKey.replace('-', '_');
+            value = System.getenv(noDashKey);
+        }
+        return value;
     }
 
     /**
