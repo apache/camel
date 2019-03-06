@@ -35,7 +35,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.ModelCamelContext;
@@ -638,6 +640,15 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     protected void loadRouteBuilders(CamelContext camelContext) throws Exception {
+        // lets use Camel's bean post processor on any existing route builder classes
+        // so the instance has some support for dependency injection
+        // TODO: We should have this hidden behind an interface, so we can do bean post processing via camel-api
+        DefaultCamelBeanPostProcessor postProcessor = new DefaultCamelBeanPostProcessor(getCamelContext());
+        for (RouteBuilder routeBuilder : getRouteBuilders()) {
+            postProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.getClass().getName());
+            postProcessor.postProcessAfterInitialization(routeBuilder, routeBuilder.getClass().getName());
+        }
+
         if (routeBuilderClasses != null) {
             String[] routeClasses = routeBuilderClasses.split(",");
             for (String routeClass : routeClasses) {
@@ -704,7 +715,7 @@ public abstract class MainSupport extends ServiceSupport {
         }
 
         if (configurationClasses != null) {
-            for (Class clazz : configurationClasses) {
+            for (Class<?> clazz : configurationClasses) {
                 // create instance of configuration class as it may do dependency injection and bind to registry
                 Object config = camelContext.getInjector().newInstance(clazz);
                 // invoke configure method if exists
@@ -906,67 +917,67 @@ public abstract class MainSupport extends ServiceSupport {
         return rc;
     }
 
-public abstract class Option {
-    private String abbreviation;
-    private String fullName;
-    private String description;
+    public abstract class Option {
+        private String abbreviation;
+        private String fullName;
+        private String description;
 
-    protected Option(String abbreviation, String fullName, String description) {
-        this.abbreviation = "-" + abbreviation;
-        this.fullName = "-" + fullName;
-        this.description = description;
-    }
-
-    public boolean processOption(String arg, LinkedList<String> remainingArgs) {
-        if (arg.equalsIgnoreCase(abbreviation) || fullName.startsWith(arg)) {
-            doProcess(arg, remainingArgs);
-            return true;
+        protected Option(String abbreviation, String fullName, String description) {
+            this.abbreviation = "-" + abbreviation;
+            this.fullName = "-" + fullName;
+            this.description = description;
         }
-        return false;
-    }
 
-    public String getAbbreviation() {
-        return abbreviation;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getInformation() {
-        return "  " + getAbbreviation() + " or " + getFullName() + " = " + getDescription();
-    }
-
-    protected abstract void doProcess(String arg, LinkedList<String> remainingArgs);
-}
-
-public abstract class ParameterOption extends Option {
-    private String parameterName;
-
-    protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
-        super(abbreviation, fullName, description);
-        this.parameterName = parameterName;
-    }
-
-    protected void doProcess(String arg, LinkedList<String> remainingArgs) {
-        if (remainingArgs.isEmpty()) {
-            System.err.println("Expected fileName for ");
-            showOptions();
-            completed();
-        } else {
-            String parameter = remainingArgs.removeFirst();
-            doProcess(arg, parameter, remainingArgs);
+        public boolean processOption(String arg, LinkedList<String> remainingArgs) {
+            if (arg.equalsIgnoreCase(abbreviation) || fullName.startsWith(arg)) {
+                doProcess(arg, remainingArgs);
+                return true;
+            }
+            return false;
         }
+
+        public String getAbbreviation() {
+            return abbreviation;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getFullName() {
+            return fullName;
+        }
+
+        public String getInformation() {
+            return "  " + getAbbreviation() + " or " + getFullName() + " = " + getDescription();
+        }
+
+        protected abstract void doProcess(String arg, LinkedList<String> remainingArgs);
     }
 
-    public String getInformation() {
-        return "  " + getAbbreviation() + " or " + getFullName() + " <" + parameterName + "> = " + getDescription();
-    }
+    public abstract class ParameterOption extends Option {
+        private String parameterName;
 
-    protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);
-}
+        protected ParameterOption(String abbreviation, String fullName, String description, String parameterName) {
+            super(abbreviation, fullName, description);
+            this.parameterName = parameterName;
+        }
+
+        protected void doProcess(String arg, LinkedList<String> remainingArgs) {
+            if (remainingArgs.isEmpty()) {
+                System.err.println("Expected fileName for ");
+                showOptions();
+                completed();
+            } else {
+                String parameter = remainingArgs.removeFirst();
+                doProcess(arg, parameter, remainingArgs);
+            }
+        }
+
+        public String getInformation() {
+            return "  " + getAbbreviation() + " or " + getFullName() + " <" + parameterName + "> = " + getDescription();
+        }
+
+        protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);
+    }
 }
