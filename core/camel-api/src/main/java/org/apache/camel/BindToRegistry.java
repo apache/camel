@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * Used for binding a bean to the registry
  *
  * If no name is specified then the bean will have its name auto computed based on the
- * field name, or method name where the annotation is configured.
+ * class name, field name, or method name where the annotation is configured.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

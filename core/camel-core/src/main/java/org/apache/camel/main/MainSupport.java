@@ -806,7 +806,7 @@ public abstract class MainSupport extends ServiceSupport {
                     // if the property has not been set and its a complex type (not simple or string etc)
                     Class type = getGetterType(component, k);
                     if (isComplexType(type)) {
-                        Set lookup = findBindingByType(camelContext, type);
+                        Set lookup = findExplicitBindingByType(camelContext, type);
                         if (lookup.size() == 1) {
                             v = lookup.iterator().next();
                             try {
@@ -825,7 +825,7 @@ public abstract class MainSupport extends ServiceSupport {
              * This means that if there are any, then they have been added by the end user
              * and we should favour using the bean if there is a single instance bound for the type.
              */
-            private Set findBindingByType(CamelContext camelContext, Class type) {
+            private Set findExplicitBindingByType(CamelContext camelContext, Class type) {
                 if (camelContext.getRegistry() instanceof MainRegistry) {
                     return ((MainRegistry) camelContext.getRegistry()).findBindingsByType(type);
                 }
