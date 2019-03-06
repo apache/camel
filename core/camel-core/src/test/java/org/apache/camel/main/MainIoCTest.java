@@ -39,6 +39,8 @@ public class MainIoCTest extends Assert {
         main.addConfigurationClass(MyConfiguration.class);
         // add as class so we get IoC
         main.addRouteBuilder(MyRouteBuilder.class);
+        // manually bind
+        main.bind("myBar", new MyBar());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();
@@ -78,6 +80,10 @@ public class MainIoCTest extends Assert {
         main.stop();
     }
 
+    public static class MyBar {
+        // noop
+    }
+
     public static class MyConfiguration {
 
         @BeanInject
@@ -105,9 +111,13 @@ public class MainIoCTest extends Assert {
         }
 
         @BindToRegistry(name = "coolStuff")
-        public String cool(MyCoolBean cool) {
-            // should lookup MyCoolBean type from the registry
+        public String cool(@BeanInject MyCoolBean cool,
+                           @PropertyInject(value = "magic", defaultValue = "456") int num,
+                           @BeanInject("myBar") MyBar bar) {
+            // should lookup MyCoolBean type from the registry and find the property
             Assert.assertNotNull(cool);
+            Assert.assertEquals(456, num);
+            Assert.assertNotNull(bar);
             return cool.getName();
         }
 
