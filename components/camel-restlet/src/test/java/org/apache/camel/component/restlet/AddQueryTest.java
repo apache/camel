@@ -27,9 +27,9 @@ public class AddQueryTest extends Assert {
     
     @Test
     public void testAddQuery() throws Exception {
-        assertEquals("http://a/b/c?a=b", RestletProducer.addQueryToUri("http://a/b/c", "a=b"));
-        assertEquals("http://a/b/c?a=b&c=b", RestletProducer.addQueryToUri("http://a/b/c", "a=b&c=b"));
-        assertEquals("http://a/b/c?a=b&c=b&l=m", RestletProducer.addQueryToUri("http://a/b/c?c=b&l=m", "a=b"));
-        assertEquals("http://a/b/c?a=b&i=j&c=b&l=m", RestletProducer.addQueryToUri("http://a/b/c?c=b&l=m", "a=b&i=j"));
+        assertEquals("http4://a/b/c?a=b", RestletProducer.addQueryToUri("http4://a/b/c", "a=b"));
+        assertEquals("http4://a/b/c?a=b&c=b", RestletProducer.addQueryToUri("http4://a/b/c", "a=b&c=b"));
+        assertEquals("http4://a/b/c?a=b&c=b&l=m", RestletProducer.addQueryToUri("http4://a/b/c?c=b&l=m", "a=b"));
+        assertEquals("http4://a/b/c?a=b&i=j&c=b&l=m", RestletProducer.addQueryToUri("http4://a/b/c?c=b&l=m", "a=b&i=j"));
     }
 }

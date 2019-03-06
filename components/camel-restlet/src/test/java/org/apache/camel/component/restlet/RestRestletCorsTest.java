@@ -33,7 +33,7 @@ public class RestRestletCorsTest extends RestletTestSupport {
 
     @Test
     public void testCors() throws Exception {
-        Exchange out = template.request("http://localhost:" + portNum + "/users/123/basic", new Processor() {
+        Exchange out = template.request("http4://localhost:" + portNum + "/users/123/basic", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
@@ -49,7 +49,7 @@ public class RestRestletCorsTest extends RestletTestSupport {
 
     @Test
     public void testRestletProducerGet() throws Exception {
-        Exchange exchange = template.request("http://localhost:" + portNum + "/users/123/basic", null);
+        Exchange exchange = template.request("http4://localhost:" + portNum + "/users/123/basic", null);
 
         // verify no problems have occurred:
         assertFalse(exchange.isFailed());

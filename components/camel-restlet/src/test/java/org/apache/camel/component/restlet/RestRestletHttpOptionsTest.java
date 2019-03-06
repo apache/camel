@@ -28,7 +28,7 @@ public class RestRestletHttpOptionsTest extends RestletTestSupport {
 
     @Test
     public void testRestletServerOptions() throws Exception {
-        Exchange exchange = template.request("http://localhost:" + portNum + "/users/v1/customers", new Processor() {
+        Exchange exchange = template.request("http4://localhost:" + portNum + "/users/v1/customers", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
@@ -39,7 +39,7 @@ public class RestRestletHttpOptionsTest extends RestletTestSupport {
         assertEquals("GET, OPTIONS", exchange.getOut().getHeader("ALLOW"));
         assertEquals(null, exchange.getOut().getBody(String.class));
 
-        exchange = fluentTemplate.to("http://localhost:" + portNum + "/users/v1/123").withHeader(Exchange.HTTP_METHOD, "OPTIONS").send();
+        exchange = fluentTemplate.to("http4://localhost:" + portNum + "/users/v1/123").withHeader(Exchange.HTTP_METHOD, "OPTIONS").send();
         assertEquals(204, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("OPTIONS, PUT", exchange.getOut().getHeader("ALLOW"));
         assertEquals(null, exchange.getOut().getBody(String.class));

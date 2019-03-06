@@ -25,13 +25,13 @@ public class RestRestletVerbTest extends RestletTestSupport {
 
     @Test
     public void testGetAll() throws Exception {
-        String out = template.requestBodyAndHeader("http://localhost:" + portNum + "/users", null, Exchange.HTTP_METHOD, "GET", String.class);
+        String out = template.requestBodyAndHeader("http4://localhost:" + portNum + "/users", null, Exchange.HTTP_METHOD, "GET", String.class);
         assertEquals("[{ \"id\":\"1\", \"name\":\"Scott\" },{ \"id\":\"2\", \"name\":\"Claus\" }]", out);
     }
 
     @Test
     public void testGetOne() throws Exception {
-        String out = template.requestBodyAndHeader("http://localhost:" + portNum + "/users/1", null, Exchange.HTTP_METHOD, "GET", String.class);
+        String out = template.requestBodyAndHeader("http4://localhost:" + portNum + "/users/1", null, Exchange.HTTP_METHOD, "GET", String.class);
         assertEquals("{ \"id\":\"1\", \"name\":\"Scott\" }", out);
     }
 
@@ -41,7 +41,7 @@ public class RestRestletVerbTest extends RestletTestSupport {
         mock.expectedBodiesReceived("{ \"id\":\"1\", \"name\":\"Scott\" }");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
 
-        template.requestBodyAndHeader("http://localhost:" + portNum + "/users", "{ \"id\":\"1\", \"name\":\"Scott\" }", Exchange.HTTP_METHOD, "POST", String.class);
+        template.requestBodyAndHeader("http4://localhost:" + portNum + "/users", "{ \"id\":\"1\", \"name\":\"Scott\" }", Exchange.HTTP_METHOD, "POST", String.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -53,7 +53,7 @@ public class RestRestletVerbTest extends RestletTestSupport {
         mock.expectedHeaderReceived("id", "1");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "PUT");
 
-        template.requestBodyAndHeader("http://localhost:" + portNum + "/users/1", "{ \"id\":\"1\", \"name\":\"Scott\" }", Exchange.HTTP_METHOD, "PUT", String.class);
+        template.requestBodyAndHeader("http4://localhost:" + portNum + "/users/1", "{ \"id\":\"1\", \"name\":\"Scott\" }", Exchange.HTTP_METHOD, "PUT", String.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -64,7 +64,7 @@ public class RestRestletVerbTest extends RestletTestSupport {
         mock.expectedHeaderReceived("id", "1");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "DELETE");
 
-        template.requestBodyAndHeader("http://localhost:" + portNum + "/users/1", null, Exchange.HTTP_METHOD, "DELETE", String.class);
+        template.requestBodyAndHeader("http4://localhost:" + portNum + "/users/1", null, Exchange.HTTP_METHOD, "DELETE", String.class);
 
         assertMockEndpointsSatisfied();
     }

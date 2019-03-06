@@ -34,7 +34,7 @@ public class RestRestletPostJsonPojoListTest extends RestletTestSupport {
         mock.expectedMessageCount(1);
 
         String body = "[ {\"id\": 123, \"name\": \"Donald Duck\"}, {\"id\": 456, \"name\": \"John Doe\"} ]";
-        template.sendBody("http://localhost:" + portNum + "/users/new", body);
+        template.sendBody("http4://localhost:" + portNum + "/users/new", body);
 
         assertMockEndpointsSatisfied();
 
