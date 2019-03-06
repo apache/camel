@@ -406,7 +406,7 @@ public class S3Producer extends DefaultProducer {
         S3Object res = s3Client.getObject(req);
         
         Message message = getMessageForResponse(exchange);
-        message.setBody(res.getObjectContent());
+        message.setBody(res);
     }
     
     private void listObjects(AmazonS3 s3Client, Exchange exchange) {
