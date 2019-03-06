@@ -343,6 +343,7 @@ Camel-AWS s3 component provides the following operation on the producer side:
 - deleteBucket
 - downloadLink
 - listObjects
+- getObject (this will return an S3Object instance)
 
 #### Advanced AmazonS3 configuration
 
