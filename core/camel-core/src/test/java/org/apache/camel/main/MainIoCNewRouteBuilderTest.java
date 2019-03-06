@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.PropertyInject;
@@ -29,6 +30,7 @@ public class MainIoCNewRouteBuilderTest extends Assert {
     @Test
     public void testMainIoC() throws Exception {
         Main main = new Main();
+        main.addConfiguration(new MyConfiguration());
         main.addRouteBuilder(new MyRouteBuilder());
         main.start();
 
@@ -42,7 +44,35 @@ public class MainIoCNewRouteBuilderTest extends Assert {
 
         endpoint.assertIsSatisfied();
 
+        MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean mcb = (MainIoCNewRouteBuilderTest.MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
+        assertNotNull(mcb);
+        assertEquals("Tiger", mcb.getName());
+
         main.stop();
+    }
+
+    public static class MyConfiguration {
+
+        @BeanInject
+        private CamelContext camel;
+
+        @BindToRegistry
+        public static class MyCoolBean {
+
+            private String name = "Tiger";
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+        }
+
+        public void configure() {
+            camel.getGlobalOptions().put("foo", "123");
+        }
     }
 
     public static class MyBar {
