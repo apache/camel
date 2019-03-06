@@ -28,7 +28,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.NoSuchBeanException;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RuntimeCamelException;
@@ -327,12 +326,11 @@ public class DefaultCamelBeanPostProcessor {
         if (isEmpty(name)) {
             name = clazz.getSimpleName();
         }
-        // create an instance
-        Object value = bean;
-        if (value == null) {
-            value = camelContext.getInjector().newInstance(clazz);
+        if (bean == null) {
+            // no bean so then create an instance from its type
+            bean = camelContext.getInjector().newInstance(clazz);
         }
-        camelContext.getRegistry().bind(name, value);
+        camelContext.getRegistry().bind(name, bean);
     }
 
     private void bindToRegistry(Field field, String name, Object bean, String beanName) {
@@ -384,18 +382,21 @@ public class DefaultCamelBeanPostProcessor {
                 parameters[i] = camelContext.getTypeConverter();
             } else {
                 // we also support @BeanInject and @PropertyInject annotations
-                Annotation[][] pa = method.getParameterAnnotations();
-                Annotation[] anns = pa[i];
-                if (anns.length > 0) {
+                Annotation[] anns = method.getParameterAnnotations()[i];
+                if (anns.length == 1) {
+                    // we dont assume there are multiple annotations on the same parameter so grab first
                     Annotation ann = anns[0];
                     if (ann.annotationType() == PropertyInject.class) {
                         PropertyInject pi = (PropertyInject) ann;
+                        // build key with default value included as this is supported during resolving
                         String key = pi.value();
                         if (!isEmpty(pi.defaultValue())) {
                             key = key + ":" + pi.defaultValue();
                         }
+                        // need to force property lookup by having key enclosed in tokens
+                        key = camelContext.getPropertiesComponent().getPrefixToken() + key + camelContext.getPropertiesComponent().getSuffixToken();
                         try {
-                            Object value = camelContext.resolvePropertyPlaceholders("{{" + key + "}}");
+                            Object value = camelContext.resolvePropertyPlaceholders(key);
                             parameters[i] = camelContext.getTypeConverter().convertTo(type, value);
                         } catch (Exception e) {
                             throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -427,6 +428,7 @@ public class DefaultCamelBeanPostProcessor {
                 }
             }
 
+            // each parameter must be mapped
             if (parameters[i] == null) {
                 int pos = i + 1;
                 throw new IllegalArgumentException("@BindToProperty cannot bind parameter #" + pos + " on method: " + method);
