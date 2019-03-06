@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Set;
 
 import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
@@ -27,6 +28,8 @@ import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
@@ -84,18 +87,10 @@ public class DefaultCamelBeanPostProcessor {
             return bean;
         }
 
+        injectClass(bean, beanName);
+        injectNestedClasses(bean, beanName);
         injectFields(bean, beanName);
         injectMethods(bean, beanName);
-
-        // the bean may also need to be registered into the registry
-        BindToRegistry bind = bean.getClass().getAnnotation(BindToRegistry.class);
-        if (bind != null) {
-            String name = bind.name();
-            if (isEmpty(name)) {
-                name = bean.getClass().getSimpleName();
-            }
-            camelContext.getRegistry().bind(name, bean);
-        }
 
         if (bean instanceof CamelContextAware && canSetCamelContext(bean, beanName)) {
             CamelContextAware contextAware = (CamelContextAware)bean;
@@ -243,6 +238,26 @@ public class DefaultCamelBeanPostProcessor {
         });
     }
 
+    protected void injectClass(final Object bean, final String beanName) {
+        Class<?> clazz = bean.getClass();
+        BindToRegistry ann = clazz.getAnnotation(BindToRegistry.class);
+        if (ann != null && getPostProcessorHelper().matchContext(ann.context())) {
+            bindToRegistry(clazz, ann.name(), bean, beanName);
+        }
+    }
+
+    protected void injectNestedClasses(final Object bean, final String beanName) {
+        ReflectionHelper.doWithClasses(bean.getClass(), new ReflectionHelper.ClassCallback() {
+            public void doWith(Class clazz) throws IllegalArgumentException, IllegalAccessException {
+                BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
+                if (ann != null && getPostProcessorHelper().matchContext(ann.context())) {
+                    // its a nested class so we dont have a bean instance for it
+                    bindToRegistry(clazz, ann.name(), null, null);
+                }
+            }
+        });
+    }
+
     protected void setterInjection(Method method, Object bean, String beanName) {
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
         if (propertyInject != null && getPostProcessorHelper().matchContext(propertyInject.context())) {
@@ -308,6 +323,18 @@ public class DefaultCamelBeanPostProcessor {
         }
     }
 
+    private void bindToRegistry(Class<?> clazz, String name, Object bean, String beanName) {
+        if (isEmpty(name)) {
+            name = clazz.getSimpleName();
+        }
+        // create an instance
+        Object value = bean;
+        if (value == null) {
+            value = camelContext.getInjector().newInstance(clazz);
+        }
+        camelContext.getRegistry().bind(name, value);
+    }
+
     private void bindToRegistry(Field field, String name, Object bean, String beanName) {
         if (isEmpty(name)) {
             name = field.getName();
@@ -329,17 +356,31 @@ public class DefaultCamelBeanPostProcessor {
         }
         Object parameters = null;
         if (method.getParameterCount() == 1) {
-            // the parameter can only be
-            Class type = method.getParameterTypes()[0];
+            // the parameter can only be one of these types
+            Class<?> type = method.getParameterTypes()[0];
             if (type.isAssignableFrom(CamelContext.class)) {
                 parameters = camelContext;
-            } else {
+            } else if (type.isAssignableFrom(Registry.class)) {
+                parameters = camelContext.getRegistry();
+            } else if (type.isAssignableFrom(TypeConverter.class)) {
+                parameters = camelContext.getTypeConverter();
+            }
+
+            if (parameters == null) {
+                // see if we can find a single instance of this type already in the registry
+                Set<?> instances = camelContext.getRegistry().findByType(type);
+                if (instances.size() == 1) {
+                    parameters = instances.iterator().next();
+                }
+            }
+
+            if (parameters == null) {
                 throw new IllegalArgumentException("@BindToRegistry on class: " + method.getDeclaringClass()
-                    + " method: " + method.getName() + " only support CamelContext as parameter type");
+                    + " method: " + method.getName() + " cannot lookup the type: " + type + " from the Camel registry.");
             }
         } else if (method.getParameterCount() > 1) {
             throw new IllegalArgumentException("@BindToRegistry on class: " + method.getDeclaringClass()
-                + " method: " + method.getName() + " with method parameters is not allowed");
+                + " method: " + method.getName() + " with 2 or more method parameters is not allowed");
         }
         Object value;
         if (parameters != null) {

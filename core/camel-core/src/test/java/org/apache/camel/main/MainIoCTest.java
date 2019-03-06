@@ -67,6 +67,14 @@ public class MainIoCTest extends Assert {
         assertNotNull(qf);
         assertTrue(qf instanceof PriorityBlockingQueueFactory);
 
+        MyConfiguration.MyCoolBean mcb = (MyConfiguration.MyCoolBean) camelContext.getRegistry().lookupByName("MyCoolBean");
+        assertNotNull(mcb);
+        assertEquals("Tiger", mcb.getName());
+
+        Object cool = camelContext.getRegistry().lookupByName("coolStuff");
+        assertNotNull(cool);
+        assertEquals("Tiger", cool);
+
         main.stop();
     }
 
@@ -76,10 +84,31 @@ public class MainIoCTest extends Assert {
         private CamelContext camel;
 
         @BindToRegistry
+        public static class MyCoolBean {
+
+            private String name = "Tiger";
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+        }
+
+        @BindToRegistry
         public BlockingQueueFactory queueFactory(CamelContext myCamel) {
             // we can optionally include camel context as parameter
             Assert.assertNotNull(myCamel);
             return new PriorityBlockingQueueFactory();
+        }
+
+        @BindToRegistry(name = "coolStuff")
+        public String cool(MyCoolBean cool) {
+            // should lookup MyCoolBean type from the registry
+            Assert.assertNotNull(cool);
+            return cool.getName();
         }
 
         public void configure() {
