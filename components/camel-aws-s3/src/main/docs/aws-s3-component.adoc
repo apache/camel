@@ -444,6 +444,17 @@ This operation will delete the object camelKey from the bucket mycamelbucket.
 
 This operation will list the buckets for this account
 
+- deleteBucket: this operation delete the bucket specified as URI parameter or header
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=deleteBucket")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the bucket mycamelbucket
+
 
 ### Dependencies
 
