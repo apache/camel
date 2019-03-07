@@ -483,6 +483,23 @@ This operation will create a downloadLink for the file camelKey in the bucket my
 
 This operation will list the objects in the mycamelbucket bucket
 
+- GetObject: this operation get a single object in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(S3Constants.KEY, "camelKey"); 
+      }
+  })
+  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=getObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will return an S3Object instance related to the camelKey object in mycamelbucket bucket.
+
 
 ### Dependencies
 
