@@ -78,11 +78,11 @@ public class ManagedStepTest extends ManagementTestSupport {
 
         String xml = mcc.getManagedCamelContext().dumpStepStatsAsXml(false);
         assertNotNull(xml);
-        assertTrue(xml.contains("<stepStat id=\"foo\" index=\"1\""));
+        assertTrue(xml.contains("<stepStat id=\"foo\""));
 
         xml = mcc.getManagedCamelContext().dumpStepStatsAsXml(true);
         assertNotNull(xml);
-        assertTrue(xml.contains("<stepStat id=\"foo\" index=\"1\""));
+        assertTrue(xml.contains("<stepStat id=\"foo\""));
     }
 
     @Override
