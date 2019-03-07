@@ -32,7 +32,7 @@ public class RestRestletGetCorsTest extends RestletTestSupport {
         // send OPTIONS first which should not be routed
         getMockEndpoint("mock:input").expectedMessageCount(0);
 
-        Exchange out = template.request("http://localhost:" + portNum + "/users/123/basic", new Processor() {
+        Exchange out = template.request("http4://localhost:" + portNum + "/users/123/basic", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
@@ -51,7 +51,7 @@ public class RestRestletGetCorsTest extends RestletTestSupport {
 
         // send GET request which should be routed
 
-        String out2 = template.requestBody("http://localhost:" + portNum + "/users/123/basic", null, String.class);
+        String out2 = template.requestBody("http4://localhost:" + portNum + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out2);
 
         assertMockEndpointsSatisfied();

@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.restlet;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.http.entity.ContentType;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -44,7 +47,7 @@ public class SpringRestRestletPojoInOutTest extends CamelSpringTestSupport {
     @Test
     public void testRestletPojoInOut() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        String out = template.requestBody("http://localhost:" + portNum + "/users/lives", body, String.class);
+        String out = template.requestBodyAndHeader("http4://localhost:" + portNum + "/users/lives", body, Exchange.CONTENT_TYPE, ContentType.APPLICATION_JSON, String.class);
 
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);

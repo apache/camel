@@ -36,7 +36,7 @@ public class RestRestletApiTest extends RestletTestSupport {
 
     @Test
     public void testApi() throws Exception {
-        Exchange exchange = template.request("http://localhost:" + portNum + "/docs", null);
+        Exchange exchange = template.request("http4://localhost:" + portNum + "/docs", null);
         assertThat(exchange.getOut().getHeader(HTTP_RESPONSE_CODE, Integer.class), is(200));
         String body = exchange.getOut().getBody(String.class);
         log.info("Received body: ", body);

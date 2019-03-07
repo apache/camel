@@ -33,7 +33,7 @@ public class RestRestletBindingModeXmlTest extends RestletTestSupport {
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        template.sendBody("http://localhost:" + portNum + "/users/new", body);
+        template.sendBody("http4://localhost:" + portNum + "/users/new", body);
 
         assertMockEndpointsSatisfied();
 
@@ -51,7 +51,7 @@ public class RestRestletBindingModeXmlTest extends RestletTestSupport {
         // we bind to xml, but send in json, which is not possible
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
         try {
-            template.sendBody("http://localhost:" + portNum + "/users/new", body);
+            template.sendBody("http4://localhost:" + portNum + "/users/new", body);
             fail("Should have thrown exception");
         } catch (Exception e) {
             // expected

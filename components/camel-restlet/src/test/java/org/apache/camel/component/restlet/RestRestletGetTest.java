@@ -37,7 +37,7 @@ public class RestRestletGetTest extends RestletTestSupport {
 
     @Test
     public void testRestletProducerGet() throws Exception {
-        String out = template.requestBody("http://localhost:" + portNum + "/users/123/basic", null, String.class);
+        String out = template.requestBody("http4://localhost:" + portNum + "/users/123/basic", null, String.class);
         assertEquals("123;Donald Duck", out);
     }
 
@@ -45,7 +45,7 @@ public class RestRestletGetTest extends RestletTestSupport {
     @Ignore("CAMEL-12320")
     public void testRestletProducerGetInvalid() throws Exception {
         try {
-            template.requestBody("http://localhost:" + portNum + "/users/123/basicshouldnotbevalid", null, String.class);
+            template.requestBody("http4://localhost:" + portNum + "/users/123/basicshouldnotbevalid", null, String.class);
         } catch (Exception e) {
             // should be a 404
         }
