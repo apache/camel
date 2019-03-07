@@ -53,7 +53,6 @@ public interface ManagedCamelContext {
      *
      * @param id id of the step
      * @return the step or <tt>null</tt> if not found
-     * @throws IllegalArgumentException if the type is not compliant
      */
     ManagedStepMBean getManagedStep(String id);
 

@@ -795,7 +795,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Routes the message to a sequence of processors which is grouped together as one logical name.
      *
-     * @param id unique id of the step within the route
+     * @param id unique id of the step within the camel context
      * @return the builder
      */
     public StepDefinition step(String id) {
