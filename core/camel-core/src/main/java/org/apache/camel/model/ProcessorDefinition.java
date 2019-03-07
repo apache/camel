@@ -784,7 +784,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Routes the message to a sequence of processors which is grouped together as one logical name.
      *
-     * @param id the id of the step
+     * @return the builder
+     */
+    public StepDefinition step() {
+        StepDefinition answer = new StepDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Routes the message to a sequence of processors which is grouped together as one logical name.
+     *
+     * @param id unique id of the step within the route
      * @return the builder
      */
     public StepDefinition step(String id) {
