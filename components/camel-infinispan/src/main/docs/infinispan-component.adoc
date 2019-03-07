@@ -206,6 +206,21 @@ from("direct:start")
     .to("infinispan:myCacheName");
 ----
 
+* Compute a value through a remapping function:
++
+[source,java]
+----
+@BindToRegistry(name = "mappingFunction")
+BiFunction<String, String, String> comp = (k, v) -> v + "replay"; 
+
+from("direct:start")
+    .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.COMPUTE)
+    .setHeader(InfinispanConstants.KEY).constant("123")
+    .to("infinispan?cacheContainer=#cacheContainer&remappingFunction=#mappingFunction");
+----
+
+This will return oldValue + "replay"
+
 * Retrieve a specific key from the remote cache using a cache container configuration with additional parameters (host, port and protocol version):
 +
 [source,java]
