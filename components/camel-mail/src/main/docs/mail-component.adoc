@@ -78,7 +78,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mail component supports 4 options, which are listed below.
+The Mail component supports 5 options, which are listed below.
 
 
 
@@ -88,6 +88,7 @@ The Mail component supports 4 options, which are listed below.
 | *configuration* (advanced) | Sets the Mail configuration |  | MailConfiguration
 | *contentTypeResolver* (advanced) | Resolver to determine Content-Type for file attachments. |  | ContentTypeResolver
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
