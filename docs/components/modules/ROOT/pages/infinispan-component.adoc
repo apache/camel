@@ -74,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (18 parameters):
+==== Query Parameters (19 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,6 +96,7 @@ with the following path and query parameters:
 | *configurationProperties* (advanced) | Implementation specific properties for the CacheManager |  | Map
 | *configurationUri* (advanced) | An implementation specific URI for the CacheManager |  | String
 | *flags* (advanced) | A comma separated list of Flag to be applied by default on each cache invocation, not applicable to remote caches. |  | String
+| *remappingFunction* (advanced) | Set a specific remappingFunction to use in a compute operation |  | BiFunction
 | *resultHeader* (advanced) | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | Object
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
@@ -116,7 +117,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 21 options, which are listed below.
+The component supports 22 options, which are listed below.
 
 
 
@@ -135,6 +136,7 @@ The component supports 21 options, which are listed below.
 | *camel.component.infinispan.configuration.hosts* | Specifies the host of the cache on Infinispan instance |  | String
 | *camel.component.infinispan.configuration.operation* | The operation to perform. |  | InfinispanOperation
 | *camel.component.infinispan.configuration.query-builder* | Specifies the query builder. |  | InfinispanQueryBuilder
+| *camel.component.infinispan.configuration.remapping-function* | Set a specific remappingFunction to use in a compute operation |  | BiFunction
 | *camel.component.infinispan.configuration.result-header* | Store the operation result in a header instead of the message body. By default, resultHeader == null and the query result is stored in the message body, any existing content in the message body is discarded. If resultHeader is set, the value is used as the name of the header to store the query result and the original message body is preserved. This value can be overridden by an in message header named: CamelInfinispanOperationResultHeader |  | Object
 | *camel.component.infinispan.configuration.sync* | If true, the consumer will receive notifications synchronously | true | Boolean
 | *camel.component.infinispan.customizer.embedded-cache-manager.enabled* | Enable or disable the cache-manager customizer. | true | Boolean
@@ -174,7 +176,7 @@ The component supports 21 options, which are listed below.
 ### Examples
 
 * Retrieve a specific key from the default cache using a custom cache container:
-+
+
 [source,java]
 ----
 from("direct:start")
@@ -194,7 +196,7 @@ from("direct:start")
 ----
 
 * Put a value with lifespan
-+
+
 [source,java]
 ----
 from("direct:start")
@@ -205,8 +207,23 @@ from("direct:start")
     .to("infinispan:myCacheName");
 ----
 
+* Compute operation through a remapping function on the default cache using a custom cache container:
+
+[source,java]
+----
+@BindToRegistry(name = "mappingFunction")
+BiFunction<String, String, String> comp = (k, v) -> v + "replay"; 
+
+from("direct:start")
+    .setHeader(InfinispanConstants.OPERATION).constant(InfinispanOperation.COMPUTE)
+    .setHeader(InfinispanConstants.KEY).constant("123")
+    .to("infinispan?cacheContainer=#cacheContainer&remappingFunction=#mappingFunction");
+----
+
+This will return oldValue + "replay"
+
 * Retrieve a specific key from the remote cache using a cache container configuration with additional parameters (host, port and protocol version):
-+
+
 [source,java]
 ----
 org.infinispan.client.hotrod.configuration.Configuration cacheContainerConfiguration = new org.infinispan.client.hotrod.configuration.ConfigurationBuilder()
