@@ -444,7 +444,7 @@ This operation will delete the object camelKey from the bucket mycamelbucket.
 
 This operation will list the buckets for this account
 
-- deleteBucket: this operation delete the bucket specified as URI parameter or header
+- DeleteBucket: this operation delete the bucket specified as URI parameter or header
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -454,6 +454,34 @@ This operation will list the buckets for this account
 --------------------------------------------------------------------------------
 
 This operation will delete the bucket mycamelbucket
+
+- DownloadLink: this operation create a download link for the file specified in the key header
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(S3Constants.KEY, "camelKey"); 
+      }
+  })
+  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=downloadLink")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will create a downloadLink for the file camelKey in the bucket mycamelbucket
+
+- ListObjects: this operation list object in a specific bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=listObjects")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list the objects in the mycamelbucket bucket
 
 
 ### Dependencies
