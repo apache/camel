@@ -14,33 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.spring.processor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.StepTest;
 
-import org.apache.camel.spi.Metadata;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * Routes the message to a sequence of processors which is grouped together as one logical name
- */
-@Metadata(label = "eip,routing")
-@XmlRootElement(name = "step")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class StepDefinition extends OutputDefinition<StepDefinition> {
+public class SpringStepTest extends StepTest {
 
-    public StepDefinition() {
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/step.xml");
     }
-
-    @Override
-    public String getShortName() {
-        return "step";
-    }
-
-    @Override
-    public String getLabel() {
-        return "step";
-    }
-
 }
