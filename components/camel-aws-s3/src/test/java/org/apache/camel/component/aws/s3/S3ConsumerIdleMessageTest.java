@@ -53,7 +53,7 @@ public class S3ConsumerIdleMessageTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&delay=50" 
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" 
                         + "&maxMessagesPerPoll=5&sendEmptyMessageWhenIdle=true")
                     .to("mock:result");
             }

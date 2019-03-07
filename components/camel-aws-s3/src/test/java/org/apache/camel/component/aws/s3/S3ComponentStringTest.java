@@ -93,7 +93,7 @@ public class S3ComponentStringTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws-s3://" + getCamelBucket() + "?amazonS3Client=#amazonS3Client&region=us-west-1";
+                String awsEndpoint = "aws-s3://" + getCamelBucket() + "?amazonS3Client=#amazonS3Client";
 
                 from("direct:sendString")
                         .to(awsEndpoint + "&deleteAfterWrite=false").to("mock:result");
