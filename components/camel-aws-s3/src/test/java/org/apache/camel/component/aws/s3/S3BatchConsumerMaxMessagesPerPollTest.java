@@ -102,7 +102,7 @@ public class S3BatchConsumerMaxMessagesPerPollTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&delay=5000&maxMessagesPerPoll=0")
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=5000&maxMessagesPerPoll=0")
                     .to("mock:result");
             }
         };

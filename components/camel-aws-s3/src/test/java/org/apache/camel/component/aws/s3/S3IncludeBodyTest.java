@@ -62,7 +62,7 @@ public class S3IncludeBodyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&delay=50" 
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" 
                         + "&maxMessagesPerPoll=5&prefix=confidential&includeBody=false")
                     .to("mock:result");
             }

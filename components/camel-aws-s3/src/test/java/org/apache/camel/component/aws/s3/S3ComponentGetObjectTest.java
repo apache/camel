@@ -67,7 +67,7 @@ public class S3ComponentGetObjectTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&operation=getObject";
+                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=getObject";
 
                 from("direct:getObject").to(awsEndpoint).to("mock:result");
 

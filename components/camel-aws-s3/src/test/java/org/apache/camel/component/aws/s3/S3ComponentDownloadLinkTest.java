@@ -71,7 +71,7 @@ public class S3ComponentDownloadLinkTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&operation=downloadLink";
+                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=downloadLink";
                 
                 from("direct:downloadLink")
                     .to(awsEndpoint)

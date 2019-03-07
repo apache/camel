@@ -174,7 +174,7 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1";
+                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client";
                 
                 from("direct:start")
                     .to(awsEndpoint + "&storageClass=REDUCED_REDUNDANCY");

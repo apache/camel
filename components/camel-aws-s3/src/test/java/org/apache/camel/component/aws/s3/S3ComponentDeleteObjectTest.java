@@ -72,7 +72,7 @@ public class S3ComponentDeleteObjectTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&operation=deleteObject";
+                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=deleteObject";
                 
                 from("direct:start")
                     .to(awsEndpoint)

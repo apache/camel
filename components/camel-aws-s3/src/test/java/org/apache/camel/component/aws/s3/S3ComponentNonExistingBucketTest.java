@@ -169,7 +169,7 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws-s3://nonExistingBucket?amazonS3Client=#amazonS3Client&region=us-west-1&policy=xxx";
+                String awsEndpoint = "aws-s3://nonExistingBucket?amazonS3Client=#amazonS3Client&policy=xxx";
                 
                 from("direct:start")
                     .to(awsEndpoint + "&storageClass=REDUCED_REDUNDANCY");

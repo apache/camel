@@ -71,7 +71,7 @@ public class S3ComponentListObjectTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&operation=listObjects";
+                String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=listObjects";
                 
                 from("direct:listObjects")
                     .to(awsEndpoint)
