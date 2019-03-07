@@ -410,7 +410,7 @@ policies are updated). This is the AWS recommended way to manage credentials and
           exchange.getIn().setHeader(S3Constants.DESTINATION_KEY, "camelDestinationKey");   
       }
   })
-  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&operation=copyObject")
+  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=copyObject")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
@@ -427,11 +427,22 @@ This operation will copy the object with the name expressed in the header camelD
           exchange.getIn().setHeader(S3Constants.KEY, "camelKey"); 
       }
   })
-  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&operation=deleteObject")
+  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=deleteObject")
   .to("mock:result");
 --------------------------------------------------------------------------------
 
 This operation will delete the object camelKey from the bucket mycamelbucket.
+
+- ListBuckets: this operation list the buckets for this account in this region
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start")
+  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=listBuckets")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will list the buckets for this account
 
 
 ### Dependencies
