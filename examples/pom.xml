@@ -101,6 +101,7 @@
     <module>camel-example-spring</module>
     <module>camel-example-spring-boot</module>
     <module>camel-example-spring-boot-activemq</module>
+    <module>camel-example-spring-boot-amqp</module>
     <module>camel-example-spring-boot-clustered-route-controller</module>
     <module>camel-example-spring-boot-geocoder</module>
     <module>camel-example-spring-boot-grpc</module>
