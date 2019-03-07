@@ -199,7 +199,16 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         return line -> {
             try {
                 // Trim the line coming in to remove any trailing whitespace
-                String trimmedLine = line.trim();
+                String trimmedLine;
+
+                // if separator is a tab, don't trim any leading whitespaces (could be empty values separated by tabs)
+                if (separator.equals("\t")) {
+                    // trim only trailing whitespaces
+                    trimmedLine = line.replaceAll("\\s+$", "");
+                } else {
+                    trimmedLine = line.trim();
+                }
+
                 // Increment counter
                 count.incrementAndGet();
                 Map<String, Object> model;
