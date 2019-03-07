@@ -27,6 +27,7 @@ import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ManagementStrategy;
@@ -61,6 +62,29 @@ public class ManagedCamelContextImpl implements ManagedCamelContext {
                 ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
                         .getObjectNameForProcessor(camelContext, processor, def);
                 return getManagementStrategy().getManagementAgent().newProxyClient(on, type);
+            } catch (MalformedObjectNameException e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
+        }
+
+        return null;
+    }
+
+    public ManagedStepMBean getManagedStep(String id) {
+        // jmx must be enabled
+        if (getManagementStrategy().getManagementAgent() == null) {
+            return null;
+        }
+
+        Processor processor = camelContext.getProcessor(id);
+        ProcessorDefinition def = camelContext.adapt(ModelCamelContext.class).getProcessorDefinition(id);
+
+        // processor may be null if its anonymous inner class or as lambda
+        if (def != null) {
+            try {
+                ObjectName on = getManagementStrategy().getManagementObjectNameStrategy()
+                    .getObjectNameForStep(camelContext, processor, def);
+                return getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
             } catch (MalformedObjectNameException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }

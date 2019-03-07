@@ -18,7 +18,6 @@ package org.apache.camel.management;
 
 import java.net.UnknownHostException;
 import java.util.concurrent.ThreadPoolExecutor;
-
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
@@ -52,6 +51,7 @@ import org.apache.camel.management.mbean.ManagedProducer;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRouteController;
 import org.apache.camel.management.mbean.ManagedService;
+import org.apache.camel.management.mbean.ManagedStep;
 import org.apache.camel.management.mbean.ManagedThreadPool;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.EventNotifier;
@@ -79,6 +79,7 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     public static final String TYPE_PRODUCER = "producers";
     public static final String TYPE_ROUTE = "routes";
     public static final String TYPE_COMPONENT = "components";
+    public static final String TYPE_STEP = "steps";
     public static final String TYPE_TRACER = "tracer";
     public static final String TYPE_EVENT_NOTIFIER = "eventnotifiers";
     public static final String TYPE_ERRORHANDLER = "errorhandlers";
@@ -143,6 +144,9 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         } else if (managedObject instanceof ManagedErrorHandler) {
             ManagedErrorHandler meh = (ManagedErrorHandler) managedObject;
             objectName = getObjectNameForErrorHandler(meh.getRouteContext(), meh.getErrorHandler(), meh.getErrorHandlerBuilder());
+        } else if (managedObject instanceof ManagedStep) {
+            ManagedStep mp = (ManagedStep) managedObject;
+            objectName = getObjectNameForStep(mp.getContext(), mp.getProcessor(), mp.getDefinition());
         } else if (managedObject instanceof ManagedProcessor) {
             ManagedProcessor mp = (ManagedProcessor) managedObject;
             objectName = getObjectNameForProcessor(mp.getContext(), mp.getProcessor(), mp.getDefinition());
@@ -268,6 +272,15 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=").append(TYPE_PROCESSOR).append(",");
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(definition.getId()));
+        return createObjectName(buffer);
+    }
+
+    public ObjectName getObjectNameForStep(CamelContext context, Processor processor, NamedNode definition) throws MalformedObjectNameException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
+        buffer.append(KEY_TYPE + "=").append(TYPE_STEP).append(",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(definition.getId()));
         return createObjectName(buffer);
     }

@@ -782,6 +782,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Routes the message to a sequence of processors which is grouped together as one logical name.
+     *
+     * @param id the id of the step
+     * @return the builder
+     */
+    public StepDefinition step(String id) {
+        StepDefinition answer = new StepDefinition();
+        answer.setId(id);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
      * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
      * Creates a {@link org.apache.camel.processor.Pipeline} so that the message
      * will get processed by each endpoint in turn and for request/response the
