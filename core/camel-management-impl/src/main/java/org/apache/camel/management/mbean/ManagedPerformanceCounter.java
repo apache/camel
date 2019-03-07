@@ -293,7 +293,7 @@ public abstract class ManagedPerformanceCounter extends ManagedCounter implement
     }
 
     private static String dateAsString(long value) {
-        if (value == 0) {
+        if (value <= 0) {
             return "";
         }
         return new SimpleDateFormat(TIMESTAMP_FORMAT).format(value);
