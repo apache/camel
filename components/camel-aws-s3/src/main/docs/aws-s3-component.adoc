@@ -414,7 +414,25 @@ policies are updated). This is the AWS recommended way to manage credentials and
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-This operation will copy the object with the name expressed in the header camelDestinationKey to the camelDestinationBucket bucket.
+This operation will copy the object with the name expressed in the header camelDestinationKey to the camelDestinationBucket bucket, from the bucket mycamelbucket.
+
+- DeleteObject: this operation deletes an object from a bucket
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+                    
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(S3Constants.KEY, "camelKey"); 
+      }
+  })
+  .to("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&region=us-west-1&operation=deleteObject")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation will delete the object camelKey from the bucket mycamelbucket.
+
 
 ### Dependencies
 
