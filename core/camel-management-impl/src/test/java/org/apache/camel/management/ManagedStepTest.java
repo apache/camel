@@ -70,7 +70,6 @@ public class ManagedStepTest extends ManagementTestSupport {
         assertNotNull(json);
         assertTrue(json.contains("\"description\": \"Routes the message to a sequence of processors which is grouped together as one logical name"));
 
-
         ManagedCamelContext mcc = context.getExtension(ManagedCamelContext.class);
         ManagedStepMBean step = mcc.getManagedStep("foo");
 
@@ -85,8 +84,8 @@ public class ManagedStepTest extends ManagementTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .step("foo")
-                        .to("log:foo")
-                        .to("mock:foo")
+                        .to("log:foo").id("abc")
+                        .to("mock:foo").id("abc")
                     .end()
                     .to("mock:result");
             }
