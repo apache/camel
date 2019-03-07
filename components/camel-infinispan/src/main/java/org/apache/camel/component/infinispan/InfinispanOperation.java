@@ -35,5 +35,6 @@ public enum InfinispanOperation {
     CLEAR,
     CLEARASYNC,
     QUERY,
-    STATS
+    STATS,
+    COMPUTE
 }

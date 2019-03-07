@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
@@ -59,6 +60,8 @@ public class InfinispanConfiguration implements Cloneable {
     private Object cacheContainerConfiguration;
     @UriParam(label = "advanced")
     private Object resultHeader;
+    @UriParam(label = "advanced")
+    private BiFunction remappingFunction;
 
     public String getCommand() {
         return operation.toString();
@@ -293,4 +296,15 @@ public class InfinispanConfiguration implements Cloneable {
     public void setResultHeader(Object resultHeader) {
         this.resultHeader = resultHeader;
     }
+
+	public BiFunction getRemappingFunction() {
+		return remappingFunction;
+	}
+
+    /**
+     * Set a specific remappingFunction to use in a compute operation
+     */
+	public void setRemappingFunction(BiFunction remappingFunction) {
+		this.remappingFunction = remappingFunction;
+	}
 }
