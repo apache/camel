@@ -175,7 +175,7 @@ The component supports 21 options, which are listed below.
 ### Examples
 
 * Retrieve a specific key from the default cache using a custom cache container:
-+
+
 [source,java]
 ----
 from("direct:start")
@@ -195,7 +195,7 @@ from("direct:start")
 ----
 
 * Put a value with lifespan
-+
+
 [source,java]
 ----
 from("direct:start")
@@ -206,8 +206,8 @@ from("direct:start")
     .to("infinispan:myCacheName");
 ----
 
-* Compute a value through a remapping function:
-+
+* Compute operation through a remapping function on the default cache using a custom cache container:
+
 [source,java]
 ----
 @BindToRegistry(name = "mappingFunction")
@@ -222,7 +222,7 @@ from("direct:start")
 This will return oldValue + "replay"
 
 * Retrieve a specific key from the remote cache using a cache container configuration with additional parameters (host, port and protocol version):
-+
+
 [source,java]
 ----
 org.infinispan.client.hotrod.configuration.Configuration cacheContainerConfiguration = new org.infinispan.client.hotrod.configuration.ConfigurationBuilder()
