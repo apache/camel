@@ -58,6 +58,8 @@ public interface ManagementObjectNameStrategy {
 
     ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, NamedNode definition) throws MalformedObjectNameException;
 
+    ObjectName getObjectNameForStep(CamelContext context, Processor processor, NamedNode definition) throws MalformedObjectNameException;
+
     ObjectName getObjectNameForRoute(Route route) throws MalformedObjectNameException;
 
     ObjectName getObjectNameForConsumer(CamelContext context, Consumer consumer) throws MalformedObjectNameException;
