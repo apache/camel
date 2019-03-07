@@ -28,7 +28,7 @@ public class RestRestletPojoInOutTest extends RestletTestSupport {
     @Test
     public void testRestletPojoInOut() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        String out = template.requestBody("http://localhost:" + portNum + "/users/lives", body, String.class);
+        String out = template.requestBody("http4://localhost:" + portNum + "/users/lives", body, String.class);
 
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);

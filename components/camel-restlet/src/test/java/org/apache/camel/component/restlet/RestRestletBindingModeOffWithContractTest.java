@@ -37,7 +37,7 @@ public class RestRestletBindingModeOffWithContractTest extends RestletTestSuppor
         mock.message(0).body().isInstanceOf(UserPojoEx.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        Object answer = template.requestBodyAndHeader("http://localhost:" + portNum + "/users/new", body, Exchange.CONTENT_TYPE, "application/json");
+        Object answer = template.requestBodyAndHeader("http4://localhost:" + portNum + "/users/new", body, Exchange.CONTENT_TYPE, "application/json");
         assertNotNull(answer);
         BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream)answer));
         String line;

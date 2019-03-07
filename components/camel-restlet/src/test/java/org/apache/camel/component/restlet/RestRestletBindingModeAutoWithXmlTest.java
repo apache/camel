@@ -33,7 +33,7 @@ public class RestRestletBindingModeAutoWithXmlTest extends RestletTestSupport {
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        template.sendBody("http://localhost:" + portNum + "/users/new", body);
+        template.sendBody("http4://localhost:" + portNum + "/users/new", body);
 
         assertMockEndpointsSatisfied();
 

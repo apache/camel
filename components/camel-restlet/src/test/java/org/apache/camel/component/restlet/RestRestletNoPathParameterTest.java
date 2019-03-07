@@ -28,7 +28,7 @@ public class RestRestletNoPathParameterTest extends RestletTestSupport {
     
     @Test
     public void testRestletProducerGet() throws Exception {
-        String out = template.requestBody("http://localhost:" + portNum + "/users/info", null, String.class);
+        String out = template.requestBody("http4://localhost:" + portNum + "/users/info", null, String.class);
         assertEquals("There are many users", out);
     }
 

@@ -21,10 +21,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.http.entity.ContentType;
+
 import org.junit.Test;
 
 public class RestRestletBindingModeJsonWithContractTest extends RestletTestSupport {
@@ -36,7 +39,7 @@ public class RestRestletBindingModeJsonWithContractTest extends RestletTestSuppo
         mock.message(0).body().isInstanceOf(UserPojoEx.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        Object answer = template.requestBody("http://localhost:" + portNum + "/users/new", body);
+        Object answer = template.requestBodyAndHeader("http4://localhost:" + portNum + "/users/new", body, Exchange.CONTENT_TYPE, ContentType.APPLICATION_JSON);
         assertNotNull(answer);
         BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream)answer));
         String line;

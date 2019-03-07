@@ -33,7 +33,7 @@ public class RestRestletPostJsonJaxbPojoTest extends RestletTestSupport {
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        template.sendBody("http://localhost:" + portNum + "/users/new", body);
+        template.sendBody("http4://localhost:" + portNum + "/users/new", body);
 
         assertMockEndpointsSatisfied();
 

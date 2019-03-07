@@ -34,7 +34,7 @@ public class RestRestletPostXmlJaxbPojoTest extends RestletTestSupport {
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        template.sendBodyAndHeader("http://localhost:" + portNum + "/users/new", body, Exchange.CONTENT_TYPE, "text/xml");
+        template.sendBodyAndHeader("http4://localhost:" + portNum + "/users/new", body, Exchange.CONTENT_TYPE, "text/xml");
 
         assertMockEndpointsSatisfied();
 
@@ -51,7 +51,7 @@ public class RestRestletPostXmlJaxbPojoTest extends RestletTestSupport {
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"456\"></user>";
-        template.sendBody("http://localhost:" + portNum + "/users/new", body);
+        template.sendBody("http4://localhost:" + portNum + "/users/new", body);
 
         assertMockEndpointsSatisfied();
 

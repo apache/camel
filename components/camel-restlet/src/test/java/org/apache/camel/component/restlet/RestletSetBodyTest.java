@@ -109,7 +109,7 @@ public class RestletSetBodyTest extends RestletTestSupport {
             @Override
             public void configure() throws Exception {
                 from("restlet:http://localhost:" + portNum + "/stock/{symbol}?restletMethods=get")
-                    .to("http://localhost:" + portNum2 + "/test?bridgeEndpoint=true")
+                    .to("http4://localhost:" + portNum2 + "/test?bridgeEndpoint=true")
                     //.removeHeader("Transfer-Encoding")
                     .setBody().constant("110");
 
