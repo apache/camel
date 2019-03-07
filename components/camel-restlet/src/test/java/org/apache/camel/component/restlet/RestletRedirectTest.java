@@ -51,7 +51,7 @@ public class RestletRedirectTest extends RestletTestSupport {
     
             assertEquals(302, response.getStatusLine().getStatusCode());
             assertTrue("Should have location header", response.containsHeader("Location"));
-            assertEquals("http://somewhere.com", response.getFirstHeader("Location").getValue());
+            assertEquals("http4://somewhere.com", response.getFirstHeader("Location").getValue());
             assertEquals("bar", response.getFirstHeader("Foo").getValue());
         } finally {
             client.close();
@@ -65,7 +65,7 @@ public class RestletRedirectTest extends RestletTestSupport {
             public void configure() throws Exception {
                 from("restlet:http://localhost:" + portNum + "/users/{username}")
                     .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(302))
-                    .setHeader("Location", constant("http://somewhere.com"))
+                    .setHeader("Location", constant("http4://somewhere.com"))
                     .setHeader("Foo", constant("bar"));
             }
         };

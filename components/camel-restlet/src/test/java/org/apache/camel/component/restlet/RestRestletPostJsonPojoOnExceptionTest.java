@@ -36,7 +36,7 @@ public class RestRestletPostJsonPojoOnExceptionTest extends RestletTestSupport {
 
         String body = "This is not json";
         try {
-            template.sendBody("http://localhost:" + portNum + "/users/new", body);
+            template.sendBody("http4://localhost:" + portNum + "/users/new", body);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());

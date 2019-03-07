@@ -30,7 +30,7 @@ public class RestRestletPojoInOutCustomErrorResponseTest extends RestletTestSupp
     @Test
     public void testRestletPojoInOutOk() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        String out = template.requestBody("http://localhost:" + portNum + "/users/lives", body, String.class);
+        String out = template.requestBody("http4://localhost:" + portNum + "/users/lives", body, String.class);
 
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
@@ -39,7 +39,7 @@ public class RestRestletPojoInOutCustomErrorResponseTest extends RestletTestSupp
     @Test
     public void testRestletPojoInOutError() throws Exception {
         final String body = "{\"id\": 77, \"name\": \"John Doe\"}";
-        Exchange reply = template.request("http://localhost:" + portNum + "/users/lives?throwExceptionOnFailure=false", new Processor() {
+        Exchange reply = template.request("http4://localhost:" + portNum + "/users/lives?throwExceptionOnFailure=false", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(body);

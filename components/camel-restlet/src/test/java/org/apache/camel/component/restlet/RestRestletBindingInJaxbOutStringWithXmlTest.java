@@ -33,7 +33,7 @@ public class RestRestletBindingInJaxbOutStringWithXmlTest extends RestletTestSup
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        String reply = template.requestBody("http://localhost:" + portNum + "/users/new", body, String.class);
+        String reply = template.requestBody("http4://localhost:" + portNum + "/users/new", body, String.class);
 
         assertEquals("<message>Thanks for calling us</message>", reply);
 
