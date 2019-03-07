@@ -27,7 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.infinispan.util.Condition;
-import org.apache.camel.impl.JndiRegistry;
 import org.infinispan.Cache;
 import org.infinispan.stats.Stats;
 import org.junit.Test;

@@ -119,8 +119,8 @@ public class InfinispanConfiguration implements Cloneable {
     }
 
     /**
-    * If true, the consumer will receive notifications synchronously
-    */
+     * If true, the consumer will receive notifications synchronously
+     */
     public boolean isSync() {
         return sync;
     }
@@ -145,22 +145,30 @@ public class InfinispanConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the set of event types to register by the consumer. Multiple event can be separated by comma.
+     * Specifies the set of event types to register by the consumer. Multiple
+     * event can be separated by comma.
      * <p/>
-     * The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
-     * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED,
-     * TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED
+     * The possible event types are: CACHE_ENTRY_ACTIVATED,
+     * CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
+     * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED,
+     * CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED, TRANSACTION_REGISTERED,
+     * CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED,
+     * PARTITION_STATUS_CHANGED
      */
     public void setEventTypes(Set<String> eventTypes) {
         this.eventTypes = eventTypes;
     }
 
     /**
-     * Specifies the set of event types to register by the consumer. Multiple event can be separated by comma.
+     * Specifies the set of event types to register by the consumer. Multiple
+     * event can be separated by comma.
      * <p/>
-     * The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
-     * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED,
-     * TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED, PARTITION_STATUS_CHANGED
+     * The possible event types are: CACHE_ENTRY_ACTIVATED,
+     * CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED,
+     * CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED,
+     * CACHE_ENTRY_MODIFIED, TRANSACTION_COMPLETED, TRANSACTION_REGISTERED,
+     * CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED,
+     * PARTITION_STATUS_CHANGED
      */
     public void setEventTypes(String eventTypes) {
         this.eventTypes = new HashSet<>(Arrays.asList(eventTypes.split(",")));
@@ -259,11 +267,12 @@ public class InfinispanConfiguration implements Cloneable {
     }
 
     /**
-     * The CacheContainer configuration. Uses if the cacheContainer is not defined.
-     * Must be the following types:
-     * org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration;
-     * org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration;
-     * 
+     * The CacheContainer configuration. Uses if the cacheContainer is not
+     * defined. Must be the following types:
+     * org.infinispan.client.hotrod.configuration.Configuration - for remote
+     * cache interaction configuration;
+     * org.infinispan.configuration.cache.Configuration - for embedded cache
+     * interaction configuration;
      */
     public void setCacheContainerConfiguration(Object cacheContainerConfiguration) {
         this.cacheContainerConfiguration = cacheContainerConfiguration;
@@ -282,29 +291,26 @@ public class InfinispanConfiguration implements Cloneable {
     }
 
     /**
-     * Store the operation result in a header instead of the message body.
-     *
-     * By default, resultHeader == null and the query result is stored in the
+     * Store the operation result in a header instead of the message body. By
+     * default, resultHeader == null and the query result is stored in the
      * message body, any existing content in the message body is discarded. If
      * resultHeader is set, the value is used as the name of the header to store
-     * the query result and the original message body is preserved.
-     *
-     * This value can be overridden by an in message header named:
-     *
-     *     CamelInfinispanOperationResultHeader
+     * the query result and the original message body is preserved. This value
+     * can be overridden by an in message header named:
+     * CamelInfinispanOperationResultHeader
      */
     public void setResultHeader(Object resultHeader) {
         this.resultHeader = resultHeader;
     }
 
-	public BiFunction getRemappingFunction() {
-		return remappingFunction;
-	}
+    public BiFunction getRemappingFunction() {
+        return remappingFunction;
+    }
 
     /**
      * Set a specific remappingFunction to use in a compute operation
      */
-	public void setRemappingFunction(BiFunction remappingFunction) {
-		this.remappingFunction = remappingFunction;
-	}
+    public void setRemappingFunction(BiFunction remappingFunction) {
+        this.remappingFunction = remappingFunction;
+    }
 }
