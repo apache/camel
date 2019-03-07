@@ -18,6 +18,7 @@ package org.apache.camel.component.infinispan.springboot;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
 import javax.annotation.Generated;
 import org.apache.camel.component.infinispan.InfinispanCustomListener;
 import org.apache.camel.component.infinispan.InfinispanOperation;
@@ -165,6 +166,10 @@ public class InfinispanComponentConfiguration
          * named: CamelInfinispanOperationResultHeader
          */
         private Object resultHeader;
+        /**
+         * Set a specific remappingFunction to use in a compute operation
+         */
+        private BiFunction remappingFunction;
 
         @Deprecated
         @DeprecatedConfigurationProperty
@@ -280,6 +285,14 @@ public class InfinispanComponentConfiguration
 
         public void setResultHeader(Object resultHeader) {
             this.resultHeader = resultHeader;
+        }
+
+        public BiFunction getRemappingFunction() {
+            return remappingFunction;
+        }
+
+        public void setRemappingFunction(BiFunction remappingFunction) {
+            this.remappingFunction = remappingFunction;
         }
     }
 }

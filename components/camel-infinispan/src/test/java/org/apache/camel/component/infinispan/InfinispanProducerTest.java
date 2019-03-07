@@ -20,11 +20,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiFunction;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.infinispan.util.Condition;
+import org.apache.camel.impl.JndiRegistry;
 import org.infinispan.Cache;
 import org.infinispan.stats.Stats;
 import org.junit.Test;
@@ -39,6 +42,10 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
     private static final long LIFESPAN_TIME = 100;
     private static final long LIFESPAN_FOR_MAX_IDLE = -1;
     private static final long MAX_IDLE_TIME = 200;
+    
+    @BindToRegistry(name = "mappingFunction")
+    BiFunction<String, String, String> comp = (k, v) -> v + "replay"; 
+    
 
     @Test
     public void keyAndValueArePublishedWithDefaultOperation() throws Exception {
@@ -547,7 +554,23 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         String result = exchange.getIn().getBody(String.class);
         assertEquals("existing value", result);
     }
+    
+    @Test
+    public void computeOperation() throws Exception {
+        currentCache().put(KEY_ONE, "existing value");
 
+        Exchange exchange = template.request("direct:compute", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(InfinispanConstants.KEY, KEY_ONE);
+                exchange.getIn().setHeader(InfinispanConstants.OPERATION, InfinispanOperation.COMPUTE);
+            }
+        });
+
+        String result = exchange.getIn().getBody(String.class);
+        assertEquals("existing valuereplay", result);
+    }   
+    
     @Test
     public void retrievesAValueByKey() throws Exception {
         currentCache().put(KEY_ONE, VALUE_ONE);
@@ -1079,6 +1102,8 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
                     .to("infinispan?cacheContainer=#cacheContainer&operation=CLEARASYNC");
                 from("direct:stats")
                     .to("infinispan?cacheContainer=#cacheContainer&operation=STATS");
+                from("direct:compute")
+                    .to("infinispan?cacheContainer=#cacheContainer&operation=COMPUTE&remappingFunction=#mappingFunction");
             }
         };
     }
