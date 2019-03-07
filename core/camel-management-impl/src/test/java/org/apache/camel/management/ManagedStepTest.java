@@ -75,6 +75,14 @@ public class ManagedStepTest extends ManagementTestSupport {
 
         assertEquals("foo", step.getProcessorId());
         assertEquals(1, step.getExchangesCompleted());
+
+        String xml = mcc.getManagedCamelContext().dumpStepStatsAsXml(false);
+        assertNotNull(xml);
+        assertTrue(xml.contains("<stepStat id=\"foo\" index=\"1\""));
+
+        xml = mcc.getManagedCamelContext().dumpStepStatsAsXml(true);
+        assertNotNull(xml);
+        assertTrue(xml.contains("<stepStat id=\"foo\" index=\"1\""));
     }
 
     @Override
