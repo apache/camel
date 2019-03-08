@@ -19,22 +19,50 @@ package org.apache.camel.processor;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.support.EventHelper;
 
 public class StepProcessor extends Pipeline {
 
-    public StepProcessor(CamelContext camelContext, Collection<Processor> processors) {
+    private final String stepId;
+
+    public StepProcessor(CamelContext camelContext, Collection<Processor> processors, String stepId) {
         super(camelContext, processors);
+        this.stepId = stepId;
     }
 
-    public static Processor newInstance(CamelContext camelContext, List<Processor> processors) {
+    public static Processor newInstance(CamelContext camelContext, List<Processor> processors, String stepId) {
         if (processors.isEmpty()) {
             return null;
         } else if (processors.size() == 1) {
             return processors.get(0);
         }
-        return new StepProcessor(camelContext, processors);
+        return new StepProcessor(camelContext, processors, stepId);
+    }
+
+    @Override
+    public boolean process(Exchange exchange, final AsyncCallback callback) {
+        EventHelper.notifyStepStarted(exchange.getContext(), exchange, stepId);
+
+        return super.process(exchange, (sync) -> {
+            // then fire event to signal the step is done
+            boolean failed = exchange.isFailed();
+            try {
+                if (failed) {
+                    EventHelper.notifyStepFailed(exchange.getContext(), exchange, stepId);
+                } else {
+                    EventHelper.notifyStepDone(exchange.getContext(), exchange, stepId);
+                }
+            } catch (Throwable t) {
+                // must catch exceptions to ensure synchronizations is also invoked
+                log.warn("Exception occurred during event notification. This exception will be ignored.", t);
+            } finally {
+                callback.done(sync);
+            }
+        });
     }
 
     @Override

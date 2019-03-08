@@ -22,7 +22,7 @@ import org.apache.camel.spi.CamelEvent;
 /**
  * Event after a step has been completed successfully.
  */
-public class StepCompletedEvent extends AbstractStepEvent implements CamelEvent.StepStartedEvent {
+public class StepCompletedEvent extends AbstractStepEvent implements CamelEvent.StepCompletedEvent {
 
     public StepCompletedEvent(Exchange source, String stepId) {
         super(source, stepId);
