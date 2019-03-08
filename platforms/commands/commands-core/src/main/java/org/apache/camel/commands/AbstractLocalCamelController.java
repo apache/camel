@@ -406,6 +406,30 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return null;
     }
 
+    @Override
+    public String getStepStatsAsXml(String routeId, String camelContextName, boolean fullStats) throws Exception {
+        CamelContext context = this.getLocalCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+
+        ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
+        if (agent != null) {
+            MBeanServer mBeanServer = agent.getMBeanServer();
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + routeId + "\",*"), null);
+            for (ObjectName routeMBean : set) {
+
+                // the route must be part of the camel context
+                String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+                if (camelId != null && camelId.equals(camelContextName)) {
+                    String xml = (String) mBeanServer.invoke(routeMBean, "dumpStepStatsAsXml", new Object[]{fullStats}, new String[]{"boolean"});
+                    return xml;
+                }
+            }
+        }
+        return null;
+    }
+
     public String getRestModelAsXml(String camelContextName) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
