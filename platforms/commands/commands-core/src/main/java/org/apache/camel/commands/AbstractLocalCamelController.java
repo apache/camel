@@ -278,8 +278,9 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                         row.put("routeId", route.getId());
                         row.put("state", getRouteState(route));
                         row.put("uptime", route.getUptime());
-                        ManagedRouteMBean mr = context.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId());
-                        if (mr != null) {
+                        ManagedCamelContext mcc = context.getExtension(ManagedCamelContext.class);
+                        if (mcc != null && mcc.getManagedCamelContext() != null) {
+                            ManagedRouteMBean mr = mcc.getManagedRoute(route.getId());
                             row.put("exchangesTotal", "" + mr.getExchangesTotal());
                             row.put("exchangesInflight", "" + mr.getExchangesInflight());
                             row.put("exchangesFailed", "" + mr.getExchangesFailed());
