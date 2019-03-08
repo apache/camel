@@ -25,20 +25,19 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentDownloadLinkTest extends CamelTestSupport {
 
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
+    
     @EndpointInject(uri = "direct:downloadLink")
     private ProducerTemplate template;
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-
-    @BindToRegistry(name = "amazonS3Client")
-    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
 
     @Test
     public void sendIn() throws Exception {

@@ -38,14 +38,14 @@ import org.junit.Test;
 
 public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
 
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock client = new AmazonS3ClientMock();
+    
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-
-    @BindToRegistry(name = "amazonS3Client")
-    AmazonS3ClientMock client = new AmazonS3ClientMock();
 
     @Test
     public void sendInOnly() throws Exception {
