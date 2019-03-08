@@ -37,6 +37,7 @@ public interface UnitOfWork extends Service {
     String MDC_MESSAGE_ID = "camel.messageId";
     String MDC_CORRELATION_ID = "camel.correlationId";
     String MDC_ROUTE_ID = "camel.routeId";
+    String MDC_STEP_ID = "camel.stepId";
     String MDC_CAMEL_CONTEXT_ID = "camel.contextId";
     String MDC_TRANSACTION_KEY = "camel.transactionKey";
 

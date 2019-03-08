@@ -45,6 +45,10 @@ public class StepProcessor extends Pipeline {
 
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
+        // setup step id on exchange
+        final Object oldStepId = exchange.removeProperty(Exchange.STEP_ID);
+        exchange.setProperty(Exchange.STEP_ID, stepId);
+
         EventHelper.notifyStepStarted(exchange.getContext(), exchange, stepId);
 
         return super.process(exchange, (sync) -> {
@@ -60,6 +64,13 @@ public class StepProcessor extends Pipeline {
                 // must catch exceptions to ensure synchronizations is also invoked
                 log.warn("Exception occurred during event notification. This exception will be ignored.", t);
             } finally {
+                if (oldStepId != null) {
+                    // restore step id
+                    exchange.setProperty(Exchange.STEP_ID, oldStepId);
+                } else {
+                    // clear step id
+                    exchange.removeProperty(Exchange.STEP_ID);
+                }
                 callback.done(sync);
             }
         });
@@ -72,7 +83,7 @@ public class StepProcessor extends Pipeline {
 
     @Override
     public String toString() {
-        return "Step[" + getId() + "]";
+        return "Step[" + stepId + "]";
     }
 
 }

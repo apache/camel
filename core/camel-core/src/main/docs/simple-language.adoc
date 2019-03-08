@@ -189,6 +189,9 @@ specified.
 |routeId |String |*Camel 2.11:* Returns the id of the current route the
 Exchange is being routed.
 
+|stepId |String |*Camel 3:* Returns the id of the current step the
+Exchange is being routed.
+
 |threadName |String |*Camel 2.3:* Returns the name of the current thread. Can be used for
 logging purpose.
 

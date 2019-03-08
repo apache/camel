@@ -1210,6 +1210,22 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the current step id (if any)
+     */
+    public static Expression stepIdExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getProperty(Exchange.STEP_ID);
+            }
+
+            @Override
+            public String toString() {
+                return "stepId";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the {@code null} value
      */
     public static Expression nullExpression() {

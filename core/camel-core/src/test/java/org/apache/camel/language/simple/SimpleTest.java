@@ -236,6 +236,13 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testSimpleStepId() throws Exception {
+        assertExpression("${stepId}", null);
+        exchange.setProperty(Exchange.STEP_ID, "foo");
+        assertExpression("${stepId}", "foo");
+    }
+
+    @Test
     public void testSimpleOutExpressions() throws Exception {
         exchange.getOut().setBody("Bye World");
         exchange.getOut().setHeader("quote", "Camel rocks");
