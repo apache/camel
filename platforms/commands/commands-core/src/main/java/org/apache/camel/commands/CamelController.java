@@ -191,6 +191,17 @@ public interface CamelController {
     String getRouteStatsAsXml(String routeId, String camelContextName, boolean fullStats, boolean includeProcessors) throws Exception;
 
     /**
+     * Returns detailed step statistics as XML identified by a ID and a Camel context.
+     *
+     * @param routeId           the route ID.
+     * @param camelContextName  the Camel context.
+     * @param fullStats         whether to include verbose stats
+     * @return the step statistics as XML
+     * @throws java.lang.Exception can be thrown
+     */
+    String getStepStatsAsXml(String routeId, String camelContextName, boolean fullStats) throws Exception;
+
+    /**
      * Return the endpoints
      *
      * @param camelContextName the Camel context.
