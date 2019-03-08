@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.model.S3Object;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +31,9 @@ public class S3BatchConsumerTest extends CamelTestSupport {
     
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
+    
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
         
     @Test
     public void receiveBatch() throws Exception {
@@ -48,13 +53,9 @@ public class S3BatchConsumerTest extends CamelTestSupport {
         mock.message(4).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(true);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 5);
     }
-    
+
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-        // add 6 messages, one more we will poll
+    protected RouteBuilder createRouteBuilder() throws Exception {
         for (int counter = 0; counter < 6; counter++) {
             S3Object s3Object = new S3Object();
             s3Object.setBucketName("mycamelbucket");
@@ -63,13 +64,6 @@ public class S3BatchConsumerTest extends CamelTestSupport {
             clientMock.objects.add(s3Object);
         }
         
-        registry.bind("amazonS3Client", clientMock);
-        
-        return registry;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

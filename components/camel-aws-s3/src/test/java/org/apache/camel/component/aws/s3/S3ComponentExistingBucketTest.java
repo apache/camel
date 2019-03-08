@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -43,7 +44,8 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
     
-    private AmazonS3ClientMock client;
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @Test
     public void sendIn() throws Exception {
@@ -60,7 +62,7 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         
         assertResultExchange(result.getExchanges().get(0));
         
-        PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
+        PutObjectRequest putObjectRequest = clientMock.putObjectRequests.get(0);
         assertEquals("REDUCED_REDUNDANCY", putObjectRequest.getStorageClass());
         assertEquals("mycamelbucket", putObjectRequest.getBucketName());
         
@@ -82,7 +84,7 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         
         assertResultExchange(result.getExchanges().get(0));
         
-        PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
+        PutObjectRequest putObjectRequest = clientMock.putObjectRequests.get(0);
         assertEquals("REDUCED_REDUNDANCY", putObjectRequest.getStorageClass());
         assertEquals("mycamelbucket", putObjectRequest.getBucketName());
         
@@ -120,7 +122,7 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         
         assertResultExchange(result.getExchanges().get(0));
         
-        PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
+        PutObjectRequest putObjectRequest = clientMock.putObjectRequests.get(0);
         assertEquals("STANDARD", putObjectRequest.getStorageClass());
         assertEquals("mycamelbucket", putObjectRequest.getBucketName());
         assertEquals(26L, putObjectRequest.getMetadata().getContentLength());
@@ -157,16 +159,6 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
     private void assertResponseMessage(Message message) {
         assertEquals("3a5c8b1ad448bca04584ecb55b836264", message.getHeader(S3Constants.E_TAG));
         assertNull(message.getHeader(S3Constants.VERSION_ID));
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        client = new AmazonS3ClientMock();
-        registry.bind("amazonS3Client", client);
-        
-        return registry;
     }
 
     @Override

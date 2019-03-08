@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.amazonaws.services.s3.model.Bucket;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -38,7 +39,8 @@ public class S3ComponentListBucketsTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
     
-    private AmazonS3ClientMock client;
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @Test
     public void sendIn() throws Exception {
@@ -56,16 +58,6 @@ public class S3ComponentListBucketsTest extends CamelTestSupport {
         assertEquals(1, list.size());
         assertEquals("camel", list.get(0).getOwner().getDisplayName());
         assertEquals("camel-bucket", list.get(0).getName());
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        client = new AmazonS3ClientMock();
-        registry.bind("amazonS3Client", client);
-        
-        return registry;
     }
 
     @Override

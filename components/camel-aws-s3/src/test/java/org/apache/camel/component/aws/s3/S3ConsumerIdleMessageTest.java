@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -27,6 +28,9 @@ import org.junit.Test;
  * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
  */
 public class S3ConsumerIdleMessageTest extends CamelTestSupport {
+	
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @Test
     public void testConsumeIdleMessages() throws Exception {
@@ -36,16 +40,6 @@ public class S3ConsumerIdleMessageTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonS3ClientMock clientMock = new AmazonS3ClientMock();        
-        registry.bind("amazonS3Client", clientMock);
-        
-        return registry;
     }
     
     @Override
