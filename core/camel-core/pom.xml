@@ -323,11 +323,6 @@
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
-<!--  
-      </plugins>
-    </pluginManagement>
-    <plugins>
--->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <executions>
