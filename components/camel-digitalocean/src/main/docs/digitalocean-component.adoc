@@ -3,11 +3,11 @@
 
 *Available as of Camel version 2.19*
 
-The **DigitalOcean** component allows you to manage Droplets and resources within the DigitalOcean cloud with **Camel** by encapsulating [digitalocean-api-java](https://www.digitalocean.com/community/projects/api-client-in-java). All of the functionality that you are familiar with in the DigitalOcean control panel is also available through this Camel component.
+The **DigitalOcean** component allows you to manage Droplets and resources within the DigitalOcean cloud with **Camel** by encapsulating https://www.digitalocean.com/community/projects/api-client-in-java[digitalocean-api-java]. All of the functionality that you are familiar with in the DigitalOcean control panel is also available through this Camel component.
 
 === Prerequisites
 
-You must have a valid DigitalOcean account and a valid OAuth token. You can generate an OAuth token by visiting the [Apps & API](https://cloud.digitalocean.com/settings/applications) section of the DigitalOcean control panel for your account.
+You must have a valid DigitalOcean account and a valid OAuth token. You can generate an OAuth token by visiting the [Apps & API] section of the DigitalOcean control panel for your account.
 
 === URI format
 
@@ -115,7 +115,7 @@ All message bodies returned are using objects provided by the **digitalocean-api
 
 === API Rate Limits
 
-DigitalOcean REST API encapsulated by camel-digitalocean component is subjected to API Rate Limiting. You can find the per method limits in the [API Rate Limits documentation](https://developers.digitalocean.com/documentation/v2/#rate-limit).
+DigitalOcean REST API encapsulated by camel-digitalocean component is subjected to API Rate Limiting. You can find the per method limits in the https://developers.digitalocean.com/documentation/v2/#rate-limit[API Rate Limits documentation].
 
 
 === Account endpoint
