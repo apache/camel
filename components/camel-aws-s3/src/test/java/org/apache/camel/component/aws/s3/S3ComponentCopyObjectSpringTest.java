@@ -29,15 +29,12 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentCopyObjectSpringTest extends CamelSpringTestSupport {
-
+    
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-
-    @BindToRegistry(name = "amazonS3Client")
-    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
 
     @Test
     public void sendIn() throws Exception {

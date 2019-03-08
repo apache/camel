@@ -16,28 +16,23 @@
  */
 package org.apache.camel.component.aws.s3;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentDeleteObjectSpringTest extends CamelSpringTestSupport {
-
+    
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-
-    @BindToRegistry(name = "amazonS3Client")
-    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
 
     @Test
     public void sendIn() throws Exception {

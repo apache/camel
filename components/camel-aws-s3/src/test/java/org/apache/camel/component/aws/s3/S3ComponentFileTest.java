@@ -41,6 +41,9 @@ import org.junit.Test;
 
 public class S3ComponentFileTest extends CamelTestSupport {
 
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock client = new AmazonS3ClientMock();
+    
     @EndpointInject(uri = "direct:startKeep")
     ProducerTemplate templateKeep;
 
@@ -49,9 +52,6 @@ public class S3ComponentFileTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
     MockEndpoint result;
-
-    @BindToRegistry(name = "amazonS3Client")
-    AmazonS3ClientMock client = new AmazonS3ClientMock();
 
     File testFile;
 

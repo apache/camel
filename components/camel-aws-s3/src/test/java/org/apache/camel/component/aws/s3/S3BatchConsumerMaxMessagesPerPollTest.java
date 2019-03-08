@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import com.amazonaws.services.s3.model.S3Object;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -24,13 +26,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import com.amazonaws.services.s3.model.S3Object;
-
 public class S3BatchConsumerMaxMessagesPerPollTest extends CamelTestSupport {
 
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-
+    
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
 

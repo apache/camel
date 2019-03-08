@@ -29,14 +29,14 @@ import org.junit.Test;
 
 public class S3ComponentGetObjectTest extends CamelTestSupport {
 
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
+    
     @EndpointInject(uri = "direct:listBuckets")
     private ProducerTemplate template;
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-
-    @BindToRegistry(name = "amazonS3Client")
-    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
 
     @Test
     public void sendIn() throws Exception {

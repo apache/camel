@@ -29,20 +29,19 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentStringTest extends CamelTestSupport {
 
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock client = new AmazonS3ClientMock();
+    
     @EndpointInject(uri = "direct:sendString")
     ProducerTemplate templateSendString;
 
     @EndpointInject(uri = "mock:result")
     MockEndpoint result;
-
-    @BindToRegistry(name = "amazonS3Client")
-    AmazonS3ClientMock client = new AmazonS3ClientMock();
 
     File testFile;
 
