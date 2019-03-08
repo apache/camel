@@ -4265,10 +4265,16 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         ManagementStrategyFactory factory = new DefaultManagementStrategyFactory();
         if (!isJMXDisabled()) {
             try {
-                ServiceLoader<ManagementStrategyFactory> loader = ServiceLoader.load(ManagementStrategyFactory.class);
-                Iterator<ManagementStrategyFactory> iterator = loader.iterator();
-                if (iterator.hasNext()) {
-                    factory = iterator.next();
+                FactoryFinder finder = getFactoryFinder("META-INF/services/org/apache/camel/management/");
+                try {
+                    if (finder != null) {
+                        Object object = finder.newInstance("ManagementStrategyFactory");
+                        if (object instanceof ManagementStrategyFactory) {
+                            factory = (ManagementStrategyFactory) object;
+                        }
+                    }
+                } catch (NoFactoryAvailableException e) {
+                    // ignore there is no custom factory
                 }
             } catch (Exception e) {
                 log.warn("Cannot create JMX lifecycle strategy. Will fallback and disable JMX.", e);
