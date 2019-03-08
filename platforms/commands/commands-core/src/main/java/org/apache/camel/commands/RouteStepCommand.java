@@ -58,7 +58,7 @@ public class RouteStepCommand extends AbstractRouteCommand {
             out.println("");
             out.println(stringEscape.unescapeJava("\u001B[1mStep\u001B[0m"));
             out.println(stringEscape.unescapeJava("\tCamel Context: " + contextName));
-            out.println(String.format(HEADER_FORMAT, "Id", "Count", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Self (ms)"));
+            out.println(String.format(HEADER_FORMAT, "Id", "Count", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Total (ms)"));
         }
 
         String xml = camelController.getStepStatsAsXml(routeId, contextName, true);
@@ -70,12 +70,10 @@ public class RouteStepCommand extends AbstractRouteCommand {
                     route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), route.getSelfProcessingTime()));
 
             for (StepStatDump ss : route.getStepStats()) {
-                // the self time is the total time of the step itself
-                long selfTime = ss.getTotalProcessingTime();
                 count = ss.getExchangesCompleted() + ss.getExchangesFailed();
                 // indent step id with 2 spaces
                 out.println(String.format(OUTPUT_FORMAT, "  " + ss.getId(), count, ss.getLastProcessingTime(), ss.getDeltaProcessingTime(),
-                        ss.getMeanProcessingTime(), ss.getMinProcessingTime(), ss.getMaxProcessingTime(), selfTime));
+                        ss.getMeanProcessingTime(), ss.getMinProcessingTime(), ss.getMaxProcessingTime(), ss.getTotalProcessingTime()));
             }
         }
 
