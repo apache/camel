@@ -29,32 +29,32 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentDeleteObjectTest extends CamelTestSupport {
-    
+
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
-        
+
         template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
         assertEquals(resultExchange.getIn().getBody(), true);
     }
@@ -65,11 +65,9 @@ public class S3ComponentDeleteObjectTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=deleteObject";
-                
-                from("direct:start")
-                    .to(awsEndpoint)
-                    .to("mock:result");
-                
+
+                from("direct:start").to(awsEndpoint).to("mock:result");
+
             }
         };
     }

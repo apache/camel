@@ -29,36 +29,36 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentDeleteObjectSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
-        
+
         template.send("direct:deleteObject", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.KEY, "camelKey");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
         assertEquals(resultExchange.getIn().getBody(), true);
     }
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/aws/s3/S3ComponentSpringTest-context.xml");

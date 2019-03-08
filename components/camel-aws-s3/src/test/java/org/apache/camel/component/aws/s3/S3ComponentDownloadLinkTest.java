@@ -30,29 +30,29 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentDownloadLinkTest extends CamelTestSupport {
-    
+
     @EndpointInject(uri = "direct:downloadLink")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Map<String, Object> headers = new HashMap<>();
         headers.put(S3Constants.KEY, "test");
         template.sendBodyAndHeaders("direct:downloadLink", headers);
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
         String dlLink = resultExchange.getIn().getHeader(S3Constants.DOWNLOAD_LINK, String.class);
         assertEquals("http://aws.amazonas.s3/file.zip", dlLink);
@@ -64,11 +64,9 @@ public class S3ComponentDownloadLinkTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=downloadLink";
-                
-                from("direct:downloadLink")
-                    .to(awsEndpoint)
-                    .to("mock:result");
-                
+
+                from("direct:downloadLink").to(awsEndpoint).to("mock:result");
+
             }
         };
     }

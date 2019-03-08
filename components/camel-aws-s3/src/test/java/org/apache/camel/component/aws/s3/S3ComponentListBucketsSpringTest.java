@@ -32,27 +32,27 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentListBucketsSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject(uri = "direct:listBuckets")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
-        
+
         template.sendBody("direct:listBuckets", ExchangePattern.InOnly, "");
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
         List<Bucket> list = resultExchange.getIn().getBody(List.class);
         assertEquals(1, list.size());

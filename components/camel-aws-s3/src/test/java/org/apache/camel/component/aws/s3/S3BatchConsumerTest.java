@@ -28,18 +28,18 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3BatchConsumerTest extends CamelTestSupport {
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
-    
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-        
+
     @Test
     public void receiveBatch() throws Exception {
         mock.expectedMessageCount(5);
         assertMockEndpointsSatisfied();
-        
+
         mock.message(0).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(0);
         mock.message(1).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(1);
         mock.message(2).exchangeProperty(Exchange.BATCH_INDEX).isEqualTo(2);
@@ -60,15 +60,14 @@ public class S3BatchConsumerTest extends CamelTestSupport {
             S3Object s3Object = new S3Object();
             s3Object.setBucketName("mycamelbucket");
             s3Object.setKey("counter-" + counter);
-            
+
             clientMock.objects.add(s3Object);
         }
-        
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=5000&maxMessagesPerPoll=5")
-                    .to("mock:result");
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=5000&maxMessagesPerPoll=5").to("mock:result");
             }
         };
     }

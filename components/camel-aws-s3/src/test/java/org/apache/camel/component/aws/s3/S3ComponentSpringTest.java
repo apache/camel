@@ -30,55 +30,59 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     @Test
     public void sendInOnly() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.KEY, "CamelUnitTest");
                 exchange.getIn().setBody("This is my bucket content.");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
         assertResponseMessage(exchange.getIn());
     }
 
     @Test
     public void sendInOut() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.KEY, "CamelUnitTest");
                 exchange.getIn().setBody("This is my bucket content.");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
         assertResponseMessage(exchange.getOut());
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
         assertIsInstanceOf(InputStream.class, resultExchange.getIn().getBody());
         assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
         assertEquals("mycamelbucket", resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
         assertEquals("CamelUnitTest", resultExchange.getIn().getHeader(S3Constants.KEY));
-        assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not enabled on this bucket
+        assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not
+                                                                              // enabled
+                                                                              // on
+                                                                              // this
+                                                                              // bucket
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
         assertNull(resultExchange.getIn().getHeader(S3Constants.E_TAG));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_TYPE));
@@ -88,7 +92,7 @@ public class S3ComponentSpringTest extends CamelSpringTestSupport {
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_MD5));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CACHE_CONTROL));
     }
-    
+
     private void assertResponseMessage(Message message) {
         assertEquals("3a5c8b1ad448bca04584ecb55b836264", message.getHeader(S3Constants.E_TAG));
         assertNull(message.getHeader(S3Constants.VERSION_ID));

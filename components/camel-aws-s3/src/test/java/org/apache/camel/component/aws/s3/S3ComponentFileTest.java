@@ -104,14 +104,20 @@ public class S3ComponentFileTest extends CamelTestSupport {
         assertIsInstanceOf(InputStream.class, resultExchange.getIn().getBody());
 
         if (!delete) {
-            // assert on the file content only in case the "deleteAfterWrite" option is NOT enabled
-            // in which case we would still have the file and thereby could assert on it's content
+            // assert on the file content only in case the "deleteAfterWrite"
+            // option is NOT enabled
+            // in which case we would still have the file and thereby could
+            // assert on it's content
             assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
         }
 
         assertEquals(getCamelBucket(), resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
         assertEquals("CamelUnitTest", resultExchange.getIn().getHeader(S3Constants.KEY));
-        assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not enabled on this bucket
+        assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not
+                                                                              // enabled
+                                                                              // on
+                                                                              // this
+                                                                              // bucket
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
         assertNull(resultExchange.getIn().getHeader(S3Constants.E_TAG));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_TYPE));
@@ -136,14 +142,11 @@ public class S3ComponentFileTest extends CamelTestSupport {
             public void configure() throws Exception {
                 String awsEndpoint = "aws-s3://" + getCamelBucket() + "?amazonS3Client=#amazonS3Client";
 
-                from("direct:startKeep")
-                        .to(awsEndpoint + "&deleteAfterWrite=false");
+                from("direct:startKeep").to(awsEndpoint + "&deleteAfterWrite=false");
 
-                from("direct:startDelete")
-                        .to(awsEndpoint + "&deleteAfterWrite=true");
+                from("direct:startDelete").to(awsEndpoint + "&deleteAfterWrite=true");
 
-                from(awsEndpoint + "&maxMessagesPerPoll=5")
-                        .to("mock:result");
+                from(awsEndpoint + "&maxMessagesPerPoll=5").to("mock:result");
             }
         };
     }
