@@ -22,6 +22,9 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedProcessMBean;
+import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
+import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -51,6 +54,10 @@ public class ManagedStepTest extends ManagementTestSupport {
         // should be on route1
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", routeId);
+
+        // should be step foo
+        String stepId = (String) mbeanServer.getAttribute(on, "StepId");
+        assertEquals("foo", stepId);
 
         String camelId = (String) mbeanServer.getAttribute(on, "CamelId");
         assertEquals("camel-1", camelId);
@@ -83,6 +90,19 @@ public class ManagedStepTest extends ManagementTestSupport {
         xml = mcc.getManagedCamelContext().dumpStepStatsAsXml(true);
         assertNotNull(xml);
         assertTrue(xml.contains("<stepStat id=\"foo\""));
+
+        // the processors within the step should point-back to the parent step
+        ManagedSendProcessorMBean mp = mcc.getManagedProcessor("abc", ManagedSendProcessorMBean.class);
+        assertNotNull(mp);
+        assertEquals("route1", mp.getRouteId());
+        assertEquals("foo", mp.getStepId());
+        assertEquals("log://foo", mp.getDestination());
+
+        mp = mcc.getManagedProcessor("def", ManagedSendProcessorMBean.class);
+        assertNotNull(mp);
+        assertEquals("route1", mp.getRouteId());
+        assertEquals("foo", mp.getStepId());
+        assertEquals("mock://foo", mp.getDestination());
     }
 
     @Override
@@ -90,10 +110,10 @@ public class ManagedStepTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:start").routeId("route1")
                     .step("foo")
                         .to("log:foo").id("abc")
-                        .to("mock:foo").id("abc")
+                        .to("mock:foo").id("def")
                     .end()
                     .to("mock:result");
             }

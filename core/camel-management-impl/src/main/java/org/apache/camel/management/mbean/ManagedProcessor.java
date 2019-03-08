@@ -37,6 +37,8 @@ import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.model.StepDefinition;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.support.service.ServiceHelper;
@@ -48,6 +50,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     private final Processor processor;
     private final ProcessorDefinition<?> definition;
     private final String id;
+    private String stepId;
     private Route route;
 
     public ManagedProcessor(CamelContext context, Processor processor, ProcessorDefinition<?> definition) {
@@ -55,6 +58,13 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.processor = processor;
         this.definition = definition;
         this.id = definition.idOrCreate(context.getNodeIdFactory());
+        StepDefinition step;
+        if (definition instanceof StepDefinition) {
+            step = (StepDefinition) definition;
+        } else {
+            step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
+        }
+        this.stepId = step != null ? step.idOrCreate(context.getNodeIdFactory()) : null;
     }
 
     @Override
@@ -82,6 +92,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     public String getId() {
         return id;
+    }
+
+    public String getStepId() {
+        return stepId;
     }
 
     public Integer getIndex() {
