@@ -121,6 +121,18 @@ public class DefaultEventFactory implements EventFactory {
         return new ExchangeSentEvent(exchange, endpoint, timeTaken);
     }
 
+    public CamelEvent createStepStartedEvent(Exchange exchange, String stepId) {
+        return new StepStartedEvent(exchange, stepId);
+    }
+
+    public CamelEvent createStepCompletedEvent(Exchange exchange, String stepId) {
+        return new StepCompletedEvent(exchange, stepId);
+    }
+
+    public CamelEvent createStepFailedEvent(Exchange exchange, String stepId) {
+        return new StepFailedEvent(exchange, stepId);
+    }
+
     public CamelEvent createCamelContextSuspendingEvent(CamelContext context) {
         return new CamelContextSuspendingEvent(context);
     }
