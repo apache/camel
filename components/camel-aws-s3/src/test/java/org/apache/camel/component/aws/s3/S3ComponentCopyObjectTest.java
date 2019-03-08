@@ -29,20 +29,20 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentCopyObjectTest extends CamelTestSupport {
-    
+
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
-        
+
         template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.BUCKET_DESTINATION_NAME, "camelDestinationBucket");
@@ -50,13 +50,13 @@ public class S3ComponentCopyObjectTest extends CamelTestSupport {
                 exchange.getIn().setHeader(S3Constants.DESTINATION_KEY, "camelDestinationKey");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
         assertEquals(resultExchange.getIn().getHeader(S3Constants.VERSION_ID), "11192828ahsh2723");
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
@@ -75,11 +75,9 @@ public class S3ComponentCopyObjectTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=copyObject";
-                
-                from("direct:start")
-                    .to(awsEndpoint)
-                    .to("mock:result");
-                
+
+                from("direct:start").to(awsEndpoint).to("mock:result");
+
             }
         };
     }

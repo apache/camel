@@ -37,60 +37,60 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
-    
+
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock client = new AmazonS3ClientMock();
-    
+
     @Test
     public void sendInOnly() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.KEY, "CamelUnitTest");
                 exchange.getIn().setBody("This is my bucket content.");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
         PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
         assertEquals("REDUCED_REDUNDANCY", putObjectRequest.getStorageClass());
         assertEquals("nonExistingBucket", putObjectRequest.getBucketName());
-        
+
         assertResponseMessage(exchange.getIn());
     }
 
     @Test
     public void sendInOut() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.KEY, "CamelUnitTest");
                 exchange.getIn().setBody("This is my bucket content.");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
         PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
         assertEquals("REDUCED_REDUNDANCY", putObjectRequest.getStorageClass());
         assertEquals("nonExistingBucket", putObjectRequest.getBucketName());
-        
+
         assertResponseMessage(exchange.getOut());
     }
-    
+
     @Test
     public void sendCustomHeaderValues() throws Exception {
         result.expectedMessageCount(1);
@@ -114,11 +114,11 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
                 exchange.getIn().setBody("This is my bucket content.");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
         PutObjectRequest putObjectRequest = client.putObjectRequests.get(0);
         assertEquals("STANDARD", putObjectRequest.getStorageClass());
         assertEquals("nonExistingBucket", putObjectRequest.getBucketName());
@@ -133,13 +133,17 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
 
         assertResponseMessage(exchange.getIn());
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
         assertIsInstanceOf(InputStream.class, resultExchange.getIn().getBody());
         assertEquals("This is my bucket content.", resultExchange.getIn().getBody(String.class));
         assertEquals("nonExistingBucket", resultExchange.getIn().getHeader(S3Constants.BUCKET_NAME));
         assertEquals("CamelUnitTest", resultExchange.getIn().getHeader(S3Constants.KEY));
-        assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not enabled on this bucket
+        assertNull(resultExchange.getIn().getHeader(S3Constants.VERSION_ID)); // not
+                                                                              // enabled
+                                                                              // on
+                                                                              // this
+                                                                              // bucket
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
         assertNull(resultExchange.getIn().getHeader(S3Constants.E_TAG));
         assertNull(resultExchange.getIn().getHeader(S3Constants.CONTENT_TYPE));
@@ -150,7 +154,7 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
         assertNull(resultExchange.getIn().getHeader(S3Constants.CACHE_CONTROL));
         assertEquals(0, resultExchange.getIn().getHeader(S3Constants.S3_HEADERS, Map.class).size());
     }
-    
+
     private void assertResponseMessage(Message message) {
         assertEquals("3a5c8b1ad448bca04584ecb55b836264", message.getHeader(S3Constants.E_TAG));
         assertNull(message.getHeader(S3Constants.VERSION_ID));
@@ -162,12 +166,10 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws-s3://nonExistingBucket?amazonS3Client=#amazonS3Client&policy=xxx";
-                
-                from("direct:start")
-                    .to(awsEndpoint + "&storageClass=REDUCED_REDUNDANCY");
-                
-                from(awsEndpoint + "&maxMessagesPerPoll=5")
-                    .to("mock:result");
+
+                from("direct:start").to(awsEndpoint + "&storageClass=REDUCED_REDUNDANCY");
+
+                from(awsEndpoint + "&maxMessagesPerPoll=5").to("mock:result");
             }
         };
     }

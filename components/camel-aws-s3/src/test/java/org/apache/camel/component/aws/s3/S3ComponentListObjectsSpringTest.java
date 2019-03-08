@@ -30,34 +30,34 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentListObjectsSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject(uri = "direct:listBuckets")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
 
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
-        
+
         template.sendBody("direct:listObjects", ExchangePattern.InOnly, "");
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
         ObjectListing list = resultExchange.getIn().getBody(ObjectListing.class);
         assertEquals(1, list.getObjectSummaries().size());
         assertEquals("Myfile", list.getObjectSummaries().get(0).getKey());
         assertEquals("test", list.getObjectSummaries().get(0).getBucketName());
     }
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/aws/s3/S3ComponentSpringTest-context.xml");

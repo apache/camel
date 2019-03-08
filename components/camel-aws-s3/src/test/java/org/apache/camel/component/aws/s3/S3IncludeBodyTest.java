@@ -37,38 +37,37 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Test to verify that the body is not retrieved when the includeBody option is false
+ * Test to verify that the body is not retrieved when the includeBody option is
+ * false
  */
 public class S3IncludeBodyTest extends CamelTestSupport {
-	
+
     @BindToRegistry(name = "amazonS3Client")
     DummyAmazonS3Client clientMock = new DummyAmazonS3Client();
-    
+
     @Test
     public void testConsumePrefixedMessages() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        
+
         assertMockEndpointsSatisfied();
         assertNull("Expected body to be empty", mock.getExchanges().get(0).getIn().getBody(String.class));
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" 
-                        + "&maxMessagesPerPoll=5&prefix=confidential&includeBody=false")
-                    .to("mock:result");
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" + "&maxMessagesPerPoll=5&prefix=confidential&includeBody=false").to("mock:result");
             }
         };
     }
 
     class DummyAmazonS3Client extends AmazonS3Client {
-        
+
         private AtomicInteger requestCount = new AtomicInteger(0);
-        
+
         DummyAmazonS3Client() {
             super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
         }
@@ -76,12 +75,12 @@ public class S3IncludeBodyTest extends CamelTestSupport {
         @Override
         public ObjectListing listObjects(ListObjectsRequest request) throws AmazonClientException, AmazonServiceException {
             int currentRequestCount = requestCount.incrementAndGet();
-            
+
             assertEquals("mycamelbucket", request.getBucketName());
             if (currentRequestCount == 2) {
                 assertEquals("confidential", request.getPrefix());
             }
-            
+
             ObjectListing response = new ObjectListing();
             response.setBucketName(request.getBucketName());
             response.setPrefix(request.getPrefix());
@@ -90,15 +89,15 @@ public class S3IncludeBodyTest extends CamelTestSupport {
             s3ObjectSummary.setBucketName(request.getBucketName());
             s3ObjectSummary.setKey("key");
             response.getObjectSummaries().add(s3ObjectSummary);
-            
+
             return response;
         }
-        
+
         @Override
         public S3Object getObject(String bucketName, String key) throws AmazonClientException, AmazonServiceException {
             assertEquals("mycamelbucket", bucketName);
             assertEquals("key", key);
-            
+
             S3Object s3Object = new S3Object();
             s3Object.setBucketName(bucketName);
             s3Object.setKey(key);
@@ -107,13 +106,13 @@ public class S3IncludeBodyTest extends CamelTestSupport {
             } catch (UnsupportedEncodingException e) {
                 // noop
             }
-            
+
             return s3Object;
         }
-        
+
         @Override
         public void deleteObject(String bucketName, String key) throws AmazonClientException, AmazonServiceException {
-            //noop
+            // noop
         }
     }
 }

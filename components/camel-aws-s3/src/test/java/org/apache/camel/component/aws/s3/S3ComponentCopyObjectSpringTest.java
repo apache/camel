@@ -29,20 +29,20 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentCopyObjectSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
-        
+
         template.send("direct:copyObject", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(S3Constants.BUCKET_DESTINATION_NAME, "camelDestinationBucket");
@@ -50,13 +50,13 @@ public class S3ComponentCopyObjectSpringTest extends CamelSpringTestSupport {
                 exchange.getIn().setHeader(S3Constants.DESTINATION_KEY, "camelDestinationKey");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
         assertEquals(resultExchange.getIn().getHeader(S3Constants.VERSION_ID), "11192828ahsh2723");
         assertNull(resultExchange.getIn().getHeader(S3Constants.LAST_MODIFIED));
@@ -68,7 +68,7 @@ public class S3ComponentCopyObjectSpringTest extends CamelSpringTestSupport {
         assertNull(resultExchange.getIn().getHeader(S3Constants.CACHE_CONTROL));
         assertNull(resultExchange.getIn().getHeader(S3Constants.USER_METADATA));
     }
-    
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/aws/s3/S3ComponentSpringTest-context.xml");

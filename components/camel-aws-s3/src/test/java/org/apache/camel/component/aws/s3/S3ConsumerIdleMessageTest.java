@@ -25,13 +25,14 @@ import org.junit.Test;
 
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
+ * sendEmptyMessageWhenIdle property is set and a polling event yields no
+ * results.
  */
 public class S3ConsumerIdleMessageTest extends CamelTestSupport {
-	
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @Test
     public void testConsumeIdleMessages() throws Exception {
         Thread.sleep(110);
@@ -41,15 +42,13 @@ public class S3ConsumerIdleMessageTest extends CamelTestSupport {
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" 
-                        + "&maxMessagesPerPoll=5&sendEmptyMessageWhenIdle=true")
-                    .to("mock:result");
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" + "&maxMessagesPerPoll=5&sendEmptyMessageWhenIdle=true").to("mock:result");
             }
         };
     }

@@ -87,8 +87,7 @@ public class S3ComponentStringTest extends CamelTestSupport {
             public void configure() throws Exception {
                 String awsEndpoint = "aws-s3://" + getCamelBucket() + "?amazonS3Client=#amazonS3Client";
 
-                from("direct:sendString")
-                        .to(awsEndpoint + "&deleteAfterWrite=false").to("mock:result");
+                from("direct:sendString").to(awsEndpoint + "&deleteAfterWrite=false").to("mock:result");
             }
         };
     }

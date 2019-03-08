@@ -30,27 +30,27 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentListObjectTest extends CamelTestSupport {
-    
+
     @EndpointInject(uri = "direct:listBuckets")
     private ProducerTemplate template;
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
-    
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);
-        
+
         template.sendBody("direct:listObjects", ExchangePattern.InOnly, "");
         assertMockEndpointsSatisfied();
-        
+
         assertResultExchange(result.getExchanges().get(0));
-        
+
     }
-    
+
     private void assertResultExchange(Exchange resultExchange) {
         ObjectListing list = resultExchange.getIn().getBody(ObjectListing.class);
         assertEquals(1, list.getObjectSummaries().size());
@@ -64,11 +64,9 @@ public class S3ComponentListObjectTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 String awsEndpoint = "aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&operation=listObjects";
-                
-                from("direct:listObjects")
-                    .to(awsEndpoint)
-                    .to("mock:result");
-                
+
+                from("direct:listObjects").to(awsEndpoint).to("mock:result");
+
             }
         };
     }

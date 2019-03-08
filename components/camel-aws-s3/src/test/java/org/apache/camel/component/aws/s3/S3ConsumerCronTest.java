@@ -24,10 +24,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ConsumerCronTest extends CamelTestSupport {
-	
+
     @BindToRegistry(name = "amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @Test
     public void testConsumerCron() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -38,15 +38,13 @@ public class S3ConsumerCronTest extends CamelTestSupport {
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client"
-                        + "&scheduler=spring&scheduler.cron=0/2+*+*+*+*+?"
-                        + "&sendEmptyMessageWhenIdle=true")
+                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client" + "&scheduler=spring&scheduler.cron=0/2+*+*+*+*+?" + "&sendEmptyMessageWhenIdle=true")
                     .to("mock:result");
             }
         };

@@ -53,7 +53,7 @@ public class S3ComponentGetObjectTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
 
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

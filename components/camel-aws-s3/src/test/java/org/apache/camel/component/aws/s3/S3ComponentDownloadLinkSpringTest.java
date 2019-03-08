@@ -31,7 +31,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentDownloadLinkSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject(uri = "direct:downloadLink")
     private ProducerTemplate template;
 
