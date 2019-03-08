@@ -35,6 +35,9 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Route ID")
     String getRouteId();
 
+    @ManagedAttribute(description = "Step ID")
+    String getStepId();
+
     @ManagedAttribute(description = "Processor ID")
     String getProcessorId();
 

@@ -19,5 +19,4 @@ package org.apache.camel.api.management.mbean;
 public interface ManagedStepMBean extends ManagedProcessorMBean {
 
     // noop
-
 }
