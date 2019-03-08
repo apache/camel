@@ -187,7 +187,7 @@ public final class BoxConnectionHelper {
      * - detects wrong clientId error
      */
     private static void validatePage(Document page) {
-        Elements errorDivs = page.select("div[class*=error_message");
+        Elements errorDivs = page.select("div[class*=error_message]");
         String errorMessage = null;
         if (!errorDivs.isEmpty()) {
             errorMessage = errorDivs.first().text().replaceAll("\\s+", " ")
