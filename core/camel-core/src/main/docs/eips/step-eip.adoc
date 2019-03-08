@@ -13,7 +13,23 @@ This allows to capture metrics at a group level which can make management and mo
 of Camel routes easier by using higher-level abstractions. You can also
 think this as a middle-level between route vs each individual processors in the routes.
 
-TIP: Each Step EIP is registered in JMX under the `type=steps` tree.
+You may want to do this when you have large routes and want to breakup the routes into
+logical steps.
+
+This means you can monitor your Camel applications and gather statistics at 4-tiers:
+
+- context level
+* route(s) level
+** step(s) level
+*** processor(s) level
+
+
+==== JMX Management
+
+Each Step EIP is registered in JMX under the `type=steps` tree, which allows to monitor
+all the steps in the CamelContext. Its also possible to dump statistics in XML format
+by the `dumpStepStatsAsXml` operations on the CamelContext or Route mbeans.
+
 
 === Options
 
