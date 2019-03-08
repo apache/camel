@@ -17,16 +17,18 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.regions.Regions;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ComponentConfigurationTest extends CamelTestSupport {
+	
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @Test
     public void createEndpointWithMinimalS3ClientConfiguration() throws Exception {
-        AmazonS3ClientMock mock = new AmazonS3ClientMock();
-        
-        context.getRegistry().bind("amazonS3Client", mock);
         
         S3Component component = new S3Component(context);
         S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?amazonS3Client=#amazonS3Client&accessKey=xxx&secretKey=yyy");
@@ -62,9 +64,6 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithMinimalArnConfiguration() throws Exception {
-        AmazonS3ClientMock mock = new AmazonS3ClientMock();
-        
-        context.getRegistry().bind("amazonS3Client", mock);
         
         S3Component component = new S3Component(context);
         S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://arn:aws:s3:::MyBucket?amazonS3Client=#amazonS3Client&accessKey=xxx&secretKey=yyy");
@@ -74,9 +73,6 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithMinimalConfigurationAndProvidedClient() throws Exception {
-        AmazonS3ClientMock mock = new AmazonS3ClientMock();
-        
-        context.getRegistry().bind("amazonS3Client", mock);
         
         S3Component component = new S3Component(context);
         S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?amazonS3Client=#amazonS3Client");
@@ -84,7 +80,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertNull(endpoint.getConfiguration().getAccessKey());
         assertNull(endpoint.getConfiguration().getSecretKey());
-        assertSame(mock, endpoint.getConfiguration().getAmazonS3Client());
+        assertSame(clientMock, endpoint.getConfiguration().getAmazonS3Client());
         assertNull(endpoint.getConfiguration().getRegion());
         assertTrue(endpoint.getConfiguration().isDeleteAfterRead());
         assertEquals(10, endpoint.getMaxMessagesPerPoll());
@@ -95,9 +91,6 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithMaximalConfiguration() throws Exception {
-        AmazonS3ClientMock mock = new AmazonS3ClientMock();
-        
-        context.getRegistry().bind("amazonS3Client", mock);
     
         S3Component component = new S3Component(context);
         S3Endpoint endpoint = (S3Endpoint) component.createEndpoint("aws-s3://MyBucket?amazonS3Client=#amazonS3Client"
@@ -226,9 +219,6 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     
     @Test
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
-        AmazonS3ClientMock mock = new AmazonS3ClientMock();
-        
-        context.getRegistry().bind("amazonS3Client", mock);
         
         S3Component component = new S3Component(context);
         component.createEndpoint("aws-s3://MyTopic?amazonS3Client=#amazonS3Client");

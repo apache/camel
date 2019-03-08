@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.model.ObjectListing;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -36,7 +37,8 @@ public class S3ComponentListObjectTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
     
-    private AmazonS3ClientMock client;
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @Test
     public void sendIn() throws Exception {
@@ -54,16 +56,6 @@ public class S3ComponentListObjectTest extends CamelTestSupport {
         assertEquals(1, list.getObjectSummaries().size());
         assertEquals("Myfile", list.getObjectSummaries().get(0).getKey());
         assertEquals("test", list.getObjectSummaries().get(0).getBucketName());
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        client = new AmazonS3ClientMock();
-        registry.bind("amazonS3Client", client);
-        
-        return registry;
     }
 
     @Override

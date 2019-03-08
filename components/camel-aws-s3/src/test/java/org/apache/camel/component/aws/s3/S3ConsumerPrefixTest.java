@@ -29,6 +29,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.util.StringInputStream;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -40,6 +41,9 @@ import org.junit.Test;
  * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
  */
 public class S3ConsumerPrefixTest extends CamelTestSupport {
+	
+    @BindToRegistry(name = "amazonS3Client")
+    DummyAmazonS3Client clientMock = new DummyAmazonS3Client();
     
     @Test
     public void testConsumePrefixedMessages() throws Exception {
@@ -48,15 +52,6 @@ public class S3ConsumerPrefixTest extends CamelTestSupport {
         
         assertMockEndpointsSatisfied();
         assertEquals("Camel rocks!", mock.getExchanges().get(0).getIn().getBody(String.class));
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        registry.bind("amazonS3Client", new DummyAmazonS3Client());
-        
-        return registry;
     }
     
     @Override

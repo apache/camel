@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -23,6 +24,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3ConsumerCronTest extends CamelTestSupport {
+	
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @Test
     public void testConsumerCron() throws Exception {
@@ -33,16 +37,6 @@ public class S3ConsumerCronTest extends CamelTestSupport {
 
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonS3ClientMock clientMock = new AmazonS3ClientMock();        
-        registry.bind("amazonS3Client", clientMock);
-        
-        return registry;
     }
     
     @Override

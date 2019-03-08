@@ -17,15 +17,19 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.services.s3.model.S3Object;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class S3BatchConsumerMaxMessagesPerPollTest extends CamelTestSupport {
+	
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
@@ -77,13 +81,9 @@ public class S3BatchConsumerMaxMessagesPerPollTest extends CamelTestSupport {
         mock.message(19).exchangeProperty(Exchange.BATCH_COMPLETE).isEqualTo(true);
         mock.expectedPropertyReceived(Exchange.BATCH_SIZE, 20);
     }
-    
+
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-        // add 20 messages
+    protected RouteBuilder createRouteBuilder() throws Exception {
         for (int counter = 0; counter < 20; counter++) {
             S3Object s3Object = new S3Object();
             s3Object.setBucketName("mycamelbucket");
@@ -92,13 +92,6 @@ public class S3BatchConsumerMaxMessagesPerPollTest extends CamelTestSupport {
             clientMock.objects.add(s3Object);
         }
         
-        registry.bind("amazonS3Client", clientMock);
-        
-        return registry;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {

@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.s3;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
@@ -36,7 +37,8 @@ public class S3ComponentDownloadLinkTest extends CamelTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
     
-    private AmazonS3ClientMock client;
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @Test
     public void sendIn() throws Exception {
@@ -54,16 +56,6 @@ public class S3ComponentDownloadLinkTest extends CamelTestSupport {
     private void assertResultExchange(Exchange resultExchange) {
         String dlLink = resultExchange.getIn().getHeader(S3Constants.DOWNLOAD_LINK, String.class);
         assertEquals("http://aws.amazonas.s3/file.zip", dlLink);
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        client = new AmazonS3ClientMock();
-        registry.bind("amazonS3Client", client);
-        
-        return registry;
     }
 
     @Override

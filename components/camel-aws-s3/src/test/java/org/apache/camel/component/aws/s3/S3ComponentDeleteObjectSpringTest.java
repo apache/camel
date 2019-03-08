@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -35,7 +36,8 @@ public class S3ComponentDeleteObjectSpringTest extends CamelSpringTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
     
-    private AmazonS3ClientMock client;
+    @BindToRegistry(name = "amazonS3Client")
+    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @Test
     public void sendIn() throws Exception {
@@ -55,16 +57,6 @@ public class S3ComponentDeleteObjectSpringTest extends CamelSpringTestSupport {
     
     private void assertResultExchange(Exchange resultExchange) {
         assertEquals(resultExchange.getIn().getBody(), true);
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        client = new AmazonS3ClientMock();
-        registry.bind("amazonS3Client", client);
-        
-        return registry;
     }
     
     @Override
