@@ -218,6 +218,7 @@ public interface Exchange {
     String SPLIT_INDEX        = "CamelSplitIndex";
     String SPLIT_COMPLETE     = "CamelSplitComplete";
     String SPLIT_SIZE         = "CamelSplitSize";
+    String STEP_ID            = "CamelStepId";
 
     String TIMER_COUNTER         = "CamelTimerCounter";
     String TIMER_FIRED_TIME      = "CamelTimerFiredTime";

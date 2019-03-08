@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -25,8 +26,11 @@ public class StepTest extends ContextTestSupport {
     @Test
     public void testStep() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:foo").expectedPropertyReceived(Exchange.STEP_ID, "foo");
         getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedPropertyReceived(Exchange.STEP_ID, "bar");
         getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:result").message(0).exchangeProperty(Exchange.STEP_ID).isNull();
 
         template.sendBody("direct:start", "Hello World");
 
