@@ -138,6 +138,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private boolean breakOnFirstError;
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean specificAvroReader = false;
 
     //Producer Camel specific configuration properties
     @UriParam(label = "producer")
@@ -421,6 +423,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         addPropertyIfNotNull(props, ConsumerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
         addPropertyIfNotNull(props, "schema.registry.url", getSchemaRegistryURL());
+        addPropertyIfNotNull(props, "specific.avro.reader", isSpecificAvroReader());
 
         // SSL
         applySslConfiguration(props, getSslContextParameters());
@@ -763,6 +766,17 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setBreakOnFirstError(boolean breakOnFirstError) {
         this.breakOnFirstError = breakOnFirstError;
+    }
+    
+    public boolean isSpecificAvroReader() {
+    	return specificAvroReader;
+    }
+    
+    /**
+     * This enables the use of a specific Avro reader for use with the Confluent schema registry and the io.confluent.kafka.serializers.KafkaAvroDeserializer. The default value is false.
+     */
+    public void setSpecificAvroReader(boolean specificAvroReader) {
+    	this.specificAvroReader = specificAvroReader;
     }
 
     public String getBrokers() {
