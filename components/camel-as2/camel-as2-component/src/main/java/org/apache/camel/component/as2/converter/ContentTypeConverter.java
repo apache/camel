@@ -14,19 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.as2.internal;
+package org.apache.camel.component.as2.converter;
+
+import org.apache.camel.CamelException;
+import org.apache.camel.Converter;
+import org.apache.http.entity.ContentType;
 
 /**
- * Constants for AS2 component.
+ * Content type related converters.
  */
-public interface AS2Constants {
-
-    // suffix for parameters when passed as exchange header properties
-    String PROPERTY_PREFIX = "CamelAS2.";
-
-    // thread profile name for this component
-    String THREAD_PROFILE_NAME = "CamelAS2";
+@Converter
+public enum ContentTypeConverter {
+    INSTANCE;
     
-    // header property containing the AS2 Interchange. 
-    String AS2_INTERCHANGE = PROPERTY_PREFIX + "interchange";
+    @Converter
+    public static ContentType toContentType(String contentTypeString) throws CamelException {
+        try {
+            return ContentType.parse(contentTypeString);
+        } catch (Exception e) {
+            throw new CamelException("failed to convert String to ContentType", e);
+        }
+    }
 }
