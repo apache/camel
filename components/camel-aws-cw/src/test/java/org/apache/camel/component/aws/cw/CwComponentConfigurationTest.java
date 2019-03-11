@@ -16,24 +16,22 @@
  */
 package org.apache.camel.component.aws.cw;
 
-
 import java.util.Date;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 
 public class CwComponentConfigurationTest extends CamelTestSupport {
-	
-	@BindToRegistry("now")
-    private static final Date NOW = new Date();
     
+    @BindToRegistry("now")
+    private static final Date NOW = new Date();
+
     @BindToRegistry("amazonCwClient")
     private AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
 

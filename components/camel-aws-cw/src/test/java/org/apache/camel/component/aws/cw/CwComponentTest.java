@@ -32,7 +32,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -42,12 +41,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class CwComponentTest extends CamelTestSupport {
-	
-	@BindToRegistry("now")
+
+    @BindToRegistry("now")
     private static final Date NOW = new Date();
-	
+
     private static final Date LATER = new Date(NOW.getTime() + 1);
-    
+
     @BindToRegistry("amazonCwClient")
     private AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
 
