@@ -76,10 +76,10 @@ public class SimpleRegistryTest extends Assert {
     @Test
     public void testBindDual() {
         String foo = "foo";
-        // will override
+        // bind a 2nd c but its a different type
         registry.bind("c", foo);
         assertEquals(2, registry.size());
-        // should return the original entry
+        // should return the original entry if no specific type given
         assertSame(1, registry.lookupByName("c"));
         assertSame(1, registry.lookupByNameAndType("c", Integer.class));
         // should return the string type
