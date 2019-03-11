@@ -24,7 +24,7 @@ import org.apache.camel.ProducerTemplate;
  */
 public class MyProducer {
 
-    @EndpointInject(ref = "testEndpoint")
+    @EndpointInject(uri = "ref:testEndpoint")
     private ProducerTemplate endpoint;
 
     public void doSomething(String body) {
