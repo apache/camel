@@ -813,7 +813,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     public String getSchemaRegistryURL() {
-		return schemaRegistryURL;
+    	return schemaRegistryURL;
 	}
 
  
