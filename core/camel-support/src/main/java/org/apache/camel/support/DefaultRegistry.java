@@ -42,10 +42,11 @@ public class DefaultRegistry implements Registry, CamelContextAware {
 
     protected CamelContext camelContext;
     protected List<BeanRepository> repositories;
-    protected final Registry simple = new SimpleRegistry();
+    protected Registry fallbackRegistry = new SimpleRegistry();
 
     /**
-     * Creates a default registry that only uses {@link SimpleRegistry} as the repository.
+     * Creates a default registry that uses {@link SimpleRegistry} as the fallback registry.
+     * The fallback registry can customized via {@link #setFallbackRegistry(Registry)}.
      */
     public DefaultRegistry() {
         // noop
@@ -53,8 +54,8 @@ public class DefaultRegistry implements Registry, CamelContextAware {
 
     /**
      * Creates a registry that uses the given {@link BeanRepository} as first choice bean repository to lookup beans.
-     * Will fallback and use {@link SimpleRegistry} as internal registry if the beans cannot be found in the first
-     * choice bean repository.
+     * Will fallback and use {@link SimpleRegistry} as fallback registry if the beans cannot be found in the first
+     * choice bean repository. The fallback registry can customized via {@link #setFallbackRegistry(Registry)}.
      *
      * @param repositories the first choice repositories such as Spring, JNDI, OSGi etc.
      */
@@ -66,8 +67,8 @@ public class DefaultRegistry implements Registry, CamelContextAware {
 
     /**
      * Creates a registry that uses the given {@link BeanRepository} as first choice bean repository to lookup beans.
-     * Will fallback and use {@link SimpleRegistry} as internal registry if the beans cannot be found in the first
-     * choice bean repository.
+     * Will fallback and use {@link SimpleRegistry} as fallback registry if the beans cannot be found in the first
+     * choice bean repository. The fallback registry can customized via {@link #setFallbackRegistry(Registry)}.
      *
      * @param repositories the first choice repositories such as Spring, JNDI, OSGi etc.
      */
@@ -75,6 +76,20 @@ public class DefaultRegistry implements Registry, CamelContextAware {
         if (repositories != null) {
             this.repositories = new ArrayList<>(repositories);
         }
+    }
+
+    /**
+     * Gets the fallback {@link Registry}
+     */
+    public Registry getFallbackRegistry() {
+        return fallbackRegistry;
+    }
+
+    /**
+     * To use a custom {@link Registry} as fallback.
+     */
+    public void setFallbackRegistry(Registry fallbackRegistry) {
+        this.fallbackRegistry = fallbackRegistry;
     }
 
     @Override
@@ -102,7 +117,7 @@ public class DefaultRegistry implements Registry, CamelContextAware {
 
     @Override
     public void bind(String id, Object bean) {
-        simple.bind(id, bean);
+        fallbackRegistry.bind(id, bean);
     }
 
     @Override
@@ -121,14 +136,15 @@ public class DefaultRegistry implements Registry, CamelContextAware {
             for (BeanRepository r : repositories) {
                 Object answer = r.lookupByName(name);
                 if (answer != null) {
-                    return answer;
+                    return unwrap(answer);
                 }
             }
         }
-        return simple.lookupByName(name);
+        return fallbackRegistry.lookupByName(name);
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         try {
             // Must avoid attempting placeholder resolution when looking up
@@ -144,11 +160,11 @@ public class DefaultRegistry implements Registry, CamelContextAware {
             for (BeanRepository r : repositories) {
                 T answer = r.lookupByNameAndType(name, type);
                 if (answer != null) {
-                    return answer;
+                    return (T) unwrap(answer);
                 }
             }
         }
-        return simple.lookupByNameAndType(name, type);
+        return fallbackRegistry.lookupByNameAndType(name, type);
     }
 
     @Override
@@ -161,7 +177,7 @@ public class DefaultRegistry implements Registry, CamelContextAware {
                 }
             }
         }
-        return simple.findByTypeWithName(type);
+        return fallbackRegistry.findByTypeWithName(type);
     }
 
     @Override
@@ -174,6 +190,6 @@ public class DefaultRegistry implements Registry, CamelContextAware {
                 }
             }
         }
-        return simple.findByType(type);
+        return fallbackRegistry.findByType(type);
     }
 }

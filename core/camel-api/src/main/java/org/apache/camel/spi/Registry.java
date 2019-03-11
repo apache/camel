@@ -32,4 +32,15 @@ public interface Registry extends BeanRepository {
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
     void bind(String id, Object bean) throws RuntimeCamelException;
+
+    /**
+     * Strategy to wrap the value to be stored in the registry.
+     *
+     * @param value  the value
+     * @return the value to store
+     */
+    default Object wrap(Object value) {
+        return value;
+    }
+
 }

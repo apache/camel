@@ -23,6 +23,6 @@ import org.apache.camel.support.DefaultRegistry;
 public final class MainRegistry extends DefaultRegistry {
 
     public <T> Set<T> findBindingsByType(Class<T> type) {
-        return simple.findByType(type);
+        return fallbackRegistry.findByType(type);
     }
 }

@@ -51,6 +51,7 @@ public class JndiRegistry extends JndiBeanRepository implements Registry {
     @Override
     public void bind(String name, Object object) {
         try {
+            object = wrap(object);
             getContext().bind(name, object);
         } catch (NamingException e) {
             throw new RuntimeCamelException(e);

@@ -71,6 +71,7 @@ public class JndiBeanRepository implements BeanRepository {
         }
 
         try {
+            answer = unwrap(answer);
             return type.cast(answer);
         } catch (Throwable e) {
             String msg = "Found bean: " + name + " in JNDI Context: " + context
@@ -81,7 +82,7 @@ public class JndiBeanRepository implements BeanRepository {
 
     public Object lookupByName(String name) {
         try {
-            return getContext().lookup(name);
+            return unwrap(getContext().lookup(name));
         } catch (NameNotFoundException e) {
             return null;
         } catch (NamingException e) {
@@ -96,6 +97,7 @@ public class JndiBeanRepository implements BeanRepository {
             while (list.hasMore()) {
                 NameClassPair pair = list.next();
                 Object instance = context.lookup(pair.getName());
+                instance = unwrap(instance);
                 if (type.isInstance(instance)) {
                     answer.put(pair.getName(), type.cast(instance));
                 }
@@ -114,6 +116,7 @@ public class JndiBeanRepository implements BeanRepository {
             while (list.hasMore()) {
                 NameClassPair pair = list.next();
                 Object instance = context.lookup(pair.getName());
+                instance = unwrap(instance);
                 if (type.isInstance(instance)) {
                     answer.add(type.cast(instance));
                 }
