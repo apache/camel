@@ -14,42 +14,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.s3;
+package org.apache.camel.component.bean;
 
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Test to verify that the polling consumer delivers an empty Exchange when the
- * sendEmptyMessageWhenIdle property is set and a polling event yields no
- * results.
+ * Unit test to demonstrate calling a package scoped bean method
  */
-public class S3ConsumerIdleMessageTest extends CamelTestSupport {
-
-    @BindToRegistry("amazonS3Client")
-    AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
+public class BeanPackageScopeTest extends ContextTestSupport {
 
     @Test
-    public void testConsumeIdleMessages() throws Exception {
-        Thread.sleep(110);
+    public void testPackageScope() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(2);
-        assertMockEndpointsSatisfied();
-        assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
-        assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
+        mock.expectedBodiesReceived("Hello World");
+
+        template.requestBody("direct:in", "World");
+
+        mock.assertIsSatisfied();
     }
 
-    @Override
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @Override
             public void configure() throws Exception {
-                from("aws-s3://mycamelbucket?amazonS3Client=#amazonS3Client&delay=50" + "&maxMessagesPerPoll=5&sendEmptyMessageWhenIdle=true").to("mock:result");
+                from("direct:in")
+                    .setHeader("foo", constant("bar"))
+                    .to("bean:myBean")
+                    .to("seda:a");
+
+                from("seda:a")
+                    .to("bean:myBean")
+                    .to("mock:result");
             }
         };
+    }
+
+    @BindToRegistry("myBean")
+    public static class MyBean {
+        public void doSomething(Exchange exchange) {
+            String body = exchange.getIn().getBody(String.class);
+            exchange.getIn().setHeader("user", "admin");
+            exchange.getIn().setBody(body + "MyBean");
+        }
     }
 
 }

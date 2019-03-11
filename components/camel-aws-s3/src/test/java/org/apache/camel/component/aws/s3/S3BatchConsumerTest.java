@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class S3BatchConsumerTest extends CamelTestSupport {
 
-    @BindToRegistry(name = "amazonS3Client")
+    @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @EndpointInject(uri = "mock:result")

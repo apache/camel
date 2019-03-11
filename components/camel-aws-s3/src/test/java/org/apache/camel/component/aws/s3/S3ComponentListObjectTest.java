@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class S3ComponentListObjectTest extends CamelTestSupport {
     
-    @BindToRegistry(name = "amazonS3Client")
+    @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
     
     @EndpointInject(uri = "direct:listBuckets")

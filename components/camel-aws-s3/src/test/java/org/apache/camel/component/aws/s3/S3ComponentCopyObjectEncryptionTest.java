@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class S3ComponentCopyObjectEncryptionTest extends CamelTestSupport {
 
-    @BindToRegistry(name = "amazonS3Client")
+    @BindToRegistry("amazonS3Client")
     AmazonS3EncryptionClientMock clientMock = new AmazonS3EncryptionClientMock();
     
     @EndpointInject(uri = "direct:start")

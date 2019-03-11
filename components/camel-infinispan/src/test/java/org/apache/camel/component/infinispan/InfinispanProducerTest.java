@@ -42,7 +42,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
     private static final long LIFESPAN_FOR_MAX_IDLE = -1;
     private static final long MAX_IDLE_TIME = 200;
     
-    @BindToRegistry(name = "mappingFunction")
+    @BindToRegistry("mappingFunction")
     BiFunction<String, String, String> comp = (k, v) -> v + "replay"; 
     
 
