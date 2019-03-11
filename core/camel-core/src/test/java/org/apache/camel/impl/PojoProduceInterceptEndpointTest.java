@@ -96,7 +96,7 @@ public class PojoProduceInterceptEndpointTest extends Assert {
 
     public static class MyBean {
 
-        @Produce(uri = "direct:start")
+        @Produce("direct:start")
         Producer producer;
 
         public Object doSomething(String body) throws Exception {

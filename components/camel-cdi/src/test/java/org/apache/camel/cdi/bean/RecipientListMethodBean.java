@@ -27,7 +27,7 @@ import org.apache.camel.RecipientList;
 public class RecipientListMethodBean {
 
     @RecipientList
-    @Consume(uri = "direct:inbound")
+    @Consume("direct:inbound")
     public List<String> route() {
         return Arrays.asList("mock:outbound1", "mock:outbound2");
     }

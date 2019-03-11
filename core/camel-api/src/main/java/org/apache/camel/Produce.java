@@ -41,6 +41,14 @@ public @interface Produce {
     /**
      * The uri to produce to
      */
+    String value() default "";
+
+    /**
+     * The uri to produce to
+     *
+     * @deprecated use value instead
+     */
+    @Deprecated
     String uri() default "";
 
     /**

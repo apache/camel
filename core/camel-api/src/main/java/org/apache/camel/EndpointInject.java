@@ -40,6 +40,14 @@ public @interface EndpointInject {
     /**
      * The uri of the endpoint
      */
+    String value() default "";
+
+    /**
+     * The uri of the endpoint
+     *
+     * @deprecated use value instead
+     */
+    @Deprecated
     String uri() default "";
 
     /**

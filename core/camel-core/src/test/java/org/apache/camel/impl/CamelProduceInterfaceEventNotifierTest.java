@@ -86,7 +86,7 @@ public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
 
     class MySender {
 
-        @Produce(uri = "mock:result")
+        @Produce("mock:result")
         FooService hello;
 
     }

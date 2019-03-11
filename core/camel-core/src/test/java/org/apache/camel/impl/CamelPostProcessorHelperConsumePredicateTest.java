@@ -71,12 +71,12 @@ public class CamelPostProcessorHelperConsumePredicateTest extends ContextTestSup
 
     public class MyConsumeBean {
 
-        @Consume(uri = "direct:foo", predicate = "${body} >= 0 && ${body} < 100")
+        @Consume(value = "direct:foo", predicate = "${body} >= 0 && ${body} < 100")
         public void low(String body) {
             template.sendBody("mock:low", body);
         }
 
-        @Consume(uri = "direct:foo", predicate = "${body} >= 100")
+        @Consume(value = "direct:foo", predicate = "${body} >= 100")
         public void high(String body) {
             template.sendBody("mock:high", body);
         }
