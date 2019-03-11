@@ -25,7 +25,7 @@ public class AnotherFooEventConsumer {
     @EndpointInject(uri = "mock:result")
     private ProducerTemplate destination;
 
-    @Consume(ref = "foo")
+    @Consume(uri = "ref:foo")
     public void doSomething(String body) {
         destination.sendBody("another" + body);
     }

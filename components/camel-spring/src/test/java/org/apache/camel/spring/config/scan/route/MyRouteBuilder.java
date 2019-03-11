@@ -26,10 +26,10 @@ public class MyRouteBuilder extends RouteBuilder {
 
     MyProcessor component;
 
-    @EndpointInject(ref = "start")
+    @EndpointInject(uri = "ref:start")
     Endpoint startEndpoint;
 
-    @EndpointInject(ref = "result")
+    @EndpointInject(uri = "ref:result")
     Endpoint resultEndpoint;
 
     @Override

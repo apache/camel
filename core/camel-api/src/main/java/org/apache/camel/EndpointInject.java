@@ -43,11 +43,6 @@ public @interface EndpointInject {
     String uri() default "";
 
     /**
-     * Reference to endpoint
-     */
-    String ref() default "";
-
-    /**
      * Use the field or getter on the bean to provide the uri of the endpoint
      */
     String property() default "";
