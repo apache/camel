@@ -26,6 +26,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.IsSingleton;
@@ -159,12 +160,18 @@ public class CamelPostProcessorHelper implements CamelContextAware {
 
     public Endpoint getEndpointInjection(Object bean, String uri, String propertyName,
             String injectionPointName, boolean mandatory) {
+        Endpoint answer;
         if (ObjectHelper.isEmpty(uri)) {
             // if no uri then fallback and try the endpoint property
-            return doGetEndpointInjection(bean, propertyName, injectionPointName);
+            answer = doGetEndpointInjection(bean, propertyName, injectionPointName);
         } else {
-            return doGetEndpointInjection(uri, injectionPointName, mandatory);
+            answer = doGetEndpointInjection(uri, injectionPointName, mandatory);
         }
+        // it may be a delegate endpoint via ref component
+        if (answer instanceof DelegateEndpoint) {
+            answer = ((DelegateEndpoint) answer).getEndpoint();
+        }
+        return answer;
     }
 
     private Endpoint doGetEndpointInjection(String uri, String injectionPointName, boolean mandatory) {
