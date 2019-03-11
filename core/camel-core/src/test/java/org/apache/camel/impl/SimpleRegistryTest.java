@@ -52,14 +52,8 @@ public class SimpleRegistryTest extends Assert {
 
     @Test
     public void testLookupByNameAndWrongType() {
-        try {
-            registry.lookupByNameAndType("a", Float.class);
-            fail();
-        } catch (NoSuchBeanException e) {
-            // expected
-            assertEquals("a", e.getName());
-            assertTrue(e.getMessage().endsWith("of type: java.lang.String expected type was: class java.lang.Float"));
-        }
+        Object answer = registry.lookupByNameAndType("a", Float.class);
+        assertNull(answer);
     }
     
     @Test
@@ -80,12 +74,25 @@ public class SimpleRegistryTest extends Assert {
     }
 
     @Test
-    public void testBind() {
-        Object foo = "foo";
+    public void testBindDual() {
+        String foo = "foo";
         // will override
         registry.bind("c", foo);
         assertEquals(2, registry.size());
-        assertSame(foo, registry.get("c"));
+        // should return the original entry
+        assertSame(1, registry.lookupByName("c"));
+        assertSame(1, registry.lookupByNameAndType("c", Integer.class));
+        // should return the string type
+        assertSame("foo", registry.lookupByNameAndType("c", String.class));
+
+        Map<String, Integer> map = registry.findByTypeWithName(Integer.class);
+        assertEquals(1, map.size());
+        assertEquals(Integer.valueOf(1), map.get("c"));
+
+        Map<String, String> map2 = registry.findByTypeWithName(String.class);
+        assertEquals(2, map2.size());
+        assertEquals("foo", map2.get("c"));
+        assertEquals("b", map2.get("a"));
     }
 
 }

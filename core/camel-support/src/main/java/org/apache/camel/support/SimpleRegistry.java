@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,29 +32,34 @@ import org.apache.camel.spi.Registry;
  *
  * @see DefaultRegistry
  */
-public class SimpleRegistry extends HashMap<String, Object> implements Registry {
-
-    private static final long serialVersionUID = -3739035212761568984L;
+public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>> implements Registry {
 
     @Override
     public Object lookupByName(String name) {
-        Object answer = get(name);
-        if (answer != null) {
-            answer = unwrap(answer);
-        }
-        return answer;
+        return lookupByNameAndType(name, Object.class);
     }
 
     @Override
     public <T> T lookupByNameAndType(String name, Class<T> type) {
-        Object answer = lookupByName(name);
-
-        // just to be safe
-        if (answer == null) {
+        Map<Class<?>, Object> map = this.get(name);
+        if (map == null) {
             return null;
         }
 
+        Object answer = map.get(type);
+        if (answer == null) {
+            for (Map.Entry<Class<?>, Object> entry : map.entrySet()) {
+                if (type.isAssignableFrom(entry.getKey())) {
+                    answer = entry.getValue();
+                    break;
+                }
+            }
+        }
+        if (answer == null) {
+            return null;
+        }
         try {
+            answer = unwrap(answer);
             return type.cast(answer);
         } catch (Throwable e) {
             String msg = "Found bean: " + name + " in SimpleRegistry: " + this
@@ -64,11 +70,13 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
 
     @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        Map<String, T> result = new HashMap<>();
-        for (Map.Entry<String, Object> entry : entrySet()) {
-            if (type.isInstance(entry.getValue())) {
-                Object value = unwrap(entry.getValue());
-                result.put(entry.getKey(), type.cast(value));
+        Map<String, T> result = new LinkedHashMap<>();
+        for (Map.Entry<String, Map<Class<?>, Object>> entry : entrySet()) {
+            for (Object value : entry.getValue().values()) {
+                if (type.isInstance(value)) {
+                    value = unwrap(value);
+                    result.put(entry.getKey(), type.cast(value));
+                }
             }
         }
         return result;
@@ -77,10 +85,12 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
     @Override
     public <T> Set<T> findByType(Class<T> type) {
         Set<T> result = new HashSet<>();
-        for (Map.Entry<String, Object> entry : entrySet()) {
-            if (type.isInstance(entry.getValue())) {
-                Object value = unwrap(entry.getValue());
-                result.add(type.cast(value));
+        for (Map.Entry<String, Map<Class<?>, Object>> entry : entrySet()) {
+            for (Object value : entry.getValue().values()) {
+                if (type.isInstance(value)) {
+                    value = unwrap(value);
+                    result.add(type.cast(value));
+                }
             }
         }
         return result;
@@ -88,7 +98,7 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
 
     @Override
     public void bind(String id, Object bean) {
-        put(id, wrap(bean));
+        computeIfAbsent(id, k -> new LinkedHashMap<>()).put(bean.getClass(), wrap(bean));
     }
 
 }

@@ -57,35 +57,16 @@ public class RegistryLookupTypeClassCastExceptionTest extends Assert {
     }
 
     @Test
-    public void testLookupClassCast() throws Exception {
-        Registry registry = new DefaultRegistry();
-
-        MyClass my = new MyClass();
-        registry.bind("my", my);
-
-        try {
-            registry.lookupByNameAndType("my", String.class);
-            fail("Should have thrown exception");
-        } catch (NoSuchBeanException e) {
-            assertEquals("my", e.getName());
-            assertTrue(e.getMessage().endsWith("expected type was: class java.lang.String"));
-        }
-    }
-
-    @Test
     public void testCamelContextLookupClassCast() throws Exception {
         CamelContext context = new DefaultCamelContext();
 
         MyClass my = new MyClass();
         context.getRegistry().bind("my", my);
 
-        try {
-            context.getRegistry().lookupByNameAndType("my", String.class);
-            fail("Should have thrown exception");
-        } catch (NoSuchBeanException e) {
-            assertEquals("my", e.getName());
-            assertTrue(e.getMessage().endsWith("expected type was: class java.lang.String"));
-        }
+        Object answer = context.getRegistry().lookupByNameAndType("my", String.class);
+        assertNull(answer);
+        answer = context.getRegistry().lookupByNameAndType("my", MyClass.class);
+        assertNotNull(answer);
     }
 
     public static class MyClass {
