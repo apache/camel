@@ -32,6 +32,14 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 public @interface BindToRegistry {
-    String name() default "";
+
+    /**
+     * The name of the bean
+     */
+    String value() default "";
+
+    /**
+     * Id of {@link CamelContext} to use
+     */
     String context() default "";
 }

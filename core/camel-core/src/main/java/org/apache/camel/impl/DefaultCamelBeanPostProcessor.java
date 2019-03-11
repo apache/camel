@@ -180,7 +180,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
 
                 BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
                 if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
-                    bindToRegistry(field, bind.name(), bean, beanName);
+                    bindToRegistry(field, bind.value(), bean, beanName);
                 }
             }
         });
@@ -222,7 +222,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         Class<?> clazz = bean.getClass();
         BindToRegistry ann = clazz.getAnnotation(BindToRegistry.class);
         if (ann != null && getPostProcessorHelper().matchContext(ann.context())) {
-            bindToRegistry(clazz, ann.name(), bean, beanName);
+            bindToRegistry(clazz, ann.value(), bean, beanName);
         }
     }
 
@@ -232,7 +232,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                 BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
                 if (ann != null && getPostProcessorHelper().matchContext(ann.context())) {
                     // its a nested class so we dont have a bean instance for it
-                    bindToRegistry(clazz, ann.name(), null, null);
+                    bindToRegistry(clazz, ann.value(), null, null);
                 }
             }
         });
@@ -261,7 +261,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
 
         BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
         if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
-            bindToRegistry(method, bind.name(), bean, beanName);
+            bindToRegistry(method, bind.value(), bean, beanName);
         }
     }
 
