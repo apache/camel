@@ -41,7 +41,7 @@ import org.junit.Test;
  */
 public class S3IncludeBodyTest extends CamelTestSupport {
 
-    @BindToRegistry(name = "amazonS3Client")
+    @BindToRegistry("amazonS3Client")
     DummyAmazonS3Client clientMock = new DummyAmazonS3Client();
 
     @Test

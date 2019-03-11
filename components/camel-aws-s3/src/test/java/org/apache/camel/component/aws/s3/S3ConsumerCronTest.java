@@ -24,7 +24,7 @@ import org.junit.Test;
 
 public class S3ConsumerCronTest extends CamelTestSupport {
 
-    @BindToRegistry(name = "amazonS3Client")
+    @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
 
     @Test

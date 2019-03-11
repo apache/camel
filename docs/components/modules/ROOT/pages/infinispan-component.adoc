@@ -211,7 +211,7 @@ from("direct:start")
 
 [source,java]
 ----
-@BindToRegistry(name = "mappingFunction")
+@BindToRegistry("mappingFunction")
 BiFunction<String, String, String> comp = (k, v) -> v + "replay"; 
 
 from("direct:start")
