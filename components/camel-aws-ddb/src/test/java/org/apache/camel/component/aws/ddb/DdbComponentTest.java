@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.aws.ddb;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultProducerTemplate;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class DdbComponentTest extends CamelTestSupport {
 
-    private AmazonDDBClientMock amazonDDBClient;
+    @BindToRegistry("amazonDDBClient")
+    private AmazonDDBClientMock amazonDDBClient = new AmazonDDBClientMock();
 
     @Test
     public void whenTableExistsThenDoesntCreateItOnStart() throws Exception {
@@ -56,16 +57,6 @@ public class DdbComponentTest extends CamelTestSupport {
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
         DdbComponent component = new DdbComponent(context);
         component.createEndpoint("aws-ddb://activeTable?accessKey=xxx&secretKey=yyy");
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        amazonDDBClient = new AmazonDDBClientMock();
-        registry.bind("amazonDDBClient", amazonDDBClient);
-
-        return registry;
     }
 
     @Override
