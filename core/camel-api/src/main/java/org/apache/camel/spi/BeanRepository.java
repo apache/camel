@@ -28,6 +28,10 @@ public interface BeanRepository {
     /**
      * Looks up a bean in the registry based purely on name,
      * returning the bean or <tt>null</tt> if it could not be found.
+     * <p/>
+     * Important: Multiple beans of different types may be bound with the same name, and its
+     * encouraged to use the {@link #lookupByNameAndType(String, Class)} to lookup the bean
+     * with a specific type, or to use any of the <tt>find</tt> methods.
      *
      * @param name the name of the bean
      * @return the bean from the registry or <tt>null</tt> if it could not be found
