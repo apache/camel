@@ -26,6 +26,8 @@ import com.amazonaws.services.cloudwatch.model.Dimension;
 import com.amazonaws.services.cloudwatch.model.MetricDatum;
 import com.amazonaws.services.cloudwatch.model.PutMetricDataRequest;
 import com.amazonaws.services.cloudwatch.model.StandardUnit;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -40,8 +42,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class CwComponentTest extends CamelTestSupport {
+	
+	@BindToRegistry("now")
     private static final Date NOW = new Date();
+	
     private static final Date LATER = new Date(NOW.getTime() + 1);
+    
+    @BindToRegistry("amazonCwClient")
     private AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
 
     @Test
@@ -123,14 +130,6 @@ public class CwComponentTest extends CamelTestSupport {
         assertThat(dimensions.size(), is(2));
         assertEquals("keyOne", dimension.getName());
         assertEquals("valueOne", dimension.getValue());
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("amazonCwClient", cloudWatchClient);
-        registry.bind("now", NOW);
-        return registry;
     }
 
     @Override
