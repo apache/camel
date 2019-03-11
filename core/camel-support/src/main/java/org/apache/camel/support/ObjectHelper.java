@@ -19,6 +19,7 @@ package org.apache.camel.support;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -171,12 +172,37 @@ public final class ObjectHelper {
      */
     public static Object invokeMethod(Method method, Object instance, Object... parameters) {
         try {
-            return method.invoke(instance, parameters);
+            if (parameters != null) {
+                return method.invoke(instance, parameters);
+            } else {
+                return method.invoke(instance);
+            }
         } catch (IllegalAccessException e) {
             throw new RuntimeCamelException(e);
         } catch (InvocationTargetException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e.getCause());
         }
+    }
+
+    /**
+     * A helper method to invoke a method via reflection in a safe way by allowing to invoke
+     * methods that are not accessible by default and wrap any exceptions
+     * as {@link RuntimeCamelException} instances
+     *
+     * @param method the method to invoke
+     * @param instance the object instance (or null for static methods)
+     * @param parameters the parameters to the method
+     * @return the result of the method invocation
+     */
+    public static Object invokeMethodSafe(Method method, Object instance, Object... parameters) throws InvocationTargetException, IllegalAccessException {
+        Object answer;
+        method.setAccessible(true);
+        if (parameters != null) {
+            answer = method.invoke(instance, parameters);
+        } else {
+            answer = method.invoke(instance);
+        }
+        return answer;
     }
 
     /**

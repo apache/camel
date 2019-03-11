@@ -80,13 +80,13 @@ public class BeanInfo {
 
     static {
         // exclude all java.lang.Object methods as we dont want to invoke them
-        EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getMethods()));
+        EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getDeclaredMethods()));
         // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
-        EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getMethods()));
+        EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getDeclaredMethods()));
         try {
             // but keep toString as this method is okay
-            EXCLUDED_METHODS.remove(Object.class.getMethod("toString"));
-            EXCLUDED_METHODS.remove(Proxy.class.getMethod("toString"));
+            EXCLUDED_METHODS.remove(Object.class.getDeclaredMethod("toString"));
+            EXCLUDED_METHODS.remove(Proxy.class.getDeclaredMethod("toString"));
         } catch (Throwable e) {
             // ignore
         }
@@ -880,8 +880,9 @@ public class BeanInfo {
             }
         }
 
-        // must be a public method
-        if (!Modifier.isPublic(method.getModifiers())) {
+        // must not be a private method
+        boolean privateMethod = Modifier.isPrivate(method.getModifiers());
+        if (privateMethod) {
             return false;
         }
 

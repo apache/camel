@@ -19,12 +19,13 @@ package org.apache.camel.component.bean;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.issues.MyPackageScopedBean;
 import org.junit.Test;
 
 /**
  * Unit test to demonstrate calling a package scoped bean method
  */
-public class BeanPackageScopeTest extends ContextTestSupport {
+public class BeanPackageScopeOutsideTest extends ContextTestSupport {
 
     @Test
     public void testPackageScope() throws Exception {
@@ -39,24 +40,14 @@ public class BeanPackageScopeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                bindToRegistry("myBean", new MyBean());
+                // this bean is now outside this package
+                bindToRegistry("myBean", new MyPackageScopedBean());
 
                 from("direct:in")
                     .to("bean:myBean")
                     .to("mock:result");
             }
         };
-    }
-
-    public static class MyBean {
-
-        String doSomething(String body) {
-            return "Hello " + body;
-        }
-
-        private String doSomethingElse(String foo) {
-            return "foo";
-        }
     }
 
 }
