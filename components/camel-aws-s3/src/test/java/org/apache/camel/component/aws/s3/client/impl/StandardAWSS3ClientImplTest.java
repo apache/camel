@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
  */
 public class StandardAWSS3ClientImplTest {
     private static final int MAX_CONNECTIONS = 1;
-    private EncryptionMaterials encryptionMaterials = mock(EncryptionMaterials.class);
 
     @Test
     public void standardAWSS3ClientImplNoEncryption() {
