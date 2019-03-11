@@ -33,6 +33,7 @@ import com.amazonaws.services.ec2.model.StopInstancesResult;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
 import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -46,6 +47,9 @@ public class EC2ProducerTest extends CamelTestSupport {
     
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
+    
+    @BindToRegistry("amazonEc2Client")
+    AmazonEC2ClientMock amazonEc2Client = new AmazonEC2ClientMock();
     
     @Test
     public void ec2CreateAndRunTest() throws Exception {
@@ -483,17 +487,6 @@ public class EC2ProducerTest extends CamelTestSupport {
         DeleteTagsResult resultGet = (DeleteTagsResult) exchange.getIn().getBody();
         
         assertNotNull(resultGet);
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonEC2ClientMock clientMock = new AmazonEC2ClientMock();
-        
-        registry.bind("amazonEc2Client", clientMock);
-        
-        return registry;
     }
 
     @Override
