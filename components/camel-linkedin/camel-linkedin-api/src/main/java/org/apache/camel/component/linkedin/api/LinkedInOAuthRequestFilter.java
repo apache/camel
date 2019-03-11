@@ -158,7 +158,7 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
             //if redirect url != null, it means that it contains code= and there is no need to continue
             if (redirectionUrl != null) {
                 redirectQuery = redirectionUrl.getQuery();
-            } else if(afterLoginRedirectedResponse.statusCode() == SC_OK){
+            } else if (afterLoginRedirectedResponse.statusCode() == SC_OK) {
                 //allow permission page is in response (or still login page containing errors)
                 final Document allowPage = afterLoginRedirectedResponse.parse();
                 //detect possible login errors
