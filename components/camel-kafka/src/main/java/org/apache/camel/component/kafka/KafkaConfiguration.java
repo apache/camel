@@ -813,10 +813,9 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     public String getSchemaRegistryURL() {
-    	return schemaRegistryURL;
+    	 return schemaRegistryURL;
     }
 
- 
     /**
      * URL of the Confluent schema registry servers to use. 
      * The format is host1:port1,host2:port2. 
