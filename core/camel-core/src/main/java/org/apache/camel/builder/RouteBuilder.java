@@ -58,6 +58,14 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
+    public RouteBuilder() {
+        this(null);
+    }
+
+    public RouteBuilder(CamelContext context) {
+        super(context);
+    }
+
     /**
      * Add routes to a context using a lambda expression.
      * It can be used as following:
@@ -77,14 +85,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 rbc.accept(this);
             }
         });
-    }
-
-    public RouteBuilder() {
-        this(null);
-    }
-
-    public RouteBuilder(CamelContext context) {
-        super(context);
     }
 
     @Override
