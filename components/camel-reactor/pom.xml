@@ -31,7 +31,6 @@
     <description>Reactor based back-end for Camel's reactive streams component</description>
 
     <properties>
-      <!-- use by camel-catalog -->
       <firstVersion>2.20.0</firstVersion>
       <label>reactive,streams</label>
 

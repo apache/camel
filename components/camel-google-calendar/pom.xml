@@ -29,7 +29,7 @@
 
   <artifactId>camel-google-calendar</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: GoogleCalendar</name>
+  <name>Camel :: Google Calendar</name>
   <description>Camel Component for GoogleCalendar</description>
 
   <properties>

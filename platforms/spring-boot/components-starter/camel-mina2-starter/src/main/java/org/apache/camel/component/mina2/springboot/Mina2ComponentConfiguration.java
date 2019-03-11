@@ -19,7 +19,6 @@ package org.apache.camel.component.mina2.springboot;
 import java.util.List;
 import javax.annotation.Generated;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.component.mina2.Mina2Component;
 import org.apache.camel.component.mina2.Mina2TextLineDelimiter;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.apache.camel.support.jsse.SSLContextParameters;

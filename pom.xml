@@ -61,7 +61,7 @@
     <errorprone-version>2.5</errorprone-version>
     <mycila-license-version>3.0</mycila-license-version>
     <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
-    <groovy-version>2.5.5</groovy-version>
+    <groovy-version>2.5.6</groovy-version>
   </properties>
 
   <mailingLists>
@@ -148,6 +148,7 @@
     <module>components</module>
     <module>archetypes</module>
     <module>platforms</module>
+    <module>catalog</module>
     <module>tests</module>
     <module>examples</module>
     <module>docs</module>
@@ -204,10 +205,12 @@
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**/*</exclude>
                 <exclude>**/*.adoc</exclude>
+                <exclude>**/*.adoc.template</exclude>
                 <exclude>**/*.md</exclude>
                 <exclude>**/*.sh</exclude>
                 <exclude>**/*.bat</exclude>
                 <exclude>**/java9-maven-settings</exclude>
+                <exclude>**/*.pfx</exclude>
                 <!-- tooling json-simple parser -->
                 <exclude>**/src/main/java/org/json/simple/**</exclude>
                 <!-- tooling/camel-manual/src/styles/print.css use a different license -->
@@ -227,6 +230,7 @@
                 <exclude>**/readme-languages.mvel</exclude>
                 <exclude>**/readme-others.mvel</exclude>
                 <exclude>**/spring-boot-auto-configure-options.mvel</exclude>
+                <exclude>**/camel-NOTICE.txt</exclude>
                 <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
                 <!-- cxf does not handle comments here -->
                 <exclude>**/src/main/resources/META-INF/cxf/cxf.extension</exclude>
@@ -236,12 +240,17 @@
                 <!-- camel-salesforce BSD license from salesforce developers -->
                 <exclude>**/CometDReplayExtension.java</exclude>
                 <exclude>**/LICENSE-SALESFORCE.txt</exclude>
+                <!-- camel-as2 -->
+                <exclude>**/mdnDescription.vm</exclude>
+                <!-- camel-jbpm -->
+                <exclude>**/src/main/resources/*.wid</exclude>
                 <!-- camel website and user-manual -->
                 <exclude>**/node/**</exclude>
                 <exclude>**/node_modules/**</exclude>
                 <exclude>**/npm-shrinkwrap.json</exclude>
                 <exclude>**/package.json</exclude>
                 <exclude>**/user-manual/**</exclude>
+                <exclude>**/yarn.lock</exclude>
                 <!-- examples -->
                 <exclude>**/fabric8/*.yaml</exclude>
                 <exclude>**/src/main/resources/consul/services.json</exclude>

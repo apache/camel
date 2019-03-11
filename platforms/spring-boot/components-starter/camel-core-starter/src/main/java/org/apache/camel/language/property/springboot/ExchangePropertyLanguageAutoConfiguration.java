@@ -82,8 +82,7 @@ public class ExchangePropertyLanguageAutoConfiguration {
     public ExchangePropertyLanguage configureExchangePropertyLanguage()
             throws Exception {
         ExchangePropertyLanguage language = new ExchangePropertyLanguage();
-        if (CamelContextAware.class
-                .isAssignableFrom(ExchangePropertyLanguage.class)) {
+        if (CamelContextAware.class.isAssignableFrom(ExchangePropertyLanguage.class)) {
             CamelContextAware contextAware = CamelContextAware.class
                     .cast(language);
             if (contextAware != null) {

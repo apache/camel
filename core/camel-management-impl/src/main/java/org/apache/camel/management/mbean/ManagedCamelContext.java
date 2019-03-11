@@ -36,7 +36,6 @@ import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
-
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
@@ -52,6 +51,7 @@ import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -536,6 +536,63 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                     sb.append("      </processorStats>\n");
                 }
                 sb.append("    </routeStat>\n");
+            }
+            sb.append("  </routeStats>\n");
+        }
+
+        sb.append("</camelContextStat>");
+        return sb.toString();
+    }
+
+    public String dumpStepStatsAsXml(boolean fullStats) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<camelContextStat").append(String.format(" id=\"%s\" state=\"%s\"", getCamelId(), getState()));
+        // use substring as we only want the attributes
+        String stat = dumpStatsAsXml(fullStats);
+        sb.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
+        sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+
+        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        if (server != null) {
+            // gather all the routes for this CamelContext, which requires JMX
+            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=routes,*");
+            Set<ObjectName> routes = server.queryNames(query, null);
+
+            List<ManagedProcessorMBean> steps = new ArrayList<>();
+            // gather all the steps for this CamelContext, which requires JMX
+            query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=steps,*");
+            Set<ObjectName> names = server.queryNames(query, null);
+            for (ObjectName on : names) {
+                ManagedStepMBean step = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
+                steps.add(step);
+            }
+            steps.sort(new OrderProcessorMBeans());
+
+            // loop the routes, and append the processor stats if needed
+            sb.append("  <routeStats>\n");
+            for (ObjectName on : routes) {
+                ManagedRouteMBean route = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedRouteMBean.class);
+                sb.append("    <routeStat").append(String.format(" id=\"%s\" state=\"%s\"", route.getRouteId(), route.getState()));
+                // use substring as we only want the attributes
+                stat = route.dumpStatsAsXml(fullStats);
+                sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append("\"");
+                sb.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+
+                // add steps details if needed
+                sb.append("      <stepStats>\n");
+                for (ManagedProcessorMBean processor : steps) {
+                    // the step must belong to this route
+                    if (route.getRouteId().equals(processor.getRouteId())) {
+                        sb.append("        <stepStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", processor.getProcessorId(), processor.getIndex(), processor.getState()));
+                        // use substring as we only want the attributes
+                        stat = processor.dumpStatsAsXml(fullStats);
+                        sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append("\"");
+                        sb.append(" ").append(stat.substring(7)).append("\n");
+                    }
+                    sb.append("      </stepStats>\n");
+                }
+                sb.append("    </stepStat>\n");
             }
             sb.append("  </routeStats>\n");
         }

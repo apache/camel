@@ -17,7 +17,6 @@
 package org.apache.camel.management;
 
 import java.util.Arrays;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -25,8 +24,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.rest.CollectionFormat;
 import org.apache.camel.model.rest.RestParamType;
 import org.junit.Test;
@@ -35,10 +32,8 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.put("dummy-test", new DummyRestConsumerFactory());
-
-        CamelContext answer = new DefaultCamelContext(registry);
+        CamelContext answer = super.createCamelContext();
+        answer.getRegistry().bind("dummy-test", new DummyRestConsumerFactory());
 
         PropertiesComponent pc = new PropertiesComponent();
         pc.setLocation("classpath:org/apache/camel/management/rest.properties");

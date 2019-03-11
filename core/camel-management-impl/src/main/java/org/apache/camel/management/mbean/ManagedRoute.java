@@ -52,6 +52,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.api.management.mbean.RouteError;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
@@ -474,6 +475,61 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         if (includeProcessors) {
             answer.append(sb);
         }
+
+        answer.append("</routeStat>");
+        return answer.toString();
+    }
+
+    public String dumpStepStatsAsXml(boolean fullStats) throws Exception {
+        // in this logic we need to calculate the accumulated processing time for the processor in the route
+        // and hence why the logic is a bit more complicated to do this, as we need to calculate that from
+        // the bottom -> top of the route but this information is valuable for profiling routes
+        StringBuilder sb = new StringBuilder();
+
+        // gather all the steps for this route, which requires JMX
+        sb.append("  <stepStats>\n");
+        MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+        if (server != null) {
+            // get all the processor mbeans and sort them accordingly to their index
+            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            ObjectName query = ObjectName.getInstance(jmxDomain + ":context=" + prefix + getContext().getManagementName() + ",type=steps,*");
+            Set<ObjectName> names = server.queryNames(query, null);
+            List<ManagedStepMBean> mps = new ArrayList<>();
+            for (ObjectName on : names) {
+                ManagedStepMBean step = context.getManagementStrategy().getManagementAgent().newProxyClient(on, ManagedStepMBean.class);
+
+                // the step must belong to this route
+                if (getRouteId().equals(step.getRouteId())) {
+                    mps.add(step);
+                }
+            }
+            mps.sort(new OrderProcessorMBeans());
+
+            // and now add the sorted list of steps to the xml output
+            for (ManagedStepMBean step : mps) {
+                sb.append("    <stepStat").append(String.format(" id=\"%s\" index=\"%s\" state=\"%s\"", step.getProcessorId(), step.getIndex(), step.getState()));
+                // use substring as we only want the attributes
+                sb.append(" ").append(step.dumpStatsAsXml(fullStats).substring(7)).append("\n");
+            }
+        }
+        sb.append("  </stepStats>\n");
+
+        StringBuilder answer = new StringBuilder();
+        answer.append("<routeStat").append(String.format(" id=\"%s\"", route.getId())).append(String.format(" state=\"%s\"", getState()));
+        // use substring as we only want the attributes
+        String stat = dumpStatsAsXml(fullStats);
+        answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
+        InflightRepository.InflightExchange oldest = getOldestInflightEntry();
+        if (oldest == null) {
+            answer.append(" oldestInflightExchangeId=\"\"");
+            answer.append(" oldestInflightDuration=\"\"");
+        } else {
+            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
+            answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
+        }
+        answer.append(" ").append(stat.substring(7, stat.length() - 2)).append(">\n");
+
+        answer.append(sb);
 
         answer.append("</routeStat>");
         return answer.toString();

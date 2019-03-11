@@ -154,10 +154,6 @@ public final class PackageHelper {
 
         @Override
         public boolean accept(File pathname) {
-            // skip camel-jetty9 as its a duplicate of camel-jetty
-            if ("camel-jetty9".equals(pathname.getName())) {
-                return false;
-            }
             return pathname.isDirectory() || pathname.getName().endsWith(".json");
         }
     }
@@ -170,7 +166,6 @@ public final class PackageHelper {
             boolean special = "camel-core-osgi".equals(name)
                 || "camel-core-xml".equals(name)
                 || "camel-http-common".equals(name)
-                || "camel-jetty".equals(name)
                 || "camel-jetty-common".equals(name);
             boolean special2 = "camel-as2".equals(name)
                 || "camel-box".equals(name)

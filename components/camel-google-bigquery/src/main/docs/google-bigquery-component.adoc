@@ -106,14 +106,30 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
-The component supports 4 options, which are listed below.
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-bigquery-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 8 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.google-bigquery.connection-factory.credentials-file-location* |  |  | String
+| *camel.component.google-bigquery.connection-factory.service-account* |  |  | String
+| *camel.component.google-bigquery.connection-factory.service-account-key* |  |  | String
+| *camel.component.google-bigquery.connection-factory.service-u-r-l* |  |  | String
 | *camel.component.google-bigquery.dataset-id* | BigQuery Dataset Id |  | String
 | *camel.component.google-bigquery.enabled* | Whether to enable auto configuration of the google-bigquery component. This is enabled by default. |  | Boolean
 | *camel.component.google-bigquery.project-id* | Google Cloud Project Id |  | String

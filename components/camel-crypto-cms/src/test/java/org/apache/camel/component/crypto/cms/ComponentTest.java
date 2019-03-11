@@ -28,7 +28,7 @@ import org.apache.camel.component.crypto.cms.util.TestAttributesGeneratorProvide
 import org.apache.camel.component.crypto.cms.util.TestOriginatorInformationProvider;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;

@@ -77,6 +77,7 @@
     <module>camel-example-loadbalancing</module>
     <module>camel-example-loan-broker-cxf</module>
     <module>camel-example-loan-broker-jms</module>
+    <module>camel-example-main</module>
     <module>camel-example-management</module>
     <module>camel-example-micrometer</module>	
     <module>camel-example-mybatis</module>
@@ -88,8 +89,6 @@
     <module>camel-example-rabbitmq</module>
     <module>camel-example-reactive-streams</module>
     <module>camel-example-reload</module>
-    <module>camel-example-reportincident</module>
-    <module>camel-example-reportincident-wssecurity</module>
     <module>camel-example-rest-producer</module>
     <module>camel-example-rest-swagger</module>
     <module>camel-example-restlet-jdbc</module>
@@ -102,6 +101,7 @@
     <module>camel-example-spring</module>
     <module>camel-example-spring-boot</module>
     <module>camel-example-spring-boot-activemq</module>
+    <module>camel-example-spring-boot-amqp</module>
     <module>camel-example-spring-boot-clustered-route-controller</module>
     <module>camel-example-spring-boot-geocoder</module>
     <module>camel-example-spring-boot-grpc</module>
@@ -165,12 +165,12 @@
   </dependencyManagement>
 
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
+    <!--<resources>-->
+      <!--<resource>-->
+        <!--<directory>src/main/resources</directory>-->
+        <!--<filtering>true</filtering>-->
+      <!--</resource>-->
+    <!--</resources>-->
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -178,19 +178,6 @@
         <configuration>
           <skip>true</skip>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>resources</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
       <!-- update readme file -->
@@ -208,10 +195,10 @@
         </executions>
       </plugin>
 
-      <!-- to validate Camel endpoints: mvn camel:validate -->
+      <!-- to validate Camel endpoints: mvn camel-report:validate -->
       <plugin>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
+        <artifactId>camel-report-maven-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
           <failOnError>false</failOnError>

@@ -27,7 +27,10 @@ public class CamelTwitterTest extends BaseKarafTest {
 
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        testComponent(COMPONENT, "twitter-timeline");
+        testComponent(COMPONENT, "twitter-streaming");
+        testComponent(COMPONENT, "twitter-search");
+        testComponent(COMPONENT, "twitter-directmessage");
     }
 
 

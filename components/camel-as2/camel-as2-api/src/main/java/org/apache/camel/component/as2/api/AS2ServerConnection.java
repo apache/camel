@@ -210,6 +210,14 @@ public class AS2ServerConnection {
         listenerThread.start();
     }
 
+    public PrivateKey getSigningPrivateKey() {
+        return signingPrivateKey;
+    }
+
+    public PrivateKey getDecryptingPrivateKey() {
+        return decryptingPrivateKey;
+    }
+
     public void close() {
         if (listenerThread != null) {
             synchronized (listenerThread) {

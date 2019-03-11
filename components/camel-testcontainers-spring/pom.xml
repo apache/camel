@@ -32,7 +32,6 @@
     <description>Camel unit testing with Spring and testcontainers</description>
 
     <properties>
-        <!-- use by camel-catalog -->
         <firstVersion>2.22.0</firstVersion>
         <label>testing,java,docker</label>
 

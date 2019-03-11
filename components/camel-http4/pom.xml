@@ -34,7 +34,6 @@
   <properties>
     <!-- CAMEL-7010 Now we move to HttpClient 4.3 API -->
     <camel.osgi.import.before.defaults>
-      javax.servlet.*;version="${servlet-version-range}",
       org.apache.http.*;version="[4.3,5)"
     </camel.osgi.import.before.defaults>
   </properties>
@@ -61,6 +60,11 @@
     </dependency>
 
     <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-management-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
@@ -97,6 +101,12 @@
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
       <version>${jetty-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -34,7 +34,6 @@
   <description>Using Netflix Ribbon for client side load balancing</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.18.0</firstVersion>
     <label>microservice</label>
 

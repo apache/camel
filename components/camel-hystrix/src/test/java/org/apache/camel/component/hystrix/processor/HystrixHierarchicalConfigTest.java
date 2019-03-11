@@ -18,10 +18,10 @@ package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.support.SimpleRegistry;
 import org.junit.Assert;
 import org.junit.Test;
 

@@ -41,6 +41,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.function.ThrowingConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,6 +66,27 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         super(context);
     }
 
+    /**
+     * Add routes to a context using a lambda expression.
+     * It can be used as following:
+     * <pre>
+     * RouteBuilder.addRoutes(context, rb ->
+     *     rb.from("direct:inbound").bean(ProduceTemplateBean.class)));
+     * </pre>
+     *
+     * @param context the camel context to add routes
+     * @param rbc a lambda expression receiving the {@code RouteBuilder} to use to create routes
+     * @throws Exception if an error occurs
+     */
+    public static void addRoutes(CamelContext context, ThrowingConsumer<RouteBuilder, Exception> rbc) throws Exception {
+        context.addRoutes(new RouteBuilder(context) {
+            @Override
+            public void configure() throws Exception {
+                rbc.accept(this);
+            }
+        });
+    }
+
     @Override
     public String toString() {
         return getRouteCollection().toString();
@@ -79,6 +101,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public abstract void configure() throws Exception;
+
+    /**
+     * Binds the bean to the repository (if possible).
+     *
+     * @param id   the id of the bean
+     * @param bean the bean
+     */
+    public void bindToRegistry(String id, Object bean) {
+        getContext().getRegistry().bind(id, bean);
+    }
 
     /**
      * Configures the REST services

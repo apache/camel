@@ -168,6 +168,18 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-http4-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
 
 The component supports 19 options, which are listed below.
 
@@ -543,7 +555,7 @@ int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 
 To disable cookies you can set the HTTP Client to ignore cookies by
 adding this URI option: +
- `httpClient.cookiePolicy=ignoreCookies`
+ `httpClient.cookieSpec=ignoreCookies`
 
 ### Advanced Usage
 

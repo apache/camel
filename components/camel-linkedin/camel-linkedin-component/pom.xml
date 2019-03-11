@@ -38,6 +38,9 @@
     <componentPackage>org.apache.camel.component.linkedin</componentPackage>
     <outPackage>org.apache.camel.component.linkedin.internal</outPackage>
 
+    <camel.osgi.import.additional>
+      org.apache.cxf.*;version="${cxf-version-range}"
+    </camel.osgi.import.additional>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
   </properties>
 
@@ -83,6 +86,11 @@
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3-version}</version>
     </dependency>
 
     <!-- testing -->

@@ -40,12 +40,15 @@ public @interface EndpointInject {
     /**
      * The uri of the endpoint
      */
-    String uri() default "";
+    String value() default "";
 
     /**
-     * Reference to endpoint
+     * The uri of the endpoint
+     *
+     * @deprecated use value instead
      */
-    String ref() default "";
+    @Deprecated
+    String uri() default "";
 
     /**
      * Use the field or getter on the bean to provide the uri of the endpoint

@@ -35,6 +35,8 @@ Here are the versions that are compatible:
 |2.13.0 |2.3.3
 |2.14.0 |2.3.7
 |2.15.0 |2.4.0
+|2.23.0 |4.2
+|3.0    |4.3
 |============================
 
 [[Karaf-PreparingKarafforCamel]]
@@ -231,6 +233,15 @@ route(s)
 |camel:context-suspend |Suspends the given Camel context
 |camel:context-resume |Resumes the given Camel context
 |=========================================================
+
+[[Karaf-KarafcommandsinCamel3onwards]]
+==== Karaf commands in Camel 3 onwards
+
+[width="100%",cols="1s,4",options="header",]
+|=======================================================================
+|Command |Description
+|camel:route-step |Display step information about Camel route(s).
+|=======================================================================
 
 [[Karaf-camel:context-list]]
 ==== `camel:context-list`

@@ -68,7 +68,7 @@ public class BoxEventLogsManager {
      *            returned.
      * @param after
      *            - the lower bound on the timestamp of the events returned.
-     * @param after
+     * @param before
      *            - the upper bound on the timestamp of the events returned.
      * @param types
      *            - an optional list of event types to filter by.

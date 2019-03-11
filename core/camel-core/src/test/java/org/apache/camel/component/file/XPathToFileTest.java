@@ -64,7 +64,7 @@ public class XPathToFileTest extends ContextTestSupport {
                 from("direct:start")
                     .split(xpath("/foo/person"))
                         .log("${bodyAs(String)}")
-                        .to("file://target/data/xpath?fileName=xpath-${property.CamelSplitIndex}.xml")
+                        .to("file://target/data/xpath?fileName=xpath-${exchangeProperty.CamelSplitIndex}.xml")
                         .to("mock:result");
             }
         };

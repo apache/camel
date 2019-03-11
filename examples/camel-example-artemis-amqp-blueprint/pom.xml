@@ -29,13 +29,16 @@
   </parent>
 
   <artifactId>camel-example-artemis-amqp-blueprint</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Example :: ActiveMQ Artemis :: AMQP</name>
   <description>Demonstrates ActiveMQ Artemis using Camel's AMQP component. 
   </description>
 
   <properties>
     <category>Messaging</category>
+    <camel.osgi.import.additional>
+      org.apache.qpid.*;version="[0.20,1)",
+    </camel.osgi.import.additional>
   </properties>
 
   <dependencies>
@@ -131,6 +134,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
         <configuration>
           <useBlueprint>true</useBlueprint>
         </configuration>

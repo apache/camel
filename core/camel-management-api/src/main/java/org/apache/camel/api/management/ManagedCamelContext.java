@@ -19,6 +19,7 @@ package org.apache.camel.api.management;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.mbean.ManagedStepMBean;
 
 public interface ManagedCamelContext {
 
@@ -46,6 +47,14 @@ public interface ManagedCamelContext {
      * @throws IllegalArgumentException if the type is not compliant
      */
     <T extends ManagedProcessorMBean> T getManagedProcessor(String id, Class<T> type);
+
+    /**
+     * Gets the managed step client api from any of the routes which with the given id
+     *
+     * @param id id of the step
+     * @return the step or <tt>null</tt> if not found
+     */
+    ManagedStepMBean getManagedStep(String id);
 
     /**
      * Gets the managed route client api with the given route id

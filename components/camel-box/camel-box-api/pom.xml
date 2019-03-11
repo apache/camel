@@ -35,6 +35,10 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <camel.osgi.import.pkg>
+      *
+    </camel.osgi.import.pkg>
   </properties>
 
   <build>
@@ -44,8 +48,8 @@
 
       <!-- to generate API Javadoc -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-javadoc-plugin</artifactId>
         <executions>
           <execution>
             <id>add-javadoc</id>
@@ -58,8 +62,9 @@
               <source>${jdk.version}</source>
               <quiet>true</quiet>
               <detectOfflineLinks>false</detectOfflineLinks>
-              <javadocVersion>${jdk.version}</javadocVersion>
+              <javadocVersion>1.8.0</javadocVersion>
               <encoding>UTF-8</encoding>
+              <doclint>none</doclint>
             </configuration>
           </execution>
         </executions>

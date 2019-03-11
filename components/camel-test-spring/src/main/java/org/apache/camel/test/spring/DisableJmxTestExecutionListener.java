@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.spring;
 
-import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.support.AbstractTestExecutionListener;
 

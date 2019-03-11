@@ -33,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,8 +45,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import javax.naming.Context;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.AsyncProcessor;
@@ -110,6 +109,7 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
 import org.apache.camel.spi.ClassResolver;
@@ -136,6 +136,7 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
@@ -169,9 +170,9 @@ import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResolverHelper;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -234,7 +235,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
     private Boolean useDataType = Boolean.FALSE;
-    private Boolean useBreadcrumb = Boolean.TRUE;
+    private Boolean useBreadcrumb = Boolean.FALSE;
     private Boolean allowUseOriginalMessage = Boolean.FALSE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerBuilder;
@@ -252,6 +253,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private volatile TypeConverter typeConverter;
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile Injector injector;
+    private volatile CamelBeanPostProcessor beanPostProcessor;
     private volatile ComponentResolver componentResolver;
     private volatile LanguageResolver languageResolver;
     private volatile DataFormatResolver dataFormatResolver;
@@ -306,23 +308,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     private Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
 
     /**
-     * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
-     * but will silently fallback and use {@link SimpleRegistry} if JNDI cannot be used.
+     * Creates the {@link CamelContext} using {@link org.apache.camel.support.DefaultRegistry} as registry.
      * <p/>
-     * Use one of the other constructors to force use an explicit registry / JNDI.
+     * Use one of the other constructors to force use an explicit registry.
      */
     public AbstractCamelContext() {
         this(true);
-    }
-
-    /**
-     * Creates the {@link CamelContext} using the given JNDI context as the registry
-     *
-     * @param jndiContext the JNDI context
-     */
-    public AbstractCamelContext(Context jndiContext) {
-        this();
-        setJndiContext(jndiContext);
     }
 
     /**
@@ -352,9 +343,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public void doInit() {
-        // setup management strategy first since end users may use it to add event notifiers
+        // setup management first since end users may use it to add event notifiers
         // using the management strategy before the CamelContext has been started
-        this.managementStrategy = createManagementStrategy();
+        setupManagement(null);
 
         // Call all registered trackers with this context
         // Note, this may use a partially constructed object
@@ -517,7 +508,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
                 }
             }
 
-            return  component;
+            return component;
         } catch (Exception e) {
             throw new RuntimeCamelException("Cannot auto create component: " + name, e);
         } finally {
@@ -2496,6 +2487,21 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         this.injector = doAddService(injector);
     }
 
+    public CamelBeanPostProcessor getBeanPostProcessor() {
+        if (beanPostProcessor == null) {
+            synchronized (lock) {
+                if (beanPostProcessor == null) {
+                    setBeanPostProcessor(createBeanPostProcessor());
+                }
+            }
+        }
+        return beanPostProcessor;
+    }
+
+    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
+        this.beanPostProcessor = doAddService(beanPostProcessor);
+    }
+
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
         return managementMBeanAssembler;
     }
@@ -2556,38 +2562,15 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     public <T> T getRegistry(Class<T> type) {
         Registry reg = getRegistry();
 
-        // unwrap the property placeholder delegate
-        if (reg instanceof PropertyPlaceholderDelegateRegistry) {
-            reg = ((PropertyPlaceholderDelegateRegistry) reg).getRegistry();
-        }
-
         if (type.isAssignableFrom(reg.getClass())) {
             return type.cast(reg);
-        } else if (reg instanceof CompositeRegistry) {
-            List<Registry> list = ((CompositeRegistry) reg).getRegistryList();
-            for (Registry r : list) {
-                if (type.isAssignableFrom(r.getClass())) {
-                    return type.cast(r);
-                }
-            }
         }
         return null;
     }
 
-    /**
-     * Sets the registry to the given JNDI context
-     *
-     * @param jndiContext is the JNDI context to use as the registry
-     * @see #setRegistry(Registry)
-     */
-    public void setJndiContext(Context jndiContext) {
-        setRegistry(new JndiRegistry(jndiContext));
-    }
-
     public void setRegistry(Registry registry) {
-        // wrap the registry so we always do property placeholder lookups
-        if (!(registry instanceof PropertyPlaceholderDelegateRegistry)) {
-            registry = new PropertyPlaceholderDelegateRegistry(this, registry);
+        if (registry instanceof CamelContextAware) {
+            ((CamelContextAware) registry).setCamelContext(this);
         }
         this.registry = registry;
     }
@@ -4255,13 +4238,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     }
 
     public ManagementStrategy getManagementStrategy() {
-        if (managementStrategy == null) {
-            synchronized (lock) {
-                if (managementStrategy == null) {
-                    setManagementStrategy(createManagementStrategy());
-                }
-            }
-        }
         return managementStrategy;
     }
 
@@ -4274,8 +4250,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
             disableJMX = true;
         } else if (isInit()) {
             disableJMX = true;
-            managementStrategy = createManagementStrategy();
-            lifecycleStrategies.clear();
+            // we are still in initializing mode, so we can disable JMX, by setting up management again
+            setupManagement(null);
         } else {
             throw new IllegalStateException("Disabling JMX can only be done when CamelContext has not been started");
         }
@@ -4283,6 +4259,37 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public boolean isJMXDisabled() {
         return disableJMX;
+    }
+
+    public void setupManagement(Map<String, Object> options) {
+        ManagementStrategyFactory factory = new DefaultManagementStrategyFactory();
+        if (!isJMXDisabled()) {
+            try {
+                FactoryFinder finder = getFactoryFinder("META-INF/services/org/apache/camel/management/");
+                try {
+                    if (finder != null) {
+                        Object object = finder.newInstance("ManagementStrategyFactory");
+                        if (object instanceof ManagementStrategyFactory) {
+                            factory = (ManagementStrategyFactory) object;
+                        }
+                    }
+                } catch (NoFactoryAvailableException e) {
+                    // ignore there is no custom factory
+                }
+            } catch (Exception e) {
+                log.warn("Cannot create JMX lifecycle strategy. Will fallback and disable JMX.", e);
+            }
+        }
+
+        log.debug("Setting up management with factory: {}", factory);
+        try {
+            ManagementStrategy strategy = factory.create(this, options);
+            LifecycleStrategy lifecycle = factory.createLifecycle(this);
+            factory.setupManagement(this, strategy, lifecycle);
+        } catch (Exception e) {
+            log.warn("Error setting up management due " + e.getMessage());
+            throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
     }
 
     public InflightRepository getInflightRepository() {
@@ -4714,6 +4721,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     protected abstract Injector createInjector();
 
+    protected abstract CamelBeanPostProcessor createBeanPostProcessor();
+
     protected abstract ComponentResolver createComponentResolver();
 
     protected abstract Registry createRegistry();
@@ -4727,8 +4736,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
     protected abstract FactoryFinderResolver createFactoryFinderResolver();
 
     protected abstract ClassResolver createClassResolver();
-
-    protected abstract ManagementStrategy createManagementStrategy();
 
     protected abstract ProcessorFactory createProcessorFactory();
 

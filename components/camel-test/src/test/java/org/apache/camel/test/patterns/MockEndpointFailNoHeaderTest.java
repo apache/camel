@@ -43,11 +43,11 @@ public class MockEndpointFailNoHeaderTest extends CamelTestSupport {
         template.sendBodyAndHeader(expectedBody, "foo", "bar");
         resultEndpoint.assertIsSatisfied();
     }
-    
-    
+
     @Test
     public void noHeaderTestCase() throws InterruptedException {
         resultEndpoint.expectedHeaderReceived("foo", "bar");
+        resultEndpoint.setResultWaitTime(1); // speedup test
         resultEndpoint.assertIsNotSatisfied();
     }
 

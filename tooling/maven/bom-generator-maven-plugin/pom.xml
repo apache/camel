@@ -111,4 +111,19 @@
 
     </dependencies>
 
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <configuration>
+                    <mojoDependencies>
+                        <dep>org.apache.maven:maven-plugin-api</dep>
+                    </mojoDependencies>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

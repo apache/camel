@@ -109,6 +109,10 @@
           <groupId>org.apache.velocity</groupId>
           <artifactId>velocity</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -175,6 +179,7 @@
           <configuration>
             <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
             <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+            <mojoDependencies></mojoDependencies>
           </configuration>
           <executions>
             <execution>

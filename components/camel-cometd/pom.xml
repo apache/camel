@@ -33,7 +33,7 @@
 
     <properties>
         <camel.osgi.import.pkg>
-            org.eclipse.jetty.util.ssl;version="[9.2,10)";resolution:=optional,
+            org.eclipse.jetty.*;version="[9.3,10)",
             ${camel.osgi.import.defaults},
             *
         </camel.osgi.import.pkg>
@@ -42,7 +42,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

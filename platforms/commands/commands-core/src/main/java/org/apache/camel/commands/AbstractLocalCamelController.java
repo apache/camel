@@ -37,8 +37,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
-import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.api.management.ManagedCamelContext;
+import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -278,8 +278,9 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
                         row.put("routeId", route.getId());
                         row.put("state", getRouteState(route));
                         row.put("uptime", route.getUptime());
-                        ManagedRouteMBean mr = context.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId());
-                        if (mr != null) {
+                        ManagedCamelContext mcc = context.getExtension(ManagedCamelContext.class);
+                        if (mcc != null && mcc.getManagedCamelContext() != null) {
+                            ManagedRouteMBean mr = mcc.getManagedRoute(route.getId());
                             row.put("exchangesTotal", "" + mr.getExchangesTotal());
                             row.put("exchangesInflight", "" + mr.getExchangesInflight());
                             row.put("exchangesFailed", "" + mr.getExchangesFailed());
@@ -394,11 +395,35 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             MBeanServer mBeanServer = agent.getMBeanServer();
             Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + routeId + "\",*"), null);            
             for (ObjectName routeMBean : set) {
-            	
-            	// the route must be part of the camel context
-            	String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+
+                // the route must be part of the camel context
+                String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
                 if (camelId != null && camelId.equals(camelContextName)) {
                     String xml = (String) mBeanServer.invoke(routeMBean, "dumpRouteStatsAsXml", new Object[]{fullStats, includeProcessors}, new String[]{"boolean", "boolean"});
+                    return xml;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getStepStatsAsXml(String routeId, String camelContextName, boolean fullStats) throws Exception {
+        CamelContext context = this.getLocalCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+
+        ManagementAgent agent = context.getManagementStrategy().getManagementAgent();
+        if (agent != null) {
+            MBeanServer mBeanServer = agent.getMBeanServer();
+            Set<ObjectName> set = mBeanServer.queryNames(new ObjectName(agent.getMBeanObjectDomainName() + ":type=routes,name=\"" + routeId + "\",*"), null);
+            for (ObjectName routeMBean : set) {
+
+                // the route must be part of the camel context
+                String camelId = (String) mBeanServer.getAttribute(routeMBean, "CamelId");
+                if (camelId != null && camelId.equals(camelContextName)) {
+                    String xml = (String) mBeanServer.invoke(routeMBean, "dumpStepStatsAsXml", new Object[]{fullStats}, new String[]{"boolean"});
                     return xml;
                 }
             }

@@ -34,8 +34,10 @@
         <include>org.apache.camel:camel-base</include>
         <include>org.apache.camel:camel-support</include>
         <include>org.apache.camel:camel-core</include>
+        <include>org.apache.camel:camel-core-osgi</include>
+        <include>org.apache.camel:camel-core-xml</include>
 
-        <!-- NOTE: auto-generated list of components when building platforms/camel-catalog -->
+        <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel components: START -->
         <include>org.apache.camel:camel-activemq</include>
         <include>org.apache.camel:camel-ahc</include>
@@ -51,7 +53,23 @@
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-atomix</include>
         <include>org.apache.camel:camel-avro</include>
-        <include>org.apache.camel:camel-aws</include>
+        <include>org.apache.camel:camel-aws-cw</include>
+        <include>org.apache.camel:camel-aws-ddb</include>
+        <include>org.apache.camel:camel-aws-ec2</include>
+        <include>org.apache.camel:camel-aws-ecs</include>
+        <include>org.apache.camel:camel-aws-eks</include>
+        <include>org.apache.camel:camel-aws-iam</include>
+        <include>org.apache.camel:camel-aws-kinesis</include>
+        <include>org.apache.camel:camel-aws-kms</include>
+        <include>org.apache.camel:camel-aws-lambda</include>
+        <include>org.apache.camel:camel-aws-mq</include>
+        <include>org.apache.camel:camel-aws-msk</include>
+        <include>org.apache.camel:camel-aws-s3</include>
+        <include>org.apache.camel:camel-aws-sdb</include>
+        <include>org.apache.camel:camel-aws-ses</include>
+        <include>org.apache.camel:camel-aws-sns</include>
+        <include>org.apache.camel:camel-aws-sqs</include>
+        <include>org.apache.camel:camel-aws-swf</include>
         <include>org.apache.camel:camel-aws-xray</include>
         <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-barcode</include>
@@ -70,6 +88,7 @@
         <include>org.apache.camel:camel-caffeine</include>
         <include>org.apache.camel:camel-cassandraql</include>
         <include>org.apache.camel:camel-cdi</include>
+        <include>org.apache.camel:camel-chatscript</include>
         <include>org.apache.camel:camel-chunk</include>
         <include>org.apache.camel:camel-cm-sms</include>
         <include>org.apache.camel:camel-cmis</include>
@@ -78,8 +97,6 @@
         <include>org.apache.camel:camel-consul</include>
         <include>org.apache.camel:camel-controlbus</include>
         <include>org.apache.camel:camel-corda</include>
-        <include>org.apache.camel:camel-core-osgi</include>
-        <include>org.apache.camel:camel-core-xml</include>
         <include>org.apache.camel:camel-couchbase</include>
         <include>org.apache.camel:camel-couchdb</include>
         <include>org.apache.camel:camel-crypto</include>
@@ -159,7 +176,6 @@
         <include>org.apache.camel:camel-jdbc</include>
         <include>org.apache.camel:camel-jetty</include>
         <include>org.apache.camel:camel-jetty-common</include>
-        <include>org.apache.camel:camel-jetty9</include>
         <include>org.apache.camel:camel-jgroups</include>
         <include>org.apache.camel:camel-jgroups-raft</include>
         <include>org.apache.camel:camel-jibx</include>
@@ -343,7 +359,6 @@
         <include>org.apache.camel:camel-catalog-provider-karaf</include>
         <include>org.apache.camel:camel-catalog-provider-springboot</include>
         <include>org.apache.camel:camel-commands-core</include>
-        <include>org.apache.camel:camel-commands-jolokia</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
         <include>org.apache.camel:camel-route-parser</include>
       </includes>
@@ -354,7 +369,7 @@
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
-        <!-- NOTE: auto-generated list of components when building platforms/camel-catalog -->
+        <!-- NOTE: auto-generated list of components when building camel catalog -->
         <!-- camel starters: START -->
         <include>org.apache.camel:camel-activemq-starter</include>
         <include>org.apache.camel:camel-ahc-starter</include>
@@ -369,7 +384,23 @@
         <include>org.apache.camel:camel-atom-starter</include>
         <include>org.apache.camel:camel-atomix-starter</include>
         <include>org.apache.camel:camel-avro-starter</include>
-        <include>org.apache.camel:camel-aws-starter</include>
+        <include>org.apache.camel:camel-aws-cw-starter</include>
+        <include>org.apache.camel:camel-aws-ddb-starter</include>
+        <include>org.apache.camel:camel-aws-ec2-starter</include>
+        <include>org.apache.camel:camel-aws-ecs-starter</include>
+        <include>org.apache.camel:camel-aws-eks-starter</include>
+        <include>org.apache.camel:camel-aws-iam-starter</include>
+        <include>org.apache.camel:camel-aws-kinesis-starter</include>
+        <include>org.apache.camel:camel-aws-kms-starter</include>
+        <include>org.apache.camel:camel-aws-lambda-starter</include>
+        <include>org.apache.camel:camel-aws-mq-starter</include>
+        <include>org.apache.camel:camel-aws-msk-starter</include>
+        <include>org.apache.camel:camel-aws-s3-starter</include>
+        <include>org.apache.camel:camel-aws-sdb-starter</include>
+        <include>org.apache.camel:camel-aws-ses-starter</include>
+        <include>org.apache.camel:camel-aws-sns-starter</include>
+        <include>org.apache.camel:camel-aws-sqs-starter</include>
+        <include>org.apache.camel:camel-aws-swf-starter</include>
         <include>org.apache.camel:camel-aws-xray-starter</include>
         <include>org.apache.camel:camel-azure-starter</include>
         <include>org.apache.camel:camel-barcode-starter</include>
@@ -385,6 +416,7 @@
         <include>org.apache.camel:camel-browse-starter</include>
         <include>org.apache.camel:camel-caffeine-starter</include>
         <include>org.apache.camel:camel-cassandraql-starter</include>
+        <include>org.apache.camel:camel-chatscript-starter</include>
         <include>org.apache.camel:camel-chunk-starter</include>
         <include>org.apache.camel:camel-cm-sms-starter</include>
         <include>org.apache.camel:camel-cmis-starter</include>
@@ -470,7 +502,6 @@
         <include>org.apache.camel:camel-jdbc-starter</include>
         <include>org.apache.camel:camel-jetty-common-starter</include>
         <include>org.apache.camel:camel-jetty-starter</include>
-        <include>org.apache.camel:camel-jetty9-starter</include>
         <include>org.apache.camel:camel-jgroups-raft-starter</include>
         <include>org.apache.camel:camel-jgroups-starter</include>
         <include>org.apache.camel:camel-jibx-starter</include>

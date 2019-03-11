@@ -46,9 +46,6 @@ public class Application {
 
     private static final Logger LOG = LoggerFactory.getLogger(Application.class);
 
-    @Autowired
-    private MetricRegistry metricRegistry;
-
     /**
      * @param args no command line args required
      */
@@ -66,7 +63,7 @@ public class Application {
     @Bean(destroyMethod = "stop")
     public GraphiteReporter graphiteReporter() {
         final GraphiteSender graphite = new GraphiteUDP(new InetSocketAddress("localhost", 2003));
-        final GraphiteReporter reporter = GraphiteReporter.forRegistry(metricRegistry).prefixedWith("camel-spring-boot").convertRatesTo(TimeUnit.SECONDS)
+        final GraphiteReporter reporter = GraphiteReporter.forRegistry(metricRegistry()).prefixedWith("camel-spring-boot").convertRatesTo(TimeUnit.SECONDS)
             .convertDurationsTo(TimeUnit.MILLISECONDS).filter(MetricFilter.ALL).build(graphite);
         reporter.start(5, TimeUnit.SECONDS);
         return reporter;
@@ -97,6 +94,11 @@ public class Application {
             }
         };
     }
+    
+    @Bean
+    MetricRegistry metricRegistry() {
+        return new MetricRegistry();
+    }
 
     @Bean
     CamelContextConfiguration contextConfiguration() {
@@ -105,7 +107,7 @@ public class Application {
             public void beforeApplicationStart(CamelContext context) {
                 LOG.info("Configuring Camel metrics on all routes");
                 MetricsRoutePolicyFactory fac = new MetricsRoutePolicyFactory();
-                fac.setMetricsRegistry(metricRegistry);
+                fac.setMetricsRegistry(metricRegistry());
                 context.addRoutePolicyFactory(fac);
             }
 

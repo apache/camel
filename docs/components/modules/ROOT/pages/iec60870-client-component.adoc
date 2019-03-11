@@ -101,15 +101,29 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
-The component supports 3 options, which are listed below.
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-iec60870-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *camel.component.iec60870-client.default-connection-options.ignore-background-scan* | Whether background scan transmissions should be ignored. | true | Boolean
+| *camel.component.iec60870-client.default-connection-options.cause-source-address* | Whether to include the source address |  | Byte
+| *camel.component.iec60870-client.default-connection-options.data-module-options* | Whether to include the source address |  | DataModuleOptions
+| *camel.component.iec60870-client.default-connection-options.ignore-background-scan* | Whether to include the source address | true | Boolean
 | *camel.component.iec60870-client.enabled* | Whether to enable auto configuration of the iec60870-client component. This is enabled by default. |  | Boolean
 | *camel.component.iec60870-client.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===

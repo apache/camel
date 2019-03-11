@@ -26,8 +26,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ObjectHelper;
 
 /**

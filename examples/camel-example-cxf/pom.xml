@@ -37,6 +37,9 @@
     <title>CXF</title>
 
     <jetty9-version>${jetty92-version}</jetty9-version>
+    <camel.osgi.import.additional>
+      org.apache.cxf.*;version="${cxf-version-range}"
+    </camel.osgi.import.additional>
   </properties>
 
   <dependencies>
@@ -92,7 +95,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty9</artifactId>
+      <artifactId>camel-jetty</artifactId>
     </dependency>
 
     <dependency>

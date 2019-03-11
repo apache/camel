@@ -350,9 +350,9 @@ public class CamelConfigurationProperties {
 
     /**
      * Set whether breadcrumb is enabled.
-     * The default value is true.
+     * The default value is false.
      */
-    private boolean useBreadcrumb = true;
+    private boolean useBreadcrumb;
 
     /**
      * Sets the JMX statistics level

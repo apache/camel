@@ -115,11 +115,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.exchangeExceptionOgnlExpression(remainder);
         }
 
-        // property
-        remainder = ifStartsWithReturnRemainder("property", function);
-        if (remainder == null) {
-            remainder = ifStartsWithReturnRemainder("exchangeProperty", function);
-        }
+        // exchange property
+        remainder = ifStartsWithReturnRemainder("exchangeProperty", function);
         if (remainder != null) {
             // remove leading character (dot or ?)
             if (remainder.startsWith(".") || remainder.startsWith("?")) {
@@ -208,7 +205,12 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (parts.length > 2) {
                 throw new SimpleParserException("Valid syntax: ${properties:key[:default]} was: " + function, token.getIndex());
             }
-            return ExpressionBuilder.propertiesComponentExpression(remainder, null, null);
+            String defaultValue = null;
+            if (parts.length >= 2) {
+                defaultValue = parts[1];
+            }
+            String key = parts[0];
+            return ExpressionBuilder.propertiesComponentExpression(key, null, defaultValue);
         }
 
         // properties-location: prefix
@@ -218,13 +220,15 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (parts.length > 3) {
                 throw new SimpleParserException("Valid syntax: ${properties-location:location:key[:default]} was: " + function, token.getIndex());
             }
-
-            String locations = null;
-            String key = remainder;
-            if (parts.length >= 2) {
-                locations = StringHelper.before(remainder, ":");
-                key = StringHelper.after(remainder, ":");
+            String defaultValue = null;
+            if (parts.length >= 3) {
+                defaultValue = parts[2];
             }
+            String key = null;
+            if (parts.length >= 2) {
+                key = parts[1];
+            }
+            String locations = parts[0];
             return ExpressionBuilder.propertiesComponentExpression(key, locations, null);
         }
 
@@ -408,6 +412,8 @@ public class SimpleFunctionExpression extends LiteralExpression {
             return ExpressionBuilder.camelContextNameExpression();
         } else if (ObjectHelper.equal(expression, "routeId")) {
             return ExpressionBuilder.routeIdExpression();
+        } else if (ObjectHelper.equal(expression, "stepId")) {
+            return ExpressionBuilder.stepIdExpression();
         } else if (ObjectHelper.equal(expression, "null")) {
             return ExpressionBuilder.nullExpression();
         }

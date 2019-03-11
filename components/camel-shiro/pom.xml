@@ -32,7 +32,6 @@
 	<description>Security using Shiro</description>
 
 	<properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.5.0</firstVersion>
     <label>security</label>
 

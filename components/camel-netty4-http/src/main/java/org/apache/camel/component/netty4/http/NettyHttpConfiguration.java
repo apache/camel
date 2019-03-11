@@ -293,15 +293,6 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         this.maxHeaderSize = maxHeaderSize;
     }
 
-    // Don't support allowDefaultCodec
-    public boolean isAllowDefaultCodec() {
-        return false;
-    }
-    
-    public void setAllowDefaultCodec(boolean allowDefaultCodec) {
-        throw new UnsupportedOperationException("You cannot setAllowDefaultCodec here.");
-    }
-
     public String getOkStatusCodeRange() {
         return okStatusCodeRange;
     }

@@ -17,11 +17,10 @@
  * under the License.
  */
 
-def LOCAL_REPOSITORY = env.LOCAL_REPOSITORY ?: '/home/jenkins/jenkins-slave/maven-repositories/0'
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
 def JDK_NAME = env.JDK_NAME ?: 'JDK 1.8 (latest)'
 
-def MAVEN_PARAMS = "-U -B -e -fae -V -Dmaven.repo.local=${LOCAL_REPOSITORY} -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
+def MAVEN_PARAMS = "-U -B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 
 pipeline {
 
@@ -51,17 +50,6 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            when {
-                not {
-                    branch 'master'
-                }
-            }
-            steps {
-                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install"
-            }
-        }
-
         stage('Checks') {
             steps {
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
@@ -75,7 +63,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true test"
+                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.failure.ignore=true clean install"
             }
             post {
                 always {

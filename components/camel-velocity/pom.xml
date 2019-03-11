@@ -33,6 +33,9 @@
     <description>Camel Velocity support</description>
 
     <properties>
+	<camel.osgi.import.additional>
+		org.apache.velocity.*;version="[1.6.2,2)"
+	</camel.osgi.import.additional>
     </properties>
 
     <dependencies>
@@ -84,6 +87,12 @@
             <artifactId>velocity-tools</artifactId>
             <version>${velocity-tools-version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

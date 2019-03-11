@@ -31,7 +31,7 @@ public class ConsumeMethodBean {
     @Uri("mock:outbound")
     private ProducerTemplate producer;
 
-    @Consume(uri = "seda:inbound")
+    @Consume("seda:inbound")
     public void consume(@Body String body) {
         producer.sendBody(body);
     }

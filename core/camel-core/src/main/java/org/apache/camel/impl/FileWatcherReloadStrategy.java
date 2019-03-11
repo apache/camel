@@ -123,7 +123,7 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
         }
     }
 
-    private class UpdatedFileProcessor extends DefaultProducer {
+    private final class UpdatedFileProcessor extends DefaultProducer {
 
         private UpdatedFileProcessor(Endpoint endpoint) {
             super(endpoint);

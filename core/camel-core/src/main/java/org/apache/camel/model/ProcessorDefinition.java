@@ -782,6 +782,30 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Routes the message to a sequence of processors which is grouped together as one logical name.
+     *
+     * @return the builder
+     */
+    public StepDefinition step() {
+        StepDefinition answer = new StepDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Routes the message to a sequence of processors which is grouped together as one logical name.
+     *
+     * @param id unique id of the step within the camel context
+     * @return the builder
+     */
+    public StepDefinition step(String id) {
+        StepDefinition answer = new StepDefinition();
+        answer.setId(id);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
      * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
      * Creates a {@link org.apache.camel.processor.Pipeline} so that the message
      * will get processed by each endpoint in turn and for request/response the
@@ -3087,7 +3111,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Adds a onComplection {@link org.apache.camel.spi.Synchronization} hook that invoke this route as
+     * Adds a onCompletion {@link org.apache.camel.spi.Synchronization} hook that invoke this route as
      * a callback when the {@link org.apache.camel.Exchange} has finished being processed.
      * The hook invoke callbacks for either onComplete or onFailure.
      * <p/>

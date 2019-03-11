@@ -31,7 +31,7 @@ public class CamelContextDisableJmxTest extends Assert {
         context.start();
 
         // JMX should be disabled and therefore not a ManagedManagementStrategy instance
-        assertFalse(context.getManagementStrategy() instanceof ManagedManagementStrategy);
+        assertFalse(context.getManagementStrategy() instanceof JmxManagementStrategy);
 
         context.stop();
     }

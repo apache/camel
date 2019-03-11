@@ -126,7 +126,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String useMDCLogging;
     @XmlAttribute
     private String useDataType;
-    @XmlAttribute @Metadata(defaultValue = "true")
+    @XmlAttribute
     private String useBreadcrumb;
     @XmlAttribute
     private String allowUseOriginalMessage;
@@ -276,6 +276,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             }
             if (beanPostProcessor instanceof CamelBeanPostProcessor) {
                 ((CamelBeanPostProcessor) beanPostProcessor).setCamelContext(getContext());
+            }
+            // register the bean post processor on camel context
+            if (beanPostProcessor instanceof org.apache.camel.spi.CamelBeanPostProcessor) {
+                context.setBeanPostProcessor((org.apache.camel.spi.CamelBeanPostProcessor) beanPostProcessor);
             }
         }
     }

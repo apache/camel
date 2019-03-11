@@ -19,6 +19,7 @@ package org.apache.camel.model.rest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -299,6 +300,14 @@ public class RestOperationParamDefinition {
      */
     public RestOperationParamDefinition allowableValues(String... allowableValues) {
         setAllowableValues(Arrays.asList(allowableValues));
+        return this;
+    }
+
+    /**
+     * Allowed values of the parameter when its an enum type
+     */
+    public RestOperationParamDefinition allowableValues(String allowableValues) {
+        setAllowableValues(Arrays.asList(allowableValues.split(",")));
         return this;
     }
 

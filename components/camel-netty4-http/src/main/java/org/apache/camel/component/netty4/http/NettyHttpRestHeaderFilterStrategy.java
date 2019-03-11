@@ -35,7 +35,7 @@ public class NettyHttpRestHeaderFilterStrategy extends NettyHttpHeaderFilterStra
 
     @Override
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
-        boolean answer = super.applyFilterToExternalHeaders(headerName, headerValue, exchange);
+        boolean answer = super.applyFilterToCamelHeaders(headerName, headerValue, exchange);
         // using rest producer then headers are mapping to uri and query parameters using {key} syntax
         // if there is a match to an existing Camel Message header, then we should filter (=true) this
         // header as its already been mapped by the RestProducer from camel-core, and we do not want

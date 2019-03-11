@@ -73,7 +73,7 @@ public class EipDocumentationEnricherMojo extends AbstractMojo {
     /**
      * Path to camel core xml project root directory.
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-core-xml")
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-xml")
     public File camelCoreXmlDir;
 
     /**

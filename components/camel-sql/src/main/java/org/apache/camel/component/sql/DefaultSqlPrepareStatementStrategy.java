@@ -82,13 +82,63 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                 }
             }
             // replace all :?word and :?${foo} with just ?
-            answer = REPLACE_PATTERN.matcher(query).replaceAll("\\?");
+            answer = replaceParams(query);
         } else {
             answer = query;
         }
 
         LOG.trace("Prepared query: {}", answer);
         return answer;
+    }
+
+    private String replaceParams(String query) {
+        // nested parameters are not replaced properly just by the REPLACE_PATTERN
+        // for example ":?${array[${index}]}"
+        query = replaceBracketedParams(query);
+        return REPLACE_PATTERN.matcher(query).replaceAll("\\?");
+    }
+
+    private String replaceBracketedParams(String query) {
+        while (query.contains(":?${")) {
+            int i = query.indexOf(":?${");
+            int j = findClosingBracket(query, i + 3);
+
+            if (j == -1) {
+                throw new IllegalArgumentException("String doesn't have equal opening and closing brackets: " + query);
+            }
+
+            query = query.substring(0, i) + "?" + query.substring(j + 1);
+        }
+        return query;
+    }
+
+    /**
+     * Finds closing bracket in text for named parameter.
+     *
+     * @param   text
+     * @param   openPosition
+     *          position of the opening bracket
+     *
+     * @return  index of corresponding closing bracket, or -1, if none was found
+     */
+    private static int findClosingBracket(String text, int openPosition) {
+        if (text.charAt(openPosition) != '{') {
+            throw new IllegalArgumentException("Character at specified position is not an open bracket");
+        }
+
+        int remainingClosingBrackets = 0;
+
+        for (int i = openPosition; i < text.length(); i++) {
+            if (text.charAt(i) == '{') {
+                remainingClosingBrackets++;
+            } else if (text.charAt(i) == '}') {
+                remainingClosingBrackets--;
+            }
+            if (remainingClosingBrackets == 0) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -166,15 +216,40 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
     private static final class NamedQueryParser {
 
+        private final String query;
         private final Matcher matcher;
 
         private NamedQueryParser(String query) {
+            this.query = query;
             this.matcher = NAME_PATTERN.matcher(query);
         }
 
         public String next() {
             if (matcher.find()) {
-                return matcher.group(1);
+                String param = matcher.group(1);
+
+                int openingBrackets = 0;
+                int closingBrackets = 0;
+                for (int i = 0; i < param.length(); i++) {
+                    if (param.charAt(i) == '{') {
+                        openingBrackets++;
+                    }
+                    if (param.charAt(i) == '}') {
+                        closingBrackets++;
+                    }
+                }
+                if (openingBrackets != closingBrackets) {
+                    // nested parameters are not found properly by the NAME_PATTERN
+                    // for example param ":?${array[?${index}]}"
+                    // is detected as "${array[?${index}"
+                    // we have to find correct closing bracket manually
+                    String querySubstring = query.substring(matcher.start());
+                    int i = querySubstring.indexOf('{');
+                    int j = findClosingBracket(querySubstring, i);
+                    param = "$" + querySubstring.substring(i, j + 1);
+                }
+
+                return param;
             }
 
             return null;

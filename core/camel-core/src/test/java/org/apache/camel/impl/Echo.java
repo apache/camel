@@ -23,7 +23,7 @@ import org.apache.camel.Produce;
  */
 public interface Echo {
 
-    @Produce(uri = "direct:hello")
+    @Produce("direct:hello")
     String hello(String name);
 
 }

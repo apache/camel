@@ -5,7 +5,7 @@
 
 The Yammer component allows you to interact with the
 https://www.yammer.com[Yammer] enterprise social network. Consuming
-messages, users, and user relationships is supported as well as creating
+messages and users is supported as well as creating
 new messages.
 
 Yammer uses OAuth 2 for all client application authentication. In order
@@ -26,14 +26,14 @@ for this component:
 </dependency>
 ----
 
-### URI format
+=== URI format
 
 [source]
 ----
 yammer:[function]?[options]
 ----
 
-### Component options
+=== Component options
 
 The Yammer component can be configured with the Yammer account settings
 which are mandatory to configure before using.
@@ -62,7 +62,7 @@ The Yammer component supports 5 options, which are listed below.
 
 You can also configure these options directly in the endpoint.
 
-### Endpoint options
+=== Endpoint options
 
 
 
@@ -124,6 +124,18 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-yammer-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
 
 The component supports 18 options, which are listed below.
 
@@ -140,9 +152,9 @@ The component supports 18 options, which are listed below.
 | *camel.component.yammer.config.function* | The function to use |  | String
 | *camel.component.yammer.config.function-type* | The function to use |  | YammerFunctionType
 | *camel.component.yammer.config.limit* | Return only the specified number of messages. Works for threaded=true and threaded=extended. | -1 | Integer
-| *camel.component.yammer.config.newer-than* | Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter newerThan=3516 to ensure that you do not get duplicate copies of messages already on your page. | -1 | Integer
-| *camel.component.yammer.config.older-than* | Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you're currently viewing 20 messages and the oldest is number 2912, you could append olderThan=2912 to your request to get the 20 messages prior to those you're seeing. | -1 | Integer
-| *camel.component.yammer.config.requestor* |  |  | ApiRequestor
+| *camel.component.yammer.config.newer-than* | Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter "?newerThan=3516″ to ensure that you do not get duplicate copies of messages already on your page. | -1 | Integer
+| *camel.component.yammer.config.older-than* | Returns messages older than the message ID specified as a numeric string. This is useful for paginating messages. For example, if you're currently viewing 20 messages and the oldest is number 2912, you could append "?olderThan=2912″ to your request to get the 20 messages prior to those you're seeing. | -1 | Integer
+| *camel.component.yammer.config.requestor* | Set to true if you want to use raw JSON rather than converting to POJOs. |  | ApiRequestor
 | *camel.component.yammer.config.threaded* | threaded=true will only return the first message in each thread. This parameter is intended for apps which display message threads collapsed. threaded=extended will return the thread starter messages in order of most recently active as well as the two most recent messages, as they are viewed in the default view on the Yammer web interface. |  | String
 | *camel.component.yammer.config.use-json* | Set to true if you want to use raw JSON rather than converting to POJOs. | false | Boolean
 | *camel.component.yammer.config.user-id* | The user id |  | String
@@ -155,9 +167,7 @@ The component supports 18 options, which are listed below.
 
 
 
-
-
-### Consuming messages
+=== Consuming messages
 
 The Yammer component provides several endpoints for consuming
 messages:
@@ -188,7 +198,7 @@ and topics that the user is following.
 |=======================================================================
 
 
-#### Message format
+==== Message format
 
 All messages by default are converted to a POJO model provided in the
 `org.apache.camel.component.yammer.model` package. The original message
@@ -297,7 +307,7 @@ That said, marshaling this data into POJOs is not free so if you need
 you can switch back to using pure JSON by adding the `useJson=false`
 option to your URI.
 
-### Creating messages
+=== Creating messages
 
 To create a new message in the account of the current user, you can use
 the following URI:
@@ -342,17 +352,8 @@ assertEquals(1, messages.getMessages().size());
 assertEquals("Hi from Camel!", messages.getMessages().get(0).getBody().getPlain());
 ----
 
-### Retrieving user relationships
 
-The Yammer component can retrieve user relationships:
-
-[source]
-----
-yammer:relationships?[options]
-----
-
-
-### Retrieving users
+=== Retrieving users
 
 The Yammer component provides several endpoints for retrieving
 users:
@@ -367,10 +368,10 @@ users:
 |=====================================================
 
 
-### Using an enricher
+=== Using an enricher
 
-It is helpful sometimes (or maybe always in the case of users or
-relationship consumers) to use an enricher pattern rather than a route
+It is helpful sometimes (or maybe always in the case of users
+to use an enricher pattern rather than a route
 initiated with one of the polling consumers in camel-yammer. This is
 because the consumers will fire repeatedly, however often you set the
 delay for. If you just want to look up a user's data, or grab a message
@@ -391,9 +392,3 @@ from("direct:start")
 This will go out and fetch the current user's `User` object and set it as
 the Camel message body.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

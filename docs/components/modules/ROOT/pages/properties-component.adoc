@@ -15,7 +15,7 @@ Where *key* is the key for the property to lookup
 === Options
 
 // component options: START
-The Properties component supports 17 options, which are listed below.
+The Properties component supports 18 options, which are listed below.
 
 
 
@@ -37,7 +37,8 @@ The Properties component supports 17 options, which are listed below.
 | *suffixToken* (advanced) | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_SUFFIX_TOKEN). | }} | String
 | *initialProperties* (advanced) | Sets initial properties which will be used before any locations are resolved. |  | Properties
 | *overrideProperties* (advanced) | Sets a special list of override properties that take precedence and will use first, if a property exist. |  | Properties
-| *systemPropertiesMode* (common) | Sets the system property mode. | 2 | int
+| *systemPropertiesMode* (common) | Sets the system property (and environment variable) mode. The default mode (override) is to check system properties (and environment variables) first, before trying the specified properties. This allows system properties/environment variables to override any other property source. | 2 | int
+| *environmentVariableMode* (common) | Sets the OS environment variables mode. The default mode (fallback) is to check OS environment variables, if the property cannot be resolved from its sources first. This allows environment variables as fallback values. | 1 | int
 | *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |===
 // component options: END
@@ -80,8 +81,20 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
-The component supports 18 options, which are listed below.
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-properties-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 19 options, which are listed below.
 
 
 
@@ -92,6 +105,7 @@ The component supports 18 options, which are listed below.
 | *camel.component.properties.default-fallback-enabled* | If false, the component does not attempt to find a default for the key by looking after the colon separator. | true | Boolean
 | *camel.component.properties.enabled* | Whether to enable auto configuration of the properties component. This is enabled by default. |  | Boolean
 | *camel.component.properties.encoding* | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by java.util.Properties#load(java.io.InputStream) |  | String
+| *camel.component.properties.environment-variable-mode* | Sets the OS environment variables mode. The default mode (fallback) is to check OS environment variables, if the property cannot be resolved from its sources first. This allows environment variables as fallback values. | 1 | Integer
 | *camel.component.properties.fallback-to-unaugmented-property* | If true, first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false, only the augmented property name is searched. | true | Boolean
 | *camel.component.properties.ignore-missing-location* | Whether to silently ignore if a location cannot be located, such as a properties file not found. | false | Boolean
 | *camel.component.properties.initial-properties* | Sets initial properties which will be used before any locations are resolved. The option is a java.util.Properties type. |  | String
@@ -105,7 +119,7 @@ The component supports 18 options, which are listed below.
 | *camel.component.properties.property-suffix* | Optional suffix appended to property names before resolution. |  | String
 | *camel.component.properties.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.properties.suffix-token* | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link DEFAULT_SUFFIX_TOKEN). | }} | String
-| *camel.component.properties.system-properties-mode* | Sets the system property mode. | 2 | Integer
+| *camel.component.properties.system-properties-mode* | Sets the system property (and environment variable) mode. The default mode (override) is to check system properties (and environment variables) first, before trying the specified properties. This allows system properties/environment variables to override any other property source. | 2 | Integer
 |===
 // spring-boot-auto-configure options: END
 
@@ -231,6 +245,10 @@ location=file:${env:APP_HOME}/etc/foo.properties
 
 Where `APP_HOME` is an OS environment.
 
+NOTE: Some OS'es (such as Linux) do not support dashes in environment variable names,
+so here we are using `APP_HOME`. But if you specify `APP-HOME` then Camel 3 will automatic lookup
+the value as `APP_HOME` (with underscore) as fallback.
+
 You can have multiple placeholders in the same location, such as:
 
 [source]
@@ -238,7 +256,7 @@ You can have multiple placeholders in the same location, such as:
 location=file:${env:APP_HOME}/etc/${prop.name}.properties
 ----
 
-#=== Using system and environment variables to configure property prefixes and suffixes
+=== Using system and environment variables to configure property prefixes and suffixes
 
 *Available as of Camel 2.12.5, 2.13.3, 2.14.0*
 
@@ -481,6 +499,21 @@ The example below has property placeholder in the `<jmxAgent>` tag:
 
 You can also define property placeholders in the various attributes on
 the `<camelContext>` tag such as `trace` as shown here:
+
+=== Using JVM system properties or Environment variables as override or fallback values
+
+The properties components supports using JVM system properties and also OS environment variables
+as values which can either be used as override or fallback values.
+
+The default mode is that JVM system properties are in override mode, which means they
+are checked first.
+
+And as of Camel 3.0 then OS environment variables are in fallback mode as default mode,
+which means that if a property was not found then as a fallback the OS environment variables
+is checked as last.
+
+You can control these modes using the `systemPropertiesMode` and `environmentVariableMode`
+options on the properties component.
 
 === Overriding a property setting using a JVM System Property
 

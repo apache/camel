@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.quartz2;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.quartz.Scheduler;

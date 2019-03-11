@@ -57,8 +57,6 @@
     <module>camel-test-spring</module>
     <module>camel-testcontainers</module>
     <module>camel-testcontainers-spring</module>
-    <module>camel-core-osgi</module>
-    <module>camel-core-xml</module>
     <module>camel-blueprint</module>
     <module>camel-spring</module>
     <module>camel-groovy</module>
@@ -68,7 +66,6 @@
     <module>camel-ipfs</module>
     <module>camel-jetty-common</module>
     <module>camel-jetty</module>
-    <module>camel-jetty9</module>
     <module>camel-undertow</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
@@ -93,7 +90,23 @@
     <module>camel-atom</module>
     <module>camel-atomix</module>
     <module>camel-avro</module>
-    <module>camel-aws</module>
+    <module>camel-aws-cw</module>
+    <module>camel-aws-ddb</module>
+    <module>camel-aws-ec2</module>
+    <module>camel-aws-ecs</module>
+    <module>camel-aws-eks</module>
+    <module>camel-aws-iam</module>
+    <module>camel-aws-kinesis</module>
+    <module>camel-aws-kms</module>
+    <module>camel-aws-lambda</module>
+    <module>camel-aws-mq</module>
+    <module>camel-aws-msk</module>
+    <module>camel-aws-s3</module>
+    <module>camel-aws-sdb</module>
+    <module>camel-aws-ses</module>
+    <module>camel-aws-sns</module>
+    <module>camel-aws-sqs</module>
+    <module>camel-aws-swf</module>
     <module>camel-aws-xray</module>
     <module>camel-azure</module>
     <module>camel-base64</module>
@@ -109,6 +122,7 @@
     <module>camel-caffeine</module>
     <module>camel-cassandraql</module>
     <module>camel-cdi</module>
+    <module>camel-chatscript</module>
     <module>camel-chunk</module>
     <module>camel-cm-sms</module>
     <module>camel-cmis</module>
@@ -429,26 +443,6 @@
           <scope>provided</scope>
         </dependency>
       </dependencies>
-    </profile>
-    <profile>
-      <id>validate</id>
-      <build>
-        <plugins>
-          <!-- to validate Camel endpoints: mvn camel:validate -Pvalidate -->
-          <plugin>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-maven-plugin</artifactId>
-            <version>${project.version}</version>
-            <configuration>
-              <failOnError>false</failOnError>
-              <includeTest>true</includeTest>
-              <includeXml>true</includeXml>
-              <ignoreLenientProperties>false</ignoreLenientProperties>
-              <excludes>.*custom-exchange-formatter-context\.xml</excludes>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 

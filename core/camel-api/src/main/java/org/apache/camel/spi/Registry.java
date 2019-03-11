@@ -16,47 +16,20 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
-import java.util.Set;
+import org.apache.camel.RuntimeCamelException;
 
 /**
- * Represents a service registry which may be implemented via a Spring ApplicationContext,
- * via JNDI, a simple Map or the OSGi Service Registry
+ * Represents a {@link BeanRepository} which may also be capable
+ * of binding beans to its repository.
  */
-public interface Registry {
+public interface Registry extends BeanRepository {
 
     /**
-     * Looks up a service in the registry based purely on name,
-     * returning the service or <tt>null</tt> if it could not be found.
+     * Binds the bean to the repository (if possible).
      *
-     * @param name the name of the service
-     * @return the service from the registry or <tt>null</tt> if it could not be found
+     * @param id   the id of the bean
+     * @param bean the bean
+     * @throws RuntimeCamelException is thrown if binding is not possible
      */
-    Object lookupByName(String name);
-
-    /**
-     * Looks up a service in the registry, returning the service or <tt>null</tt> if it could not be found.
-     *
-     * @param name the name of the service
-     * @param type the type of the required service
-     * @return the service from the registry or <tt>null</tt> if it could not be found
-     */
-    <T> T lookupByNameAndType(String name, Class<T> type);
-
-    /**
-     * Finds services in the registry by their type.
-     *
-     * @param type  the type of the registered services
-     * @return the types found, with their ids as the key. Returns an empty Map if none found.
-     */
-    <T> Map<String, T> findByTypeWithName(Class<T> type);
-
-    /**
-     * Finds services in the registry by their type.
-     *
-     * @param type  the type of the registered services
-     * @return the types found. Returns an empty Set if none found.
-     */
-    <T> Set<T> findByType(Class<T> type);
-
+    void bind(String id, Object bean) throws RuntimeCamelException;
 }

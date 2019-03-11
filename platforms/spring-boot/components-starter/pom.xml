@@ -27,7 +27,7 @@
   </parent>
   <artifactId>components-starter</artifactId>
   <packaging>pom</packaging>
-  <name>Camel :: Components :: Starter</name>
+  <name>Camel :: Platforms :: Spring-Boot :: Components Starter</name>
   <description>Camel Components Starter</description>
   <!-- to support spring-boot auto configuration in the Camel components -->
   <dependencies>
@@ -114,7 +114,23 @@
     <module>camel-atom-starter</module>
     <module>camel-atomix-starter</module>
     <module>camel-avro-starter</module>
-    <module>camel-aws-starter</module>
+    <module>camel-aws-cw-starter</module>
+    <module>camel-aws-ddb-starter</module>
+    <module>camel-aws-ec2-starter</module>
+    <module>camel-aws-ecs-starter</module>
+    <module>camel-aws-eks-starter</module>
+    <module>camel-aws-iam-starter</module>
+    <module>camel-aws-kinesis-starter</module>
+    <module>camel-aws-kms-starter</module>
+    <module>camel-aws-lambda-starter</module>
+    <module>camel-aws-mq-starter</module>
+    <module>camel-aws-msk-starter</module>
+    <module>camel-aws-s3-starter</module>
+    <module>camel-aws-sdb-starter</module>
+    <module>camel-aws-ses-starter</module>
+    <module>camel-aws-sns-starter</module>
+    <module>camel-aws-sqs-starter</module>
+    <module>camel-aws-swf-starter</module>
     <module>camel-aws-xray-starter</module>
     <module>camel-azure-starter</module>
     <module>camel-barcode-starter</module>
@@ -130,6 +146,7 @@
     <module>camel-browse-starter</module>
     <module>camel-caffeine-starter</module>
     <module>camel-cassandraql-starter</module>
+    <module>camel-chatscript-starter</module>
     <module>camel-chunk-starter</module>
     <module>camel-cm-sms-starter</module>
     <module>camel-cmis-starter</module>
@@ -215,7 +232,6 @@
     <module>camel-jdbc-starter</module>
     <module>camel-jetty-common-starter</module>
     <module>camel-jetty-starter</module>
-    <module>camel-jetty9-starter</module>
     <module>camel-jgroups-raft-starter</module>
     <module>camel-jgroups-starter</module>
     <module>camel-jibx-starter</module>

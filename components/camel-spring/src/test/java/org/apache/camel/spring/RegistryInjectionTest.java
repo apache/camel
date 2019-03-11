@@ -18,7 +18,6 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -38,8 +37,8 @@ public class RegistryInjectionTest extends SpringTestSupport {
     public void testInjectedStrategy() throws Exception {
         CamelContext context = createCamelContext();
 
-        PropertyPlaceholderDelegateRegistry delegate = (PropertyPlaceholderDelegateRegistry) context.getRegistry();
-        assertTrue(delegate.getRegistry() instanceof JndiRegistry);
+        JndiRegistry jndi = context.getRegistry(JndiRegistry.class);
+        assertNotNull(jndi);
     }
 
 }

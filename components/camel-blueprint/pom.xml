@@ -33,7 +33,6 @@
   <packaging>jar</packaging>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.4.0</firstVersion>
     <label>java,osgi</label>
   </properties>
@@ -122,11 +121,44 @@
         <includes>
           <include>**/*</include>
         </includes>
-        <filtering>true</filtering>
       </resource>
     </resources>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>jaxb-list</id>
+            <goals>
+              <goal>generate-jaxb-list</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-generated-resources-jaxb</id>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+            <phase>process-classes</phase>
+            <configuration>
+              <resources>
+                <resource>
+                  <directory>${basedir}/target/generated/camel/jaxb</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- enrich the schemas with documentation -->
       <plugin>
         <groupId>org.apache.camel</groupId>
@@ -278,7 +310,7 @@
                         <include name="org/apache/camel/blueprint/package-info.java"/>
                         <include name="org/apache/camel/util/blueprint/**/*.java"/>
                       </fileset>
-                      <fileset dir="${basedir}/../camel-core-xml/src/main/java">
+                      <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java">
                         <include name="org/apache/camel/core/xml/*.java"/>
                         <include name="org/apache/camel/core/xml/util/**/*.java"/>
                       </fileset>
@@ -308,8 +340,8 @@
                     <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
                     <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
                          update="true">
-                      <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*"/>
-                      <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*"/>
+                      <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java" includes="**/*"/>
+                      <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java" includes="**/*"/>
                       <fileset dir="${basedir}/src/main/java" includes="**/*"/>
                     </jar>
                   </target>
@@ -452,8 +484,8 @@
                     <echo>Including source code from camel-core-xml in the camel-blueprint-sources.jar</echo>
                     <jar destfile="${project.build.directory}/${project.artifactId}-${project.version}-sources.jar"
                          update="true">
-                      <fileset dir="${basedir}/../camel-core-osgi/src/main/java" includes="**/*"/>
-                      <fileset dir="${basedir}/../camel-core-xml/src/main/java" includes="**/*"/>
+                      <fileset dir="${basedir}/../../core/camel-core-osgi/src/main/java" includes="**/*"/>
+                      <fileset dir="${basedir}/../../core/camel-core-xml/src/main/java" includes="**/*"/>
                     </jar>
                   </target>
                 </configuration>

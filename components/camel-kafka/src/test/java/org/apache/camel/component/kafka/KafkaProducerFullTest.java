@@ -343,8 +343,8 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
         ConsumerRecord<String, String> record = records.get(0);
         Headers headers = record.headers();
         assertNotNull("Kafka Headers should not be null.", headers);
-        // we have 6 headers and 1 header with breadcrumbId
-        assertEquals("Seven propagated header is expected.", 7, headers.toArray().length);
+        // we have 6 headers
+        assertEquals("6 propagated header is expected.", 6, headers.toArray().length);
         assertEquals("Propagated string value received", propagatedStringHeaderValue,
                 new String(getHeaderValue(propagatedStringHeaderKey, headers)));
         assertEquals("Propagated integer value received", propagatedIntegerHeaderValue,

@@ -373,7 +373,6 @@ public class InfinispanProducer extends HeaderSelectorProducer {
     @InvokeOnHeader("CLEAR")
     void onClear(Message message) {
         final BasicCache<Object, Object> cache = manager.getCache(message, this.cacheName);
-
         cache.clear();
     }
 
@@ -405,6 +404,14 @@ public class InfinispanProducer extends HeaderSelectorProducer {
         final BasicCache<Object, Object> cache = manager.getCache(message, this.cacheName);
         final Object result = InfinispanUtil.asAdvanced(cache).getStats();
 
+        setResult(message, result);
+    }
+    
+    @InvokeOnHeader("COMPUTE")
+    void onCompute(Message message) {
+        final BasicCache<Object, Object> cache = manager.getCache(message, this.cacheName);
+        final Object key = message.getHeader(InfinispanConstants.KEY);
+        final Object result = cache.compute(key, configuration.getRemappingFunction());
         setResult(message, result);
     }
 

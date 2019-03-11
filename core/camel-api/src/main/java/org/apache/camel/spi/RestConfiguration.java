@@ -43,6 +43,7 @@ public class RestConfiguration {
     private String producerApiDoc;
     private String scheme;
     private String host;
+    private boolean useXForwardHeaders = true;
     private String apiHost;
     private int port;
     private String contextPath;
@@ -156,6 +157,26 @@ public class RestConfiguration {
      */
     public void setHost(String host) {
         this.host = host;
+    }
+
+    /**
+     * WWhether to use X-Forward headers to set host etc. for Swagger.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     */
+    public boolean isUseXForwardHeaders() {
+        return useXForwardHeaders;
+    }
+
+    /**
+     * WWhether to use X-Forward headers to set host etc. for Swagger.
+     * <p/>
+     * This option is default <tt>true</tt>.
+     * 
+     * @param useXForwardHeaders whether to use X-Forward headers
+     */
+    public void setUseXForwardHeaders(boolean useXForwardHeaders) {
+        this.useXForwardHeaders = useXForwardHeaders;
     }
 
     public String getApiHost() {

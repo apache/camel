@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ProducerTemplate;
@@ -28,11 +26,13 @@ public class MainSupportTest extends ContextTestSupport {
 
     private class MyMainSupport extends MainSupport {
 
+        @Override
         protected ProducerTemplate findOrCreateCamelTemplate() {
             return context.createProducerTemplate();
         }
 
-        protected Map<String, CamelContext> getCamelContextMap() {
+        @Override
+        protected CamelContext createCamelContext() {
             return null;
         }
     }

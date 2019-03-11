@@ -33,7 +33,6 @@
   <description>Circuit Breaker EIP using Netflix Hystrix</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.18.0</firstVersion>
     <label>eip,microservice</label>
 

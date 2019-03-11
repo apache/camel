@@ -27,6 +27,8 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE })
 public @interface ServiceFactory {
 
+    String JDK_SERVICE = "#jdk#";
+
     String value();
 
 }

@@ -60,7 +60,7 @@ public class ProducerCacheHitsTest extends CamelTestSupport {
         
         StopWatch watch = new StopWatch();
         Object result = template.requestBodyAndHeaders(uri, body, headers);
-        template.sendBody("mock:results", new TestResult(uri, iterations, threads, watch.stop()));
+        template.sendBody("mock:results", new TestResult(uri, iterations, threads, watch.taken()));
         return result;
     }
     

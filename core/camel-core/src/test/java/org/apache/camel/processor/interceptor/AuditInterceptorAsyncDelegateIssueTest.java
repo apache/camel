@@ -22,8 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.junit.Before;
 import org.junit.Test;
 

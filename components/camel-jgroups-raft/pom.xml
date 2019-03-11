@@ -28,7 +28,7 @@
 
     <artifactId>camel-jgroups-raft</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: jgroups-raft</name>
+    <name>Camel :: JGroups Raft</name>
     <description>Camel jgroups-raft support</description>
 
     <properties>

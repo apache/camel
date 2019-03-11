@@ -41,12 +41,15 @@ public @interface Produce {
     /**
      * The uri to produce to
      */
-    String uri() default "";
+    String value() default "";
 
     /**
-     * Reference to endpoint to produce to
+     * The uri to produce to
+     *
+     * @deprecated use value instead
      */
-    String ref() default "";
+    @Deprecated
+    String uri() default "";
 
     /**
      * Use the field or getter on the bean to provide the uri to produce to

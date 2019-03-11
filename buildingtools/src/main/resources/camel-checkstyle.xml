@@ -151,7 +151,7 @@ lengths, if/try depths, etc...
             <property name="max" value="200"/>
         </module>
         <module name="ExecutableStatementCount">
-            <property name="max" value="120"/>
+            <property name="max" value="180"/>
         </module>
         <module name="LineLength">
             <property name="max" value="200"/>

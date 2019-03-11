@@ -32,6 +32,9 @@
     <description>Camel Freemarker support</description>
 
     <properties>
+    	<camel.osgi.import.additional>
+    		freemarker.*;version="[2.3.15,3)"
+    	</camel.osgi.import.additional>
     </properties>
 
     <dependencies>

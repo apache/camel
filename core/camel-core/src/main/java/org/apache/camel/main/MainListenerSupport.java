@@ -23,11 +23,11 @@ import org.apache.camel.CamelContext;
  */
 public class MainListenerSupport implements MainListener {
 
-    public void beforeStart(MainSupport main) {
+    public void configure(CamelContext context) {
         // noop
     }
 
-    public void configure(CamelContext context) {
+    public void beforeStart(MainSupport main) {
         // noop
     }
 

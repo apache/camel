@@ -59,6 +59,37 @@ public final class ReflectionHelper {
     }
 
     /**
+     * Action to take on each class.
+     */
+    public interface ClassCallback {
+
+        /**
+         * Perform an operation using the given class.
+         *
+         * @param clazz the class to operate on
+         */
+        void doWith(Class clazz) throws IllegalArgumentException, IllegalAccessException;
+    }
+
+    /**
+     * Perform the given callback operation on the nested (inner) classes.
+     *
+     * @param clazz class to start looking at
+     * @param cc the callback to invoke for each inner class (excluding the class itself)
+     */
+    public static void doWithClasses(Class<?> clazz, ClassCallback cc) throws IllegalArgumentException {
+        // and then nested classes
+        Class[] classes = clazz.getDeclaredClasses();
+        for (Class aClazz : classes) {
+            try {
+                cc.doWith(aClazz);
+            } catch (IllegalAccessException ex) {
+                throw new IllegalStateException("Shouldn't be illegal to access class '" + aClazz.getName() + "': " + ex);
+            }
+        }
+    }
+
+    /**
      * Invoke the given callback on all fields in the target class, going up the
      * class hierarchy to get all declared fields.
      * @param clazz the target class to analyze
@@ -155,6 +186,24 @@ public final class ReflectionHelper {
         } catch (Exception ex) {
             throw new UnsupportedOperationException("Cannot inject value of class: " + value.getClass() + " into: " + f);
         }
+    }
+
+    public static Object getField(Field f, Object instance) {
+        try {
+            boolean oldAccessible = f.isAccessible();
+            boolean shouldSetAccessible = !Modifier.isPublic(f.getModifiers()) && !oldAccessible;
+            if (shouldSetAccessible) {
+                f.setAccessible(true);
+            }
+            Object answer = f.get(instance);
+            if (shouldSetAccessible) {
+                f.setAccessible(oldAccessible);
+            }
+            return answer;
+        } catch (Exception ex) {
+            // ignore
+        }
+        return null;
     }
 
 }

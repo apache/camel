@@ -30,7 +30,7 @@
 
   <artifactId>camel-google-bigquery</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: GoogleBigQuery</name>
+  <name>Camel :: Google BigQuery</name>
   <description>Camel Component for Google Cloud Platform BigQuery</description>
 
   <properties>

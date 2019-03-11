@@ -131,6 +131,11 @@
       <artifactId>commons-lang3</artifactId>
       <version>${commons-lang3-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${commons-text-version}</version>
+    </dependency>
 
     <!-- logging -->
     <dependency>
@@ -276,10 +281,11 @@
         <artifactId>maven-plugin-plugin</artifactId>
         <configuration>
           <goalPrefix>camel-salesforce</goalPrefix>
+          <mojoDependencies></mojoDependencies>
         </configuration>
         <executions>
           <execution>
-            <id>mojo-descriptor</id>
+            <id>default-descriptor</id>
             <goals>
               <goal>descriptor</goal>
             </goals>

@@ -79,8 +79,7 @@ public class Base64DataFormatAutoConfiguration {
 
     @Bean(name = "base64-dataformat-factory")
     @ConditionalOnMissingBean(Base64DataFormat.class)
-    public DataFormatFactory configureBase64DataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureBase64DataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

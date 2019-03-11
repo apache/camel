@@ -40,7 +40,7 @@ public class OnExceptionFailureRouteIdTest extends DeadLetterChannelFailureRoute
                     .throwException(new IllegalArgumentException("Forced"));
 
                 from("direct:dead")
-                    .log("Failed at route ${property.CamelFailureRouteId}")
+                    .log("Failed at route ${exchangeProperty.CamelFailureRouteId}")
                     .to("mock:dead");
             }
         };

@@ -32,7 +32,6 @@
   <description>Using Camel with Spring Boot</description>
 
   <properties>
-    <!-- use by camel-catalog -->
     <firstVersion>2.15.0</firstVersion>
     <label>spring,microservice</label>
 
@@ -68,6 +67,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
+    </dependency>
+    <!-- JMX is enabled by default -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-management-impl</artifactId>
     </dependency>
 
     <!-- Optional Spring web support -->

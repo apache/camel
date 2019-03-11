@@ -79,8 +79,7 @@ public class SyslogDataFormatAutoConfiguration {
 
     @Bean(name = "syslog-dataformat-factory")
     @ConditionalOnMissingBean(SyslogDataFormat.class)
-    public DataFormatFactory configureSyslogDataFormatFactory()
-            throws Exception {
+    public DataFormatFactory configureSyslogDataFormatFactory() throws Exception {
         return new DataFormatFactory() {
             @Override
             public DataFormat newInstance() {

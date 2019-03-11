@@ -122,14 +122,30 @@ with the following path and query parameters:
 // spring-boot-auto-configure options: START
 === Spring Boot Auto-Configuration
 
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
-The component supports 3 options, which are listed below.
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-google-bigquery-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 7 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *camel.component.google-bigquery-sql.connection-factory.credentials-file-location* |  |  | String
+| *camel.component.google-bigquery-sql.connection-factory.service-account* |  |  | String
+| *camel.component.google-bigquery-sql.connection-factory.service-account-key* |  |  | String
+| *camel.component.google-bigquery-sql.connection-factory.service-u-r-l* |  |  | String
 | *camel.component.google-bigquery-sql.enabled* | Whether to enable auto configuration of the google-bigquery-sql component. This is enabled by default. |  | Boolean
 | *camel.component.google-bigquery-sql.project-id* | Google Cloud Project Id |  | String
 | *camel.component.google-bigquery-sql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean

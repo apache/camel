@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.model.SpringBootAutoConfigureOptionModel;
+import org.apache.camel.maven.packaging.model.SpringBootModel;
 import org.apache.camel.util.json.DeserializationException;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -178,8 +179,8 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                             throw new MojoExecutionException("Failed build due failOnMissingDescription=true");
                         }
 
-                        String options = templateAutoConfigurationOptions(models);
-                        boolean updated = updateAutoConfigureOptions(docFile, options);
+                        String changed = templateAutoConfigurationOptions(models, componentName);
+                        boolean updated = updateAutoConfigureOptions(docFile, changed);
                         if (updated) {
                             getLog().info("Updated doc file: " + docFile);
                         } else {
@@ -207,8 +208,8 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
                                 throw new MojoExecutionException("Failed build due failOnMissingDescription=true");
                             }
 
-                            String options = templateAutoConfigurationOptions(models);
-                            boolean updated = updateAutoConfigureOptions(docFile, options);
+                            String changed = templateAutoConfigurationOptions(models, componentName);
+                            boolean updated = updateAutoConfigureOptions(docFile, changed);
                             if (updated) {
                                 getLog().info("Updated doc file: " + docFile);
                             } else {
@@ -265,8 +266,6 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
             return "cql";
         } else if ("josql".equals(componentName)) {
             return "sql";
-        } else if ("jetty9".equals(componentName)) {
-            return "jetty";
         } else if ("juel".equals(componentName)) {
             return "el";
         } else if ("jsch".equals(componentName)) {
@@ -361,10 +360,16 @@ public class UpdateSpringBootAutoConfigurationReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateAutoConfigurationOptions(List<SpringBootAutoConfigureOptionModel> options) throws MojoExecutionException {
+    private String templateAutoConfigurationOptions(List<SpringBootAutoConfigureOptionModel> options, String componentName) throws MojoExecutionException {
+        SpringBootModel model = new SpringBootModel();
+        model.setGroupId(project.getGroupId());
+        model.setArtifactId("camel-" + componentName + "-starter");
+        model.setVersion(project.getVersion());
+        model.setOptions(options);
+
         try {
             String template = loadText(UpdateSpringBootAutoConfigurationReadmeMojo.class.getClassLoader().getResourceAsStream("spring-boot-auto-configure-options.mvel"));
-            String out = (String) TemplateRuntime.eval(template, options);
+            String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
             throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);

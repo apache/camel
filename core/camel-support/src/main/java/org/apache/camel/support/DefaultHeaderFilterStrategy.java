@@ -27,18 +27,18 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 /**
  * The default header filtering strategy. Users can configure filter by
  * setting filter set and/or setting a regular expression. Subclass can
- * add extended filter logic in 
+ * add extended filter logic in
  * {@link #extendedFilter(org.apache.camel.spi.HeaderFilterStrategy.Direction, String, Object, org.apache.camel.Exchange)}
- * 
+ *
  * Filters are associated with directions (in or out). "In" direction is
  * referred to propagating headers "to" Camel message. The "out" direction
  * is opposite which is referred to propagating headers from Camel message
  * to a native message like JMS and CXF message. You can see example of
- * DefaultHeaderFilterStrategy are being extended and invoked in camel-jms 
+ * DefaultHeaderFilterStrategy are being extended and invoked in camel-jms
  * and camel-cxf components.
  */
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
-    
+
     private Set<String> inFilter;
     private Pattern inFilterPattern;
 
@@ -48,7 +48,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     private boolean lowerCase;
     private boolean allowNullValues;
     private boolean caseInsensitive;
-    
+    private boolean filterOnMatch = true; // defaults to the previous behaviour
+
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
         return doFiltering(Direction.OUT, headerName, headerValue, exchange);
     }
@@ -60,14 +61,14 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Gets the "out" direction filter set. The "out" direction is referred to
      * copying headers from a Camel message to an external message.
-     * 
+     *
      * @return a set that contains header names that should be excluded.
      */
     public Set<String> getOutFilter() {
         if (outFilter == null) {
             outFilter = new HashSet<>();
         }
-        
+
         return outFilter;
     }
 
@@ -85,8 +86,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      * Gets the "out" direction filter regular expression {@link Pattern}. The
      * "out" direction is referred to copying headers from Camel message to
      * an external message. If the pattern matches a header, the header will
-     * be filtered out. 
-     * 
+     * be filtered out.
+     *
      * @return regular expression filter pattern
      */
     public String getOutFilterPattern() {
@@ -97,8 +98,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      * Sets the "out" direction filter regular expression {@link Pattern}. The
      * "out" direction is referred to copying headers from Camel message to
      * an external message. If the pattern matches a header, the header will
-     * be filtered out. 
-     * 
+     * be filtered out.
+     *
      * @param value regular expression filter pattern
      */
     public void setOutFilterPattern(String value) {
@@ -108,11 +109,11 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             outFilterPattern = Pattern.compile(value);
         }
     }
-    
+
     /**
      * Gets the "in" direction filter set. The "in" direction is referred to
      * copying headers from an external message to a Camel message.
-     * 
+     *
      * @return a set that contains header names that should be excluded.
      */
     public Set<String> getInFilter() {
@@ -136,20 +137,20 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      * Gets the "in" direction filter regular expression {@link Pattern}. The
      * "in" direction is referred to copying headers from an external message
      * to a Camel message. If the pattern matches a header, the header will
-     * be filtered out. 
-     * 
+     * be filtered out.
+     *
      * @return regular expression filter pattern
      */
     public String getInFilterPattern() {
         return inFilterPattern == null ? null : inFilterPattern.pattern();
     }
-    
+
     /**
      * Sets the "in" direction filter regular expression {@link Pattern}. The
      * "in" direction is referred to copying headers from an external message
      * to a Camel message. If the pattern matches a header, the header will
-     * be filtered out. 
-     * 
+     * be filtered out.
+     *
      * @param value regular expression filter pattern
      */
     public void setInFilterPattern(String value) {
@@ -169,7 +170,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     public boolean isLowerCase() {
         return lowerCase;
     }
-    
+
     /**
      * Sets the isLowercase property which is a boolean to determine
      * whether header names should be converted to lower case before
@@ -182,11 +183,11 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Gets the caseInsensitive property which is a boolean to determine
-     * whether header names should be case insensitive when checking it 
+     * whether header names should be case insensitive when checking it
      * with the filter set.
      * It does not affect filtering using regular expression pattern.
-     * 
-     * @return <tt>true</tt> if header names is case insensitive. 
+     *
+     * @return <tt>true</tt> if header names is case insensitive.
      */
     public boolean isCaseInsensitive() {
         return caseInsensitive;
@@ -194,66 +195,84 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     /**
      * Sets the caseInsensitive property which is a boolean to determine
-     * whether header names should be case insensitive when checking it 
+     * whether header names should be case insensitive when checking it
      * with the filter set.
      * It does not affect filtering using regular expression pattern,
-     * 
+     *
      * @param caseInsensitive <tt>true</tt> if header names is case insensitive.
      */
     public void setCaseInsensitive(boolean caseInsensitive) {
         this.caseInsensitive = caseInsensitive;
     }
-    
+
     public boolean isAllowNullValues() {
         return allowNullValues;
     }
-    
+
     public void setAllowNullValues(boolean value) {
         allowNullValues = value;
-    }   
+    }
+
+    public boolean isFilterOnMatch() {
+        return filterOnMatch;
+    }
+
+    /**
+     * Sets the filterOnMatch property which is a boolean to determine
+     * what to do when a pattern or filter set is matched.
+     *
+     * When set to true, a match will filter out the header. This is the default value for backwards compatibility.
+     *
+     * When set to false, the pattern or filter will indicate that the header must be kept; anything not matched will be filtered out.
+     *
+     * @param filterOnMatch <tt>true</tt> if a match filters out the header.
+     */
+    public void setFilterOnMatch(boolean filterOnMatch) {
+        this.filterOnMatch = filterOnMatch;
+    }
 
     protected boolean extendedFilter(Direction direction, String key, Object value, Exchange exchange) {
-        return false;
+        return !filterOnMatch;
     }
 
     private boolean doFiltering(Direction direction, String headerName, Object headerValue, Exchange exchange) {
         if (headerName == null) {
             return true;
         }
-        
+
         if (headerValue == null && !allowNullValues) {
             return true;
         }
-        
+
         Pattern pattern = null;
         Set<String> filter = null;
-        
+
         if (Direction.OUT == direction) {
             pattern = outFilterPattern;
-            filter = outFilter;                
+            filter = outFilter;
         } else if (Direction.IN == direction) {
             pattern = inFilterPattern;
             filter = inFilter;
         }
-   
+
         if (pattern != null && pattern.matcher(headerName).matches()) {
-            return true;
+            return filterOnMatch;
         }
-            
+
         if (filter != null) {
             if (isCaseInsensitive()) {
                 for (String filterString : filter) {
                     if (filterString.equalsIgnoreCase(headerName)) {
-                        return true;
+                        return filterOnMatch;
                     }
                 }
             } else if (isLowerCase()) {
                 if (filter.contains(headerName.toLowerCase(Locale.ENGLISH))) {
-                    return true;
+                    return filterOnMatch;
                 }
             } else {
                 if (filter.contains(headerName)) {
-                    return true;
+                    return filterOnMatch;
                 }
             }
         }

@@ -26,6 +26,7 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.apache.camel.api.management.JmxSystemPropertyKeys;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
