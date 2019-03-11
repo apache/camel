@@ -110,7 +110,7 @@ public class MainIoCTest extends Assert {
             return new PriorityBlockingQueueFactory();
         }
 
-        @BindToRegistry(name = "coolStuff")
+        @BindToRegistry("coolStuff")
         public String cool(@BeanInject MyCoolBean cool,
                            @PropertyInject(value = "magic", defaultValue = "456") int num,
                            @BeanInject("myBar") MyBar bar) {
