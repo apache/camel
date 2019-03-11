@@ -40,7 +40,6 @@ import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
-import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
@@ -53,6 +52,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
+import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.api.management.mbean.RouteError;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
