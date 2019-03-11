@@ -172,6 +172,7 @@ with the following path and query parameters:
 | *sslKeystorePassword* (security) | The store password for the key store file.This is optional for client and only needed if ssl.keystore.location is configured. |  | String
 | *sslTruststoreLocation* (security) | The location of the trust store file. |  | String
 | *sslTruststorePassword* (security) | The password for the trust store file. |  | String
+| *specificAvroReader* (confluent, consumer) | This enables the use of a specific Avro reader for use with the Confluent schema registry and the io.confluent.kafka.serializers.KafkaAvroDeserializer. The default value is false. | false | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
@@ -285,6 +286,7 @@ The component supports 99 options, which are listed below.
 | *camel.component.kafka.configuration.ssl-truststore-location* | The location of the trust store file. |  | String
 | *camel.component.kafka.configuration.ssl-truststore-password* | The password for the trust store file. |  | String
 | *camel.component.kafka.configuration.ssl-truststore-type* | The file format of the trust store file. Default value is JKS. | JKS | String
+| *camel.component.kafka.configuration.specificAvroReader* | This enables the use of a specific Avro reader for use with the Confluent schema registry and the io.confluent.kafka.serializers.KafkaAvroDeserializer. The default value is false. | false | boolean
 | *camel.component.kafka.configuration.topic* | Name of the topic to use. On the consumer you can use comma to separate multiple topics. A producer can only send a message to a single topic. |  | String
 | *camel.component.kafka.configuration.topic-is-pattern* | Whether the topic is a pattern (regular expression). This can be used to subscribe to dynamic number of topics matching the pattern. | false | Boolean
 | *camel.component.kafka.configuration.value-deserializer* | Deserializer class for value that implements the Deserializer interface. | org.apache.kafka.common.serialization.StringDeserializer | String
