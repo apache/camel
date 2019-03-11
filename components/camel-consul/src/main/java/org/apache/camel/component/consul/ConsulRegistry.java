@@ -158,7 +158,7 @@ public class ConsulRegistry implements Registry {
     }
 
     @Override
-    public void bind(String id, Object bean) throws RuntimeCamelException {
+    public void bind(String id, Class type, Object bean) throws RuntimeCamelException {
         put(id, bean);
     }
 

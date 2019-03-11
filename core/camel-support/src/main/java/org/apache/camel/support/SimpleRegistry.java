@@ -16,9 +16,8 @@
  */
 package org.apache.camel.support;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,9 +47,10 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
 
         Object answer = map.get(type);
         if (answer == null) {
-            for (Map.Entry<Class<?>, Object> entry : map.entrySet()) {
-                if (type.isAssignableFrom(entry.getKey())) {
-                    answer = entry.getValue();
+            // look for first entry that is the type
+            for (Object value : map.values()) {
+                if (type.isInstance(value)) {
+                    answer = value;
                     break;
                 }
             }
@@ -84,7 +84,7 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
 
     @Override
     public <T> Set<T> findByType(Class<T> type) {
-        Set<T> result = new HashSet<>();
+        Set<T> result = new LinkedHashSet<>();
         for (Map.Entry<String, Map<Class<?>, Object>> entry : entrySet()) {
             for (Object value : entry.getValue().values()) {
                 if (type.isInstance(value)) {
@@ -97,8 +97,8 @@ public class SimpleRegistry extends LinkedHashMap<String, Map<Class<?>, Object>>
     }
 
     @Override
-    public void bind(String id, Object bean) {
-        computeIfAbsent(id, k -> new LinkedHashMap<>()).put(bean.getClass(), wrap(bean));
+    public void bind(String id, Class type, Object bean) {
+        computeIfAbsent(id, k -> new LinkedHashMap<>()).put(type, wrap(bean));
     }
 
 }

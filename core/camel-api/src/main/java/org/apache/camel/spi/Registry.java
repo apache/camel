@@ -31,7 +31,22 @@ public interface Registry extends BeanRepository {
      * @param bean the bean
      * @throws RuntimeCamelException is thrown if binding is not possible
      */
-    void bind(String id, Object bean) throws RuntimeCamelException;
+    default void bind(String id, Object bean) throws RuntimeCamelException {
+        bind(id, bean.getClass(), bean);
+    }
+
+    /**
+     * Binds the bean to the repository (if possible).
+     * <p/>
+     * Binding by id and type allows to bind multiple entries with the same
+     * id but with different type.
+     *
+     * @param id   the id of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean the bean
+     * @throws RuntimeCamelException is thrown if binding is not possible
+     */
+    void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException;
 
     /**
      * Strategy to wrap the value to be stored in the registry.

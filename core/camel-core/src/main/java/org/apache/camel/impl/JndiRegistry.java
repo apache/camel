@@ -49,10 +49,10 @@ public class JndiRegistry extends JndiBeanRepository implements Registry {
     }
 
     @Override
-    public void bind(String name, Object object) {
+    public void bind(String id, Class<?> type, Object bean) throws RuntimeCamelException {
         try {
-            object = wrap(object);
-            getContext().bind(name, object);
+            Object object = wrap(bean);
+            getContext().bind(id, object);
         } catch (NamingException e) {
             throw new RuntimeCamelException(e);
         }
