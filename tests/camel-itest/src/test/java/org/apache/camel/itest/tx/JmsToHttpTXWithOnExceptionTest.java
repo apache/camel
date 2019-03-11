@@ -44,7 +44,7 @@ public class JmsToHttpTXWithOnExceptionTest extends AbstractJUnit4SpringContextT
     @Autowired
     private ProducerTemplate template;
 
-    @EndpointInject(ref = "data")
+    @EndpointInject(uri = "ref:data")
     private Endpoint data;
 
     @EndpointInject(uri = "mock:rollback")

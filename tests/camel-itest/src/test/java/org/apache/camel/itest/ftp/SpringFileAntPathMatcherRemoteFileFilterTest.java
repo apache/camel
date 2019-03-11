@@ -58,7 +58,7 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest extends AbstractJUnit4
     protected String expectedBody = "Godday World";
     @Autowired
     protected ProducerTemplate template;
-    @EndpointInject(ref = "myFTPEndpoint")
+    @EndpointInject(uri = "ref:myFTPEndpoint")
     protected Endpoint inputFTP;
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
