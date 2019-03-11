@@ -37,7 +37,11 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
 
     @Override
     public Object lookupByName(String name) {
-        return get(name);
+        Object answer = get(name);
+        if (answer != null) {
+            answer = unwrap(answer);
+        }
+        return answer;
     }
 
     @Override
@@ -63,7 +67,8 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
         Map<String, T> result = new HashMap<>();
         for (Map.Entry<String, Object> entry : entrySet()) {
             if (type.isInstance(entry.getValue())) {
-                result.put(entry.getKey(), type.cast(entry.getValue()));
+                Object value = unwrap(entry.getValue());
+                result.put(entry.getKey(), type.cast(value));
             }
         }
         return result;
@@ -74,7 +79,8 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
         Set<T> result = new HashSet<>();
         for (Map.Entry<String, Object> entry : entrySet()) {
             if (type.isInstance(entry.getValue())) {
-                result.add(type.cast(entry.getValue()));
+                Object value = unwrap(entry.getValue());
+                result.add(type.cast(value));
             }
         }
         return result;
@@ -82,6 +88,7 @@ public class SimpleRegistry extends HashMap<String, Object> implements Registry 
 
     @Override
     public void bind(String id, Object bean) {
-        put(id, bean);
+        put(id, wrap(bean));
     }
+
 }

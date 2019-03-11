@@ -66,6 +66,7 @@ public class OsgiBeanRepository extends LifecycleStrategySupport implements Bean
         } catch (Exception ex) {
             throw RuntimeCamelException.wrapRuntimeCamelException(ex);
         }
+        service = unwrap(service);
         return type.cast(service);
     }
 
@@ -94,6 +95,7 @@ public class OsgiBeanRepository extends LifecycleStrategySupport implements Bean
             incrementServiceUsage(sr);
             service = bundleContext.getService(sr);
         }
+        service = unwrap(service);
         return service;
     }
 
@@ -109,6 +111,7 @@ public class OsgiBeanRepository extends LifecycleStrategySupport implements Bean
                         incrementServiceUsage(sr);
                         if (service != null) {
                             String name = (String)sr.getProperty("name");
+                            service = unwrap(service);
                             if (name != null) {
                                 result.put(name, type.cast(service));
                             } else {

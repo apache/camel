@@ -59,4 +59,14 @@ public interface BeanRepository {
      */
     <T> Set<T> findByType(Class<T> type);
 
+    /**
+     * Strategy to wrap the value to be stored in the registry.
+     *
+     * @param value  the value
+     * @return the value to return
+     */
+    default Object unwrap(Object value) {
+        return value;
+    }
+
 }
