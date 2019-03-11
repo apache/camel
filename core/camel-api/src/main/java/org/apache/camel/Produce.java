@@ -44,11 +44,6 @@ public @interface Produce {
     String uri() default "";
 
     /**
-     * Reference to endpoint to produce to
-     */
-    String ref() default "";
-
-    /**
      * Use the field or getter on the bean to provide the uri to produce to
      */
     String property() default "";

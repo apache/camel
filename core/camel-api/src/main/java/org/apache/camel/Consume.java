@@ -42,11 +42,6 @@ public @interface Consume {
     String uri() default "";
 
     /**
-     * Reference to endpoint to consume from
-     */
-    String ref() default "";
-
-    /**
      * Use the field or getter on the bean to provide the uri to consume from
      */
     String property() default "";

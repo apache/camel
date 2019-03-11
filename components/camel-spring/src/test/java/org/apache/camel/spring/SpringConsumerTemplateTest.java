@@ -37,7 +37,7 @@ public class SpringConsumerTemplateTest extends SpringRunWithTestSupport {
     @Autowired
     private ConsumerTemplate consumer;
 
-    @EndpointInject(ref = "result")
+    @EndpointInject(uri = "ref:result")
     private MockEndpoint mock;
 
     @Test

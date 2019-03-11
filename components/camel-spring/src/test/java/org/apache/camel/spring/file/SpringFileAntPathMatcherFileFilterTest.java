@@ -32,7 +32,7 @@ public class SpringFileAntPathMatcherFileFilterTest extends SpringRunWithTestSup
     protected String expectedBody = "Godday World";
     @Autowired
     protected ProducerTemplate template;
-    @EndpointInject(ref = "myFileEndpoint")
+    @EndpointInject(uri = "ref:myFileEndpoint")
     protected Endpoint inputFile;
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;

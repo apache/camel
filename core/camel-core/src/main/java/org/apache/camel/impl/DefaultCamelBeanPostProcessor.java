@@ -170,12 +170,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
 
                 EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
                 if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
-                    injectField(field, endpointInject.uri(), endpointInject.ref(), endpointInject.property(), bean, beanName);
+                    injectField(field, endpointInject.uri(), endpointInject.property(), bean, beanName);
                 }
 
                 Produce produce = field.getAnnotation(Produce.class);
                 if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
-                    injectField(field, produce.uri(), produce.ref(), produce.property(), bean, beanName, produce.binding());
+                    injectField(field, produce.uri(), produce.property(), bean, beanName, produce.binding());
                 }
 
                 BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
@@ -186,15 +186,15 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         });
     }
 
-    public void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
+    public void injectField(Field field, String endpointUri, String endpointProperty,
                                Object bean, String beanName) {
-        injectField(field, endpointUri, endpointRef, endpointProperty, bean, beanName, true);
+        injectField(field, endpointUri, endpointProperty, bean, beanName, true);
     }
 
-    public void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
+    public void injectField(Field field, String endpointUri, String endpointProperty,
                                Object bean, String beanName, boolean binding) {
         ReflectionHelper.setField(field, bean,
-                getPostProcessorHelper().getInjectionValue(field.getType(), endpointUri, endpointRef, endpointProperty,
+                getPostProcessorHelper().getInjectionValue(field.getType(), endpointUri, endpointProperty,
                         field.getName(), bean, beanName, binding));
     }
 
@@ -251,12 +251,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
 
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
-            setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.ref(), endpointInject.property());
+            setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.property());
         }
 
         Produce produce = method.getAnnotation(Produce.class);
         if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
-            setterInjection(method, bean, beanName, produce.uri(), produce.ref(), produce.property());
+            setterInjection(method, bean, beanName, produce.uri(), produce.property());
         }
 
         BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
@@ -265,13 +265,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         }
     }
 
-    public void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointRef, String endpointProperty) {
+    public void setterInjection(Method method, Object bean, String beanName, String endpointUri, String endpointProperty) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes.length != 1) {
             LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: {}", method);
         } else {
             String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-            Object value = getPostProcessorHelper().getInjectionValue(parameterTypes[0], endpointUri, endpointRef, endpointProperty,
+            Object value = getPostProcessorHelper().getInjectionValue(parameterTypes[0], endpointUri, endpointProperty,
                     propertyName, bean, beanName);
             invokeMethod(method, bean, value);
         }
