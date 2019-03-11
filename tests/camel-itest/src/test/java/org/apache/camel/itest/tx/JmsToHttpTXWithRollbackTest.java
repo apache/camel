@@ -42,7 +42,7 @@ public class JmsToHttpTXWithRollbackTest extends AbstractJUnit4SpringContextTest
     // use the spring id to refer to the endpoint we should send data to
     // notice using this id we can setup the actual endpoint in spring XML
     // and we can even use spring ${ } property in the spring XML
-    @EndpointInject(ref = "data")
+    @EndpointInject(uri = "ref:data")
     private ProducerTemplate template;
 
     // the ok response to expect

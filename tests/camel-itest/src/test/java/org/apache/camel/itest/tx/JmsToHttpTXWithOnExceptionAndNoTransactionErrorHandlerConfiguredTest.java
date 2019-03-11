@@ -43,7 +43,7 @@ public class JmsToHttpTXWithOnExceptionAndNoTransactionErrorHandlerConfiguredTes
     @Autowired
     private ProducerTemplate template;
 
-    @EndpointInject(ref = "data")
+    @EndpointInject(uri = "ref:data")
     private Endpoint data;
 
     @EndpointInject(uri = "mock:rollback")
