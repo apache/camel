@@ -316,6 +316,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // Confluent only options
     @UriParam(label = "confluent")
     private String schemaRegistryURL;
+    @UriParam(label = "confluent,consumer", defaultValue = "false")
+    private boolean specificAvroReader = false;
 
     public KafkaConfiguration() {
     }
@@ -423,6 +425,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, ConsumerConfig.RETRY_BACKOFF_MS_CONFIG, getRetryBackoffMs());
         addPropertyIfNotNull(props, ConsumerConfig.RECONNECT_BACKOFF_MAX_MS_CONFIG, getReconnectBackoffMaxMs());
         addPropertyIfNotNull(props, "schema.registry.url", getSchemaRegistryURL());
+        addPropertyIfNotNull(props, "specific.avro.reader", isSpecificAvroReader());
 
         // SSL
         applySslConfiguration(props, getSslContextParameters());
@@ -812,6 +815,17 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      */
     public void setSchemaRegistryURL(String schemaRegistryURL) {
         this.schemaRegistryURL = schemaRegistryURL;
+    }
+    
+    public boolean isSpecificAvroReader() {
+    	return specificAvroReader;
+    }
+    
+    /**
+     * This enables the use of a specific Avro reader for use with the Confluent schema registry and the io.confluent.kafka.serializers.KafkaAvroDeserializer. The default value is false.
+     */
+    public void setSpecificAvroReader(boolean specificAvroReader) {
+    	this.specificAvroReader = specificAvroReader;
     }
 
     public String getCompressionCodec() {
