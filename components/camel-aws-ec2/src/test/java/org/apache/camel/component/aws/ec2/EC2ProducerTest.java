@@ -45,11 +45,11 @@ import org.junit.Test;
 
 public class EC2ProducerTest extends CamelTestSupport {
     
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint mock;
-    
     @BindToRegistry("amazonEc2Client")
     AmazonEC2ClientMock amazonEc2Client = new AmazonEC2ClientMock();
+
+    @EndpointInject(uri = "mock:result")
+    private MockEndpoint mock;
     
     @Test
     public void ec2CreateAndRunTest() throws Exception {
