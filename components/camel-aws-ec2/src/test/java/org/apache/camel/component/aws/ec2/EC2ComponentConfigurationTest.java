@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.ec2;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -26,6 +27,8 @@ import org.junit.Test;
 import static org.mockito.Mockito.mock;
 
 public class EC2ComponentConfigurationTest extends CamelTestSupport {
+    
+    @BindToRegistry("amazonEc2Client")
     AmazonEC2Client amazonEc2Client = mock(AmazonEC2Client.class);
 
     @Test
@@ -100,12 +103,5 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("amazonEc2Client", amazonEc2Client);
-        return registry;
     }
 }
