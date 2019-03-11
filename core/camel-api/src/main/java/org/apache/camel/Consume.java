@@ -39,6 +39,14 @@ public @interface Consume {
     /**
      * The uri to consume from
      */
+    String value() default "";
+
+    /**
+     * The uri to consume from
+     *
+     * @deprecated use value instead
+     */
+    @Deprecated
     String uri() default "";
 
     /**

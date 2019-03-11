@@ -42,7 +42,7 @@ public class DefaultInjectorTest extends Assert {
 
     public static class MyBean {
 
-        @Produce(uri = "language:simple:${body}${body}")
+        @Produce("language:simple:${body}${body}")
         ProducerTemplate template;
 
         public Object doSomething(String body) {

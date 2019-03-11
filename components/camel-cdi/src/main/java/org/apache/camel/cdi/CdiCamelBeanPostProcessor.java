@@ -72,7 +72,8 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
             EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
             if (endpointInject != null) {
                 try {
-                    injectField(field, endpointInject.uri(), endpointInject.property(), endpointInject.context(), bean, beanName);
+                    String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
+                    injectField(field, uri, endpointInject.property(), endpointInject.context(), bean, beanName);
                 } catch (Exception cause) {
                     throw new InjectionException("Injection of [" + endpointInject + "] for field [" + field + "] failed!", cause);
                 }
@@ -81,7 +82,8 @@ final class CdiCamelBeanPostProcessor extends DefaultCamelBeanPostProcessor {
             Produce produce = field.getAnnotation(Produce.class);
             if (produce != null) {
                 try {
-                    injectField(field, produce.uri(), produce.property(), produce.context(), bean, beanName);
+                    String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
+                    injectField(field, uri, produce.property(), produce.context(), bean, beanName);
                 } catch (Exception cause) {
                     throw new InjectionException("Injection of [" + produce + "] for field [" + field + "] failed!", cause);
                 }

@@ -171,7 +171,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
             String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.property(), propertyName, bean, "foo");
+            Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
 
@@ -195,7 +195,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
             String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.property(), propertyName, bean, "foo");
+            Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
 
@@ -223,7 +223,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         Class<?>[] parameterTypes = method.getParameterTypes();
         for (Class<?> type : parameterTypes) {
             String propertyName = org.apache.camel.util.ObjectHelper.getPropertyName(method);
-            Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.property(), propertyName, bean, "foo");
+            Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
             ObjectHelper.invokeMethod(method, bean, value);
         }
 
@@ -250,7 +250,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
         Class<?> type = field.getType();
         String propertyName = "producer";
-        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.property(), propertyName, bean, "foo");
+        Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
 
         field.set(bean, value);
 
@@ -275,7 +275,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
         Class<?> type = field.getType();
         String propertyName = "producer";
-        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.property(), propertyName, bean, "foo");
+        Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
 
         field.set(bean, value);
 
@@ -300,7 +300,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
         Class<?> type = field.getType();
         String propertyName = "producer";
-        Object value = helper.getInjectionValue(type, endpointInject.uri(), endpointInject.property(), propertyName, bean, "foo");
+        Object value = helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
 
         field.set(bean, value);
 
@@ -327,7 +327,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         String propertyName = "producer";
 
         try {
-            helper.getInjectionValue(type, endpointInject.uri(), endpointInject.property(), propertyName, bean, "foo");
+            helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
             fail("Should throw exception");
         } catch (ResolveEndpointFailedException e) {
             assertEquals("ref://unknown", e.getUri());
@@ -348,7 +348,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         String propertyName = "producer";
 
         try {
-            helper.getInjectionValue(type, endpointInject.uri(), endpointInject.property(), propertyName, bean, "foo");
+            helper.getInjectionValue(type, endpointInject.value(), endpointInject.property(), propertyName, bean, "foo");
             fail("Should throw exception");
         } catch (ResolveEndpointFailedException e) {
             assertEquals("Failed to resolve endpoint: xxx://foo due to: No component found with scheme: xxx", e.getMessage());
@@ -477,7 +477,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         EndpointInject inject = field.getAnnotation(EndpointInject.class);
         String propertyName = "fluent";
         Class<?> classType = field.getType();
-        Object value = helper.getInjectionValue(classType, inject.uri(), inject.property(), propertyName, myBean, "bla");
+        Object value = helper.getInjectionValue(classType, inject.value(), inject.property(), propertyName, myBean, "bla");
 
         field.set(myBean, value);
 
@@ -504,7 +504,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     public class MyConsumeBean {
 
-        @Consume(uri = "seda:foo")
+        @Consume("seda:foo")
         public void consumeSomething(String body) {
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);
@@ -513,7 +513,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     public class MyConsumeAndSynchronizationBean {
 
-        @Consume(uri = "seda:foo")
+        @Consume("seda:foo")
         public void consumeSomething(String body, Exchange exchange) {
             exchange.addOnCompletion(mySynchronization);
             assertEquals("Hello World", body);
@@ -523,7 +523,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     public class MyProduceAndSynchronizationBean {
 
-        @Produce(uri = "mock:result")
+        @Produce("mock:result")
         Producer producer;
 
         public void produceSomething(String body) throws Exception {
@@ -558,7 +558,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         private ProducerTemplate producer;
 
-        @EndpointInject(uri = "mock:result")
+        @EndpointInject("mock:result")
         public void setProducer(ProducerTemplate producer) {
             this.producer = producer;
         }
@@ -576,7 +576,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         private Producer producer;
 
-        @EndpointInject(uri = "mock:result")
+        @EndpointInject("mock:result")
         public void setProducer(Producer producer) {
             this.producer = producer;
         }
@@ -595,7 +595,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
         private PollingConsumer consumer;
 
-        @EndpointInject(uri = "seda:foo")
+        @EndpointInject("seda:foo")
         public void setConsumer(PollingConsumer consumer) {
             this.consumer = consumer;
         }
@@ -612,7 +612,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     public class MyEndpointInjectProducerTemplate {
 
-        @EndpointInject(uri = "mock:result")
+        @EndpointInject("mock:result")
         public ProducerTemplate producer;
 
         public void send(Exchange exchange) throws Exception {
@@ -623,7 +623,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     public class MyEndpointInjectFluentProducerTemplate {
 
-        @EndpointInject(uri = "mock:result")
+        @EndpointInject("mock:result")
         public FluentProducerTemplate producer;
 
         public void send(Exchange exchange) throws Exception {
@@ -645,7 +645,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     public class MyEndpointInjectProducerTemplateNameUnknown {
 
-        @EndpointInject(uri = "ref:unknown")
+        @EndpointInject("ref:unknown")
         public ProducerTemplate producer;
 
         public void send(Exchange exchange) throws Exception {
@@ -656,7 +656,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     public class MyEndpointInjectProducerTemplateUrlUnknown {
 
-        @EndpointInject(uri = "xxx:foo")
+        @EndpointInject("xxx:foo")
         public ProducerTemplate producer;
 
         public void send(Exchange exchange) throws Exception {
@@ -667,7 +667,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     public class MyPrivateConsumeBean {
 
-        @Consume(uri = "seda:foo")
+        @Consume("seda:foo")
         private void consumeSomethingPrivate(String body) {
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);

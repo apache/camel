@@ -27,7 +27,7 @@ public class DistributeRecordsBean {
 
     private static final Logger LOG = LoggerFactory.getLogger(DistributeRecordsBean.class);
 
-    @Consume(uri = "activemq:personnel.records")
+    @Consume("activemq:personnel.records")
     @RecipientList
     public String[] route(@XPath("/person/city/text()") String city) {
         if (city.equals("London")) {

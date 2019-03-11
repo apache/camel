@@ -851,12 +851,14 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
                     EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
                     if (endpointInject != null && matchContext(endpointInject.context())) {
-                        injectField(field, endpointInject.uri(), endpointInject.property(), bean, beanName);
+                        String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
+                        injectField(field, uri, endpointInject.property(), bean, beanName);
                     }
 
                     Produce produce = field.getAnnotation(Produce.class);
                     if (produce != null && matchContext(produce.context())) {
-                        injectField(field, produce.uri(), produce.property(), bean, beanName);
+                        String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
+                        injectField(field, uri, produce.property(), bean, beanName);
                     }
                 }
                 clazz = clazz.getSuperclass();
@@ -918,12 +920,14 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
             EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
             if (endpointInject != null && matchContext(endpointInject.context())) {
-                setterInjection(method, bean, beanName, endpointInject.uri(), endpointInject.property());
+                String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
+                setterInjection(method, bean, beanName, uri, endpointInject.property());
             }
 
             Produce produce = method.getAnnotation(Produce.class);
             if (produce != null && matchContext(produce.context())) {
-                setterInjection(method, bean, beanName, produce.uri(), produce.property());
+                String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
+                setterInjection(method, bean, beanName, uri, produce.property());
             }
         }
 
