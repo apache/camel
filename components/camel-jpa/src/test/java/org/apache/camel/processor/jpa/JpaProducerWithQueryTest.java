@@ -125,7 +125,7 @@ public class JpaProducerWithQueryTest extends Assert {
         Map<String, Object> params = new HashMap<>();
         params.put("custName", "${body}");
         // bind the params
-        registry.put("params", params);
+        registry.bind("params", params);
         camelContext.setRegistry(registry);
 
         camelContext.addRoutes(new RouteBuilder() {
