@@ -307,7 +307,7 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     public void shouldFailWhenThereIsNoJobLauncher() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("mockJob", job);
+        registry.bind("mockJob", job);
         CamelContext camelContext = new DefaultCamelContext(registry);
         camelContext.addRoutes(new RouteBuilder() {
             @Override
@@ -324,9 +324,9 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     public void shouldFailWhenThereIsMoreThanOneJobLauncher() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("mockJob", job);
-        registry.put("launcher1", jobLauncher);
-        registry.put("launcher2", jobLauncher);
+        registry.bind("mockJob", job);
+        registry.bind("launcher1", jobLauncher);
+        registry.bind("launcher2", jobLauncher);
         CamelContext camelContext = new DefaultCamelContext(registry);
         camelContext.addRoutes(new RouteBuilder() {
             @Override
@@ -343,8 +343,8 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
     public void shouldResolveAnyJobLauncher() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("mockJob", job);
-        registry.put("someRandomName", jobLauncher);
+        registry.bind("mockJob", job);
+        registry.bind("someRandomName", jobLauncher);
         CamelContext camelContext = new DefaultCamelContext(registry);
         camelContext.addRoutes(new RouteBuilder() {
             @Override
