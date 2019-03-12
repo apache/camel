@@ -74,7 +74,7 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
         super.initRegistry();
 
         // initialize the registry with our filter
-        getRegistry().put("myFilter", new NotificationFilter() {
+        getRegistry().bind("myFilter", new NotificationFilter() {
 
             private static final long serialVersionUID = 1L;
 

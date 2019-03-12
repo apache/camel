@@ -59,6 +59,6 @@ public class JMXHandbackTest extends SimpleBeanFixture {
     @Override
     protected void initRegistry() {
         super.initRegistry();
-        getRegistry().put("hb", hb);
+        getRegistry().bind("hb", hb);
     }
 }
