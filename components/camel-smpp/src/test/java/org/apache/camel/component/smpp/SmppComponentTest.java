@@ -178,7 +178,7 @@ public class SmppComponentTest {
     @Test
     public void createEndpointWithSessionStateListener() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("sessionStateListener", new SessionStateListener() {
+        registry.bind("sessionStateListener", new SessionStateListener() {
             @Override
             public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {
             }
