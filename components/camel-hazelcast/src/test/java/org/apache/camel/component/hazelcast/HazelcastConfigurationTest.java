@@ -188,7 +188,7 @@ public class HazelcastConfigurationTest {
             config.getNetworkConfig().getJoin().getTcpIpConfig().setEnabled(false);
 
             SimpleRegistry reg = new SimpleRegistry();
-            reg.put("my-config", config);
+            reg.bind("my-config", config);
 
             context = new DefaultCamelContext(reg);
             context.start();
@@ -253,8 +253,8 @@ public class HazelcastConfigurationTest {
             HazelcastInstance hzComponent = Hazelcast.newHazelcastInstance(componentConfig);
 
             SimpleRegistry reg = new SimpleRegistry();
-            reg.put(customConfig.getInstanceName(), customConfig);
-            reg.put(sharedConfig.getInstanceName(), hzShared);
+            reg.bind(customConfig.getInstanceName(), customConfig);
+            reg.bind(sharedConfig.getInstanceName(), hzShared);
 
             HazelcastMapComponent component = new HazelcastMapComponent();
             component.setHazelcastInstance(hzComponent);
