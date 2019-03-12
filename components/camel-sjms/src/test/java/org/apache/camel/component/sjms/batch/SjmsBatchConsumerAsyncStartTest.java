@@ -31,7 +31,7 @@ public class SjmsBatchConsumerAsyncStartTest extends SjmsBatchConsumerTest {
     @Override
     public CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("testStrategy", new ListAggregationStrategy());
+        registry.bind("testStrategy", new ListAggregationStrategy());
         ConnectionFactory connectionFactory = new MockConnectionFactory(broker.getTcpConnectorUri());
 
         SjmsComponent sjmsComponent = new SjmsComponent();

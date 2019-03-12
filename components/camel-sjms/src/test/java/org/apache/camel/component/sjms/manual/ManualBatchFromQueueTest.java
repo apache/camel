@@ -40,7 +40,7 @@ public class ManualBatchFromQueueTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("testStrategy", new ListAggregationStrategy());
+        registry.bind("testStrategy", new ListAggregationStrategy());
 
         CamelContext camel = new DefaultCamelContext(registry);
 

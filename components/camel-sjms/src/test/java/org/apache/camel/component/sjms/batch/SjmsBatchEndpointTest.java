@@ -54,7 +54,7 @@ public class SjmsBatchEndpointTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("aggStrategy", AggregationStrategies.groupedExchange());
+        registry.bind("aggStrategy", AggregationStrategies.groupedExchange());
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
         connectionFactory.setBrokerURL(broker.getTcpConnectorUri());

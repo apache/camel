@@ -48,7 +48,7 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
     @Override
     public CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("testStrategy", new ListAggregationStrategy());
+        registry.bind("testStrategy", new ListAggregationStrategy());
         // the only thing special about this MockConnectionFactor is it allows us to call returnBadSessionNTimes(int)
         // which will cause the MockSession to throw an IllegalStateException <int> times before returning a valid one.
         // This gives us the ability to test bad sessions
