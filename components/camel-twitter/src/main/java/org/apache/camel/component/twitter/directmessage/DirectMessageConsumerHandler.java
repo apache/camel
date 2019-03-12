@@ -36,7 +36,7 @@ public class DirectMessageConsumerHandler extends AbstractTwitterConsumerHandler
 
     @Override
     public List<Exchange> pollConsume() throws TwitterException {
-        List<DirectMessage> directMessages =  getTwitter().getDirectMessages(getLastIdPaging());
+        List<DirectMessage> directMessages =  getTwitter().getDirectMessages(endpoint.getProperties().getCount());
         for (int i = 0; i < directMessages.size(); i++) {
             setLastIdIfGreater(directMessages.get(i).getId());
         }
@@ -48,7 +48,7 @@ public class DirectMessageConsumerHandler extends AbstractTwitterConsumerHandler
     public List<Exchange> directConsume() throws TwitterException {
         return TwitterEventType.DIRECT_MESSAGE.createExchangeList(
             endpoint,
-            getTwitter().getDirectMessages()
+            getTwitter().getDirectMessages(endpoint.getProperties().getCount())
         );
     }
 }
