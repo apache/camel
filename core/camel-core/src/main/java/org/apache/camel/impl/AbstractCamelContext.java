@@ -33,7 +33,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,6 +49,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
@@ -189,7 +189,7 @@ import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
 /**
  * Represents the context used to configure routes and the policies to use.
  */
-public abstract class AbstractCamelContext extends ServiceSupport implements ModelCamelContext, Suspendable {
+public abstract class AbstractCamelContext extends ServiceSupport implements ModelCamelContext, CatalogCamelContext, Suspendable {
 
     public enum Initialization {
         Eager, Default, Lazy

@@ -30,6 +30,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -43,7 +44,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -614,7 +614,7 @@ public final class CamelContextHelper {
                     String title = null;
 
                     // enrich with more meta-data
-                    String json = camelContext.explainEipJson(line, false);
+                    String json = camelContext.adapt(CatalogCamelContext.class).explainEipJson(line, false);
                     if (json != null) {
                         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
 

@@ -43,6 +43,7 @@ import javax.management.openmbean.TabularDataSupport;
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -555,12 +556,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public String createRouteStaticEndpointJson() {
-        return getContext().createRouteStaticEndpointJson(getRouteId());
+        return getContext().adapt(CatalogCamelContext.class).createRouteStaticEndpointJson(getRouteId());
     }
 
     @Override
     public String createRouteStaticEndpointJson(boolean includeDynamic) {
-        return getContext().createRouteStaticEndpointJson(getRouteId(), includeDynamic);
+        return getContext().adapt(CatalogCamelContext.class).createRouteStaticEndpointJson(getRouteId(), includeDynamic);
     }
 
     @Override
