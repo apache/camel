@@ -40,7 +40,7 @@ public class AtomGoodBlogsTest extends TestSupport {
 
         // First we register a blog service in our bean registry
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("blogService", new BlogService());
+        registry.bind("blogService", new BlogService());
 
         // Then we create the camel context with our bean registry
         context = new DefaultCamelContext(registry);
