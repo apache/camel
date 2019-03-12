@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 291 in 226 JAR artifacts (0 deprecated)
+Number of Components: 292 in 227 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -111,6 +111,9 @@ Number of Components: 291 in 226 JAR artifacts (0 deprecated)
 
 | link:camel-aws-sns/src/main/docs/aws-sns-component.adoc[AWS Simple Notification System] (camel-aws-sns) +
 `aws-sns:topicNameOrArn` | 2.8 | The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
+
+| link:camel-aws-sqs/src/main/docs/aws-sqs-component.adoc[AWS Simple Queue Service] (camel-aws-sqs) +
+`aws-sqs:queueNameOrArn` | 2.6 | The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
 
 | link:camel-aws-swf/src/main/docs/aws-swf-component.adoc[AWS Simple Workflow] (camel-aws-swf) +
 `aws-swf:type` | 2.13 | The aws-swf component is used for managing workflows from Amazon Simple Workflow.
