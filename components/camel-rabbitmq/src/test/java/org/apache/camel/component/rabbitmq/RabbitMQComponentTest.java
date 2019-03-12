@@ -106,7 +106,7 @@ public class RabbitMQComponentTest {
     public void testConnectionFactoryRef() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         ConnectionFactory connectionFactoryMock = Mockito.mock(ConnectionFactory.class);
-        registry.put("connectionFactoryMock", connectionFactoryMock);
+        registry.bind("connectionFactoryMock", connectionFactoryMock);
 
         CamelContext defaultContext = new DefaultCamelContext(registry);
 
