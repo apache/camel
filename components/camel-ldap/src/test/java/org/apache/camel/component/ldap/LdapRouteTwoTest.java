@@ -65,7 +65,7 @@ public class LdapRouteTwoTest extends AbstractLdapTestUnit {
         env.put("java.naming.security.authentication", "simple");
 
         SimpleRegistry reg = new SimpleRegistry();
-        reg.put("localhost:" + port, env);
+        reg.bind("localhost:" + port, env);
         camel = new DefaultCamelContext(reg);
         template = camel.createProducerTemplate();
     }

@@ -66,7 +66,7 @@ public class LdapRouteTest extends AbstractLdapTestUnit {
         LdapContext ctx = getWiredContext(ldapServer);
 
         SimpleRegistry reg = new SimpleRegistry();
-        reg.put("localhost:" + port, ctx);
+        reg.bind("localhost:" + port, ctx);
         camel = new DefaultCamelContext(reg);
         template = camel.createProducerTemplate();
     }
