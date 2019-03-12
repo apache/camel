@@ -161,9 +161,9 @@
     <couchbase-client-version>1.4.13</couchbase-client-version>
     <couchbase-client-bundle-version>1.4.13_1</couchbase-client-bundle-version>
     <curator-version>2.12.0</curator-version>
-    <cxf-version>3.3.0</cxf-version>
+    <cxf-version>3.3.1</cxf-version>
     <cxf-version-range>[3.1,4.0)</cxf-version-range>
-    <cxf-codegen-plugin-version>3.3.0</cxf-codegen-plugin-version>
+    <cxf-codegen-plugin-version>3.3.1</cxf-codegen-plugin-version>
     <cxf-xjc-plugin-version>3.2.0</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.2.0</cxf-xjc-utils-version>
     <deltaspike-version>1.9.0</deltaspike-version>
@@ -5986,7 +5986,6 @@
     <profile>
       <id>faster-builds</id>
       <properties>
-        <cxf-codegen-plugin-version>3.3.1-SNAPSHOT</cxf-codegen-plugin-version>
         <maven-bundle-plugin-version>4.1.1-SNAPSHOT</maven-bundle-plugin-version>
       </properties>
     </profile>
