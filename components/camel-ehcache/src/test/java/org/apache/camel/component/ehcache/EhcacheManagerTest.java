@@ -75,7 +75,7 @@ public class EhcacheManagerTest {
 
         try {
             SimpleRegistry registry = new SimpleRegistry();
-            registry.put("myConf", new XmlConfiguration(getClass().getResource("/ehcache/ehcache-file-config.xml")));
+            registry.bind("myConf", new XmlConfiguration(getClass().getResource("/ehcache/ehcache-file-config.xml")));
 
             context = new DefaultCamelContext(registry);
             context.addRoutes(new RouteBuilder() {
@@ -120,7 +120,7 @@ public class EhcacheManagerTest {
             cacheManager = CacheManagerBuilder.newCacheManagerBuilder().build(true);
 
             SimpleRegistry registry = new SimpleRegistry();
-            registry.put("myManager", cacheManager);
+            registry.bind("myManager", cacheManager);
 
             context = new DefaultCamelContext(registry);
             context.addRoutes(new RouteBuilder() {
