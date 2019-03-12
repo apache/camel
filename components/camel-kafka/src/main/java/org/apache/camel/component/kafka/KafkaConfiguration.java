@@ -316,8 +316,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     // Confluent only options
     @UriParam(label = "confluent")
     private String schemaRegistryURL;
-    @UriParam(label = "confluent,consumer", defaultValue = "false")
-    private boolean specificAvroReader = false;
+    @UriParam(label = "confluent,consumer")
+    private boolean specificAvroReader;
 
     public KafkaConfiguration() {
     }
@@ -810,7 +810,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * URL of the Confluent schema registry servers to use. 
      * The format is host1:port1,host2:port2. 
      * This is known as schema.registry.url in the Confluent documentation.
-     * <p/>
      * This option is only available in the Confluent Kafka product (not standard Apache Kafka)
      */
     public void setSchemaRegistryURL(String schemaRegistryURL) {
@@ -822,7 +821,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
     
     /**
-     * This enables the use of a specific Avro reader for use with the Confluent schema registry and the io.confluent.kafka.serializers.KafkaAvroDeserializer. The default value is false.
+     * This enables the use of a specific Avro reader for use with the Confluent schema registry and the io.confluent.kafka.serializers.KafkaAvroDeserializer.
+     * This option is only available in the Confluent Kafka product (not standard Apache Kafka)
      */
     public void setSpecificAvroReader(boolean specificAvroReader) {
     	this.specificAvroReader = specificAvroReader;
