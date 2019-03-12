@@ -35,7 +35,7 @@ public class ECSProducerTest extends CamelTestSupport {
     @BindToRegistry("amazonEcsClient")
     AmazonECSClientMock clientMock = new AmazonECSClientMock();
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
     
     @Test
