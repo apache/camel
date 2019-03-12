@@ -50,8 +50,8 @@ public class DdbStreamEndpointTest {
     @Before
     public void setup() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("someSeqNumProv", sequenceNumberProvider);
-        registry.put("ddbStreamsClient", amazonDynamoDBStreams);
+        registry.bind("someSeqNumProv", sequenceNumberProvider);
+        registry.bind("ddbStreamsClient", amazonDynamoDBStreams);
 
         context = new DefaultCamelContext(registry);
     }
