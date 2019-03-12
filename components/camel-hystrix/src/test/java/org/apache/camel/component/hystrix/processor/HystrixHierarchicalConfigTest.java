@@ -41,8 +41,8 @@ public class HystrixHierarchicalConfigTest {
         ref.setGroupKey("ref-group-key");
         ref.setCorePoolSize(5);
 
-        registry.put(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, def);
-        registry.put("ref-hystrix", ref);
+        registry.bind(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, def);
+        registry.bind("ref-hystrix", ref);
 
         final HystrixReifier reifier = new HystrixReifier(
                 new HystrixDefinition()
@@ -112,8 +112,8 @@ public class HystrixHierarchicalConfigTest {
 
         context.adapt(ModelCamelContext.class).setHystrixConfiguration(def);
 
-        registry.put(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, defReg);
-        registry.put("ref-hystrix", ref);
+        registry.bind(HystrixConstants.DEFAULT_HYSTRIX_CONFIGURATION_ID, defReg);
+        registry.bind("ref-hystrix", ref);
 
         final HystrixReifier reifier = new HystrixReifier(
                 new HystrixDefinition()
