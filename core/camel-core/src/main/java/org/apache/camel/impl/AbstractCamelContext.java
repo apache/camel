@@ -999,10 +999,12 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         doWithDefinedClassLoader(() -> builder.addRoutesToCamelContext(AbstractCamelContext.this));
     }
 
+    @Deprecated
     public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {
         return ModelHelper.loadRoutesDefinition(this, is);
     }
 
+    @Deprecated
     public synchronized RestsDefinition loadRestsDefinition(InputStream is) throws Exception {
         // load routes using JAXB
         Unmarshaller unmarshaller = getModelJAXBContextFactory().newJAXBContext().createUnmarshaller();
@@ -1025,6 +1027,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         }
 
         return answer;
+    }
+
+    public void addRouteDefinitions(InputStream is) throws Exception {
+        RoutesDefinition def = ModelHelper.loadRoutesDefinition(this, is);
+        if (def != null) {
+            addRouteDefinitions(def.getRoutes());
+        }
     }
 
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
@@ -2608,7 +2617,19 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         return restDefinitions;
     }
 
-    public void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception {
+    public void addRestDefinitions(InputStream is) throws Exception {
+        RestsDefinition rests = ModelHelper.loadRestsDefinition(this, is);
+        if (rests != null) {
+            addRestDefinitions(rests.getRests());
+            // rests are also routes so need to add them there too
+            for (final RestDefinition restDefinition : rests.getRests()) {
+                List<RouteDefinition> routeDefinitions = restDefinition.asRouteDefinition(this);
+                addRouteDefinitions(routeDefinitions);
+            }
+        }
+    }
+
+    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception {
         if (restDefinitions == null || restDefinitions.isEmpty()) {
             return;
         }

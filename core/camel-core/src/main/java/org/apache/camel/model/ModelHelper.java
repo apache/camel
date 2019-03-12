@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Iterator;
@@ -28,9 +29,12 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
 
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -188,6 +192,30 @@ public final class ModelHelper {
             for (RouteDefinition route : answer.getRoutes()) {
                 applyNamespaces(route, namespaces);
             }
+        } else {
+            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
+        }
+
+        return answer;
+    }
+
+    public static RestsDefinition loadRestsDefinition(CamelContext context, InputStream is) throws Exception {
+        // load routes using JAXB
+        Unmarshaller unmarshaller = getJAXBContext(context).createUnmarshaller();
+        Object result = unmarshaller.unmarshal(is);
+
+        if (result == null) {
+            throw new IOException("Cannot unmarshal to rests using JAXB from input stream: " + is);
+        }
+
+        // can either be routes or a single route
+        RestsDefinition answer;
+        if (result instanceof RestDefinition) {
+            RestDefinition rest = (RestDefinition) result;
+            answer = new RestsDefinition();
+            answer.getRests().add(rest);
+        } else if (result instanceof RestsDefinition) {
+            answer = (RestsDefinition) result;
         } else {
             throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
         }

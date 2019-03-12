@@ -53,13 +53,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
 
         // load rest from XML and add them to the existing camel context
         InputStream is = getClass().getResourceAsStream("barRest.xml");
-        RestsDefinition rests = context.loadRestsDefinition(is);
-        context.addRestDefinitions(rests.getRests());
-
-        for (final RestDefinition restDefinition : rests.getRests()) {
-            List<RouteDefinition> routeDefinitions = restDefinition.asRouteDefinition(context);
-            context.addRouteDefinitions(routeDefinitions);
-        }
+        context.addRestDefinitions(is);
 
         assertNotNull("Loaded rest route should be there", context.getRoute("route1"));
         assertEquals(3, context.getRoutes().size());
