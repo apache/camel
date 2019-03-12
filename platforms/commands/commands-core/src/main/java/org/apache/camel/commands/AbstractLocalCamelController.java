@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
@@ -571,7 +571,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         if (context == null) {
             return null;
         }
-        return context.explainEndpointJson(uri, allOptions);
+        return context.adapt(CatalogCamelContext.class).explainEndpointJson(uri, allOptions);
     }
 
     public String explainEipAsJSon(String camelContextName, String nameOrId, boolean allOptions) throws Exception {
@@ -579,7 +579,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         if (context == null) {
             return null;
         }
-        return context.explainEipJson(nameOrId, allOptions);
+        return context.adapt(CatalogCamelContext.class).explainEipJson(nameOrId, allOptions);
     }
 
     public List<Map<String, String>> listComponents(String camelContextName) throws Exception {
@@ -591,7 +591,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         List<Map<String, String>> answer = new ArrayList<>();
 
         // find all components
-        Map<String, Properties> components = context.findComponents();
+        Map<String, Properties> components = context.adapt(CatalogCamelContext.class).findComponents();
 
         // gather component detail for each component
         for (Map.Entry<String, Properties> entry : components.entrySet()) {
@@ -609,7 +609,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             String version = null;
 
             // load component json data, and parse it to gather the component meta-data
-            String json = context.getComponentParameterJsonSchema(name);
+            String json = context.adapt(CatalogCamelContext.class).getComponentParameterJsonSchema(name);
             List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
             for (Map<String, String> row : rows) {
                 if (row.containsKey("description")) {

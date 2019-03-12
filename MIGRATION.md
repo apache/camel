@@ -134,6 +134,9 @@ The `Main` class from `camel-core`, `camel-spring` and `camel-cdi` has been modi
 
 The `ref` attribute on `@Consume`, `@Produce` and `@EndpointInject` has been removed. Instead use the ref component in the `uri` attribute, eg `uri = "ref:myName"`.
 
+The uri attribute has been deprecated, instead use value, which allows a shorthand style, from using `@Consume(uri = "jms:cheese")` to `@Consume("jms:cheese")`.
+
+
 ### Moved APIs
 
 The following API changes may affect your existing Camel applications, which needs to be migrated.
@@ -141,11 +144,16 @@ The following API changes may affect your existing Camel applications, which nee
 TODO: Should this be a table?
 TODO: Add the other moved classes/packages etc
 
-#### Generic Information
+#### CamelContext
 
 The methods on `CamelContext` that are related to catalog has been moved into a new `CatalogCamelContext` interface, which you can access by adapting:
 
     CatalogCamelContext ccc = context.adapt(CatalogCamelContext.class);
+
+The `loadRouteDefinitions` and `loadRestDefinitions` on `ModelCamelContext` has been changed to `addRouteDefinitions` and `addRestDefinitions` to be aligned with the other methods. You can find loader methods on the `ModelHelper` utility class.
+
+
+#### Generic Information
 
 The class `SimpleRegistry` is moved from `org.apache.camel.impl` to `org.apache.camel.support`. Also you should favour using the `org.apache.camel.support.DefaultRegistry` instead. Also you should use the `bind` operation instead of `put` to add entries to the `SimpleRegistry` or `DefaultRegistry`.
 

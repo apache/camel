@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
 
@@ -47,26 +46,6 @@ public interface ModelCamelContext extends CamelContext {
      * @return the route definition or <tt>null</tt> if not found
      */
     RouteDefinition getRouteDefinition(String id);
-
-    /**
-     * Loads a collection of route definitions from the given {@link java.io.InputStream}.
-     *
-     * @param is input stream with the route(s) definition to add
-     * @return the route definitions
-     * @throws Exception if the route definitions could not be loaded for whatever reason
-     */
-    @Deprecated
-    RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
-
-    /**
-     * Loads a collection of rest definitions from the given {@link java.io.InputStream}.
-     *
-     * @param is input stream with the rest(s) definition to add
-     * @return the rest definitions
-     * @throws Exception if the rest definitions could not be loaded for whatever reason
-     */
-    @Deprecated
-    RestsDefinition loadRestsDefinition(InputStream is) throws Exception;
 
     /**
      * Adds a collection of route definitions to the context
@@ -133,17 +112,19 @@ public interface ModelCamelContext extends CamelContext {
      * Adds a collection of rest definitions to the context
      *
      * @param is input stream with the rest(s) definition to add
+     * @param addToRoutes whether the rests should also automatically be added as routes
      * @throws Exception if the rest definitions could not be created for whatever reason
      */
-    void addRestDefinitions(InputStream is) throws Exception;
+    void addRestDefinitions(InputStream is, boolean addToRoutes) throws Exception;
 
     /**
      * Adds a collection of rest definitions to the context
      *
      * @param restDefinitions the rest(s) definition to add
+     * @param addToRoutes whether the rests should also automatically be added as routes
      * @throws Exception if the rest definitions could not be created for whatever reason
      */
-    void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception;
+    void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception;
 
     /**
      * Sets the data formats that can be referenced in the routes.
