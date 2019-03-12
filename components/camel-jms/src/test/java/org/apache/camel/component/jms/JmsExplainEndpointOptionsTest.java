@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class JmsExplainEndpointOptionsTest extends CamelTestSupport {
 
     @Test
     public void testExplain() throws Exception {
-        String json = context.explainEndpointJson("jms:browse.me", true);
+        String json = context.adapt(CatalogCamelContext.class).explainEndpointJson("jms:browse.me", true);
         assertNotNull(json);
 
         assertTrue(json.contains("\"defaultValue\": \"queue\""));

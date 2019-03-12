@@ -44,7 +44,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -997,36 +996,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         init();
         log.debug("Adding routes from builder: {}", builder);
         doWithDefinedClassLoader(() -> builder.addRoutesToCamelContext(AbstractCamelContext.this));
-    }
-
-    @Deprecated
-    public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {
-        return ModelHelper.loadRoutesDefinition(this, is);
-    }
-
-    @Deprecated
-    public synchronized RestsDefinition loadRestsDefinition(InputStream is) throws Exception {
-        // load routes using JAXB
-        Unmarshaller unmarshaller = getModelJAXBContextFactory().newJAXBContext().createUnmarshaller();
-        Object result = unmarshaller.unmarshal(is);
-
-        if (result == null) {
-            throw new IOException("Cannot unmarshal to rests using JAXB from input stream: " + is);
-        }
-
-        // can either be routes or a single route
-        RestsDefinition answer;
-        if (result instanceof RestDefinition) {
-            RestDefinition rest = (RestDefinition) result;
-            answer = new RestsDefinition();
-            answer.getRests().add(rest);
-        } else if (result instanceof RestsDefinition) {
-            answer = (RestsDefinition) result;
-        } else {
-            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
-        }
-
-        return answer;
     }
 
     public void addRouteDefinitions(InputStream is) throws Exception {
@@ -2617,24 +2586,26 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
         return restDefinitions;
     }
 
-    public void addRestDefinitions(InputStream is) throws Exception {
+    public void addRestDefinitions(InputStream is, boolean addToRoutes) throws Exception {
         RestsDefinition rests = ModelHelper.loadRestsDefinition(this, is);
         if (rests != null) {
-            addRestDefinitions(rests.getRests());
-            // rests are also routes so need to add them there too
-            for (final RestDefinition restDefinition : rests.getRests()) {
-                List<RouteDefinition> routeDefinitions = restDefinition.asRouteDefinition(this);
-                addRouteDefinitions(routeDefinitions);
-            }
+            addRestDefinitions(rests.getRests(), addToRoutes);
         }
     }
 
-    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception {
+    public synchronized void addRestDefinitions(Collection<RestDefinition> restDefinitions, boolean addToRoutes) throws Exception {
         if (restDefinitions == null || restDefinitions.isEmpty()) {
             return;
         }
 
         this.restDefinitions.addAll(restDefinitions);
+        if (addToRoutes) {
+            // rests are also routes so need to add them there too
+            for (final RestDefinition restDefinition : restDefinitions) {
+                List<RouteDefinition> routeDefinitions = restDefinition.asRouteDefinition(this);
+                addRouteDefinitions(routeDefinitions);
+            }
+        }
     }
 
     public RestConfiguration getRestConfiguration() {

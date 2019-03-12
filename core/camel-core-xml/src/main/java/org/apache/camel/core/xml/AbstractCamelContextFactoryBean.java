@@ -412,15 +412,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             initRestRefs();
 
             // and add the rests
-            getContext().addRestDefinitions(getRests());
+            getContext().addRestDefinitions(getRests(), true);
 
-            // convert rests into routes so we reuse routes for runtime
-            for (RestDefinition rest : getRests()) {
-                List<RouteDefinition> routes = rest.asRouteDefinition(getContext());
-                for (RouteDefinition route : routes) {
-                    getRoutes().add(route);
-                }
-            }
             // convert rests api-doc into routes so they are routes for runtime
             for (RestConfiguration config : getContext().getRestConfigurations()) {
                 if (config.getApiContextPath() != null) {
