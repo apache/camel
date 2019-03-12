@@ -62,7 +62,7 @@ public class CamelReactiveStreamsTest {
         ReactiveStreamsComponent component = new ReactiveStreamsComponent();
 
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("dummy", new ReactiveStreamsTestService("from-registry"));
+        registry.bind("dummy", new ReactiveStreamsTestService("from-registry"));
 
         DefaultCamelContext context = new DefaultCamelContext(registry);
         context.addComponent(ReactiveStreamsConstants.SCHEME, component);
