@@ -480,7 +480,8 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 }
             }
         }
-        camelContext.addRestDefinitions(getRestCollection().getRests(), true);
+        // cannot add as routes yet as when using Java DSL with rest we need to initialize this specially
+        camelContext.addRestDefinitions(getRestCollection().getRests(), false);
 
         // convert rests api-doc into routes so they are routes for runtime
         for (RestConfiguration config : camelContext.getRestConfigurations()) {
@@ -502,6 +503,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 }
             }
         }
+        // add rest as routes and have them prepared as well via routeCollection.route method
+        getRestCollection().getRests()
+            .forEach(rest -> rest.asRouteDefinition(getContext())
+                .forEach(route -> getRouteCollection().route(route)));
     }
 
     protected void populateTransformers() {
