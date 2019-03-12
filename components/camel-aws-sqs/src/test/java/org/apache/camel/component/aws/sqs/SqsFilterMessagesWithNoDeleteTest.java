@@ -67,7 +67,7 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
         });
         MockEndpoint result = MockEndpoint.resolve(ctx, "mock:result");
         clientMock.setScheduler(ctx.getExecutorServiceManager().newScheduledThreadPool(clientMock, "ClientMock Scheduler", 1));
-        registry.put("amazonSQSClient", clientMock);
+        registry.bind("amazonSQSClient", clientMock);
 
         result.expectedMessageCount(0);
 
@@ -111,7 +111,7 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
             }
         });
         MockEndpoint result = MockEndpoint.resolve(ctx, "mock:result");
-        registry.put("amazonSQSClient", clientMock);
+        registry.bind("amazonSQSClient", clientMock);
         clientMock.setScheduler(ctx.getExecutorServiceManager().newScheduledThreadPool(clientMock, "ClientMock Scheduler", 1));
 
         result.expectedMessageCount(1);
