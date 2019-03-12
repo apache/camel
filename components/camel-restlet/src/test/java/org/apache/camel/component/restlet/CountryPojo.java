@@ -39,6 +39,6 @@ public class CountryPojo {
 
     @Override
     public String toString() {
-        return "{\"iso\":\"" + this.iso + "\",\"country\":\"" + this.country +"\"}";
+        return "{\"iso\":\"" + this.iso + "\",\"country\":\"" + this.country + "\"}";
     }
 }
