@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -28,12 +29,13 @@
 
     <artifactId>camel-jackson</artifactId>
     <packaging>jar</packaging>
+
     <name>Camel :: Jackson</name>
     <description>Camel Jackson support</description>
 
     <properties>
         <camel.osgi.import.before.defaults>
-          com.fasterxml.jackson.*;version="[2.6,3)"
+            com.fasterxml.jackson.*;version="[2.6,3)"
         </camel.osgi.import.before.defaults>
     </properties>
 
@@ -44,8 +46,8 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-          <groupId>com.fasterxml.jackson.core</groupId>
-          <artifactId>jackson-databind</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
@@ -57,7 +59,7 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
             <scope>test</scope>
-        </dependency>   
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -79,5 +81,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

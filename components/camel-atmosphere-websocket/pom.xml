@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -50,17 +51,17 @@
     <dependencies>
         <!-- Camel -->
         <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-support</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-servlet</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-servlet</artifactId>
         </dependency>
         <dependency>
-          <groupId>javax.servlet</groupId>
-          <artifactId>javax.servlet-api</artifactId>
-          <version>${javax.servlet-api-version}</version>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax.servlet-api-version}</version>
         </dependency>
 
         <!--  atmosphere -->
@@ -69,7 +70,7 @@
             <artifactId>atmosphere-runtime</artifactId>
             <version>${atmosphere-version}</version>
         </dependency>
-        
+
 
         <!-- test dependencies -->
         <dependency>
@@ -125,7 +126,7 @@
             <scope>test</scope>
         </dependency>
 
-       <!-- Jetty for testing -->
-        
+        <!-- Jetty for testing -->
+
     </dependencies>
 </project>

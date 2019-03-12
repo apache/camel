@@ -17,34 +17,34 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel.example</groupId>
-    <artifactId>examples</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel.example</groupId>
+        <artifactId>examples</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-example-twitter-websocket-blueprint</artifactId>
-  <name>Camel :: Example :: Twitter WebSocket :: OSGi</name>
-  <description>An example that pushes new tweets to a web page using web-socket</description>
-  <packaging>jar</packaging>
+    <artifactId>camel-example-twitter-websocket-blueprint</artifactId>
+    <name>Camel :: Example :: Twitter WebSocket :: OSGi</name>
+    <description>An example that pushes new tweets to a web page using web-socket</description>
+    <packaging>jar</packaging>
 
-  <properties>
-    <category>Social</category>
+    <properties>
+        <category>Social</category>
 
-    <camel.osgi.import.pkg>
-      *
-    </camel.osgi.import.pkg>
-    <camel.osgi.export.pkg>
-      *
-    </camel.osgi.export.pkg>
-  </properties>
+        <camel.osgi.import.pkg>
+            *
+        </camel.osgi.import.pkg>
+        <camel.osgi.export.pkg>
+            *
+        </camel.osgi.export.pkg>
+    </properties>
 
-  <!-- there are no maven dependencies needed as the Camel application has no Java code,
-       and its all defined in the src/main/resources/OSGI-INF/blueprint/camel-twitter.xml file -->
+    <!-- there are no maven dependencies needed as the Camel application has no Java code,
+         and its all defined in the src/main/resources/OSGI-INF/blueprint/camel-twitter.xml file -->
 
 </project>

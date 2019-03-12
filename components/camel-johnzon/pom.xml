@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -41,20 +42,20 @@
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.apache.johnzon</groupId>
-          <artifactId>johnzon-core</artifactId>
-          <version>${johnzon-version}</version>
+            <groupId>org.apache.johnzon</groupId>
+            <artifactId>johnzon-core</artifactId>
+            <version>${johnzon-version}</version>
         </dependency>
         <dependency>
-          <groupId>org.apache.johnzon</groupId>
-          <artifactId>johnzon-mapper</artifactId>
-          <version>${johnzon-version}</version>
+            <groupId>org.apache.johnzon</groupId>
+            <artifactId>johnzon-mapper</artifactId>
+            <version>${johnzon-version}</version>
         </dependency>
         <dependency>
-          <groupId>org.apache.geronimo.specs</groupId>
-          <artifactId>geronimo-json_1.1_spec</artifactId>
-          <version>${geronimo-json-spec-version}</version>
-          <scope>compile</scope>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-json_1.1_spec</artifactId>
+            <version>${geronimo-json-spec-version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- testing -->
@@ -62,7 +63,7 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
             <scope>test</scope>
-        </dependency>   
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>

@@ -17,84 +17,85 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>tooling</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>tooling</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>maven-plugins</artifactId>
-  <name>Camel :: Maven Plugins</name>
-  <description>Camel Maven Plugins</description>
-  <packaging>pom</packaging>
+    <artifactId>maven-plugins</artifactId>
+    <packaging>pom</packaging>
 
-  <modules>
-    <module>camel-package-maven-plugin</module>
-    <module>camel-maven-plugin</module>
-    <module>camel-eip-documentation-enricher-maven-plugin</module>
-    <module>camel-api-component-maven-plugin</module>
-    <module>bom-generator-maven-plugin</module>
-    <module>camel-restdsl-swagger-plugin</module>
-    <module>camel-javadoc-plugin</module>
-  </modules>
+    <name>Camel :: Maven Plugins</name>
+    <description>Camel Maven Plugins</description>
 
-  <!-- Apply to children. -->
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>bundle-jar</id>
-              <phase>package</phase>
-            </execution>
-          </executions>
-          <configuration>
-            <archive combine.self="override">
-              <manifestFile/>
-              <manifest>
-                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              </manifest>
-            </archive>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.felix</groupId>
-          <artifactId>maven-bundle-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>bundle-manifest</id>
-              <phase>none</phase>
-            </execution>
-            <execution>
-              <id>versions</id>
-              <phase>none</phase>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>none</phase>
-          </execution>
-          <execution>
-            <id>versions</id>
-            <phase>none</phase>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+    <modules>
+        <module>camel-package-maven-plugin</module>
+        <module>camel-maven-plugin</module>
+        <module>camel-eip-documentation-enricher-maven-plugin</module>
+        <module>camel-api-component-maven-plugin</module>
+        <module>bom-generator-maven-plugin</module>
+        <module>camel-restdsl-swagger-plugin</module>
+        <module>camel-javadoc-plugin</module>
+    </modules>
 
+    <!-- Apply to children. -->
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>bundle-jar</id>
+                            <phase>package</phase>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <archive combine.self="override">
+                            <manifestFile/>
+                            <manifest>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.felix</groupId>
+                    <artifactId>maven-bundle-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>bundle-manifest</id>
+                            <phase>none</phase>
+                        </execution>
+                        <execution>
+                            <id>versions</id>
+                            <phase>none</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>versions</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

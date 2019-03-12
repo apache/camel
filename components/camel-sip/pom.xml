@@ -17,74 +17,75 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>components</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
-  
-	<artifactId>camel-sip</artifactId>
-	<packaging>jar</packaging>
-	<name>Camel :: SIP</name>
-	<description>Camel SIP protocol based communication component</description>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>components</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-	<properties>
-	</properties>
-	
-  	<dependencies>
-	    <dependency>
-	      	<groupId>org.apache.camel</groupId>
-	      	<artifactId>camel-support</artifactId>
-	    </dependency>   
-            <dependency>
-	      	<groupId>org.opentelecoms.sip</groupId>
-	      	<artifactId>sip-api-1.2</artifactId>
-	      	<version>${sip-api-version}</version>
-	    </dependency>
-	    <dependency>
-	      	<groupId>org.apache.servicemix.bundles</groupId>
-	      	<artifactId>org.apache.servicemix.bundles.jain-sip-ri</artifactId>
-	      	<version>${jain-sip-ri-bundle-version}</version>
-	    </dependency>
-	    	       
-		<!-- test dependencies -->
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-         <!-- logging -->
+    <artifactId>camel-sip</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: SIP</name>
+    <description>Camel SIP protocol based communication component</description>
+
+    <properties>
+    </properties>
+
+    <dependencies>
         <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-api</artifactId>
-          <scope>test</scope>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-core</artifactId>
-          <scope>test</scope>
+            <groupId>org.opentelecoms.sip</groupId>
+            <artifactId>sip-api-1.2</artifactId>
+            <version>${sip-api-version}</version>
         </dependency>
         <dependency>
-          <groupId>org.apache.logging.log4j</groupId>
-          <artifactId>log4j-slf4j-impl</artifactId>
-          <scope>test</scope>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.jain-sip-ri</artifactId>
+            <version>${jain-sip-ri-bundle-version}</version>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- workaround for org.apache.log4j.AppenderSkeleton -->
         <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>log4j-over-slf4j</artifactId>
-          <scope>test</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <scope>test</scope>
         </dependency>
-  	</dependencies>
+    </dependencies>
 
 </project>

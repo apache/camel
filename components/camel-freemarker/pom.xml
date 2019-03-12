@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -32,9 +33,9 @@
     <description>Camel Freemarker support</description>
 
     <properties>
-    	<camel.osgi.import.additional>
-    		freemarker.*;version="[2.3.15,3)"
-    	</camel.osgi.import.additional>
+        <camel.osgi.import.additional>
+            freemarker.*;version="[2.3.15,3)"
+        </camel.osgi.import.additional>
     </properties>
 
     <dependencies>
@@ -52,10 +53,10 @@
         <!-- testing -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring</artifactId>            
+            <artifactId>camel-test-spring</artifactId>
             <scope>test</scope>
-        </dependency>      
-           
+        </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>

@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -27,6 +28,7 @@
     </parent>
 
     <artifactId>camel-buildtools</artifactId>
+
     <name>Camel :: Buildtools</name>
     <description>The build tools for the Apache Camel project</description>
 
@@ -48,8 +50,7 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-            <plugin>
-                <!--
+            <plugin><!--
                      This updates header-*.txt with the content of
                      header.txt and the appropriate formatting for
                      the specific style.
@@ -80,14 +81,14 @@
                             </mapping>
                             <headerDefinitions>
                                 <!-- custom style for properties files -->
-                                <headerDefinition>src/main/resources/license-properties-headerdefinition.xml</headerDefinition>
+                                <headerDefinition>src/main/resources/license-properties-headerdefinition.xml
+                                </headerDefinition>
                             </headerDefinitions>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <!--
+            <plugin><!--
                      This loads the content of header-*.txt into
                      header-* Maven properties to be included for
                      resource filtering below.
@@ -119,17 +120,16 @@
                         <artifactId>groovy-ant</artifactId>
                         <version>${groovy-version}</version>
                         <scope>runtime</scope>
-		    </dependency>
-	            <dependency>
+                    </dependency>
+                    <dependency>
                         <groupId>org.codehaus.groovy</groupId>
                         <artifactId>groovy-xml</artifactId>
                         <version>${groovy-version}</version>
                         <scope>runtime</scope>
-		    </dependency>
+                    </dependency>
                 </dependencies>
             </plugin>
-            <plugin>
-                <!--
+            <plugin><!--
                      This is needed so that the camel-checkstyle.xml is
                      filltered so that the header values are updated
                      with header-* Maven properties.
@@ -146,7 +146,6 @@
                     <useDefaultDelimiters>false</useDefaultDelimiters>
                 </configuration>
             </plugin>
-       </plugins>
+        </plugins>
     </build>
-
 </project>

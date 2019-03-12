@@ -17,15 +17,16 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-parent</artifactId>
-      <version>3.0.0-SNAPSHOT</version>
-      <relativePath>../../parent</relativePath>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+        <relativePath>../../parent</relativePath>
     </parent>
 
     <groupId>org.apache.camel.tests.bundles</groupId>
@@ -35,11 +36,12 @@
 
     <properties>
         <servicemix.legal.version>1.0</servicemix.legal.version>
-        <camel.osgi.export>${camel.osgi.export.pkg}*;version=${pkgVersion};-split-package:=merge-first</camel.osgi.export>
-        <camel.osgi.export.pkg />
-        <camel.osgi.import.pkg />
-        <camel.osgi.private.pkg />
-        <camel.osgi.dynamicimport.pkg />
+        <camel.osgi.export>${camel.osgi.export.pkg}*;version=${pkgVersion};-split-package:=merge-first
+        </camel.osgi.export>
+        <camel.osgi.export.pkg/>
+        <camel.osgi.import.pkg/>
+        <camel.osgi.private.pkg/>
+        <camel.osgi.dynamicimport.pkg/>
         <camel.osgi.failok>false</camel.osgi.failok>
     </properties>
 
@@ -74,7 +76,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -125,12 +127,12 @@
                         </configuration>
                     </execution>
                 </executions>
-                <dependencies>                  
+                <dependencies>
                     <dependency>
-                         <groupId>org.apache.servicemix.legal</groupId>
-                         <artifactId>legal</artifactId>
-                         <version>${servicemix.legal.version}</version>
-                         <type>xml</type>
+                        <groupId>org.apache.servicemix.legal</groupId>
+                        <artifactId>legal</artifactId>
+                        <version>${servicemix.legal.version}</version>
+                        <type>xml</type>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -160,9 +162,9 @@
             </plugin>
         </plugins>
     </build>
-   
-   <modules>
-     <module>mock-javamail_1.7</module>
-     <module>camel-validator-test-resources</module>
-   </modules>
+
+    <modules>
+        <module>mock-javamail_1.7</module>
+        <module>camel-validator-test-resources</module>
+    </modules>
 </project>

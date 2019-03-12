@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -119,7 +120,7 @@
                     <artifactId>infinispan-remote-query-client</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>           
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -195,12 +196,12 @@
                 <server.dir>${server.dir.parent}/${server.dir.name}</server.dir>
             </properties>
             <build>
-                 <plugins>
-                     <plugin>
-                         <groupId>org.apache.maven.plugins</groupId>
-                         <artifactId>maven-antrun-plugin</artifactId>
-                         <executions>
-                             <execution>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <executions>
+                            <execution>
                                 <id>install-binary-distribution</id>
                                 <phase>generate-test-resources</phase>
                                 <goals>
@@ -209,14 +210,14 @@
                                 <configuration>
                                     <target>
                                         <get
-                                         src="https://downloads.jboss.org/infinispan/${infinispan-version}/infinispan-server-${infinispan-version}.zip"
-                                         dest="${project.build.directory}/infinispan-server-${infinispan-version}.zip"/>
+                                                src="https://downloads.jboss.org/infinispan/${infinispan-version}/infinispan-server-${infinispan-version}.zip"
+                                                dest="${project.build.directory}/infinispan-server-${infinispan-version}.zip"/>
                                         <unzip
-                                         src="${project.build.directory}/infinispan-server-${infinispan-version}.zip"
-                                         dest="${server.dir.parent}"/>
-                                   </target>
-                               </configuration>
-                           </execution>
+                                                src="${project.build.directory}/infinispan-server-${infinispan-version}.zip"
+                                                dest="${server.dir.parent}"/>
+                                    </target>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -270,17 +271,29 @@
                                     <executeCommands>
                                         <commands>
                                             <!-- Separate cache for protobuf serialized objects. -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=remote_query:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=remote_query:add(configuration=default)
+                                            </command>
                                             <!-- Separate cache for converter factory which uses Int keys -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=static_converter_factory:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=static_converter_factory:add(configuration=default)
+                                            </command>
                                             <!-- Separate cache for converter factory which uses Int keys -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=static_filter_factory:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=static_filter_factory:add(configuration=default)
+                                            </command>
                                             <!-- Separate cache for @ClientListener(includeCurrentState=true) -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=include_current_state:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=include_current_state:add(configuration=default)
+                                            </command>
                                             <!-- Separate cache for misc tests. -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=misc_cache:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=misc_cache:add(configuration=default)
+                                            </command>
                                             <!-- Separate cache for idempotent tests. -->
-                                            <command>/subsystem=datagrid-infinispan/cache-container=local/local-cache=idempotent:add(configuration=default)</command>
+                                            <command>
+                                                /subsystem=datagrid-infinispan/cache-container=local/local-cache=idempotent:add(configuration=default)
+                                            </command>
                                         </commands>
                                     </executeCommands>
                                 </configuration>
