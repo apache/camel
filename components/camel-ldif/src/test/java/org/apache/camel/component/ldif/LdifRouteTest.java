@@ -74,7 +74,7 @@ public class LdifRouteTest extends AbstractLdapTestUnit {
         ldapContext = getWiredContext(ldapServer);
 
         SimpleRegistry reg = new SimpleRegistry();
-        reg.put(LDAP_CONN_NAME, getWiredConnection(ldapServer));
+        reg.bind(LDAP_CONN_NAME, getWiredConnection(ldapServer));
         camel = new DefaultCamelContext(reg);
         template = camel.createProducerTemplate();
     }
