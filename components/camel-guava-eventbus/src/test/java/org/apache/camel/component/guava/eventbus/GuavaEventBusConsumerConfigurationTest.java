@@ -36,7 +36,7 @@ public class GuavaEventBusConsumerConfigurationTest extends CamelTestSupport {
     public void invalidConfiguration() throws Exception {
         // Given
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("eventBus", new EventBus());
+        registry.bind("eventBus", new EventBus());
         CamelContext context = new DefaultCamelContext(registry);
         context.addRoutes(new RouteBuilder() {
             @Override
