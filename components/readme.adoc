@@ -812,7 +812,8 @@ Number of Components: 292 in 227 JAR artifacts (0 deprecated)
 `thrift:host:port/service` | 2.20 | The Thrift component allows to call and expose remote procedures (RPC) with Apache Thrift data format and serialization mechanism
 
 | link:camel-tika/src/main/docs/tika-component.adoc[Tika] (camel-tika) +
-`tika:operation` | 2.19 | This component integrates with Apache Tika to extract content and metadata from thousands of file types.
+`tika:operation` | 2.19 | This component integrates with Apache Tika to extract content and metadata from thousands of file
+        types.
 
 | link:camel-timer/src/main/docs/timer-component.adoc[Timer] (camel-timer) +
 `timer:timerName` | 1.0 | The timer component is used for generating message exchanges when a timer fires.
