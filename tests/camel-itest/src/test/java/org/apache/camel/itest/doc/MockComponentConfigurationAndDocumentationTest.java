@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest.doc;
 
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -28,7 +29,7 @@ public class MockComponentConfigurationAndDocumentationTest extends CamelTestSup
 
     @Test
     public void testEndpointExplain() throws Exception {
-        String json = context.explainEndpointJson("mock:foo?retainFirst=10", true);
+        String json = context.adapt(CatalogCamelContext.class).explainEndpointJson("mock:foo?retainFirst=10", true);
         assertNotNull(json);
 
         assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\","
