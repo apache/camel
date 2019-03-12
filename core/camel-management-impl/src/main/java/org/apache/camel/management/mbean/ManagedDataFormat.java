@@ -26,6 +26,7 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
@@ -94,7 +95,7 @@ public class ManagedDataFormat implements ManagedInstance, ManagedDataFormatMBea
     public String informationJson() {
         String dataFormatName = getName();
         if (dataFormatName != null) {
-            return camelContext.explainDataFormatJson(dataFormatName, dataFormat, true);
+            return camelContext.adapt(CatalogCamelContext.class).explainDataFormatJson(dataFormatName, dataFormat, true);
         } else {
             return null;
         }
@@ -107,7 +108,7 @@ public class ManagedDataFormat implements ManagedInstance, ManagedDataFormatMBea
             try {
                 TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainDataFormatTabularType());
 
-                String json = camelContext.explainDataFormatJson(dataFormatName, dataFormat, allOptions);
+                String json = camelContext.adapt(CatalogCamelContext.class).explainDataFormatJson(dataFormatName, dataFormat, allOptions);
                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
                 for (Map<String, String> row : rows) {

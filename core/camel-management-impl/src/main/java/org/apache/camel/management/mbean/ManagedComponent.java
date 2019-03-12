@@ -31,6 +31,7 @@ import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
@@ -101,9 +102,9 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
         try {
             // a component may have been given a different name, so resolve its default name by its java type
             // as we can find the component json information from the default component name
-            String defaultName = component.getCamelContext().resolveComponentDefaultName(component.getClass().getName());
+            String defaultName = component.getCamelContext().adapt(CatalogCamelContext.class).resolveComponentDefaultName(component.getClass().getName());
             String target = defaultName != null ? defaultName : name;
-            return component.getCamelContext().getComponentParameterJsonSchema(target);
+            return component.getCamelContext().adapt(CatalogCamelContext.class).getComponentParameterJsonSchema(target);
         } catch (IOException e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
@@ -113,9 +114,9 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
         try {
             // a component may have been given a different name, so resolve its default name by its java type
             // as we can find the component json information from the default component name
-            String defaultName = component.getCamelContext().resolveComponentDefaultName(component.getClass().getName());
+            String defaultName = component.getCamelContext().adapt(CatalogCamelContext.class).resolveComponentDefaultName(component.getClass().getName());
             String target = defaultName != null ? defaultName : name;
-            String json = component.getCamelContext().explainComponentJson(target, allOptions);
+            String json = component.getCamelContext().adapt(CatalogCamelContext.class).explainComponentJson(target, allOptions);
 
             List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
 

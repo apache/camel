@@ -26,6 +26,7 @@ import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -159,12 +160,12 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     }
 
     public String informationJson() {
-        return context.explainEipJson(id, true);
+        return context.adapt(CatalogCamelContext.class).explainEipJson(id, true);
     }
 
     public TabularData explain(boolean allOptions) {
         try {
-            String json = context.explainEipJson(id, allOptions);
+            String json = context.adapt(CatalogCamelContext.class).explainEipJson(id, allOptions);
             List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEipTabularType());

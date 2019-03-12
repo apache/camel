@@ -28,7 +28,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
@@ -36,9 +35,11 @@ import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
+
 import org.w3c.dom.Document;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Producer;
@@ -649,7 +650,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public Map<String, Properties> findEips() throws Exception {
-        return context.findEips();
+        return context.adapt(CatalogCamelContext.class).findEips();
     }
 
     public List<String> findEipNames() throws Exception {
@@ -660,7 +661,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     public TabularData listEips() throws Exception {
         try {
             // find all EIPs
-            Map<String, Properties> eips = context.findEips();
+            Map<String, Properties> eips = context.adapt(CatalogCamelContext.class).findEips();
 
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listEipsTabularType());
 
@@ -684,7 +685,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public Map<String, Properties> findComponents() throws Exception {
-        Map<String, Properties> answer = context.findComponents();
+        Map<String, Properties> answer = context.adapt(CatalogCamelContext.class).findComponents();
         for (Map.Entry<String, Properties> entry : answer.entrySet()) {
             if (entry.getValue() != null) {
                 // remove component as its not serializable over JMX
@@ -701,7 +702,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public String createRouteStaticEndpointJson(boolean includeDynamic) {
-        return context.createRouteStaticEndpointJson(null, includeDynamic);
+        return context.adapt(CatalogCamelContext.class).createRouteStaticEndpointJson(null, includeDynamic);
     }
 
     public List<String> findComponentNames() throws Exception {
@@ -713,7 +714,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     public TabularData listComponents() throws Exception {
         try {
             // find all components
-            Map<String, Properties> components = context.findComponents();
+            Map<String, Properties> components = context.adapt(CatalogCamelContext.class).findComponents();
 
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listComponentsTabularType());
 
@@ -734,11 +735,11 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
                 // a component may have been given a different name, so resolve its default name by its java type
                 // as we can find the component json information from the default component name
-                String defaultName = context.resolveComponentDefaultName(type);
+                String defaultName = context.adapt(CatalogCamelContext.class).resolveComponentDefaultName(type);
                 String target = defaultName != null ? defaultName : name;
 
                 // load component json data, and parse it to gather the component meta-data
-                String json = context.getComponentParameterJsonSchema(target);
+                String json = context.adapt(CatalogCamelContext.class).getComponentParameterJsonSchema(target);
                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
                 for (Map<String, String> row : rows) {
                     if (row.containsKey("title")) {
@@ -777,31 +778,31 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public String componentParameterJsonSchema(String componentName) throws Exception {
-        return context.getComponentParameterJsonSchema(componentName);
+        return context.adapt(CatalogCamelContext.class).getComponentParameterJsonSchema(componentName);
     }
 
     public String dataFormatParameterJsonSchema(String dataFormatName) throws Exception {
-        return context.getDataFormatParameterJsonSchema(dataFormatName);
+        return context.adapt(CatalogCamelContext.class).getDataFormatParameterJsonSchema(dataFormatName);
     }
 
     public String languageParameterJsonSchema(String languageName) throws Exception {
-        return context.getLanguageParameterJsonSchema(languageName);
+        return context.adapt(CatalogCamelContext.class).getLanguageParameterJsonSchema(languageName);
     }
 
     public String eipParameterJsonSchema(String eipName) throws Exception {
-        return context.getEipParameterJsonSchema(eipName);
+        return context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema(eipName);
     }
 
     public String explainEipJson(String nameOrId, boolean includeAllOptions) {
-        return context.explainEipJson(nameOrId, includeAllOptions);
+        return context.adapt(CatalogCamelContext.class).explainEipJson(nameOrId, includeAllOptions);
     }
 
     public String explainComponentJson(String componentName, boolean includeAllOptions) throws Exception {
-        return context.explainComponentJson(componentName, includeAllOptions);
+        return context.adapt(CatalogCamelContext.class).explainComponentJson(componentName, includeAllOptions);
     }
 
     public String explainEndpointJson(String uri, boolean includeAllOptions) throws Exception {
-        return context.explainEndpointJson(uri, includeAllOptions);
+        return context.adapt(CatalogCamelContext.class).explainEndpointJson(uri, includeAllOptions);
     }
 
     public void reset(boolean includeRoutes) throws Exception {

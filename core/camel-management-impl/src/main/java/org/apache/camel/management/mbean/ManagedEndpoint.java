@@ -25,6 +25,7 @@ import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
@@ -86,13 +87,13 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
 
     @Override
     public String informationJson() {
-        return endpoint.getCamelContext().explainEndpointJson(getEndpointUri(), true);
+        return endpoint.getCamelContext().adapt(CatalogCamelContext.class).explainEndpointJson(getEndpointUri(), true);
     }
 
     @Override
     public TabularData explain(boolean allOptions) {
         try {
-            String json = endpoint.getCamelContext().explainEndpointJson(getEndpointUri(), allOptions);
+            String json = endpoint.getCamelContext().adapt(CatalogCamelContext.class).explainEndpointJson(getEndpointUri(), allOptions);
             List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainEndpointTabularType());

@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import java.util.Set;
 
+import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class GatherAllStaticEndpointUrisTest extends ContextTestSupport {
         assertNotNull(uris2out);
         assertEquals(1, uris2out.size());
 
-        String json = context.createRouteStaticEndpointJson(null);
+        String json = context.adapt(CatalogCamelContext.class).createRouteStaticEndpointJson(null);
         assertNotNull(json);
         assertTrue(json.contains("{ \"uri\": \"direct://foo\" }"));
         assertTrue(json.contains("{ \"uri\": \"seda://bar\" }"));

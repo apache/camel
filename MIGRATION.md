@@ -143,6 +143,10 @@ TODO: Add the other moved classes/packages etc
 
 #### Generic Information
 
+The methods on `CamelContext` that are related to catalog has been moved into a new `CatalogCamelContext` interface, which you can access by adapting:
+
+    CatalogCamelContext ccc = context.adapt(CatalogCamelContext.class);
+
 The class `SimpleRegistry` is moved from `org.apache.camel.impl` to `org.apache.camel.support`. Also you should favour using the `org.apache.camel.support.DefaultRegistry` instead. Also you should use the `bind` operation instead of `put` to add entries to the `SimpleRegistry` or `DefaultRegistry`.
 
 The class `CompositeRegistry` and `PropertyPlaceholderDelegateRegistry` has been deleted. Instead use `DefaultRegistry`.
