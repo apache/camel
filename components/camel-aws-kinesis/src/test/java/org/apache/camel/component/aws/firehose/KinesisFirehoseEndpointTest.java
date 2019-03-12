@@ -41,7 +41,7 @@ public class KinesisFirehoseEndpointTest {
     @Before
     public void setup() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("firehoseClient", amazonKinesisFirehoseClient);
+        registry.bind("firehoseClient", amazonKinesisFirehoseClient);
         camelContext = new DefaultCamelContext(registry);
     }
 

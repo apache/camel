@@ -41,7 +41,7 @@ public class KinesisEndpointTest {
     @Before
     public void setup() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("kinesisClient", amazonKinesisClient);
+        registry.bind("kinesisClient", amazonKinesisClient);
         camelContext = new DefaultCamelContext(registry);
     }
 
