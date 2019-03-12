@@ -21,6 +21,7 @@ import com.amazonaws.services.ecs.model.DeleteClusterResult;
 import com.amazonaws.services.ecs.model.DescribeClustersResult;
 import com.amazonaws.services.ecs.model.ListClustersResult;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -31,6 +32,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class ECSProducerTest extends CamelTestSupport {
+	
+	@BindToRegistry("amazonEcsClient")
+    AmazonECSClientMock clientMock = new AmazonECSClientMock();
     
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
@@ -105,17 +109,6 @@ public class ECSProducerTest extends CamelTestSupport {
         
         DeleteClusterResult resultGet = exchange.getIn().getBody(DeleteClusterResult.class);
         assertEquals("Test", resultGet.getCluster().getClusterName());
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonECSClientMock clientMock = new AmazonECSClientMock();
-        
-        registry.bind("amazonEcsClient", clientMock);
-        
-        return registry;
     }
 
     @Override
