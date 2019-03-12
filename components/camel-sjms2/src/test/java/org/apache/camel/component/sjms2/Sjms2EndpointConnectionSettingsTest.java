@@ -64,8 +64,8 @@ public class Sjms2EndpointConnectionSettingsTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("activemq", connectionFactory);
-        registry.put("connresource", connectionResource);
+        registry.bind("activemq", connectionFactory);
+        registry.bind("connresource", connectionResource);
         return new DefaultCamelContext(registry);
     }
 }
