@@ -17,87 +17,87 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>components</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>components</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-milo</artifactId>
-  <packaging>jar</packaging>
-  <name>Camel :: Milo</name>
-  <description>Camel OPC UA support</description>
+    <artifactId>camel-milo</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: Milo</name>
+    <description>Camel OPC UA support</description>
 
-  <properties>
-    <camel.osgi.import.before.defaults>
-      com.google.common.*;version="19.0.0"
-    </camel.osgi.import.before.defaults>
-  </properties>
+    <properties>
+        <camel.osgi.import.before.defaults>
+            com.google.common.*;version="19.0.0"
+        </camel.osgi.import.before.defaults>
+    </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-support</artifactId>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-support</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.eclipse.milo</groupId>
-      <artifactId>sdk-server</artifactId>
-      <version>${milo-version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.eclipse.milo</groupId>
+            <artifactId>sdk-server</artifactId>
+            <version>${milo-version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>org.eclipse.milo</groupId>
-      <artifactId>sdk-client</artifactId>
-      <version>${milo-version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.eclipse.milo</groupId>
+            <artifactId>sdk-client</artifactId>
+            <version>${milo-version}</version>
+        </dependency>
 
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <childDelegation>false</childDelegation>
-          <useFile>true</useFile>
-          <forkCount>1</forkCount>
-          <!-- required due to issue eclipse/milo#23 -->
-          <reuseForks>false</reuseForks>
-          <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <childDelegation>false</childDelegation>
+                    <useFile>true</useFile>
+                    <forkCount>1</forkCount>
+                    <!-- required due to issue eclipse/milo#23 -->
+                    <reuseForks>false</reuseForks>
+                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

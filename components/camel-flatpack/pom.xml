@@ -17,77 +17,78 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>components</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>components</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-flatpack</artifactId>
-  <packaging>jar</packaging>
-  <name>Camel :: FlatPack</name>
-  <description>Camel FlatPack support</description>
+    <artifactId>camel-flatpack</artifactId>
+    <packaging>jar</packaging>
+    <name>Camel :: FlatPack</name>
+    <description>Camel FlatPack support</description>
 
-  <properties>
-    <camel.osgi.import.additional>
-      net.sf.flatpack.*;version="[3.1.1,4)"
-    </camel.osgi.import.additional>
-  </properties>
+    <properties>
+        <camel.osgi.import.additional>
+            net.sf.flatpack.*;version="[3.1.1,4)"
+        </camel.osgi.import.additional>
+    </properties>
 
-  <dependencies>
+    <dependencies>
 
-    <!-- core required: org.apache.camel.processor.loadbalancer -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.flatpack</groupId>
-      <artifactId>flatpack</artifactId>
-      <version>${flatpack-version}</version>
-    </dependency>
-    <dependency> 
-      <groupId>org.jdom</groupId>
-	  <artifactId>jdom</artifactId>
-	  <version>${jdom-version}</version>
-    </dependency>
+        <!-- core required: org.apache.camel.processor.loadbalancer -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.flatpack</groupId>
+            <artifactId>flatpack</artifactId>
+            <version>${flatpack-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>${jdom-version}</version>
+        </dependency>
 
-	  <!-- logging -->   
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
-    </dependency>
+        <!-- logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-    <!-- testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
-      <scope>test</scope>      
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <!-- testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -17,70 +17,70 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel.example</groupId>
-    <artifactId>examples</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel.example</groupId>
+        <artifactId>examples</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-example-ehcache-blueprint</artifactId>
-  <name>Camel :: Example :: EHCache :: OSGi</name>
-  <description>An example using EHCache with OSGi Blueprint</description>
-  <packaging>jar</packaging>
+    <artifactId>camel-example-ehcache-blueprint</artifactId>
+    <name>Camel :: Example :: EHCache :: OSGi</name>
+    <description>An example using EHCache with OSGi Blueprint</description>
+    <packaging>jar</packaging>
 
-  <properties>
-    <category>OSGi</category>
-    <title>EHCache OSGi</title>
+    <properties>
+        <category>OSGi</category>
+        <title>EHCache OSGi</title>
 
-    <camel.osgi.import.pkg>
-      *
-    </camel.osgi.import.pkg>
-    <camel.osgi.export.pkg>
-      *
-    </camel.osgi.export.pkg>
-  </properties>
+        <camel.osgi.import.pkg>
+            *
+        </camel.osgi.import.pkg>
+        <camel.osgi.export.pkg>
+            *
+        </camel.osgi.export.pkg>
+    </properties>
 
-  <dependencies>
+    <dependencies>
 
-    <!-- camel -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-blueprint</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-ehcache</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-servlet</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jackson</artifactId>
-    </dependency>
+        <!-- camel -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-blueprint</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-ehcache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+        </dependency>
 
-    <!-- logging -->
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-  </dependencies>
+        <!-- logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
 
 </project>

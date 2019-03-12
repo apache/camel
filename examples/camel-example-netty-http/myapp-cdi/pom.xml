@@ -17,69 +17,69 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>camel-example-netty-http</artifactId>
-    <groupId>org.apache.camel.example</groupId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <artifactId>camel-example-netty-http</artifactId>
+        <groupId>org.apache.camel.example</groupId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-example-netty-myapp-cdi</artifactId>
-  <name>Camel :: Example :: Netty HTTP :: My Application CDI (deprecated)</name>
-  <packaging>jar</packaging>
+    <artifactId>camel-example-netty-myapp-cdi</artifactId>
+    <name>Camel :: Example :: Netty HTTP :: My Application CDI (deprecated)</name>
+    <packaging>jar</packaging>
 
-  <dependencies>
+    <dependencies>
 
-    <!-- CDI API -->
-    <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
-      <version>${cdi-api-1.2-version}</version>
-      <scope>provided</scope>
-    </dependency>
+        <!-- CDI API -->
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${cdi-api-1.2-version}</version>
+            <scope>provided</scope>
+        </dependency>
 
-    <!-- Camel CDI -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-cdi</artifactId>
-    </dependency>
+        <!-- Camel CDI -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-cdi</artifactId>
+        </dependency>
 
-    <!-- PAX CDI -->
-    <dependency>
-      <groupId>org.ops4j.pax.cdi</groupId>
-      <artifactId>pax-cdi-api</artifactId>
-      <version>${pax-cdi-version}</version>
-    </dependency>
+        <!-- PAX CDI -->
+        <dependency>
+            <groupId>org.ops4j.pax.cdi</groupId>
+            <artifactId>pax-cdi-api</artifactId>
+            <version>${pax-cdi-version}</version>
+        </dependency>
 
-  </dependencies>
+    </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Import-Package>
-              org.apache.camel.component.netty4,
-              org.apache.camel.component.netty4.http,
-              org.apache.camel.spi,
-              *
-            </Import-Package>
-            <Require-Capability>
-              osgi.extender; filter:="(osgi.extender=pax.cdi)",
-              org.ops4j.pax.cdi.extension; filter:="(extension=pax-cdi-extension)",
-              org.ops4j.pax.cdi.extension; filter:="(extension=camel-cdi-extension)"
-            </Require-Capability>
-          </instructions>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+                        <Import-Package>
+                            org.apache.camel.component.netty4,
+                            org.apache.camel.component.netty4.http,
+                            org.apache.camel.spi,
+                            *
+                        </Import-Package>
+                        <Require-Capability>
+                            osgi.extender; filter:="(osgi.extender=pax.cdi)",
+                            org.ops4j.pax.cdi.extension; filter:="(extension=pax-cdi-extension)",
+                            org.ops4j.pax.cdi.extension; filter:="(extension=camel-cdi-extension)"
+                        </Require-Capability>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

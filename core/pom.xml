@@ -17,77 +17,77 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <modelVersion>4.0.0</modelVersion>
-
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-    <relativePath>../parent</relativePath>
-  </parent>
-
-  <artifactId>core</artifactId>
-  <name>Camel :: Core Modules</name>
-  <description>Camel Core Modules</description>
-  <packaging>pom</packaging>
-
-  <modules>
-    <module>camel-util</module>
-    <module>camel-api</module>
-    <module>camel-support</module>
-    <module>camel-management-api</module>
-    <module>camel-management-impl</module>
-    <module>camel-base</module>
-    <module>camel-core</module>
-    <module>camel-core-osgi</module>
-    <module>camel-core-xml</module>
-  </modules>
-
-  <build>
-    <plugins>
-      <plugin>
+    <parent>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <id>generate-legal</id>
-            <goals>
-              <goal>generate-legal</goal>
-            </goals>
-            <phase>prepare-package</phase>
-          </execution>
-          <execution>
-            <id>jaxb-list</id>
-            <goals>
-              <goal>generate-jaxb-list</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-generated-resources</id>
-            <goals>
-              <goal>resources</goal>
-            </goals>
-            <phase>process-classes</phase>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>${basedir}/target/generated/camel/jaxb</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+        <artifactId>camel-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+        <relativePath>../parent</relativePath>
+    </parent>
 
+    <artifactId>core</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Camel :: Core Modules</name>
+    <description>Camel Core Modules</description>
+
+    <modules>
+        <module>camel-util</module>
+        <module>camel-api</module>
+        <module>camel-support</module>
+        <module>camel-management-api</module>
+        <module>camel-management-impl</module>
+        <module>camel-base</module>
+        <module>camel-core</module>
+        <module>camel-core-osgi</module>
+        <module>camel-core-xml</module>
+    </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-package-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-legal</id>
+                        <goals>
+                            <goal>generate-legal</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                    </execution>
+                    <execution>
+                        <id>jaxb-list</id>
+                        <goals>
+                            <goal>generate-jaxb-list</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-generated-resources</id>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/target/generated/camel/jaxb</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

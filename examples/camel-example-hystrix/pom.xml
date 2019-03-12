@@ -17,30 +17,30 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel.example</groupId>
-    <artifactId>examples</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel.example</groupId>
+        <artifactId>examples</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-example-hystrix</artifactId>
-  <packaging>pom</packaging>
-  <name>Camel :: Example :: Hystrix</name>
-  <description>An example showing how to use Hystrix EIP as circuit breaker in Camel routes</description>
+    <artifactId>camel-example-hystrix</artifactId>
+    <packaging>pom</packaging>
+    <name>Camel :: Example :: Hystrix</name>
+    <description>An example showing how to use Hystrix EIP as circuit breaker in Camel routes</description>
 
-  <properties>
-    <category>EIP</category>
-  </properties>
+    <properties>
+        <category>EIP</category>
+    </properties>
 
-  <modules>
-    <module>client</module>
-    <module>service1</module>
-    <module>service2</module>
-  </modules>
+    <modules>
+        <module>client</module>
+        <module>service1</module>
+        <module>service2</module>
+    </modules>
 
 </project>

@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -28,6 +29,7 @@
 
     <artifactId>camel-jetty-common</artifactId>
     <packaging>jar</packaging>
+
     <name>Camel :: Jetty :: Common</name>
     <description>Camel Jetty 8.x/9.x support</description>
 
@@ -60,14 +62,14 @@
             <!-- provided scope as the Jetty8/9 component will provide the proper version -->
             <scope>provided</scope>
             <exclusions>
-               <exclusion>
-                   <groupId>javax.servlet</groupId>
-                   <artifactId>servlet-api</artifactId>
-               </exclusion>
-               <exclusion>
-                   <groupId>org.eclipse.jetty.orbit</groupId>
-                   <artifactId>javax.servlet</artifactId>
-               </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>servlet-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty.orbit</groupId>
+                    <artifactId>javax.servlet</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -100,7 +102,7 @@
             <version>${jetty-version}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- test dependencies -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -115,26 +117,26 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <optional>true</optional>
             <scope>test</scope>
+            <optional>true</optional>
         </dependency>
         <!-- for testing rest-dsl -->
         <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-jackson</artifactId>
-          <scope>test</scope>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-jaxb</artifactId>
-          <scope>test</scope>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jaxb</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>   
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -151,5 +153,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>

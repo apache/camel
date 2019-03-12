@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -33,9 +34,9 @@
     <description>Camel Velocity support</description>
 
     <properties>
-	<camel.osgi.import.additional>
-		org.apache.velocity.*;version="[1.6.2,2)"
-	</camel.osgi.import.additional>
+        <camel.osgi.import.additional>
+            org.apache.velocity.*;version="[1.6.2,2)"
+        </camel.osgi.import.additional>
     </properties>
 
     <dependencies>
@@ -55,7 +56,7 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
             <scope>test</scope>
-        </dependency>  
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
@@ -77,10 +78,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>commons-io</groupId>
-        	<artifactId>commons-io</artifactId>
-        	<version>${commons-io-version}</version>
-        	<scope>test</scope>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io-version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>

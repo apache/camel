@@ -27,7 +27,9 @@
   <artifactId>camel-pgevent-starter</artifactId>
   <packaging>jar</packaging>
   <name>Spring-Boot Starter :: Camel :: PgEvent</name>
-  <description>Spring-Boot Starter for Component for sending/receiving notifications in PostgreSQL via the pgjdbc-ng driver</description>
+  <description>Spring-Boot Starter for Component for sending/receiving notifications in PostgreSQL via the pgjdbc-ng
+        driver
+    </description>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
