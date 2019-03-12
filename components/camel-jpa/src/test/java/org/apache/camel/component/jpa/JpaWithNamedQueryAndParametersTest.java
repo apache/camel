@@ -126,7 +126,7 @@ public class JpaWithNamedQueryAndParametersTest extends Assert {
         Map<String, Object> params = new HashMap<>();
         params.put("custName", "Willem");
         // bind the params
-        registry.put("params", params);
+        registry.bind("params", params);
         camelContext.setRegistry(registry);
         
         template = camelContext.createProducerTemplate();
