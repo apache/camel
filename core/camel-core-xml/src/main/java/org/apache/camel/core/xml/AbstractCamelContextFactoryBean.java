@@ -411,8 +411,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // must init rest refs before we add the rests
             initRestRefs();
 
-            // and add the rests
-            getContext().addRestDefinitions(getRests(), true);
+            // cannot add rests as routes yet as we need to initialize this specially
+            getContext().addRestDefinitions(getRests(), false);
 
             // convert rests api-doc into routes so they are routes for runtime
             for (RestConfiguration config : getContext().getRestConfigurations()) {
@@ -433,6 +433,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                         getRoutes().add(route);
                     }
                 }
+            }
+
+            // add each rest as route
+            for (RestDefinition rest : getContext().getRestDefinitions()) {
+                rest.asRouteDefinition(getContext()).forEach(r -> getRoutes().add(r));
             }
 
             // do special preparation for some concepts such as interceptors and policies

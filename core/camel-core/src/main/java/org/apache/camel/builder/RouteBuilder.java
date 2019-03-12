@@ -480,7 +480,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 }
             }
         }
-        // cannot add as routes yet as when using Java DSL with rest we need to initialize this specially
+        // cannot add rests as routes yet as we need to initialize this specially
         camelContext.addRestDefinitions(getRestCollection().getRests(), false);
 
         // convert rests api-doc into routes so they are routes for runtime
