@@ -102,7 +102,7 @@ public class CxfEndpointTest extends Assert {
         SimpleRegistry registry = new SimpleRegistry();
         CxfEndpointConfigurer configurer = mock(CxfEndpointConfigurer.class);
         Processor processor = mock(Processor.class);
-        registry.put("myConfigurer", configurer);
+        registry.bind("myConfigurer", configurer);
         CamelContext camelContext = new DefaultCamelContext(registry);
         CxfComponent cxfComponent = new CxfComponent(camelContext);
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI + "&cxfEndpointConfigurer=#myConfigurer");
