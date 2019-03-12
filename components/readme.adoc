@@ -1,7 +1,7 @@
 ==== Components
 
 // components: START
-Number of Components: 292 in 227 JAR artifacts (0 deprecated)
+Number of Components: 291 in 226 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -111,9 +111,6 @@ Number of Components: 292 in 227 JAR artifacts (0 deprecated)
 
 | link:camel-aws-sns/src/main/docs/aws-sns-component.adoc[AWS Simple Notification System] (camel-aws-sns) +
 `aws-sns:topicNameOrArn` | 2.8 | The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
-
-| link:camel-aws-sqs/src/main/docs/aws-sqs-component.adoc[AWS Simple Queue Service] (camel-aws-sqs) +
-`aws-sqs:queueNameOrArn` | 2.6 | The aws-sqs component is used for sending and receiving messages to Amazon's SQS service.
 
 | link:camel-aws-swf/src/main/docs/aws-swf-component.adoc[AWS Simple Workflow] (camel-aws-swf) +
 `aws-swf:type` | 2.13 | The aws-swf component is used for managing workflows from Amazon Simple Workflow.
@@ -1040,7 +1037,7 @@ Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
 ==== Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 32 in 32 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 31 in 31 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1049,8 +1046,6 @@ Number of Miscellaneous Components: 32 in 32 JAR artifacts (0 deprecated)
 | link:camel-blueprint/src/main/docs/blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
 
 | link:camel-cdi/src/main/docs/cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
-
-| link:camel-cxf/src/main/docs/cxf.adoc[Cxf] (camel-cxf) |  | Camel CXF support
 
 | link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
 
