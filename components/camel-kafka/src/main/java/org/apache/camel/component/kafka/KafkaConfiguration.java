@@ -817,7 +817,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
     
     public boolean isSpecificAvroReader() {
-    	return specificAvroReader;
+        return specificAvroReader;
     }
     
     /**
@@ -825,7 +825,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * This option is only available in the Confluent Kafka product (not standard Apache Kafka)
      */
     public void setSpecificAvroReader(boolean specificAvroReader) {
-    	this.specificAvroReader = specificAvroReader;
+        this.specificAvroReader = specificAvroReader;
     }
 
     public String getCompressionCodec() {
