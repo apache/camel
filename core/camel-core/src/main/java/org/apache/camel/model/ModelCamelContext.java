@@ -55,6 +55,7 @@ public interface ModelCamelContext extends CamelContext {
      * @return the route definitions
      * @throws Exception if the route definitions could not be loaded for whatever reason
      */
+    @Deprecated
     RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception;
 
     /**
@@ -64,8 +65,21 @@ public interface ModelCamelContext extends CamelContext {
      * @return the rest definitions
      * @throws Exception if the rest definitions could not be loaded for whatever reason
      */
+    @Deprecated
     RestsDefinition loadRestsDefinition(InputStream is) throws Exception;
-    
+
+    /**
+     * Adds a collection of route definitions to the context
+     * <p/>
+     * <b>Important: </b> Each route in the same {@link org.apache.camel.CamelContext} must have an <b>unique</b> route id.
+     * If you use the API from {@link org.apache.camel.CamelContext} or {@link org.apache.camel.model.ModelCamelContext} to add routes, then any
+     * new routes which has a route id that matches an old route, then the old route is replaced by the new route.
+     *
+     * @param is input stream with the route(s) definition to add
+     * @throws Exception if the route definitions could not be created for whatever reason
+     */
+    void addRouteDefinitions(InputStream is) throws Exception;
+
     /**
      * Adds a collection of route definitions to the context
      * <p/>
@@ -114,6 +128,14 @@ public interface ModelCamelContext extends CamelContext {
      * @return list of the current REST definitions
      */
     List<RestDefinition> getRestDefinitions();
+
+    /**
+     * Adds a collection of rest definitions to the context
+     *
+     * @param is input stream with the rest(s) definition to add
+     * @throws Exception if the rest definitions could not be created for whatever reason
+     */
+    void addRestDefinitions(InputStream is) throws Exception;
 
     /**
      * Adds a collection of rest definitions to the context

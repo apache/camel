@@ -41,8 +41,7 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
     @Test
     public void testLoadRouteFromXmlWitOnException() throws Exception {
         InputStream is = getClass().getResourceAsStream("barOnExceptionRoute.xml");
-        RoutesDefinition routes = context.loadRoutesDefinition(is);
-        context.addRouteDefinitions(routes.getRoutes());
+        context.addRouteDefinitions(is);
         context.start();
 
         assertNotNull("Loaded bar route should be there", context.getRoute("bar"));
