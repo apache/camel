@@ -46,7 +46,7 @@ public final class TwitterConverter {
     @Converter
     public static String toString(DirectMessage dm) throws ParseException {
         return new StringBuilder()
-            .append(dm.getCreatedAt()).append(" (").append(dm.getSenderScreenName()).append(") ")
+            .append(dm.getCreatedAt()).append(" (").append(dm.getSenderId()).append(") ")
             .append(dm.getText())
             .toString();
     }
