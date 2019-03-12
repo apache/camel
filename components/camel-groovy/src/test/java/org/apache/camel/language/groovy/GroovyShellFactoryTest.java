@@ -38,7 +38,7 @@ public class GroovyShellFactoryTest extends CamelTestSupport {
         GroovyShellFactory groovyShellFactory = mock(GroovyShellFactory.class);
         given(groovyShellFactory.createGroovyShell(any(Exchange.class))).willReturn(new GroovyShell());
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("groovyShellFactory", groovyShellFactory);
+        registry.bind("groovyShellFactory", groovyShellFactory);
         CamelContext camelContext = new DefaultCamelContext(registry);
 
         // When
