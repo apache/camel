@@ -57,7 +57,7 @@ public class MasterEndpointFailoverTest {
 
         // Need to bind the zookeeper client with the name "curator"
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("curator", client);
+        registry.bind("curator", client);
 
         producerContext = new DefaultCamelContext(registry);
         // Add the vm:start endpoint to avoid the NPE before starting the consumerContext1
