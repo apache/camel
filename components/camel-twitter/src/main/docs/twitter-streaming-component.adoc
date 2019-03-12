@@ -69,7 +69,7 @@ with the following path and query parameters:
 | *radius* (consumer) | Used by the non-stream geography search to search by radius. You need to configure all the following options: longitude, latitude, radius, and distanceMetric. |  | Double
 | *twitterStream* (consumer) | To use a custom instance of TwitterStream |  | TwitterStream
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
-| *count* (filter) | Limiting number of results per page. |  | Integer
+| *count* (filter) | Limiting number of results per page. | 5 | Integer
 | *filterOld* (filter) | Filter out old tweets, that has previously been polled. This state is stored in memory only, and based on last tweet id. | true | boolean
 | *keywords* (filter) | Can be used for a streaming filter. Multiple values can be separated with comma. |  | String
 | *lang* (filter) | The lang string ISO_639-1 which will be used for searching |  | String
