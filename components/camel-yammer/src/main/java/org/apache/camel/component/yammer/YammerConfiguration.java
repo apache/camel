@@ -40,9 +40,9 @@ public class YammerConfiguration {
     @UriParam(label = "consumer", defaultValue = "-1")
     private int limit = -1; // default is unlimited
     @UriParam(label = "consumer", defaultValue = "-1")
-    private int olderThan = -1;
+    private long olderThan = -1;
     @UriParam(label = "consumer", defaultValue = "-1")
-    private int newerThan = -1;
+    private long newerThan = -1;
     @UriParam(label = "consumer", enums = "true,extended")
     private String threaded;
     @UriParam(label = "consumer")
@@ -148,7 +148,7 @@ public class YammerConfiguration {
         this.limit = limit;
     }
 
-    public int getOlderThan() {
+    public long getOlderThan() {
         return olderThan;
     }
 
@@ -157,11 +157,11 @@ public class YammerConfiguration {
      * This is useful for paginating messages. For example, if you're currently viewing 20 messages and the oldest is number 2912,
      * you could append "?olderThan=2912″ to your request to get the 20 messages prior to those you're seeing.
      */
-    public void setOlderThan(int olderThan) {
+    public void setOlderThan(long olderThan) {
         this.olderThan = olderThan;
     }
 
-    public int getNewerThan() {
+    public long getNewerThan() {
         return newerThan;
     }
 
@@ -170,7 +170,7 @@ public class YammerConfiguration {
      * If you're looking at messages, and the most recent message returned is 3516, you can make a request with the parameter "?newerThan=3516″
      * to ensure that you do not get duplicate copies of messages already on your page.
      */
-    public void setNewerThan(int newerThan) {
+    public void setNewerThan(long newerThan) {
         this.newerThan = newerThan;
     }
 
