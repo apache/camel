@@ -54,7 +54,8 @@ public class FromMultipleEndpointTest extends ContextTestSupport {
             public void configure() throws Exception {
                 getContext().setTracing(true);
 
-                from("direct:foo", "seda:bar").to("mock:results");
+                from("direct:foo").to("mock:results");
+                from("seda:bar").to("mock:results");
             }
         };
 

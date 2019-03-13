@@ -367,7 +367,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     protected void assertFrom(RouteDefinition route, String uri) {
-        FromDefinition from = assertOneElement(route.getInputs());
+        FromDefinition from = route.getInput();
         assertEquals("From URI", uri, from.getUri());
     }
 

@@ -175,30 +175,6 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
-     * Creates a new route from the given URI inputs
-     *
-     * @param uris  the from uri
-     * @return the builder
-     */
-    public RouteDefinition from(@AsEndpointUri String... uris) {
-        RouteDefinition route = createRoute();
-        route.from(uris);
-        return route(route);
-    }
-
-    /**
-     * Creates a new route from the given endpoints
-     *
-     * @param endpoints  the from endpoints
-     * @return the builder
-     */
-    public RouteDefinition from(Endpoint... endpoints) {
-        RouteDefinition route = createRoute();
-        route.from(endpoints);
-        return route(route);
-    }
-
-    /**
      * Creates a new route using the given route
      *
      * @param route the route

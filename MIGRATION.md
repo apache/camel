@@ -136,6 +136,10 @@ The `ref` attribute on `@Consume`, `@Produce` and `@EndpointInject` has been rem
 
 The uri attribute has been deprecated, instead use value, which allows a shorthand style, from using `@Consume(uri = "jms:cheese")` to `@Consume("jms:cheese")`.
 
+### Routes with multiple inputs
+
+In Camel 2.x you could have 2 or more inputs to Camel routes, however this was not supported in all use-cases in Camel, and this functionality is seldom in use. This has
+also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code for specifying multipe inputs to routes, and its now only possible to specify exactly only 1 input to a route.
 
 ### Moved APIs
 

@@ -1630,11 +1630,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
                     target = route;
                     break;
                 }
-                for (FromDefinition from : route.getInputs()) {
-                    if (nameOrId.equals(from.getId())) {
-                        target = route;
-                        break;
-                    }
+                if (nameOrId.equals(route.getInput().getId())) {
+                    target = route;
+                    break;
                 }
                 Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
                 while (it.hasNext()) {
