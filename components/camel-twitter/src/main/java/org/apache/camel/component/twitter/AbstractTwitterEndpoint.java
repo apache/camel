@@ -18,7 +18,6 @@ package org.apache.camel.component.twitter;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
 import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -28,15 +27,18 @@ import org.apache.camel.spi.UriParam;
  */
 public abstract class AbstractTwitterEndpoint extends DefaultPollingEndpoint implements TwitterEndpoint {
 
-    @UriParam(optionalPrefix = "consumer.", defaultValue = "" + TwitterConsumerPolling.DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
+    public static final long DEFAULT_CONSUMER_DELAY = 30 * 1000L;
+
+    @UriParam(optionalPrefix = "consumer.", defaultValue = "" + DEFAULT_CONSUMER_DELAY, label = "consumer,scheduler",
         description = "Milliseconds before the next poll.")
-    private long delay = TwitterConsumerPolling.DEFAULT_CONSUMER_DELAY;
+    private long delay = DEFAULT_CONSUMER_DELAY;
 
     @UriParam
     private TwitterConfiguration properties;
 
     public AbstractTwitterEndpoint(String uri, AbstractTwitterComponent component, TwitterConfiguration properties) {
         super(uri, component);
+        setDelay(DEFAULT_CONSUMER_DELAY);
         this.properties = properties;
     }
 
