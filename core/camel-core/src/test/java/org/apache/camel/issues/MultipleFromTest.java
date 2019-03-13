@@ -42,7 +42,8 @@ public class MultipleFromTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start", "seda:in").to("mock:result");
+                from("direct:start").to("mock:result");
+                from("seda:in").to("mock:result");
             }
         };
     }

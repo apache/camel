@@ -228,32 +228,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     /**
-     * Creates a new route from the given URIs input
-     *
-     * @param uris  the from uris
-     * @return the builder
-     */
-    public RouteDefinition from(String... uris) {
-        getRouteCollection().setCamelContext(getContext());
-        RouteDefinition answer = getRouteCollection().from(uris);
-        configureRoute(answer);
-        return answer;
-    }
-
-    /**
-     * Creates a new route from the given endpoint
-     *
-     * @param endpoints  the from endpoints
-     * @return the builder
-     */
-    public RouteDefinition from(Endpoint... endpoints) {
-        getRouteCollection().setCamelContext(getContext());
-        RouteDefinition answer = getRouteCollection().from(endpoints);
-        configureRoute(answer);
-        return answer;
-    }
-
-    /**
      * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder
      *
      * @param errorHandlerBuilder  the error handler to be used by default for all child routes
@@ -491,7 +465,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
                 // so we check all existing routes if they have rest-api route already added
                 boolean hasRestApi = false;
                 for (RouteDefinition route : camelContext.getRouteDefinitions()) {
-                    FromDefinition from = route.getInputs().get(0);
+                    FromDefinition from = route.getInput();
                     if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
                         hasRestApi = true;
                     }

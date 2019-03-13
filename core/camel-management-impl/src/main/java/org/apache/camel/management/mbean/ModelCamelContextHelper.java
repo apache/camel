@@ -45,10 +45,8 @@ public final class ModelCamelContextHelper {
      */
     public static boolean isEipInUse(CamelContext camelContext, String name) {
         for (RouteDefinition route : camelContext.adapt(ModelCamelContext.class).getRouteDefinitions()) {
-            for (FromDefinition from : route.getInputs()) {
-                if (name.equals(from.getShortName())) {
-                    return true;
-                }
+            if (name.equals(route.getInput().getShortName())) {
+                return true;
             }
             Iterator<ProcessorDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(route.getOutputs(), ProcessorDefinition.class);
             while (it.hasNext()) {

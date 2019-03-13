@@ -422,7 +422,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                     // so we check all existing routes if they have rest-api route already added
                     boolean hasRestApi = false;
                     for (RouteDefinition route : getContext().getRouteDefinitions()) {
-                        FromDefinition from = route.getInputs().get(0);
+                        FromDefinition from = route.getInput();
                         if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
                             hasRestApi = true;
                         }

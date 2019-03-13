@@ -63,7 +63,7 @@ public class RandomLoadBalanceJavaDSLBuilderTest extends RandomLoadBalanceTest {
         RouteDefinition route = context.getRouteDefinitions().get(0);
 
         // the start of the route
-        sb.append("from(\"" + route.getInputs().get(0).getUri() + "\")");
+        sb.append("from(\"" + route.getInput().getUri() + "\")");
 
         // navigate the route and add Java DSL to the sb
         navigateDefinition(route, sb);

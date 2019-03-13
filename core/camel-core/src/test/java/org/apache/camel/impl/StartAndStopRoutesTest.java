@@ -58,7 +58,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         context.getRouteController().stopRoute(route.getId());
 
         // lets mutate the route...
-        FromDefinition fromType = assertOneElement(route.getInputs());
+        FromDefinition fromType = route.getInput();
         fromType.setUri("direct:test.C");
         context.adapt(ModelCamelContext.class).addRouteDefinition(route);
 
