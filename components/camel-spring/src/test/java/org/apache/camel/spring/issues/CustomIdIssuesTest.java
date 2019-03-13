@@ -39,7 +39,7 @@ public class CustomIdIssuesTest extends SpringTestSupport {
         assertNotNull(route);
         assertTrue(route.hasCustomIdAssigned());
 
-        FromDefinition from = route.getInputs().get(0);
+        FromDefinition from = route.getInput();
         assertEquals("fromFile", from.getId());
         assertTrue(from.hasCustomIdAssigned());
 

@@ -47,7 +47,6 @@
       <get>
         <route>
           <to uri="mock:hello"/>
-          <to uri="mock:bar"/>
           <throwException ref="darn"/>
         </route>
       </get>

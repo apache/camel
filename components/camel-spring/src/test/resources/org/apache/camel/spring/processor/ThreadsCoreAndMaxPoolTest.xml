@@ -27,6 +27,10 @@
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
+            <threads poolSize="5" maxPoolSize="10"/>
+            <to uri="mock:result"/>
+        </route>
+        <route>
             <from uri="direct:foo"/>
             <threads poolSize="5" maxPoolSize="10"/>
             <to uri="mock:result"/>
