@@ -7,6 +7,7 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.TrustManagersParameters;
 
 import org.junit.Test;
 
@@ -75,8 +76,12 @@ public class RestletProducerSSLTest extends RestletTestSupport {
 		kmp.setKeyPassword("changeit");
 		kmp.setKeyStore(ksp);
 
+		TrustManagersParameters tmp = new TrustManagersParameters();
+		tmp.setKeyStore(ksp);
+
 		SSLContextParameters sslContextParameters = new SSLContextParameters();
 		sslContextParameters.setKeyManagers(kmp);
+		sslContextParameters.setTrustManagers(tmp);
 
 		return sslContextParameters;
 	}
