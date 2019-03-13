@@ -228,23 +228,20 @@ public class CamelKieServerExtension implements KieServerExtension {
 
     protected void annotateKJarRoutes(RoutesDefinition routes, String deploymentId) {
         for (RouteDefinition route : routes.getRoutes()) {
+            FromDefinition from = route.getInput();
+            if (from.getUri().startsWith("jbpm:events") && !from.getUri().contains("deploymentId")) {
+                StringBuilder uri = new StringBuilder(from.getUri());
 
-            for (FromDefinition from : route.getInputs()) {
-
-                if (from.getUri().startsWith("jbpm:events") && !from.getUri().contains("deploymentId")) {
-                    StringBuilder uri = new StringBuilder(from.getUri());
-
-                    String[] split = from.getUri().split("\\?");
-                    if (split.length == 1) {
-                        // no query given
-                        uri.append("?");
-                    } else {
-                        // already query params exist
-                        uri.append("&");
-                    }
-                    uri.append("deploymentId=").append(deploymentId);
-                    from.setUri(uri.toString());
+                String[] split = from.getUri().split("\\?");
+                if (split.length == 1) {
+                    // no query given
+                    uri.append("?");
+                } else {
+                    // already query params exist
+                    uri.append("&");
                 }
+                uri.append("deploymentId=").append(deploymentId);
+                from.setUri(uri.toString());
             }
         }
     }
