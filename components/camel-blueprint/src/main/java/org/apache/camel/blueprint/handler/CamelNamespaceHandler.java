@@ -1026,7 +1026,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
             // regular camel routes
             for (RouteDefinition rd : camelContext.adapt(ModelCamelContext.class).getRouteDefinitions()) {
-                findInputComponents(rd.getInputs(), components, languages, dataformats);
+                findInputComponents(rd.getInput(), components, languages, dataformats);
                 findOutputComponents(rd.getOutputs(), components, languages, dataformats);
             }
 
@@ -1036,7 +1036,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                     Object o = vd.getToOrRoute();
                     if (o instanceof RouteDefinition) {
                         RouteDefinition route = (RouteDefinition) o;
-                        findInputComponents(route.getInputs(), components, languages, dataformats);
+                        findInputComponents(route.getInput(), components, languages, dataformats);
                         findOutputComponents(route.getOutputs(), components, languages, dataformats);
                     } else if (o instanceof ToDefinition) {
                         findUriComponent(((ToDefinition) o).getUri(), components);
@@ -1108,12 +1108,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         }
 
-        private void findInputComponents(List<FromDefinition> defs, Set<String> components, Set<String> languages, Set<String> dataformats) {
-            if (defs != null) {
-                for (FromDefinition def : defs) {
-                    findUriComponent(def.getUri(), components);
-                    findSchedulerUriComponent(def.getUri(), components);
-                }
+        private void findInputComponents(FromDefinition from, Set<String> components, Set<String> languages, Set<String> dataformats) {
+            if (from != null) {
+                findUriComponent(from.getUri(), components);
+                findSchedulerUriComponent(from.getUri(), components);
             }
         }
 
