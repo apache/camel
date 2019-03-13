@@ -521,8 +521,8 @@
         <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>
         <okclient-version>3.11.0</okclient-version>
         <okclient-bundle-version>3.11.0_1</okclient-bundle-version>
-        <olingo2-version>2.0.10</olingo2-version>
-        <olingo-odata2-core-bundle-version>2.0.10_1</olingo-odata2-core-bundle-version>
+        <olingo2-version>2.0.11</olingo2-version>
+        <olingo-odata2-core-bundle-version>2.0.11_1</olingo-odata2-core-bundle-version>
         <olingo2-gson-version>2.4</olingo2-gson-version>
         <olingo4-version>4.5.0</olingo4-version>
         <ognl-version>3.1.12</ognl-version>
