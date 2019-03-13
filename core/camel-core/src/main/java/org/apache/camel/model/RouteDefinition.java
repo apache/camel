@@ -135,7 +135,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     @Override
     public String toString() {
         if (getId() != null) {
-            return "Route(" + getId() + ")[" + input + " -> " + outputs + "]";
+            return "Route(" + getId() + ")[" + (input != null ? input : "") + " -> " + outputs + "]";
         } else {
             return "Route[" + input + " -> " + outputs + "]";
         }
@@ -692,8 +692,10 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Input to the route.
      */
-    @XmlElementRef
+    @XmlElementRef(required = false)
     public void setInput(FromDefinition input) {
+        // required = false: in rest-dsl you can embed an in-lined route which
+        // does not have a <from> as its implied to be the rest endpoint
         this.input = input;
     }
 

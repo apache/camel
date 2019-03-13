@@ -43,7 +43,7 @@ public class SpringRouteNoOutputTest extends SpringTestSupport {
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("Route myRoute has no outputs: Route(myRoute)[[From[direct:start]] -> []]", iae.getMessage());
+            assertEquals("Route myRoute has no outputs: Route(myRoute)[From[direct:start] -> []]", iae.getMessage());
             return null;
         }
 

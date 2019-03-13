@@ -38,9 +38,7 @@ public class XmlConfigTestSupport extends TestSupport {
         assertEquals("One Route should be found", 1, routes.size());
 
         for (RouteDefinition route : routes) {
-            List<FromDefinition> inputs = route.getInputs();
-            assertEquals("Number of inputs", 1, inputs.size());
-            FromDefinition fromType = inputs.get(0);
+            FromDefinition fromType = route.getInput();
             assertEquals("from URI", "seda:test.a", fromType.getUri());
 
             List<?> outputs = route.getOutputs();
