@@ -23,7 +23,7 @@ import org.apache.camel.component.influxdb.CamelInfluxDbException;
 import org.apache.camel.component.influxdb.InfluxDbConstants;
 import org.influxdb.dto.Point;
 
-@Converter
+@Converter(loader = true)
 public final class CamelInfluxDbConverters {
 
     private CamelInfluxDbConverters() {
