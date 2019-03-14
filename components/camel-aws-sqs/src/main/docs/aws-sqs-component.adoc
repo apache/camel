@@ -343,6 +343,18 @@ will not make it through the filter AND also not be deleted from the SQS
 queue. After 5000 miliseconds, the message will become visible to other
 consumers.
 
+### Send Batch Message
+
+From Camel 3.x we introduce the sendBatchMessage operation. You can set a `SendMessageBatchRequest` or an `Iterable`
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage")).to("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing a `SendMessageBatchResult` instance, that you can examinate to check what messages were successfull and what not.
+The id set on each message of the batch will be a Random UUID.
+
 ### See Also
 
 * Configuring Camel
