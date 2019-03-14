@@ -33,7 +33,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootApplication
 @SpringBootTest(
     classes = {CamelAutoConfiguration.class, CamelHealthAutoConfiguration.class, MyCamelRoute.class},
-    properties = {"management.endpoint.health.verbose = true"}
+    properties = {"management.info.camel.verbose = true"}
     )
 public class CamelHealthTest extends Assert {
 
@@ -53,6 +53,9 @@ public class CamelHealthTest extends Assert {
         
         String version = (String) health.getDetails().get("version");
         assertEquals(camelContext.getVersion(), version);
+        
+        String name = (String) health.getDetails().get("name");
+        assertEquals(camelContext.getName(), name);
     }
 
 }
