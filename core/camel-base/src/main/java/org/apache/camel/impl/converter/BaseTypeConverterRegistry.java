@@ -48,6 +48,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.DoubleMap;
 import org.apache.camel.util.ObjectHelper;
 
 /**

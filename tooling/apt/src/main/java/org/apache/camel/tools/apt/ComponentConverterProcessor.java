@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.AnnotationMirror;
@@ -39,27 +38,60 @@ import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
 @SupportedAnnotationTypes({"org.apache.camel.Converter"})
-public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
+public class ComponentConverterProcessor extends AbstractCamelAnnotationProcessor {
+
+    private static final class ClassConverters {
+
+        private final Map<String, Map<TypeMirror, ExecutableElement>> converters = new TreeMap<>();
+        private final Comparator<TypeMirror> comparator;
+        private final List<ExecutableElement> fallbackConverters = new ArrayList<>();
+
+        ClassConverters(Comparator<TypeMirror> comparator) {
+            this.comparator = comparator;
+        }
+
+        void addTypeConverter(TypeMirror to, TypeMirror from, ExecutableElement ee) {
+            converters.computeIfAbsent(toString(to), c -> new TreeMap<>(comparator)).put(from, ee);
+        }
+
+        void addFallbackTypeConverter(ExecutableElement ee) {
+            fallbackConverters.add(ee);
+        }
+
+        Map<String, Map<TypeMirror, ExecutableElement>> getConverters() {
+            return converters;
+        }
+
+        List<ExecutableElement> getFallbackConverters() {
+            return fallbackConverters;
+        }
+
+        private static String toString(TypeMirror type) {
+            return type.toString().replaceAll("<.*>", "");
+        }
+
+    }
 
     @Override
     protected void doProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) throws Exception {
-        if (this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.impl.converter.CoreStaticTypeConverterLoader") != null) {
-            return;
-        }
-
-        // We're in tests, do not generate anything
-        if (this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.converter.ObjectConverter") == null) {
-            return;
-        }
+        Map<String, ClassConverters> converters = new TreeMap<>();
 
         Comparator<TypeMirror> comparator = (o1, o2) -> processingEnv.getTypeUtils().isAssignable(o1, o2)
             ? -1 : processingEnv.getTypeUtils().isAssignable(o2, o1) ? +1 : o1.toString().compareTo(o2.toString());
 
-        Map<String, Map<TypeMirror, ExecutableElement>> converters = new TreeMap<>();
         TypeElement converterAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.Converter");
+        // the current class with type converters
+        String currentClass = null;
         for (Element element : roundEnv.getElementsAnnotatedWith(converterAnnotationType)) {
-            if (element.getKind() == ElementKind.METHOD) {
-                ExecutableElement ee = (ExecutableElement)element;
+            // we need a top level class first
+            if (element.getKind() == ElementKind.CLASS) {
+                TypeElement te = (TypeElement) element;
+                if (!te.getNestingKind().isNested() && isLoaderEnabled(te)) {
+                    // we only accept top-level classes and if loader is enabled
+                    currentClass = te.getQualifiedName().toString();
+                }
+            } else if (currentClass != null && element.getKind() == ElementKind.METHOD) {
+                ExecutableElement ee = (ExecutableElement) element;
                 TypeMirror to = ee.getReturnType();
                 TypeMirror from = ee.getParameters().get(0).asType();
                 String fromStr = toString(from);
@@ -70,22 +102,53 @@ public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
                     } else {
                         processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Could not retrieve type element for " + fromStr);
                     }
-
                 }
-                converters.computeIfAbsent(toString(to), c -> new TreeMap<>(comparator)).put(from, ee);
-            }
-        }
-        TypeElement fallbackAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.FallbackConverter");
-        List<ExecutableElement> fallbackConverters = new ArrayList<>();
-        for (Element element : roundEnv.getElementsAnnotatedWith(fallbackAnnotationType)) {
-            if (element.getKind() == ElementKind.METHOD) {
-                ExecutableElement ee = (ExecutableElement)element;
-                fallbackConverters.add(ee);
+                converters.computeIfAbsent(currentClass, c -> new ClassConverters(comparator)).addTypeConverter(to, from, ee);
             }
         }
 
-        String p = "org.apache.camel.impl.converter";
-        String c = "CoreStaticTypeConverterLoader";
+        TypeElement fallbackAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.FallbackConverter");
+        currentClass = null;
+        for (Element element : roundEnv.getElementsAnnotatedWith(fallbackAnnotationType)) {
+            if (element.getKind() == ElementKind.CLASS) {
+                TypeElement te = (TypeElement) element;
+                if (!te.getNestingKind().isNested() && isLoaderEnabled(te)) {
+                    // we only accept top-level classes and if loader is enabled
+                    currentClass = te.getQualifiedName().toString();
+                }
+            } else if (currentClass != null && element.getKind() == ElementKind.METHOD) {
+                ExecutableElement ee = (ExecutableElement) element;
+                converters.computeIfAbsent(currentClass, c -> new ClassConverters(comparator)).addFallbackTypeConverter(ee);
+            }
+        }
+
+        // now write all the converters
+        for (Map.Entry<String, ClassConverters> entry : converters.entrySet()) {
+            String key = entry.getKey();
+            ClassConverters value = entry.getValue();
+            writeConverterLoader(key, value, converterAnnotationType, fallbackAnnotationType);
+        }
+    }
+
+    private static boolean isLoaderEnabled(Element element) {
+        for (AnnotationMirror ann : element.getAnnotationMirrors()) {
+            for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
+                if ("loader".equals(entry.getKey().getSimpleName().toString())) {
+                    return (Boolean) entry.getValue().getValue();
+                }
+            }
+        }
+        return false;
+    }
+
+    private void writeConverterLoader(String fqn, ClassConverters converters,
+                                      TypeElement converterAnnotationType,
+                                      TypeElement fallbackAnnotationType) throws Exception {
+
+        int pos = fqn.lastIndexOf('.');
+        String p = fqn.substring(0, pos);
+        String c = fqn.substring(pos + 1) + "Loader";
+
         JavaFileObject jfo = processingEnv.getFiler().createSourceFile(p + "." + c);
         Set<String> converterClasses = new LinkedHashSet<>();
         try (Writer writer = jfo.openWriter()) {
@@ -98,11 +161,12 @@ public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
             writer.append("import org.apache.camel.spi.TypeConverterLoader;\n");
             writer.append("import org.apache.camel.spi.TypeConverterRegistry;\n");
             writer.append("import org.apache.camel.support.TypeConverterSupport;\n");
+            writer.append("import org.apache.camel.util.DoubleMap;\n");
             writer.append("\n");
             writer.append("@SuppressWarnings(\"unchecked\")\n");
             writer.append("public class ").append(c).append(" implements TypeConverterLoader {\n");
             writer.append("\n");
-            writer.append("    public static final CoreStaticTypeConverterLoader INSTANCE = new CoreStaticTypeConverterLoader();\n");
+            writer.append("    public static final ").append(c).append(" INSTANCE = new ").append(c).append("();\n");
             writer.append("\n");
             writer.append("    static abstract class SimpleTypeConverter extends TypeConverterSupport {\n");
             writer.append("        private final boolean allowNull;\n");
@@ -133,7 +197,7 @@ public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
             writer.append("\n");
             writer.append("    private ").append(c).append("() {\n");
 
-            for (Map.Entry<String, Map<TypeMirror, ExecutableElement>> to : converters.entrySet()) {
+            for (Map.Entry<String, Map<TypeMirror, ExecutableElement>> to : converters.getConverters().entrySet()) {
                 for (Map.Entry<TypeMirror, ExecutableElement> from : to.getValue().entrySet()) {
                     boolean allowNull = false;
                     for (AnnotationMirror ann : from.getValue().getAnnotationMirrors()) {
@@ -163,7 +227,7 @@ public class ConverterProcessor extends AbstractCamelAnnotationProcessor {
             writer.append("    @Override\n");
             writer.append("    public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {\n");
             writer.append("        converters.forEach((k, v, c) -> registry.addTypeConverter(k, v, c));\n");
-            for (ExecutableElement ee : fallbackConverters) {
+            for (ExecutableElement ee : converters.getFallbackConverters()) {
                 boolean allowNull = false;
                 boolean canPromote = false;
                 for (AnnotationMirror ann : ee.getAnnotationMirrors()) {

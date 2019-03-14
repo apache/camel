@@ -51,4 +51,13 @@ public @interface FallbackConverter {
      */
     boolean canPromote() default false;
 
+    /**
+     * Whether to let the Camel compiler plugin to generate java source code
+     * for fast loading of the type converters.
+     * 
+     * This option should only be configured on the top-level class.
+     */
+    boolean loader() default false;
+
+
 }
