@@ -34,15 +34,6 @@ public final class BeanConverter {
         // Helper Class
     }
 
-    @Converter
-    public static int toDummy(String s) {
-        return 1;
-    }
-
-    public String hello(String w) {
-        return null;
-    }
-
     @FallbackConverter
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // use a fallback type converter so we can convert the embedded body if the value is BeanInvocation
