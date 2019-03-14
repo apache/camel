@@ -52,9 +52,18 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
         private final Map<String, Map<TypeMirror, ExecutableElement>> converters = new TreeMap<>();
         private final List<ExecutableElement> fallbackConverters = new ArrayList<>();
         private int size;
+        private boolean ignoreOnLoadError;
 
         ClassConverters(Comparator<TypeMirror> comparator) {
             this.comparator = comparator;
+        }
+
+        boolean isIgnoreOnLoadError() {
+            return ignoreOnLoadError;
+        }
+
+        void setIgnoreOnLoadError(boolean ignoreOnLoadError) {
+            this.ignoreOnLoadError = ignoreOnLoadError;
         }
 
         void addTypeConverter(TypeMirror to, TypeMirror from, ExecutableElement ee) {
@@ -98,6 +107,7 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
         TypeElement converterAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.Converter");
         // the current class with type converters
         String currentClass = null;
+        boolean ignoreOnLoadError = false;
         for (Element element : roundEnv.getElementsAnnotatedWith(converterAnnotationType)) {
             // we need a top level class first
             if (element.getKind() == ElementKind.CLASS) {
@@ -105,6 +115,7 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
                 if (!te.getNestingKind().isNested() && isLoaderEnabled(te)) {
                     // we only accept top-level classes and if loader is enabled
                     currentClass = te.getQualifiedName().toString();
+                    ignoreOnLoadError = isIgnoreOnLoadError(element);
                 }
             } else if (currentClass != null && element.getKind() == ElementKind.METHOD) {
                 ExecutableElement ee = (ExecutableElement) element;
@@ -120,21 +131,29 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
                     }
                 }
                 converters.computeIfAbsent(currentClass, c -> new ClassConverters(comparator)).addTypeConverter(to, from, ee);
+                if (converters.containsKey(currentClass)) {
+                    converters.get(currentClass).setIgnoreOnLoadError(ignoreOnLoadError);
+                }
             }
         }
 
         TypeElement fallbackAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.FallbackConverter");
         currentClass = null;
+        ignoreOnLoadError = false;
         for (Element element : roundEnv.getElementsAnnotatedWith(fallbackAnnotationType)) {
             if (element.getKind() == ElementKind.CLASS) {
                 TypeElement te = (TypeElement) element;
                 if (!te.getNestingKind().isNested() && isLoaderEnabled(te)) {
                     // we only accept top-level classes and if loader is enabled
                     currentClass = te.getQualifiedName().toString();
+                    ignoreOnLoadError = isIgnoreOnLoadError(element);
                 }
             } else if (currentClass != null && element.getKind() == ElementKind.METHOD) {
                 ExecutableElement ee = (ExecutableElement) element;
                 converters.computeIfAbsent(currentClass, c -> new ClassConverters(comparator)).addFallbackTypeConverter(ee);
+                if (converters.containsKey(currentClass)) {
+                    converters.get(currentClass).setIgnoreOnLoadError(ignoreOnLoadError);
+                }
             }
         }
 
@@ -153,6 +172,17 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
                 if ("loader".equals(entry.getKey().getSimpleName().toString())) {
+                    return (Boolean) entry.getValue().getValue();
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isIgnoreOnLoadError(Element element) {
+        for (AnnotationMirror ann : element.getAnnotationMirrors()) {
+            for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
+                if ("ignoreOnLoadError".equals(entry.getKey().getSimpleName().toString())) {
                     return (Boolean) entry.getValue().getValue();
                 }
             }
@@ -266,7 +296,15 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
             writer.append("\n");
             writer.append("    @Override\n");
             writer.append("    public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {\n");
-            writer.append("        converters.forEach((k, v, c) -> registry.addTypeConverter(k, v, c));\n");
+            if (converters.isIgnoreOnLoadError()) {
+                writer.append("        try {\n");
+                writer.append("            converters.forEach((k, v, c) -> registry.addTypeConverter(k, v, c));\n");
+                writer.append("        } catch (Throwable e) {\n");
+                writer.append("            // ignore on load error\n");
+                writer.append("        }\n");
+            } else {
+                writer.append("        converters.forEach((k, v, c) -> registry.addTypeConverter(k, v, c));\n");
+            }
             for (ExecutableElement ee : converters.getFallbackConverters()) {
                 boolean allowNull = false;
                 boolean canPromote = false;
