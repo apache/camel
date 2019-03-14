@@ -27,11 +27,20 @@ import static org.apache.camel.TypeConverter.MISS_VALUE;
 /**
  * A set of converter methods for working with beans
  */
-@Converter
+@Converter(loader = true)
 public final class BeanConverter {
 
     private BeanConverter() {
         // Helper Class
+    }
+
+    @Converter
+    public static int toDummy(String s) {
+        return 1;
+    }
+
+    public String hello(String w) {
+        return null;
     }
 
     @FallbackConverter

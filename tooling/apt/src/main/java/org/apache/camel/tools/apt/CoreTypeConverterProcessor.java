@@ -38,11 +38,16 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
-@SupportedAnnotationTypes({"org.apache.camel.Converter"})
-public class CoreConverterProcessor extends AbstractCamelAnnotationProcessor {
+@SupportedAnnotationTypes({"org.apache.camel.Converter", "org.apache.camel.FallbackConverter"})
+public class CoreTypeConverterProcessor extends AbstractCamelAnnotationProcessor {
 
     @Override
     protected void doProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) throws Exception {
+
+        // TODO: fallback does not work
+        // TODO: generate so you dont need to pass in CamelContext but register into a java set/thingy
+        // so you can init this via static initializer block { ... } and then register on CamelContext later
+
         if (this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.impl.converter.CoreStaticTypeConverterLoader") != null) {
             return;
         }
@@ -105,10 +110,10 @@ public class CoreConverterProcessor extends AbstractCamelAnnotationProcessor {
             writer.append("\n");
             writer.append("    public static final CoreStaticTypeConverterLoader INSTANCE = new CoreStaticTypeConverterLoader();\n");
             writer.append("\n");
-            writer.append("    static abstract class SimpleTypeConverter extends TypeConverterSupport {\n");
+            writer.append("    static abstract class BaseTypeConverter extends TypeConverterSupport {\n");
             writer.append("        private final boolean allowNull;\n");
             writer.append("\n");
-            writer.append("        public SimpleTypeConverter(boolean allowNull) {\n");
+            writer.append("        public BaseTypeConverter(boolean allowNull) {\n");
             writer.append("            this.allowNull = allowNull;\n");
             writer.append("        }\n");
             writer.append("\n");
@@ -130,7 +135,7 @@ public class CoreConverterProcessor extends AbstractCamelAnnotationProcessor {
             writer.append("        protected abstract Object doConvert(Exchange exchange, Object value) throws Exception;\n");
             writer.append("    };\n");
             writer.append("\n");
-            writer.append("    private DoubleMap<Class<?>, Class<?>, SimpleTypeConverter> converters = new DoubleMap<>(256);\n");
+            writer.append("    private final DoubleMap<Class<?>, Class<?>, BaseTypeConverter> converters = new DoubleMap<>(256);\n");
             writer.append("\n");
             writer.append("    private ").append(c).append("() {\n");
 
@@ -151,7 +156,7 @@ public class CoreConverterProcessor extends AbstractCamelAnnotationProcessor {
                         }
                     }
                     writer.append("        converters.put(").append(to.getKey()).append(".class").append(", ").append(toString(from.getKey()))
-                        .append(".class, new SimpleTypeConverter(").append(Boolean.toString(allowNull)).append(") {\n");
+                        .append(".class, new BaseTypeConverter(").append(Boolean.toString(allowNull)).append(") {\n");
                     writer.append("            @Override\n");
                     writer.append("            public Object doConvert(Exchange exchange, Object value) throws Exception {\n");
                     writer.append("                return ").append(toJava(from.getValue(), converterClasses)).append(";\n");
