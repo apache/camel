@@ -144,7 +144,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 36 options, which are listed below.
+The component supports 37 options, which are listed below.
 
 
 
@@ -170,6 +170,7 @@ The component supports 36 options, which are listed below.
 | *camel.component.aws-sqs.configuration.message-deduplication-id-strategy* | Only for FIFO queues. Strategy for setting the messageDeduplicationId on the message. Can be one of the following options: *useExchangeId*, *useContentBasedDeduplication*. For the *useContentBasedDeduplication* option, no messageDeduplicationId will be set on the message. | useExchangeId | String
 | *camel.component.aws-sqs.configuration.message-group-id-strategy* | Only for FIFO queues. Strategy for setting the messageGroupId on the message. Can be one of the following options: *useConstant*, *useExchangeId*, *usePropertyValue*. For the *usePropertyValue* option, the value of property "CamelAwsMessageGroupId" will be used. |  | String
 | *camel.component.aws-sqs.configuration.message-retention-period* | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue. |  | Integer
+| *camel.component.aws-sqs.configuration.operation* | The operation to do in case the user don't want to send only a message |  | SqsOperations
 | *camel.component.aws-sqs.configuration.policy* | The policy for this queue |  | String
 | *camel.component.aws-sqs.configuration.proxy-host* | To define a proxy host when instantiating the SQS client |  | String
 | *camel.component.aws-sqs.configuration.proxy-port* | To define a proxy port when instantiating the SQS client |  | Integer
