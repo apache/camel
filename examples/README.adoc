@@ -168,6 +168,8 @@ Number of Examples: 103 (0 deprecated)
 
 | link:camel-example-spring-jms/README.md[Spring JMS] (camel-example-spring-jms) | Messaging | An example using Spring XML to talk to the JMS server from different kind of client techniques
 
+| link:camel-example-as2/README.md[AS2] (camel-example-as2) | Messaging | Demonstrates sending and receiving AS2 messages using AS2 enpoints.
+
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
 
 | link:camel-example-ehcache-blueprint/README.md[EHCache OSGi] (camel-example-ehcache-blueprint) | OSGi | An example using EHCache with OSGi Blueprint
