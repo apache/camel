@@ -92,10 +92,10 @@ public class SqsProducer extends DefaultProducer {
     private void sendBatchMessage(AmazonSQS amazonSQS, Exchange exchange) {
         SendMessageBatchRequest request = new SendMessageBatchRequest(getQueueUrl());
         Collection<SendMessageBatchRequestEntry> entries = new ArrayList<SendMessageBatchRequestEntry>();
-        if (exchange.getIn().getBody() instanceof Collection) {
-            Collection c = exchange.getIn().getBody(Collection.class);
+        if (exchange.getIn().getBody() instanceof Iterable) {
+            Iterable c = exchange.getIn().getBody(Iterable.class);
             for (Iterator iterator = c.iterator(); iterator.hasNext();) {
-                String object = (String)iterator.next();
+                String object = (String) iterator.next();
                 SendMessageBatchRequestEntry entry = new SendMessageBatchRequestEntry();
                 entry.setId(UUID.randomUUID().toString());
                 entry.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
