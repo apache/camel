@@ -45,7 +45,7 @@ import org.apache.camel.support.ExchangeHelper;
 /**
  * JavaMail specific converters.
  */
-@Converter
+@Converter(loader = true)
 public final class MailConverters {
 
     private static final String NOW_DATE_FORMAT = "yyyy-MM-dd HH:mm:SS";

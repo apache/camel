@@ -33,7 +33,7 @@ import org.apache.camel.component.telegram.model.Update;
 /**
  * Utilities for converting between Telegram APIs and standard java objects.
  */
-@Converter
+@Converter(loader = true)
 public final class TelegramConverter {
 
     private TelegramConverter() {

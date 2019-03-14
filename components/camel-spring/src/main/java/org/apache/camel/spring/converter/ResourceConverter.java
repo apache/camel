@@ -22,7 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.Converter;
 import org.springframework.core.io.Resource;
 
-@Converter
+@Converter(loader = true)
 public final class ResourceConverter {
 
     private ResourceConverter() {
