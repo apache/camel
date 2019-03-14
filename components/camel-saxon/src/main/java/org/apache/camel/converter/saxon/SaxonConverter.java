@@ -38,7 +38,7 @@ import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
-@Converter
+@Converter(loader = true)
 public final class SaxonConverter {
 
     private SaxonConverter() {

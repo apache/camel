@@ -33,7 +33,7 @@ import org.apache.camel.converter.IOConverter;
 /**
  * HL7 converters.
  */
-@Converter
+@Converter(loader = true)
 public final class HL7Converter {
 
     private static final HapiContext DEFAULT_CONTEXT;

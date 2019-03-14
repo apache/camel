@@ -19,7 +19,7 @@ package org.apache.camel.component.atomix;
 import io.atomix.catalyst.transport.Address;
 import org.apache.camel.Converter;
 
-@Converter
+@Converter(loader = true)
 public final class AtomixTypeConverter {
 
     private AtomixTypeConverter() {

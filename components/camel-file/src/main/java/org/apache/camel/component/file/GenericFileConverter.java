@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A set of converter methods for working with generic file types
  */
-@Converter
+@Converter(loader = true)
 public final class GenericFileConverter {
 
     static Supplier<Charset> defaultCharset = Charset::defaultCharset;
