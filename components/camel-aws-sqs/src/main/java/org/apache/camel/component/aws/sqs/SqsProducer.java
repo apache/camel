@@ -17,13 +17,20 @@
 package org.apache.camel.component.aws.sqs;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
+import com.amazonaws.services.sqs.model.SendMessageBatchRequest;
+import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
+import com.amazonaws.services.sqs.model.SendMessageBatchResult;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import org.apache.camel.Exchange;
@@ -50,6 +57,21 @@ public class SqsProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+        SqsOperations operation = determineOperation(exchange);
+        if (ObjectHelper.isEmpty(operation)) {
+           processSingleMessage(exchange);
+        } else {
+            switch (operation) {
+            case sendBatchMessage:
+            	sendBatchMessage(getClient(), exchange);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported operation");
+            }
+        }
+    }
+    
+    public void processSingleMessage(final Exchange exchange) {
         String body = exchange.getIn().getBody(String.class);
         SendMessageRequest request = new SendMessageRequest(getQueueUrl(), body);
         request.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
@@ -66,8 +88,49 @@ public class SqsProducer extends DefaultProducer {
         message.setHeader(SqsConstants.MESSAGE_ID, result.getMessageId());
         message.setHeader(SqsConstants.MD5_OF_BODY, result.getMD5OfMessageBody());
     }
+    
+    private void sendBatchMessage(AmazonSQS amazonSQS, Exchange exchange) {
+        SendMessageBatchRequest request = new SendMessageBatchRequest(getQueueUrl());
+        Collection<SendMessageBatchRequestEntry> entries = new ArrayList<SendMessageBatchRequestEntry>();
+        if (exchange.getIn().getBody() instanceof Collection) {
+        	Collection c = exchange.getIn().getBody(Collection.class);
+        	for (Iterator iterator = c.iterator(); iterator.hasNext();) {
+				String object = (String) iterator.next();
+				SendMessageBatchRequestEntry entry = new SendMessageBatchRequestEntry();
+				entry.setId(UUID.randomUUID().toString());
+				entry.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
+				entry.setMessageBody(object);
+				addDelay(entry, exchange);
+				configureFifoAttributes(entry, exchange);
+				entries.add(entry);
+			}
+            request.setEntries(entries);
+            SendMessageBatchResult result = amazonSQS.sendMessageBatch(request);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        } else {
+        	request = exchange.getIn().getBody(SendMessageBatchRequest.class);
+            SendMessageBatchResult result = amazonSQS.sendMessageBatch(request);
+            Message message = getMessageForResponse(exchange);
+            message.setBody(result);
+        }
+    }
 
     private void configureFifoAttributes(SendMessageRequest request, Exchange exchange) {
+        if (getEndpoint().getConfiguration().isFifoQueue()) {
+            // use strategies
+            MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
+            String messageGroupId = messageGroupIdStrategy.getMessageGroupId(exchange);
+            request.setMessageGroupId(messageGroupId);
+
+            MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = getEndpoint().getConfiguration().getMessageDeduplicationIdStrategy();
+            String messageDeduplicationId = messageDeduplicationIdStrategy.getMessageDeduplicationId(exchange);
+            request.setMessageDeduplicationId(messageDeduplicationId);
+
+        }
+    }
+    
+    private void configureFifoAttributes(SendMessageBatchRequestEntry request, Exchange exchange) {
         if (getEndpoint().getConfiguration().isFifoQueue()) {
             // use strategies
             MessageGroupIdStrategy messageGroupIdStrategy = getEndpoint().getConfiguration().getMessageGroupIdStrategy();
@@ -94,6 +157,20 @@ public class SqsProducer extends DefaultProducer {
         log.trace("found delay: {}", delayValue);
         request.setDelaySeconds(delayValue == null ? Integer.valueOf(0) : delayValue);
     }
+    
+    private void addDelay(SendMessageBatchRequestEntry request, Exchange exchange) {
+        Integer headerValue = exchange.getIn().getHeader(SqsConstants.DELAY_HEADER, Integer.class);
+        Integer delayValue;
+        if (headerValue == null) {
+            log.trace("Using the config delay");
+            delayValue = getEndpoint().getConfiguration().getDelaySeconds();
+        } else {
+            log.trace("Using the header delay");
+            delayValue = headerValue;
+        }
+        log.trace("found delay: {}", delayValue);
+        request.setDelaySeconds(delayValue == null ? Integer.valueOf(0) : delayValue);
+    }
 
     protected AmazonSQS getClient() {
         return getEndpoint().getClient();
@@ -101,6 +178,10 @@ public class SqsProducer extends DefaultProducer {
 
     protected String getQueueUrl() {
         return getEndpoint().getQueueUrl();
+    }
+    
+    protected SqsConfiguration getConfiguration() {
+        return getEndpoint().getConfiguration();
     }
 
     @Override
@@ -180,5 +261,13 @@ public class SqsProducer extends DefaultProducer {
             return out;
         }
         return exchange.getIn();
+    }
+    
+    private SqsOperations determineOperation(Exchange exchange) {
+        SqsOperations operation = exchange.getIn().getHeader(SqsConstants.SQS_OPERATION, SqsOperations.class);
+        if (operation == null) {
+            operation = getConfiguration().getOperation();
+        }
+        return operation;
     }
 }
