@@ -23,7 +23,7 @@ import org.apache.camel.Converter;
 import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 
-@Converter
+@Converter(loader = true)
 public final class RestletConverter {
 
     private RestletConverter() {

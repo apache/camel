@@ -23,7 +23,7 @@ import org.apache.http.entity.ContentType;
 /**
  * Content type related converters.
  */
-@Converter
+@Converter(loader = true)
 public enum ContentTypeConverter {
     INSTANCE;
     

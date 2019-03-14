@@ -32,7 +32,7 @@ import org.apache.http.entity.InputStreamEntity;
 /**
  * Some converter methods to make it easier to convert the body to RequestEntity types.
  */
-@Converter
+@Converter(loader = true)
 public final class HttpEntityConverter {
 
     private HttpEntityConverter() {

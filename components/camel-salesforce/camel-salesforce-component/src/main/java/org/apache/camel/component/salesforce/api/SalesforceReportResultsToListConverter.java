@@ -40,7 +40,7 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.SummaryVa
 /**
  * Salesforce report results to <code>List&lt;List&lt;String&gt;&gt;</code>converter.
  */
-@Converter
+@Converter(loader = true)
 public final class SalesforceReportResultsToListConverter {
 
     public static final String INCLUDE_DETAILS = "CamelSalesforceIncludeDetails";

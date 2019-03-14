@@ -31,7 +31,7 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.bson.Document;
 
-@Converter
+@Converter(loader = true)
 public final class MongoDbFallbackConverter {
 
     // Jackson's ObjectMapper is thread-safe, so no need to create a pool nor synchronize access to it

@@ -33,7 +33,7 @@ import org.apache.camel.component.jms.JmsBinding;
 /**
  * 
  */
-@Converter
+@Converter(loader = true)
 public class ActiveMQMessageConverter {
     private JmsBinding binding = new JmsBinding();
 

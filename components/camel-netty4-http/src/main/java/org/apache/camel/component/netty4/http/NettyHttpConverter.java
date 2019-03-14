@@ -30,7 +30,7 @@ import org.apache.camel.component.netty4.NettyConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 
-@Converter
+@Converter(loader = true)
 public final class NettyHttpConverter {
 
     private NettyHttpConverter() {
