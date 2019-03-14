@@ -109,7 +109,7 @@ import org.apache.camel.converter.IOConverter;
 /**
  * HL7 converters.
  */
-@Converter(ignoreOnLoadError = true)
+@Converter(loader = true, ignoreOnLoadError = true)
 public final class HL722Converter {
 
     private static final HapiContext DEFAULT_CONTEXT;
