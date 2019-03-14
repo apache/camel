@@ -42,8 +42,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * A Producer which sends messages to the Amazon Web Service Simple Queue Service
- * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
+ * A Producer which sends messages to the Amazon Web Service Simple Queue
+ * Service <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
  */
 public class SqsProducer extends DefaultProducer {
 
@@ -59,18 +59,18 @@ public class SqsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         SqsOperations operation = determineOperation(exchange);
         if (ObjectHelper.isEmpty(operation)) {
-           processSingleMessage(exchange);
+            processSingleMessage(exchange);
         } else {
             switch (operation) {
             case sendBatchMessage:
-            	sendBatchMessage(getClient(), exchange);
+                sendBatchMessage(getClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
             }
         }
     }
-    
+
     public void processSingleMessage(final Exchange exchange) {
         String body = exchange.getIn().getBody(String.class);
         SendMessageRequest request = new SendMessageRequest(getQueueUrl(), body);
@@ -88,28 +88,28 @@ public class SqsProducer extends DefaultProducer {
         message.setHeader(SqsConstants.MESSAGE_ID, result.getMessageId());
         message.setHeader(SqsConstants.MD5_OF_BODY, result.getMD5OfMessageBody());
     }
-    
+
     private void sendBatchMessage(AmazonSQS amazonSQS, Exchange exchange) {
         SendMessageBatchRequest request = new SendMessageBatchRequest(getQueueUrl());
         Collection<SendMessageBatchRequestEntry> entries = new ArrayList<SendMessageBatchRequestEntry>();
         if (exchange.getIn().getBody() instanceof Collection) {
-        	Collection c = exchange.getIn().getBody(Collection.class);
-        	for (Iterator iterator = c.iterator(); iterator.hasNext();) {
-				String object = (String) iterator.next();
-				SendMessageBatchRequestEntry entry = new SendMessageBatchRequestEntry();
-				entry.setId(UUID.randomUUID().toString());
-				entry.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
-				entry.setMessageBody(object);
-				addDelay(entry, exchange);
-				configureFifoAttributes(entry, exchange);
-				entries.add(entry);
-			}
+            Collection c = exchange.getIn().getBody(Collection.class);
+            for (Iterator iterator = c.iterator(); iterator.hasNext();) {
+                String object = (String)iterator.next();
+                SendMessageBatchRequestEntry entry = new SendMessageBatchRequestEntry();
+                entry.setId(UUID.randomUUID().toString());
+                entry.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders(), exchange));
+                entry.setMessageBody(object);
+                addDelay(entry, exchange);
+                configureFifoAttributes(entry, exchange);
+                entries.add(entry);
+            }
             request.setEntries(entries);
             SendMessageBatchResult result = amazonSQS.sendMessageBatch(request);
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         } else {
-        	request = exchange.getIn().getBody(SendMessageBatchRequest.class);
+            request = exchange.getIn().getBody(SendMessageBatchRequest.class);
             SendMessageBatchResult result = amazonSQS.sendMessageBatch(request);
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
@@ -129,7 +129,7 @@ public class SqsProducer extends DefaultProducer {
 
         }
     }
-    
+
     private void configureFifoAttributes(SendMessageBatchRequestEntry request, Exchange exchange) {
         if (getEndpoint().getConfiguration().isFifoQueue()) {
             // use strategies
@@ -157,7 +157,7 @@ public class SqsProducer extends DefaultProducer {
         log.trace("found delay: {}", delayValue);
         request.setDelaySeconds(delayValue == null ? Integer.valueOf(0) : delayValue);
     }
-    
+
     private void addDelay(SendMessageBatchRequestEntry request, Exchange exchange) {
         Integer headerValue = exchange.getIn().getHeader(SqsConstants.DELAY_HEADER, Integer.class);
         Integer delayValue;
@@ -179,14 +179,14 @@ public class SqsProducer extends DefaultProducer {
     protected String getQueueUrl() {
         return getEndpoint().getQueueUrl();
     }
-    
+
     protected SqsConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
 
     @Override
     public SqsEndpoint getEndpoint() {
-        return (SqsEndpoint) super.getEndpoint();
+        return (SqsEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -201,7 +201,8 @@ public class SqsProducer extends DefaultProducer {
         Map<String, MessageAttributeValue> result = new HashMap<>();
         HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         for (Entry<String, Object> entry : headers.entrySet()) {
-            // only put the message header which is not filtered into the message attribute
+            // only put the message header which is not filtered into the
+            // message attribute
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 Object value = entry.getValue();
                 if (value instanceof String && !((String)value).isEmpty()) {
@@ -246,14 +247,15 @@ public class SqsProducer extends DefaultProducer {
                     mav.withStringValue(value.toString());
                     result.put(entry.getKey(), mav);
                 } else {
-                    // cannot translate the message header to message attribute value
+                    // cannot translate the message header to message attribute
+                    // value
                     log.warn("Cannot put the message header key={}, value={} into Sqs MessageAttribute", entry.getKey(), entry.getValue());
                 }
             }
         }
         return result;
     }
-    
+
     public static Message getMessageForResponse(final Exchange exchange) {
         if (exchange.getPattern().isOutCapable()) {
             Message out = exchange.getOut();
@@ -262,7 +264,7 @@ public class SqsProducer extends DefaultProducer {
         }
         return exchange.getIn();
     }
-    
+
     private SqsOperations determineOperation(Exchange exchange) {
         SqsOperations operation = exchange.getIn().getHeader(SqsConstants.SQS_OPERATION, SqsOperations.class);
         if (operation == null) {

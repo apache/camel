@@ -33,43 +33,41 @@ import org.junit.Test;
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
 public class SqsProducerBatchSendTestIT extends CamelTestSupport {
 
-	@EndpointInject("direct:start")
-	private ProducerTemplate template;
+    @EndpointInject("direct:start")
+    private ProducerTemplate template;
 
-	@EndpointInject("mock:result")
-	private MockEndpoint result;
+    @EndpointInject("mock:result")
+    private MockEndpoint result;
 
-	@Test
-	public void sendInOnly() throws Exception {
-		result.expectedMessageCount(5);
+    @Test
+    public void sendInOnly() throws Exception {
+        result.expectedMessageCount(5);
 
-		Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
-			public void process(Exchange exchange) throws Exception {
-				Collection c = new ArrayList<Integer>();
-				c.add("1");
-				c.add("2");
-				c.add("3");
-				c.add("4");
-				c.add("5");
-				exchange.getIn().setBody(c);
-			}
-		});
+        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                Collection c = new ArrayList<Integer>();
+                c.add("1");
+                c.add("2");
+                c.add("3");
+                c.add("4");
+                c.add("5");
+                exchange.getIn().setBody(c);
+            }
+        });
 
-		assertMockEndpointsSatisfied();
-	}
+        assertMockEndpointsSatisfied();
+    }
 
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		final String sqsEndpointUri = String.format(
-				"aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        final String sqsEndpointUri = String.format("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
 
-		return new RouteBuilder() {
-			@Override
-			public void configure() throws Exception {
-				from("direct:start").startupOrder(2).setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage"))
-						.to(sqsEndpointUri);
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").startupOrder(2).setHeader(SqsConstants.SQS_OPERATION, constant("sendBatchMessage")).to(sqsEndpointUri);
 
-				from("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&deleteAfterRead=true").startupOrder(1).log("${body}").to("mock:result");
-			}
-		};
-	}
+                from("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1&deleteAfterRead=true").startupOrder(1).log("${body}").to("mock:result");
+            }
+        };
+    }
 }
