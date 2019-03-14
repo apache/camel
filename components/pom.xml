@@ -206,6 +206,7 @@
         <module>camel-jmx</module>
         <module>camel-jolt</module>
         <module>camel-johnzon</module>
+        <module>camel-jooq</module>
         <module>camel-jpa</module>
         <module>camel-jsonpath</module>
         <module>camel-jsch</module>
