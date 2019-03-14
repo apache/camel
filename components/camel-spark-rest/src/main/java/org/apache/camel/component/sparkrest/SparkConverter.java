@@ -23,7 +23,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import spark.Request;
 import spark.Response;
 
-@Converter
+@Converter(loader = true)
 public final class SparkConverter {
 
     private SparkConverter() {

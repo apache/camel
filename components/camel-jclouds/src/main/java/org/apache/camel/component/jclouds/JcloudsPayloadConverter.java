@@ -40,7 +40,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.ByteSourcePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
 
-@Converter
+@Converter(loader = true)
 public final class JcloudsPayloadConverter {
 
     private JcloudsPayloadConverter() {

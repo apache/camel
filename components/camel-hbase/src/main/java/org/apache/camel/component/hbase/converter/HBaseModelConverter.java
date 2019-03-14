@@ -19,7 +19,7 @@ package org.apache.camel.component.hbase.converter;
 import org.apache.camel.Converter;
 import org.apache.hadoop.hbase.util.Bytes;
 
-@Converter
+@Converter(loader = true)
 public final class HBaseModelConverter {
 
     private HBaseModelConverter() {

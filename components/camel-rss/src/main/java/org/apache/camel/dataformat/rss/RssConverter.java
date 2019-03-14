@@ -24,7 +24,7 @@ import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.SyndFeedOutput;
 import org.apache.camel.Converter;
 
-@Converter
+@Converter(loader = true)
 public final class RssConverter {
     private RssConverter() {
     }
