@@ -25,7 +25,7 @@ import org.eclipse.jetty.server.Response;
 
 import static org.apache.camel.TypeConverter.MISS_VALUE;
 
-@Converter
+@Converter(loader = true)
 public final class JettyConverter {
 
     private JettyConverter() {
