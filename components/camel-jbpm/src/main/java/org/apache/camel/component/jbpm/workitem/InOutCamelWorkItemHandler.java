@@ -56,7 +56,7 @@ import org.kie.api.runtime.process.WorkItemManager;
         name = "InOutCamelConnector",
         displayName = "InOutCamelConnector",
         category = "Camel",
-        defaultHandler = "mvel: new org.apache.camel.component.jbpm.workitem.InOutCamelWorkitemHandler()",
+        defaultHandler = "mvel: new org.apache.camel.component.jbpm.workitem.InOutCamelWorkItemHandler()",
         documentation = "${artifactId}/index.html",
         parameters = {
                 @WidParameter(name = JBPMConstants.CAMEL_ENDPOINT_ID_WI_PARAM)
