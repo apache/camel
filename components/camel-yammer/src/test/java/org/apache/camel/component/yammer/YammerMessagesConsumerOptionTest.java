@@ -21,7 +21,8 @@ import org.junit.Test;
 
 public class YammerMessagesConsumerOptionTest extends YammerComponentTestSupport {
 
-    private static final String YAMMER_MESSAGES_CONSUMER = "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken&limit=1&threaded=true&olderThan=58802444918784"
+    private static final String YAMMER_MESSAGES_CONSUMER = "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey" 
+        + "&accessToken=aAccessToken&limit=1&threaded=true&olderThan=58802444918784"
         + "&newerThan=58802444918781";
 
     @Test
