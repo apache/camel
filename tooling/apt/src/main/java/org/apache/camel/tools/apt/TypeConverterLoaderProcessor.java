@@ -43,8 +43,14 @@ import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardLocation;
 
-@SupportedAnnotationTypes({"org.apache.camel.Converter"})
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
+
+@SupportedAnnotationTypes({"org.apache.camel.Converter", "org.apache.camel.FallbackConverter"})
 public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcessor {
+
+    // TODO: fallback does not work
+    // TODO: generate so you dont need to pass in CamelContext but register into a java set/thingy
+    // so you can init this via static initializer block { ... } and then register on CamelContext later
 
     private static final class ClassConverters {
 
@@ -118,21 +124,24 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
                     ignoreOnLoadError = isIgnoreOnLoadError(element);
                 }
             } else if (currentClass != null && element.getKind() == ElementKind.METHOD) {
+                // is the method annotated with @Converter
                 ExecutableElement ee = (ExecutableElement) element;
-                TypeMirror to = ee.getReturnType();
-                TypeMirror from = ee.getParameters().get(0).asType();
-                String fromStr = toString(from);
-                if (!fromStr.endsWith("[]")) {
-                    TypeElement e = this.processingEnv.getElementUtils().getTypeElement(fromStr);
-                    if (e != null) {
-                        from = e.asType();
-                    } else {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Could not retrieve type element for " + fromStr);
+                if (isConverterMethod(ee)) {
+                    TypeMirror to = ee.getReturnType();
+                    TypeMirror from = ee.getParameters().get(0).asType();
+                    String fromStr = toString(from);
+                    if (!fromStr.endsWith("[]")) {
+                        TypeElement e = this.processingEnv.getElementUtils().getTypeElement(fromStr);
+                        if (e != null) {
+                            from = e.asType();
+                        } else {
+                            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Could not retrieve type element for " + fromStr);
+                        }
                     }
-                }
-                converters.computeIfAbsent(currentClass, c -> new ClassConverters(comparator)).addTypeConverter(to, from, ee);
-                if (converters.containsKey(currentClass)) {
-                    converters.get(currentClass).setIgnoreOnLoadError(ignoreOnLoadError);
+                    converters.computeIfAbsent(currentClass, c -> new ClassConverters(comparator)).addTypeConverter(to, from, ee);
+                    if (converters.containsKey(currentClass)) {
+                        converters.get(currentClass).setIgnoreOnLoadError(ignoreOnLoadError);
+                    }
                 }
             }
         }
@@ -140,7 +149,7 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
         TypeElement fallbackAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.FallbackConverter");
         currentClass = null;
         ignoreOnLoadError = false;
-        for (Element element : roundEnv.getElementsAnnotatedWith(fallbackAnnotationType)) {
+        for (Element element : roundEnv.getElementsAnnotatedWith(converterAnnotationType)) {
             if (element.getKind() == ElementKind.CLASS) {
                 TypeElement te = (TypeElement) element;
                 if (!te.getNestingKind().isNested() && isLoaderEnabled(te)) {
@@ -150,9 +159,11 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
                 }
             } else if (currentClass != null && element.getKind() == ElementKind.METHOD) {
                 ExecutableElement ee = (ExecutableElement) element;
-                converters.computeIfAbsent(currentClass, c -> new ClassConverters(comparator)).addFallbackTypeConverter(ee);
-                if (converters.containsKey(currentClass)) {
-                    converters.get(currentClass).setIgnoreOnLoadError(ignoreOnLoadError);
+                if (isFallbackConverterMethod(ee)) {
+                    converters.computeIfAbsent(currentClass, c -> new ClassConverters(comparator)).addFallbackTypeConverter(ee);
+                    if (converters.containsKey(currentClass)) {
+                        converters.get(currentClass).setIgnoreOnLoadError(ignoreOnLoadError);
+                    }
                 }
             }
         }
@@ -161,9 +172,7 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
         for (Map.Entry<String, ClassConverters> entry : converters.entrySet()) {
             String key = entry.getKey();
             ClassConverters value = entry.getValue();
-            if (!value.isEmpty()) {
-                writeConverterLoader(key, value, converterAnnotationType, fallbackAnnotationType);
-            }
+            writeConverterLoader(key, value, converterAnnotationType, fallbackAnnotationType);
         }
         writeConverterLoaderMetaInfo(converters);
     }
@@ -185,6 +194,26 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
                 if ("ignoreOnLoadError".equals(entry.getKey().getSimpleName().toString())) {
                     return (Boolean) entry.getValue().getValue();
                 }
+            }
+        }
+        return false;
+    }
+
+    private static boolean isConverterMethod(ExecutableElement element) {
+        for (AnnotationMirror ann : element.getAnnotationMirrors()) {
+            String name = ann.getAnnotationType().asElement().getSimpleName().toString();
+            if ("Converter".equals(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isFallbackConverterMethod(ExecutableElement element) {
+        for (AnnotationMirror ann : element.getAnnotationMirrors()) {
+            String name = ann.getAnnotationType().asElement().getSimpleName().toString();
+            if ("FallbackConverter".equals(name)) {
+                return true;
             }
         }
         return false;
@@ -263,7 +292,7 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
             writer.append("        protected abstract Object doConvert(Exchange exchange, Object value) throws Exception;\n");
             writer.append("    };\n");
             writer.append("\n");
-            writer.append("    private DoubleMap<Class<?>, Class<?>, BaseTypeConverter> converters = new DoubleMap<>(" + converters.size() + ");\n");
+            writer.append("    private final DoubleMap<Class<?>, Class<?>, BaseTypeConverter> converters = new DoubleMap<>(" + converters.size() + ");\n");
             writer.append("\n");
             writer.append("    private ").append(c).append("() {\n");
 
