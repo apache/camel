@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws.sqs;
+package org.apache.camel.component.aws.sqs.integration;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,13 +25,14 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.aws.sqs.SqsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
-public class SqsProducerBatchSendTestIT extends CamelTestSupport {
+public class SqsProducerBatchSendIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("direct:start")
     private ProducerTemplate template;
