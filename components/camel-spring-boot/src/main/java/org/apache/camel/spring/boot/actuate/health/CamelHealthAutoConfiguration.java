@@ -18,7 +18,6 @@ package org.apache.camel.spring.boot.actuate.health;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.apache.camel.spring.boot.actuate.endpoint.CamelRoutesEndpointProperties;
 import org.apache.camel.spring.boot.health.HealthCheckVerboseConfiguration;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
