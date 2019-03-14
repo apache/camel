@@ -234,8 +234,8 @@ The component supports 140 options, which are listed below.
 | *management.endpoint.camelroutes.cache.time-to-live* | Maximum time that a response can be cached. | 0ms | Duration
 | *management.endpoint.camelroutes.enabled* | To turn on or off information about Camel Routes via actuator endpoint. | true | Boolean
 | *management.endpoint.camelroutes.read-only* | Whether Camel Routes actuator is in read-only mode. If not in read-only mode then operations to start/stop routes would be enabled. | true | Boolean
-| *management.endpoint.health.verbose* | Global option to enable/disable  health bean camel version info, default is true. | true | Boolean
 | *management.info.camel.enabled* | Whether to enable Camel info. | true | Boolean
+| *management.info.camel.verbose* | Global option to enable/disable  health bean camel version info, default is true. | true | Boolean
 | *camel.springboot.stream-caching* | Sets whether stream caching is enabled or not (deprecated use stream-caching-enabled instead). Default is false. | false | Boolean
 | *camel.springboot.use-m-d-c-logging* | To turn on MDC logging (deprecated use use-mdc-logging instead) | false | Boolean
 |===

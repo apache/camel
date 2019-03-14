@@ -18,7 +18,7 @@ package org.apache.camel.spring.boot.health;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("management.endpoint.health")
+@ConfigurationProperties("management.info.camel")
 public class HealthCheckVerboseConfiguration {
     /**
      * Global option to enable/disable  health bean camel version info, default is true.
