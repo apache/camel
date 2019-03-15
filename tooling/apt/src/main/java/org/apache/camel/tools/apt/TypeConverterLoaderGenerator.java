@@ -24,7 +24,6 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.TypeElement;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
@@ -37,12 +36,17 @@ public class TypeConverterLoaderGenerator extends AbstractTypeConverterGenerator
     }
 
     @Override
-    void writeConverters(Map<String, ClassConverters> converters, TypeElement converterAnnotationType) throws Exception {
+    String convertersKey(String currentClass) {
+        return currentClass;
+    }
+
+    @Override
+    void writeConverters(Map<String, ClassConverters> converters) throws Exception {
         // now write all the converters
         for (Map.Entry<String, ClassConverters> entry : converters.entrySet()) {
             String key = entry.getKey();
             ClassConverters value = entry.getValue();
-            writeConverters(key, "Loader", value, converterAnnotationType);
+            writeConverters(key, "Loader", value);
         }
         writeConverterLoaderMetaInfo(converters);
     }
