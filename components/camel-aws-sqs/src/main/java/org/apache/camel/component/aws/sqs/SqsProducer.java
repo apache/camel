@@ -27,6 +27,8 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.DeleteMessageRequest;
+import com.amazonaws.services.sqs.model.DeleteMessageResult;
 import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageBatchRequest;
 import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
@@ -64,6 +66,9 @@ public class SqsProducer extends DefaultProducer {
             switch (operation) {
             case sendBatchMessage:
                 sendBatchMessage(getClient(), exchange);
+                break;
+            case deleteMessage:
+                deleteMessage(getClient(), exchange);
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported operation");
@@ -114,6 +119,20 @@ public class SqsProducer extends DefaultProducer {
             Message message = getMessageForResponse(exchange);
             message.setBody(result);
         }
+    }
+    
+    private void deleteMessage(AmazonSQS amazonSQS, Exchange exchange) {
+        String receiptHandle = exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class);
+        DeleteMessageRequest request = new DeleteMessageRequest();
+        request.setQueueUrl(getQueueUrl());
+        if (ObjectHelper.isEmpty(receiptHandle)) {
+            throw new IllegalArgumentException("Receipt Handle must be specified for the operation deleteMessage");
+        }
+        request.setReceiptHandle(receiptHandle);
+        DeleteMessageResult result = new DeleteMessageResult();
+        result = amazonSQS.deleteMessage(request);
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
     }
 
     private void configureFifoAttributes(SendMessageRequest request, Exchange exchange) {
