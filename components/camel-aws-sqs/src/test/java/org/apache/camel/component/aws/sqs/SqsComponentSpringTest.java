@@ -19,6 +19,8 @@ package org.apache.camel.component.aws.sqs;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.amazonaws.services.sqs.model.SendMessageBatchResult;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -28,8 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.amazonaws.services.sqs.model.SendMessageBatchResult;
 
 public class SqsComponentSpringTest extends CamelSpringTestSupport {
     
