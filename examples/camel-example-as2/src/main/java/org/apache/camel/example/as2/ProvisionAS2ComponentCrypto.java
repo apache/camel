@@ -101,5 +101,5 @@ public class ProvisionAS2ComponentCrypto implements CamelContextAware {
 
         // keys used to encrypt/decrypt
         decryptingKP = signingKP;
-     }
+    }
 }

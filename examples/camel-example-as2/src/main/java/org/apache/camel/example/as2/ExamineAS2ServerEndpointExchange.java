@@ -35,7 +35,7 @@ public class ExamineAS2ServerEndpointExchange implements Processor {
         HttpCoreContext context = exchange.getProperty(AS2Constants.AS2_INTERCHANGE, HttpCoreContext.class);
         String ediMessage = exchange.getIn().getBody(String.class);
 
-        if(context != null) {
+        if (context != null) {
             HttpRequest request = context.getRequest();
             log.info("\n*******************************************************************************"
                    + "\n*******************************************************************************"
@@ -44,7 +44,7 @@ public class ExamineAS2ServerEndpointExchange implements Processor {
                    + "\n************************** Containing EDI message *****************************"
                    + "\n\n" + ediMessage + "\n"
                    + "\n*******************************************************************************"
-                    +"\n*******************************************************************************");
+                   + "\n*******************************************************************************");
         } else {
             log.info("AS2 Interchange missing from context");
         }
