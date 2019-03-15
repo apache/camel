@@ -18,5 +18,6 @@ package org.apache.camel.component.aws.sqs;
 
 public enum SqsOperations {
 
-    sendBatchMessage
+    sendBatchMessage,
+    deleteMessage
 }
