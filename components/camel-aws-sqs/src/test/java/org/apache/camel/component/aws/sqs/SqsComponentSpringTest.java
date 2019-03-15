@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -25,6 +28,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.amazonaws.services.sqs.model.SendMessageBatchResult;
 
 public class SqsComponentSpringTest extends CamelSpringTestSupport {
     
@@ -80,6 +85,28 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         
         assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
+    }
+    
+    @Test
+    public void sendBatchMessage() throws Exception {
+        result.expectedMessageCount(1);
+
+        template.send("direct:start-batch", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection c = new ArrayList<Integer>();
+                c.add("team1");
+                c.add("team2");
+                c.add("team3");
+                c.add("team4");
+                exchange.getIn().setBody(c);
+            }
+        });
+        assertMockEndpointsSatisfied();
+        SendMessageBatchResult res = result.getExchanges().get(0).getIn().getBody(SendMessageBatchResult.class);
+        assertEquals(2, res.getFailed().size());
+        assertEquals(2, res.getSuccessful().size());
     }
 
     @Override
