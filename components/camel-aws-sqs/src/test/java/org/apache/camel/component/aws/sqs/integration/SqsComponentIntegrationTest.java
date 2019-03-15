@@ -34,10 +34,10 @@ public class SqsComponentIntegrationTest extends CamelTestSupport {
     private String accessKey = "xxx";
     private String secretKey = "yyy";
     
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate template;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
     
     @Test

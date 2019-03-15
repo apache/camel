@@ -29,10 +29,10 @@ import org.junit.Test;
 
 public class SqsComponentTest extends CamelTestSupport {
     
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate template;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
     
     @Test
