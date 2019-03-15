@@ -18,7 +18,6 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
@@ -35,7 +34,6 @@ public final class BeanConverter {
     }
 
     @Converter(fallback = true)
-    @FallbackConverter
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // use a fallback type converter so we can convert the embedded body if the value is BeanInvocation
         if (BeanInvocation.class.isAssignableFrom(value.getClass())) {

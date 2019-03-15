@@ -34,7 +34,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.Type;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
@@ -81,7 +80,7 @@ public final class SaxonConverter {
         return new DOMNodeList(domNodeList);
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         if (NodeInfo.class.isAssignableFrom(value.getClass())) {
             // use a fallback type converter so we can convert the embedded body if the value is NodeInfo

@@ -297,6 +297,11 @@ The class `XsltAggregationStrategy` has been moved from `org.apache.camel.builde
 
 When using the option `groupedExchange` on the aggregator EIP then the output of the aggregation is now longer also stored in the exchange property `Exchange.GROUPED_EXCHANGE`. This behaviour was already deprecated from Camel 2.13 onwards.
 
+### Fallback type converters
+
+The `@FallbackConverter` annotation has been removed, and you should use `@Converter(fallback = true)` instead. Also you can set `@Converter(loader = true)` on the converter class to allow Camel to generate source code for loading type converters in a faster way.
+
+
 ### Other changes
 
 The default for use breadcrumbs has been changed from `true` to `false`.
