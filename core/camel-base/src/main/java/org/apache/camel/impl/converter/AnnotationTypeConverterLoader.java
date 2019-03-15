@@ -36,7 +36,6 @@ import static java.lang.reflect.Modifier.isStatic;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -271,13 +270,12 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                     if (method.getAnnotation(Converter.class) != null) {
                         allowNull = method.getAnnotation(Converter.class).allowNull();
                     }
-                    injector = handleHasConverterAnnotation(registry, type, injector, method, allowNull);
-                } else if (ObjectHelper.hasAnnotation(method, FallbackConverter.class, true)) {
-                    boolean allowNull = false;
-                    if (method.getAnnotation(FallbackConverter.class) != null) {
-                        allowNull = method.getAnnotation(FallbackConverter.class).allowNull();
+                    boolean fallback = method.getAnnotation(Converter.class).fallback();
+                    if (fallback) {
+                        injector = handleHasFallbackConverterAnnotation(registry, type, injector, method, allowNull);
+                    } else {
+                        injector = handleHasConverterAnnotation(registry, type, injector, method, allowNull);
                     }
-                    injector = handleHasFallbackConverterAnnotation(registry, type, injector, method, allowNull);
                 }
             }
 
@@ -379,8 +377,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     protected void registerFallbackTypeConverter(TypeConverterRegistry registry, TypeConverter typeConverter, Method method) {
         boolean canPromote = false;
         // check whether the annotation may indicate it can promote
-        if (method.getAnnotation(FallbackConverter.class) != null) {
-            canPromote = method.getAnnotation(FallbackConverter.class).canPromote();
+        if (method.getAnnotation(Converter.class) != null) {
+            canPromote = method.getAnnotation(Converter.class).fallbackCanPromote();
         }
         registry.addFallbackTypeConverter(typeConverter, canPromote);
     }

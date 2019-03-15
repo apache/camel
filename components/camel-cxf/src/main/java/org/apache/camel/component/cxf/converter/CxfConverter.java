@@ -28,7 +28,6 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.converter.stream.CachedOutputStream;
@@ -135,7 +134,7 @@ public final class CxfConverter {
      * @return the converted value of the desired type or null if no suitable converter found
      */
     @SuppressWarnings("unchecked")
-    @FallbackConverter
+    @Converter(fallback = true)
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, 
             TypeConverterRegistry registry) {
 
