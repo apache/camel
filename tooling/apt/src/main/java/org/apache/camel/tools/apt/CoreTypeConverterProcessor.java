@@ -38,8 +38,21 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 
-@SupportedAnnotationTypes({"org.apache.camel.Converter", "org.apache.camel.FallbackConverter"})
+import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
+
+@SupportedAnnotationTypes({"org.apache.camel.Converter"})
 public class CoreTypeConverterProcessor extends AbstractCamelAnnotationProcessor {
+
+    private static boolean isFallbackConverter(Element element) {
+        for (AnnotationMirror ann : element.getAnnotationMirrors()) {
+            for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
+                if ("fallback".equals(entry.getKey().getSimpleName().toString())) {
+                    return (Boolean) entry.getValue().getValue();
+                }
+            }
+        }
+        return false;
+    }
 
     @Override
     protected void doProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) throws Exception {
@@ -61,33 +74,43 @@ public class CoreTypeConverterProcessor extends AbstractCamelAnnotationProcessor
             ? -1 : processingEnv.getTypeUtils().isAssignable(o2, o1) ? +1 : o1.toString().compareTo(o2.toString());
 
         Map<String, Map<TypeMirror, ExecutableElement>> converters = new TreeMap<>();
+        List<ExecutableElement> fallbackConverters = new ArrayList<>();
         TypeElement converterAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.Converter");
         for (Element element : roundEnv.getElementsAnnotatedWith(converterAnnotationType)) {
             if (element.getKind() == ElementKind.METHOD) {
                 ExecutableElement ee = (ExecutableElement)element;
-                TypeMirror to = ee.getReturnType();
-                TypeMirror from = ee.getParameters().get(0).asType();
-                String fromStr = toString(from);
-                if (!fromStr.endsWith("[]")) {
-                    TypeElement e = this.processingEnv.getElementUtils().getTypeElement(fromStr);
-                    if (e != null) {
-                        from = e.asType();
-                    } else {
-                        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Could not retrieve type element for " + fromStr);
-                    }
 
+                // is it a regular converter or a fallback converter
+                if (isFallbackConverter(ee)) {
+                    fallbackConverters.add(ee);
+                } else {
+                    TypeMirror to = ee.getReturnType();
+                    TypeMirror from = ee.getParameters().get(0).asType();
+                    String fromStr = toString(from);
+                    if (!fromStr.endsWith("[]")) {
+                        TypeElement e = this.processingEnv.getElementUtils().getTypeElement(fromStr);
+                        if (e != null) {
+                            from = e.asType();
+                        } else {
+                            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Could not retrieve type element for " + fromStr);
+                        }
+
+                    }
+                    converters.computeIfAbsent(toString(to), c -> new TreeMap<>(comparator)).put(from, ee);
                 }
-                converters.computeIfAbsent(toString(to), c -> new TreeMap<>(comparator)).put(from, ee);
             }
         }
+/*        dumpExceptionToErrorFile("camel-apt-error.log", "Looking for @FallbackConverter", null);
         TypeElement fallbackAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.FallbackConverter");
         List<ExecutableElement> fallbackConverters = new ArrayList<>();
         for (Element element : roundEnv.getElementsAnnotatedWith(fallbackAnnotationType)) {
+            dumpExceptionToErrorFile("camel-apt-error.log", "Found element: " + element, null);
             if (element.getKind() == ElementKind.METHOD) {
                 ExecutableElement ee = (ExecutableElement)element;
+                dumpExceptionToErrorFile("camel-apt-error.log", "Element is fallback: " + element, null);
                 fallbackConverters.add(ee);
             }
-        }
+        }*/
 
         String p = "org.apache.camel.impl.converter";
         String c = "CoreStaticTypeConverterLoader";
@@ -170,21 +193,20 @@ public class CoreTypeConverterProcessor extends AbstractCamelAnnotationProcessor
             writer.append("    public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {\n");
             writer.append("        converters.forEach((k, v, c) -> registry.addTypeConverter(k, v, c));\n");
             for (ExecutableElement ee : fallbackConverters) {
+                // TODO: move this to methods
                 boolean allowNull = false;
                 boolean canPromote = false;
                 for (AnnotationMirror ann : ee.getAnnotationMirrors()) {
-                    if (ann.getAnnotationType().asElement() == fallbackAnnotationType) {
-                        for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
-                            switch (entry.getKey().getSimpleName().toString()) {
-                            case "allowNull":
-                                allowNull = (Boolean)entry.getValue().getValue();
-                                break;
-                            case "canPromote":
-                                canPromote = (Boolean)entry.getValue().getValue();
-                                break;
-                            default:
-                                throw new IllegalStateException();
-                            }
+                    for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
+                        switch (entry.getKey().getSimpleName().toString()) {
+                        case "allowNull":
+                            allowNull = (Boolean)entry.getValue().getValue();
+                            break;
+                        case "fallbackCanPromote":
+                            canPromote = (Boolean)entry.getValue().getValue();
+                            break;
+                        default:
+                            throw new IllegalStateException();
                         }
                     }
                 }

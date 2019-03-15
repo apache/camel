@@ -39,6 +39,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.TYPE, ElementType.METHOD })
+@Deprecated
 public @interface FallbackConverter {
 
     /**
@@ -50,14 +51,5 @@ public @interface FallbackConverter {
      * Whether or not this fallback converter can be promoted to a first class type converter.
      */
     boolean canPromote() default false;
-
-    /**
-     * Whether to let the Camel compiler plugin to generate java source code
-     * for fast loading of the type converters.
-     * 
-     * This option should only be configured on the top-level class.
-     */
-    boolean loader() default false;
-
 
 }
