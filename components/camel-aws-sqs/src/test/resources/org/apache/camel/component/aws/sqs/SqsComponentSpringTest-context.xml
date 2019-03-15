@@ -39,6 +39,12 @@
             <to uri="aws-sqs://camel-1?amazonSQSClient=#amazonSQSClient&amp;operation=sendBatchMessage"/>
             <to uri="mock:result"/>
         </route>
+        
+        <route>
+            <from uri="direct:start-delete"/>
+            <to uri="aws-sqs://camel-1?amazonSQSClient=#amazonSQSClient&amp;operation=deleteMessage"/>
+            <to uri="mock:result"/>
+        </route>
     </camelContext>
 
     <bean id="amazonSQSClient" class="org.apache.camel.component.aws.sqs.AmazonSQSClientMock"/>
