@@ -23,11 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
@@ -37,13 +34,7 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
-import javax.tools.DocumentationTool;
-import javax.tools.FileObject;
-import javax.tools.JavaFileManager;
 import javax.tools.JavaFileObject;
-import javax.tools.StandardLocation;
-
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
 
 public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnotationProcessor {
 
@@ -128,12 +119,13 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
                     ignoreOnLoadError = isIgnoreOnLoadError(element);
                 }
             } else if (currentClass != null && element.getKind() == ElementKind.METHOD) {
+                String key = convertersKey(currentClass);
                 // is the method annotated with @Converter
                 ExecutableElement ee = (ExecutableElement) element;
                 if (isFallbackConverter(ee)) {
-                    converters.computeIfAbsent(currentClass, c -> new ClassConverters(comparator)).addFallbackTypeConverter(ee);
-                    if (converters.containsKey(currentClass)) {
-                        converters.get(currentClass).setIgnoreOnLoadError(ignoreOnLoadError);
+                    converters.computeIfAbsent(key, c -> new ClassConverters(comparator)).addFallbackTypeConverter(ee);
+                    if (converters.containsKey(key)) {
+                        converters.get(key).setIgnoreOnLoadError(ignoreOnLoadError);
                     }
                 } else {
                     TypeMirror to = ee.getReturnType();
@@ -148,18 +140,20 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
                         }
 
                     }
-                    converters.computeIfAbsent(currentClass, c -> new ClassConverters(comparator)).addTypeConverter(to, from, ee);
-                    if (converters.containsKey(currentClass)) {
-                        converters.get(currentClass).setIgnoreOnLoadError(ignoreOnLoadError);
+                    converters.computeIfAbsent(key, c -> new ClassConverters(comparator)).addTypeConverter(to, from, ee);
+                    if (converters.containsKey(key)) {
+                        converters.get(key).setIgnoreOnLoadError(ignoreOnLoadError);
                     }
                 }
             }
         }
 
-        writeConverters(converters, converterAnnotationType);
+        writeConverters(converters);
     }
 
-    abstract void writeConverters(Map<String, ClassConverters> converters, TypeElement converterAnnotationType) throws Exception;
+    abstract String convertersKey(String currentClass);
+
+    abstract void writeConverters(Map<String, ClassConverters> converters) throws Exception;
 
     abstract boolean acceptClass(Element element);
 
@@ -207,8 +201,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
         return false;
     }
 
-    void writeConverters(String fqn, String suffix, ClassConverters converters,
-                         TypeElement converterAnnotationType) throws Exception {
+    void writeConverters(String fqn, String suffix, ClassConverters converters) throws Exception {
 
         int pos = fqn.lastIndexOf('.');
         String p = fqn.substring(0, pos);
