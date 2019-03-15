@@ -26,8 +26,8 @@ public class ProvisionExchangeMessageCrypto implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-       AS2Component component =  exchange.getContext().getComponent("as2", AS2Component.class);
-       AS2Configuration configuration = component.getConfiguration();
+        AS2Component component =  exchange.getContext().getComponent("as2", AS2Component.class);
+        AS2Configuration configuration = component.getConfiguration();
         
         exchange.getIn().setHeader("CamelAS2.signingAlgorithm", configuration.getSigningAlgorithm());
         exchange.getIn().setHeader("CamelAS2.signingCertificateChain", configuration.getSigningCertificateChain());
