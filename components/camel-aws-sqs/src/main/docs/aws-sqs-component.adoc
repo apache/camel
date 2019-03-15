@@ -356,6 +356,19 @@ from("direct:start")
 As result you'll get an exchange containing a `SendMessageBatchResult` instance, that you can examinate to check what messages were successfull and what not.
 The id set on each message of the batch will be a Random UUID.
 
+### Delete single Message
+
+From Camel 3.x we introduce the deleteMessage operation. You'll need to set a receipt handle header for the message you want to delete.
+
+------------------------------------------------------------------------------------------------------
+from("direct:start")
+  .setHeader(SqsConstants.SQS_OPERATION, constant("deleteMessage"))
+  .setHeader(SqsConstants.RECEIPT_HANDLE, constant("123456"))
+  .to("aws-sqs://camel-1?accessKey=RAW(xxx)&secretKey=RAW(xxx)&region=EU_WEST_1");
+------------------------------------------------------------------------------------------------------
+
+As result you'll get an exchange containing a `DeleteMessageResult` instance, that you can examinate to check if the message was deleted or not.
+
 ### See Also
 
 * Configuring Camel
