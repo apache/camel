@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.http.SdkHttpMetadata;
 import com.amazonaws.services.sqs.AbstractAmazonSQS;
 import com.amazonaws.services.sqs.model.BatchResultErrorEntry;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
