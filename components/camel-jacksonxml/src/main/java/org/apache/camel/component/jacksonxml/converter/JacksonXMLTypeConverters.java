@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.component.jacksonxml.JacksonXMLConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -38,7 +37,7 @@ public final class JacksonXMLTypeConverters {
     public JacksonXMLTypeConverters() {
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
 
         // only do this if enabled

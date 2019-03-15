@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.component.reactive.streams.util.MonoPublisher;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.reactivestreams.Publisher;
@@ -34,7 +33,7 @@ public final class ReactiveStreamsConverter implements CamelContextAware {
     public ReactiveStreamsConverter() {
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     public Object convertToPublisher(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         if (type.isAssignableFrom(Publisher.class)) {
             return new MonoPublisher<>(value);

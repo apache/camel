@@ -35,6 +35,7 @@ import java.lang.annotation.Target;
  * if it can not handle the types to convert from/to.
  *
  * @see org.apache.camel.component.file.GenericFileConverter GenericFileConverter for an example.
+ * @deprecated use @Converter(fallback = true) instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

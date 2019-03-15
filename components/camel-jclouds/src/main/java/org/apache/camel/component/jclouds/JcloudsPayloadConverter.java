@@ -29,7 +29,6 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.converter.stream.StreamSourceCache;
@@ -127,9 +126,9 @@ public final class JcloudsPayloadConverter {
         return payload;
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     @SuppressWarnings("unchecked")
-    public static <T extends Payload> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) throws IOException {
+    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         Class<?> sourceType = value.getClass();
         if (type == Payload.class && WrappedFile.class.isAssignableFrom(sourceType)) {
             // attempt to convert to JClouds Payload from a file

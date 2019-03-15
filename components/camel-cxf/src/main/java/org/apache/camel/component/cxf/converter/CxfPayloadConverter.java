@@ -36,7 +36,6 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
@@ -120,7 +119,7 @@ public final class CxfPayloadConverter {
     }
 
     @SuppressWarnings("unchecked")
-    @FallbackConverter
+    @Converter(fallback = true)
     public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // use fallback type converter, so we can probably convert into
         // CxfPayloads from other types

@@ -33,7 +33,6 @@ import java.util.function.Supplier;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -56,7 +55,7 @@ public final class GenericFileConverter {
         // Helper Class
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
         throws IOException, NoTypeConversionAvailableException {
 
