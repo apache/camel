@@ -982,6 +982,8 @@
     <bundle dependency='true'>mvn:com.googlecode.javaewah/JavaEWAH/${java-ewah-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsch/${jsch-bundle-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.bouncycastle/bcprov-jdk15on/${bouncycastle-version}</bundle>
+    <bundle dependency='true'>mvn:org.bouncycastle/bcpg-jdk15on/${bouncycastle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-git/${project.version}</bundle>
