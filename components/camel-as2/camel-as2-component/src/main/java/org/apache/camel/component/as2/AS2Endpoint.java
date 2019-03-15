@@ -99,7 +99,7 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         return configuration.getRequestUri();
     }
 
-     public void setRequestUri(String requestUri) {
+    public void setRequestUri(String requestUri) {
         configuration.setRequestUri(requestUri);
     }
 
