@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.sqs;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.amazonaws.services.sqs.model.DeleteMessageResult;
 import com.amazonaws.services.sqs.model.SendMessageBatchResult;
 
 import org.apache.camel.EndpointInject;
@@ -107,6 +108,22 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         SendMessageBatchResult res = result.getExchanges().get(0).getIn().getBody(SendMessageBatchResult.class);
         assertEquals(2, res.getFailed().size());
         assertEquals(2, res.getSuccessful().size());
+    }
+    
+    @Test
+    public void deleteMessage() throws Exception {
+        result.expectedMessageCount(1);
+
+        template.send("direct:start-delete", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(SqsConstants.RECEIPT_HANDLE, "123456");
+            }
+        });
+        assertMockEndpointsSatisfied();
+        DeleteMessageResult res = result.getExchanges().get(0).getIn().getBody(DeleteMessageResult.class);
+        assertNotNull(res);
     }
 
     @Override
