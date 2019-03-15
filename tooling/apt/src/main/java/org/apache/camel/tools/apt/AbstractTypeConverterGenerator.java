@@ -45,13 +45,12 @@ import javax.tools.StandardLocation;
 
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpExceptionToErrorFile;
 
-@SupportedAnnotationTypes({"org.apache.camel.Converter"})
-public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcessor {
+public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnotationProcessor {
 
     // TODO: generate so you dont need to pass in CamelContext but register into a java set/thingy
     // so you can init this via static initializer block { ... } and then register on CamelContext later
 
-    private static final class ClassConverters {
+    public static final class ClassConverters {
 
         private final Comparator<TypeMirror> comparator;
         private final Map<String, Map<TypeMirror, ExecutableElement>> converters = new TreeMap<>();
@@ -64,7 +63,7 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
             this.comparator = comparator;
         }
 
-        boolean isIgnoreOnLoadError() {
+        public boolean isIgnoreOnLoadError() {
             return ignoreOnLoadError;
         }
 
@@ -82,29 +81,30 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
             sizeFallback++;
         }
 
-        Map<String, Map<TypeMirror, ExecutableElement>> getConverters() {
+        public Map<String, Map<TypeMirror, ExecutableElement>> getConverters() {
             return converters;
         }
 
-        List<ExecutableElement> getFallbackConverters() {
+        public List<ExecutableElement> getFallbackConverters() {
             return fallbackConverters;
+        }
+
+        public long size() {
+            return size;
+        }
+
+        public long sizeFallback() {
+            return sizeFallback;
+        }
+
+        public boolean isEmpty() {
+            return size == 0 && sizeFallback == 0;
         }
 
         private static String toString(TypeMirror type) {
             return type.toString().replaceAll("<.*>", "");
         }
 
-        long size() {
-            return size;
-        }
-
-        long sizeFallback() {
-            return sizeFallback;
-        }
-
-        boolean isEmpty() {
-            return size == 0 && sizeFallback == 0;
-        }
     }
 
     @Override
@@ -122,7 +122,7 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
             // we need a top level class first
             if (element.getKind() == ElementKind.CLASS) {
                 TypeElement te = (TypeElement) element;
-                if (!te.getNestingKind().isNested() && isLoaderEnabled(te)) {
+                if (!te.getNestingKind().isNested() && acceptClass(te)) {
                     // we only accept top-level classes and if loader is enabled
                     currentClass = te.getQualifiedName().toString();
                     ignoreOnLoadError = isIgnoreOnLoadError(element);
@@ -156,25 +156,12 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
             }
         }
 
-        // now write all the converters
-        for (Map.Entry<String, ClassConverters> entry : converters.entrySet()) {
-            String key = entry.getKey();
-            ClassConverters value = entry.getValue();
-            writeConverterLoader(key, value, converterAnnotationType);
-        }
-        writeConverterLoaderMetaInfo(converters);
+        writeConverters(converters, converterAnnotationType);
     }
 
-    private static boolean isLoaderEnabled(Element element) {
-        for (AnnotationMirror ann : element.getAnnotationMirrors()) {
-            for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
-                if ("loader".equals(entry.getKey().getSimpleName().toString())) {
-                    return (Boolean) entry.getValue().getValue();
-                }
-            }
-        }
-        return false;
-    }
+    abstract void writeConverters(Map<String, ClassConverters> converters, TypeElement converterAnnotationType) throws Exception;
+
+    abstract boolean acceptClass(Element element);
 
     private static boolean isIgnoreOnLoadError(Element element) {
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
@@ -220,33 +207,12 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
         return false;
     }
 
-    private void writeConverterLoaderMetaInfo(Map<String, ClassConverters> converters) throws Exception {
-        StringJoiner sj = new StringJoiner(",");
-        for (Map.Entry<String, ClassConverters> entry : converters.entrySet()) {
-            String key = entry.getKey();
-            ClassConverters value = entry.getValue();
-            if (!value.isEmpty()) {
-                sj.add(key);
-            }
-        }
-
-        if (sj.length() > 0) {
-            FileObject fo = processingEnv.getFiler().createResource(StandardLocation.CLASS_OUTPUT, "", "META-INF/services/org/apache/camel/TypeConverterLoader");
-            try (Writer writer = fo.openWriter()) {
-                writer.append("# Generated by camel annotation processor\n");
-                for (String fqn : sj.toString().split(",")) {
-                    writer.append("class=").append(fqn).append("Loader\n");
-                }
-            }
-        }
-    }
-
-    private void writeConverterLoader(String fqn, ClassConverters converters,
-                                      TypeElement converterAnnotationType) throws Exception {
+    void writeConverters(String fqn, String suffix, ClassConverters converters,
+                         TypeElement converterAnnotationType) throws Exception {
 
         int pos = fqn.lastIndexOf('.');
         String p = fqn.substring(0, pos);
-        String c = fqn.substring(pos + 1) + "Loader";
+        String c = fqn.substring(pos + 1) + (suffix != null ? suffix : "");
 
         JavaFileObject jfo = processingEnv.getFiler().createSourceFile(p + "." + c);
         Set<String> converterClasses = new LinkedHashSet<>();
@@ -294,7 +260,7 @@ public class TypeConverterLoaderProcessor extends AbstractCamelAnnotationProcess
                 writer.append("        protected abstract Object doConvert(Exchange exchange, Object value) throws Exception;\n");
                 writer.append("    };\n");
                 writer.append("\n");
-                writer.append("    private final DoubleMap<Class<?>, Class<?>, BaseTypeConverter> converters = new DoubleMap<>(" + converters.size() + ");\n");
+                writer.append("    private final DoubleMap<Class<?>, Class<?>, BaseTypeConverter> converters = new DoubleMap<>(").append(String.valueOf(converters.size())).append(");\n");
                 writer.append("\n");
             }
             writer.append("    private ").append(c).append("() {\n");
