@@ -39,6 +39,22 @@ public @interface Converter {
     boolean allowNull() default false;
 
     /**
+     * Whether this converter is a regular converter or a fallback converter.
+     *
+     * The difference between a regular converter and a fallback-converter
+     * is that the fallback is resolved at last if no regular converter could be found.
+     * Also the method signature is scoped to be generic to allow handling a broader range
+     * of types trying to be converted. The fallback converter can just return <tt>null</tt>
+     * if it can not handle the types to convert from/to.
+     */
+    boolean fallback() default false;
+
+    /**
+     * Whether or not this fallback converter can be promoted to a first class type converter.
+     */
+    boolean fallbackCanPromote() default false;
+
+    /**
      * Whether to ignore the type converter if it cannot be loaded for some reason.
      * <p/>
      * This can be used if a Camel component provides multiple components
@@ -54,8 +70,9 @@ public @interface Converter {
     /**
      * Whether to let the Camel compiler plugin to generate java source code
      * for fast loading of the type converters.
-     *
-     * This option should only be configured on the top-level class.
+     * <p/>
+     * Important this configuration must be set on the class-level, not on the method.
      */
     boolean loader() default false;
+
 }
