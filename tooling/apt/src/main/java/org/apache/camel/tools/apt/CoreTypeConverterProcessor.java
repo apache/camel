@@ -43,6 +43,8 @@ import static org.apache.camel.tools.apt.AnnotationProcessorHelper.dumpException
 @SupportedAnnotationTypes({"org.apache.camel.Converter"})
 public class CoreTypeConverterProcessor extends AbstractCamelAnnotationProcessor {
 
+    // TODO: extend the abstract class for reuse
+
     private static boolean isFallbackConverter(Element element) {
         for (AnnotationMirror ann : element.getAnnotationMirrors()) {
             for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> entry : ann.getElementValues().entrySet()) {
@@ -100,17 +102,6 @@ public class CoreTypeConverterProcessor extends AbstractCamelAnnotationProcessor
                 }
             }
         }
-/*        dumpExceptionToErrorFile("camel-apt-error.log", "Looking for @FallbackConverter", null);
-        TypeElement fallbackAnnotationType = this.processingEnv.getElementUtils().getTypeElement("org.apache.camel.FallbackConverter");
-        List<ExecutableElement> fallbackConverters = new ArrayList<>();
-        for (Element element : roundEnv.getElementsAnnotatedWith(fallbackAnnotationType)) {
-            dumpExceptionToErrorFile("camel-apt-error.log", "Found element: " + element, null);
-            if (element.getKind() == ElementKind.METHOD) {
-                ExecutableElement ee = (ExecutableElement)element;
-                dumpExceptionToErrorFile("camel-apt-error.log", "Element is fallback: " + element, null);
-                fallbackConverters.add(ee);
-            }
-        }*/
 
         String p = "org.apache.camel.impl.converter";
         String c = "CoreStaticTypeConverterLoader";
