@@ -184,6 +184,7 @@
         <include>org.apache.camel:camel-jmx</include>
         <include>org.apache.camel:camel-johnzon</include>
         <include>org.apache.camel:camel-jolt</include>
+        <include>org.apache.camel:camel-jooq</include>
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
         <include>org.apache.camel:camel-json-validator</include>
@@ -510,6 +511,7 @@
         <include>org.apache.camel:camel-jmx-starter</include>
         <include>org.apache.camel:camel-johnzon-starter</include>
         <include>org.apache.camel:camel-jolt-starter</include>
+        <include>org.apache.camel:camel-jooq-starter</include>
         <include>org.apache.camel:camel-jpa-starter</include>
         <include>org.apache.camel:camel-jsch-starter</include>
         <include>org.apache.camel:camel-json-validator-starter</include>

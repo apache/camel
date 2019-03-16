@@ -1112,10 +1112,11 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         private AggregationTimeoutMap(ScheduledExecutorService executor, long requestMapPollTimeMillis) {
             // do NOT use locking on the timeout map as this aggregator has its own shared lock we will use instead
             super(executor, requestMapPollTimeMillis, optimisticLocking);
+            addListener(this::onEviction);
         }
 
         @Override
-        public void purge() {
+        protected void purge() {
             // wait for lock to be created
             if (lock != null) {
                 // must acquire the shared aggregation lock to be able to purge
@@ -1128,14 +1129,16 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
             }
         }
 
-        @Override
-        public boolean onEviction(String key, String exchangeId) {
+        private void onEviction(Listener.Type type, String key, String exchangeId) {
+            if (type != Listener.Type.Evict) {
+                return;
+            }
             log.debug("Completion timeout triggered for correlation key: {}", key);
 
             boolean inProgress = inProgressCompleteExchanges.contains(exchangeId);
             if (inProgress) {
                 log.trace("Aggregated exchange with id: {} is already in progress.", exchangeId);
-                return true;
+                return;
             }
 
             // get the aggregated exchange
@@ -1160,7 +1163,6 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
                 log.debug("Another Camel instance has already successfully correlated or processed this timeout eviction "
                           + "for exchange with id: {} and correlation id: {}", exchangeId, key);
             }
-            return true;
         }
     }
 
@@ -1430,7 +1432,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
         aggregateController.onStart(this);
 
         if (optimisticLocking) {
-            lock = new NoLock();
+            lock = NoLock.INSTANCE;
             if (getOptimisticLockingExecutorService() == null) {
                 setOptimisticLockingExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_OPTIMISTIC_LOCKING_EXECUTOR, 1));
                 shutdownOptimisticLockingExecutorService = true;

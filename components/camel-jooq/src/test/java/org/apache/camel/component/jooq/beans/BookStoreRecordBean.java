@@ -14,31 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.reply;
+package org.apache.camel.component.jooq.beans;
 
-/**
- * Listener for events when correlation id's changes.
- */
-public interface CorrelationListener {
+import org.apache.camel.component.jooq.db.tables.records.BookStoreRecord;
+import org.jooq.Query;
+import org.jooq.ResultQuery;
+import org.jooq.impl.DSL;
+import org.springframework.stereotype.Component;
 
-    /**
-     * Callback when a new correlation id is added
-     *
-     * @param key the correlation id
-     */
-    void onPut(String key);
+import static org.apache.camel.component.jooq.db.Tables.BOOK_STORE;
 
-    /**
-     * Callback when a correlation id is removed
-     *
-     * @param key the correlation id
-     */
-    void onRemove(String key);
+@Component
+public class BookStoreRecordBean {
+    private String name = "test";
 
-    /**
-     * Callback when a correlation id is evicted due timeout
-     *
-     * @param key the correlation id
-     */
-    void onEviction(String key);
+    public BookStoreRecord generate() {
+        return new BookStoreRecord(name);
+    }
+
+    public ResultQuery select() {
+        return DSL.selectFrom(BOOK_STORE).where(BOOK_STORE.NAME.eq(name));
+    }
+
+    public Query delete() {
+        return DSL.delete(BOOK_STORE).where(BOOK_STORE.NAME.eq(name));
+    }
 }

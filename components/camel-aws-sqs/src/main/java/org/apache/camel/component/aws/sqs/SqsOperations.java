@@ -14,31 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rabbitmq.reply;
+package org.apache.camel.component.aws.sqs;
 
-/**
- * Listener for events when correlation id's changes.
- */
-public interface CorrelationListener {
+public enum SqsOperations {
 
-    /**
-     * Callback when a new correlation id is added
-     *
-     * @param key the correlation id
-     */
-    void onPut(String key);
-
-    /**
-     * Callback when a correlation id is removed
-     *
-     * @param key the correlation id
-     */
-    void onRemove(String key);
-
-    /**
-     * Callback when a correlation id is evicted due timeout
-     *
-     * @param key the correlation id
-     */
-    void onEviction(String key);
+    sendBatchMessage,
+    deleteMessage
 }

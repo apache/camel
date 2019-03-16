@@ -29,4 +29,5 @@ public interface SqsConstants {
     String RECEIPT_HANDLE = "CamelAwsSqsReceiptHandle";
     String DELAY_HEADER = "CamelAwsSqsDelaySeconds";
     String MESSAGE_GROUP_ID_PROPERTY = "CamelAwsMessageGroupId";
+    String SQS_OPERATION = "CamelAwsSqsOperation";
 }

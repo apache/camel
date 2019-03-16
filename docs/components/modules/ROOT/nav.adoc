@@ -176,6 +176,7 @@
 * xref:jmx-component.adoc[JMX Component]
 * xref:json-johnzon-dataformat.adoc[JSon Johnzon DataFormat]
 * xref:jolt-component.adoc[JOLT Component]
+* xref:jooq-component.adoc[JOOQ Component]
 * xref:jpa-component.adoc[JPA Component]
 * xref:scp-component.adoc[SCP Component]
 * xref:json-validator-component.adoc[JSON Schema Validator Component]

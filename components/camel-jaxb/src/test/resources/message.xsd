@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="message.jaxb.converter.camel.apache.org"
+	xmlns:tns="message.jaxb.converter.camel.apache.org"
+	elementFormDefault="qualified">
+
+	<element name="message" type="tns:Message"></element>
+
+	<complexType name="Message">
+		<sequence>
+			<element name="text" minOccurs="1" type="string" />
+		</sequence>
+	</complexType>
+</schema>
