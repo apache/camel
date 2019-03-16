@@ -78,6 +78,7 @@ public class FastTypeConverterRegistry extends BaseTypeConverterRegistry {
             loadCoreTypeConverters();
             int core = typeMappings.size();
             // load type converters up front
+            log.info("Initializing fast TypeConverterRegistry - requires converters to be annotated with @Converter(loader = true)");
             loadTypeConverters();
             int additional = typeMappings.size() - core;
 
