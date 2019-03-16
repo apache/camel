@@ -46,7 +46,7 @@ public class TypeConverterLoaderGenerator extends AbstractTypeConverterGenerator
         for (Map.Entry<String, ClassConverters> entry : converters.entrySet()) {
             String key = entry.getKey();
             ClassConverters value = entry.getValue();
-            writeConverters(key, "Loader", value);
+            writeConverters(key, "Loader", false, value);
         }
         writeConverterLoaderMetaInfo(converters);
     }
