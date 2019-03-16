@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.util.IOHelper;
@@ -33,25 +34,30 @@ import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: We can automatic detect this for example like headersmap-factory by having this on the classpath
-
 /**
  * An optimized {@link org.apache.camel.spi.TypeConverterRegistry} which loads
  * the type converters up-front on startup in a faster way by leveraging
  * source generated type converter loaders (<tt>@Converter(loader = true)</tt>,
- * and will not perform slower package scanning.
+ * as well as invoking the type converters without reflection,
+ * and will not perform classpath scanning.
  */
-public class TypeConverterLoaderRegistry extends BaseTypeConverterRegistry {
+public class FastTypeConverterRegistry extends BaseTypeConverterRegistry {
 
-    // TODO: Maybe it should be named FastTypeConverterRegistry
+    // TODO: We can automatic detect this for example like headersmap-factory by having this on the classpath
 
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverterLoader";
 
-    private static final Logger LOG = LoggerFactory.getLogger(TypeConverterLoaderRegistry.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FastTypeConverterRegistry.class);
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    public TypeConverterLoaderRegistry() {
+    public FastTypeConverterRegistry() {
         super(null, null, null); // pass in null to base class as we load all type converters without package scanning
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        super.setCamelContext(camelContext);
+        setInjector(camelContext.getInjector());
     }
 
     @Override

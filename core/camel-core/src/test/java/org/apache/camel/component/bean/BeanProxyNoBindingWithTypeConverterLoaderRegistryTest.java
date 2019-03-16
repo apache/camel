@@ -17,7 +17,7 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.impl.converter.TypeConverterLoaderRegistry;
+import org.apache.camel.impl.converter.FastTypeConverterRegistry;
 
 public class BeanProxyNoBindingWithTypeConverterLoaderRegistryTest extends BeanProxyNoBindingTest {
 
@@ -25,7 +25,7 @@ public class BeanProxyNoBindingWithTypeConverterLoaderRegistryTest extends BeanP
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // switch to using the faster type converter loader
-        context.setTypeConverterRegistry(new TypeConverterLoaderRegistry());
+        context.setTypeConverterRegistry(new FastTypeConverterRegistry());
         return context;
     }
 }

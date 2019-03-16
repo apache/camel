@@ -88,7 +88,6 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
