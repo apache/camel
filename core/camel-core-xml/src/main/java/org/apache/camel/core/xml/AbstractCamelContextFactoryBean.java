@@ -168,7 +168,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().setPackageScanClassResolver(packageResolver);
         }
 
-        // set the package scan resolver as soon as possible
+        // also set type converter registry as early as possible
         TypeConverterRegistry tcr = getBeanForType(TypeConverterRegistry.class);
         if (tcr != null) {
             LOG.info("Using custom TypeConverterRegistry: {}", tcr);
