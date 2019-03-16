@@ -60,7 +60,7 @@ public class CoreTypeConverterProcessor extends AbstractTypeConverterGenerator {
         for (Map.Entry<String, ClassConverters> entry : converters.entrySet()) {
             String key = entry.getKey();
             ClassConverters value = entry.getValue();
-            writeConverters(key, null, value);
+            writeConverters(key, null, true, value);
         }
     }
 

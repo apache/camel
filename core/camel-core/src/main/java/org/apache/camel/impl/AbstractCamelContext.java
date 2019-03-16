@@ -2446,6 +2446,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Mod
 
     public void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
         this.typeConverterRegistry = doAddService(typeConverterRegistry);
+        // some registries are also a type converter implementation
+        if (typeConverterRegistry instanceof TypeConverter) {
+            this.typeConverter = (TypeConverter) typeConverterRegistry;
+        }
     }
 
     public Injector getInjector() {
