@@ -77,7 +77,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final LongAdder noopCounter = new LongAdder();
     protected final LongAdder attemptCounter = new LongAdder();
     protected final LongAdder missCounter = new LongAdder();
-    protected final LongAdder baseHitCounter = new LongAdder();
     protected final LongAdder hitCounter = new LongAdder();
     protected final LongAdder failedCounter = new LongAdder();
 
@@ -85,7 +84,10 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         this.resolver = resolver;
         this.injector = injector;
         this.factoryFinder = factoryFinder;
-        this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+        if (resolver != null) {
+            // we only have annotation based package scanning if we have a resolver
+            this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+        }
 
         List<FallbackTypeConverter> fallbacks = new ArrayList<>();
         // add to string first as it will then be last in the last as to string can nearly
@@ -547,9 +549,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
-        List<TypeConverter> converters = factoryFinder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
-        for (TypeConverter converter : converters) {
-            addFallbackTypeConverter(converter, false);
+        if (factoryFinder != null) {
+            List<TypeConverter> converters = factoryFinder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
+            for (TypeConverter converter : converters) {
+                addFallbackTypeConverter(converter, false);
+            }
         }
     }
 

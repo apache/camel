@@ -691,6 +691,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     TypeConverterRegistry getTypeConverterRegistry();
 
     /**
+     * Configures the type converter registry to use, where type converters can be added or looked up.
+     *
+     * @param typeConverterRegistry the registry to use
+     */
+    void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry);
+
+    /**
      * Returns the registry used to lookup components by name and type such as SimpleRegistry, Spring ApplicationContext,
      * JNDI, or the OSGi Service Registry.
      *

@@ -201,7 +201,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
         return false;
     }
 
-    void writeConverters(String fqn, String suffix, ClassConverters converters) throws Exception {
+    void writeConverters(String fqn, String suffix, boolean staticInstance, ClassConverters converters) throws Exception {
 
         int pos = fqn.lastIndexOf('.');
         String p = fqn.substring(0, pos);
@@ -224,7 +224,9 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
             writer.append("@SuppressWarnings(\"unchecked\")\n");
             writer.append("public class ").append(c).append(" implements TypeConverterLoader {\n");
             writer.append("\n");
-            writer.append("    public static final ").append(c).append(" INSTANCE = new ").append(c).append("();\n");
+            if (staticInstance) {
+                writer.append("    public static final ").append(c).append(" INSTANCE = new ").append(c).append("();\n");
+            }
             writer.append("\n");
 
             if (converters.size() > 0) {
@@ -256,7 +258,7 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
                 writer.append("    private final DoubleMap<Class<?>, Class<?>, BaseTypeConverter> converters = new DoubleMap<>(").append(String.valueOf(converters.size())).append(");\n");
                 writer.append("\n");
             }
-            writer.append("    private ").append(c).append("() {\n");
+            writer.append("    ").append(staticInstance ? "private " : "public ").append(c).append("() {\n");
 
             for (Map.Entry<String, Map<TypeMirror, ExecutableElement>> to : converters.getConverters().entrySet()) {
                 for (Map.Entry<TypeMirror, ExecutableElement> from : to.getValue().entrySet()) {
