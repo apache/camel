@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Enumeration;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -103,7 +103,7 @@ public class TypeConverterLoaderRegistry extends BaseTypeConverterRegistry {
      * for text files on the classpath at the {@link #META_INF_SERVICES} location.
      */
     protected String[] findTypeConverterLoaderClasses() throws IOException {
-        Set<String> classes = new HashSet<>();
+        Set<String> classes = new LinkedHashSet<>();
         findLoaders(classes, getClass().getClassLoader());
         return classes.toArray(new String[classes.size()]);
     }
