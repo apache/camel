@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
  */
 public class TypeConverterLoaderRegistry extends BaseTypeConverterRegistry {
 
+    // TODO: Maybe it should be named FastTypeConverterRegistry
+
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverterLoader";
 
     private static final Logger LOG = LoggerFactory.getLogger(TypeConverterLoaderRegistry.class);
