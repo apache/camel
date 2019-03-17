@@ -26,7 +26,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterLoader;
@@ -49,39 +48,14 @@ public class FastTypeConverterRegistry extends BaseTypeConverterRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(FastTypeConverterRegistry.class);
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
-    private boolean annotationScanning;
-
     public FastTypeConverterRegistry() {
         super(null, null, null); // pass in null to base class as we load all type converters without package scanning
-    }
-
-    /**
-     * Whether annotations canning of type converters is enabled.
-     * This can be used for backwards compatibility to discover type converters
-     * as Camel 2.x does. Its recommended to migrate to use fast type converters only.
-     */
-    public boolean isAnnotationScanning() {
-        return annotationScanning;
-    }
-
-    /**
-     * Sets whether annotations canning of type converters is enabled.
-     * This can be used for backwards compatibility to discover type converters
-     * as Camel 2.x does. Its recommended to migrate to use fast type converters only.
-     */
-    public void setAnnotationScanning(boolean annotationScanning) {
-        this.annotationScanning = annotationScanning;
+        setAnnotationScanning(false);
     }
 
     @Override
     protected void initAnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
         // noop
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        super.setCamelContext(camelContext);
-        setInjector(camelContext.getInjector());
     }
 
     @Override
@@ -115,8 +89,9 @@ public class FastTypeConverterRegistry extends BaseTypeConverterRegistry {
     @Override
     protected void doStart() throws Exception {
         // we are using backwards compatible legacy mode to detect additional converters
-        if (annotationScanning) {
+        if (isAnnotationScanning()) {
             try {
+                // we need an injector for annotation scanning
                 setInjector(camelContext.getInjector());
 
                 int fast = typeMappings.size();
