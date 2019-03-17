@@ -124,10 +124,12 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
         // load all the found classes into the type converter registry
         for (Class<?> type : classes) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
+            if (acceptClass(type)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
+                }
+                loadConverterMethods(registry, type);
             }
-            loadConverterMethods(registry, type);
         }
 
         // now clear the maps so we do not hold references
@@ -298,6 +300,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
             }
         }
+    }
+
+    protected boolean acceptClass(Class<?> clazz) {
+        return true;
     }
 
     private CachingInjector<?> handleHasConverterAnnotation(TypeConverterRegistry registry, Class<?> type,

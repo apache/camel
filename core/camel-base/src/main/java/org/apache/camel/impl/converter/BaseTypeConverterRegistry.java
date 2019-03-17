@@ -55,7 +55,7 @@ import org.apache.camel.util.ObjectHelper;
  * Base implementation of a type converter registry used for
  * <a href="http://camel.apache.org/type-converter.html">type converters</a> in Camel.
  */
-public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry, CamelContextAware {
+public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
 
     protected static final TypeConverter MISS_CONVERTER = new TypeConverterSupport() {
         @Override
@@ -67,7 +67,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final DoubleMap<Class<?>, Class<?>, TypeConverter> typeMappings = new DoubleMap<>(200);
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<>();
     protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<>();
-    protected final PackageScanClassResolver resolver;
     protected CamelContext camelContext;
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
@@ -81,13 +80,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final LongAdder failedCounter = new LongAdder();
 
     public BaseTypeConverterRegistry(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
-        this.resolver = resolver;
         this.injector = injector;
         this.factoryFinder = factoryFinder;
-        if (resolver != null) {
-            // we only have annotation based package scanning if we have a resolver
-            this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
-        }
+        initAnnotationTypeConverterLoader(resolver);
 
         List<FallbackTypeConverter> fallbacks = new ArrayList<>();
         // add to string first as it will then be last in the last as to string can nearly
@@ -105,6 +100,13 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         // add all core fallback converters at once which is faster (profiler)
         fallbackConverters.addAll(fallbacks);
+    }
+
+    protected void initAnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
+        if (resolver != null) {
+            // we only have annotation based package scanning if we have a resolver
+            this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+        }
     }
 
     @Override

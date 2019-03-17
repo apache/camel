@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import java.util.List;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
@@ -30,7 +31,7 @@ import org.apache.camel.TypeConverters;
  * The utilization {@link Statistics} is by default disabled, as it has a slight performance impact under very high
  * concurrent load. The statistics can be enabled using {@link Statistics#setStatisticsEnabled(boolean)} method.
  */
-public interface TypeConverterRegistry extends StaticService {
+public interface TypeConverterRegistry extends StaticService, CamelContextAware {
 
     /**
      * Utilization statistics of the this registry.

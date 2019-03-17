@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -43,15 +44,38 @@ import org.slf4j.LoggerFactory;
  */
 public class FastTypeConverterRegistry extends BaseTypeConverterRegistry {
 
-    // TODO: We can automatic detect this for example like headersmap-factory by having this on the classpath
-
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverterLoader";
 
     private static final Logger LOG = LoggerFactory.getLogger(FastTypeConverterRegistry.class);
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
+    private boolean annotationScanning;
+
     public FastTypeConverterRegistry() {
         super(null, null, null); // pass in null to base class as we load all type converters without package scanning
+    }
+
+    /**
+     * Whether annotations canning of type converters is enabled.
+     * This can be used for backwards compatibility to discover type converters
+     * as Camel 2.x does. Its recommended to migrate to use fast type converters only.
+     */
+    public boolean isAnnotationScanning() {
+        return annotationScanning;
+    }
+
+    /**
+     * Sets whether annotations canning of type converters is enabled.
+     * This can be used for backwards compatibility to discover type converters
+     * as Camel 2.x does. Its recommended to migrate to use fast type converters only.
+     */
+    public void setAnnotationScanning(boolean annotationScanning) {
+        this.annotationScanning = annotationScanning;
+    }
+
+    @Override
+    protected void initAnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
+        // noop
     }
 
     @Override
@@ -81,11 +105,35 @@ public class FastTypeConverterRegistry extends BaseTypeConverterRegistry {
             log.info("Initializing fast TypeConverterRegistry - requires converters to be annotated with @Converter(loader = true)");
             loadTypeConverters();
             int additional = typeMappings.size() - core;
-
             // report how many type converters we have loaded
             log.info("Type converters loaded (core: {}, classpath: {})", core, additional);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
+        }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // we are using backwards compatible legacy mode to detect additional converters
+        if (annotationScanning) {
+            try {
+                setInjector(camelContext.getInjector());
+
+                int fast = typeMappings.size();
+                // load type converters up front
+                log.info("Initializing fast TypeConverterRegistry - requires converters to be annotated with @Converter(loader = true)");
+
+                TypeConverterLoader loader = new FastAnnotationTypeConverterLoader(camelContext.getPackageScanClassResolver());
+                loader.load(this);
+                int additional = typeMappings.size() - fast;
+                // report how many type converters we have loaded
+                log.info("Type converters loaded (fast: {}, scanned: {})", fast, additional);
+                if (additional > 0) {
+                    log.warn("Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.");
+                }
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeCamelException(e);
+            }
         }
     }
 

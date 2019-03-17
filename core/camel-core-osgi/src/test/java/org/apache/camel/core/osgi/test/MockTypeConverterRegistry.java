@@ -19,6 +19,7 @@ package org.apache.camel.core.osgi.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
@@ -93,6 +94,14 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
 
     public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
         // noop
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        // noop
+    }
+
+    public CamelContext getCamelContext() {
+        return null;
     }
 
     public void start() throws Exception {
