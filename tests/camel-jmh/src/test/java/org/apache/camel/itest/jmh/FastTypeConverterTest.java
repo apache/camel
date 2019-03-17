@@ -80,6 +80,8 @@ public class FastTypeConverterTest {
             camel = new DefaultCamelContext();
             try {
                 camel.setTypeConverterRegistry(new FastTypeConverterRegistry());
+                // dont scan for additional type converters
+                camel.setLoadTypeConverters(false);
                 camel.start();
             } catch (Exception e) {
                 // ignore

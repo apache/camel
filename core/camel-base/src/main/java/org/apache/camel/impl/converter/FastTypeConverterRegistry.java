@@ -89,21 +89,19 @@ public class FastTypeConverterRegistry extends BaseTypeConverterRegistry {
     @Override
     protected void doStart() throws Exception {
         // we are using backwards compatible legacy mode to detect additional converters
-        if (isAnnotationScanning()) {
+        if (camelContext.isLoadTypeConverters()) {
             try {
                 // we need an injector for annotation scanning
                 setInjector(camelContext.getInjector());
 
                 int fast = typeMappings.size();
                 // load type converters up front
-                log.info("Initializing fast TypeConverterRegistry - requires converters to be annotated with @Converter(loader = true)");
-
                 TypeConverterLoader loader = new FastAnnotationTypeConverterLoader(camelContext.getPackageScanClassResolver());
                 loader.load(this);
                 int additional = typeMappings.size() - fast;
                 // report how many type converters we have loaded
-                log.info("Type converters loaded (fast: {}, scanned: {})", fast, additional);
                 if (additional > 0) {
+                    log.info("Type converters loaded (fast: {}, scanned: {})", fast, additional);
                     log.warn("Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.");
                 }
             } catch (Exception e) {

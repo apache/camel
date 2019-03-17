@@ -18,7 +18,6 @@ package org.apache.camel.impl.converter;
 
 import org.apache.camel.Converter;
 import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.util.ObjectHelper;
 
 public final class FastAnnotationTypeConverterLoader extends AnnotationTypeConverterLoader {
 
@@ -28,7 +27,7 @@ public final class FastAnnotationTypeConverterLoader extends AnnotationTypeConve
 
     @Override
     protected boolean acceptClass(Class<?> clazz) {
-        Converter conv = ObjectHelper.getAnnotation(clazz, Converter.class);
+        Converter conv = clazz.getAnnotation(Converter.class);
         if (conv != null) {
             // skip all loader classes as they have already been loaded
             return !conv.loader();
