@@ -62,6 +62,7 @@ public class InstanceMethodTypeConverter extends TypeConverterSupport {
             throw new RuntimeCamelException("Could not instantiate an instance of: " + type.getCanonicalName());
         }
         // inject parent type converter
+        // TODO: Remove this in the near future as this is no longer needed (you can use exchange as parameter)
         if (instance instanceof TypeConverterAware) {
             if (registry instanceof TypeConverter) {
                 TypeConverter parentTypeConverter = (TypeConverter) registry;

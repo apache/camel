@@ -23,7 +23,9 @@ import org.apache.camel.TypeConverter;
  * such as for implementing a fallback type converter
  *
  * @see TypeConverterRegistry
+ * @deprecated to be removed in the near future
  */
+@Deprecated
 public interface TypeConverterAware {
 
     /**
