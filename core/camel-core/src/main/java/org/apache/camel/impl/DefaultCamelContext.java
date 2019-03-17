@@ -132,22 +132,12 @@ public class DefaultCamelContext extends AbstractCamelContext {
      * Lazily create a default implementation
      */
     protected TypeConverter createTypeConverter() {
-        BaseTypeConverterRegistry answer;
-        answer = new DefaultTypeConverter(getPackageScanClassResolver(), getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
+        // lets use the new fast type converter registry
+        FastTypeConverterRegistry answer = new FastTypeConverterRegistry();
         answer.setCamelContext(this);
         setTypeConverterRegistry(answer);
         return answer;
     }
-
-    /*
-        // lets use the new fast type converter registry
-        FastTypeConverterRegistry answer = new FastTypeConverterRegistry();
-        // use backwards compatible mode
-        answer.setAnnotationScanning(true);
-        answer.setCamelContext(this);
-        setTypeConverterRegistry(answer);
-        return answer;
-     */
 
     @Override
     protected TypeConverterRegistry createTypeConverterRegistry() {
