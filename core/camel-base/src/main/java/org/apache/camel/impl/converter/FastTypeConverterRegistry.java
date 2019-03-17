@@ -76,7 +76,7 @@ public class FastTypeConverterRegistry extends BaseTypeConverterRegistry {
             loadCoreTypeConverters();
             int core = typeMappings.size();
             // load type converters up front
-            log.info("Initializing fast TypeConverterRegistry - requires converters to be annotated with @Converter(loader = true)");
+            log.debug("Initializing FastTypeConverterRegistry - requires converters to be annotated with @Converter(loader = true)");
             loadTypeConverters();
             int additional = typeMappings.size() - core;
             // report how many type converters we have loaded
@@ -102,7 +102,7 @@ public class FastTypeConverterRegistry extends BaseTypeConverterRegistry {
                 // report how many type converters we have loaded
                 if (additional > 0) {
                     log.info("Type converters loaded (fast: {}, scanned: {})", fast, additional);
-                    log.warn("Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.");
+                    log.warn("Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.", additional);
                 }
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
