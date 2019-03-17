@@ -50,7 +50,7 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
         ObjectName name = null;
         for (ObjectName service : names) {
-            if (service.toString().contains("DefaultTypeConverter")) {
+            if (service.toString().contains("FastTypeConverter")) {
                 name = service;
                 break;
             }
