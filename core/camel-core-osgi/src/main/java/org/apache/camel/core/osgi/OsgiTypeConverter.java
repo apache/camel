@@ -209,6 +209,17 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         return delegate;
     }
 
+    @Override
+    public boolean isAnnotationScanning() {
+        // we use osgi service registry to track type-converters
+        return false;
+    }
+
+    @Override
+    public void setAnnotationScanning(boolean annotationScanning) {
+        // noop
+    }
+
     protected DefaultTypeConverter createRegistry() {
         // base the osgi type converter on the default type converter
         DefaultTypeConverter answer = new DefaultTypeConverter(new DefaultPackageScanClassResolver() {
