@@ -68,10 +68,12 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<>();
     protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<>();
     protected CamelContext camelContext;
+    protected PackageScanClassResolver resolver;
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
     protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
+    protected boolean annotationScanning = true;
     protected final Statistics statistics = new UtilizationStatistics();
     protected final LongAdder noopCounter = new LongAdder();
     protected final LongAdder attemptCounter = new LongAdder();
@@ -82,7 +84,7 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     public BaseTypeConverterRegistry(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
         this.injector = injector;
         this.factoryFinder = factoryFinder;
-        initAnnotationTypeConverterLoader(resolver);
+        this.resolver = resolver;
 
         List<FallbackTypeConverter> fallbacks = new ArrayList<>();
         // add to string first as it will then be last in the last as to string can nearly
@@ -602,9 +604,19 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         this.typeConverterExists = typeConverterExists;
     }
 
+    public boolean isAnnotationScanning() {
+        return annotationScanning;
+    }
+
+    public void setAnnotationScanning(boolean annotationScanning) {
+        this.annotationScanning = annotationScanning;
+    }
+
     @Override
     protected void doStart() throws Exception {
-        // noop
+        if (annotationScanning) {
+            initAnnotationTypeConverterLoader(resolver);
+        }
     }
 
     @Override

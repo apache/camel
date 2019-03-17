@@ -29,6 +29,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.impl.converter.FastTypeConverterRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
@@ -137,6 +138,16 @@ public class DefaultCamelContext extends AbstractCamelContext {
         setTypeConverterRegistry(answer);
         return answer;
     }
+
+    /*
+        // lets use the new fast type converter registry
+        FastTypeConverterRegistry answer = new FastTypeConverterRegistry();
+        // use backwards compatible mode
+        answer.setAnnotationScanning(true);
+        answer.setCamelContext(this);
+        setTypeConverterRegistry(answer);
+        return answer;
+     */
 
     @Override
     protected TypeConverterRegistry createTypeConverterRegistry() {

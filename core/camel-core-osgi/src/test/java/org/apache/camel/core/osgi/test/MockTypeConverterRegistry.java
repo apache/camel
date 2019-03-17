@@ -96,6 +96,14 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         // noop
     }
 
+    public boolean isAnnotationScanning() {
+        return false;
+    }
+
+    public void setAnnotationScanning(boolean annotationScanning) {
+        // noop
+    }
+
     public void setCamelContext(CamelContext camelContext) {
         // noop
     }

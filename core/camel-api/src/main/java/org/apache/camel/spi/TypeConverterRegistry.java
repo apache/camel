@@ -189,4 +189,13 @@ public interface TypeConverterRegistry extends StaticService, CamelContextAware 
      */
     void setTypeConverterExists(TypeConverterExists typeConverterExists);
 
+    boolean isAnnotationScanning();
+
+    /**
+     * Sets whether annotations canning of type converters is enabled.
+     * This can be used for backwards compatibility to discover type converters
+     * as Camel 2.x does. Its recommended to migrate to use fast type converters only.
+     */
+    void setAnnotationScanning(boolean annotationScanning);
+
 }
