@@ -409,6 +409,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         fallbackConverters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
+
+        // TODO: Remove this in the near future as this is no longer needed (you can use exchange as parameter)
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
             typeConverterAware.setTypeConverter(this);
@@ -427,6 +429,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         converters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
+
+        // TODO: Remove this in the near future as this is no longer needed (you can use exchange as parameter)
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
             typeConverterAware.setTypeConverter(this);
