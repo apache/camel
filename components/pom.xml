@@ -320,6 +320,7 @@
         <module>camel-weather</module>
         <module>camel-web3j</module>
         <module>camel-websocket</module>
+        <module>camel-websocket-jsr356</module>
         <module>camel-wordpress</module>
         <module>camel-xchange</module>
         <module>camel-xmlsecurity</module>
@@ -332,7 +333,6 @@
         <module>camel-zipkin</module>
         <module>camel-zookeeper</module>
         <module>camel-zookeeper-master</module>
-        <module>camel-websocket-jsr356</module>
     </modules>
 
     <build>
