@@ -23,6 +23,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.converter.FastTypeConverterRegistry;
 import org.junit.Test;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Level;
@@ -78,7 +79,7 @@ public class FastTypeConverterTest {
         public void initialize() throws IOException {
             camel = new DefaultCamelContext();
             try {
-//                camel.setTypeConverterRegistry(new TypeConverterLoaderRegistry());
+                camel.setTypeConverterRegistry(new FastTypeConverterRegistry());
                 camel.start();
             } catch (Exception e) {
                 // ignore
