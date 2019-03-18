@@ -21,16 +21,19 @@ import com.amazonaws.services.kms.model.DescribeKeyResult;
 import com.amazonaws.services.kms.model.ListKeysResult;
 import com.amazonaws.services.kms.model.ScheduleKeyDeletionResult;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class KMSProducerTest extends CamelTestSupport {
+	
+	@BindToRegistry("amazonKmsClient")
+    AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
     
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
@@ -139,17 +142,6 @@ public class KMSProducerTest extends CamelTestSupport {
         assertEquals("test", resultGet.getKeyMetadata().getKeyId());
         assertEquals("MyCamelKey", resultGet.getKeyMetadata().getDescription());
         assertFalse(resultGet.getKeyMetadata().isEnabled());
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
-        
-        registry.bind("amazonKmsClient", clientMock);
-        
-        return registry;
     }
 
     @Override
