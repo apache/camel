@@ -31,10 +31,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class KMSProducerTest extends CamelTestSupport {
-	
-	@BindToRegistry("amazonKmsClient")
+
+    @BindToRegistry("amazonKmsClient")
     AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
-    
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
     
