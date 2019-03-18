@@ -37,9 +37,9 @@ import org.junit.Test;
 @Ignore("Must be manually tested.")
 public class KinesisComponentIntegrationTest extends CamelTestSupport {
 
-	@BindToRegistry("amazonKinesisClient")
+    @BindToRegistry("amazonKinesisClient")
     AmazonKinesis client = AmazonKinesisClientBuilder.standard().withRegion(Regions.EU_CENTRAL_1).build();
-	
+
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
 
