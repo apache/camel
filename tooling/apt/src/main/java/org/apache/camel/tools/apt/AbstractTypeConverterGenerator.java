@@ -38,9 +38,6 @@ import javax.tools.JavaFileObject;
 
 public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnotationProcessor {
 
-    // TODO: generate so you dont need to pass in CamelContext but register into a java set/thingy
-    // so you can init this via static initializer block { ... } and then register on CamelContext later
-
     public static final class ClassConverters {
 
         private final Comparator<TypeMirror> comparator;
@@ -259,6 +256,9 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
                 writer.append("\n");
             }
             writer.append("    ").append(staticInstance ? "private " : "public ").append(c).append("() {\n");
+            writer.append("    }\n");
+            writer.append("\n");
+            writer.append("    private void registerConverters() {\n");
 
             for (Map.Entry<String, Map<TypeMirror, ExecutableElement>> to : converters.getConverters().entrySet()) {
                 for (Map.Entry<TypeMirror, ExecutableElement> from : to.getValue().entrySet()) {
@@ -279,11 +279,13 @@ public abstract class AbstractTypeConverterGenerator extends AbstractCamelAnnota
             if (converters.size() > 0) {
                 if (converters.isIgnoreOnLoadError()) {
                     writer.append("        try {\n");
+                    writer.append("            registerConverters();\n");
                     writer.append("            converters.forEach((k, v, c) -> registry.addTypeConverter(k, v, c));\n");
                     writer.append("        } catch (Throwable e) {\n");
                     writer.append("            // ignore on load error\n");
                     writer.append("        }\n");
                 } else {
+                    writer.append("        registerConverters();\n");
                     writer.append("        converters.forEach((k, v, c) -> registry.addTypeConverter(k, v, c));\n");
                 }
             }

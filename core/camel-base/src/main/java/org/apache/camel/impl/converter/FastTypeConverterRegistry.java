@@ -27,7 +27,6 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterLoader;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -50,12 +49,6 @@ public class FastTypeConverterRegistry extends BaseTypeConverterRegistry {
 
     public FastTypeConverterRegistry() {
         super(null, null, null); // pass in null to base class as we load all type converters without package scanning
-        setAnnotationScanning(false);
-    }
-
-    @Override
-    protected void initAnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
-        // noop
     }
 
     @Override

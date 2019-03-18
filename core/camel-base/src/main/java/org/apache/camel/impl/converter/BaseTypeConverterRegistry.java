@@ -73,7 +73,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final FactoryFinder factoryFinder;
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
     protected LoggingLevel typeConverterExistsLoggingLevel = LoggingLevel.WARN;
-    protected boolean annotationScanning = true;
     protected final Statistics statistics = new UtilizationStatistics();
     protected final LongAdder noopCounter = new LongAdder();
     protected final LongAdder attemptCounter = new LongAdder();
@@ -85,6 +84,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         this.injector = injector;
         this.factoryFinder = factoryFinder;
         this.resolver = resolver;
+        if (resolver != null) {
+            this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+        }
 
         List<FallbackTypeConverter> fallbacks = new ArrayList<>();
         // add to string first as it will then be last in the last as to string can nearly
@@ -102,13 +104,6 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
 
         // add all core fallback converters at once which is faster (profiler)
         fallbackConverters.addAll(fallbacks);
-    }
-
-    protected void initAnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
-        if (resolver != null) {
-            // we only have annotation based package scanning if we have a resolver
-            this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
-        }
     }
 
     @Override
@@ -608,19 +603,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         this.typeConverterExists = typeConverterExists;
     }
 
-    public boolean isAnnotationScanning() {
-        return annotationScanning;
-    }
-
-    public void setAnnotationScanning(boolean annotationScanning) {
-        this.annotationScanning = annotationScanning;
-    }
-
     @Override
     protected void doStart() throws Exception {
-        if (annotationScanning) {
-            initAnnotationTypeConverterLoader(resolver);
-        }
+        // noop
     }
 
     @Override
