@@ -774,8 +774,11 @@
                                 <exclude>**/cacerts</exclude>
                                 <exclude>**/*.p12</exclude>
                                 <exclude>**/*.txt</exclude>
+                                <exclude>.mvn/**</exclude>
+                                <exclude>mvnw*</exclude>
                             </excludes>
                             <mapping>
+                                <java>SLASHSTAR_STYLE</java>
                                 <properties>CAMEL_PROPERTIES_STYLE</properties>
                                 <spring.factories>CAMEL_PROPERTIES_STYLE</spring.factories>
                                 <spring.provides>CAMEL_PROPERTIES_STYLE</spring.provides>
