@@ -31,16 +31,19 @@ import com.amazonaws.services.identitymanagement.model.RemoveUserFromGroupResult
 import com.amazonaws.services.identitymanagement.model.StatusType;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyResult;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class IAMProducerTest extends CamelTestSupport {
+	
+	@BindToRegistry("amazonIAMClient")
+    AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
@@ -283,17 +286,6 @@ public class IAMProducerTest extends CamelTestSupport {
 
         RemoveUserFromGroupResult resultGet = (RemoveUserFromGroupResult)exchange.getIn().getBody();
         assertNotNull(resultGet);
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
-
-        registry.bind("amazonIAMClient", clientMock);
-
-        return registry;
     }
 
     @Override
