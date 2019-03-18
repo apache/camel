@@ -18,17 +18,21 @@ package org.apache.camel.component.aws.firehose.integration;
 
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose;
 import com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehoseAsyncClientBuilder;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.firehose.KinesisFirehoseConstants;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
 
+    @BindToRegistry("FirehoseClient")
+    AmazonKinesisFirehose client = AmazonKinesisFirehoseAsyncClientBuilder.defaultClient();
+    
     @Test
     public void testFirehoseRouting() throws Exception {
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
@@ -37,14 +41,6 @@ public class KinesisFirehoseComponentIntegrationTest extends CamelTestSupport {
             }
         });
         assertNotNull(exchange.getIn().getHeader(KinesisFirehoseConstants.RECORD_ID));
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        AmazonKinesisFirehose client = AmazonKinesisFirehoseAsyncClientBuilder.defaultClient();
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("FirehoseClient", client);
-        return registry;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
