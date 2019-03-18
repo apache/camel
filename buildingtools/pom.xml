@@ -75,7 +75,7 @@
                                 <include>**/header-xml.txt</include>
                             </includes>
                             <mapping>
-                                <header-java.txt>JAVADOC_STYLE</header-java.txt>
+                                <header-java.txt>SLASHSTAR_STYLE</header-java.txt>
                                 <header-properties.txt>CAMEL_PROPERTIES_STYLE</header-properties.txt>
                                 <header-xml.txt>XML_STYLE</header-xml.txt>
                             </mapping>
