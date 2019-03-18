@@ -21,6 +21,7 @@ import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.AmazonKinesisClientBuilder;
 import com.amazonaws.services.kinesis.model.Record;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -29,7 +30,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.aws.kinesis.KinesisConstants;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,6 +37,9 @@ import org.junit.Test;
 @Ignore("Must be manually tested.")
 public class KinesisComponentIntegrationTest extends CamelTestSupport {
 
+	@BindToRegistry("amazonKinesisClient")
+    AmazonKinesis client = AmazonKinesisClientBuilder.standard().withRegion(Regions.EU_CENTRAL_1).build();
+	
     @EndpointInject(uri = "direct:start")
     private ProducerTemplate template;
 
@@ -74,16 +77,6 @@ public class KinesisComponentIntegrationTest extends CamelTestSupport {
         assertEquals(partition, resultExchange.getIn().getHeader(KinesisConstants.PARTITION_KEY));
         assertNotNull(resultExchange.getIn().getHeader(KinesisConstants.APPROX_ARRIVAL_TIME));
         assertNotNull(resultExchange.getIn().getHeader(KinesisConstants.SEQUENCE_NUMBER));
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        AmazonKinesis client = AmazonKinesisClientBuilder.standard().withRegion(Regions.EU_CENTRAL_1).build();
-        registry.bind("amazonKinesisClient", client);
-
-        return registry;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
