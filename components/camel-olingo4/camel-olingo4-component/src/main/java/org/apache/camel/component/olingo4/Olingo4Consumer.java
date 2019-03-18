@@ -29,6 +29,7 @@ import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiConsumer;
 import org.apache.camel.util.component.ApiConsumerHelper;
+import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
 import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientValue;
@@ -156,7 +157,13 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
                 }
                 splitResult.add(entity);
             }
-        } else if (result instanceof ClientEntity) {
+        } else if (result instanceof ClientValue && ((ClientValue) result).isCollection()) {
+            ClientValue value = (ClientValue) result;
+            ClientCollectionValue<ClientValue> collection = value.asCollection();
+            collection.forEach(v -> {
+                splitResult.add(v);
+            });
+        } else {
             splitResult.add(result);
         }
 
