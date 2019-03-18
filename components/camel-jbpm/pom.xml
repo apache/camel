@@ -167,7 +167,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>templating-maven-plugin</artifactId>
-                <version>1.0.0</version>
+                <version>${templating-maven-plugin-version}</version>
                 <executions>
                     <execution>
                         <id>filter-src</id>
