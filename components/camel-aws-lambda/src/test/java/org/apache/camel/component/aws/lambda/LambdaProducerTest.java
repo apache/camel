@@ -53,7 +53,7 @@ public class LambdaProducerTest extends CamelTestSupport {
     @BindToRegistry("awsLambdaClient")
     AmazonLambdaClientMock clientMock = new AmazonLambdaClientMock();
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
