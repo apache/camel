@@ -19,13 +19,14 @@ package org.apache.camel.component.aws.lambda;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.AWSLambdaClient;
 
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
 
-
 public class LambdaComponentConfigurationTest extends CamelTestSupport {
+    
+	@BindToRegistry("awsLambdaClient")
     AWSLambdaClient awsLambdaClient = mock(AWSLambdaClient.class);
 
     @Test
@@ -93,12 +94,5 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("awsLambdaClient", awsLambdaClient);
-        return registry;
     }
 }
