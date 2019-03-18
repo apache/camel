@@ -23,6 +23,15 @@ ResultQuery<Record> resultQuery = create.resultQuery("SELECT * FROM BOOK");
 Result<Record> result = resultQuery.fetch();
 ----
 
+=== Plain SQL
+SQL could be executed using JOOQ's objects "Query" or "ResultQuery".
+Also SQL query could be specified inside URI:
+[source,java]
+----
+from("jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=query=select * from book_store x where x.name = 'test'").to("bean:myBusinessLogic");
+----
+See examples below.
+
 === Consuming from endpoint
 Consuming messages from a JOOQ consumer endpoint removes (or updates) entity beans in the database.
 This allows you to use a database table as a logical queue: consumers take messages from the queue and then delete/update them to logically remove them from the queue.
@@ -64,12 +73,13 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+==== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *query* (common) | SQL query. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumeDelete* (consumer) | Delete entity after it is consumed. | true | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
@@ -109,7 +119,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 6 options, which are listed below.
+The component supports 7 options, which are listed below.
 
 
 
@@ -120,6 +130,7 @@ The component supports 6 options, which are listed below.
 | *camel.component.jooq.configuration.database-configuration* |  |  | Configuration
 | *camel.component.jooq.configuration.entity-type* | JOOQ entity class. |  | Class
 | *camel.component.jooq.configuration.operation* | Type of operation to execute on query: execute, fetch, etc. |  | JooqOperation
+| *camel.component.jooq.configuration.query* | SQL query. |  | String
 | *camel.component.jooq.enabled* | Whether to enable auto configuration of the jooq component. This is enabled by default. |  | Boolean
 | *camel.component.jooq.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
@@ -228,6 +239,26 @@ Camel context configuration:
         <route id="queue-route">
             <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?consumeDelete=false"/>
             <log message="Consumed ${body}"/>
+        </route>
+
+        <!-- SQL: select -->
+        <route id="sql-select">
+            <from uri="direct:sql-select"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch?query=select * from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- SQL: delete -->
+        <route id="sql-delete">
+            <from uri="direct:sql-delete"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute?query=delete from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- SQL: consume -->
+        <route id="sql-consume">
+            <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
         </route>
     </camelContext>
 </beans>

@@ -70,5 +70,25 @@
             <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?consumeDelete=false"/>
             <log message="Consumed ${body}"/>
         </route>
+
+        <!-- SQL: select -->
+        <route id="sql-select">
+            <from uri="direct:sql-select"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/fetch?query=select * from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- SQL: delete -->
+        <route id="sql-delete">
+            <from uri="direct:sql-delete"/>
+            <to uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord/execute?query=delete from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
+
+        <!-- SQL: consume -->
+        <route id="sql-consume">
+            <from uri="jooq://org.apache.camel.component.jooq.db.tables.records.BookStoreRecord?query=select * from book_store x where x.name = 'test'"/>
+            <log message="Fetched ${body}"/>
+        </route>
     </camelContext>
 </beans>

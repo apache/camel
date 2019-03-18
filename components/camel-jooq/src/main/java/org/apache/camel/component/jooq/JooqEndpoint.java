@@ -100,32 +100,23 @@ public class JooqEndpoint extends ScheduledPollEndpoint {
             type = ResultQuery.class;
             break;
         default:
-            type = null;
+            throw new UnsupportedOperationException("Operation: " + configuration.getOperation());
         }
 
-        if (type == null) {
-            return new Expression() {
-                @Override
-                public <T> T evaluate(Exchange exchange, Class<T> type) {
-                    return exchange.getMessage().getBody(type);
-                };
-            };
-        } else {
-            return new Expression() {
-                public Object evaluate(Exchange exchange, Class asType) {
-                    Object answer = exchange.getIn().getBody(type);
-                    if (answer == null) {
-                        Object defaultValue = exchange.getIn().getBody();
-                        if (defaultValue != null) {
-                            throw RuntimeCamelException.wrapRuntimeCamelException(new NoTypeConversionAvailableException(defaultValue, type));
-                        }
-
-                        answer = exchange.getContext().getInjector().newInstance(type);
+        return new Expression() {
+            public Object evaluate(Exchange exchange, Class asType) {
+                Object answer = exchange.getIn().getBody(type);
+                if (answer == null) {
+                    Object defaultValue = exchange.getIn().getBody();
+                    if (defaultValue != null) {
+                        throw RuntimeCamelException.wrapRuntimeCamelException(new NoTypeConversionAvailableException(defaultValue, type));
                     }
-                    return answer;
+
+                    answer = exchange.getContext().getInjector().newInstance(type);
                 }
-            };
-        }
+                return answer;
+            }
+        };
     }
 
     @Override

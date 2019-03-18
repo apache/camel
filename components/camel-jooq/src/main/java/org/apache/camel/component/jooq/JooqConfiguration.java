@@ -21,8 +21,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.jooq.Configuration;
-import org.jooq.Table;
-import org.jooq.UpdatableRecord;
 
 @UriParams
 public class JooqConfiguration implements Cloneable {
@@ -35,6 +33,9 @@ public class JooqConfiguration implements Cloneable {
 
     @UriParam(label = "consumer", defaultValue = "true", description = "Delete entity after it is consumed.")
     private boolean consumeDelete = true;
+
+    @UriParam(description = "SQL query.")
+    private String query;
 
     private Configuration databaseConfiguration;
 
@@ -71,6 +72,14 @@ public class JooqConfiguration implements Cloneable {
 
     public void setConsumeDelete(boolean consumeDelete) {
         this.consumeDelete = consumeDelete;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
     }
 
     public JooqConfiguration copy() {
