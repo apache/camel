@@ -123,6 +123,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         LOG.info("Manufacturer: {}", properties);
     }
 
+    @SuppressWarnings( "unchecked" )
     @Test
     public void testCreateUpdateDelete() throws Exception {
         final Map<String, Object> data = getEntityData();
@@ -165,6 +166,7 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         return data;
     }
 
+    @SuppressWarnings( "unchecked" )
     @Test
     public void testBatch() throws Exception {
         final List<Olingo2BatchRequest> batchParts = new ArrayList<>();
@@ -291,6 +293,40 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
                 assertNull(body);
             }
         }
+    }
+
+    /**
+     * Read value of the People object and split the results
+     * into individual messages
+     */
+    @SuppressWarnings( "unchecked" )
+    @Test
+    public void testConsumerReadClientValuesSplitResults() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo2://read/Manufacturers('1')/Address?consumer.splitResult=true";
+
+        this.context.setTracing(true);
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-value");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(60000);
+
+        final Map<String, Object> resultValue = requestBodyAndHeaders(endpoint, null, headers);
+        assertNotNull(resultValue);
+
+        mockEndpoint.assertIsSatisfied();
+        //
+        // 1 individual message in the exchange
+        //
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+        assertIsInstanceOf(Map.class, body);
+        Map<String, Object> value = (Map<String, Object>) body;
+        Object addrObj = value.get("Address");
+        assertIsInstanceOf(Map.class, addrObj);
+        Map<String, Object> addrMap = (Map<String, Object>) addrObj;
+        assertEquals("70173", addrMap.get("ZipCode"));
+        assertEquals("Star Street 137", addrMap.get("Street"));
+        assertEquals("Germany", addrMap.get("Country"));
+        assertEquals("Stuttgart", addrMap.get("City"));
     }
 
     /**
@@ -454,9 +490,14 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
                 //
                 // Consumer endpoint
                 //
-                from("olingo2://read/Manufacturers?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false").to("mock:consumer-alreadyseen");
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false")
+                    .to("mock:consumer-alreadyseen");
 
-                from("olingo2://read/Manufacturers?consumer.splitResult=true").to("mock:consumer-splitresult");
+                from("olingo2://read/Manufacturers?consumer.splitResult=true")
+                    .to("mock:consumer-splitresult");
+
+                from("olingo2://read/Manufacturers('1')/Address?consumer.splitResult=true")
+                    .to("mock:consumer-value");
             }
         };
     }
