@@ -35,7 +35,7 @@ public class KMSProducerTest extends CamelTestSupport {
     @BindToRegistry("amazonKmsClient")
     AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
     
     @Test
