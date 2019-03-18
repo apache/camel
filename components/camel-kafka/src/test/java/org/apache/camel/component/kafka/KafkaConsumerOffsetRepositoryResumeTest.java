@@ -69,10 +69,9 @@ public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTe
      */
     @Test
     public void shouldResumeFromAnyParticularOffset() throws InterruptedException {
-        result.expectedMessageCount(3);
         result.expectedBodiesReceivedInAnyOrder("message-6", "message-8", "message-9");
 
-        result.assertIsSatisfied(3000);
+        result.assertIsSatisfied(5000);
 
         assertEquals("partition-0", "4", stateRepository.getState(TOPIC + "/0"));
         assertEquals("partition-1", "4", stateRepository.getState(TOPIC + "/1"));
@@ -92,6 +91,7 @@ public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTe
             public void configure() throws Exception {
                 from("kafka:" + TOPIC
                              + "?groupId=A"
+                             + "&autoCommitIntervalMs=1000"
                              + "&autoOffsetReset=earliest"             // Ask to start from the beginning if we have unknown offset
                              + "&consumersCount=2"                     // We have 2 partitions, we want 1 consumer per partition
                              + "&offsetRepository=#offset")            // Keep the offset in our repository
