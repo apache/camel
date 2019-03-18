@@ -41,8 +41,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class IAMProducerTest extends CamelTestSupport {
-	
-	@BindToRegistry("amazonIAMClient")
+
+    @BindToRegistry("amazonIAMClient")
     AmazonIAMClientMock clientMock = new AmazonIAMClientMock();
 
     @EndpointInject(uri = "mock:result")
