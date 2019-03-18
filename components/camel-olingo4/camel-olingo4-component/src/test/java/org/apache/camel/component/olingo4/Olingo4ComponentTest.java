@@ -34,6 +34,7 @@ import org.apache.olingo.client.api.domain.ClientEntitySet;
 import org.apache.olingo.client.api.domain.ClientPrimitiveValue;
 import org.apache.olingo.client.api.domain.ClientProperty;
 import org.apache.olingo.client.api.domain.ClientServiceDocument;
+import org.apache.olingo.client.api.domain.ClientValue;
 import org.apache.olingo.commons.api.Constants;
 import org.apache.olingo.commons.api.edm.Edm;
 import org.apache.olingo.commons.api.ex.ODataError;
@@ -466,6 +467,30 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
             }
         }
     }
+    /**
+     * Read value of the People object and split the results
+     * into individual messages
+     */
+    @Test
+    public void testConsumerReadClientValuesSplitResults() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo4://read/People('russellwhyte')/FavoriteFeature?consumer.splitResult=true";
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-value");
+        mockEndpoint.expectedMinimumMessageCount(1);
+
+        final ClientValue resultValue = requestBodyAndHeaders(endpoint, null, headers);
+        assertIsInstanceOf(ClientValue.class, resultValue);
+
+        mockEndpoint.assertIsSatisfied();
+        //
+        // 1 individual message in the exchange
+        //
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+        assertIsInstanceOf(ClientPrimitiveValue.class, body);
+        ClientPrimitiveValue value = (ClientPrimitiveValue) body;
+        assertEquals("Feature1", value.toString());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -522,9 +547,15 @@ public class Olingo4ComponentTest extends AbstractOlingo4TestSupport {
                 //
                 // Consumer endpoint
                 //
-                from("olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false").to("mock:consumer-alreadyseen");
+                from("olingo4://read/People?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false")
+                    .to("mock:consumer-alreadyseen");
 
-                from("olingo4://read/People?consumer.splitResult=true").to("mock:consumer-splitresult");
+                from("olingo4://read/People?consumer.splitResult=true")
+                    .to("mock:consumer-splitresult");
+
+                from("olingo4://read/People('russellwhyte')/FavoriteFeature?consumer.splitResult=true")
+                    .to("mock:consumer-splitresult-value");
+
             }
         };
     }
