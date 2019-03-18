@@ -49,7 +49,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class LambdaProducerTest extends CamelTestSupport {
-	
+
     @BindToRegistry("awsLambdaClient")
     AmazonLambdaClientMock clientMock = new AmazonLambdaClientMock();
 
