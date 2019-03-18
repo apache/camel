@@ -65,22 +65,22 @@ public class FallbackTypeConverter {
 
     private final Map<AnnotatedElement, JAXBContext> contexts = new HashMap<>();
     private final StaxConverter staxConverter = new StaxConverter();
-    private boolean prettyPrint = true;
-    private boolean objectFactory;
+    private boolean defaultPrettyPrint = true;
+    private boolean defaultObjectFactory;
 
     public boolean isPrettyPrint() {
-        return prettyPrint;
+        return defaultPrettyPrint;
     }
 
     /**
      * Whether the JAXB converter should use pretty print or not (default is true)
      */
     public void setPrettyPrint(boolean prettyPrint) {
-        this.prettyPrint = prettyPrint;
+        this.defaultPrettyPrint = prettyPrint;
     }
 
     public boolean isObjectFactory() {
-        return objectFactory;
+        return defaultObjectFactory;
     }
 
     /**
@@ -88,7 +88,7 @@ public class FallbackTypeConverter {
      * This only applies to POJO classes that has not been annotated with JAXB and providing jaxb.index descriptor files.
      */
     public void setObjectFactory(boolean objectFactory) {
-        this.objectFactory = objectFactory;
+        this.defaultObjectFactory = objectFactory;
     }
 
     @FallbackConverter
@@ -100,37 +100,39 @@ public class FallbackTypeConverter {
             return null;
         }
 
+        boolean prettyPrint = defaultPrettyPrint;
         String property = exchange != null ? exchange.getContext().getGlobalOption(PRETTY_PRINT) : null;
         if (property != null) {
             if (property.equalsIgnoreCase("false")) {
-                setPrettyPrint(false);
+                prettyPrint = false;
             } else {
-                setPrettyPrint(true);
+                prettyPrint = true;
             }
         }
 
         // configure object factory
+        boolean objectFactory = defaultObjectFactory;
         property = exchange != null ? exchange.getContext().getGlobalOption(OBJECT_FACTORY) : null;
         if (property != null) {
             if (property.equalsIgnoreCase("false")) {
-                setObjectFactory(false);
+                objectFactory = false;
             } else {
-                setObjectFactory(true);
+                objectFactory = true;
             }
         }
 
         try {
-            if (isJaxbType(type, exchange)) {
+            if (isJaxbType(type, exchange, objectFactory)) {
                 return unmarshall(type, exchange, value, exchange.getContext().getTypeConverter());
             }
             if (value != null && isNotStreamCacheType(type)) {
                 if (hasXmlRootElement(value.getClass())) {
-                    return marshall(type, exchange, value, exchange.getContext().getTypeConverter(), null);
+                    return marshall(type, exchange, value, exchange.getContext().getTypeConverter(), null, prettyPrint);
                 }
-                if (isObjectFactory()) {
+                if (objectFactory) {
                     Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), value.getClass());
                     if (objectFactoryMethod != null) {
-                        return marshall(type, exchange, value, exchange.getContext().getTypeConverter(), objectFactoryMethod);
+                        return marshall(type, exchange, value, exchange.getContext().getTypeConverter(), objectFactoryMethod, prettyPrint);
                     }
                 }
             }
@@ -146,8 +148,8 @@ public class FallbackTypeConverter {
         return type.getAnnotation(XmlRootElement.class) != null;
     }
 
-    protected <T> boolean isJaxbType(Class<T> type, Exchange exchange) {
-        if (isObjectFactory()) {
+    protected <T> boolean isJaxbType(Class<T> type, Exchange exchange, boolean objectFactory) {
+        if (objectFactory) {
             return hasXmlRootElement(type) || JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), type) != null;
         } else {
             return hasXmlRootElement(type);
@@ -216,7 +218,8 @@ public class FallbackTypeConverter {
         return null;
     }
 
-    protected <T> T marshall(Class<T> type, Exchange exchange, Object value, TypeConverter converter, Method objectFactoryMethod)
+    protected <T> T marshall(Class<T> type, Exchange exchange, Object value, TypeConverter converter,
+                             Method objectFactoryMethod, boolean prettyPrint)
         throws JAXBException, FactoryConfigurationError, TypeConversionException {
         LOG.trace("Marshal from value {} to type {}", value, type);
 
@@ -229,7 +232,7 @@ public class FallbackTypeConverter {
             Marshaller marshaller = context.createMarshaller();
             Writer buffer = new StringWriter();
 
-            if (isPrettyPrint()) {
+            if (prettyPrint) {
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             }
             String charset = exchange != null ? exchange.getProperty(Exchange.CHARSET_NAME, String.class) : null;
