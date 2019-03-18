@@ -1,5 +1,5 @@
 [[GroovyDSL-AbouttheGroovyDSL]]
-== About the Groovy DSL
+== About the Groovy DSL (deprecated)
 
 The Groovy DSL implementation is built on top of the existing Java-based
 DSL, but it additionally allows to use Groovy language
