@@ -147,6 +147,9 @@ be registered in the type converter registry. However invoking these type conver
 does **not** happen in a _fast way_ but uses Java method call reflection. It is therefore
 recommended to migrate your type converters to use the faster way. See further below.
 
+TIP: You can turn off the fallback of discovering Camel 2.x compatible type converters by
+setting the `loadTypeConverters` option to `false` on `CamelContext`.
+
 The converter classes must be annotated on the top class level with the `@Converter` annotation,
 and each converter method as well.
 
