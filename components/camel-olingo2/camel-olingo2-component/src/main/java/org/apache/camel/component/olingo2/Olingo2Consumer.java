@@ -144,7 +144,9 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
             for (ODataEntry entry : odataFeed.getEntries()) {
                 splitResult.add(entry);
             }
-        } else if (result instanceof ODataEntry) {
+        } else if (result instanceof List) {
+            return result;
+        } else {
             splitResult.add(result);
         }
 
