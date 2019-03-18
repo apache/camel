@@ -25,8 +25,8 @@ import org.junit.Test;
 import static org.mockito.Mockito.mock;
 
 public class LambdaComponentConfigurationTest extends CamelTestSupport {
-    
-	@BindToRegistry("awsLambdaClient")
+
+    @BindToRegistry("awsLambdaClient")
     AWSLambdaClient awsLambdaClient = mock(AWSLambdaClient.class);
 
     @Test
