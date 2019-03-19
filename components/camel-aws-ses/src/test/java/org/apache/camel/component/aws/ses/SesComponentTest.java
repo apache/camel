@@ -29,8 +29,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SesComponentTest extends CamelTestSupport {
-    
-	@BindToRegistry("amazonSESClient")
+
+    @BindToRegistry("amazonSESClient")
     private AmazonSESClientMock sesClient = new AmazonSESClientMock();
 
     @Test
