@@ -37,6 +37,7 @@ public class CamelServletTest extends AbstractSpringBootTestSupport {
                 .module(inferModuleName(CamelServletTest.class))
 //                .dependency(DependencyResolver.withVersion("org.springframework.boot:spring-boot-starter-web"))
 //                .dependency(DependencyResolver.withVersion("org.springframework:spring-webmvc"))
+                .dependency("javax.servlet:javax.servlet-api")
                 .unitTestExclusionPattern(".*(\\.integration\\..*|IntegrationTest$|ExposedServletEndpointURIToJMXTest$.*Arquillian.*)")
                 .build();
     }
