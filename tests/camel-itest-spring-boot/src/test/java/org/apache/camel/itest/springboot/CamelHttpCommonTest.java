@@ -35,6 +35,7 @@ public class CamelHttpCommonTest extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelHttpCommonTest.class))
+                .dependency("javax.servlet:javax.servlet-api")
                 .build();
     }
 
