@@ -58,10 +58,10 @@ import org.slf4j.LoggerFactory;
 @Converter(loader = true)
 public class FallbackTypeConverter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
-
     public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint";
     public static final String OBJECT_FACTORY = "CamelJaxbObjectFactory";
+
+    private static final Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
 
     private final Map<AnnotatedElement, JAXBContext> contexts = new HashMap<>();
     private final StaxConverter staxConverter = new StaxConverter();
