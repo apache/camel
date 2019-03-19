@@ -776,6 +776,7 @@
                                 <exclude>**/*.txt</exclude>
                                 <exclude>.mvn/**</exclude>
                                 <exclude>mvnw*</exclude>
+                                <exclude>**/META-INF/persistence*.xsd</exclude>
                             </excludes>
                             <mapping>
                                 <java>SLASHSTAR_STYLE</java>
