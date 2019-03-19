@@ -22,17 +22,20 @@ import com.amazonaws.services.kafka.model.CreateClusterResult;
 import com.amazonaws.services.kafka.model.DeleteClusterResult;
 import com.amazonaws.services.kafka.model.ListClustersResult;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class MSKProducerTest extends CamelTestSupport {
 
+    @BindToRegistry("amazonMskClient")
+    AmazonMSKClientMock clientMock = new AmazonMSKClientMock();
+    
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
 
@@ -94,17 +97,6 @@ public class MSKProducerTest extends CamelTestSupport {
         DeleteClusterResult resultGet = (DeleteClusterResult)exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.getClusterArn());
         assertEquals(ClusterState.DELETING.name(), resultGet.getState());
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        AmazonMSKClientMock clientMock = new AmazonMSKClientMock();
-
-        registry.bind("amazonMskClient", clientMock);
-
-        return registry;
     }
 
     @Override
