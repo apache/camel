@@ -82,7 +82,7 @@ public abstract class AbstractResourceIntegrationTest extends Assert {
         // check if accessToken is set
         if (accessToken != null) {
             token = new OAuthToken(null, accessToken,
-                    (expiryTime != null) ? Long.parseLong(expiryTime) : DEFAULT_EXPIRY);
+                    (expiryTime != null && !"".equals(expiryTime.trim())) ? Long.parseLong(expiryTime) : DEFAULT_EXPIRY);
         }
 
         final OAuthSecureStorage secureStorage = new OAuthSecureStorage() {
