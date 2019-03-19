@@ -1,22 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
+<!-- persistence.xml schema -->
+<xsd:schema targetNamespace="http://xmlns.jcp.org/xml/ns/persistence" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:persistence="http://xmlns.jcp.org/xml/ns/persistence"
+  elementFormDefault="qualified" 
+  attributeFormDefault="unqualified" 
+  version="2.1">
 
-    Licensed to the Apache Software Foundation (ASF) under one or more
-    contributor license agreements.  See the NOTICE file distributed with
-    this work for additional information regarding copyright ownership.
-    The ASF licenses this file to You under the Apache License, Version 2.0
-    (the "License"); you may not use this file except in compliance with
-    the License.  You may obtain a copy of the License at
+  <xsd:annotation>
+    <xsd:documentation>
+      @(#)persistence_2_1.xsd  2.1  February 4, 2013
+    </xsd:documentation>
+  </xsd:annotation>
 
-         http://www.apache.org/licenses/LICENSE-2.0
+  <xsd:annotation>
+    <xsd:documentation>
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+  Copyright (c) 2008  - 2013 Oracle Corporation. All rights reserved. 
+  
+  This program and the accompanying materials are made available under the 
+  terms of the Eclipse Public License v1.0 and Eclipse Distribution License v. 1.0 
+  which accompanies this distribution. 
+  The Eclipse Public License is available at http://www.eclipse.org/legal/epl-v10.html
+  and the Eclipse Distribution License is available at 
+  http://www.eclipse.org/org/documents/edl-v10.php.
+  
+  Contributors:
+      Linda DeMichiel - Java Persistence 2.1, Version 2.1 (February 4, 2013)
+      Specification available from http://jcp.org/en/jsr/detail?id=338
+ 
+    </xsd:documentation>
+  </xsd:annotation>
 
--->
+   <xsd:annotation>
+     <xsd:documentation><![CDATA[
+
+     This is the XML Schema for the persistence configuration file.
+     The file must be named "META-INF/persistence.xml" in the 
+     persistence archive.
+
+     Persistence configuration files must indicate
+     the persistence schema by using the persistence namespace:
+
+     http://xmlns.jcp.org/xml/ns/persistence
+
+     and indicate the version of the schema by
+     using the version element as shown below:
+
+      <persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+          http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+        version="2.1">
+          ...
+      </persistence>
+
+    ]]></xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:simpleType name="versionType">
+    <xsd:restriction base="xsd:token">
+      <xsd:pattern value="[0-9]+(\.[0-9]+)*"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <!-- **************************************************** -->
+
   <xsd:element name="persistence">
     <xsd:complexType>
       <xsd:sequence>
