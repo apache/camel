@@ -19,7 +19,6 @@ package org.apache.camel.component.rest;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
@@ -29,13 +28,6 @@ public class FromRestAdviceWithTest extends ContextTestSupport {
     @Override
     public boolean isUseRouteBuilder() {
         return false;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
-        return jndi;
     }
 
     @Test
