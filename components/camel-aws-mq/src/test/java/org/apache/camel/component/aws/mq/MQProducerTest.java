@@ -40,7 +40,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class MQProducerTest extends CamelTestSupport {
-	
+
     @BindToRegistry("amazonMqClient")
     AmazonMQClientMock clientMock = new AmazonMQClientMock();
     
