@@ -34,7 +34,7 @@ public class CamelJaxbFallbackConverterTest extends ExchangeTestSupport {
     @Test
     public void testFallbackConverterWithoutObjectFactory() throws Exception {
         TypeConverter converter = context.getTypeConverter();
-        Foo foo = converter.convertTo(Foo.class, exchange,"<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
+        Foo foo = converter.convertTo(Foo.class, exchange, "<foo><zot name=\"bar1\" value=\"value\" otherValue=\"otherValue\"/></foo>");
         assertNotNull("foo should not be null", foo);
         assertEquals("value", foo.getBarRefs().get(0).getValue());
 
