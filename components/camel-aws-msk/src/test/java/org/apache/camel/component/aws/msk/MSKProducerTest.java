@@ -36,7 +36,7 @@ public class MSKProducerTest extends CamelTestSupport {
     @BindToRegistry("amazonMskClient")
     AmazonMSKClientMock clientMock = new AmazonMSKClientMock();
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
