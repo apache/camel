@@ -38,10 +38,10 @@ public class CamelSWFTestSupport extends CamelTestSupport {
                     + "&eventName=testEvent"
                     + "&amazonSWClient=#amazonSWClient";
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     protected ProducerTemplate template;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
     @BindToRegistry("amazonSWClient")
