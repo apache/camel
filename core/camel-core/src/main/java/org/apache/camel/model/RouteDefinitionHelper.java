@@ -191,11 +191,12 @@ public final class RouteDefinitionHelper {
                     verb.setRouteId(id);
                 }
 
+                // if its the rest/rest-api endpoints then they should include the route id as well
                 if (ObjectHelper.isNotEmpty(route.getInput())) {
                     FromDefinition fromDefinition = route.getInput();
                     String endpointUri = fromDefinition.getEndpointUri();
-                    if (ObjectHelper.isNotEmpty(endpointUri)) {
-                        Map<String, Object> options = new HashMap<String, Object>();
+                    if (ObjectHelper.isNotEmpty(endpointUri) && (endpointUri.startsWith("rest:") || endpointUri.startsWith("rest-api:"))) {
+                        Map<String, Object> options = new HashMap<String, Object>(1);
                         options.put("routeId", route.getId());
                         endpointUri = URISupport.appendParametersToURI(endpointUri, options);
                      
