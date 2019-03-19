@@ -3054,16 +3054,6 @@
           </dependency>
         </dependencies>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>flatten-maven-plugin</artifactId>
-        <configuration>
-          <flattenMode>bom</flattenMode>
-          <pomElements>
-            <repositories>remove</repositories>
-          </pomElements>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 </project>
