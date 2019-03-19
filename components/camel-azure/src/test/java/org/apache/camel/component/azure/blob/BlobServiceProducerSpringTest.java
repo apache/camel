@@ -34,10 +34,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
     
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate template;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
     
     @Test
