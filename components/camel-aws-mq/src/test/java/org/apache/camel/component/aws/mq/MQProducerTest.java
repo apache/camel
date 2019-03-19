@@ -44,7 +44,7 @@ public class MQProducerTest extends CamelTestSupport {
     @BindToRegistry("amazonMqClient")
     AmazonMQClientMock clientMock = new AmazonMQClientMock();
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
     
     @Test
