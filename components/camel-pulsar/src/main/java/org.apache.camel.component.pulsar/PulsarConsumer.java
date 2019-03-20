@@ -28,6 +28,11 @@ public class PulsarConsumer extends DefaultConsumer {
     }
 
     public static PulsarConsumer create(PulsarEndpoint pulsarEndpoint, Processor processor) {
+        if(pulsarEndpoint == null || processor == null) {
+            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Pulsar endpoint nor processor must be supplied");
+            LOGGER.error("An exception occurred when creating PulsarConsumer :: {}", illegalArgumentException);
+            throw illegalArgumentException;
+        }
         return new PulsarConsumer(pulsarEndpoint, processor);
     }
 
