@@ -6,12 +6,13 @@ public class ConsumerCreationStrategyFactory {
 
     private final ExclusiveConsumerStrategy exclusiveConsumerStrategy;
     private final SharedConsumerStrategy sharedConsumerStrategy;
-    private final PulsarConsumer pulsarConsumer;
+    private final FailoverConsumerStrategy failoverConsumerStrategy;
+
 
     public ConsumerCreationStrategyFactory(PulsarConsumer pulsarConsumer) {
-        this.pulsarConsumer = pulsarConsumer;
-        sharedConsumerStrategy = new SharedConsumerStrategy(this.pulsarConsumer);
-        exclusiveConsumerStrategy = new ExclusiveConsumerStrategy(this.pulsarConsumer);
+        sharedConsumerStrategy = new SharedConsumerStrategy(pulsarConsumer);
+        exclusiveConsumerStrategy = new ExclusiveConsumerStrategy(pulsarConsumer);
+        failoverConsumerStrategy = new FailoverConsumerStrategy(pulsarConsumer);
     }
 
 
@@ -21,6 +22,8 @@ public class ConsumerCreationStrategyFactory {
                 return sharedConsumerStrategy;
             case EXCLUSIVE:
                 return exclusiveConsumerStrategy;
+            case FAILOVER:
+                return failoverConsumerStrategy;
             default:
                 return exclusiveConsumerStrategy;
         }

@@ -13,7 +13,7 @@ import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeade
 import org.apache.camel.Exchange;
 import org.apache.pulsar.client.api.Message;
 
-public class PulsarMessageUtils {
+public final class PulsarMessageUtils {
 
     public static Exchange updateExchange(final Message<byte[]> message, final Exchange input) {
         final Exchange output = input.copy(true);

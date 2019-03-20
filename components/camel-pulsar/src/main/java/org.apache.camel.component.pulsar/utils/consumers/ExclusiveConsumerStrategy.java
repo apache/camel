@@ -12,18 +12,16 @@ import org.apache.pulsar.client.api.SubscriptionType;
 public class ExclusiveConsumerStrategy implements ConsumerCreationStrategy {
 
     private final PulsarConsumer pulsarConsumer;
-    private final CommonCreationStrategy commonCreationStrategy;
 
     public ExclusiveConsumerStrategy(PulsarConsumer pulsarConsumer) {
         this.pulsarConsumer = pulsarConsumer;
-        commonCreationStrategy = new CommonCreationStrategy();
     }
 
     @Override
     public Collection<Consumer<byte[]>> create(final PulsarEndpoint pulsarEndpoint) {
         String consumerName = pulsarEndpoint.getConfiguration().getConsumerName();
 
-        ConsumerBuilder<byte[]> builder = commonCreationStrategy.create(consumerName, pulsarEndpoint, pulsarConsumer);
+        ConsumerBuilder<byte[]> builder = CommonCreationStrategy.create(consumerName, pulsarEndpoint, pulsarConsumer);
 
         try {
             return Collections.singletonList(builder.subscriptionType(SubscriptionType.Exclusive).subscribe());
