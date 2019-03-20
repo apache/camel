@@ -92,7 +92,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         match.put("match", actualQuery);
         Map<String, Object> query = new HashMap<>();
         query.put("query", match);
-        SearchHits response = template.requestBody("direct:search", match, SearchHits.class);
+        SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
         assertNotNull("response should not be null", response);
         assertEquals("response hits should be == 0", 0, response.totalHits);
     }
@@ -108,10 +108,17 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         GetResponse getResponse = template.requestBody("direct:get", indexId, GetResponse.class);
         assertNotNull("response should not be null", getResponse);
         assertNotNull("response source should not be null", getResponse.getSource());
-        SearchRequest req = new SearchRequest();
-        req.indices("twitter");
-        req.types("tweet");
-        SearchHits response = template.requestBody("direct:search", req, SearchHits.class);
+        // need to create a query string
+        String query = "{\n" +
+                "    \"query\" : { \"match\" : { \"key\" : \"value\" }}\n" +
+                "}\n";
+        SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
+        assertNotNull("response should not be null", response);
+        assertEquals("response hits should be == 0", 0, response.totalHits);
+
+        // testing
+
+        response = template.requestBody("direct:search-1", query, SearchHits.class);
         assertNotNull("response should not be null", response);
         assertEquals("response hits should be == 0", 0, response.totalHits);
     }
@@ -325,6 +332,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
                 from("direct:multiget").to("elasticsearch-rest://elasticsearch?operation=MultiGet&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:delete").to("elasticsearch-rest://elasticsearch?operation=Delete&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:search").to("elasticsearch-rest://elasticsearch?operation=Search&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:search-1").to("elasticsearch-rest://elasticsearch?operation=Search&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:multiSearch").to("elasticsearch-rest://elasticsearch?operation=MultiSearch&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:update").to("elasticsearch-rest://elasticsearch?operation=Update&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:exists").to("elasticsearch-rest://elasticsearch?operation=Exists&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
