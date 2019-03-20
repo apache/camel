@@ -17,15 +17,19 @@ public class SharedConsumerStrategy implements ConsumerCreationStrategy {
     private static final Logger LOGGER = LoggerFactory.getLogger(SharedConsumerStrategy.class);
 
     private final PulsarConsumer pulsarConsumer;
-    private final CommonCreationStrategy commonCreationStrategy;
 
     public SharedConsumerStrategy(PulsarConsumer pulsarConsumer) {
         this.pulsarConsumer = pulsarConsumer;
-        commonCreationStrategy = new CommonCreationStrategy();
     }
 
     @Override
     public Collection<Consumer<byte[]>> create(final PulsarEndpoint pulsarEndpoint) {
+        final Collection<Consumer<byte[]>> consumers = createMultipleConsumers(pulsarEndpoint);
+
+        return consumers;
+    }
+
+    public Collection<Consumer<byte[]>> createMultipleConsumers(final PulsarEndpoint pulsarEndpoint) {
         final Collection<Consumer<byte[]>> consumers = new LinkedList<>();
         final PulsarEndpointConfiguration configuration = pulsarEndpoint.getConfiguration();
 
@@ -33,7 +37,7 @@ public class SharedConsumerStrategy implements ConsumerCreationStrategy {
             try {
                 String consumerName = configuration.getConsumerNamePrefix() + i;
 
-                ConsumerBuilder<byte[]> builder = commonCreationStrategy.create(consumerName, pulsarEndpoint, pulsarConsumer);
+                ConsumerBuilder<byte[]> builder = CommonCreationStrategy.create(consumerName, pulsarEndpoint, pulsarConsumer);
 
                 consumers.add(builder.subscriptionType(SubscriptionType.Shared).subscribe());
 
@@ -43,7 +47,6 @@ public class SharedConsumerStrategy implements ConsumerCreationStrategy {
                 LOGGER.error("", exception);
             }
         }
-
         return consumers;
     }
 }

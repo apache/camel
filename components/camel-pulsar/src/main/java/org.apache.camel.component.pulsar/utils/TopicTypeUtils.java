@@ -15,7 +15,7 @@ enum TopicType {
     }
 }
 
-public class TopicTypeUtils {
+public final class TopicTypeUtils {
 
     public static String parse(final String value) {
         if(TopicType.PERSISTENT.getTopicType().equalsIgnoreCase(value)) {
