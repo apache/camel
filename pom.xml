@@ -730,6 +730,32 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>flatten-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-cli</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>flatten</goal>
+                                </goals>
+                                <configuration>
+                                    <updatePomFile>true</updatePomFile>
+                                    <pomElements>
+                                        <build>keep</build>
+                                        <dependencyManagement>keep</dependencyManagement>
+                                        <description>keep</description>
+                                        <name>keep</name>
+                                        <parent>expand</parent>
+                                        <pluginManagement>keep</pluginManagement>
+                                        <profiles>remove</profiles>
+                                        <properties>expand</properties>
+                                    </pomElements>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
