@@ -2,7 +2,7 @@ package org.apache.camel.component.pulsar.utils;
 
 enum TopicType {
     PERSISTENT("persistent"),
-    NON_PERSISTENT("persistent");
+    NON_PERSISTENT("non-persistent");
 
     private String topicType;
 
