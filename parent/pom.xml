@@ -601,6 +601,7 @@
     <zookeeper-version>3.4.8</zookeeper-version>
     <zxing-version>3.2.1</zxing-version>
     <zxing-bundle-version>3.2.1_1</zxing-bundle-version>
+    <pulsar-client-version>2.2.1</pulsar-client-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
