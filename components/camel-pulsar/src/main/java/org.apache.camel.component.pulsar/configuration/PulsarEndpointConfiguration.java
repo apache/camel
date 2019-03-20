@@ -1,5 +1,6 @@
 package org.apache.camel.component.pulsar.configuration;
 
+import org.apache.camel.component.pulsar.PulsarUri;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -39,11 +40,11 @@ public class PulsarEndpointConfiguration {
     @UriParam(label = "consumer, producer")
     private PulsarClient pulsarClient;
 
-    public PulsarEndpointConfiguration(String topicType, String tenant, String namespace, String topic) {
-        this.topicType = topicType;
-        this.tenant = tenant;
-        this.namespace = namespace;
-        this.topic = topic;
+    public PulsarEndpointConfiguration(PulsarUri uri) {
+        this.topicType = uri.getType();
+        this.tenant = uri.getTenant();
+        this.namespace = uri.getNamespace();
+        this.topic = uri.getTopic();
     }
 
     public String getTopicType() {
