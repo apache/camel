@@ -20,5 +20,6 @@ public enum MSKOperations {
 
     listClusters,
     createCluster,
-    deleteCluster
+    deleteCluster,
+    describeCluster
 }

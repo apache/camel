@@ -23,6 +23,8 @@ import com.amazonaws.services.kafka.model.CreateClusterRequest;
 import com.amazonaws.services.kafka.model.CreateClusterResult;
 import com.amazonaws.services.kafka.model.DeleteClusterRequest;
 import com.amazonaws.services.kafka.model.DeleteClusterResult;
+import com.amazonaws.services.kafka.model.DescribeClusterRequest;
+import com.amazonaws.services.kafka.model.DescribeClusterResult;
 import com.amazonaws.services.kafka.model.ListClustersRequest;
 import com.amazonaws.services.kafka.model.ListClustersResult;
 
@@ -55,6 +57,9 @@ public class MSKProducer extends DefaultProducer {
             break;
         case deleteCluster:
             deleteCluster(getEndpoint().getMskClient(), exchange);
+            break;
+        case describeCluster:
+        	describeCluster(getEndpoint().getMskClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -151,6 +156,25 @@ public class MSKProducer extends DefaultProducer {
         DeleteClusterResult result;
         try {
             result = mskClient.deleteCluster(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void describeCluster(AWSKafka mskClient, Exchange exchange) {
+        DescribeClusterRequest request = new DescribeClusterRequest();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(MSKConstants.CLUSTER_ARN))) {
+            String arn = exchange.getIn().getHeader(MSKConstants.CLUSTER_ARN, String.class);
+            request.withClusterArn(arn);
+        } else {
+            throw new IllegalArgumentException("Cluster ARN must be specified");
+        }
+        DescribeClusterResult result;
+        try {
+            result = mskClient.describeCluster(request);
         } catch (AmazonServiceException ase) {
             log.trace("Delete Cluster command returned the error code {}", ase.getErrorCode());
             throw ase;
