@@ -18,6 +18,7 @@ package org.apache.camel.component.sql;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -39,6 +40,16 @@ public final class SqlHelper {
             if (placeholder != null) {
                 answer = answer.replaceAll(placeholder, "?");
             }
+            // skip lines with comments
+            StringJoiner sj = new StringJoiner("\n");
+            String[] lines = answer.split("\n");
+            for (String line : lines) {
+                String trim = line.trim();
+                if (!trim.isEmpty() && !trim.startsWith("--")) {
+                    sj.add(line);
+                }
+            }
+            answer = sj.toString();
         }
         return answer;
     }
