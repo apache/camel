@@ -31,10 +31,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import io.swagger.jackson.mixin.ResponseSchemaMixin;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
+import io.swagger.models.Response;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.util.Yaml;
@@ -226,6 +228,8 @@ public class RestSwaggerSupport {
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                mapper.addMixIn(Response.class, ResponseSchemaMixin.class);
+                
                 byte[] bytes = mapper.writeValueAsBytes(swagger);
 
                 int len = bytes.length;
@@ -246,6 +250,8 @@ public class RestSwaggerSupport {
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                mapper.addMixIn(Response.class, ResponseSchemaMixin.class);
+                
                 byte[] jsonData = mapper.writeValueAsBytes(swagger);
 
                 // json to yaml
