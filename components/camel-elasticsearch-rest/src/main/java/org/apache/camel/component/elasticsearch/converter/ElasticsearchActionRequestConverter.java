@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
+import org.apache.camel.util.ObjectHelper;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.get.GetRequest;
@@ -157,9 +158,17 @@ public final class ElasticsearchActionRequestConverter {
         if (queryObject instanceof SearchRequest) {
             return (SearchRequest) queryObject;
         }
-        SearchRequest searchRequest = new SearchRequest(exchange.getIn()
-            .getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class))
-            .types(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class));
+        SearchRequest searchRequest = new SearchRequest();
+
+        // Only setup the indexName and indexType if the message header has the setting
+        String indexName = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
+        String indexType = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class);
+        if (ObjectHelper.isNotEmpty(indexName)) {
+            searchRequest.indices(indexName);
+        }
+        if (ObjectHelper.isNotEmpty(indexType)) {
+            searchRequest.types(indexType);
+        }
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         String queryText = null;
@@ -174,7 +183,7 @@ public final class ElasticsearchActionRequestConverter {
                 XContentBuilder contentBuilder = XContentFactory.contentBuilder(XContentType.JSON);
                 queryText = Strings.toString(contentBuilder.map(mapQuery));
             } catch (IOException e) {
-                LOG.error(e.getMessage());
+                LOG.error("Cannot build the QueryText from the map.", e);
             }
         } else if (queryObject instanceof String) {
             queryText = (String) queryObject;
@@ -186,6 +195,7 @@ public final class ElasticsearchActionRequestConverter {
             }
         } else {
             // Cannot convert the queryObject into SearchRequest
+            LOG.info("Cannot convert queryObject into SearchRequest object");
             return null;
         }
 
