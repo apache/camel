@@ -43,7 +43,6 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(MSKConstants.OPERATION, MSKOperations.listClusters);
             }
         });
 
@@ -61,7 +60,6 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:createCluster", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(MSKConstants.OPERATION, MSKOperations.createCluster);
                 exchange.getIn().setHeader(MSKConstants.CLUSTER_NAME, "test-kafka");
                 exchange.getIn().setHeader(MSKConstants.CLUSTER_KAFKA_VERSION, "2.1.1");
                 exchange.getIn().setHeader(MSKConstants.BROKER_NODES_NUMBER, 2);
@@ -84,7 +82,6 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:deleteCluster", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(MSKConstants.OPERATION, MSKOperations.deleteCluster);
                 exchange.getIn().setHeader(MSKConstants.CLUSTER_ARN, "test-kafka");
             }
         });
@@ -104,7 +101,6 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:describeCluster", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(MSKConstants.OPERATION, MSKOperations.describeCluster);
                 exchange.getIn().setHeader(MSKConstants.CLUSTER_ARN, "test-kafka");
             }
         });
