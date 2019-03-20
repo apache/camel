@@ -20,6 +20,7 @@ import com.amazonaws.services.kafka.model.BrokerNodeGroupInfo;
 import com.amazonaws.services.kafka.model.ClusterState;
 import com.amazonaws.services.kafka.model.CreateClusterResult;
 import com.amazonaws.services.kafka.model.DeleteClusterResult;
+import com.amazonaws.services.kafka.model.DescribeClusterResult;
 import com.amazonaws.services.kafka.model.ListClustersResult;
 
 import org.apache.camel.EndpointInject;
@@ -93,6 +94,26 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         DeleteClusterResult resultGet = (DeleteClusterResult)exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.getClusterArn());
         assertEquals(ClusterState.DELETING.name(), resultGet.getState());
+    }
+    
+    
+    @Test
+    public void mskDescribeClusterTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:describeCluster", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(MSKConstants.OPERATION, MSKOperations.describeCluster);
+                exchange.getIn().setHeader(MSKConstants.CLUSTER_ARN, "test-kafka");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        DescribeClusterResult resultGet = (DescribeClusterResult)exchange.getIn().getBody();
+        assertEquals("test-kafka", resultGet.getClusterInfo().getClusterArn());
+        assertEquals(ClusterState.ACTIVE.name(), resultGet.getClusterInfo().getState());
     }
 
     @Override

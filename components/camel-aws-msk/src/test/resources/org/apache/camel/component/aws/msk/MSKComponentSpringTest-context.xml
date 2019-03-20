@@ -41,6 +41,12 @@
             <to uri="aws-msk://Test?mskClient=#amazonMskClient&amp;operation=deleteCluster"/>
             <to uri="mock:result"/>
         </route>
+        
+        <route>
+            <from uri="direct:describeCluster"/>
+            <to uri="aws-msk://Test?mskClient=#amazonMskClient&amp;operation=describeCluster"/>
+            <to uri="mock:result"/>
+        </route>
     </camelContext>
 
     <bean id="amazonMskClient" class="org.apache.camel.component.aws.msk.AmazonMSKClientMock"/>
