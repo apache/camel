@@ -25,7 +25,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SnsComponentTest extends CamelTestSupport {
-	
+
     @BindToRegistry("amazonSNSClient")
     AmazonSNSClientMock client = new AmazonSNSClientMock();
     
