@@ -95,4 +95,15 @@ public interface PropertiesComponent extends Component {
      */
     void setIgnoreMissingLocation(boolean ignoreMissingLocation);
 
+    /**
+     * Sets initial properties which will be added before any property locations are loaded.
+     */
+    void setInitialProperties(Properties initialProperties);
+
+    /**
+     * Sets a special list of override properties that take precedence
+     * and will use first, if a property exist.
+     */
+    void setOverrideProperties(Properties overrideProperties);
+
 }
