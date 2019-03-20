@@ -221,7 +221,7 @@ public class KafkaConsumer extends DefaultConsumer {
                     consumer.subscribe(topicPattern, this);
                 } else {
                     log.info("Subscribing {} to topic {}", threadId, topicName);
-                    consumer.subscribe(Arrays.asList(topicName.split(",")));
+                    consumer.subscribe(Arrays.asList(topicName.split(",")), this);
                 }
 
                 StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
