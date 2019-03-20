@@ -3,7 +3,7 @@ package org.apache.camel.component.pulsar;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class PulsarConsumerTest extends CamelTestSupport {
+public class PulsarComponentTest extends CamelTestSupport {
 
     @Test
     public void testProducer() throws Exception {

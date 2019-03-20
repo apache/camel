@@ -5,12 +5,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.DefaultEndpoint;
 import org.apache.pulsar.client.api.PulsarClient;
 
-@UriEndpoint(firstVersion = "2.2.1", scheme = "pulsar", title = "Apache Pulsar", syntax = "pulsar:topicType/tenant/namespace/topic", label = "messaging")
+@UriEndpoint(scheme = "pulsar", title = "Apache Pulsar", syntax = "pulsar:topicType/tenant/namespace/topic", label = "messaging")
 public class PulsarEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -25,7 +25,7 @@ public class PulsarEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() {
-        return null;
+        return PulsarProducer.create(this);
     }
 
     @Override

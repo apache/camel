@@ -11,16 +11,16 @@ import org.apache.pulsar.client.api.PulsarClient;
 public class PulsarEndpointConfiguration {
 
     @UriPath(label = "consumer, producer")
-    @Metadata(required = true)
+    @Metadata(required = "true")
     private String topicType;
     @UriPath(label = "consumer, producer")
-    @Metadata(required = true)
+    @Metadata(required = "true")
     private String tenant;
     @UriPath(label = "consumer, producer")
-    @Metadata(required = true)
+    @Metadata(required = "true")
     private String namespace;
     @UriPath(label = "consumer, producer")
-    @Metadata(required = true)
+    @Metadata(required = "true")
     private String topic;
     @UriParam(label = "consumer")
     private String subscriptionName;

@@ -5,7 +5,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration;
 import org.apache.camel.component.pulsar.utils.TopicTypeUtils;
-import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 public class PulsarComponent extends DefaultComponent {
 

@@ -1,13 +1,13 @@
 package org.apache.camel.component.pulsar;
 
-import java.util.Objects;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.impl.DefaultProducer;
 import org.apache.pulsar.client.api.Producer;
+import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +18,13 @@ public class PulsarProducer extends DefaultProducer {
     private Producer<byte[]> producer;
     private final PulsarEndpoint pulsarEndpoint;
 
-    public PulsarProducer(PulsarEndpoint pulsarEndpoint) {
+    private PulsarProducer(PulsarEndpoint pulsarEndpoint) {
         super(pulsarEndpoint);
         this.pulsarEndpoint = pulsarEndpoint;
+    }
+
+    public static PulsarProducer create(final PulsarEndpoint pulsarEndpoint) {
+        return new PulsarProducer(pulsarEndpoint);
     }
 
     @Override
@@ -28,15 +32,8 @@ public class PulsarProducer extends DefaultProducer {
         final PulsarEndpointConfiguration configuration = pulsarEndpoint.getConfiguration();
         final Message message = exchange.getIn();
 
-        final String producerName = configuration.getTopic() + "-" + configuration.getSubscriptionName();
-
-
-        if(Objects.isNull(producer)) {
-            producer = pulsarEndpoint.getPulsarClient()
-                .newProducer()
-                .topic(configuration.getTopic())
-                .producerName(producerName)
-                .create();
+        if (producer == null) {
+            producer = createProducer(configuration);
         }
 
         try {
@@ -46,5 +43,29 @@ public class PulsarProducer extends DefaultProducer {
         } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
             LOGGER.error("", exception);
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        producer = createProducer(pulsarEndpoint.getConfiguration());
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        if (producer != null && !producer.isConnected()) {
+            producer.close();
+        }
+    }
+
+    private Producer<byte[]> createProducer(final PulsarEndpointConfiguration configuration) throws PulsarClientException {
+        return pulsarEndpoint.getPulsarClient()
+            .newProducer()
+            .topic(configuration.getTopic())
+            .producerName(configuration.getProducerName())
+            .create();
     }
 }
