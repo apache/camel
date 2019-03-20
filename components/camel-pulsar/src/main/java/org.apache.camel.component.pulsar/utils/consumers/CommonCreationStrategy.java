@@ -18,6 +18,6 @@ public class CommonCreationStrategy {
             .subscriptionName(endpointConfiguration.getSubscriptionName())
             .receiverQueueSize(endpointConfiguration.getConsumerQueueSize())
             .consumerName(name)
-            .messageListener(new PulsarMessageListener(pulsarConsumer, pulsarEndpoint));
+            .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer.getExceptionHandler(), pulsarConsumer.getProcessor()));
     }
 }
