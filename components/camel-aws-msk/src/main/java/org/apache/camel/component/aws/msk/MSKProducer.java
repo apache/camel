@@ -59,7 +59,7 @@ public class MSKProducer extends DefaultProducer {
             deleteCluster(getEndpoint().getMskClient(), exchange);
             break;
         case describeCluster:
-        	describeCluster(getEndpoint().getMskClient(), exchange);
+            describeCluster(getEndpoint().getMskClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");

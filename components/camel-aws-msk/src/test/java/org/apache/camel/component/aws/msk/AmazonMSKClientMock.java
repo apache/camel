@@ -70,7 +70,7 @@ public class AmazonMSKClientMock extends AbstractAWSKafka {
         ClusterInfo clusterInfo = new ClusterInfo();
         clusterInfo.setClusterArn("test-kafka");
         clusterInfo.setState(ClusterState.ACTIVE.name());
-		res.setClusterInfo(clusterInfo);
-		return res;
+        res.setClusterInfo(clusterInfo);
+        return res;
     }
 }
