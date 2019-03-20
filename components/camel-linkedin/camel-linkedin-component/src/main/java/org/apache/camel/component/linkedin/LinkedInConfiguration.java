@@ -262,7 +262,7 @@ public class LinkedInConfiguration {
 
     public void validate() throws IllegalArgumentException {
             //if access token is null, authentication credentials have to be validated
-        if(ObjectHelper.isEmpty(accessToken)) {
+        if (ObjectHelper.isEmpty(accessToken)) {
             StringHelper.notEmpty(userName, "userName");
             if (ObjectHelper.isEmpty(userPassword) && secureStorage == null) {
                 throw new IllegalArgumentException("Property userPassword or secureStorage is required");
