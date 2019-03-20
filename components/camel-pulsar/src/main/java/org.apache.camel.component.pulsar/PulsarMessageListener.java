@@ -1,5 +1,15 @@
 package org.apache.camel.component.pulsar;
 
+import static org.apache.camel.component.pulsar.utils.PulsarMessageHeaders.EVENT_TIME;
+import static org.apache.camel.component.pulsar.utils.PulsarMessageHeaders.KEY;
+import static org.apache.camel.component.pulsar.utils.PulsarMessageHeaders.KEY_BYTES;
+import static org.apache.camel.component.pulsar.utils.PulsarMessageHeaders.MESSAGE_ID;
+import static org.apache.camel.component.pulsar.utils.PulsarMessageHeaders.PRODUCER_NAME;
+import static org.apache.camel.component.pulsar.utils.PulsarMessageHeaders.PROPERTIES;
+import static org.apache.camel.component.pulsar.utils.PulsarMessageHeaders.PUBLISH_TIME;
+import static org.apache.camel.component.pulsar.utils.PulsarMessageHeaders.SEQUENCE_ID;
+import static org.apache.camel.component.pulsar.utils.PulsarMessageHeaders.TOPIC_NAME;
+
 import org.apache.camel.Exchange;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
@@ -25,9 +35,17 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
         final Exchange exchange = endpoint.createExchange();
 
         try {
-            LOGGER.info("Consumed message -> {} on thread {}", message, Thread.currentThread());
-
             org.apache.camel.Message msg = exchange.getIn();
+
+            msg.setHeader(EVENT_TIME, message.getEventTime());
+            msg.setHeader(MESSAGE_ID, message.getMessageId());
+            msg.setHeader(KEY, message.getKey());
+            msg.setHeader(KEY_BYTES, message.getKeyBytes());
+            msg.setHeader(PRODUCER_NAME, message.getProducerName());
+            msg.setHeader(TOPIC_NAME, message.getTopicName());
+            msg.setHeader(SEQUENCE_ID, message.getSequenceId());
+            msg.setHeader(PUBLISH_TIME, message.getPublishTime());
+            msg.setHeader(PROPERTIES, message.getProperties());
 
             msg.setBody(message.getValue());
 
