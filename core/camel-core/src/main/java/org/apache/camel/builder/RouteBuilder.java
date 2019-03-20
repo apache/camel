@@ -113,6 +113,17 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     /**
+     * Binds the bean to the repository (if possible).
+     *
+     * @param id   the id of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean the bean
+     */
+    public void bindToRegistry(String id, Class<?> type, Object bean) {
+        getContext().getRegistry().bind(id, type, bean);
+    }
+
+    /**
      * Configures the REST services
      *
      * @return the builder
