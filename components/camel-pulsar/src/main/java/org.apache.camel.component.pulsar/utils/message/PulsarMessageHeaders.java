@@ -1,4 +1,4 @@
-package org.apache.camel.component.pulsar.utils;
+package org.apache.camel.component.pulsar.utils.message;
 
 public class PulsarMessageHeaders {
     public static final String PRODUCER_NAME = "producer_name";
