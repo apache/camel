@@ -20,6 +20,8 @@ import com.amazonaws.services.kafka.model.BrokerNodeGroupInfo;
 import com.amazonaws.services.kafka.model.ClusterState;
 import com.amazonaws.services.kafka.model.CreateClusterResult;
 import com.amazonaws.services.kafka.model.DeleteClusterResult;
+import com.amazonaws.services.kafka.model.DescribeClusterRequest;
+import com.amazonaws.services.kafka.model.DescribeClusterResult;
 import com.amazonaws.services.kafka.model.ListClustersResult;
 
 import org.apache.camel.BindToRegistry;
@@ -98,6 +100,25 @@ public class MSKProducerTest extends CamelTestSupport {
         assertEquals("test-kafka", resultGet.getClusterArn());
         assertEquals(ClusterState.DELETING.name(), resultGet.getState());
     }
+    
+    @Test
+    public void mskDescribeClusterTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:describeCluster", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(MSKConstants.OPERATION, MSKOperations.describeCluster);
+                exchange.getIn().setHeader(MSKConstants.CLUSTER_ARN, "test-kafka");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        DescribeClusterResult resultGet = (DescribeClusterResult)exchange.getIn().getBody();
+        assertEquals("test-kafka", resultGet.getClusterInfo().getClusterArn());
+        assertEquals(ClusterState.ACTIVE.name(), resultGet.getClusterInfo().getState());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -107,6 +128,7 @@ public class MSKProducerTest extends CamelTestSupport {
                 from("direct:listClusters").to("aws-msk://test?mskClient=#amazonMskClient&operation=listClusters").to("mock:result");
                 from("direct:createCluster").to("aws-msk://test?mskClient=#amazonMskClient&operation=createCluster").to("mock:result");
                 from("direct:deleteCluster").to("aws-msk://test?mskClient=#amazonMskClient&operation=deleteCluster").to("mock:result");
+                from("direct:describeCluster").to("aws-msk://test?mskClient=#amazonMskClient&operation=describeCluster").to("mock:result");
             }
         };
     }
