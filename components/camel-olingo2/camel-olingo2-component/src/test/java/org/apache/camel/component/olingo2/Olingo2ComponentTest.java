@@ -121,7 +121,6 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         LOG.info("Manufacturer: {}", properties);
     }
 
-    @SuppressWarnings( "unchecked" )
     @Test
     public void testCreateUpdateDelete() throws Exception {
         final Map<String, Object> data = getEntityData();
@@ -164,7 +163,6 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
         return data;
     }
 
-    @SuppressWarnings( "unchecked" )
     @Test
     public void testBatch() throws Exception {
         final List<Olingo2BatchRequest> batchParts = new ArrayList<>();
@@ -301,7 +299,6 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
      * Read value of the People object and split the results
      * into individual messages
      */
-    @SuppressWarnings( "unchecked" )
     @Test
     public void testConsumerReadClientValuesSplitResults() throws Exception {
         final Map<String, Object> headers = new HashMap<>();
