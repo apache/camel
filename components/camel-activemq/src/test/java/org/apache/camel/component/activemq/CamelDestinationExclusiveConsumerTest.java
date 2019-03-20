@@ -35,7 +35,7 @@ public class CamelDestinationExclusiveConsumerTest {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint expectedEndpoint;
 
     @Test
