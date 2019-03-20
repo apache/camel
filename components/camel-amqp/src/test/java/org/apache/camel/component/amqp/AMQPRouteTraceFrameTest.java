@@ -36,7 +36,7 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
 
     static BrokerService broker;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint resultEndpoint;
 
     String expectedBody = "Hello there!";

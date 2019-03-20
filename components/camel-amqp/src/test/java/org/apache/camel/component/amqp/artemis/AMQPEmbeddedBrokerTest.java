@@ -43,7 +43,7 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
     
     static EmbeddedActiveMQ server = new EmbeddedActiveMQ();
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint resultEndpoint;
 
     String expectedBody = "Hello there!";
