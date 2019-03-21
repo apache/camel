@@ -9,7 +9,7 @@ public class PulsarComponentTest extends CamelTestSupport {
     public void testProducer() throws Exception {
         PulsarComponent component = new PulsarComponent(context);
 
-        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar:persistent/omega-pl/fulfilment/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
+        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/omega-pl/fulfilment/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 
         endpoint.isSingleton();
     }

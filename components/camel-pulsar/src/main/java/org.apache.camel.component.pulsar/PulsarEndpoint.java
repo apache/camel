@@ -9,18 +9,31 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.pulsar.client.api.PulsarClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @UriEndpoint(scheme = "pulsar", title = "Apache Pulsar", syntax = "pulsar:topicType/tenant/namespace/topic", label = "messaging")
 public class PulsarEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarEndpoint.class);
 
     @UriParam
     private final PulsarEndpointConfiguration pulsarEndpointConfiguration;
     @UriParam
     private final PulsarClient pulsarClient;
 
-    public PulsarEndpoint(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarClient pulsarClient) {
+    private PulsarEndpoint(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarClient pulsarClient) {
         this.pulsarEndpointConfiguration = pulsarEndpointConfiguration;
         this.pulsarClient = pulsarClient;
+    }
+
+    public static PulsarEndpoint create(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarClient pulsarClient) {
+        if (pulsarClient == null || pulsarEndpointConfiguration == null) {
+            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Pulsar client and Pulsar Endpoint Configuration cannot be null");
+            LOGGER.error("An exception occurred while creating Pulsar Endpoint :: {}", illegalArgumentException);
+            throw illegalArgumentException;
+        }
+        return new PulsarEndpoint(pulsarEndpointConfiguration, pulsarClient);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.apache.camel.component.pulsar.configuration;
 
+import org.apache.camel.component.pulsar.PulsarUri;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -10,40 +11,40 @@ import org.apache.pulsar.client.api.PulsarClient;
 @UriParams
 public class PulsarEndpointConfiguration {
 
-    @UriPath(label = "consumer, producer")
+    @UriPath(label = "consumer, producer", description = "Whether the topic is persistent or not", enums = "persistent, non-persistent")
     @Metadata(required = "true")
     private String topicType;
-    @UriPath(label = "consumer, producer")
+    @UriPath(label = "consumer, producer", description = "Pulsar tenant for the topic namespace to reside in")
     @Metadata(required = "true")
     private String tenant;
-    @UriPath(label = "consumer, producer")
+    @UriPath(label = "consumer, producer", description = "Pulsar namespace for the topic to reside in")
     @Metadata(required = "true")
     private String namespace;
-    @UriPath(label = "consumer, producer")
+    @UriPath(label = "consumer, producer", description = "Name of the Pulsar topic")
     @Metadata(required = "true")
     private String topic;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Name of the subscription to use")
     private String subscriptionName;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Type of the subscription", enums = "EXCLUSIVE, SHARED, FAILOVER")
     private SubscriptionType subscriptionType;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Number of consumers")
     private int numberOfConsumers;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Size of the consumer queue")
     private int consumerQueueSize;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Name of the consumer")
     private String consumerName;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", description = "Name of the producer")
     private String producerName;
-    @UriParam(label = "consumer")
+    @UriParam(label = "consumer", description = "Prefix to add to consumer names")
     private String consumerNamePrefix;
-    @UriParam(label = "consumer, producer")
+    @UriParam(label = "consumer, producer", description = "The pulsar client")
     private PulsarClient pulsarClient;
 
-    public PulsarEndpointConfiguration(String topicType, String tenant, String namespace, String topic) {
-        this.topicType = topicType;
-        this.tenant = tenant;
-        this.namespace = namespace;
-        this.topic = topic;
+    public PulsarEndpointConfiguration(PulsarUri uri) {
+        this.topicType = uri.getType();
+        this.tenant = uri.getTenant();
+        this.namespace = uri.getNamespace();
+        this.topic = uri.getTopic();
     }
 
     public String getTopicType() {
