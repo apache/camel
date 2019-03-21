@@ -155,6 +155,7 @@ public class MllpConfiguration implements Cloneable {
             target.stringPayload = source.stringPayload;
             target.validatePayload = source.validatePayload;
             target.charsetName = source.charsetName;
+            target.maxConcurrentConsumers = source.maxConcurrentConsumers;
         }
     }
 
