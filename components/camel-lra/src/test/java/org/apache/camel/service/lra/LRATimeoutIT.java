@@ -27,7 +27,6 @@ import org.junit.Test;
 public class LRATimeoutIT extends AbstractLRATestSupport {
 
     @Test
-    @Ignore("https://issues.jboss.org/browse/JBTM-2979")
     public void testTimeoutCalledCorrectly() throws Exception {
 
         MockEndpoint compensate = getMockEndpoint("mock:compensate");
