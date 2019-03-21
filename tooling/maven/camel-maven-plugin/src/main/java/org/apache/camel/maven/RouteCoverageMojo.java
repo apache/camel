@@ -30,7 +30,20 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.helper.EndpointHelper;
@@ -203,12 +216,37 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
         List<CamelNodeDetails> routeIdTrees = routeTrees.stream().filter(t -> t.getRouteId() != null).collect(Collectors.toList());
         List<CamelNodeDetails> anonymousRouteTrees = routeTrees.stream().filter(t -> t.getRouteId() == null).collect(Collectors.toList());
-
+                
+     // creates the folder for the xml.file
+        
+        File file =  (new File(project.getBasedir() + "/target/site/jacoco"));
+        if (file.exists()){
+        	getLog().info(file + " already exists");
+        }
+        else{
+        	file.mkdirs();
+        }
+        String xmlFilePath = file.toString() + "/xmlJacoco.xml";             
+        
+        Document document = createDocument();
+        
+         // report tag                      
+            Element report = document.createElement("report"); 
+            createAttrString(document, report, "name", "Camel Xml");
+            document.appendChild(report);                
+        
         // favor strict matching on route ids
         for (CamelNodeDetails t : routeIdTrees) {
             String routeId = t.getRouteId();
             String fileName = stripRootPath(asRelativeFile(t.getFileName()));
-
+            String sourceFileName = (new File(fileName)).getName();
+            String packageName = (new File(fileName)).getParent();
+            
+         // package tag
+            Element pack = document.createElement("package");
+            createAttrString(document, pack, "name", packageName);
+            report.appendChild(pack);
+           
             // grab dump data for the route
             try {
                 List<CoverageData> coverageData = RouteCoverageHelper.parseDumpRouteCoverageByRouteId("target/camel-route-coverage", routeId);
@@ -219,14 +257,60 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                     List<RouteCoverageNode> coverage = gatherRouteCoverageSummary(Collections.singletonList(t), coverageData);
                     String out = templateCoverageData(fileName, routeId, coverage, notCovered);
                     getLog().info("Route coverage summary:\n\n" + out);
-                    getLog().info("");
+                    getLog().info("");                   
+                    
+                 // sourcefile tag
+                    Element sourcefile = document.createElement("sourcefile");
+                    createAttrString(document, sourcefile, "name", sourceFileName);
+                    pack.appendChild(sourcefile);
+                                        
+                    int covered = 0, missed = 0;
+                    for (RouteCoverageNode node : coverage) {
+                    	
+                        int missedCount = 0;
+                        
+                        if (node.getCount() > 0) {
+                            covered++;
+                        }
+                        
+                        else {
+                        	missedCount ++;
+                        	missed ++;
+                        }
+                        
+                        // line tag
+                        Element line = document.createElement("line");
+                        
+                        createAttrInt(document, line, "nr", node.getLineNumber());
+                        createAttrInt(document, line, "mi", missedCount);
+                        createAttrInt(document, line, "ci", node.getCount());
+                        
+                        // provides no useful information, needed to be read by sonarQube
+                        createAttrInt(document, line, "mb", 0);
+                        createAttrInt(document, line, "cb", 0);
+                        
+                        sourcefile.appendChild(line);
+                                             
+                    }
+                   
+                    // counter tag
+                    Element counter = document.createElement("counter");
+                    createAttrString(document, counter, "type", "LINE");
+                    createAttrInt(document, counter, "missed", missed);
+                    createAttrInt(document, counter, "covered", covered);
+                    sourcefile.appendChild(counter);
+                     
                 }
 
             } catch (Exception e) {
                 throw new MojoExecutionException("Error during gathering route coverage data for route: " + routeId, e);
             }
         }
+        
+        
+        createXmlFile(document, xmlFilePath);
 
+        
         if (anonymousRoutes && !anonymousRouteTrees.isEmpty()) {
             // grab dump data for the route
             try {
@@ -258,9 +342,14 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                             String out = templateCoverageData(fileName, null, coverage, notCovered);
                             getLog().info("Route coverage summary:\n\n" + out);
                             getLog().info("");
+                            
+                            
                         }
                     }
                 }
+                
+                
+                
             } catch (Exception e) {
                 throw new MojoExecutionException("Error during gathering route coverage data", e);
             }
@@ -328,7 +417,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     private String templateCoverageData(String fileName, String routeId, List<RouteCoverageNode> model, AtomicInteger notCovered) throws MojoExecutionException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         PrintStream sw = new PrintStream(bos);
-
+        
+        
         if (model.get(0).getClassName() != null) {
             sw.println("Class:\t" + model.get(0).getClassName());
         } else {
@@ -341,11 +431,13 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         sw.println(String.format("%8s    %8s    %s", "Line #", "Count", "Route"));
         sw.println(String.format("%8s    %8s    %s", "------", "-----", "-----"));
 
+       
         int covered = 0;
         for (RouteCoverageNode node : model) {
             if (node.getCount() > 0) {
                 covered++;
             }
+            
             String pad = padString(node.getLevel());
             sw.println(String.format("%8s    %8s    %s", node.getLineNumber(), node.getCount(), pad + node.getName()));
         }
@@ -366,7 +458,51 @@ public class RouteCoverageMojo extends AbstractExecMojo {
         sw.println();
 
         return bos.toString();
+    }    
+    
+    private Attr createAttrInt(Document doc, Element e, String name, Integer value) {
+    	Attr a = doc.createAttribute(name);
+    	a.setValue(value.toString());
+    	e.setAttributeNode(a);
+    	
+    	return a;
     }
+    
+    private Attr createAttrString(Document doc, Element e, String name, String value) {
+    	Attr a = doc.createAttribute(name);
+    	a.setValue(value);
+    	e.setAttributeNode(a);
+    	
+    	return a;
+    }
+    
+    private Document createDocument() {
+    	Document document = null;
+    	try {	
+    	    DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();        
+    	    DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
+    	    document = documentBuilder.newDocument();
+        
+        } catch (ParserConfigurationException pce) {
+            pce.printStackTrace();
+        } 
+    	
+    	return document;
+        
+    }
+    
+    private void createXmlFile(Document document, String xmlFilePath) {
+        try {
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource domSource = new DOMSource(document);
+            StreamResult streamResult = new StreamResult(new File(xmlFilePath));
+       
+            transformer.transform(domSource, streamResult);
+        } catch (TransformerException tfe) {
+            tfe.printStackTrace();
+        }
+    }   
 
     private static List<RouteCoverageNode> gatherRouteCoverageSummary(List<CamelNodeDetails> route, List<CoverageData> coverageData) {
         List<RouteCoverageNode> answer = new ArrayList<>();
