@@ -50,7 +50,6 @@ public class LRAManualIT extends AbstractLRATestSupport {
     }
 
     @Test
-    @Ignore("https://issues.jboss.org/browse/JBTM-2979")
     public void testTimeout() throws InterruptedException {
         MockEndpoint compensateEndpoint = getMockEndpoint("mock:compensate");
         compensateEndpoint.expectedMessageCount(1);

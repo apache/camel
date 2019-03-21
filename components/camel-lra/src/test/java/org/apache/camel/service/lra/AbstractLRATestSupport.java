@@ -18,6 +18,7 @@ package org.apache.camel.service.lra;
 
 import java.io.IOException;
 import java.io.InputStream;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
@@ -31,6 +32,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+
+import static org.awaitility.Awaitility.await;
+import static org.hamcrest.Matchers.equalTo;
 
 /**
  * Base class for LRA based tests.
@@ -48,6 +52,7 @@ public abstract class AbstractLRATestSupport extends CamelTestSupport {
 
     @After
     public void checkActiveLRAs() throws IOException {
+        await().atMost(2, SECONDS).until(() -> getNumberOfActiveLRAs(), equalTo(activeLRAs));
         Assert.assertEquals("Some LRA have been left pending", activeLRAs, getNumberOfActiveLRAs());
     }
 
