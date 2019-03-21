@@ -31,14 +31,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import io.swagger.jackson.mixin.ResponseSchemaMixin;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Contact;
 import io.swagger.models.Info;
 import io.swagger.models.License;
-import io.swagger.models.Response;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.apache.camel.Exchange;
 import org.apache.camel.model.ModelHelper;
@@ -205,6 +204,8 @@ public class RestSwaggerSupport {
 
     public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
             Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration) throws Exception {
+        ObjectMapper mapper;
+
         LOG.trace("renderResourceListing");
 
         if (cors) {
@@ -227,10 +228,9 @@ public class RestSwaggerSupport {
                     clearVendorExtensions(swagger);
                 }
 
-                ObjectMapper mapper = new ObjectMapper();
+                mapper = Json.mapper();
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-                mapper.addMixIn(Response.class, ResponseSchemaMixin.class);
                 
                 byte[] bytes = mapper.writeValueAsBytes(swagger);
 
@@ -251,10 +251,9 @@ public class RestSwaggerSupport {
                     clearVendorExtensions(swagger);
                 }
 
-                ObjectMapper mapper = new ObjectMapper();
+                mapper = Yaml.mapper();
                 mapper.enable(SerializationFeature.INDENT_OUTPUT);
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-                mapper.addMixIn(Response.class, ResponseSchemaMixin.class);
                 
                 byte[] jsonData = mapper.writeValueAsBytes(swagger);
 
