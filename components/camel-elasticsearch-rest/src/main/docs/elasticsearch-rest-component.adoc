@@ -82,7 +82,7 @@ with the following path and query parameters:
 | *connectionTimeout* (producer) | The time in ms to wait before connection will timeout. | 30000 | int
 | *disconnect* (producer) | Disconnect after it finish calling the producer | false | boolean
 | *enableSSL* (producer) | Enable SSL | false | boolean
-| *hostAddresses* (producer) | *Required* Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for hostAddresses to be considered instead. |  | String
+| *hostAddresses* (producer) | *Required* Comma separated list with ip:port formatted remote transport addresses to use. |  | String
 | *indexName* (producer) | The name of the index to act against |  | String
 | *indexType* (producer) | The type of the index to act against |  | String
 | *maxRetryTimeout* (producer) | The time in ms before retry | 30000 | int
