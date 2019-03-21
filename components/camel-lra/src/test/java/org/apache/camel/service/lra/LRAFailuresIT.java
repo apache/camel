@@ -28,7 +28,6 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
     private AtomicInteger maxFailures;
 
     @Test
-    @Ignore("https://issues.jboss.org/browse/JBTM-2978")
     public void testCompensationAfterFailures() throws Exception {
         maxFailures = new AtomicInteger(1);
 
@@ -42,7 +41,6 @@ public class LRAFailuresIT extends AbstractLRATestSupport {
     }
 
     @Test
-    @Ignore("https://issues.jboss.org/browse/JBTM-2977")
     public void testCompletionAfterFailures() throws Exception {
         maxFailures = new AtomicInteger(1);
 
