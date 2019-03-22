@@ -27,10 +27,10 @@
     <!-- START SNIPPET: e1 -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         
-        <!-- we define the json xstream data formats to be used (xstream is default) -->
+        <!-- we define the json xstream data formats to be used -->
         <dataFormats>
-            <json id="json" unmarshalTypeName="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
-            <json id="pretty" prettyPrint="true" unmarshalTypeName="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
+            <json id="json" library="XStream" unmarshalTypeName="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
+            <json id="pretty" library="XStream" prettyPrint="true" unmarshalTypeName="org.apache.camel.dataformat.xstream.PurchaseOrder"/>
         </dataFormats>
 
         <route>
