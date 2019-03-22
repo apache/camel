@@ -114,7 +114,7 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public Endpoint resolveEndpoint(String uri) {
-        return new RouteReifier(route).resolveEndpoint(getCamelContext(), uri);
+        return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
 
     public Endpoint resolveEndpoint(String uri, String ref) {
