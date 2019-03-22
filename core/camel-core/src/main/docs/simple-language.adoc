@@ -182,7 +182,7 @@ component.
 option is optional. See more at
 Using PropertyPlaceholder.
 
-|properties:key:default |String |*Camel 2.14.1*: Lookup a property with the given key. If the key does
+|`properties:key:default` |String |*Camel 2.14.1*: Lookup a property with the given key. If the key does
 not exists or has no value, then an optional default value can be
 specified.
 
