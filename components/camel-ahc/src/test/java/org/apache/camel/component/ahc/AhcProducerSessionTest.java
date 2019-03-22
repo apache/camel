@@ -29,7 +29,7 @@ import org.apache.camel.http.common.cookie.InstanceCookieHandler;
 import org.junit.Test;
 
 public class AhcProducerSessionTest extends BaseAhcTest {
-	
+
     @BindToRegistry("instanceCookieHandler")
     InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
    
