@@ -14,42 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.client;
+package org.apache.camel.example.pulsar.client;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Client that uses the {@link org.apache.camel.ProducerTemplate} to easily exchange messages with the Server.
+ * Client that uses the {@link ProducerTemplate} to easily exchange messages with the Server.
+ * <p/>
+ * Requires that the JMS broker is running, as well as CamelServer
  */
-public final class CamelFileClient {
-
-    private static final int SIZE = 5000;
-
-    private CamelFileClient() {
+public final class CamelClient {
+    private CamelClient() {
         // Helper class
     }
 
+    // START SNIPPET: e1
     public static void main(final String[] args) throws Exception {
-        AbstractApplicationContext context = new ClassPathXmlApplicationContext("camel-file-client.xml");
+        System.out.println("Notice this client requires that the CamelServer is already running!");
+
+        AbstractApplicationContext context = new ClassPathXmlApplicationContext("camel-client.xml");
 
         // get the camel template for Spring template style sending of messages (= producer)
-        final ProducerTemplate producer = context.getBean("camelTemplate", ProducerTemplate.class);
+        ProducerTemplate camelTemplate = context.getBean("camelTemplate", ProducerTemplate.class);
 
-        // now send a lot of messages
-        System.out.println("Writing files ...");
-
-        for (int i = 0; i < SIZE; i++) {
-            producer.sendBodyAndHeader("file:target//inbox", "File " + i, Exchange.FILE_NAME, i + ".txt");
-        }
-
-        System.out.println("... Wrote " + SIZE + " files");
+        System.out.println("Invoking the multiply with 22");
+        // as opposed to the CamelClientRemoting example we need to define the service URI in this java code
+        int response = (Integer)camelTemplate.sendBody("pulsar:cameltest", ExchangePattern.InOut, 22);
+        System.out.println("... the result is: " + response);
 
         // we're done so let's properly close the application context
         IOHelper.close(context);
     }
+    // END SNIPPET: e1
 
 }

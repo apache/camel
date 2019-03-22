@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   Licensed to the Apache Software Foundation (ASF) under one or more
   contributor license agreements.  See the NOTICE file distributed with
@@ -25,44 +24,40 @@
         <version>2.17.3</version>
     </parent>
 
-    <artifactId>camel-example-route-throttling</artifactId>
+    <artifactId>camel-example-spring-pulsar</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: Example :: Route :: Throttling</name>
-    <description>A client-server example using JMS transport where we on the server side can throttle the Camel
-        route dynamically based on the flow of messages</description>
-        
+    <name>Camel :: Example :: Spring :: Pulsar</name>
+    <description>An example using Spring XML to talk to the Pulsar server from different kind of client techniques</description>
     <properties>
-    <camel.osgi.export.pkg>org.apache.camel.example.pulsar.client.*</camel.osgi.export.pkg>
-    <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import.additional>
-  </properties>
+        <camel.osgi.export.pkg>org.apache.camel.example.server.*</camel.osgi.export.pkg>
+        <camel.osgi.import.additional>org.apache.activemq.xbean</camel.osgi.import.additional>
+    </properties>
 
     <dependencies>
+        <!-- START SNIPPET: e1 -->
+        <!-- required by both client and server -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-jms</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-camel</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-pulsar</artifactId>
+            <version>2.17.3</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-kahadb-store</artifactId>
-        </dependency>
+        <!-- END SNIPPET: e1 -->
 
+        <!-- START SNIPPET: e2 -->
         <!-- xbean is required for ActiveMQ broker configuration in the spring xml file -->
         <dependency>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
         </dependency>
+        <!-- END SNIPPET: e2 -->
 
         <!-- for logging using log4j.properties in src/main/resources -->
         <dependency>
@@ -77,12 +72,7 @@
         <!-- for testing -->
         <dependency>
           <groupId>org.apache.camel</groupId>
-          <artifactId>camel-test</artifactId>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
+          <artifactId>camel-test-spring</artifactId>
           <scope>test</scope>
         </dependency>
 
@@ -105,15 +95,23 @@
             </properties>
         </profile>
         <profile>
-            <id>CamelFileClient</id>
+            <id>CamelClientRemoting</id>
             <properties>
                 <!-- we start using our own class to control what we do in the main -->
-                <target.main.class>org.apache.camel.example.pulsar.client.CamelFileClient</target.main.class>
+                <target.main.class>org.apache.camel.example.pulsar.client.CamelClientRemoting</target.main.class>
+            </properties>
+        </profile>
+        <profile>
+            <id>CamelClientEndpoint</id>
+            <properties>
+                <!-- we start using our own class to control what we do in the main -->
+                <target.main.class>org.apache.camel.example.pulsar.client.CamelClientEndpoint</target.main.class>
             </properties>
         </profile>
     </profiles>
     <build>
-        <plugins>
+
+		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
@@ -136,17 +134,19 @@
 					</execution>
 				</executions>
 			</plugin>
-            <!-- Allows the example to be run via 'mvn compile exec:java' -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>${target.main.class}</mainClass>
-                    <includePluginDependencies>false</includePluginDependencies>
-                    <commandlineArgs>${target.cmd.args}</commandlineArgs>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+
+      <!-- Allows the example to be run via 'mvn compile exec:java' -->
+      <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <configuration>
+              <mainClass>${target.main.class}</mainClass>
+              <includePluginDependencies>false</includePluginDependencies>
+              <commandlineArgs>${target.cmd.args}</commandlineArgs>
+          </configuration>
+      </plugin>
+    </plugins>
+
+  </build>
 
 </project>

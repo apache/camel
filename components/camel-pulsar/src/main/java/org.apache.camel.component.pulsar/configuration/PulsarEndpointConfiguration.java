@@ -1,12 +1,13 @@
 package org.apache.camel.component.pulsar.configuration;
 
-import org.apache.camel.component.pulsar.PulsarUri;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.pulsar.client.impl.ClientBuilderImpl;
 
 @UriParams
 public class PulsarEndpointConfiguration {
@@ -40,12 +41,7 @@ public class PulsarEndpointConfiguration {
     @UriParam(label = "consumer, producer", description = "The pulsar client")
     private PulsarClient pulsarClient;
 
-    public PulsarEndpointConfiguration(PulsarUri uri) {
-        this.topicType = uri.getType();
-        this.tenant = uri.getTenant();
-        this.namespace = uri.getNamespace();
-        this.topic = uri.getTopic();
-    }
+    public PulsarEndpointConfiguration(){}
 
     public String getTopicType() {
         return topicType;
@@ -135,7 +131,10 @@ public class PulsarEndpointConfiguration {
         this.consumerNamePrefix = consumerNamePrefix;
     }
 
-    public PulsarClient getPulsarClient() {
+    public PulsarClient getPulsarClient() throws PulsarClientException {
+        if (pulsarClient == null) {
+            pulsarClient = new ClientBuilderImpl().serviceUrl("pulsar://localhost:6650").build();
+        }
         return pulsarClient;
     }
 

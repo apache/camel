@@ -12,7 +12,7 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "pulsar", title = "Apache Pulsar", syntax = "pulsar:topicType/tenant/namespace/topic", label = "messaging")
+@UriEndpoint(scheme = "pulsar", title = "Apache Pulsar", syntax = "pulsar:tenant/namespace/topic", label = "messaging")
 public class PulsarEndpoint extends DefaultEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarEndpoint.class);
@@ -64,5 +64,10 @@ public class PulsarEndpoint extends DefaultEndpoint {
 
     public PulsarEndpointConfiguration getConfiguration() {
         return pulsarEndpointConfiguration;
+    }
+
+    @Override
+    protected String createEndpointUri() {
+        return "pulsar:cameltest";
     }
 }

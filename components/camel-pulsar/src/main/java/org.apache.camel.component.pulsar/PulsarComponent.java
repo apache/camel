@@ -8,14 +8,15 @@ import org.apache.camel.impl.DefaultComponent;
 
 public class PulsarComponent extends DefaultComponent {
 
-    public PulsarComponent(CamelContext context) {
+    private final PulsarEndpointConfiguration configuration;
+
+    public PulsarComponent(CamelContext context, PulsarEndpointConfiguration configuration) {
         super(context);
+        this.configuration = configuration;
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
-        PulsarEndpointConfiguration configuration = new PulsarEndpointConfiguration(new PulsarUri(uri));
 
         setProperties(configuration, parameters);
 
