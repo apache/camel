@@ -22,8 +22,6 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for the MllpEndpoint class.
- *
- * @author vishal423
  */
 public class MllpEndpointTest {
 
