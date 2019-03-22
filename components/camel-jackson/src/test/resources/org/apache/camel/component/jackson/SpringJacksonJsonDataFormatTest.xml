@@ -30,8 +30,8 @@
         <!-- we define the json jackson data formats to be used -->
         <dataFormats>
             <!-- this uses the default unmarshal type that is a Map based -->
-            <json id="jack" library="Jackson"/>
-            <json id="pretty" library="Jackson" prettyPrint="true"/>
+            <json id="jack"/>
+            <json id="pretty" prettyPrint="true"/>
             <!-- and this one uses our own TestPojo class as unmarshal type -->
             <json id="pojo" library="Jackson" unmarshalTypeName="org.apache.camel.component.jackson.TestPojo"/>
             <!-- in addition to our own TestPojoView class we make use of the jsonView attribute here as filter -->

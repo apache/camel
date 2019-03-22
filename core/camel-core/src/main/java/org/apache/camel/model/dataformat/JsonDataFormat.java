@@ -46,8 +46,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean prettyPrint;
     @XmlAttribute
-    @Metadata(defaultValue = "XStream")
-    private JsonLibrary library = JsonLibrary.XStream;
+    @Metadata(defaultValue = "Jackson")
+    private JsonLibrary library = JsonLibrary.Jackson;
     @XmlAttribute
     private String unmarshalTypeName;
     @XmlTransient

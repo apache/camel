@@ -141,6 +141,10 @@ The uri attribute has been deprecated, instead use value, which allows a shortha
 In Camel 2.x you could have 2 or more inputs to Camel routes, however this was not supported in all use-cases in Camel, and this functionality is seldom in use. This has
 also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code for specifying multipe inputs to routes, and its now only possible to specify exactly only 1 input to a route.
 
+### JSon DataFormat
+
+The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
+
 ### Moved APIs
 
 The following API changes may affect your existing Camel applications, which needs to be migrated.
