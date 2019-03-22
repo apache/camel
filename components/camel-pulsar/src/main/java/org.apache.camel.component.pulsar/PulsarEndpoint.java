@@ -22,18 +22,19 @@ public class PulsarEndpoint extends DefaultEndpoint {
     @UriParam
     private final PulsarClient pulsarClient;
 
-    private PulsarEndpoint(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarClient pulsarClient) {
+    private PulsarEndpoint(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarClient pulsarClient, String endpointURI, PulsarComponent pulsarComponent) {
+        super(endpointURI, pulsarComponent);
         this.pulsarEndpointConfiguration = pulsarEndpointConfiguration;
         this.pulsarClient = pulsarClient;
     }
 
-    public static PulsarEndpoint create(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarClient pulsarClient) {
+    public static PulsarEndpoint create(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarClient pulsarClient, String endpointURI, PulsarComponent pulsarComponent) {
         if (pulsarClient == null || pulsarEndpointConfiguration == null) {
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Pulsar client and Pulsar Endpoint Configuration cannot be null");
             LOGGER.error("An exception occurred while creating Pulsar Endpoint :: {}", illegalArgumentException);
             throw illegalArgumentException;
         }
-        return new PulsarEndpoint(pulsarEndpointConfiguration, pulsarClient);
+        return new PulsarEndpoint(pulsarEndpointConfiguration, pulsarClient, endpointURI, pulsarComponent);
     }
 
     @Override
