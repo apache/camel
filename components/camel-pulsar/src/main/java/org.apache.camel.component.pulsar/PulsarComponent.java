@@ -20,6 +20,6 @@ public class PulsarComponent extends DefaultComponent {
 
         setProperties(configuration, parameters);
 
-        return PulsarEndpoint.create(configuration, configuration.getPulsarClient());
+        return PulsarEndpoint.create(configuration, this);
     }
 }

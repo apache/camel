@@ -54,6 +54,7 @@
     <property name="producerName" value="rik"/>
     <property name="topic" value="pulsar:cameltest"/>
     <property name="subscriptionType" value="EXCLUSIVE"/>
+    <property name="pulsarBrokerUrl" value="pulsar://localhost:6650"/>
   </bean>
   <bean id="pulsar" class="org.apache.camel.component.pulsar.PulsarComponent">
     <constructor-arg ref="camel-server"/>

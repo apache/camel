@@ -9,6 +9,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,18 +23,19 @@ public class PulsarEndpoint extends DefaultEndpoint {
     @UriParam
     private final PulsarClient pulsarClient;
 
-    private PulsarEndpoint(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarClient pulsarClient) {
+    private PulsarEndpoint(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarComponent component) throws PulsarClientException {
+        super(pulsarEndpointConfiguration.getTopic(), component);
         this.pulsarEndpointConfiguration = pulsarEndpointConfiguration;
-        this.pulsarClient = pulsarClient;
+        this.pulsarClient = pulsarEndpointConfiguration.getPulsarClient();
     }
 
-    public static PulsarEndpoint create(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarClient pulsarClient) {
-        if (pulsarClient == null || pulsarEndpointConfiguration == null) {
+    public static PulsarEndpoint create(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarComponent component) throws PulsarClientException {
+        if (pulsarEndpointConfiguration == null) {
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Pulsar client and Pulsar Endpoint Configuration cannot be null");
             LOGGER.error("An exception occurred while creating Pulsar Endpoint :: {}", illegalArgumentException);
             throw illegalArgumentException;
         }
-        return new PulsarEndpoint(pulsarEndpointConfiguration, pulsarClient);
+        return new PulsarEndpoint(pulsarEndpointConfiguration, component);
     }
 
     @Override
@@ -64,10 +66,5 @@ public class PulsarEndpoint extends DefaultEndpoint {
 
     public PulsarEndpointConfiguration getConfiguration() {
         return pulsarEndpointConfiguration;
-    }
-
-    @Override
-    protected String createEndpointUri() {
-        return "pulsar:cameltest";
     }
 }
