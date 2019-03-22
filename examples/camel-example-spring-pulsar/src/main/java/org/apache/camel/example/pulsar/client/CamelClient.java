@@ -43,7 +43,7 @@ public final class CamelClient {
 
         System.out.println("Invoking the multiply with 22");
         // as opposed to the CamelClientRemoting example we need to define the service URI in this java code
-        int response = (Integer)camelTemplate.sendBody("pulsar:cameltest", ExchangePattern.InOut, 22);
+        int response = (Integer)camelTemplate.sendBody("pulsar:tn1/ns1/cameltest", ExchangePattern.InOut, 22);
         System.out.println("... the result is: " + response);
 
         // we're done so let's properly close the application context

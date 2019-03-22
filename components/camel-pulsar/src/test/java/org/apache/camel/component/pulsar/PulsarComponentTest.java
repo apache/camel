@@ -7,7 +7,7 @@ public class PulsarComponentTest extends CamelTestSupport {
 
     @Test
     public void testProducer() throws Exception {
-        PulsarComponent component = new PulsarComponent(context, null);
+        PulsarComponent component = new PulsarComponent(context, null, null);
 
         PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/omega-pl/fulfilment/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 

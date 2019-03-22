@@ -47,7 +47,7 @@ public final class CamelClientEndpoint {
         CamelContext camel = context.getBean("camel-client", CamelContext.class);
 
         // get the endpoint from the camel context
-        Endpoint endpoint = camel.getEndpoint("pulsar:cameltest");
+        Endpoint endpoint = camel.getEndpoint("pulsar:tn1/ns1/cameltest");
 
         // create the exchange used for the communication
         // we use the in out pattern for a synchronized exchange where we expect a response

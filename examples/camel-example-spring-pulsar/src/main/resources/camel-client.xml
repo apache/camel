@@ -38,14 +38,19 @@
                                 ignore-resource-not-found="true"/>
 
   <bean id="pulsarconfig" class="org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration" >
-    <property name="producerName" value="rik"/>
-    <property name="topic" value="pulsar:cameltest"/>
+    <property name="producerName" value="prod-client"/>
     <property name="subscriptionType" value="EXCLUSIVE"/>
     <property name="pulsarBrokerUrl" value="pulsar://localhost:6650"/>
+  </bean>
+  <bean id="pulsarAdminConfig" class="org.apache.camel.component.pulsar.configuration.AdminConfiguration">
+    <property name="autoCreateAllowed" value="true"/>
+    <property name="serviceUrl" value="http://localhost:8080"/>
+    <property name="clusters" value="standalone"/>
   </bean>
   <bean id="pulsar" class="org.apache.camel.component.pulsar.PulsarComponent">
     <constructor-arg ref="camel-client"/>
     <constructor-arg ref="pulsarconfig"/>
+    <constructor-arg ref="pulsarAdminConfig"/>
   </bean>
   <!-- END SNIPPET: e3 -->
 
