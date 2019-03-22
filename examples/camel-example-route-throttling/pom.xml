@@ -32,7 +32,7 @@
         route dynamically based on the flow of messages</description>
         
     <properties>
-    <camel.osgi.export.pkg>org.apache.camel.example.pulsar.client.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.example.client.*</camel.osgi.export.pkg>
     <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool</camel.osgi.import.additional>
   </properties>
 
@@ -101,14 +101,14 @@
             <id>CamelClient</id>
             <properties>
                 <!-- we start using our own class to control what we do in the main -->
-                <target.main.class>org.apache.camel.example.pulsar.client.CamelClient</target.main.class>
+                <target.main.class>org.apache.camel.example.client.CamelClient</target.main.class>
             </properties>
         </profile>
         <profile>
             <id>CamelFileClient</id>
             <properties>
                 <!-- we start using our own class to control what we do in the main -->
-                <target.main.class>org.apache.camel.example.pulsar.client.CamelFileClient</target.main.class>
+                <target.main.class>org.apache.camel.example.client.CamelFileClient</target.main.class>
             </properties>
         </profile>
     </profiles>
