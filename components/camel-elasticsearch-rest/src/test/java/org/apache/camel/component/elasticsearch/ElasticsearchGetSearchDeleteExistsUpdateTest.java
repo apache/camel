@@ -109,9 +109,9 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         assertNotNull("response should not be null", getResponse);
         assertNotNull("response source should not be null", getResponse.getSource());
         // need to create a query string
-        String query = "{\n" +
-                "    \"query\" : { \"match\" : { \"key\" : \"value\" }}\n" +
-                "}\n";
+        String query = "{\n" 
+                + "    \"query\" : { \"match\" : { \"key\" : \"value\" }}\n"
+                + "}\n";
         SearchHits response = template.requestBody("direct:search", query, SearchHits.class);
         assertNotNull("response should not be null", response);
         assertEquals("response hits should be == 0", 0, response.totalHits);
