@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.ahc;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,16 +25,9 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Test;
 
 public class AhcProduceClientConfigTest extends BaseAhcTest {
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        DefaultAsyncHttpClientConfig.Builder builder = new DefaultAsyncHttpClientConfig.Builder();
-        DefaultAsyncHttpClientConfig config = builder.setFollowRedirect(true).setMaxRequestRetry(3).build();
-
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myConfig", config);
-        return jndi;
-    }
+	
+	@BindToRegistry("myConfig")
+	DefaultAsyncHttpClientConfig config = new DefaultAsyncHttpClientConfig.Builder().setFollowRedirect(true).setMaxRequestRetry(3).build();
 
     @Test
     public void testAhcProduceClientConfig() throws Exception {
