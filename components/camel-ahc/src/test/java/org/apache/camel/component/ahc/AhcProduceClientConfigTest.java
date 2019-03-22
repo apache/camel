@@ -25,9 +25,9 @@ import org.asynchttpclient.DefaultAsyncHttpClientConfig;
 import org.junit.Test;
 
 public class AhcProduceClientConfigTest extends BaseAhcTest {
-	
-	@BindToRegistry("myConfig")
-	DefaultAsyncHttpClientConfig config = new DefaultAsyncHttpClientConfig.Builder().setFollowRedirect(true).setMaxRequestRetry(3).build();
+
+    @BindToRegistry("myConfig")
+    DefaultAsyncHttpClientConfig config = new DefaultAsyncHttpClientConfig.Builder().setFollowRedirect(true).setMaxRequestRetry(3).build();
 
     @Test
     public void testAhcProduceClientConfig() throws Exception {
