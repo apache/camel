@@ -16,10 +16,10 @@ public class PulsarComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String path, Map<String, Object> parameters) throws Exception {
 
         setProperties(configuration, parameters);
 
-        return PulsarEndpoint.create(configuration, this);
+        return PulsarEndpoint.create(uri, path, configuration, this);
     }
 }

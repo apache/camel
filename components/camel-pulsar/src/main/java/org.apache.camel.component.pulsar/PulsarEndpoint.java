@@ -8,6 +8,7 @@ import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfigurati
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.slf4j.Logger;
@@ -22,20 +23,23 @@ public class PulsarEndpoint extends DefaultEndpoint {
     private final PulsarEndpointConfiguration pulsarEndpointConfiguration;
     @UriParam
     private final PulsarClient pulsarClient;
+    @UriPath(label = "consumer,producer", description = "Topic uri path")
+    private final String topic;
 
-    private PulsarEndpoint(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarComponent component) throws PulsarClientException {
-        super(pulsarEndpointConfiguration.getTopic(), component);
+    private PulsarEndpoint(String uri, String path, PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarComponent component) throws PulsarClientException {
+        super(uri, component);
+        this.topic = path;
         this.pulsarEndpointConfiguration = pulsarEndpointConfiguration;
         this.pulsarClient = pulsarEndpointConfiguration.getPulsarClient();
     }
 
-    public static PulsarEndpoint create(PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarComponent component) throws PulsarClientException {
+    public static PulsarEndpoint create(String uri, String path, PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarComponent component) throws PulsarClientException {
         if (pulsarEndpointConfiguration == null) {
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Pulsar client and Pulsar Endpoint Configuration cannot be null");
             LOGGER.error("An exception occurred while creating Pulsar Endpoint :: {}", illegalArgumentException);
             throw illegalArgumentException;
         }
-        return new PulsarEndpoint(pulsarEndpointConfiguration, component);
+        return new PulsarEndpoint(uri, path, pulsarEndpointConfiguration, component);
     }
 
     @Override
@@ -66,5 +70,9 @@ public class PulsarEndpoint extends DefaultEndpoint {
 
     public PulsarEndpointConfiguration getConfiguration() {
         return pulsarEndpointConfiguration;
+    }
+
+    public String getTopic() {
+        return topic;
     }
 }

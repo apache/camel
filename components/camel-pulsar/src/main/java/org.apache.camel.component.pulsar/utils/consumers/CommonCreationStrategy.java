@@ -14,7 +14,7 @@ public final class CommonCreationStrategy {
         return pulsarEndpoint
             .getPulsarClient()
             .newConsumer()
-            .topic(endpointConfiguration.getTopic())
+            .topic(pulsarEndpoint.getTopic())
             .subscriptionName(endpointConfiguration.getSubscriptionName())
             .receiverQueueSize(endpointConfiguration.getConsumerQueueSize())
             .consumerName(name)

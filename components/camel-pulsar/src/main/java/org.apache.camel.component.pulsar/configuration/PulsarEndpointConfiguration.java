@@ -12,18 +12,6 @@ import org.apache.pulsar.client.impl.ClientBuilderImpl;
 @UriParams
 public class PulsarEndpointConfiguration {
 
-    @UriPath(label = "consumer, producer", description = "Whether the topic is persistent or not", enums = "persistent, non-persistent")
-    @Metadata(required = "true")
-    private String topicType;
-    @UriPath(label = "consumer, producer", description = "Pulsar tenant for the topic namespace to reside in")
-    @Metadata(required = "true")
-    private String tenant;
-    @UriPath(label = "consumer, producer", description = "Pulsar namespace for the topic to reside in")
-    @Metadata(required = "true")
-    private String namespace;
-    @UriPath(label = "consumer, producer", description = "Name of the Pulsar topic")
-    @Metadata(required = "true")
-    private String topic;
     @UriParam(label = "consumer", description = "Name of the subscription to use")
     private String subscriptionName;
     @UriParam(label = "consumer", description = "Type of the subscription", enums = "EXCLUSIVE, SHARED, FAILOVER")
@@ -44,38 +32,6 @@ public class PulsarEndpointConfiguration {
     private String pulsarBrokerUrl;
 
     public PulsarEndpointConfiguration(){}
-
-    public String getTopicType() {
-        return topicType;
-    }
-
-    public void setTopicType(String topicType) {
-        this.topicType = topicType;
-    }
-
-    public String getTenant() {
-        return tenant;
-    }
-
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
 
     public String getSubscriptionName() {
         return subscriptionName;
