@@ -112,22 +112,6 @@ The component supports 2 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-=== Activating JMX in Camel
-
-[NOTE]
-====
-*Spring JAR dependency, required for Camel 2.8 or older*
-
-`spring-context.jar`, `spring-aop.jar`, `spring-beans.jar`, and
-`spring-core.jar` are needed on the classpath by Camel to be able to use
-JMX instrumentation. If these .jars are not on the classpath, Camel will
-fallback to non JMX mode. This situation is logged at `WARN` level using
-logger name `org.apache.camel.impl.DefaultCamelContext`.
-
-From *Camel 2.9* onwards, the Spring JARs are *no* longer required to
-run Camel in JMX mode.
-====
-
 ==== Using JMX to manage Apache Camel
 
 By default, JMX instrumentation agent is enabled in Camel, which means
