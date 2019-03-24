@@ -24,6 +24,7 @@
  ** xref:injector.adoc[Injector]
  ** xref:intercept.adoc[Intercept]
  ** xref:inversion-of-control-with-smart-defaults.adoc[Inversion Of Control With Smart Defaults]
+ ** xref:jmx.adoc[JMX]
  ** xref:lifecycle.adoc[Camel Lifecycle]
  ** xref:oncompletion.adoc[OnCompletion]
  ** xref:predicate.adoc[Predicates]
@@ -35,9 +36,4 @@
  ** xref:java-dsl.adoc[Java DSL]
  ** xref:spring.adoc[Spring support]
  ** xref:groovy-dsl.adoc[Groovy DSL]
- ** Scala DSL
-  *** xref:scala-dsl.adoc[About the Scala DSL]
-  *** xref:scala-dsl-getting-started.adoc[Getting Started]
-  *** xref:scala-dsl-eip.adoc[EIP]
-  *** xref:scala-dsl-supported-languages.adoc[Supported languages]
 * xref:using-osgi-blueprint-with-camel.adoc[Using OSGi blueprint with Camel]
