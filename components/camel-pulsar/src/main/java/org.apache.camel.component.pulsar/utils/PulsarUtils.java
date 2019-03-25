@@ -1,13 +1,10 @@
 package org.apache.camel.component.pulsar.utils;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
 import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration;
-import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategy;
-import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategyFactory;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -27,14 +24,6 @@ public final class PulsarUtils {
         }
 
         return new ConcurrentLinkedQueue<>();
-    }
-
-    public static Collection<Consumer<byte[]>> createConsumers(final PulsarEndpoint pulsarEndpoint,
-        final ConsumerCreationStrategyFactory factory) {
-
-        ConsumerCreationStrategy strategy = factory.getStrategy(pulsarEndpoint.getConfiguration().getSubscriptionType());
-
-        return strategy.create(pulsarEndpoint);
     }
 
     public static Producer<byte[]> createProducer(final PulsarEndpoint pulsarEndpoint) throws PulsarClientException {
