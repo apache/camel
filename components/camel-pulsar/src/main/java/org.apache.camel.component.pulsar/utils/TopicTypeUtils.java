@@ -23,7 +23,7 @@ public final class TopicTypeUtils {
         } else if(TopicType.NON_PERSISTENT.getTopicType().equalsIgnoreCase(value)) {
             return TopicType.NON_PERSISTENT.getTopicType();
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid topic type - " + value);
         }
     }
 }
