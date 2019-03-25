@@ -204,9 +204,11 @@ public class RestSwaggerSupport {
 
     public void renderResourceListing(RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
             Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration) throws Exception {
-        ObjectMapper mapper;
-
         LOG.trace("renderResourceListing");
+
+        ObjectMapper mapper = Json.mapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         if (cors) {
             setupCorsHeaders(response, configuration.getCorsHeaders());
@@ -228,10 +230,6 @@ public class RestSwaggerSupport {
                     clearVendorExtensions(swagger);
                 }
 
-                mapper = Json.mapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-                
                 byte[] bytes = mapper.writeValueAsBytes(swagger);
 
                 int len = bytes.length;
@@ -251,10 +249,6 @@ public class RestSwaggerSupport {
                     clearVendorExtensions(swagger);
                 }
 
-                mapper = Yaml.mapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-                
                 byte[] jsonData = mapper.writeValueAsBytes(swagger);
 
                 // json to yaml
