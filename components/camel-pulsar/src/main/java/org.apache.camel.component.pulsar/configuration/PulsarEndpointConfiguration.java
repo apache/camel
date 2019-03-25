@@ -1,28 +1,17 @@
 package org.apache.camel.component.pulsar.configuration;
 
-import org.apache.camel.component.pulsar.PulsarUri;
 import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.pulsar.client.impl.ClientBuilderImpl;
 
 @UriParams
 public class PulsarEndpointConfiguration {
 
-    @UriPath(label = "consumer, producer", description = "Whether the topic is persistent or not", enums = "persistent, non-persistent")
-    @Metadata(required = "true")
-    private String topicType;
-    @UriPath(label = "consumer, producer", description = "Pulsar tenant for the topic namespace to reside in")
-    @Metadata(required = "true")
-    private String tenant;
-    @UriPath(label = "consumer, producer", description = "Pulsar namespace for the topic to reside in")
-    @Metadata(required = "true")
-    private String namespace;
-    @UriPath(label = "consumer, producer", description = "Name of the Pulsar topic")
-    @Metadata(required = "true")
-    private String topic;
     @UriParam(label = "consumer", description = "Name of the subscription to use")
     private String subscriptionName;
     @UriParam(label = "consumer", description = "Type of the subscription", enums = "EXCLUSIVE, SHARED, FAILOVER")
@@ -39,45 +28,10 @@ public class PulsarEndpointConfiguration {
     private String consumerNamePrefix;
     @UriParam(label = "consumer, producer", description = "The pulsar client")
     private PulsarClient pulsarClient;
+    @UriParam(label = "consumer,producer", description = "Url for the Pulsar Broker")
+    private String pulsarBrokerUrl;
 
-    public PulsarEndpointConfiguration(PulsarUri uri) {
-        this.topicType = uri.getType();
-        this.tenant = uri.getTenant();
-        this.namespace = uri.getNamespace();
-        this.topic = uri.getTopic();
-    }
-
-    public String getTopicType() {
-        return topicType;
-    }
-
-    public void setTopicType(String topicType) {
-        this.topicType = topicType;
-    }
-
-    public String getTenant() {
-        return tenant;
-    }
-
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
-    }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
+    public PulsarEndpointConfiguration(){}
 
     public String getSubscriptionName() {
         return subscriptionName;
@@ -135,11 +89,22 @@ public class PulsarEndpointConfiguration {
         this.consumerNamePrefix = consumerNamePrefix;
     }
 
-    public PulsarClient getPulsarClient() {
+    public PulsarClient getPulsarClient() throws PulsarClientException {
+        if (pulsarClient == null) {
+            pulsarClient = new ClientBuilderImpl().serviceUrl(pulsarBrokerUrl).build();
+        }
         return pulsarClient;
     }
 
     public void setPulsarClient(PulsarClient pulsarClient) {
         this.pulsarClient = pulsarClient;
+    }
+
+    public String getPulsarBrokerUrl() {
+        return pulsarBrokerUrl;
+    }
+
+    public void setPulsarBrokerUrl(String pulsarBrokerUrl) {
+        this.pulsarBrokerUrl = pulsarBrokerUrl;
     }
 }

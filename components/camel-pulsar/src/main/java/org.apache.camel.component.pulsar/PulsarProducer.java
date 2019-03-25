@@ -64,7 +64,7 @@ public class PulsarProducer extends DefaultProducer {
     private Producer<byte[]> createProducer(final PulsarEndpointConfiguration configuration) throws PulsarClientException {
         return pulsarEndpoint.getPulsarClient()
             .newProducer()
-            .topic(configuration.getTopic())
+            .topic(pulsarEndpoint.getTopic())
             .producerName(configuration.getProducerName())
             .create();
     }
