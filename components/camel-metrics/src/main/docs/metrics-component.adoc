@@ -302,7 +302,7 @@ metrics:histogram:metricname[?options]
 |value |- |Value to use in histogram
 |===================================
 
-If no `value` is not set nothing is added to histogram and warning is
+If `value` is not set nothing is added to histogram and warning is
 logged.
 
 [source,java]
