@@ -1,10 +1,11 @@
 package org.apache.camel.component.pulsar;
 
-import java.util.Collection;
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.createConsumers;
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopConsumers;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.camel.Processor;
-import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategy;
 import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategyFactory;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.pulsar.client.api.Consumer;
@@ -17,8 +18,9 @@ public class PulsarConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumer.class);
 
     private final PulsarEndpoint pulsarEndpoint;
-    private final ConcurrentLinkedQueue<Consumer<byte[]>> pulsarConsumers;
     private final ConsumerCreationStrategyFactory consumerCreationStrategyFactory;
+
+    private Queue<Consumer<byte[]>> pulsarConsumers;
 
     private PulsarConsumer(PulsarEndpoint pulsarEndpoint, Processor processor) {
         super(pulsarEndpoint, processor);
@@ -28,7 +30,7 @@ public class PulsarConsumer extends DefaultConsumer {
     }
 
     public static PulsarConsumer create(PulsarEndpoint pulsarEndpoint, Processor processor) {
-        if(pulsarEndpoint == null || processor == null) {
+        if (pulsarEndpoint == null || processor == null) {
             IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Pulsar endpoint nor processor must be supplied");
             LOGGER.error("An exception occurred when creating PulsarConsumer :: {}", illegalArgumentException);
             throw illegalArgumentException;
@@ -38,39 +40,24 @@ public class PulsarConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws PulsarClientException {
-        stopConsumers(pulsarConsumers);
+        pulsarConsumers = stopConsumers(pulsarConsumers);
 
-        pulsarConsumers.addAll(createConsumers(pulsarEndpoint));
+        pulsarConsumers.addAll(createConsumers(pulsarEndpoint, consumerCreationStrategyFactory));
     }
 
     @Override
     protected void doStop() throws PulsarClientException {
-        stopConsumers(pulsarConsumers);
+        pulsarConsumers = stopConsumers(pulsarConsumers);
     }
 
     @Override
     protected void doSuspend() throws PulsarClientException {
-        stopConsumers(pulsarConsumers);
+        pulsarConsumers = stopConsumers(pulsarConsumers);
     }
 
     @Override
     protected void doResume() throws PulsarClientException {
-        stopConsumers(pulsarConsumers);
-        createConsumers(pulsarEndpoint);
-    }
-
-    public void stopConsumers(final Queue<Consumer<byte[]>> consumers) throws PulsarClientException {
-        while (!consumers.isEmpty()) {
-            Consumer<byte[]> consumer = pulsarConsumers.poll();
-
-            consumer.unsubscribe();
-            consumer.close();
-        }
-    }
-
-    public Collection<Consumer<byte[]>> createConsumers(final PulsarEndpoint pulsarEndpoint) {
-        ConsumerCreationStrategy strategy = consumerCreationStrategyFactory.getStrategy(pulsarEndpoint.getConfiguration().getSubscriptionType());
-
-        return strategy.create(pulsarEndpoint);
+        pulsarConsumers = stopConsumers(pulsarConsumers);
+        pulsarConsumers.addAll(createConsumers(pulsarEndpoint, consumerCreationStrategyFactory));
     }
 }

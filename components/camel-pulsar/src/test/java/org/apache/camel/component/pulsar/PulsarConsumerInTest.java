@@ -20,8 +20,14 @@ public class PulsarConsumerInTest extends CamelTestSupport {
     )
     private Endpoint from;
 
+    @EndpointInject(uri = "pulsar://persistent/omega/stock/BookIn?subscriptionName=book-stock"
+        + "&subscriptionType=Shared&consumerNamePrefix=book-stock-consumer&numberOfConsumers=10"
+        + "&pulsarClient=#pulsarClient&producerName=book-stock-producer&consumerQueueSize=5"
+    )
+    private Endpoint to;
+
     @EndpointInject(uri = "mock:result")
-    private MockEndpoint to;
+    private MockEndpoint mockEndpoint;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -36,7 +42,8 @@ public class PulsarConsumerInTest extends CamelTestSupport {
 
             @Override
             public void configure() {
-                from(from).to(to).unmarshal().string().process(processor);
+                from(from).to(to);
+                from(to).to(mockEndpoint).unmarshal().string().process(processor);
             }
         };
     }
@@ -47,7 +54,7 @@ public class PulsarConsumerInTest extends CamelTestSupport {
 
         PulsarClient pulsarClient = new ClientBuilderImpl()
             .serviceUrl("pulsar://localhost:6650")
-            .ioThreads(2)
+            .ioThreads(5)
             .listenerThreads(5)
             .build();
 
@@ -59,8 +66,6 @@ public class PulsarConsumerInTest extends CamelTestSupport {
 
     @Test
     public void test() {
-
-
         while (true) {
             //template.request(from, processor);
         }
