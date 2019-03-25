@@ -63,8 +63,8 @@ public class KafkaConsumerRebalancePartitionRevokeTest extends BaseEmbeddedKafka
     @Test
     public void ensurePartitionRevokeCallsWithLastProcessedOffset() throws Exception {
         boolean partitionRevokeCalled = messagesLatch.await(30000, TimeUnit.MILLISECONDS);
-        assertTrue("StateRepository.setState should have been called with offset >= 0 for topic" + TOPIC + 
-                ". Remaining count : " + messagesLatch.getCount(), partitionRevokeCalled);
+        assertTrue("StateRepository.setState should have been called with offset >= 0 for topic" + TOPIC 
+                + ". Remaining count : " + messagesLatch.getCount(), partitionRevokeCalled);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class KafkaConsumerRebalancePartitionRevokeTest extends BaseEmbeddedKafka
     }
 
     public class OffsetStateRepository extends MemoryStateRepository {
-        CountDownLatch messagesLatch = null;
+        CountDownLatch messagesLatch;
         
         public OffsetStateRepository(CountDownLatch messagesLatch) {
             this.messagesLatch = messagesLatch;
@@ -114,7 +114,7 @@ public class KafkaConsumerRebalancePartitionRevokeTest extends BaseEmbeddedKafka
         @Override
         public void setState(String key, String value) {
             if (key.contains(TOPIC) && messagesLatch.getCount() > 0
-            		&& Long.parseLong(value) >= 0) {
+                && Long.parseLong(value) >= 0) {
                 messagesLatch.countDown();
             }
             super.setState(key, value);
