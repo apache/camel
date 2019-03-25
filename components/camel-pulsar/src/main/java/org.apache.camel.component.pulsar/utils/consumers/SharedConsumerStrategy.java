@@ -20,7 +20,7 @@ public class SharedConsumerStrategy implements ConsumerCreationStrategy {
     private final PulsarConsumer pulsarConsumer;
     private final PulsarClientRetryPolicy retryPolicy;
 
-    public SharedConsumerStrategy(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
+    SharedConsumerStrategy(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
         this.pulsarConsumer = pulsarConsumer;
         this.retryPolicy = retryPolicy;
     }
@@ -30,7 +30,7 @@ public class SharedConsumerStrategy implements ConsumerCreationStrategy {
         return createMultipleConsumers(pulsarEndpoint);
     }
 
-    public Collection<Consumer<byte[]>> createMultipleConsumers(final PulsarEndpoint pulsarEndpoint) {
+    private Collection<Consumer<byte[]>> createMultipleConsumers(final PulsarEndpoint pulsarEndpoint) {
         final Collection<Consumer<byte[]>> consumers = new LinkedList<>();
         final PulsarEndpointConfiguration configuration = pulsarEndpoint.getConfiguration();
 
@@ -38,7 +38,7 @@ public class SharedConsumerStrategy implements ConsumerCreationStrategy {
             try {
                 String consumerName = configuration.getConsumerNamePrefix() + i;
 
-                ConsumerBuilder<byte[]> builder = CommonCreationStrategy.create(consumerName, pulsarEndpoint, pulsarConsumer);
+                ConsumerBuilder<byte[]> builder = CommonCreationStrategyUtils.create(consumerName, pulsarEndpoint, pulsarConsumer);
 
                 consumers.add(builder.subscriptionType(SubscriptionType.Shared).subscribe());
             } catch (PulsarClientException exception) {

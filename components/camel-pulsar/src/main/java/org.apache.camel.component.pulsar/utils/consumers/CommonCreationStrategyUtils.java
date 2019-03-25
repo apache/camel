@@ -6,7 +6,7 @@ import org.apache.camel.component.pulsar.PulsarMessageListener;
 import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 
-public final class CommonCreationStrategy {
+public final class CommonCreationStrategyUtils {
 
     public static ConsumerBuilder<byte[]> create(final String name, final PulsarEndpoint pulsarEndpoint, final PulsarConsumer pulsarConsumer) {
         final PulsarEndpointConfiguration endpointConfiguration = pulsarEndpoint.getConfiguration();

@@ -19,7 +19,7 @@ public class FailoverConsumerStrategy implements ConsumerCreationStrategy {
     private final PulsarConsumer pulsarConsumer;
     private final PulsarClientRetryPolicy retryPolicy;
 
-    public FailoverConsumerStrategy(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
+    FailoverConsumerStrategy(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
         this.pulsarConsumer = pulsarConsumer;
         this.retryPolicy = retryPolicy;
     }
@@ -29,7 +29,7 @@ public class FailoverConsumerStrategy implements ConsumerCreationStrategy {
         return createMultipleConsumers(pulsarEndpoint);
     }
 
-    public Collection<Consumer<byte[]>> createMultipleConsumers(final PulsarEndpoint pulsarEndpoint) {
+    private Collection<Consumer<byte[]>> createMultipleConsumers(final PulsarEndpoint pulsarEndpoint) {
         final Collection<Consumer<byte[]>> consumers = new LinkedList<>();
         final PulsarEndpointConfiguration configuration = pulsarEndpoint.getConfiguration();
 
@@ -37,7 +37,7 @@ public class FailoverConsumerStrategy implements ConsumerCreationStrategy {
             try {
                 String consumerName = configuration.getConsumerNamePrefix() + i;
 
-                ConsumerBuilder<byte[]> builder = CommonCreationStrategy
+                ConsumerBuilder<byte[]> builder = CommonCreationStrategyUtils
                     .create(consumerName, pulsarEndpoint, pulsarConsumer);
 
                 consumers.add(builder.subscriptionType(SubscriptionType.Failover).subscribe());
