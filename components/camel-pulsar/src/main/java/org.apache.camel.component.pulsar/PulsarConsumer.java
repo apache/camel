@@ -28,7 +28,7 @@ public class PulsarConsumer extends DefaultConsumer {
         super(pulsarEndpoint, processor);
         this.pulsarEndpoint = pulsarEndpoint;
         this.pulsarConsumers = new ConcurrentLinkedQueue<>();
-        this.consumerCreationStrategyFactory = new ConsumerCreationStrategyFactory(this, new ExponentialRetryPolicy());
+        this.consumerCreationStrategyFactory = ConsumerCreationStrategyFactory.create(this, new ExponentialRetryPolicy());
     }
 
     public static PulsarConsumer create(PulsarEndpoint pulsarEndpoint, Processor processor) {

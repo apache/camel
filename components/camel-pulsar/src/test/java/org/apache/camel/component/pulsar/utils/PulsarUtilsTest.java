@@ -5,15 +5,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.util.Collection;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import org.apache.camel.component.pulsar.PulsarComponent;
-import org.apache.camel.component.pulsar.PulsarEndpoint;
-import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration;
-import org.apache.camel.component.pulsar.utils.consumers.ConsumerCreationStrategyFactory;
 import org.apache.pulsar.client.api.Consumer;
-import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.junit.Test;
 

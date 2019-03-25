@@ -8,14 +8,27 @@ public class ConsumerCreationStrategyFactory {
     private final PulsarClientRetryPolicy retryPolicy;
     private final PulsarConsumer pulsarConsumer;
 
-    public ConsumerCreationStrategyFactory(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
+    private ConsumerCreationStrategyFactory(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
         this.retryPolicy = retryPolicy;
         this.pulsarConsumer = pulsarConsumer;
     }
 
+    public static ConsumerCreationStrategyFactory create(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
+        validate(pulsarConsumer, retryPolicy);
+        return new ConsumerCreationStrategyFactory(pulsarConsumer, retryPolicy);
+    }
+
+    private static void validate(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
+        if (pulsarConsumer == null || retryPolicy == null) {
+            throw new IllegalArgumentException("Neither Pulsar Consumer nor Retry Policy can be null");
+        }
+    }
+
 
     public ConsumerCreationStrategy getStrategy(final SubscriptionType subscriptionType) {
-        switch (subscriptionType) {
+        final SubscriptionType type = subscriptionType == null ? SubscriptionType.EXCLUSIVE : subscriptionType;
+
+        switch (type) {
             case SHARED:
                 return new SharedConsumerStrategy(pulsarConsumer, retryPolicy);
             case EXCLUSIVE:
