@@ -44,8 +44,8 @@ public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
     @Test
     public void offsetGetStateMustHaveBeenCalledTwice() throws Exception {
         boolean offsetGetStateCalled = messagesLatch.await(30000, TimeUnit.MILLISECONDS);
-        assertTrue("StateRepository.getState should have been called twice for topic " + TOPIC + 
-                ". Remaining count : " + messagesLatch.getCount(), offsetGetStateCalled);
+        assertTrue("StateRepository.getState should have been called twice for topic " + TOPIC  
+                + ". Remaining count : " + messagesLatch.getCount(), offsetGetStateCalled);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
     }
 
     public class OffsetStateRepository implements StateRepository<String, String> {
-        CountDownLatch messagesLatch = null;
+        CountDownLatch messagesLatch;
         
         public OffsetStateRepository(CountDownLatch messagesLatch) {
             this.messagesLatch = messagesLatch;
