@@ -3,6 +3,7 @@ package org.apache.camel.component.pulsar.utils;
 import org.apache.camel.component.pulsar.configuration.AdminConfiguration;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
+import org.apache.pulsar.client.admin.Tenants;
 import org.apache.pulsar.common.policies.data.TenantInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +24,10 @@ public class AutoConfiguration {
         setPulsarAdmin(pulsarAdmin);
     }
 
+    public AutoConfiguration(){}
+
     public void ensureNameSpaceAndTenant(String path) {
-        if(pulsarAdmin != null && adminConfiguration.isAutoCreateAllowed()) {
+        if(pulsarAdmin != null && adminConfiguration != null && adminConfiguration.isAutoCreateAllowed()) {
             Matcher matcher = pattern.matcher(path);
             if (matcher.matches()) {
                 String tenant = matcher.group("tenant");
@@ -47,7 +50,8 @@ public class AutoConfiguration {
     }
 
     private void ensureTenant(String tenant) throws PulsarAdminException {
-        List<String> tenants = pulsarAdmin.tenants().getTenants();
+        Tenants tenants1 = pulsarAdmin.tenants();
+        List<String> tenants = tenants1.getTenants();
         if (!tenants.contains(tenant)) {
             TenantInfo tenantInfo = new TenantInfo();
             tenantInfo.setAllowedClusters(adminConfiguration.getClusters());
