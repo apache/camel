@@ -42,15 +42,23 @@
     <property name="subscriptionType" value="EXCLUSIVE"/>
     <property name="pulsarBrokerUrl" value="pulsar://localhost:6650"/>
   </bean>
+  <bean id="pulsarAdminHost" class="java.lang.String"><constructor-arg value="http://localhost:8080"/></bean>
   <bean id="pulsarAdminConfig" class="org.apache.camel.component.pulsar.configuration.AdminConfiguration">
     <property name="autoCreateAllowed" value="true"/>
-    <property name="serviceUrl" value="http://localhost:8080"/>
+    <property name="serviceUrl" ref="pulsarAdminHost"/>
     <property name="clusters" value="standalone"/>
+  </bean>
+  <bean id="pulsarAdminClient" class="org.apache.pulsar.client.admin.PulsarAdmin">
+    <constructor-arg ref="pulsarAdminHost"/>
+    <constructor-arg ref="pulsarAdminConfig"/>
+  </bean>
+  <bean id="autoconfig" class="org.apache.camel.component.pulsar.utils.AutoConfiguration">
+    <constructor-arg ref="pulsarAdminClient"/>
   </bean>
   <bean id="pulsar" class="org.apache.camel.component.pulsar.PulsarComponent">
     <constructor-arg ref="camel-client"/>
     <constructor-arg ref="pulsarconfig"/>
-    <constructor-arg ref="pulsarAdminConfig"/>
+    <constructor-arg ref="autoconfig"/>
   </bean>
   <!-- END SNIPPET: e3 -->
 
