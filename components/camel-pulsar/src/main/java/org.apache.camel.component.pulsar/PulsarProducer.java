@@ -1,5 +1,8 @@
 package org.apache.camel.component.pulsar;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Queue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -15,12 +18,14 @@ public class PulsarProducer extends DefaultProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarProducer.class);
 
-    private Producer<byte[]> producer;
+    private final Queue<Producer<byte[]>> producers;
     private final PulsarEndpoint pulsarEndpoint;
 
     private PulsarProducer(PulsarEndpoint pulsarEndpoint) {
         super(pulsarEndpoint);
+
         this.pulsarEndpoint = pulsarEndpoint;
+        this.producers = new LinkedList<>();
     }
 
     public static PulsarProducer create(final PulsarEndpoint pulsarEndpoint) {
@@ -29,36 +34,48 @@ public class PulsarProducer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
-        final PulsarEndpointConfiguration configuration = pulsarEndpoint.getConfiguration();
-        final Message message = exchange.getIn();
+        synchronized (this) {
+            final Message message = exchange.getIn();
+            final Producer<byte[]> producer = producers.peek();
 
-        if (producer == null) {
-            producer = createProducer(configuration);
-        }
-
-        try {
-            byte[] body = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, message);
-
-            producer.sendAsync(body);
-        } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
-            LOGGER.error("", exception);
+            try {
+                byte[] body = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, message.getBody());
+                producer.send(body);
+            } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
+                producer.send(message.getBody(byte[].class));
+                LOGGER.error("An error occurred while serializing to byte array :: {}", exception);
+            }
         }
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected synchronized void doStart() throws Exception {
         super.doStart();
 
-        producer = createProducer(pulsarEndpoint.getConfiguration());
+        stopProducer(producers);
+        producers.add(createProducer(pulsarEndpoint.getConfiguration()));
     }
+
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (producer != null && !producer.isConnected()) {
-            producer.close();
-        }
+        stopProducer(producers);
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        super.doSuspend();
+
+        stopProducer(producers);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        super.doResume();
+
+        producers.add(createProducer(pulsarEndpoint.getConfiguration()));
     }
 
     private Producer<byte[]> createProducer(final PulsarEndpointConfiguration configuration) throws PulsarClientException {
@@ -67,5 +84,17 @@ public class PulsarProducer extends DefaultProducer {
             .topic(pulsarEndpoint.getTopic())
             .producerName(configuration.getProducerName())
             .create();
+    }
+
+    private void stopProducer(final Collection<Producer<byte[]>> pulsarProducers) throws PulsarClientException {
+        while (!pulsarProducers.isEmpty()) {
+            Producer<byte[]> producer = producers.poll();
+            producer.close();
+        }
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
     }
 }
