@@ -41,7 +41,7 @@ public class SpringApnsConsumerTest extends AbstractJUnit4SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mock;
 
     private ApnsServerStub server;
