@@ -38,6 +38,7 @@
   <context:property-placeholder location="classpath:camel.properties,file:target/custom.properties"
                                 ignore-resource-not-found="true"/>
 
+  <bean id="myOrderTypeConverters" class="org.apache.camel.example.pulsar.server.TypeConverters"/>
   <!-- START SNIPPET: e3 -->
   <!-- declare a camel context that scans for classes that is RouteBuilder
        in the package org.apache.camel.example.server -->
