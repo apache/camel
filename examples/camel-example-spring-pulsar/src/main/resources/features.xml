@@ -21,7 +21,7 @@
     <feature name='camel-example-spring-jms' version='${project.version}'>
         <feature version="${project.version}">camel</feature>
         <feature version="${project.version}">camel-pulsar</feature>
-        <bundle>mvn:org.apache.camel/camel-example-spring-jms/${project.version}</bundle>
+        <bundle>mvn:org.apache.camel/camel-example-spring-pulsar/${project.version}</bundle>
     </feature>
 
 </features>
