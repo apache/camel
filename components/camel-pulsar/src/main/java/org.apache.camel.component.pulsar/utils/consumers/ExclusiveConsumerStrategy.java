@@ -25,8 +25,12 @@ import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.SubscriptionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExclusiveConsumerStrategy implements ConsumerCreationStrategy {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExclusiveConsumerStrategy.class);
 
     private final PulsarConsumer pulsarConsumer;
     private final PulsarClientRetryPolicy retryPolicy;
@@ -45,6 +49,7 @@ public class ExclusiveConsumerStrategy implements ConsumerCreationStrategy {
         try {
             return Collections.singletonList(builder.subscriptionType(SubscriptionType.Exclusive).subscribe());
         } catch (PulsarClientException exception) {
+            LOGGER.error("An error occurred when creating the consumer {}", exception);
             retryPolicy.retry();
             return Collections.emptyList();
         }
