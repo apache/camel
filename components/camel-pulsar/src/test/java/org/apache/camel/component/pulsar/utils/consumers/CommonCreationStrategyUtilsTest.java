@@ -4,7 +4,7 @@ import static org.mockito.Mockito.mock;
 
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.junit.Test;
-
+// TODO, write some tests
 public class CommonCreationStrategyUtilsTest {
 
     @Test

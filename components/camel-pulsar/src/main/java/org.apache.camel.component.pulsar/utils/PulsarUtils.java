@@ -8,12 +8,8 @@ import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfigurati
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClientException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class PulsarUtils {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarUtils.class);
 
     public static Queue<Consumer<byte[]>> stopConsumers(final Queue<Consumer<byte[]>> consumers) throws PulsarClientException {
         while (!consumers.isEmpty()) {
@@ -31,7 +27,7 @@ public final class PulsarUtils {
 
         return pulsarEndpoint.getPulsarClient()
             .newProducer()
-            .topic(configuration.getTopic())
+            .topic(pulsarEndpoint.getTopic())
             .producerName(configuration.getProducerName())
             .create();
     }

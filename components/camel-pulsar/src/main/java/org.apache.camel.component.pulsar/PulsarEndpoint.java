@@ -11,13 +11,9 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @UriEndpoint(scheme = "pulsar", title = "Apache Pulsar", syntax = "pulsar:tenant/namespace/topic", label = "messaging")
 public class PulsarEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarEndpoint.class);
 
     @UriParam
     private final PulsarEndpointConfiguration pulsarEndpointConfiguration;
@@ -28,17 +24,13 @@ public class PulsarEndpoint extends DefaultEndpoint {
 
     private PulsarEndpoint(String uri, String path, PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarComponent component) throws PulsarClientException {
         super(uri, component);
+        // TODO: convert path to pulsar uri (include persistent / non-persistent prefix)
         this.topic = path;
         this.pulsarEndpointConfiguration = pulsarEndpointConfiguration;
         this.pulsarClient = pulsarEndpointConfiguration.getPulsarClient();
     }
 
     public static PulsarEndpoint create(String uri, String path, PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarComponent component) throws PulsarClientException {
-        if (pulsarEndpointConfiguration == null) {
-            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Pulsar client and Pulsar Endpoint Configuration cannot be null");
-            LOGGER.error("An exception occurred while creating Pulsar Endpoint :: {}", illegalArgumentException);
-            throw illegalArgumentException;
-        }
         return new PulsarEndpoint(uri, path, pulsarEndpointConfiguration, component);
     }
 

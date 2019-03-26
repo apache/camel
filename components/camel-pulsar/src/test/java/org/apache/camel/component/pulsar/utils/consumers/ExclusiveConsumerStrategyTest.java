@@ -5,7 +5,7 @@ import static org.mockito.Mockito.mock;
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.utils.retry.PulsarClientRetryPolicy;
 import org.junit.Test;
-
+// TODO, finish up tests
 public class ExclusiveConsumerStrategyTest {
 
     @Test

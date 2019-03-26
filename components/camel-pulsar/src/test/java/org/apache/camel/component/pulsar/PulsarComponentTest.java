@@ -18,25 +18,23 @@ public class PulsarComponentTest extends CamelTestSupport {
     private AutoConfiguration autoConfiguration;
 
     @Test
-    public void testProducer() throws Exception {
+    public void testPulsarEndpointConfiguration() throws Exception {
         PulsarEndpointConfiguration configuration = new PulsarEndpointConfiguration();
         configuration.setPulsarBrokerUrl("pulsar://localhost:6650");
-        PulsarComponent component = new PulsarComponent(context, configuration, null);
+        PulsarComponent component = new PulsarComponent(context);
 
         PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/omega-pl/fulfilment/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 
-        endpoint.isSingleton();
+        assertNotNull(endpoint);
     }
 
     @Test
-    public void testProducerAutoconfigures() throws Exception {
+    public void testProducerAutoConfigures() throws Exception {
         PulsarEndpointConfiguration configuration = new PulsarEndpointConfiguration();
         configuration.setPulsarBrokerUrl("pulsar://localhost:6650");
-        PulsarComponent component = new PulsarComponent(context, configuration, autoConfiguration);
+        PulsarComponent component = new PulsarComponent(context);
 
         PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/omega-pl/fulfilment/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
-
-        endpoint.isSingleton();
 
         verify(autoConfiguration).ensureNameSpaceAndTenant(Matchers.anyString());
     }

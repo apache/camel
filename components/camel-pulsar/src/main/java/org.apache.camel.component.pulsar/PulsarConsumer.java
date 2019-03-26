@@ -12,12 +12,8 @@ import org.apache.camel.component.pulsar.utils.retry.ExponentialRetryPolicy;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.PulsarClientException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PulsarConsumer extends DefaultConsumer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumer.class);
 
     private final PulsarEndpoint pulsarEndpoint;
     private final ConsumerCreationStrategyFactory consumerCreationStrategyFactory;
@@ -31,12 +27,7 @@ public class PulsarConsumer extends DefaultConsumer {
         this.consumerCreationStrategyFactory = ConsumerCreationStrategyFactory.create(this, new ExponentialRetryPolicy());
     }
 
-    public static PulsarConsumer create(PulsarEndpoint pulsarEndpoint, Processor processor) {
-        if (pulsarEndpoint == null || processor == null) {
-            IllegalArgumentException illegalArgumentException = new IllegalArgumentException("Pulsar endpoint nor processor must be supplied");
-            LOGGER.error("An exception occurred when creating PulsarConsumer :: {}", illegalArgumentException);
-            throw illegalArgumentException;
-        }
+    public static PulsarConsumer create(final PulsarEndpoint pulsarEndpoint, final Processor processor) {
         return new PulsarConsumer(pulsarEndpoint, processor);
     }
 

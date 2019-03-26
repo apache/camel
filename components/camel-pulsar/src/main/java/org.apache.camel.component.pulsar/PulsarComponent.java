@@ -10,45 +10,25 @@ import java.util.Map;
 
 public class PulsarComponent extends DefaultComponent {
 
-    private PulsarEndpointConfiguration configuration;
-    private AutoConfiguration autoConfiguration;
-
-    public PulsarComponent(CamelContext context, PulsarEndpointConfiguration configuration, AutoConfiguration autoConfiguration) {
-        super(context);
-        this.configuration = configuration;
-        this.autoConfiguration = autoConfiguration;
+    public PulsarComponent() {
     }
 
-    public PulsarComponent() {}
-
-    public PulsarComponent(CamelContext context) {
+    PulsarComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String path, Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(final String uri, final String path, final Map<String, Object> parameters) throws Exception {
+        final PulsarEndpointConfiguration configuration = new PulsarEndpointConfiguration();
+        final AutoConfiguration autoConfiguration = new AutoConfiguration();
 
         setProperties(configuration, parameters);
+        setProperties(autoConfiguration, parameters);
 
-        if(autoConfiguration != null) {
+        if (autoConfiguration.getPulsarAdmin() != null) {
             autoConfiguration.ensureNameSpaceAndTenant(path);
         }
+
         return PulsarEndpoint.create(uri, path, configuration, this);
-    }
-
-    public PulsarEndpointConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(PulsarEndpointConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    public AutoConfiguration getAutoConfiguration() {
-        return autoConfiguration;
-    }
-
-    public void setAutoConfiguration(AutoConfiguration autoConfiguration) {
-        this.autoConfiguration = autoConfiguration;
     }
 }

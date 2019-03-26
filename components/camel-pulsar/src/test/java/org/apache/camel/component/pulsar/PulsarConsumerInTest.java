@@ -8,21 +8,24 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.Test;
 
 public class PulsarConsumerInTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "pulsar://persistent/omega-pl/fulfilment/BatchCreated?numberOfConsumers=10"
+    @EndpointInject(uri = "pulsar:omega-pl/fulfilment/BatchCreated?numberOfConsumers=10"
         + "&subscriptionName=batch-created-subscription&subscriptionType=Shared&consumerNamePrefix=test-consumer"
         + "&pulsarClient=#pulsarClient&consumerQueueSize=5&producerName=test-producer"
+        + "&pulsarAdmin=#pulsarAdmin"
     )
     private Endpoint from;
 
-    @EndpointInject(uri = "pulsar://persistent/omega/stock/BookIn?subscriptionName=book-stock"
-        + "&subscriptionType=Shared&consumerNamePrefix=book-stock-consumer&numberOfConsumers=10"
+    @EndpointInject(uri = "pulsar:omega/stock/BookIn?subscriptionName=book-stock"
+        + "&subscriptionType=Failover&consumerNamePrefix=book-stock-consumer&numberOfConsumers=10"
         + "&pulsarClient=#pulsarClient&producerName=book-stock-producer&consumerQueueSize=5"
+        + "&pulsarAdmin=#pulsarAdmin"
     )
     private Endpoint to;
 
@@ -58,7 +61,12 @@ public class PulsarConsumerInTest extends CamelTestSupport {
             .listenerThreads(5)
             .build();
 
+        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
+            .serviceHttpUrl("http://localhost:8080")
+            .build();
+
         jndi.bind("pulsarClient", pulsarClient);
+        jndi.bind("pulsarAdmin", pulsarAdmin);
         jndi.bind("pulsar", new PulsarComponent(context()));
 
         return jndi;
