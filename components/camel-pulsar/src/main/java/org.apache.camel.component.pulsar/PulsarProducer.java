@@ -50,11 +50,10 @@ public class PulsarProducer extends DefaultProducer {
                 final Producer<byte[]> producer = producers.peek();
 
                 try {
-                    if (producer != null) {
-                        byte[] body = exchange.getContext().getTypeConverter()
-                            .mandatoryConvertTo(byte[].class, exchange, message.getBody());
-                        producer.send(body);
-                    }
+                    byte[] body = exchange.getContext().getTypeConverter()
+                        .mandatoryConvertTo(byte[].class, exchange, message.getBody());
+                    producer.send(body);
+
                 } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
                     LOGGER.warn("An error occurred while serializing to byte array, fall using fall back strategy :: {}", exception);
 
