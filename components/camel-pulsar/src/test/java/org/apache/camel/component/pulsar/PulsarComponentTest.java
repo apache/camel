@@ -31,8 +31,9 @@ public class PulsarComponentTest extends CamelTestSupport {
     private AutoConfiguration autoConfiguration;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         autoConfiguration = mock(AutoConfiguration.class);
+        super.setUp();
     }
 
     @Test
