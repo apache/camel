@@ -29,10 +29,10 @@ import org.junit.Test;
  */
 public class ChunkComponentNestedTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:endSimple")
+    @EndpointInject("mock:endSimple")
     protected MockEndpoint endSimpleMock;
 
-    @Produce(uri = "direct:startSimple")
+    @Produce("direct:startSimple")
     protected ProducerTemplate startSimpleProducerTemplate;
 
     /**
