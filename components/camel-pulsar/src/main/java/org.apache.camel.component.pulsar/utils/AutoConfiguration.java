@@ -1,8 +1,10 @@
 package org.apache.camel.component.pulsar.utils;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
-import org.apache.camel.component.pulsar.configuration.AdminConfiguration;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.pulsar.client.admin.PulsarAdmin;
@@ -11,10 +13,6 @@ import org.apache.pulsar.client.admin.Tenants;
 import org.apache.pulsar.common.policies.data.TenantInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @UriParams
 public class AutoConfiguration {
