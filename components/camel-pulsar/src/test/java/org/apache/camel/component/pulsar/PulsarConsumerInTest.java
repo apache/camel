@@ -1,11 +1,18 @@
 /**
- * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to
- * You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.component.pulsar;
 
@@ -17,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
@@ -31,10 +37,8 @@ public class PulsarConsumerInTest extends CamelTestSupport {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInTest.class);
     private static final String PULSAR_CLUSTER_URL = "pulsar://localhost:6650";
-    private static final String PULSAR_ADMIN_URL = "http://localhost:8080";
 
     private static final String PULSAR_CLIENT_BEAN_NAME = "pulsarClient";
-    private static final String PULSAR_ADMIN_BEAN_NAME = "pulsarAdmin";
 
     private static final String TOPIC_URI = "persistent://public/default/camel-topic";
     private static final String PRODUCER = "camel-producer";
@@ -79,12 +83,7 @@ public class PulsarConsumerInTest extends CamelTestSupport {
     private void registerPulsarBeans(final JndiRegistry jndi) throws PulsarClientException {
         PulsarClient pulsarClient = givenPulsarClient();
 
-        PulsarAdmin pulsarAdmin = PulsarAdmin.builder()
-            .serviceHttpUrl(PULSAR_ADMIN_URL)
-            .build();
-
         jndi.bind("pulsarClient", pulsarClient);
-        jndi.bind("pulsarAdmin", pulsarAdmin);
         jndi.bind("pulsar", new PulsarComponent(context()));
     }
 
