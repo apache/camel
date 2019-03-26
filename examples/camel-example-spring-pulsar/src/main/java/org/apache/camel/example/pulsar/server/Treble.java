@@ -16,12 +16,17 @@
  */
 package org.apache.camel.example.pulsar.server;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This is the implementation of the business service.
  */
 public class Treble implements Multiplier {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Treble.class);
 
     public int multiply(final int originalNumber) {
+        LOGGER.info("Number to multiply received {}", originalNumber);
         return originalNumber * 3;
     }
 
