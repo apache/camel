@@ -328,6 +328,10 @@ public class MllpEndpoint extends DefaultEndpoint {
         configuration.setCharsetName(charsetName);
     }
 
+    public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
+        configuration.setMaxConcurrentConsumers(maxConcurrentConsumers);
+    }
+
     // Utility methods for producers and consumers
 
     public boolean checkBeforeSendProperties(Exchange exchange, Socket socket, Logger log) {
