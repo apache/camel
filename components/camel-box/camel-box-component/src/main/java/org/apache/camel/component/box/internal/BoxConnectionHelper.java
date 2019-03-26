@@ -183,10 +183,17 @@ public final class BoxConnectionHelper {
 
     /**
      * Validation of page:
+     * - detects CAPTCHA test
      * - detects invalid credentials error
      * - detects wrong clientId error
      */
     private static void validatePage(Document page) {
+        Elements captchaDivs = page.select("div[class*=g-recaptcha]");
+        if (!captchaDivs.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Authentication requires CAPTCHA test. First you need to authenticate the account manually via web to unlock CAPTCHA.");
+        }
+
         Elements errorDivs = page.select("div[class*=error_message]");
         String errorMessage = null;
         if (!errorDivs.isEmpty()) {
