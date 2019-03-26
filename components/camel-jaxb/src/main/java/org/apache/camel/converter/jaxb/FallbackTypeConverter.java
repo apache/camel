@@ -121,18 +121,25 @@ public class FallbackTypeConverter {
             }
         }
 
+        TypeConverter converter = null;
+        if (registry instanceof TypeConverter) {
+            converter = (TypeConverter) registry;
+        } else if (exchange != null) {
+            converter = exchange.getContext().getTypeConverter();
+        }
+
         try {
             if (isJaxbType(type, exchange, objectFactory)) {
-                return unmarshall(type, exchange, value, exchange.getContext().getTypeConverter());
+                return unmarshall(type, exchange, value, converter);
             }
             if (value != null && isNotStreamCacheType(type)) {
                 if (hasXmlRootElement(value.getClass())) {
-                    return marshall(type, exchange, value, exchange.getContext().getTypeConverter(), null, prettyPrint);
+                    return marshall(type, exchange, value, converter, null, prettyPrint);
                 }
                 if (objectFactory) {
                     Method objectFactoryMethod = JaxbHelper.getJaxbElementFactoryMethod(exchange.getContext(), value.getClass());
                     if (objectFactoryMethod != null) {
-                        return marshall(type, exchange, value, exchange.getContext().getTypeConverter(), objectFactoryMethod, prettyPrint);
+                        return marshall(type, exchange, value, converter, objectFactoryMethod, prettyPrint);
                     }
                 }
             }
