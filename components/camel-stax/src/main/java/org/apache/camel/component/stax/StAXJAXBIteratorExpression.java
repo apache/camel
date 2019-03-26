@@ -34,7 +34,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionAdapter;
-import org.apache.camel.support.LRUSoftCache;
+import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.stax.StAXUtil.getTagName;
@@ -48,7 +48,7 @@ import static org.apache.camel.component.stax.StAXUtil.getTagName;
  * to access the message body. And there must be a JAXB annotated class to use as binding.
  */
 public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
-    private static final Map<Class<?>, JAXBContext> JAX_CONTEXTS = new LRUSoftCache<>(1000);
+    private static final Map<Class<?>, JAXBContext> JAX_CONTEXTS = LRUCacheFactory.newLRUSoftCache(1000);
 
     private final Class<T> handled;
     private final String handledName;

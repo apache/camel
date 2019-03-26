@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.component.caffeine.lrucache;
 
 import org.apache.camel.util.ObjectHelper;
 
@@ -50,21 +50,25 @@ import org.apache.camel.util.ObjectHelper;
  * Use {@link LRUCacheFactory} to create a new instance (do not use the constructor).
  *
  * @see LRUCacheFactory
- * @see LRUCache
- * @see LRUSoftCache
+ * @see CaffeineLRUCache
+ * @see CaffeineLRUSoftCache
  */
-public class LRUWeakCache<K, V> extends LRUCache<K, V> {
+public class CaffeineLRUWeakCache<K, V> extends CaffeineLRUCache<K, V> {
 
-    public LRUWeakCache(int maximumCacheSize) {
+    public CaffeineLRUWeakCache(int maximumCacheSize) {
         this(16, maximumCacheSize);
     }
 
-    public LRUWeakCache(int initialCapacity, int maximumCacheSize) {
-        super(initialCapacity, maximumCacheSize, false, false, true, false);
+    public CaffeineLRUWeakCache(int initialCapacity, int maximumCacheSize) {
+        this(initialCapacity, maximumCacheSize, false);
+    }
+
+    public CaffeineLRUWeakCache(int initialCapacity, int maximumCacheSize, boolean stopOnEviction) {
+        super(initialCapacity, maximumCacheSize, stopOnEviction, false, true, false);
     }
 
     @Override
     public String toString() {
-        return "LRUWeakCache@" + ObjectHelper.getIdentityHashCode(this);
+        return "CaffeineLRUWeakCache@" + ObjectHelper.getIdentityHashCode(this);
     }
 }
