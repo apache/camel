@@ -1,18 +1,11 @@
 /**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to
+ * You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package org.apache.camel.component.pulsar.utils.message;
 
@@ -26,10 +19,19 @@ import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeade
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.SEQUENCE_ID;
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.TOPIC_NAME;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.NotSerializableException;
+import java.io.ObjectOutputStream;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.pulsar.client.api.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class PulsarMessageUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarMessageUtils.class);
 
     public static Exchange updateExchange(final Message<byte[]> message, final Exchange input) {
         final Exchange output = input.copy(true);
@@ -59,5 +61,20 @@ public final class PulsarMessageUtils {
         output.setException(exception);
 
         return output;
+    }
+
+    public static byte[] serialize(final Object body) throws IOException {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
+
+        try {
+            outputStream.writeObject(body);
+            return byteArrayOutputStream.toByteArray();
+        } catch (NotSerializableException exception) {
+            throw new RuntimeCamelException(exception);
+        } finally {
+            byteArrayOutputStream.close();
+            outputStream.close();
+        }
     }
 }
