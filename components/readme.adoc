@@ -1055,7 +1055,7 @@ Number of Miscellaneous Components: 31 in 31 JAR artifacts (0 deprecated)
 
 | link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
 
-| link:camel-headersmap/src/main/docs/headersmap.adoc[Headersmap] (camel-headersmap) | 2.20 | Fast case-insensitive headers map implementation
+| link:camel-dropbox/src/main/docs/dropbox.adoc[Dropbox] (camel-dropbox) |  | Camel Dropbox support
 
 | link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 
