@@ -150,7 +150,6 @@
         <include>org.apache.camel:camel-hazelcast</include>
         <include>org.apache.camel:camel-hbase</include>
         <include>org.apache.camel:camel-hdfs2</include>
-        <include>org.apache.camel:camel-headersmap</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-http-common</include>
@@ -362,6 +361,8 @@
         <include>org.apache.camel:camel-commands-core</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
         <include>org.apache.camel:camel-route-parser</include>
+        <include>org.apache.camel:camel-headersmap</include>
+        <include>org.apache.camel:camel-caffeine-lrucache</include>
       </includes>
     </dependencySet>
 

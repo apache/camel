@@ -14,21 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.component.caffeine.lrucache;
+
 import org.apache.camel.Service;
 import org.apache.camel.support.LRUCache;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LRUCacheTest extends Assert {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
+public class CaffeineLRUCacheTest {
 
     private LRUCache<String, Service> cache;
 
     @Before
     public void setUp() throws Exception {
         // for testing use sync listener
-        cache = new LRUCache<>(10, 10, true, false, false, true);
+        cache = new CaffeineLRUCache<>(10, 10, true, false, false, true);
     }
 
     @Test

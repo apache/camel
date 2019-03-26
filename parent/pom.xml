@@ -820,6 +820,16 @@
                 <artifactId>camel-core-xml</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-caffeine-lrucache</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-headersmap</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- NOTE: auto-generated list of components when building camel catalog -->
             <!-- camel components: START -->
@@ -1391,11 +1401,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-hdfs2</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-headersmap</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

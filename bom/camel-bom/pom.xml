@@ -508,6 +508,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-caffeine-lrucache</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-caffeine-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
