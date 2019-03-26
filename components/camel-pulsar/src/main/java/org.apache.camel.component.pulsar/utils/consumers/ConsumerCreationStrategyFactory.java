@@ -17,31 +17,42 @@
 package org.apache.camel.component.pulsar.utils.consumers;
 
 import org.apache.camel.component.pulsar.PulsarConsumer;
+import org.apache.camel.component.pulsar.utils.retry.PulsarClientRetryPolicy;
 
 public class ConsumerCreationStrategyFactory {
 
-    private final ExclusiveConsumerStrategy exclusiveConsumerStrategy;
-    private final SharedConsumerStrategy sharedConsumerStrategy;
-    private final FailoverConsumerStrategy failoverConsumerStrategy;
+    private final PulsarClientRetryPolicy retryPolicy;
+    private final PulsarConsumer pulsarConsumer;
 
+    private ConsumerCreationStrategyFactory(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
+        this.retryPolicy = retryPolicy;
+        this.pulsarConsumer = pulsarConsumer;
+    }
 
-    public ConsumerCreationStrategyFactory(PulsarConsumer pulsarConsumer) {
-        sharedConsumerStrategy = new SharedConsumerStrategy(pulsarConsumer);
-        exclusiveConsumerStrategy = new ExclusiveConsumerStrategy(pulsarConsumer);
-        failoverConsumerStrategy = new FailoverConsumerStrategy(pulsarConsumer);
+    public static ConsumerCreationStrategyFactory create(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
+        validate(pulsarConsumer, retryPolicy);
+        return new ConsumerCreationStrategyFactory(pulsarConsumer, retryPolicy);
+    }
+
+    private static void validate(PulsarConsumer pulsarConsumer, PulsarClientRetryPolicy retryPolicy) {
+        if (pulsarConsumer == null || retryPolicy == null) {
+            throw new IllegalArgumentException("Neither Pulsar Consumer nor Retry Policy can be null");
+        }
     }
 
 
     public ConsumerCreationStrategy getStrategy(final SubscriptionType subscriptionType) {
-        switch (subscriptionType) {
+        final SubscriptionType type = subscriptionType == null ? SubscriptionType.EXCLUSIVE : subscriptionType;
+
+        switch (type) {
             case SHARED:
-                return sharedConsumerStrategy;
+                return new SharedConsumerStrategy(pulsarConsumer, retryPolicy);
             case EXCLUSIVE:
-                return exclusiveConsumerStrategy;
+                return new ExclusiveConsumerStrategy(pulsarConsumer, retryPolicy);
             case FAILOVER:
-                return failoverConsumerStrategy;
+                return new FailoverConsumerStrategy(pulsarConsumer, retryPolicy);
             default:
-                return exclusiveConsumerStrategy;
+                return new ExclusiveConsumerStrategy(pulsarConsumer, retryPolicy);
         }
     }
 }

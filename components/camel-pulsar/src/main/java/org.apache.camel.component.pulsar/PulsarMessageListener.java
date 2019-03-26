@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 public class PulsarMessageListener implements MessageListener<byte[]> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarMessageListener.class);
+
     private final PulsarEndpoint endpoint;
     private final ExceptionHandler exceptionHandler;
     private final Processor processor;
@@ -67,7 +68,6 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
         try {
             consumer.acknowledge(message.getMessageId());
         } catch (PulsarClientException exception) {
-            // retry acknowledge
             LOGGER.error("An error occurred while acknowledging this message :: {}", exception);
         }
     }

@@ -42,10 +42,11 @@ public class PulsarEndpointConfiguration {
     private String consumerNamePrefix;
     @UriParam(label = "consumer, producer", description = "The pulsar client")
     private PulsarClient pulsarClient;
-    @UriParam(label = "consumer,producer", description = "Url for the Pulsar Broker")
+    @UriParam(label = "consumer, producer", description = "Url for the Pulsar Broker")
     private String pulsarBrokerUrl;
 
-    public PulsarEndpointConfiguration(){}
+    public PulsarEndpointConfiguration() {
+    }
 
     public String getSubscriptionName() {
         return subscriptionName;
@@ -105,7 +106,7 @@ public class PulsarEndpointConfiguration {
 
     public PulsarClient getPulsarClient() throws PulsarClientException {
         if (pulsarClient == null) {
-            pulsarClient = new ClientBuilderImpl().serviceUrl(pulsarBrokerUrl).build();
+            pulsarClient = new ClientBuilderImpl().serviceUrl("pulsar://localhost:6650").build();
         }
         return pulsarClient;
     }

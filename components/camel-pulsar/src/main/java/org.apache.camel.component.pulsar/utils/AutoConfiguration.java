@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.pulsar.utils;
 
-import org.apache.camel.component.pulsar.configuration.AdminConfiguration;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.admin.PulsarAdminException;
 import org.apache.pulsar.client.admin.Tenants;
@@ -24,27 +30,27 @@ import org.apache.pulsar.common.policies.data.TenantInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * What is the purpose of this? Needs documentation here
  */
+@UriParams
 public class AutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoConfiguration.class);
     private static final Pattern URI_PATTERN = Pattern.compile("^(?<namespace>(?<tenant>.+)/.+)/.+$");
 
+    @UriParam(label = "admin", description = "The Pulsar Admin client Bean")
     private PulsarAdmin pulsarAdmin;
-    private AdminConfiguration adminConfiguration;
 
     public AutoConfiguration(PulsarAdmin pulsarAdmin) {
         setPulsarAdmin(pulsarAdmin);
     }
 
+    public AutoConfiguration() {
+    }
+
     public void ensureNameSpaceAndTenant(String path) {
-        if(pulsarAdmin != null && adminConfiguration != null && adminConfiguration.isAutoCreateAllowed()) {
+        if(pulsarAdmin != null) {
             Matcher matcher = URI_PATTERN.matcher(path);
             if (matcher.matches()) {
                 String tenant = matcher.group("tenant");
@@ -62,7 +68,9 @@ public class AutoConfiguration {
     private void ensureNameSpace(String tenant, String namespace) throws PulsarAdminException {
         List<String> namespaces = pulsarAdmin.namespaces().getNamespaces(tenant);
         if (!namespaces.contains(namespace)) {
-            pulsarAdmin.namespaces().createNamespace(namespace, adminConfiguration.getClusters());
+            // TODO find a way to pass the cluster names into this method
+            Set<String> clusters = Collections.singleton("standalone");
+            pulsarAdmin.namespaces().createNamespace(namespace, clusters);
         }
     }
 
@@ -71,7 +79,9 @@ public class AutoConfiguration {
         List<String> tenants = tenants1.getTenants();
         if (!tenants.contains(tenant)) {
             TenantInfo tenantInfo = new TenantInfo();
-            tenantInfo.setAllowedClusters(adminConfiguration.getClusters());
+            // TODO find a way to pass the cluster names into this method
+            Set<String> clusters = Collections.singleton("standalone");
+            tenantInfo.setAllowedClusters(clusters);
             pulsarAdmin.tenants().createTenant(tenant, tenantInfo);
         }
     }
@@ -80,8 +90,7 @@ public class AutoConfiguration {
         return pulsarAdmin;
     }
 
-    public void setPulsarAdmin(PulsarAdmin pulsarAdmin) {
+    private void setPulsarAdmin(PulsarAdmin pulsarAdmin) {
         this.pulsarAdmin = pulsarAdmin;
-        adminConfiguration = (AdminConfiguration) pulsarAdmin.getClientConfigData();
     }
 }
