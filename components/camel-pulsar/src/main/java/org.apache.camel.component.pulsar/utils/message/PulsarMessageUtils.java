@@ -64,14 +64,17 @@ public final class PulsarMessageUtils {
     }
 
     public static byte[] serialize(final Object body) throws IOException {
-        try {
-            ByteArrayOutputStream b = new ByteArrayOutputStream();
-            ObjectOutputStream o = new ObjectOutputStream(b);
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
 
-            o.writeObject(body);
-            return b.toByteArray();
+        try {
+            outputStream.writeObject(body);
+            return byteArrayOutputStream.toByteArray();
         } catch (NotSerializableException exception) {
             throw new RuntimeCamelException(exception);
+        } finally {
+            byteArrayOutputStream.close();
+            outputStream.close();
         }
     }
 }
