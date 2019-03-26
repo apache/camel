@@ -34,11 +34,11 @@ public class PulsarEndpointConfiguration {
     private int numberOfConsumers;
     @UriParam(label = "consumer", description = "Size of the consumer queue")
     private int consumerQueueSize;
-    @UriParam(label = "consumer", description = "Name of the consumer")
+    @UriParam(label = "consumer", description = "Name of the consumer when subscription is EXCLUSIVE")
     private String consumerName;
     @UriParam(label = "producer", description = "Name of the producer")
     private String producerName;
-    @UriParam(label = "consumer", description = "Prefix to add to consumer names")
+    @UriParam(label = "consumer", description = "Prefix to add to consumer names when a SHARED or FAILOVER subscription is used")
     private String consumerNamePrefix;
     @UriParam(label = "consumer, producer", description = "The pulsar client")
     private PulsarClient pulsarClient;
