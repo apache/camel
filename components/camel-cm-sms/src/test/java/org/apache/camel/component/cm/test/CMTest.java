@@ -76,10 +76,10 @@ public class CMTest extends AbstractJUnit4SpringContextTests {
     private final PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
     private String validNumber;
 
-    @Produce(uri = "direct:sms")
+    @Produce("direct:sms")
     private CMProxy cmProxy;
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     private MockEndpoint mock;
 
     // private StopWatch stopWatch = new StopWatch(getClass().getSimpleName());
