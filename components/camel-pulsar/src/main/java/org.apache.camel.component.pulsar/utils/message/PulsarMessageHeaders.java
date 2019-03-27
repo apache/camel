@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.pulsar.utils.message;
 
-class PulsarMessageHeaders {
+public class PulsarMessageHeaders {
+
     static final String PRODUCER_NAME = "producer_name";
     static final String SEQUENCE_ID = "sequence_id";
     static final String PUBLISH_TIME = "publish_time";
-    static final String PROPERTIES = "properties";
+    public static final String PROPERTIES = "properties";
     static final String MESSAGE_ID = "message_id";
     static final String EVENT_TIME = "event_time";
     static final String KEY = "key";
