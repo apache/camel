@@ -651,7 +651,31 @@ Each location is separated by comma.
 When using Blueprint property placeholder in the Blueprint XML file, you
 can declare the properties directly in the XML file as shown below:
 
-include::../../../components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/configadmin-outside.xml[]
+[source,xml]
+----
+<!-- blueprint property placeholders -->
+<cm:property-placeholder persistent-id="my-placeholders" update-strategy="reload">
+  <cm:default-properties>
+    <cm:property name="greeting" value="Hello"/>
+    <cm:property name="destination" value="mock:result"/>
+  </cm:default-properties>
+</cm:property-placeholder>
+
+<!-- a bean that uses a blueprint property placeholder -->
+<bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
+  <property name="say" value="${greeting}"/>
+</bean>
+
+<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+  <route>
+    <from uri="direct:start"/>
+    <bean ref="myCoolBean" method="saySomething"/>
+    <to uri="{{destination}}"/>
+  </route>
+
+</camelContext>
+---
 
 Notice that we have a `<bean>` which refers to one of the properties. And in
 the Camel route we refer to the other using the `{{ }}` notation.
@@ -659,7 +683,16 @@ the Camel route we refer to the other using the `{{ }}` notation.
 Now if you want to override these Blueprint properties from an unit
 test, you can do this as shown below:
 
-include::../../../components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/ConfigAdminOverridePropertiesOutsideCamelContextTest.java[]
+[source,java]
+----
+protected String useOverridePropertiesWithConfigAdmin(Dictionary props) {
+    // add the properties we want to override
+    props.put("greeting", "Bye");
+
+    // return the PID of the config-admin we are using in the blueprint xml file
+    return "my-placeholders";
+}
+----
 
 To do this we override and implement the
 `useOverridePropertiesWithConfigAdmin` method. We can then put the
@@ -683,14 +716,47 @@ For example in the blueprint XML file we have the
 `persistence-id="stuff"`, which mean it will load the configuration
 file as `etc/stuff.cfg`.
 
-include::../../../components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/configadmin-loadfile.xml[]
+[source,xml]
+----
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xsi:schemaLocation="
+             http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+<!-- blueprint property placeholders, that will use etc/stuff.cfg as the properties file -->
+<cm:property-placeholder persistent-id="stuff" update-strategy="reload"/>
+
+<!-- a bean that uses a blueprint property placeholder -->
+<bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
+  <property name="say" value="${greeting}"/>
+</bean>
+
+<camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+  <route>
+    <from uri="direct:start"/>
+    <bean ref="myCoolBean" method="saySomething"/>
+    <to uri="mock:result"/>
+  </route>
+
+</camelContext>
+----
 
 Now if you want to unit test this blueprint XML file, then you can override
 the `loadConfigAdminConfigurationFile` and tell Camel which file to
 load as shown below:
 
-include::../../../components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/ConfigAdminLoadConfigurationFileTest.java[]
-
+[source,java]
+----
+@Override
+protected String[] loadConfigAdminConfigurationFile() {
+    // String[0] = tell Camel the path of the .cfg file to use for OSGi ConfigAdmin in the blueprint XML file
+    // String[1] = tell Camel the persistence-id of the cm:property-placeholder in the blueprint XML file
+    return new String[]{"src/test/resources/etc/stuff.cfg", "stuff"};
+}
+----
 Notice that this method requires to return a `String[]` with 2 values. The
 1st value is the path for the configuration file to load. The second
 value is the persistence-id of the `<cm:property-placeholder>` tag.
@@ -711,11 +777,92 @@ greeting=Bye
 You can do both as well. Here is a complete example. First we have the
 Blueprint XML file:
 
-include::../../../components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/configadmin-loadfileoverride.xml[]
+[source,xml]
+----
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xsi:schemaLocation="
+             http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+  <!-- blueprint property placeholders, that will use etc/stuff.cfg as the properties file -->
+  <cm:property-placeholder persistent-id="stuff" update-strategy="reload">
+    <cm:default-properties>
+      <cm:property name="greeting" value="Hello" />
+      <cm:property name="echo" value="Hey" />
+      <cm:property name="destination" value="mock:original" />
+    </cm:default-properties>
+  </cm:property-placeholder>
+
+  <!-- a bean that uses a blueprint property placeholder -->
+  <bean id="myCoolBean" class="org.apache.camel.test.blueprint.MyCoolBean">
+    <property name="say" value="${greeting}"/>
+    <property name="echo" value="${echo}"/>
+  </bean>
+
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+    <route>
+      <from uri="direct:start"/>
+      <bean ref="myCoolBean" method="saySomething"/>
+      <to uri="{{destination}}"/>
+      <bean ref="myCoolBean" method="echoSomething"/>
+      <to uri="{{destination}}"/>
+    </route>
+
+  </camelContext>
+
+</blueprint>
+----
 
 And in the unit test class we do as follows:
 
-include::../../../components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/ConfigAdminLoadConfigurationFileAndOverrideTest.java[]
+[source,java]
+----
+/**
+ * This example will load a Blueprint .cfg file (which will initialize configadmin), and also override its property
+ * placeholders from this unit test source code directly (the change will reload blueprint container).
+ */
+public class ConfigAdminLoadConfigurationFileAndOverrideTest extends CamelBlueprintTestSupport {
+
+    @Override
+    protected String getBlueprintDescriptor() {
+        // which blueprint XML file to use for this test
+        return "org/apache/camel/test/blueprint/configadmin-loadfileoverride.xml";
+    }
+
+    @Override
+    protected String[] loadConfigAdminConfigurationFile() {
+        // which .cfg file to use, and the name of the persistence-id
+        return new String[]{"src/test/resources/etc/stuff.cfg", "stuff"};
+    }
+
+    @Override
+    protected String useOverridePropertiesWithConfigAdmin(Dictionary props) throws Exception {
+        // override / add extra properties
+        props.put("destination", "mock:extra");
+
+        // return the persistence-id to use
+        return "stuff";
+    }
+
+    @Test
+    public void testConfigAdmin() throws Exception {
+        // mock:original comes from <cm:default-properties>/<cm:property name="destination" value="mock:original" />
+        getMockEndpoint("mock:original").setExpectedMessageCount(0);
+        // mock:result comes from loadConfigAdminConfigurationFile()
+        getMockEndpoint("mock:result").setExpectedMessageCount(0);
+        // mock:extra comes from useOverridePropertiesWithConfigAdmin()
+        getMockEndpoint("mock:extra").expectedBodiesReceived("Bye World", "Yay Bye WorldYay Bye World");
+
+        template.sendBody("direct:start", "World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+}
+----
 
 And the `etc/stuff.cfg` configuration file contains:
 
@@ -743,7 +890,14 @@ type.
 
 To bridge Spring and Camel you must define a single bean as shown below:
 
-include::../../../components/camel-spring/src/test/resources/org/apache/camel/component/properties/CamelSpringPropertyPlaceholderConfigurerTest.xml[]
+[source,xml]
+----
+<!-- bridge spring property placeholder with Camel -->
+<!-- you must NOT use the <context:property-placeholder at the same time, only this bridge bean -->
+<bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+  <property name="location" value="classpath:org/apache/camel/component/properties/cheese.properties"/>
+</bean>
+----
 
 You *must not* use the spring `<context:property-placeholder>` namespace
 at the same time; this is not possible.
@@ -752,7 +906,23 @@ After declaring this bean, you can define property placeholders using
 both the Spring style, and the Camel style within the `<camelContext>`
 tag as shown below:
 
-include::../../../components/camel-spring/src/test/resources/org/apache/camel/component/properties/CamelSpringPropertyPlaceholderConfigurerTest.xml[]
+[source,xml]
+----
+<!-- a bean that uses Spring property placeholder -->
+<!-- the ${hi} is a spring property placeholder -->
+<bean id="hello" class="org.apache.camel.component.properties.HelloBean">
+  <property name="greeting" value="${hi}"/>
+</bean>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <!-- in this route we use Camels property placeholder {{ }} style -->
+  <route>
+    <from uri="direct:{{cool.bar}}"/>
+    <bean ref="hello"/>
+    <to uri="{{cool.end}}"/>
+  </route>
+</camelContext>
+----
 
 Notice how the hello bean is using pure Spring property placeholders using
 the `${}` notation. And in the Camel routes we use the Camel
@@ -808,7 +978,16 @@ So for example in your unit test classes, you can override the
 `java.util.Properties` that contains the properties which should be
 preferred to be used.
 
-include::../../../components/camel-test-blueprint/src/test/java/org/apache/camel/test/blueprint/ConfigAdminOverridePropertiesTest.java[]
+[source,java]
+----
+@Override
+protected Properties useOverridePropertiesWithPropertiesComponent() {
+    Properties extra = new Properties();
+    extra.put("destination", "mock:extra");
+    extra.put("greeting", "Bye");
+    return extra;
+}
+----
 
 This can be done from any of the Camel Test kits, such as `camel-test`,
 `camel-test-spring` and `camel-test-blueprint`.
