@@ -16,19 +16,14 @@
  */
 package org.apache.camel.example.pulsar.server;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.Converter;
 
-/**
- * This is the implementation of the business service.
- */
-public class Treble implements Multiplier {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Treble.class);
+public class TypeConverters implements org.apache.camel.TypeConverters {
 
-    public int multiply(final int originalNumber) {
-        LOGGER.info("Number to multiply received {}", originalNumber);
-        return originalNumber * 3;
+
+    @Converter
+    public int intFromByteArray(byte[] bytes) {
+        return 22;
     }
 
 }
-// END SNIPPET: e1

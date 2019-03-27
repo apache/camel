@@ -59,7 +59,6 @@ public class PulsarProducer extends DefaultProducer {
 
                 } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
                     LOGGER.warn("An error occurred while serializing to byte array, fall using fall back strategy :: {}", exception);
-
                     byte[] body = PulsarMessageUtils.serialize(message.getBody());
 
                     producer.send(body);
