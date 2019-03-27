@@ -18,6 +18,7 @@ package org.apache.camel.component.pulsar;
 
 import org.apache.camel.component.pulsar.configuration.PulsarEndpointConfiguration;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
+import org.apache.camel.component.pulsar.utils.consumers.SubscriptionType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,6 +46,25 @@ public class PulsarComponentTest extends CamelTestSupport {
         PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/omega-pl/fulfilment/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 
         assertNotNull(endpoint);
+    }
+
+    @Test
+    public void testPulsarEndpointDefaultConfiguration() throws Exception {
+        PulsarEndpointConfiguration configuration = new PulsarEndpointConfiguration();
+        configuration.setPulsarBrokerUrl("pulsar://localhost:6650");
+        PulsarComponent component = new PulsarComponent(context);
+
+        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/omega-pl/fulfilment/BatchCreated");
+
+        assertNotNull(endpoint);
+        assertEquals("sole-consumer", endpoint.getConfiguration().getConsumerName());
+        assertEquals("cons", endpoint.getConfiguration().getConsumerNamePrefix());
+        assertEquals(10, endpoint.getConfiguration().getConsumerQueueSize());
+        assertEquals(10, endpoint.getConfiguration().getNumberOfConsumers());
+        assertEquals("default-producer", endpoint.getConfiguration().getProducerName());
+        assertNull(endpoint.getConfiguration().getPulsarBrokerUrl());
+        assertEquals("subs", endpoint.getConfiguration().getSubscriptionName());
+        assertEquals(SubscriptionType.EXCLUSIVE, endpoint.getConfiguration().getSubscriptionType());
     }
 
     @Test
