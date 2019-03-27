@@ -1,43 +1,44 @@
 /**
- * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to
- * You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
- * specific language governing permissions and limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.component.pulsar;
 
+import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders;
 import org.apache.camel.component.pulsar.utils.message.PulsarMessageUtils;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.pulsar.client.api.Producer;
+import org.apache.pulsar.client.api.ProducerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedList;
-import java.util.Queue;
-
-import static org.apache.camel.component.pulsar.utils.PulsarUtils.createProducer;
-import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopProducer;
 
 public class PulsarProducer extends DefaultProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarProducer.class);
 
-    private Queue<Producer<byte[]>> producers;
     private final PulsarEndpoint pulsarEndpoint;
 
     private PulsarProducer(PulsarEndpoint pulsarEndpoint) {
         super(pulsarEndpoint);
 
         this.pulsarEndpoint = pulsarEndpoint;
-        // TODO do we want to pass this into the constructor to allow for easier testing?
-        this.producers = new LinkedList<>();
     }
 
     public static PulsarProducer create(final PulsarEndpoint pulsarEndpoint) {
@@ -46,65 +47,37 @@ public class PulsarProducer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
-        // TODO check that this synchronized is wrapping the correct scope
-        synchronized (this) {
-            if (!producers.isEmpty()) {
-                final Message message = exchange.getIn();
-                //TODO is peek the correct method to use here - look at the head of the q but do not remove?
-                final Producer<byte[]> producer = producers.peek();
+        final Message message = exchange.getIn();
+        final String topic = pulsarEndpoint.getTopic();
+        final String producerName = topic + "-" + Thread.currentThread().getId();
 
-                try {
-                    byte[] body = exchange.getContext().getTypeConverter()
-                        .mandatoryConvertTo(byte[].class, exchange, message.getBody());
-                    producer.send(body);
+        final Map properties = message.getHeader(PulsarMessageHeaders.PROPERTIES, Map.class);
 
-                } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
-                    LOGGER.debug("An error occurred while serializing to byte array, fall using fall back strategy :: {}", exception);
+        final ProducerBuilder<byte[]> producerBuilder = pulsarEndpoint
+            .getPulsarClient()
+            .newProducer()
+            .producerName(producerName)
+            .topic(topic);
 
-                    byte[] body = PulsarMessageUtils.serialize(message.getBody());
-
-                    producer.send(body);
-                }
-            } else {
-                LOGGER.error("No producer associated with endpoint [{}]", pulsarEndpoint.getEndpointUri());
-            }
+        if (properties != null && !properties.isEmpty()) {
+            producerBuilder.properties(properties);
         }
-    }
 
-    // TODO why is this synchronized but other methods are not?
-    // what are we protecting from concurrency issues - is it the producers collection?
-    // if it is the producers collection, would it be better/safer to wrap that in Collections.synchronizedCollection
-    @Override
-    protected synchronized void doStart() throws Exception {
-        super.doStart();
+        final Producer<byte[]> producer = producerBuilder.create();
 
-        producers = stopProducer(producers);
-        producers.add(createProducer(pulsarEndpoint));
-    }
+        try {
+            byte[] body = exchange.getContext().getTypeConverter()
+                .mandatoryConvertTo(byte[].class, exchange, message.getBody());
+            producer.send(body);
 
+        } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
+            LOGGER.warn("An error occurred while serializing to byte array, fall using fall back strategy :: {}", exception);
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        producers = stopProducer(producers);
-    }
+            byte[] body = PulsarMessageUtils.serialize(message.getBody());
 
-    @Override
-    protected void doSuspend() throws Exception {
-        super.doSuspend();
+            producer.send(body);
+        }
 
-        producers = stopProducer(producers);
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        super.doResume();
-
-        producers.add(createProducer(pulsarEndpoint));
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
+        producer.close();
     }
 }
