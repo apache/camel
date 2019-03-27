@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 public class AwaitingConsumerTest extends BeanstalkMockTestSupport {
 
-    @EndpointInject(uri = "beanstalk:tube")
+    @EndpointInject("beanstalk:tube")
     protected BeanstalkEndpoint endpoint;
 
     private String testMessage = "hello, world";

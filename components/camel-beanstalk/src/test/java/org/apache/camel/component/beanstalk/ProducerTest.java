@@ -43,10 +43,10 @@ import static org.mockito.Mockito.when;
 
 public class ProducerTest extends BeanstalkMockTestSupport {
 
-    @EndpointInject(uri = "beanstalk:tube")
+    @EndpointInject("beanstalk:tube")
     protected BeanstalkEndpoint endpoint;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Produce(uri = "direct:start")

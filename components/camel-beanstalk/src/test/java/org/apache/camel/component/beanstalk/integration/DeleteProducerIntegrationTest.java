@@ -29,10 +29,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class DeleteProducerIntegrationTest extends BeanstalkCamelTestSupport {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate direct;
 
     @Test
