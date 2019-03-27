@@ -24,7 +24,7 @@ import org.junit.Test;
 
 public class CoAPPingTest extends CoAPTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate sender;
     
     @Test
