@@ -32,17 +32,17 @@ public abstract class LRUCacheFactory {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LRUCacheFactory.class);
 
-    private static volatile LRUCacheFactory INSTANCE;
+    private static volatile LRUCacheFactory instance;
     
     public static LRUCacheFactory getInstance() {
-        if (INSTANCE == null) {
+        if (instance == null) {
             synchronized (LRUCacheFactory.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = createLRUCacheFactory();
+                if (instance == null) {
+                    instance = createLRUCacheFactory();
                 }
             }
         }
-        return INSTANCE;
+        return instance;
     }
 
     private static LRUCacheFactory createLRUCacheFactory() {
