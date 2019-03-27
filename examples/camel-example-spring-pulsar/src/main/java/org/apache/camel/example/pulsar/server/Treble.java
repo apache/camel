@@ -16,8 +16,6 @@
  */
 package org.apache.camel.example.pulsar.server;
 
-import org.springframework.stereotype.Service;
-
 /**
  * This is the implementation of the business service.
  */

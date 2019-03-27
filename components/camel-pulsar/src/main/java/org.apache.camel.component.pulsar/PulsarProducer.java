@@ -41,6 +41,7 @@ public class PulsarProducer extends DefaultProducer {
         super(pulsarEndpoint);
 
         this.pulsarEndpoint = pulsarEndpoint;
+        // TODO do we want to pass this into the constructor to allow for easier testing?
         this.producers = new LinkedList<>();
     }
 
@@ -50,17 +51,20 @@ public class PulsarProducer extends DefaultProducer {
 
     @Override
     public void process(final Exchange exchange) throws Exception {
+        // TODO check that this synchronized is wrapping the correct scope
         synchronized (this) {
             if(!producers.isEmpty()) {
                 final Message message = exchange.getIn();
+                //TODO is peek the correct method to use here - look at the head of the q but do not remove?
                 final Producer<byte[]> producer = producers.peek();
-
-                try {
-                    byte[] body = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, message.getBody());
-                    producer.send(body);
-                } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
-                    producer.send(message.getBody(byte[].class));
-                    LOGGER.error("An error occurred while serializing to byte array :: {}", exception);
+                if(null != producer) {
+                    try {
+                        byte[] body = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, exchange, message.getBody());
+                        producer.send(body);
+                    } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
+                        producer.send(message.getBody(byte[].class));
+                        LOGGER.error("An error occurred while serializing to byte array :: {}", exception);
+                    }
                 }
             } else {
                 LOGGER.error("No producer associated with endpoint [{}]", pulsarEndpoint.getEndpointUri());
@@ -68,6 +72,9 @@ public class PulsarProducer extends DefaultProducer {
         }
     }
 
+    // TODO why is this synchronized but other methods are not?
+    // what are we protecting from concurrency issues - is it the producers collection?
+    // if it is the producers collection, would it be better/safer to wrap that in Collections.synchronizedCollection
     @Override
     protected synchronized void doStart() throws Exception {
         super.doStart();

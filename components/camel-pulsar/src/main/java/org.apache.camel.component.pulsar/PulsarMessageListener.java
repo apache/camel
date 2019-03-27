@@ -69,6 +69,7 @@ public class PulsarMessageListener implements MessageListener<byte[]> {
             consumer.acknowledge(message.getMessageId());
         } catch (PulsarClientException exception) {
             LOGGER.error("An error occurred while acknowledging this message :: {}", exception);
+            // TODO should we be doing anything else here?
         }
     }
 }

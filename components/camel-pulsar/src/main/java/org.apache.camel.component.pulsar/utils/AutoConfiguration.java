@@ -46,6 +46,7 @@ public class AutoConfiguration {
         setPulsarAdmin(pulsarAdmin);
     }
 
+    // TODO is this required?
     public AutoConfiguration() {
     }
 

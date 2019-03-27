@@ -31,6 +31,7 @@ enum TopicType {
     }
 }
 
+// TODO this is not used - is it redundant?
 public final class TopicTypeUtils {
 
     public static String parse(final String value) {

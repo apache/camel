@@ -45,6 +45,7 @@ public class PulsarEndpointConfiguration {
     @UriParam(label = "consumer, producer", description = "Url for the Pulsar Broker")
     private String pulsarBrokerUrl;
 
+    // TODO is this required?
     public PulsarEndpointConfiguration() {
     }
 
