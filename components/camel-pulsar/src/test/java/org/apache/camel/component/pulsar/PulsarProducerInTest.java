@@ -79,7 +79,7 @@ public class PulsarProducerInTest extends CamelTestSupport {
 
         producerTemplate.sendBody("Hello ");
         producerTemplate.sendBody("World ");
-        producerTemplate.sendBody("!");
+        producerTemplate.sendBody(new Integer(10));
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
     }
