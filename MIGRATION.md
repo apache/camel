@@ -58,7 +58,7 @@ Migrating custom components
 
 You should depend on `camel-support` and not `camel-core` directly.
 
-The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. For example classes such as `DefaultComponent`, `DefaultEndpoint` etc has been moved and migration is nessasary.
+The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. For example classes such as `DefaultComponent`, `DefaultEndpoint` etc has been moved and migration is necessary.
 
 // TODO: Should we create a camel2-support JAR with an adapter to bridge between 2.x and 3.0
 
@@ -191,7 +191,7 @@ The class `org.apache.camel.management.JmxSystemPropertyKeys` has been moved to 
 
 #### camel-test
 
-If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer nessasary, and instead
+If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead
 you should just use the `bind` method from the `Registry` API which you can call directly from `CamelContext`, such as:
 
     context.getRegistry().bind("myId", myBean);
