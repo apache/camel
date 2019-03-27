@@ -31,7 +31,7 @@ import org.junit.Test;
 
 public class CMISConsumerTest extends CMISTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Test
