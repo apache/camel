@@ -23,23 +23,25 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 
+import static org.apache.camel.component.pulsar.utils.consumers.SubscriptionType.EXCLUSIVE;
+
 @UriParams
 public class PulsarEndpointConfiguration {
 
-    @UriParam(label = "consumer", description = "Name of the subscription to use")
-    private String subscriptionName;
-    @UriParam(label = "consumer", description = "Type of the subscription", enums = "EXCLUSIVE, SHARED, FAILOVER")
-    private SubscriptionType subscriptionType;
-    @UriParam(label = "consumer", description = "Number of consumers")
-    private int numberOfConsumers;
-    @UriParam(label = "consumer", description = "Size of the consumer queue")
-    private int consumerQueueSize;
-    @UriParam(label = "consumer", description = "Name of the consumer when subscription is EXCLUSIVE")
-    private String consumerName;
-    @UriParam(label = "producer", description = "Name of the producer")
-    private String producerName;
-    @UriParam(label = "consumer", description = "Prefix to add to consumer names when a SHARED or FAILOVER subscription is used")
-    private String consumerNamePrefix;
+    @UriParam(label = "consumer", description = "Name of the subscription to use", defaultValue = "subscription")
+    private String subscriptionName = "subs";
+    @UriParam(label = "consumer", description = "Type of the subscription", enums = "EXCLUSIVE, SHARED, FAILOVER", defaultValue = "EXCLUSIVE")
+    private SubscriptionType subscriptionType= EXCLUSIVE;
+    @UriParam(label = "consumer", description = "Number of consumers", defaultValue = "10")
+    private int numberOfConsumers = 10;
+    @UriParam(label = "consumer", description = "Size of the consumer queue", defaultValue = "10")
+    private int consumerQueueSize = 10;
+    @UriParam(label = "consumer", description = "Name of the consumer when subscription is EXCLUSIVE", defaultValue = "sole-consumer")
+    private String consumerName = "sole-consumer";
+    @UriParam(label = "producer", description = "Name of the producer", defaultValue = "default-producer")
+    private String producerName = "default-producer";
+    @UriParam(label = "consumer", description = "Prefix to add to consumer names when a SHARED or FAILOVER subscription is used", defaultValue = "cons")
+    private String consumerNamePrefix = "cons";
     @UriParam(label = "consumer, producer", description = "The pulsar client")
     private PulsarClient pulsarClient;
     @UriParam(label = "consumer, producer", description = "Url for the Pulsar Broker")
