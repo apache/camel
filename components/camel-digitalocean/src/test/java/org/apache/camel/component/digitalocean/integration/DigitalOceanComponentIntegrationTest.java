@@ -39,7 +39,7 @@ import org.junit.Test;
 @Ignore("Must be manually tested. Provide your own oAuthToken")
 public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Override

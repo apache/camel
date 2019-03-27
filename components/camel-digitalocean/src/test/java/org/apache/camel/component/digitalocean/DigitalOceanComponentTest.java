@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class DigitalOceanComponentTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
 
     @Override
