@@ -487,7 +487,7 @@
         <maven-war-plugin-version>3.0.0</maven-war-plugin-version>
         <metrics-version>3.2.6</metrics-version>
         <micrometer-version>1.1.3</micrometer-version>
-        <milo-version>0.2.4</milo-version>
+        <milo-version>0.2.5</milo-version>
         <mina2-version>2.0.20</mina2-version>
         <minidns-version>0.3.3</minidns-version>
         <minimal-json-version>0.9.4</minimal-json-version>
