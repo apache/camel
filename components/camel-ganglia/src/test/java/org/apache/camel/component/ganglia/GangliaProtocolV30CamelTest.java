@@ -29,12 +29,12 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 
 import org.acplt.oncrpc.OncRpcException;
 import org.acplt.oncrpc.XdrBufferDecodingStream;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -68,7 +68,10 @@ public class GangliaProtocolV30CamelTest extends CamelGangliaTestSupport {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @EndpointInject(uri = "mock:gmond")
+    @BindToRegistry("protocolV30Decoder")
+    private ProtocolV30Decoder protocolV30Decoder = new ProtocolV30Decoder();
+
+    @EndpointInject("mock:gmond")
     private MockEndpoint mockGmond;
 
     private String getTestUri() {
@@ -131,13 +134,6 @@ public class GangliaProtocolV30CamelTest extends CamelGangliaTestSupport {
         template.sendBodyAndHeaders(getTestUri(), -3.0f, headers);
 
         mockGmond.assertIsSatisfied();
-    }
-
-    @Override
-    public JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("protocolV30Decoder", new ProtocolV30Decoder());
-        return jndi;
     }
 
     @Override

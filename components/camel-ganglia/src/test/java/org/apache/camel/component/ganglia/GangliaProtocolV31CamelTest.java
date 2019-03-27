@@ -31,6 +31,7 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 import org.acplt.oncrpc.OncRpcException;
 import org.acplt.oncrpc.XdrAble;
 import org.acplt.oncrpc.XdrBufferDecodingStream;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -38,7 +39,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -75,7 +75,10 @@ public class GangliaProtocolV31CamelTest extends CamelGangliaTestSupport {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @EndpointInject(uri = "mock:gmond")
+    @BindToRegistry("protocolV31Decoder")
+    private ProtocolV31Decoder protocolV31Decoder = new ProtocolV31Decoder();
+
+    @EndpointInject("mock:gmond")
     private MockEndpoint mockGmond;
 
     private String getTestUri() {
@@ -209,13 +212,6 @@ public class GangliaProtocolV31CamelTest extends CamelGangliaTestSupport {
         template.sendBody(getTestUri() + "&type=wrong", "");
 
         mockGmond.assertIsSatisfied();
-    }
-
-    @Override
-    public JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("protocolV31Decoder", new ProtocolV31Decoder());
-        return jndi;
     }
 
     @Override
