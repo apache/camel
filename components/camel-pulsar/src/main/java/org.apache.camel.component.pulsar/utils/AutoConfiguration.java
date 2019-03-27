@@ -46,9 +46,7 @@ public class AutoConfiguration {
         this.clusters = clusters;
     }
 
-    // TODO is this required?
-    public AutoConfiguration() {
-    }
+    public AutoConfiguration() {}
 
     public void ensureNameSpaceAndTenant(String path) {
         if(pulsarAdmin != null) {
