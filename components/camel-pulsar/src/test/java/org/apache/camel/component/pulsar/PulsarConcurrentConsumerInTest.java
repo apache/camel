@@ -1,21 +1,15 @@
 /**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements.  See the NOTICE file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file to
+ * You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package org.apache.camel.component.pulsar;
 
+import java.util.concurrent.TimeUnit;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -33,19 +27,21 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PulsarConsumerInTest extends CamelTestSupport {
+public class PulsarConcurrentConsumerInTest extends CamelTestSupport {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConsumerInTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PulsarConcurrentConsumerInTest.class);
+
     private static final String PULSAR_CLUSTER_URL = "pulsar://localhost:6650";
 
     private static final String PULSAR_CLIENT_BEAN_NAME = "pulsarClient";
 
-    private static final String TOPIC_URI = "persistent://public/default/camel-topic";
+    private static final String TOPIC_URI = "non-persistent://public/default/concurrent-camel-topic";
     private static final String PRODUCER = "camel-producer";
+    private static final int NUMBER_OF_CONSUMERS=5;
 
     @EndpointInject(uri = "pulsar:" + TOPIC_URI
-        + "?numberOfConsumers=1&subscriptionType=Exclusive"
-        + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerName=camel-consumer"
+        + "?numberOfConsumers=5&subscriptionType=Shared"
+        + "&subscriptionName=camel-subscription&consumerQueueSize=1&consumerNamePrefix=camel-consumer-"
         + "&pulsarClient=#" + PULSAR_CLIENT_BEAN_NAME
     )
     private Endpoint from;
@@ -60,7 +56,7 @@ public class PulsarConsumerInTest extends CamelTestSupport {
             Processor processor = new Processor() {
                 @Override
                 public void process(final Exchange exchange) {
-                    LOGGER.info("Processing message {}", exchange.getIn().getBody());
+                    LOGGER.error("Processing message {} on Thread {}", exchange.getIn().getBody(), Thread.currentThread());
                 }
             };
 
@@ -90,22 +86,25 @@ public class PulsarConsumerInTest extends CamelTestSupport {
     private PulsarClient givenPulsarClient() throws PulsarClientException {
         return new ClientBuilderImpl()
             .serviceUrl(PULSAR_CLUSTER_URL)
-            .ioThreads(1)
-            .listenerThreads(1)
+            .ioThreads(2)
+            .listenerThreads(5)
             .build();
     }
 
     @Test
     public void givenARunningPulsarCluster_whenIPublishAMessageToCluster_verifyInMessageIsConsumed() throws Exception {
-        to.expectedMessageCount(1);
+        to.expectedMessageCount(NUMBER_OF_CONSUMERS);
 
-        Producer<String> producer = givenPulsarClient().newProducer(Schema.STRING)
+        Producer<String> producer = givenPulsarClient()
+            .newProducer(Schema.STRING)
             .producerName(PRODUCER)
             .topic(TOPIC_URI)
             .create();
 
-        producer.send("Hello World!");
+        for (int i = 0; i < NUMBER_OF_CONSUMERS; i++) {
+            producer.send("Hello World!");
+        }
 
-        to.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
     }
 }

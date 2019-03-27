@@ -30,9 +30,10 @@ public final class PulsarUtils {
     public static Queue<Consumer<byte[]>> stopConsumers(final Queue<Consumer<byte[]>> consumers) throws PulsarClientException {
         while (!consumers.isEmpty()) {
             Consumer<byte[]> consumer = consumers.poll();
-
-            consumer.unsubscribe();
-            consumer.close();
+            if(consumer != null) {
+                consumer.unsubscribe();
+                consumer.close();
+            }
         }
 
         return new ConcurrentLinkedQueue<>();
@@ -52,7 +53,9 @@ public final class PulsarUtils {
     public static Queue<Producer<byte[]>> stopProducer(final Queue<Producer<byte[]>> producers) throws PulsarClientException {
         while (!producers.isEmpty()) {
             Producer<byte[]> producer = producers.poll();
-            producer.close();
+            if(producer != null) {
+                producer.close();
+            }
         }
 
         return new LinkedList<>();

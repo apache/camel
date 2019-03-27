@@ -51,7 +51,9 @@ public class PulsarConsumer extends DefaultConsumer {
     protected void doStart() throws PulsarClientException {
         pulsarConsumers = stopConsumers(pulsarConsumers);
 
-        pulsarConsumers.addAll(createConsumers(pulsarEndpoint, consumerCreationStrategyFactory));
+        Collection<Consumer<byte[]>> consumers = createConsumers(pulsarEndpoint, consumerCreationStrategyFactory);
+
+        pulsarConsumers.addAll(consumers);
     }
 
     @Override
@@ -67,7 +69,10 @@ public class PulsarConsumer extends DefaultConsumer {
     @Override
     protected void doResume() throws PulsarClientException {
         pulsarConsumers = stopConsumers(pulsarConsumers);
-        pulsarConsumers.addAll(createConsumers(pulsarEndpoint, consumerCreationStrategyFactory));
+
+        Collection<Consumer<byte[]>> consumers = createConsumers(pulsarEndpoint, consumerCreationStrategyFactory);
+
+        pulsarConsumers.addAll(consumers);
     }
 
     private Collection<Consumer<byte[]>> createConsumers(final PulsarEndpoint endpoint,
