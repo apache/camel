@@ -24,7 +24,6 @@ import static org.mockito.Mockito.verify;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.pulsar.client.api.Consumer;
-import org.apache.pulsar.client.api.Producer;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.junit.Test;
 
@@ -70,46 +69,5 @@ public class PulsarUtilsTest {
         doThrow(new PulsarClientException("A Pulsar Client exception occurred")).when(consumer).close();
 
         PulsarUtils.stopConsumers(consumers);
-    }
-
-    @Test
-    public void givenProducerQueueIsEmpty_whenIStopProducers_verifyEmptyQueueIsReturned() throws PulsarClientException {
-        Queue<Producer<byte[]>> expected = PulsarUtils.stopProducer(new ConcurrentLinkedQueue<Producer<byte[]>>());
-
-        assertTrue(expected.isEmpty());
-    }
-
-    @Test
-    public void givenProducerQueueIsNotEmpty_whenIStopProducers_verifyEmptyQueueIsReturned() throws PulsarClientException {
-        Queue<Producer<byte[]>> producers = new ConcurrentLinkedQueue<>();
-        producers.add(mock(Producer.class));
-
-        Queue<Producer<byte[]>> expected = PulsarUtils.stopProducer(producers);
-
-        assertTrue(expected.isEmpty());
-    }
-
-    @Test
-    public void givenProducerQueueIsNotEmpty_whenIStopProducers_verifyCallToCloseProducer() throws PulsarClientException {
-        Producer<byte[]> producer = mock(Producer.class);
-
-        Queue<Producer<byte[]>> producers = new ConcurrentLinkedQueue<>();
-        producers.add(producer);
-
-        PulsarUtils.stopProducer(producers);
-
-        verify(producer).close();
-    }
-
-    @Test(expected = PulsarClientException.class)
-    public void givenProducerThrowsPulsarClientException_whenIStopProducers_verifyExceptionIsThrown() throws PulsarClientException {
-        Producer<byte[]> consumer = mock(Producer.class);
-
-        Queue<Producer<byte[]>> producers = new ConcurrentLinkedQueue<>();
-        producers.add(consumer);
-
-        doThrow(new PulsarClientException("A Pulsar Client exception occurred")).when(consumer).close();
-
-        PulsarUtils.stopProducer(producers);
     }
 }
