@@ -30,12 +30,12 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class DigitalOceanComponentTest extends CamelTestSupport {
-	
-    @BindToRegistry("digitalOceanClient")
-    DigitalOceanClient digitalOceanClient = new DigitalOceanClientMock();
     
     @EndpointInject("mock:result")
     protected MockEndpoint mockResultEndpoint;
+   
+    @BindToRegistry("digitalOceanClient")
+    DigitalOceanClient digitalOceanClient = new DigitalOceanClientMock();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
