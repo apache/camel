@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.pulsar.utils;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.pulsar.client.admin.PulsarAdmin;
@@ -30,6 +25,10 @@ import org.apache.pulsar.common.policies.data.TenantInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 /**
  * What is the purpose of this? Needs documentation here
  */
@@ -37,7 +36,6 @@ import org.slf4j.LoggerFactory;
 public class AutoConfiguration {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AutoConfiguration.class);
-    private static final Pattern URI_PATTERN = Pattern.compile("^(?<namespace>(?<tenant>.+)/.+)/.+$");
 
     @UriParam(label = "admin", description = "The Pulsar Admin client Bean")
     private PulsarAdmin pulsarAdmin;
@@ -54,10 +52,10 @@ public class AutoConfiguration {
 
     public void ensureNameSpaceAndTenant(String path) {
         if(pulsarAdmin != null) {
-            Matcher matcher = URI_PATTERN.matcher(path);
-            if (matcher.matches()) {
-                String tenant = matcher.group("tenant");
-                String namespace = matcher.group("namespace");
+            PulsarPath pulsarPath = new PulsarPath(path);
+            if (pulsarPath.isAutoConfigurable()) {
+                String tenant = pulsarPath.getTenant();
+                String namespace = pulsarPath.getNamespace();
                 try {
                     ensureTenant(tenant);
                     ensureNameSpace(tenant, namespace);
@@ -89,7 +87,7 @@ public class AutoConfiguration {
         return pulsarAdmin;
     }
 
-    private void setPulsarAdmin(PulsarAdmin pulsarAdmin) {
+    public void setPulsarAdmin(PulsarAdmin pulsarAdmin) {
         this.pulsarAdmin = pulsarAdmin;
     }
 }

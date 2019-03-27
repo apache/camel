@@ -48,17 +48,12 @@
     <property name="serviceUrl" ref="pulsarAdminHost"/>
     <property name="clusters" value="standalone"/>
   </bean>
-  <bean id="pulsarAdminClient" class="org.apache.pulsar.client.admin.PulsarAdmin">
+  <bean id="pulsarAdmin" class="org.apache.pulsar.client.admin.PulsarAdmin">
     <constructor-arg ref="pulsarAdminHost"/>
     <constructor-arg ref="pulsarAdminConfig"/>
   </bean>
-  <bean id="autoconfig" class="org.apache.camel.component.pulsar.utils.AutoConfiguration">
-    <constructor-arg ref="pulsarAdminClient"/>
-  </bean>
   <bean id="pulsar" class="org.apache.camel.component.pulsar.PulsarComponent">
     <constructor-arg ref="camel-client"/>
-    <constructor-arg ref="pulsarconfig"/>
-    <constructor-arg ref="autoconfig"/>
   </bean>
   <!-- END SNIPPET: e3 -->
 

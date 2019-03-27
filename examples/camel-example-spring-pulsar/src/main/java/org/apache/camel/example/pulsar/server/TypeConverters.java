@@ -14,8 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.pulsar.utils.retry;
+package org.apache.camel.example.pulsar.server;
 
-public interface PulsarClientRetryPolicy {
-    void retry();
+import org.apache.camel.Converter;
+
+public class TypeConverters implements org.apache.camel.TypeConverters {
+
+
+    @Converter
+    public int intFromByteArray(byte[] bytes) {
+        return 22;
+    }
+
 }

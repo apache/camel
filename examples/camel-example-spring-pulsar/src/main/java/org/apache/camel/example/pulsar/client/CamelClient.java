@@ -19,15 +19,18 @@ package org.apache.camel.example.pulsar.client;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * Client that uses the {@link ProducerTemplate} to easily exchange messages with the Server.
  * <p/>
- * Requires that the JMS broker is running, as well as CamelServer
+ * Requires that the Pulsar broker is running, as well as CamelServer
  */
 public final class CamelClient {
+    static Logger LOG = LoggerFactory.getLogger(CamelClient.class);
     private CamelClient() {
         // Helper class
     }
@@ -42,9 +45,7 @@ public final class CamelClient {
         ProducerTemplate camelTemplate = context.getBean("camelTemplate", ProducerTemplate.class);
 
         System.out.println("Invoking the multiply with 22");
-        // as opposed to the CamelClientRemoting example we need to define the service URI in this java code
-        int response = (Integer)camelTemplate.sendBody("pulsar:tn1/ns1/cameltest", ExchangePattern.InOut, 22);
-        System.out.println("... the result is: " + response);
+        camelTemplate.sendBody("pulsar:non-persistent://tn1/ns1/cameltest?pulsarAdmin=#pulsarAdmin&producerName=clientProd", ExchangePattern.InOnly, 22);
 
         // we're done so let's properly close the application context
         IOHelper.close(context);

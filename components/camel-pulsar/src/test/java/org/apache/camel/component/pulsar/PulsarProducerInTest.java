@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.pulsar;
 
-import java.util.concurrent.TimeUnit;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -29,6 +28,8 @@ import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.Test;
+
+import java.util.concurrent.TimeUnit;
 
 public class PulsarProducerInTest extends CamelTestSupport {
 
