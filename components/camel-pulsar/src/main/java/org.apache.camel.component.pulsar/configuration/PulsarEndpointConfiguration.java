@@ -31,7 +31,7 @@ public class PulsarEndpointConfiguration {
     @UriParam(label = "consumer", description = "Name of the subscription to use", defaultValue = "subscription")
     private String subscriptionName = "subs";
     @UriParam(label = "consumer", description = "Type of the subscription", enums = "EXCLUSIVE, SHARED, FAILOVER", defaultValue = "EXCLUSIVE")
-    private SubscriptionType subscriptionType= EXCLUSIVE;
+    private SubscriptionType subscriptionType = EXCLUSIVE;
     @UriParam(label = "consumer", description = "Number of consumers", defaultValue = "10")
     private int numberOfConsumers = 10;
     @UriParam(label = "consumer", description = "Size of the consumer queue", defaultValue = "10")
