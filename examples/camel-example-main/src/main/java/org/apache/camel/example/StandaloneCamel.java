@@ -27,7 +27,10 @@ import org.apache.camel.impl.DefaultCamelContext;
  * Compare this example with {@link MyApplication} which uses Camel's main class to
  * run Camel standalone in a easier way.
  */
-public class StandaloneCamel {
+public final class StandaloneCamel {
+
+    private StandaloneCamel() {
+    }
 
     public static void main(String[] args) throws Exception {
         // create a new CamelContext
