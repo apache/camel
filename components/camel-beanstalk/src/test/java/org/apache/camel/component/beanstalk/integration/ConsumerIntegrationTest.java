@@ -29,7 +29,7 @@ import org.junit.Test;
 public class ConsumerIntegrationTest extends BeanstalkCamelTestSupport {
     final String testMessage = "Hello, world!";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     MockEndpoint result;
 
     @Test

@@ -30,10 +30,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class ReleaseProducerIntegrationTest extends BeanstalkCamelTestSupport {
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate direct;
 
     @Ignore("requires reserve - release sequence")

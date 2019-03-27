@@ -36,10 +36,10 @@ import static org.mockito.Mockito.when;
 
 public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
 
-    @EndpointInject(uri = "beanstalk:tube=A")
+    @EndpointInject("beanstalk:tube=A")
     protected BeanstalkEndpoint endpoint;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     private String testMessage = "hello, world";
