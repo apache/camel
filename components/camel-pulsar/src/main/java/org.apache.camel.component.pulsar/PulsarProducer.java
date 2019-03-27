@@ -9,11 +9,6 @@
  */
 package org.apache.camel.component.pulsar;
 
-import static org.apache.camel.component.pulsar.utils.PulsarUtils.createProducer;
-import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopProducer;
-
-import java.util.LinkedList;
-import java.util.Queue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -23,6 +18,12 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.pulsar.client.api.Producer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.createProducer;
+import static org.apache.camel.component.pulsar.utils.PulsarUtils.stopProducer;
 
 public class PulsarProducer extends DefaultProducer {
 
@@ -58,7 +59,8 @@ public class PulsarProducer extends DefaultProducer {
                     producer.send(body);
 
                 } catch (NoTypeConversionAvailableException | TypeConversionException exception) {
-                    LOGGER.warn("An error occurred while serializing to byte array, fall using fall back strategy :: {}", exception);
+                    LOGGER.debug("An error occurred while serializing to byte array, fall using fall back strategy :: {}", exception);
+
                     byte[] body = PulsarMessageUtils.serialize(message.getBody());
 
                     producer.send(body);

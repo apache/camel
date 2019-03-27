@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * Client that uses the {@link ProducerTemplate} to easily exchange messages with the Server.
  * <p/>
- * Requires that the JMS broker is running, as well as CamelServer
+ * Requires that the Pulsar broker is running, as well as CamelServer
  */
 public final class CamelClient {
     static Logger LOG = LoggerFactory.getLogger(CamelClient.class);
@@ -45,10 +45,7 @@ public final class CamelClient {
         ProducerTemplate camelTemplate = context.getBean("camelTemplate", ProducerTemplate.class);
 
         System.out.println("Invoking the multiply with 22");
-        // as opposed to the CamelClientRemoting example we need to define the service URI in this java code
-        int response = (Integer)camelTemplate.sendBody("pulsar:non-persistent://tn1/ns1/cameltest?pulsarAdmin=#pulsarAdmin&producerName=clientProd", ExchangePattern.InOut, 22);
-        System.out.println("... the result is: " + response);
-        LOG.error("result ======= " + response);
+        camelTemplate.sendBody("pulsar:non-persistent://tn1/ns1/cameltest?pulsarAdmin=#pulsarAdmin&producerName=clientProd", ExchangePattern.InOnly, 22);
 
         // we're done so let's properly close the application context
         IOHelper.close(context);

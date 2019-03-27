@@ -30,8 +30,9 @@ public class ServerRoutes extends RouteBuilder {
         // route from the numbers queue to our business that is a spring bean registered with the id=multiplier
         // Camel will introspect the multiplier bean and find the best candidate of the method to invoke.
         // As our multiplier bean only have one method its easy for Camel to find the method to use.
-        from("pulsar:non-persistent://tn1/ns1/cameltest?pulsarAdmin=#pulsarAdmin&subscriptionName=serversub&numberOfConsumers=1&consumerQueueSize=1").to("multiplier");
-
+        from("pulsar:non-persistent://tn1/ns1/cameltest?pulsarAdmin=#pulsarAdmin&subscriptionName=serversub&numberOfConsumers=1&consumerQueueSize=1")
+                .to("multiplier")
+                .to("log:INFO?showBody=true");
 
     }
 
