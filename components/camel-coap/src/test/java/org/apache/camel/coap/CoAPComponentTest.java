@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class CoAPComponentTest extends CoAPTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate sender;
     
     @Test
