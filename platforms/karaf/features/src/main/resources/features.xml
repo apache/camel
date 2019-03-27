@@ -1345,6 +1345,7 @@
     <bundle dependency='true'>mvn:org.kie/kie-internal/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/kie-pmml/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-dmn-model/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-dmn-api/${jbpm-version}</bundle>
@@ -1361,6 +1362,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.datatype/jackson-datatype-jsr310/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream-java8/${xstream-bundle-version}</bundle>
