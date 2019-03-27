@@ -45,7 +45,15 @@ public class PulsarEndpoint extends DefaultEndpoint {
         this.pulsarClient = pulsarEndpointConfiguration.getPulsarClient();
     }
 
-    public static PulsarEndpoint create(String uri, String path, PulsarEndpointConfiguration pulsarEndpointConfiguration, PulsarComponent component) throws PulsarClientException {
+    public static PulsarEndpoint create(final String uri,
+                                        final String path,
+                                        final PulsarEndpointConfiguration pulsarEndpointConfiguration,
+                                        final PulsarComponent component) throws PulsarClientException, IllegalArgumentException {
+
+        if(null == pulsarEndpointConfiguration) {
+            throw new IllegalArgumentException("PulsarEndpointConfiguration cannot be null");
+        }
+
         return new PulsarEndpoint(uri, path, pulsarEndpointConfiguration, component);
     }
 

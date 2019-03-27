@@ -49,6 +49,7 @@ public final class PulsarUtils {
             .create();
     }
 
+    //TODO is this stopProducer or stopProducerS <- plural?
     public static Queue<Producer<byte[]>> stopProducer(final Queue<Producer<byte[]>> producers) throws PulsarClientException {
         while (!producers.isEmpty()) {
             Producer<byte[]> producer = producers.poll();

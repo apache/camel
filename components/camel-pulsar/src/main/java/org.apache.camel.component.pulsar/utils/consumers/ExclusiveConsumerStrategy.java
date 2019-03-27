@@ -50,6 +50,8 @@ public class ExclusiveConsumerStrategy implements ConsumerCreationStrategy {
             return Collections.singletonList(builder.subscriptionType(SubscriptionType.Exclusive).subscribe());
         } catch (PulsarClientException exception) {
             LOGGER.error("An error occurred when creating the consumer {}", exception);
+            // TODO what is the purpose of the retry policy?
+            // I'm assuming that when it is implemented, the return emptyList will be removed?
             retryPolicy.retry();
             return Collections.emptyList();
         }
