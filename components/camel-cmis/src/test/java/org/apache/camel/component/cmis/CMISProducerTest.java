@@ -36,7 +36,7 @@ import org.junit.Test;
 
 public class CMISProducerTest extends CMISTestSupport {
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Test
