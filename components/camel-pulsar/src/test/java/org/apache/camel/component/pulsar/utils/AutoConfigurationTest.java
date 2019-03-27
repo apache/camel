@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.mockito.Matchers;
 
 import java.util.Collections;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
@@ -36,6 +37,7 @@ public class AutoConfigurationTest {
     private PulsarAdmin pulsarAdmin;
     private Tenants tenants;
     private Namespaces namespaces;
+    private Set<String> clusters = Collections.singleton("standalone");
 
     @Before
     public void setUp() {
@@ -45,13 +47,15 @@ public class AutoConfigurationTest {
         namespaces = mock(Namespaces.class);
 
         when(adminConfiguration.getClusters()).thenReturn(Collections.singleton("standalone"));
+        when(pulsarAdmin.tenants()).thenReturn(tenants);
+        when(pulsarAdmin.namespaces()).thenReturn(namespaces);
     }
 
     @Test
     public void noAdminConfiguration() {
         when(pulsarAdmin.getClientConfigData()).thenReturn(null);
 
-        AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin);
+        AutoConfiguration autoConfiguration = new AutoConfiguration(null, clusters);
         autoConfiguration.ensureNameSpaceAndTenant("tn1/ns1/topic");
 
         verify(pulsarAdmin, never()).tenants();
@@ -62,7 +66,7 @@ public class AutoConfigurationTest {
         when(pulsarAdmin.getClientConfigData()).thenReturn(adminConfiguration);
         when(adminConfiguration.isAutoCreateAllowed()).thenReturn(false);
 
-        AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin);
+        AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin, clusters);
         autoConfiguration.ensureNameSpaceAndTenant("tn1/ns1/topic");
 
         verify(pulsarAdmin, never()).tenants();
@@ -73,7 +77,7 @@ public class AutoConfigurationTest {
         when(pulsarAdmin.getClientConfigData()).thenReturn(adminConfiguration);
         when(adminConfiguration.isAutoCreateAllowed()).thenReturn(true);
 
-        AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin);
+        AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin, clusters);
         autoConfiguration.ensureNameSpaceAndTenant("topic");
 
         verify(pulsarAdmin, never()).tenants();
@@ -88,7 +92,7 @@ public class AutoConfigurationTest {
         when(pulsarAdmin.namespaces()).thenReturn(namespaces);
         when(namespaces.getNamespaces("tn1")).thenReturn(Collections.<String>emptyList());
 
-        AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin);
+        AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin, clusters);
         autoConfiguration.ensureNameSpaceAndTenant("tn1/ns1/topic");
 
         verify(tenants).createTenant(eq("tn1"), Matchers.<TenantInfo>any());
@@ -104,7 +108,7 @@ public class AutoConfigurationTest {
         when(pulsarAdmin.namespaces()).thenReturn(namespaces);
         when(namespaces.getNamespaces("tn1")).thenReturn(Collections.<String>singletonList("tn1/ns1"));
 
-        AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin);
+        AutoConfiguration autoConfiguration = new AutoConfiguration(pulsarAdmin, clusters);
         autoConfiguration.ensureNameSpaceAndTenant("tn1/ns1/topic");
 
         verify(tenants, never()).createTenant(Matchers.<String>any(), Matchers.<TenantInfo>any());

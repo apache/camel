@@ -26,6 +26,7 @@ import java.util.Map;
 
 public class PulsarComponent extends DefaultComponent {
 
+    // TODO required?
     public PulsarComponent() {
     }
 
