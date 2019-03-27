@@ -41,9 +41,11 @@ public class AutoConfiguration {
 
     @UriParam(label = "admin", description = "The Pulsar Admin client Bean")
     private PulsarAdmin pulsarAdmin;
+    private Set<String> clusters = Collections.singleton("standalone");
 
-    public AutoConfiguration(PulsarAdmin pulsarAdmin) {
+    public AutoConfiguration(PulsarAdmin pulsarAdmin, Set<String> clusters) {
         setPulsarAdmin(pulsarAdmin);
+        this.clusters = clusters;
     }
 
     // TODO is this required?
@@ -69,19 +71,15 @@ public class AutoConfiguration {
     private void ensureNameSpace(String tenant, String namespace) throws PulsarAdminException {
         List<String> namespaces = pulsarAdmin.namespaces().getNamespaces(tenant);
         if (!namespaces.contains(namespace)) {
-            // TODO find a way to pass the cluster names into this method
-            Set<String> clusters = Collections.singleton("standalone");
             pulsarAdmin.namespaces().createNamespace(namespace, clusters);
         }
     }
 
     private void ensureTenant(String tenant) throws PulsarAdminException {
-        Tenants tenants1 = pulsarAdmin.tenants();
-        List<String> tenants = tenants1.getTenants();
-        if (!tenants.contains(tenant)) {
+        Tenants tenants = pulsarAdmin.tenants();
+        List<String> tenantNames = tenants.getTenants();
+        if (!tenantNames.contains(tenant)) {
             TenantInfo tenantInfo = new TenantInfo();
-            // TODO find a way to pass the cluster names into this method
-            Set<String> clusters = Collections.singleton("standalone");
             tenantInfo.setAllowedClusters(clusters);
             pulsarAdmin.tenants().createTenant(tenant, tenantInfo);
         }
