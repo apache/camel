@@ -49,10 +49,10 @@ public class BarcodeTestBase extends CamelTestSupport {
     protected static final String PATH = "target/out";
     protected static final String FILE_ENDPOINT = "file:" + PATH;
 
-    @EndpointInject(uri = "mock:out")
+    @EndpointInject("mock:out")
     MockEndpoint out;
 
-    @EndpointInject(uri = "mock:image")
+    @EndpointInject("mock:image")
     MockEndpoint image;
 
     protected void checkImage(MockEndpoint mock, int height, int width, String type, BarcodeFormat format) throws IOException {
