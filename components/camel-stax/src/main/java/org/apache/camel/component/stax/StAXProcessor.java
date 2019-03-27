@@ -26,6 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ExchangeHelper;
 
+import com.ctc.wstx.sr.ValidatingStreamReader;
+
 /**
  * It uses SAX content handler to handle events.
  * <p/>
@@ -49,25 +51,34 @@ public class StAXProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        InputSource is = exchange.getIn().getMandatoryBody(InputSource.class);
-        XMLStreamReader stream = exchange.getIn().getMandatoryBody(XMLStreamReader.class);
-        XMLReader reader = new StaxStreamXMLReader(stream);
+        XMLStreamReader stream = null;
+        try {
+            stream = exchange.getIn().getMandatoryBody(XMLStreamReader.class);
+            StaxStreamXMLReader reader = new StaxStreamXMLReader(stream);
+            ContentHandler handler;
+            if (this.contentHandlerClass != null) {
+                handler = (ContentHandler) this.contentHandlerClass.newInstance();
+            } else {
+                handler = this.contentHandler;
+            }
 
-        ContentHandler handler;
-        if (contentHandlerClass != null) {
-            handler = contentHandlerClass.newInstance();
-        } else {
-            handler = contentHandler;
-        }
-        reader.setContentHandler(handler);
-        reader.parse(is);
-
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            // preserve headers
-            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-            exchange.getOut().setBody(handler);
-        } else {
-            exchange.getIn().setBody(handler);
+            reader.setContentHandler(handler);
+            // InputSource is ignored anyway
+            reader.parse((InputSource) null);
+            if (ExchangeHelper.isOutCapable(exchange)) {
+                exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                exchange.getOut().setBody(handler);
+            } else {
+                exchange.getIn().setBody(handler);
+            }
+        } finally {
+            if (stream != null) {
+                stream.close();
+                if (stream instanceof ValidatingStreamReader) {
+                    // didn't find any method without using the woodstox package
+                    ((ValidatingStreamReader) stream).closeCompletely();
+                }
+            }
         }
     }
 
