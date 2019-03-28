@@ -121,6 +121,7 @@
         <module>camel-example-spring-cloud-serviceregistry</module>
         <module>camel-example-spring-javaconfig</module>
         <module>camel-example-spring-jms</module>
+        <module>camel-example-spring-pulsar</module>
         <module>camel-example-spring-ws</module>
         <module>camel-example-spring-xquery</module>
         <module>camel-example-spring-security</module>
