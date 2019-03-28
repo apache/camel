@@ -19,7 +19,6 @@ package org.apache.camel.management.mbean;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -29,6 +28,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
@@ -39,7 +39,15 @@ import javax.management.openmbean.TabularDataSupport;
 
 import org.w3c.dom.Document;
 
-import org.apache.camel.*;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CatalogCamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.ManagementStatisticsLevel;
+import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
@@ -422,61 +430,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use a routes definition to dump the routes
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
-        String xml = ModelHelper.dumpModelAsXml(context, def);
 
-        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
-        if (resolvePlaceholders || resolveDelegateEndpoints) {
-            final AtomicBoolean changed = new AtomicBoolean();
-            InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
-            Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
-
-                private String prev;
-
-                @Override
-                public String transform(String text) {
-                    String after = text;
-                    if (resolveDelegateEndpoints && "uri".equals(prev)) {
-                        try {
-                            // must resolve placeholder as the endpoint may use property placeholders
-                            String uri = getContext().resolvePropertyPlaceholders(text);
-                            Endpoint endpoint = context.hasEndpoint(uri);
-                            if (endpoint instanceof DelegateEndpoint) {
-                                endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
-                                after = endpoint.getEndpointUri();
-                            }
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                    }
-
-                    if (resolvePlaceholders) {
-                        try {
-                            after = getContext().resolvePropertyPlaceholders(after);
-                        } catch (Exception e) {
-                            // ignore
-                        }
-                    }
-
-                    if (!changed.get()) {
-                        changed.set(!text.equals(after));
-                    }
-
-                    // okay the previous must be the attribute key with uri, so it refers to an endpoint
-                    prev = text;
-
-                    return after;
-                }
-            });
-
-            // okay there were some property placeholder or delegate endpoints replaced so re-create the model
-            if (changed.get()) {
-                xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                RoutesDefinition copy = ModelHelper.createModelFromXml(context, xml, RoutesDefinition.class);
-                xml = ModelHelper.dumpModelAsXml(context, copy);
-            }
-        }
-
-        return xml;
+        return ModelHelper.dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
     }
 
     public void addOrUpdateRoutesFromXml(String xml) throws Exception {
