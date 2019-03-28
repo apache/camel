@@ -37,14 +37,6 @@ public interface ManagedComponentMBean {
     @ManagedAttribute(description = "Camel ManagementName")
     String getCamelManagementName();
 
-    @ManagedOperation(description = "Component information as JSon")
-    @Deprecated
-    String informationJson();
-
-    @ManagedOperation(description = "Explain how this component is configured")
-    @Deprecated
-    TabularData explain(boolean allOptions);
-
     @ManagedAttribute(description = "Whether this component support verification (parameters or connectivity)")
     boolean isVerifySupported();
 

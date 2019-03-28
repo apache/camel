@@ -29,13 +29,6 @@ public interface ManagedBrowsableEndpointMBean extends ManagedEndpointMBean {
     @ManagedOperation(description = "Get message body from queue by index")
     String browseMessageBody(Integer index);
 
-    /**
-     * @deprecated use {@link #browseAllMessagesAsXml(Boolean)} instead
-     */
-    @ManagedOperation(description = "Get message as XML from queue by index")
-    @Deprecated
-    String browseMessageAsXml(Integer index);
-
     @ManagedOperation(description = "Get message as XML from queue by index")
     String browseMessageAsXml(Integer index, Boolean includeBody);
 

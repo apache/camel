@@ -16,10 +16,7 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import javax.management.openmbean.TabularData;
-
 import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedDataFormatMBean {
 
@@ -34,13 +31,5 @@ public interface ManagedDataFormatMBean {
 
     @ManagedAttribute(description = "DataFormat State")
     String getState();
-
-    @ManagedOperation(description = "DataFormat information as JSon")
-    @Deprecated
-    String informationJson();
-
-    @ManagedOperation(description = "Explain how this data format is configured")
-    @Deprecated
-    TabularData explain(boolean allOptions);
 
 }
