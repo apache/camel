@@ -39,7 +39,6 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.CamelInternalProcessorAdvice;
 import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.reifier.rest.RestBindingReifier;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;

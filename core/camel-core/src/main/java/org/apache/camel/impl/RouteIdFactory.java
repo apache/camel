@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.apache.camel.NamedNode;

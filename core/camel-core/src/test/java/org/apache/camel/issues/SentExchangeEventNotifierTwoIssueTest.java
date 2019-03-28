@@ -16,8 +16,6 @@
  */
 package org.apache.camel.issues;
 
-import java.util.EventObject;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;

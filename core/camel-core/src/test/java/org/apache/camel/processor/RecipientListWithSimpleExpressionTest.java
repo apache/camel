@@ -21,7 +21,6 @@ import java.util.concurrent.Executors;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
 import org.junit.Test;
 
 public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
