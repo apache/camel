@@ -16,16 +16,14 @@
  */
 package org.apache.camel.commands;
 
+import org.apache.camel.util.URISupport;
+
 import java.io.PrintStream;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.camel.support.JSonSchemaHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
 
 /**
  * List the Camel endpoints available in the JVM.
@@ -48,13 +46,11 @@ public class EndpointListCommand extends AbstractCamelCommand {
 
     boolean decode = true;
     boolean verbose;
-    boolean explain;
     private final String context;
 
-    public EndpointListCommand(String context, boolean decode, boolean verbose, boolean explain) {
+    public EndpointListCommand(String context, boolean decode, boolean verbose) {
         this.decode = decode;
         this.verbose = verbose;
-        this.explain = explain;
         this.context = context;
     }
 
@@ -92,50 +88,6 @@ public class EndpointListCommand extends AbstractCamelCommand {
                 uri = URISupport.sanitizeUri(uri);
                 String state = row.get("state");
                 out.println(String.format(rowFormat, camelContextName, uri, state));
-
-                if (explain) {
-                    boolean first = true;
-                    String json = camelController.explainEndpointAsJSon(camelContextName, row.get("uri"), verbose);
-                    // use a basic json parser
-                    List<Map<String, String>> options = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-
-                    for (Map<String, String> option : options) {
-                        String key = option.get("name");
-                        String kind = option.get("kind");
-                        String type = option.get("type");
-                        String javaType = option.get("javaType");
-                        String value = option.get("value");
-                        if (ObjectHelper.isEmpty(value)) {
-                            value = option.get("defaultValue");
-                        }
-                        String desc = option.get("description");
-                        if (key != null && value != null) {
-                            if (first) {
-                                out.println();
-                                first = false;
-                            }
-                            String line;
-                            if ("path".equals(kind)) {
-                                line = "\t" + key + " (endpoint path) = " + value;
-                            } else {
-                                line = "\t" + key + " = " + value;
-                            }
-                            out.println(line);
-
-                            if (type != null) {
-                                String displayType = type;
-                                if (javaType != null && !displayType.equals(javaType)) {
-                                    displayType = type + " (" + javaType + ")";
-                                }
-                                out.println("\t" + displayType);
-                            }
-                            if (desc != null) {
-                                out.println("\t" + desc);
-                            }
-                            out.println();
-                        }
-                    }
-                }
             }
         }
         return null;
