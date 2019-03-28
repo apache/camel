@@ -25,7 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.service.ServiceComponent;
 
 public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulServiceRegistrationTestBase {
-	
+
     @BindToRegistry("service")
     ServiceComponent comp = new ServiceComponent();
 
