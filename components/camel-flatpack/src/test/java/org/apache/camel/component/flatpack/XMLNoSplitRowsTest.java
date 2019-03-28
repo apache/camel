@@ -40,7 +40,7 @@ public class XMLNoSplitRowsTest extends AbstractJUnit4SpringContextTests {
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLNoSplitRowsTest.class);
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
     protected String[] expectedFirstName = {"JOHN", "JIMMY", "JANE", "FRED"};

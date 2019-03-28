@@ -30,10 +30,10 @@ import static org.junit.Assert.assertNotNull;
 @ContextConfiguration
 public class DelimitedErrorWithUnmarshalTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    @EndpointInject(uri = "mock:dataset")
+    @EndpointInject("mock:dataset")
     protected MockEndpoint dataset;
 
     @Test

@@ -27,10 +27,10 @@ import org.springframework.util.Assert;
 @ContextConfiguration
 public class InvalidFixedLengthTest extends AbstractJUnit4SpringContextTests {
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    @EndpointInject(uri = "mock:error")
+    @EndpointInject("mock:error")
     protected MockEndpoint error;
 
     @Test
