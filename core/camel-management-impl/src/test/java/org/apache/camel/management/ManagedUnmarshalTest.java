@@ -18,7 +18,6 @@ package org.apache.camel.management;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.openmbean.TabularData;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -64,18 +63,6 @@ public class ManagedUnmarshalTest extends ManagementTestSupport {
         assertTrue(xml.contains("<unmarshal"));
         assertTrue(xml.contains("</unmarshal>"));
         assertTrue(xml.contains("<string charset=\"iso-8859-1\"/>"));
-
-        TabularData data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(2, data.size());
-
-        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(3, data.size());
-
-        String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
-        assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Converts the message data received from the wire into a format that Apache Camel processors can consume"));
     }
 
     @Override
