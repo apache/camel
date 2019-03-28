@@ -32,10 +32,10 @@ import org.lightcouch.Response;
 
 public class CouchDbConsumerUpdatesIntegrationTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "couchdb:http://localhost:5984/camelcouchdb?deletes=false")
+    @EndpointInject("couchdb:http://localhost:5984/camelcouchdb?deletes=false")
     private Endpoint from;
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint to;
 
     private CouchDbClient client;
