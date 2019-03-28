@@ -245,6 +245,7 @@
     <module>camel-jpa-starter</module>
     <module>camel-jsch-starter</module>
     <module>camel-json-validator-starter</module>
+    <module>camel-jsonapi-starter</module>
     <module>camel-jsonpath-starter</module>
     <module>camel-jt400-starter</module>
     <module>camel-kafka-starter</module>

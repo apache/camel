@@ -91,6 +91,11 @@
         <version>6.4.1</version>
       </dependency>
       <dependency>
+        <groupId>com.github.jasminb</groupId>
+        <artifactId>jsonapi-converter</artifactId>
+        <version>0.9</version>
+      </dependency>
+      <dependency>
         <groupId>com.google.code.scriptengines</groupId>
         <artifactId>scriptengines-javascript</artifactId>
         <version>1.1.1</version>
@@ -1775,6 +1780,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-json-validator-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jsonapi</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jsonapi-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

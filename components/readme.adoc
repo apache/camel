@@ -896,7 +896,7 @@ Number of Components: 294 in 230 JAR artifacts (0 deprecated)
 ==== Data Formats
 
 // dataformats: START
-Number of Data Formats: 45 in 35 JAR artifacts (0 deprecated)
+Number of Data Formats: 46 in 36 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -953,6 +953,8 @@ Number of Data Formats: 45 in 35 JAR artifacts (0 deprecated)
 | link:camel-johnzon/src/main/docs/json-johnzon-dataformat.adoc[JSon Johnzon] (camel-johnzon) | 2.18 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
 
 | link:camel-xstream/src/main/docs/json-xstream-dataformat.adoc[JSon XStream] (camel-xstream) | 2.0 | JSon data format is used for unmarshal a JSon payload to POJO or to marshal POJO back to JSon payload.
+
+| link:camel-jsonapi/src/main/docs/jsonApi-dataformat.adoc[jsonApi] (camel-jsonapi) | 3.0 | 
 
 | link:camel-lzf/src/main/docs/lzf-dataformat.adoc[LZF Deflate Compression] (camel-lzf) | 2.17 | The LZF data format is a message compression and de-compression format (uses the LZF deflate algorithm).
 
@@ -1046,7 +1048,7 @@ Number of Languages: 18 in 9 JAR artifacts (1 deprecated)
 ==== Miscellaneous Components
 
 // others: START
-Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
+Number of Miscellaneous Components: 35 in 35 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |===
@@ -1058,9 +1060,19 @@ Number of Miscellaneous Components: 30 in 30 JAR artifacts (0 deprecated)
 
 | link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
 
+| link:camel-fastjson/src/main/docs/fastjson.adoc[Fastjson] (camel-fastjson) |  | Camel Fastjson support
+
 | link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 
+| link:camel-jackson/src/main/docs/jackson.adoc[Jackson] (camel-jackson) |  | Camel Jackson support
+
 | link:camel-jasypt/src/main/docs/jasypt.adoc[Jasypt] (camel-jasypt) | 2.5 | Security using Jasypt
+
+| link:camel-jaxb/src/main/docs/jaxb.adoc[Jaxb] (camel-jaxb) |  | Camel JAXB support
+
+| link:camel-jsonapi/src/main/docs/jsonapi.adoc[Jsonapi] (camel-jsonapi) |  | Camel JsonApi data format
+
+| link:camel-jsonpath/src/main/docs/jsonpath.adoc[Jsonpath] (camel-jsonpath) |  | Camel JSON Path Language
 
 | link:camel-kura/src/main/docs/kura.adoc[Kura] (camel-kura) | 2.15 | Using Camel with Eclipse Kura (OSGi)
 

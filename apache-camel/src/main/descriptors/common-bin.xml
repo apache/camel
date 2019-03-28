@@ -189,6 +189,7 @@
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
         <include>org.apache.camel:camel-json-validator</include>
+        <include>org.apache.camel:camel-jsonapi</include>
         <include>org.apache.camel:camel-jsonpath</include>
         <include>org.apache.camel:camel-jt400</include>
         <include>org.apache.camel:camel-kafka</include>
@@ -520,6 +521,7 @@
         <include>org.apache.camel:camel-jpa-starter</include>
         <include>org.apache.camel:camel-jsch-starter</include>
         <include>org.apache.camel:camel-json-validator-starter</include>
+        <include>org.apache.camel:camel-jsonapi-starter</include>
         <include>org.apache.camel:camel-jsonpath-starter</include>
         <include>org.apache.camel:camel-jt400-starter</include>
         <include>org.apache.camel:camel-kafka-starter</include>

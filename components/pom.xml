@@ -208,6 +208,7 @@
         <module>camel-johnzon</module>
         <module>camel-jooq</module>
         <module>camel-jpa</module>
+        <module>camel-jsonapi</module>
         <module>camel-jsonpath</module>
         <module>camel-jsch</module>
         <module>camel-jt400</module>

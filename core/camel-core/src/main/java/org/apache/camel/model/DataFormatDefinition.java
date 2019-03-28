@@ -33,6 +33,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
+
 import static org.apache.camel.support.EndpointHelper.isReferenceParameter;
 
 /**
@@ -176,6 +177,7 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
         this.dataFormat = dataFormat;
     }
 
+    @Override
     public Map<QName, Object> getOtherAttributes() {
         return otherAttributes;
     }
@@ -183,6 +185,7 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
     /**
      * Adds an optional attribute
      */
+    @Override
     public void setOtherAttributes(Map<QName, Object> otherAttributes) {
         this.otherAttributes = otherAttributes;
     }
