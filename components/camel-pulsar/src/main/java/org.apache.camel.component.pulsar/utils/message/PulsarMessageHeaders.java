@@ -18,10 +18,11 @@ package org.apache.camel.component.pulsar.utils.message;
 
 public class PulsarMessageHeaders {
 
+    public static final String PROPERTIES = "properties";
+
     static final String PRODUCER_NAME = "producer_name";
     static final String SEQUENCE_ID = "sequence_id";
     static final String PUBLISH_TIME = "publish_time";
-    public static final String PROPERTIES = "properties";
     static final String MESSAGE_ID = "message_id";
     static final String EVENT_TIME = "event_time";
     static final String KEY = "key";

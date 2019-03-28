@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 
 public final class PulsarMessageUtils {
 
+    // TODO unused?
     private static final Logger LOGGER = LoggerFactory.getLogger(PulsarMessageUtils.class);
 
     public static Exchange updateExchange(final Message<byte[]> message, final Exchange input) {
