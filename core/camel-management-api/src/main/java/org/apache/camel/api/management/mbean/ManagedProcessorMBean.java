@@ -54,9 +54,11 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     void stop() throws Exception;
 
     @ManagedOperation(description = "Processor information as JSon")
+    @Deprecated
     String informationJson();
 
     @ManagedOperation(description = "Explain how this processor is configured")
+    @Deprecated
     TabularData explain(boolean allOptions);
 
     @ManagedOperation(description = "Dumps the processor as XML")

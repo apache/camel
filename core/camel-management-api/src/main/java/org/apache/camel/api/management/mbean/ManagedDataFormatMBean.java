@@ -36,9 +36,11 @@ public interface ManagedDataFormatMBean {
     String getState();
 
     @ManagedOperation(description = "DataFormat information as JSon")
+    @Deprecated
     String informationJson();
 
     @ManagedOperation(description = "Explain how this data format is configured")
+    @Deprecated
     TabularData explain(boolean allOptions);
 
 }

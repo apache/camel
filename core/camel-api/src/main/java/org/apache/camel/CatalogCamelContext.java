@@ -37,6 +37,7 @@ public interface CatalogCamelContext extends CamelContext {
      * @param javaType the FQN name of the java type
      * @return the default component name.
      */
+    @Deprecated
     String resolveComponentDefaultName(String javaType);
 
     /**
@@ -46,6 +47,7 @@ public interface CatalogCamelContext extends CamelContext {
      * @throws LoadPropertiesException is thrown if error during classpath discovery of the components
      * @throws IOException is thrown if error during classpath discovery of the components
      */
+    @Deprecated
     Map<String, Properties> findComponents() throws LoadPropertiesException, IOException;
 
     /**
@@ -55,6 +57,7 @@ public interface CatalogCamelContext extends CamelContext {
      * @throws LoadPropertiesException is thrown if error during classpath discovery of the EIPs
      * @throws IOException is thrown if error during classpath discovery of the EIPs
      */
+    @Deprecated
     Map<String, Properties> findEips() throws LoadPropertiesException, IOException;
 
     /**
@@ -92,6 +95,7 @@ public interface CatalogCamelContext extends CamelContext {
      * @param includeAllOptions whether to include non configured options also (eg default options)
      * @return the json or <tt>null</tt> if the eipName or the id was not found
      */
+    @Deprecated
     String explainEipJson(String nameOrId, boolean includeAllOptions);
 
     /**
@@ -101,6 +105,7 @@ public interface CatalogCamelContext extends CamelContext {
      * @param includeAllOptions whether to include non configured options also (eg default options)
      * @return the json or <tt>null</tt> if the component was not found
      */
+    @Deprecated
     String explainComponentJson(String componentName, boolean includeAllOptions);
 
     /**
@@ -110,6 +115,7 @@ public interface CatalogCamelContext extends CamelContext {
      * @param includeAllOptions whether to include non configured options also (eg default options)
      * @return the json
      */
+    @Deprecated
     String explainDataFormatJson(String dataFormatName, DataFormat dataFormat, boolean includeAllOptions);
 
     /**
@@ -119,6 +125,7 @@ public interface CatalogCamelContext extends CamelContext {
      * @param includeAllOptions whether to include non configured options also (eg default options)
      * @return the json or <tt>null</tt> if uri parameters is invalid, or the component is <b>not</b> built with JSon schema support
      */
+    @Deprecated
     String explainEndpointJson(String uri, boolean includeAllOptions);
 
     /**
@@ -127,6 +134,7 @@ public interface CatalogCamelContext extends CamelContext {
      * @param routeId for a particular route, or <tt>null</tt> for all routes
      * @return a JSON string
      */
+    @Deprecated
     String createRouteStaticEndpointJson(String routeId);
 
     /**
@@ -136,6 +144,7 @@ public interface CatalogCamelContext extends CamelContext {
      * @param includeDynamic whether to include dynamic endpoints
      * @return a JSON string
      */
+    @Deprecated
     String createRouteStaticEndpointJson(String routeId, boolean includeDynamic);
 
 }
