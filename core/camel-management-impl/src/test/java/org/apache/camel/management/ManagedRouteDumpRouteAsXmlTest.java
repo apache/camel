@@ -135,7 +135,6 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         // get the json
         String json = (String) mbeanServer.invoke(on, "createRouteStaticEndpointJson", null, null);
         assertNotNull(json);
-        System.out.println(json);
         assertTrue(json.contains("\"myRoute\""));
         assertTrue(json.contains("{ \"uri\": \"direct://start\" }"));
         assertTrue(json.contains("{ \"uri\": \"ref://bar\" }"));

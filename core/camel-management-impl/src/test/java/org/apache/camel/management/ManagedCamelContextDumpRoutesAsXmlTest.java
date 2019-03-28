@@ -16,14 +16,14 @@
  */
 package org.apache.camel.management;
 
+import java.util.Properties;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-
-import java.util.Properties;
 
 public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSupport {
 
