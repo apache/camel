@@ -46,15 +46,17 @@ package org.apache.camel.component.leveldb;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import java.io.IOException;
 
 /**
  * The class LevelDBSetupTest
  *
- * @author mgr,  2019-03-27
+ * @author mgr, 2019-03-27
  * @version 1.0
  */
 public class LevelDBSetupTest extends CamelTestSupport {
+    /**
+     * The Level db file.
+     */
     private LevelDBFile levelDBFile;
 
     @Override
@@ -67,8 +69,11 @@ public class LevelDBSetupTest extends CamelTestSupport {
         super.tearDown();
     }
 
+    /**
+     * Test level db start with no path.
+     */
     @Test
-    public void testLevelDBStartWithNoPath() throws IOException {
+    public void testLevelDBStartWithNoPath() {
         deleteDirectory("leveldb.dat");
         levelDBFile = new LevelDBFile();
         levelDBFile.setFileName("leveldb.dat");
@@ -76,8 +81,11 @@ public class LevelDBSetupTest extends CamelTestSupport {
         levelDBFile.stop();
     }
 
+    /**
+     * Test level db start with path.
+     */
     @Test
-    public void testLevelDBStartWithPath() throws IOException {
+    public void testLevelDBStartWithPath() {
         deleteDirectory("target/data");
         levelDBFile = new LevelDBFile();
         levelDBFile.setFileName("target/data/leveldb.dat");
