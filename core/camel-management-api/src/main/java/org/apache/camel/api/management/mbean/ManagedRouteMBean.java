@@ -116,6 +116,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Dumps the route as XML")
     String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception;
 
+    @ManagedOperation(description = "Dumps the route as XML")
+    String dumpRouteAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception;
+
     @ManagedOperation(description = "Updates the route from XML")
     void updateRouteFromXml(String xml) throws Exception;
 

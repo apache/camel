@@ -19,8 +19,11 @@ package org.apache.camel.management;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+
+import java.util.Properties;
 
 public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSupport {
 
@@ -43,9 +46,60 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
         assertTrue(xml.contains("myRoute"));
         assertTrue(xml.contains("myOtherRoute"));
         assertTrue(xml.contains("direct:start"));
+        assertTrue(xml.contains("{{result}}"));
+        assertTrue(xml.contains("seda:bar"));
+        assertTrue(xml.contains("ref:bar"));
+        assertTrue(xml.contains("<header>bar</header>"));
+    }
+
+    @Test
+    public void testDumpAsXmlResolvePlaceholder() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", new Object[]{true}, new String[]{"boolean"});
+        assertNotNull(xml);
+        log.info(xml);
+
+        assertTrue(xml.contains("route"));
+        assertTrue(xml.contains("myRoute"));
+        assertTrue(xml.contains("myOtherRoute"));
+        assertTrue(xml.contains("direct:start"));
         assertTrue(xml.contains("mock:result"));
         assertTrue(xml.contains("seda:bar"));
-        assertTrue(xml.contains("mock:bar"));
+        assertTrue(xml.contains("ref:bar"));
+        assertTrue(xml.contains("<header>bar</header>"));
+    }
+
+    @Test
+    public void testDumpAsXmlResolvePlaceholderDelegateEndpoint() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", new Object[]{true, true}, new String[]{"boolean", "boolean"});
+        assertNotNull(xml);
+        log.info(xml);
+
+        assertTrue(xml.contains("route"));
+        assertTrue(xml.contains("myRoute"));
+        assertTrue(xml.contains("myOtherRoute"));
+        assertTrue(xml.contains("direct:start"));
+        assertTrue(xml.contains("mock:result"));
+        assertTrue(xml.contains("bar"));
+        assertTrue(xml.contains("seda:bar"));
+        assertTrue(xml.contains("mock://bar"));
         assertTrue(xml.contains("<header>bar</header>"));
     }
 
@@ -54,13 +108,20 @@ public class ManagedCamelContextDumpRoutesAsXmlTest extends ManagementTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                Properties props = new Properties();
+                props.put("result", "mock:result");
+                context.getPropertiesComponent().setOverrideProperties(props);
+
+                Endpoint bar = context.getEndpoint("mock:bar");
+                bindToRegistry("bar", bar);
+
                 from("direct:start").routeId("myRoute")
                     .log("Got ${body}")
-                    .to("mock:result");
+                    .to("{{result}}");
 
                 from("seda:bar").routeId("myOtherRoute")
                     .filter().header("bar")
-                        .to("mock:bar")
+                        .to("ref:bar")
                     .end();
             }
         };
