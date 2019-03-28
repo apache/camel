@@ -39,9 +39,11 @@ public interface ManagedEndpointMBean {
     String getState();
 
     @ManagedOperation(description = "Endpoint information as JSon")
+    @Deprecated
     String informationJson();
 
     @ManagedOperation(description = "Explain how this endpoint is configured")
+    @Deprecated
     TabularData explain(boolean allOptions);
 
 }
