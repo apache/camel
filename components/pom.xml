@@ -254,6 +254,7 @@
         <module>camel-properties</module>
         <module>camel-protobuf</module>
         <module>camel-pubnub</module>
+        <module>camel-pulsar</module>
         <module>camel-quartz2</module>
         <module>camel-quickfix</module>
         <module>camel-rabbitmq</module>
