@@ -576,6 +576,7 @@
     <protobuf-maven-plugin-version>0.5.1</protobuf-maven-plugin-version>
     <protonpack-version>1.8</protonpack-version>
     <pubnub-version>4.21.0</pubnub-version>
+    <pulsar-client-version>2.2.1</pulsar-client-version>
     <qpid-broker-version>7.0.6</qpid-broker-version>
     <qpid-proton-j-version>0.31.0</qpid-proton-j-version>
     <qpid-jms-client-version>0.39.0</qpid-jms-client-version>
@@ -756,6 +757,7 @@
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
     <zxing-version>3.3.3</zxing-version>
     <zxing-bundle-version>3.3.3_1</zxing-bundle-version>
+    <pulsar-client-version>2.2.1</pulsar-client-version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
