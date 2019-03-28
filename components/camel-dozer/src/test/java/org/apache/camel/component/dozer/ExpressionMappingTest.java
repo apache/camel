@@ -38,10 +38,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration
 public class ExpressionMappingTest {
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
     
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     private ProducerTemplate startEndpoint;
     
     @Autowired
