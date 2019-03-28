@@ -35,8 +35,11 @@ public class CamelSpringBootApplicationController {
     private final CountDownLatch latch = new CountDownLatch(1);
     private final AtomicBoolean completed = new AtomicBoolean();
 
-    public CamelSpringBootApplicationController(final ApplicationContext applicationContext, final CamelContext camelContext) {
+    public CamelSpringBootApplicationController(final ApplicationContext applicationContext, final CamelContext context) {
         this.main = new Main() {
+
+            { this.camelContext = context; }
+
             @Override
             protected ProducerTemplate findOrCreateCamelTemplate() {
                 return applicationContext.getBean(ProducerTemplate.class);
@@ -44,7 +47,7 @@ public class CamelSpringBootApplicationController {
 
             @Override
             protected CamelContext createCamelContext() {
-                return camelContext;
+                return context;
             }
 
             @Override
