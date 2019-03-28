@@ -45,10 +45,10 @@ public class DnsDigEndpointTest extends CamelTestSupport {
                 + "living specie\" \"s of monkey. Many are arboreal, although there are "
                 + "species that live primarily on the ground, such as baboons... "
                 + "http://en.wikipedia.org/wiki/Monkey\""; 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     protected RouteBuilder createRouteBuilder() throws Exception {

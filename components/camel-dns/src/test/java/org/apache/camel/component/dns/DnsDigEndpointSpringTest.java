@@ -43,10 +43,10 @@ public class DnsDigEndpointSpringTest extends CamelSpringTestSupport {
         + "of monkeys: any of the smaller longer-tailed catarrhine or " + "platyrrhine primates as contrasted with the apes.\" "
         + "\" http://en.wikipedia.org/wiki/Monkey\"";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     @Override

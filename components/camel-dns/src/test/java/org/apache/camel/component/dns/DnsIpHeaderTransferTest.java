@@ -27,10 +27,10 @@ import org.junit.Test;
 
 public class DnsIpHeaderTransferTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri = "direct:start")
+    @Produce("direct:start")
     protected ProducerTemplate template;
 
     protected RouteBuilder createRouteBuilder() throws Exception {
