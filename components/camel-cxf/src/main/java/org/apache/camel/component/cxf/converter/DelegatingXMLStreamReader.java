@@ -34,9 +34,11 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
     private XMLStreamReader reader;
     private final String[] xprefixes;
     private int depth;
+    private Map<String, String> nsmap;
 
     DelegatingXMLStreamReader(XMLStreamReader reader, Map<String, String> nsmap) {
         this.reader = reader;
+        this.nsmap = nsmap;
         //the original nsmap will be mutated if some of its declarations are redundantly present at the current reader 
         Set<String> prefixes = nsmap.keySet();
         for (int i = 0; i < reader.getNamespaceCount(); i++) {
@@ -89,7 +91,11 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
 
     @Override
     public String getNamespaceURI(String prefix) {
-        return reader.getNamespaceURI(prefix);
+        String ret = reader.getNamespaceURI(prefix);
+        if (ret == null) {
+            ret = nsmap.get(prefix);
+        }
+        return ret;
     }
 
     @Override
