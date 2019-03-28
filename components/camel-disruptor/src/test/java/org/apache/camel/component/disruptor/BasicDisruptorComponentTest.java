@@ -30,10 +30,10 @@ import org.junit.Test;
 public class BasicDisruptorComponentTest extends CamelTestSupport {
     private static final Integer VALUE = 42;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint resultEndpoint;
 
-    @Produce(uri = "disruptor:test")
+    @Produce("disruptor:test")
     private ProducerTemplate template;
 
     @Test

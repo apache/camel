@@ -34,13 +34,13 @@ public class MulticastDisruptorComponentTest extends CamelTestSupport {
     private static final String MULTIPLE_CONSUMERS_ENDPOINT_URI = "disruptor:test?multipleConsumers=true";
     private static final Integer VALUE = Integer.valueOf(42);
 
-    @EndpointInject(uri = "mock:result1")
+    @EndpointInject("mock:result1")
     protected MockEndpoint resultEndpoint1;
 
-    @EndpointInject(uri = "mock:result2")
+    @EndpointInject("mock:result2")
     protected MockEndpoint resultEndpoint2;
 
-    @Produce(uri = "disruptor:test")
+    @Produce("disruptor:test")
     protected ProducerTemplate template;
 
 //    private ThreadCounter threadCounter = new ThreadCounter();
