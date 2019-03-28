@@ -18,21 +18,16 @@ package org.apache.camel.component.consul;
 
 import java.util.Optional;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulKeyValueActions;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
+import com.orbitz.consul.Consul;
+
 public class ConsulClientKeyValueTest extends ConsulTestSupport {
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("consulClient", getConsul());
-
-        return registry;
-    }
 
     @Test
     public void testKeyPut() throws Exception {
@@ -58,6 +53,14 @@ public class ConsulClientKeyValueTest extends ConsulTestSupport {
         assertTrue(keyVal.isPresent());
         assertEquals(val, keyVal.get());
     }
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("consulClient", getConsul());
+        return registry;
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
