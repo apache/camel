@@ -79,18 +79,6 @@ public class ManagedRoutingSlipTest extends ManagementTestSupport {
         TabularData data = (TabularData) mbeanServer.invoke(on, "extendedInformation", null, null);
         assertNotNull(data);
         assertEquals(2, data.size());
-
-        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{false}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(3, data.size());
-
-        data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
-        assertNotNull(data);
-        assertEquals(6, data.size());
-
-        String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
-        assertNotNull(json);
-        assertTrue(json.contains("\"description\": \"Routes a message through a series of steps that are pre-determined (the slip)"));
     }
 
     @Override
