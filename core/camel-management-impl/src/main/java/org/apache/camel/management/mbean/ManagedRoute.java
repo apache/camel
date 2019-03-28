@@ -42,13 +42,7 @@ import javax.management.openmbean.TabularDataSupport;
 
 import org.w3c.dom.Document;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CatalogCamelContext;
-import org.apache.camel.ManagementStatisticsLevel;
-import org.apache.camel.Route;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.ServiceStatus;
-import org.apache.camel.TimerListener;
+import org.apache.camel.*;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
@@ -325,11 +319,15 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public String dumpRouteAsXml() throws Exception {
-        return dumpRouteAsXml(false);
+        return dumpRouteAsXml(false, false);
+    }
+
+    public String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception {
+        return dumpRouteAsXml(resolvePlaceholders, false);
     }
 
     @Override
-    public String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception {
+    public String dumpRouteAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         String id = route.getId();
         RouteDefinition def = context.getRouteDefinition(id);
         if (def != null) {
@@ -340,21 +338,46 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 final AtomicBoolean changed = new AtomicBoolean();
                 InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
                 Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
+
+                    private String prev;
+
                     @Override
                     public String transform(String text) {
-                        try {
-                            String after = getContext().resolvePropertyPlaceholders(text);
-                            if (!changed.get()) {
-                                changed.set(!text.equals(after));
+                        String after = text;
+                        if (resolveDelegateEndpoints && "uri".equals(prev)) {
+                            try {
+                                // must resolve placeholder as the endpoint may use property placeholders
+                                String uri = getContext().resolvePropertyPlaceholders(text);
+                                Endpoint endpoint = context.hasEndpoint(uri);
+                                if (endpoint instanceof DelegateEndpoint) {
+                                    endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
+                                    after = endpoint.getEndpointUri();
+                                }
+                            } catch (Exception e) {
+                                // ignore
                             }
-                            return after;
-                        } catch (Exception e) {
-                            // ignore
-                            return text;
                         }
+
+                        if (resolvePlaceholders) {
+                            try {
+                                after = getContext().resolvePropertyPlaceholders(after);
+                            } catch (Exception e) {
+                                // ignore
+                            }
+                        }
+
+                        if (!changed.get()) {
+                            changed.set(!text.equals(after));
+                        }
+
+                        // okay the previous must be the attribute key with uri, so it refers to an endpoint
+                        prev = text;
+
+                        return after;
                     }
                 });
-                // okay there were some property placeholder replaced so re-create the model
+
+                // okay there were some property placeholder or delegate endpoints replaced so re-create the model
                 if (changed.get()) {
                     xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                     RouteDefinition copy = ModelHelper.createModelFromXml(context, xml, RouteDefinition.class);
@@ -363,6 +386,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             }
             return xml;
         }
+
         return null;
     }
 

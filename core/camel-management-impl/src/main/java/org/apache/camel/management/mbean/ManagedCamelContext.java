@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -38,15 +39,7 @@ import javax.management.openmbean.TabularDataSupport;
 
 import org.w3c.dom.Document;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CatalogCamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.ManagementStatisticsLevel;
-import org.apache.camel.Producer;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.Route;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TimerListener;
+import org.apache.camel.*;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
@@ -411,11 +404,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public String dumpRoutesAsXml() throws Exception {
-        return dumpRoutesAsXml(false);
+        return dumpRoutesAsXml(false, false);
     }
 
     @Override
     public String dumpRoutesAsXml(boolean resolvePlaceholders) throws Exception {
+        return dumpRoutesAsXml(resolvePlaceholders, false);
+    }
+
+    @Override
+    public String dumpRoutesAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         List<RouteDefinition> routes = context.getRouteDefinitions();
         if (routes.isEmpty()) {
             return null;
@@ -427,25 +425,50 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         String xml = ModelHelper.dumpModelAsXml(context, def);
 
         // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
-        if (resolvePlaceholders) {
+        if (resolvePlaceholders || resolveDelegateEndpoints) {
             final AtomicBoolean changed = new AtomicBoolean();
-            InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+            InputStream is = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
             Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
+
+                private String prev;
+
                 @Override
                 public String transform(String text) {
-                    try {
-                        String after = getContext().resolvePropertyPlaceholders(text);
-                        if (!changed.get()) {
-                            changed.set(!text.equals(after));
+                    String after = text;
+                    if (resolveDelegateEndpoints && "uri".equals(prev)) {
+                        try {
+                            // must resolve placeholder as the endpoint may use property placeholders
+                            String uri = getContext().resolvePropertyPlaceholders(text);
+                            Endpoint endpoint = context.hasEndpoint(uri);
+                            if (endpoint instanceof DelegateEndpoint) {
+                                endpoint = ((DelegateEndpoint) endpoint).getEndpoint();
+                                after = endpoint.getEndpointUri();
+                            }
+                        } catch (Exception e) {
+                            // ignore
                         }
-                        return after;
-                    } catch (Exception e) {
-                        // ignore
-                        return text;
                     }
+
+                    if (resolvePlaceholders) {
+                        try {
+                            after = getContext().resolvePropertyPlaceholders(after);
+                        } catch (Exception e) {
+                            // ignore
+                        }
+                    }
+
+                    if (!changed.get()) {
+                        changed.set(!text.equals(after));
+                    }
+
+                    // okay the previous must be the attribute key with uri, so it refers to an endpoint
+                    prev = text;
+
+                    return after;
                 }
             });
-            // okay there were some property placeholder replaced so re-create the model
+
+            // okay there were some property placeholder or delegate endpoints replaced so re-create the model
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
                 RoutesDefinition copy = ModelHelper.createModelFromXml(context, xml, RoutesDefinition.class);
