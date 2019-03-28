@@ -32,7 +32,7 @@ import org.ehcache.config.units.MemoryUnit;
 import org.junit.Test;
 
 public class EhcacheComponentConfigurationTest extends CamelTestSupport {
-    @EndpointInject(uri = "ehcache:myCache")
+    @EndpointInject("ehcache:myCache")
     private EhcacheEndpoint endpoint;
 
     @Override
