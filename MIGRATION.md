@@ -306,6 +306,11 @@ When using the option `groupedExchange` on the aggregator EIP then the output of
 The `@FallbackConverter` annotation has been removed, and you should use `@Converter(fallback = true)` instead. Also you can set `@Converter(loader = true)` on the converter class to allow Camel to generate source code for loading type converters in a faster way.
 
 
+### Removed JMX APIs for explaining EIPs, components, etc.
+
+The APIs that could find, and explain EIPs, components, endpoints etc has been removed. These APIs have little value for production runtimes, and you can obtain this kind of information via the `camel-catalog`. Also the related Camel Karaf commands that used these APIs has been removed.
+
+
 ### Other changes
 
 The default for use breadcrumbs has been changed from `true` to `false`.
