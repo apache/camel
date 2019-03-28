@@ -62,10 +62,10 @@ public class ExecJavaProcessRecipientListTest extends CamelTestSupport {
 
     private static final String EXECUTABLE_PROGRAM_ARG = ExecutableJavaProgram.class.getName();
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject(uri = "mock:output")
+    @EndpointInject("mock:output")
     private MockEndpoint output;
 
     @Test

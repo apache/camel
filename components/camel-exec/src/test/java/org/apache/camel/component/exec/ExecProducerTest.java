@@ -50,7 +50,7 @@ import static org.junit.Assert.assertNull;
 @ContextConfiguration(locations = {"exec-mock-executor-context.xml"})
 public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
 
-    @Produce(uri = "direct:input")
+    @Produce("direct:input")
     private ProducerTemplate producerTemplate;
 
     @Autowired
