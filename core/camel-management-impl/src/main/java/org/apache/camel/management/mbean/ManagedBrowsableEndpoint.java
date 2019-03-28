@@ -86,11 +86,6 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
     }
 
     @Override
-    public String browseMessageAsXml(Integer index) {
-        return browseMessageAsXml(index, true);
-    }
-
-    @Override
     public String browseMessageAsXml(Integer index, Boolean includeBody) {
         List<Exchange> exchanges = getEndpoint().getExchanges();
 

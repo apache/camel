@@ -55,10 +55,6 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertEquals("camel-1", client.getCamelId());
         assertEquals("Started", client.getState());
-
-        List<String> names = client.findComponentNames();
-        assertNotNull(names);
-        assertTrue(names.contains("mock"));
     }
 
     @Test
