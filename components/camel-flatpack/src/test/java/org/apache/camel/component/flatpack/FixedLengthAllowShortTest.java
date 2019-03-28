@@ -36,13 +36,13 @@ import static org.junit.Assert.assertNotNull;
 public class FixedLengthAllowShortTest extends AbstractJUnit4SpringContextTests {
     private static final Logger LOG = LoggerFactory.getLogger(FixedLengthAllowShortTest.class);
 
-    @EndpointInject(uri = "mock:results")
+    @EndpointInject("mock:results")
     protected MockEndpoint results;
 
-    @EndpointInject(uri = "mock:results-df")
+    @EndpointInject("mock:results-df")
     protected MockEndpoint resultsdf;
 
-    @EndpointInject(uri = "mock:results-xml")
+    @EndpointInject("mock:results-xml")
     protected MockEndpoint resultsxml;
 
     protected String[] expectedFirstName = {"JOHN-SHORT", "JIMMY-SHORT", "JANE-SHORT", "FRED-SHORT"};
