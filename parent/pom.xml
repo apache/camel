@@ -320,6 +320,7 @@
         <jackrabbit-version>2.19.1</jackrabbit-version>
         <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
+        <jasminb-jsonapi-version>0.9</jasminb-jsonapi-version>
         <jandex-version>2.1.0.Final</jandex-version>
         <jasn1-version>1.11.0</jasn1-version>
         <jasper-bundle-version>6.0.44_1</jasper-bundle-version>
@@ -1599,6 +1600,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-json-validator</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jsonapi</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3102,6 +3108,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jsonapi-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsonpath-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3950,7 +3961,11 @@
                 <artifactId>jackson-jr-objects</artifactId>
                 <version>${jackson2-version}</version>
             </dependency>
-
+            <dependency>
+              <groupId>com.github.jasminb</groupId>
+              <artifactId>jsonapi-converter</artifactId>
+              <version>${jasminb-jsonapi-version}</version>
+            </dependency>
             <dependency>
                 <groupId>net.corda</groupId>
                 <artifactId>corda-rpc</artifactId>

@@ -43,6 +43,7 @@ import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
+import org.apache.camel.model.dataformat.JsonApiDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.LZFDataFormat;
 import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
@@ -71,7 +72,7 @@ import org.apache.camel.spi.Metadata;
  * Represents a {@link org.apache.camel.impl.transformer.DataFormatTransformer} which leverages
  * {@link org.apache.camel.spi.DataFormat} to perform
  * transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be specified.
- * 
+ *
  * {@see TransformerDefinition}
  * {@see DataFormatTransformer}
  */
@@ -101,6 +102,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
         @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
         @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
         @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
+        @XmlElement(required = false, name = "jsonApi", type = JsonApiDataFormat.class),
         @XmlElement(required = false, name = "lzf", type = LZFDataFormat.class),
         @XmlElement(required = false, name = "mimeMultipart", type = MimeMultipartDataFormat.class),
         @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
