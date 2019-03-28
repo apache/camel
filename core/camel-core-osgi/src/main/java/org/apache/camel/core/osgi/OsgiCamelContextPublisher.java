@@ -17,7 +17,6 @@
 package org.apache.camel.core.osgi;
 
 import java.util.Dictionary;
-import java.util.EventObject;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.LogDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.InterceptStrategy;

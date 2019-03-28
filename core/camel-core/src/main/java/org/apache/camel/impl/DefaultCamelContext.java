@@ -27,8 +27,6 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.FastTypeConverterRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;

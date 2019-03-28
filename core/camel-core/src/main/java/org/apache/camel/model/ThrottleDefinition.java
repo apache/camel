@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import javax.xml.bind.annotation.XmlAccessType;

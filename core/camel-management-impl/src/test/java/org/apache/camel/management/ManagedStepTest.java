@@ -22,8 +22,6 @@ import javax.management.openmbean.TabularData;
 
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedCamelContext;
-import org.apache.camel.api.management.mbean.ManagedProcessMBean;
-import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.builder.RouteBuilder;

@@ -25,9 +25,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.osgi.framework.BundleContext;
 

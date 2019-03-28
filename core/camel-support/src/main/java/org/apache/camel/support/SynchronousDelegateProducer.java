@@ -18,7 +18,6 @@ package org.apache.camel.support;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 
 /**

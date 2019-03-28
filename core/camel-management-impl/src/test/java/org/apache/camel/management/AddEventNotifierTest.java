@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;

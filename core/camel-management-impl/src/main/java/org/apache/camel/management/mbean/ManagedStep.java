@@ -20,8 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedStepMBean;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.model.StepDefinition;
 import org.apache.camel.processor.StepProcessor;
 
 @ManagedResource(description = "Managed Step")

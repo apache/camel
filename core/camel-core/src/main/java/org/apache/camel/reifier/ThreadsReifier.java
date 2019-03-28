@@ -16,8 +16,6 @@
  */
 package org.apache.camel.reifier;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Processor;
@@ -25,7 +23,6 @@ import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.ThreadsDefinition;
-import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ThreadsProcessor;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;

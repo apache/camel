@@ -30,8 +30,6 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.ChildServiceSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Support class for {@link ErrorHandler} implementations.

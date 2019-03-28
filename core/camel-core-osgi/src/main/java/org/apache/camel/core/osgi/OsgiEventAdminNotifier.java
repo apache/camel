@@ -17,7 +17,6 @@
 package org.apache.camel.core.osgi;
 
 import java.util.Dictionary;
-import java.util.EventObject;
 import java.util.Hashtable;
 
 import org.apache.camel.spi.CamelEvent;
