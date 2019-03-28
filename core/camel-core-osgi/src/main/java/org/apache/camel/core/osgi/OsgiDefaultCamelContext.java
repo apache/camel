@@ -16,11 +16,6 @@
  */
 package org.apache.camel.core.osgi;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
@@ -47,11 +42,6 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
         addLifecycleStrategy(repo1);
         // setup the application context classloader with the bundle classloader
         setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
-    }
-
-    @Override
-    public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
-        return BundleContextUtils.findComponents(bundleContext, this);
     }
 
     @Override
