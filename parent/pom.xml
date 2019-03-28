@@ -576,6 +576,7 @@
     <protobuf-maven-plugin-version>0.5.1</protobuf-maven-plugin-version>
     <protonpack-version>1.8</protonpack-version>
     <pubnub-version>4.21.0</pubnub-version>
+    <pulsar-version>2.2.1</pulsar-version>
     <qpid-broker-version>7.0.6</qpid-broker-version>
     <qpid-proton-j-version>0.31.0</qpid-proton-j-version>
     <qpid-jms-client-version>0.39.0</qpid-jms-client-version>
@@ -1860,6 +1861,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-pubnub</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-pulsar</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3374,6 +3380,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-protobuf-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-pulsar-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -5003,6 +5014,18 @@
         <groupId>io.nessus</groupId>
         <artifactId>nessus-ipfs-client</artifactId>
         <version>${nessus-version}</version>
+      </dependency>
+
+      <!-- apache pulsar -->
+      <dependency>
+        <groupId>org.apache.pulsar</groupId>
+        <artifactId>pulsar-client</artifactId>
+        <version>${pulsar-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.pulsar</groupId>
+        <artifactId>pulsar-client-admin</artifactId>
+        <version>${pulsar-version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
