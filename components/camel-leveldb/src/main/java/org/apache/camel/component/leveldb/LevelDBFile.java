@@ -63,7 +63,7 @@ public class LevelDBFile implements Service {
         return file;
     }
 
-    public void setFile(final File file) throws IOException {
+    public void setFile(File file) throws IOException {
         this.file = file;
     }
 
@@ -71,7 +71,7 @@ public class LevelDBFile implements Service {
         return file.getCanonicalPath();
     }
 
-    public void setFileName(final String fileName) {
+    public void setFileName(String fileName) {
         this.file = new File(fileName);
     }
 
@@ -79,7 +79,7 @@ public class LevelDBFile implements Service {
         return writeBufferSize;
     }
 
-    public void setWriteBufferSize(final int writeBufferSize) {
+    public void setWriteBufferSize(int writeBufferSize) {
         this.writeBufferSize = writeBufferSize;
     }
 
@@ -87,7 +87,7 @@ public class LevelDBFile implements Service {
         return maxOpenFiles;
     }
 
-    public void setMaxOpenFiles(final int maxOpenFiles) {
+    public void setMaxOpenFiles(int maxOpenFiles) {
         this.maxOpenFiles = maxOpenFiles;
     }
 
@@ -95,7 +95,7 @@ public class LevelDBFile implements Service {
         return blockRestartInterval;
     }
 
-    public void setBlockRestartInterval(final int blockRestartInterval) {
+    public void setBlockRestartInterval(int blockRestartInterval) {
         this.blockRestartInterval = blockRestartInterval;
     }
 
@@ -103,7 +103,7 @@ public class LevelDBFile implements Service {
         return blockSize;
     }
 
-    public void setBlockSize(final int blockSize) {
+    public void setBlockSize(int blockSize) {
         this.blockSize = blockSize;
     }
 
@@ -111,7 +111,7 @@ public class LevelDBFile implements Service {
         return compressionType;
     }
 
-    public void setCompressionType(final String compressionType) {
+    public void setCompressionType(String compressionType) {
         this.compressionType = compressionType;
     }
 
@@ -119,7 +119,7 @@ public class LevelDBFile implements Service {
         return verifyChecksums;
     }
 
-    public void setVerifyChecksums(final boolean verifyChecksums) {
+    public void setVerifyChecksums(boolean verifyChecksums) {
         this.verifyChecksums = verifyChecksums;
     }
 
@@ -127,7 +127,7 @@ public class LevelDBFile implements Service {
         return paranoidChecks;
     }
 
-    public void setParanoidChecks(final boolean paranoidChecks) {
+    public void setParanoidChecks(boolean paranoidChecks) {
         this.paranoidChecks = paranoidChecks;
     }
 
@@ -135,7 +135,7 @@ public class LevelDBFile implements Service {
         return cacheSize;
     }
 
-    public void setCacheSize(final long cacheSize) {
+    public void setCacheSize(long cacheSize) {
         this.cacheSize = cacheSize;
     }
 
@@ -143,12 +143,12 @@ public class LevelDBFile implements Service {
         return sync;
     }
 
-    public void setSync(final boolean sync) {
+    public void setSync(boolean sync) {
         this.sync = sync;
     }
 
     public WriteOptions getWriteOptions() {
-        final WriteOptions options = new WriteOptions();
+        WriteOptions options = new WriteOptions();
         options.sync(sync);
         return options;
     }
@@ -162,7 +162,7 @@ public class LevelDBFile implements Service {
             LOG.debug("Starting LevelDB using file: {}", getFile());
         }
 
-        final Options options = new Options().writeBufferSize(writeBufferSize).maxOpenFiles(maxOpenFiles)
+        Options options = new Options().writeBufferSize(writeBufferSize).maxOpenFiles(maxOpenFiles)
                 .blockRestartInterval(blockRestartInterval).blockSize(blockSize).verifyChecksums(verifyChecksums)
                 .paranoidChecks(paranoidChecks).cacheSize(cacheSize);
 
@@ -177,13 +177,13 @@ public class LevelDBFile implements Service {
             final Path dbFile = Paths.get(this.getFileName());
             Files.createDirectories(dbFile.getParent());
             db = factory.open(getFile(), options);
-        } catch (final IOException ioe) {
+        } catch (IOException ioe) {
             throw new RuntimeException("Error opening LevelDB with file " + getFile(), ioe);
         }
     }
 
     public void stop() {
-        final File file = getFile();
+        File file = getFile();
 
         LOG.debug("Stopping LevelDB using file: {}", file);
         if (db != null) {
