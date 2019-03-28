@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 @Converter
@@ -40,7 +39,7 @@ public class InstanceDummyFallbackConverter implements CamelContextAware {
         this.camelContext = camelContext;
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         if (Currency.class.isAssignableFrom(value.getClass())) {
             return "Money talks says " + camelContext.getName();

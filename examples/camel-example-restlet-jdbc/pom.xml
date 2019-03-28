@@ -130,6 +130,15 @@
                     </connectors>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <pomElements combine.children="append">
+                        <repositories>keep</repositories>
+                    </pomElements>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

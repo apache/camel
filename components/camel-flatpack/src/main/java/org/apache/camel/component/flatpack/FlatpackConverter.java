@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,7 @@ import org.w3c.dom.Element;
 import net.sf.flatpack.DataSet;
 import org.apache.camel.Converter;
 
-@Converter
+@Converter(loader = true)
 public final class FlatpackConverter {
 
     private FlatpackConverter() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -22,7 +22,7 @@ import org.apache.camel.Converter;
 /**
  * 
  */
-@Converter
+@Converter(loader = true)
 public class ActiveMQConverter {
     /**
      * Converts a URL in ActiveMQ syntax to a destination such as to support

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -94,5 +94,16 @@ public interface PropertiesComponent extends Component {
      * Whether to silently ignore if a location cannot be located, such as a properties file not found.
      */
     void setIgnoreMissingLocation(boolean ignoreMissingLocation);
+
+    /**
+     * Sets initial properties which will be added before any property locations are loaded.
+     */
+    void setInitialProperties(Properties initialProperties);
+
+    /**
+     * Sets a special list of override properties that take precedence
+     * and will use first, if a property exist.
+     */
+    void setOverrideProperties(Properties overrideProperties);
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,11 +18,13 @@ package org.apache.camel.spring.boot.actuate.health;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
+import org.apache.camel.spring.boot.health.HealthCheckVerboseConfiguration;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,15 +32,21 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnClass({HealthIndicator.class})
 @ConditionalOnBean(CamelAutoConfiguration.class)
 @AutoConfigureAfter(CamelAutoConfiguration.class)
+@EnableConfigurationProperties(HealthCheckVerboseConfiguration.class)
 public class CamelHealthAutoConfiguration {
+
+    private  HealthCheckVerboseConfiguration properties; 
+    public CamelHealthAutoConfiguration(HealthCheckVerboseConfiguration configuration) {
+        this.properties = configuration;
+    }
 
     @ConditionalOnClass({CamelContext.class})
     @ConditionalOnMissingBean(CamelHealthIndicator.class)
-    protected static class CamelHealthIndicatorInitializer {
+    protected  class CamelHealthIndicatorInitializer {
 
         @Bean
         public HealthIndicator camelHealthIndicator(CamelContext camelContext) {
-            return new CamelHealthIndicator(camelContext);
+            return new CamelHealthIndicator(camelContext, properties);
         }
 
     }

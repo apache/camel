@@ -58,7 +58,7 @@ Migrating custom components
 
 You should depend on `camel-support` and not `camel-core` directly.
 
-The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. For example classes such as `DefaultComponent`, `DefaultEndpoint` etc has been moved and migration is nessasary.
+The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. For example classes such as `DefaultComponent`, `DefaultEndpoint` etc has been moved and migration is necessary.
 
 // TODO: Should we create a camel2-support JAR with an adapter to bridge between 2.x and 3.0
 
@@ -141,6 +141,10 @@ The uri attribute has been deprecated, instead use value, which allows a shortha
 In Camel 2.x you could have 2 or more inputs to Camel routes, however this was not supported in all use-cases in Camel, and this functionality is seldom in use. This has
 also been deprecated in Camel 2.x. In Camel 3 we have removed the remaining code for specifying multipe inputs to routes, and its now only possible to specify exactly only 1 input to a route.
 
+### JSon DataFormat
+
+The default JSon library with the JSon dataformat has changed from `XStream` to `Jackson`.
+
 ### Moved APIs
 
 The following API changes may affect your existing Camel applications, which needs to be migrated.
@@ -187,7 +191,7 @@ The class `org.apache.camel.management.JmxSystemPropertyKeys` has been moved to 
 
 #### camel-test
 
-If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer nessasary, and instead
+If you are using camel-test and override the `createRegistry` method, for example to register beans from the `JndiRegisty` class, then this is no longer necessary, and instead
 you should just use the `bind` method from the `Registry` API which you can call directly from `CamelContext`, such as:
 
     context.getRegistry().bind("myId", myBean);
@@ -296,6 +300,16 @@ The class `org.apache.camel.impl.ThrottlingInflightRoutePolicy` has been moved t
 The class `XsltAggregationStrategy` has been moved from `org.apache.camel.builder.XsltAggregationStrategy` in the camel-core JAR to `org.apache.camel.component.xslt.XsltAggregationStrategy` and moved to the `camel-xslt` JAR.
 
 When using the option `groupedExchange` on the aggregator EIP then the output of the aggregation is now longer also stored in the exchange property `Exchange.GROUPED_EXCHANGE`. This behaviour was already deprecated from Camel 2.13 onwards.
+
+### Fallback type converters
+
+The `@FallbackConverter` annotation has been removed, and you should use `@Converter(fallback = true)` instead. Also you can set `@Converter(loader = true)` on the converter class to allow Camel to generate source code for loading type converters in a faster way.
+
+
+### Removed JMX APIs for explaining EIPs, components, etc.
+
+The APIs that could find, and explain EIPs, components, endpoints etc has been removed. These APIs have little value for production runtimes, and you can obtain this kind of information via the `camel-catalog`. Also the related Camel Karaf commands that used these APIs has been removed.
+
 
 ### Other changes
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -43,6 +43,7 @@ import io.swagger.models.Info;
 import io.swagger.models.License;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -255,6 +256,10 @@ public class RestSwaggerSupport {
     public void renderResourceListing(CamelContext camelContext, RestApiResponseAdapter response, BeanConfig swaggerConfig, String contextId, String route, boolean json, boolean yaml,
                                       Map<String, Object> headers, ClassResolver classResolver, RestConfiguration configuration) throws Exception {
         LOG.trace("renderResourceListing");
+        
+        ObjectMapper mapper = Json.mapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         if (cors) {
             setupCorsHeaders(response, configuration.getCorsHeaders());
@@ -281,10 +286,7 @@ public class RestSwaggerSupport {
                 if (!configuration.isApiVendorExtension()) {
                     clearVendorExtensions(swagger);
                 }
-
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                
                 byte[] bytes = mapper.writeValueAsBytes(swagger);
 
                 int len = bytes.length;
@@ -304,9 +306,6 @@ public class RestSwaggerSupport {
                     clearVendorExtensions(swagger);
                 }
 
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.enable(SerializationFeature.INDENT_OUTPUT);
-                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
                 byte[] jsonData = mapper.writeValueAsBytes(swagger);
 
                 // json to yaml

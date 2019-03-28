@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,6 +17,8 @@
 package org.apache.camel.component.aws.swf;
 
 import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,19 +38,12 @@ public class CamelSWFTestSupport extends CamelTestSupport {
                     + "&eventName=testEvent"
                     + "&amazonSWClient=#amazonSWClient";
 
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     protected ProducerTemplate template;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     protected MockEndpoint result;
 
-    protected AmazonSimpleWorkflowClient amazonSWClient;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        amazonSWClient = mock(AmazonSimpleWorkflowClient.class);
-        registry.bind("amazonSWClient", amazonSWClient);
-        return registry;
-    }
+    @BindToRegistry("amazonSWClient")
+    protected AmazonSimpleWorkflowClient amazonSWClient = mock(AmazonSimpleWorkflowClient.class);
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.ehcache;
 
 import org.apache.camel.EndpointInject;
@@ -33,7 +32,7 @@ import org.ehcache.config.units.MemoryUnit;
 import org.junit.Test;
 
 public class EhcacheComponentConfigurationTest extends CamelTestSupport {
-    @EndpointInject(uri = "ehcache:myCache")
+    @EndpointInject("ehcache:myCache")
     private EhcacheEndpoint endpoint;
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.ehcache;
 
 import org.apache.camel.EndpointInject;
@@ -35,13 +34,13 @@ import org.ehcache.config.units.MemoryUnit;
 import org.junit.Test;
 
 public class EhcacheCacheConfigurationTest extends CamelTestSupport {
-    @EndpointInject(uri = "ehcache:myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
+    @EndpointInject("ehcache:myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
     private EhcacheEndpoint ehcacheProgrammaticConf;
-    @EndpointInject(uri = "ehcache:myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configurationUri=classpath:ehcache/ehcache-file-config.xml")
+    @EndpointInject("ehcache:myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configurationUri=classpath:ehcache/ehcache-file-config.xml")
     private EhcacheEndpoint ehcacheFileConf;
-    @EndpointInject(uri = "ehcache:myUserCacheConf")
+    @EndpointInject("ehcache:myUserCacheConf")
     private EhcacheEndpoint ehcacheUserConf;
-    @EndpointInject(uri = "ehcache:myCache?cacheManager=#myCacheManager&keyType=java.lang.String&valueType=java.lang.String")
+    @EndpointInject("ehcache:myCache?cacheManager=#myCacheManager&keyType=java.lang.String&valueType=java.lang.String")
     private EhcacheEndpoint ehcacheCacheManager;
 
     @Override

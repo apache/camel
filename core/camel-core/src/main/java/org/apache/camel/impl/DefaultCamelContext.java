@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
-
 import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
@@ -28,11 +25,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.impl.converter.FastTypeConverterRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.impl.transformer.TransformerKey;
 import org.apache.camel.impl.validator.ValidatorKey;
@@ -55,10 +50,7 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.LanguageResolver;
-import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNameStrategy;
-import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
@@ -138,8 +130,8 @@ public class DefaultCamelContext extends AbstractCamelContext {
      * Lazily create a default implementation
      */
     protected TypeConverter createTypeConverter() {
-        BaseTypeConverterRegistry answer;
-        answer = new DefaultTypeConverter(getPackageScanClassResolver(), getInjector(), getDefaultFactoryFinder(), isLoadTypeConverters());
+        // lets use the new fast type converter registry
+        FastTypeConverterRegistry answer = new FastTypeConverterRegistry();
         answer.setCamelContext(this);
         setTypeConverterRegistry(answer);
         return answer;

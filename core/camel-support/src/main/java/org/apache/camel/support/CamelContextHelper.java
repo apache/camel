@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,6 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -43,7 +42,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -53,8 +51,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public final class CamelContextHelper {
     public static final String COMPONENT_BASE = "META-INF/services/org/apache/camel/component/";
     public static final String COMPONENT_DESCRIPTOR = "META-INF/services/org/apache/camel/component.properties";
-    public static final String COMPONENT_DOCUMENTATION_PREFIX = "org/apache/camel/component/";
-    public static final String MODEL_DESCRIPTOR = "META-INF/services/org/apache/camel/model.properties";
     public static final String MODEL_DOCUMENTATION_PREFIX = "org/apache/camel/model/";
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextHelper.class);
@@ -583,80 +579,6 @@ public final class CamelContextHelper {
             }
         }
         return map;
-    }
-
-    /**
-     * Find information about all the EIPs from camel-core.
-     */
-    public static SortedMap<String, Properties> findEips(CamelContext camelContext) throws LoadPropertiesException {
-        SortedMap<String, Properties> answer = new TreeMap<>();
-
-        ClassResolver resolver = camelContext.getClassResolver();
-        LOG.debug("Finding all EIPs using class resolver: {} -> {}", resolver);
-        URL url = resolver.loadResourceAsURL(MODEL_DESCRIPTOR);
-        if (url != null) {
-            InputStream is = null;
-            try {
-                is = url.openStream();
-                String all = IOHelper.loadText(is);
-                String[] lines = all.split("\n");
-                for (String line : lines) {
-                    if (line.startsWith("#")) {
-                        continue;
-                    }
-
-                    Properties prop = new Properties();
-                    prop.put("name", line);
-
-                    String description = null;
-                    String label = null;
-                    String javaType = null;
-                    String title = null;
-
-                    // enrich with more meta-data
-                    String json = camelContext.adapt(CatalogCamelContext.class).explainEipJson(line, false);
-                    if (json != null) {
-                        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
-
-                        for (Map<String, String> row : rows) {
-                            if (row.get("title") != null) {
-                                title = row.get("title");
-                            }
-                            if (row.get("description") != null) {
-                                description = row.get("description");
-                            }
-                            if (row.get("label") != null) {
-                                label = row.get("label");
-                            }
-                            if (row.get("javaType") != null) {
-                                javaType = row.get("javaType");
-                            }
-                        }
-                    }
-
-                    if (title != null) {
-                        prop.put("title", title);
-                    }
-                    if (description != null) {
-                        prop.put("description", description);
-                    }
-                    if (label != null) {
-                        prop.put("label", label);
-                    }
-                    if (javaType != null) {
-                        prop.put("class", javaType);
-                    }
-
-                    answer.put(line, prop);
-                }
-            } catch (IOException e) {
-                throw new LoadPropertiesException(url, e);
-            } finally {
-                IOHelper.close(is);
-            }
-        }
-
-        return answer;
     }
 
     /**

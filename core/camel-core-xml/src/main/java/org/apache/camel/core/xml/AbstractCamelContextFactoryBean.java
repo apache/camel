@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -109,6 +109,7 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.CamelContextHelper;
@@ -165,6 +166,13 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (packageResolver != null) {
             LOG.info("Using custom PackageScanClassResolver: {}", packageResolver);
             getContext().setPackageScanClassResolver(packageResolver);
+        }
+
+        // also set type converter registry as early as possible
+        TypeConverterRegistry tcr = getBeanForType(TypeConverterRegistry.class);
+        if (tcr != null) {
+            LOG.info("Using custom TypeConverterRegistry: {}", tcr);
+            getContext().setTypeConverterRegistry(tcr);
         }
 
         // then set custom properties

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -36,7 +36,6 @@ import static java.lang.reflect.Modifier.isStatic;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -125,10 +124,12 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
         // load all the found classes into the type converter registry
         for (Class<?> type : classes) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
+            if (acceptClass(type)) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
+                }
+                loadConverterMethods(registry, type);
             }
-            loadConverterMethods(registry, type);
         }
 
         // now clear the maps so we do not hold references
@@ -271,13 +272,12 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                     if (method.getAnnotation(Converter.class) != null) {
                         allowNull = method.getAnnotation(Converter.class).allowNull();
                     }
-                    injector = handleHasConverterAnnotation(registry, type, injector, method, allowNull);
-                } else if (ObjectHelper.hasAnnotation(method, FallbackConverter.class, true)) {
-                    boolean allowNull = false;
-                    if (method.getAnnotation(FallbackConverter.class) != null) {
-                        allowNull = method.getAnnotation(FallbackConverter.class).allowNull();
+                    boolean fallback = method.getAnnotation(Converter.class).fallback();
+                    if (fallback) {
+                        injector = handleHasFallbackConverterAnnotation(registry, type, injector, method, allowNull);
+                    } else {
+                        injector = handleHasConverterAnnotation(registry, type, injector, method, allowNull);
                     }
-                    injector = handleHasFallbackConverterAnnotation(registry, type, injector, method, allowNull);
                 }
             }
 
@@ -300,6 +300,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
             }
         }
+    }
+
+    protected boolean acceptClass(Class<?> clazz) {
+        return true;
     }
 
     private CachingInjector<?> handleHasConverterAnnotation(TypeConverterRegistry registry, Class<?> type,
@@ -379,8 +383,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     protected void registerFallbackTypeConverter(TypeConverterRegistry registry, TypeConverter typeConverter, Method method) {
         boolean canPromote = false;
         // check whether the annotation may indicate it can promote
-        if (method.getAnnotation(FallbackConverter.class) != null) {
-            canPromote = method.getAnnotation(FallbackConverter.class).canPromote();
+        if (method.getAnnotation(Converter.class) != null) {
+            canPromote = method.getAnnotation(Converter.class).fallbackCanPromote();
         }
         registry.addFallbackTypeConverter(typeConverter, canPromote);
     }

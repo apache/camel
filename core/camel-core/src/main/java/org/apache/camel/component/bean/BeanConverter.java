@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,7 +18,6 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
@@ -27,14 +26,14 @@ import static org.apache.camel.TypeConverter.MISS_VALUE;
 /**
  * A set of converter methods for working with beans
  */
-@Converter
+@Converter(loader = true)
 public final class BeanConverter {
 
     private BeanConverter() {
         // Helper Class
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // use a fallback type converter so we can convert the embedded body if the value is BeanInvocation
         if (BeanInvocation.class.isAssignableFrom(value.getClass())) {

@@ -178,7 +178,6 @@
         <module>camel-hazelcast</module>
         <module>camel-hbase</module>
         <module>camel-hdfs2</module>
-        <module>camel-headersmap</module>
         <module>camel-hipchat</module>
         <module>camel-hl7</module>
         <module>camel-ical</module>
@@ -206,6 +205,7 @@
         <module>camel-jmx</module>
         <module>camel-jolt</module>
         <module>camel-johnzon</module>
+        <module>camel-jooq</module>
         <module>camel-jpa</module>
         <module>camel-jsonpath</module>
         <module>camel-jsch</module>
@@ -319,6 +319,7 @@
         <module>camel-weather</module>
         <module>camel-web3j</module>
         <module>camel-websocket</module>
+        <module>camel-websocket-jsr356</module>
         <module>camel-wordpress</module>
         <module>camel-xchange</module>
         <module>camel-xmlsecurity</module>
@@ -331,7 +332,6 @@
         <module>camel-zipkin</module>
         <module>camel-zookeeper</module>
         <module>camel-zookeeper-master</module>
-        <module>camel-websocket-jsr356</module>
     </modules>
 
     <build>

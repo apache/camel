@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -46,8 +46,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean prettyPrint;
     @XmlAttribute
-    @Metadata(defaultValue = "XStream")
-    private JsonLibrary library = JsonLibrary.XStream;
+    @Metadata(defaultValue = "Jackson")
+    private JsonLibrary library = JsonLibrary.Jackson;
     @XmlAttribute
     private String unmarshalTypeName;
     @XmlTransient

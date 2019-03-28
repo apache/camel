@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -51,8 +51,7 @@ import org.apache.camel.component.cm.test.mocks.cmsender.NotPhoneNumberFoundExce
 import org.apache.camel.component.cm.test.mocks.cmsender.UnknownErrorExceptionSender;
 import org.apache.camel.component.cm.test.mocks.cmsender.UnroutableMessageExceptionSender;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
-import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
+import org.apache.camel.test.spring.CamelSpringRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,8 +61,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.util.Assert;
 
-@RunWith(CamelSpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {CamelTestConfiguration.class }, loader = CamelSpringDelegatingTestContextLoader.class)
+@RunWith(CamelSpringRunner.class)
+@ContextConfiguration(classes = {CamelTestConfiguration.class })
 public class CMTest extends AbstractJUnit4SpringContextTests {
 
     // dependency: camel-spring-javaconfig
@@ -76,10 +75,10 @@ public class CMTest extends AbstractJUnit4SpringContextTests {
     private final PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
     private String validNumber;
 
-    @Produce(uri = "direct:sms")
+    @Produce("direct:sms")
     private CMProxy cmProxy;
 
-    @EndpointInject(uri = "mock:test")
+    @EndpointInject("mock:test")
     private MockEndpoint mock;
 
     // private StopWatch stopWatch = new StopWatch(getClass().getSimpleName());

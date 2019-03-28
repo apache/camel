@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,20 +24,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeDataSupport;
-import javax.management.openmbean.CompositeType;
-import javax.management.openmbean.TabularData;
-import javax.management.openmbean.TabularDataSupport;
-
-import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Result;
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Result.Status;
@@ -50,7 +40,6 @@ import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Verifica
 import org.apache.camel.api.management.mbean.ComponentVerifierExtension.VerificationError.StandardCode;
 import org.apache.camel.api.management.mbean.ManagedComponentMBean;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.util.CastUtils;
 
 @ManagedResource(description = "Managed Component")
@@ -96,56 +85,6 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
 
     public Object getInstance() {
         return component;
-    }
-
-    public String informationJson() {
-        try {
-            // a component may have been given a different name, so resolve its default name by its java type
-            // as we can find the component json information from the default component name
-            String defaultName = component.getCamelContext().adapt(CatalogCamelContext.class).resolveComponentDefaultName(component.getClass().getName());
-            String target = defaultName != null ? defaultName : name;
-            return component.getCamelContext().adapt(CatalogCamelContext.class).getComponentParameterJsonSchema(target);
-        } catch (IOException e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
-    }
-
-    public TabularData explain(boolean allOptions) {
-        try {
-            // a component may have been given a different name, so resolve its default name by its java type
-            // as we can find the component json information from the default component name
-            String defaultName = component.getCamelContext().adapt(CatalogCamelContext.class).resolveComponentDefaultName(component.getClass().getName());
-            String target = defaultName != null ? defaultName : name;
-            String json = component.getCamelContext().adapt(CatalogCamelContext.class).explainComponentJson(target, allOptions);
-
-            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-
-            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.explainComponentTabularType());
-
-            for (Map<String, String> row : rows) {
-                String name = row.get("name");
-                String kind = row.get("kind");
-                String group = row.get("group") != null ? row.get("group") : "";
-                String label = row.get("label") != null ? row.get("label") : "";
-                String type = row.get("type");
-                String javaType = row.get("javaType");
-                String deprecated = row.get("deprecated") != null ? row.get("deprecated") : "";
-                String secret = row.get("secret") != null ? row.get("secret") : "";
-                String value = row.get("value") != null ? row.get("value") : "";
-                String defaultValue = row.get("defaultValue") != null ? row.get("defaultValue") : "";
-                String description = row.get("description") != null ? row.get("description") : "";
-
-                CompositeType ct = CamelOpenMBeanTypes.explainComponentCompositeType();
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"option", "kind", "group", "label", "type", "java type", "deprecated", "secret", "value", "default value", "description"},
-                        new Object[]{name, kind, group, label, type, javaType, deprecated, secret, value, defaultValue, description});
-                answer.put(data);
-            }
-
-            return answer;
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
     }
 
     @Override

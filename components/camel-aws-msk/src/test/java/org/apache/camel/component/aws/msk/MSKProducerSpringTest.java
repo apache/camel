@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,6 +20,7 @@ import com.amazonaws.services.kafka.model.BrokerNodeGroupInfo;
 import com.amazonaws.services.kafka.model.ClusterState;
 import com.amazonaws.services.kafka.model.CreateClusterResult;
 import com.amazonaws.services.kafka.model.DeleteClusterResult;
+import com.amazonaws.services.kafka.model.DescribeClusterResult;
 import com.amazonaws.services.kafka.model.ListClustersResult;
 
 import org.apache.camel.EndpointInject;
@@ -32,7 +33,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MSKProducerSpringTest extends CamelSpringTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
@@ -42,7 +43,6 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:listClusters", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(MSKConstants.OPERATION, MSKOperations.listClusters);
             }
         });
 
@@ -60,7 +60,6 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:createCluster", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(MSKConstants.OPERATION, MSKOperations.createCluster);
                 exchange.getIn().setHeader(MSKConstants.CLUSTER_NAME, "test-kafka");
                 exchange.getIn().setHeader(MSKConstants.CLUSTER_KAFKA_VERSION, "2.1.1");
                 exchange.getIn().setHeader(MSKConstants.BROKER_NODES_NUMBER, 2);
@@ -83,7 +82,6 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         Exchange exchange = template.request("direct:deleteCluster", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(MSKConstants.OPERATION, MSKOperations.deleteCluster);
                 exchange.getIn().setHeader(MSKConstants.CLUSTER_ARN, "test-kafka");
             }
         });
@@ -93,6 +91,25 @@ public class MSKProducerSpringTest extends CamelSpringTestSupport {
         DeleteClusterResult resultGet = (DeleteClusterResult)exchange.getIn().getBody();
         assertEquals("test-kafka", resultGet.getClusterArn());
         assertEquals(ClusterState.DELETING.name(), resultGet.getState());
+    }
+    
+    
+    @Test
+    public void mskDescribeClusterTest() throws Exception {
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = template.request("direct:describeCluster", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(MSKConstants.CLUSTER_ARN, "test-kafka");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        DescribeClusterResult resultGet = (DescribeClusterResult)exchange.getIn().getBody();
+        assertEquals("test-kafka", resultGet.getClusterInfo().getClusterArn());
+        assertEquals(ClusterState.ACTIVE.name(), resultGet.getClusterInfo().getState());
     }
 
     @Override

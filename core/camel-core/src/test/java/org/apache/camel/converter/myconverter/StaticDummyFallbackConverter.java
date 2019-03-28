@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,7 +20,6 @@ import java.util.TimeZone;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 @Converter
@@ -29,7 +28,7 @@ public final class StaticDummyFallbackConverter {
     private StaticDummyFallbackConverter() {
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         if (TimeZone.class.isAssignableFrom(value.getClass())) {
             return "Time talks";

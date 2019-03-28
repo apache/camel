@@ -95,6 +95,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-caffeine-lrucache</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-controlbus</artifactId>
         </dependency>
         <dependency>
@@ -167,11 +171,6 @@
         </dependency>
 
         <!-- required dependencies by camel-core -->
-        <!-- which we shade into camel-core so its available for everybody out of the box -->
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
         <!-- we shade our patched ordered json-simple parser -->
         <dependency>
             <groupId>org.apache.camel</groupId>

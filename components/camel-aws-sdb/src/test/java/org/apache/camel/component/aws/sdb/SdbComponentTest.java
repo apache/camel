@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,17 +26,18 @@ import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
 import com.amazonaws.services.simpledb.model.ReplaceableItem;
 import com.amazonaws.services.simpledb.model.UpdateCondition;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultProducerTemplate;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SdbComponentTest extends CamelTestSupport {
     
-    private AmazonSDBClientMock amazonSDBClient;
+    @BindToRegistry("amazonSDBClient")
+    private AmazonSDBClientMock amazonSDBClient = new AmazonSDBClientMock();
     
     @Test
     public void doesntCreateDomainOnStartIfExists() throws Exception {
@@ -276,16 +277,6 @@ public class SdbComponentTest extends CamelTestSupport {
         assertEquals(2, items.size());
         assertEquals("ITEM1", items.get(0).getName());
         assertEquals("ITEM2", items.get(1).getName());
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        amazonSDBClient = new AmazonSDBClientMock();
-        registry.bind("amazonSDBClient", amazonSDBClient);
-        
-        return registry;
     }
 
     @Override

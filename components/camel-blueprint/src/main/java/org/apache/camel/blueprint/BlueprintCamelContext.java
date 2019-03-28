@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,12 +16,6 @@
  */
 package org.apache.camel.blueprint;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
 import org.apache.camel.core.osgi.OsgiBeanRepository;
@@ -44,6 +38,8 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.BlueprintEvent;
 import org.osgi.service.blueprint.container.BlueprintListener;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * OSGi Blueprint based {@link org.apache.camel.CamelContext}.
@@ -142,11 +138,6 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
 
         // must stop Camel
         stop();
-    }
-
-    @Override
-    public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
-        return BundleContextUtils.findComponents(bundleContext, this);
     }
 
     @Override

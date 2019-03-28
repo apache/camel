@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,6 @@ import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.ListTagsResult;
-import com.amazonaws.services.lambda.model.ListVersionsByFunctionRequest;
 import com.amazonaws.services.lambda.model.ListVersionsByFunctionResult;
 import com.amazonaws.services.lambda.model.PublishVersionResult;
 import com.amazonaws.services.lambda.model.TagResourceResult;
@@ -39,19 +38,22 @@ import com.amazonaws.services.lambda.model.UntagResourceResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.util.IOUtils;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class LambdaProducerTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @BindToRegistry("awsLambdaClient")
+    AmazonLambdaClientMock clientMock = new AmazonLambdaClientMock();
+
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
 
     @Test
@@ -291,17 +293,6 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertNotNull(result);
         assertEquals("GetHelloWithName", result.getVersions().get(0).getFunctionName());
         assertEquals("1", result.getVersions().get(0).getVersion());
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-
-        AmazonLambdaClientMock clientMock = new AmazonLambdaClientMock();
-
-        registry.bind("awsLambdaClient", clientMock);
-
-        return registry;
     }
 
     @Override

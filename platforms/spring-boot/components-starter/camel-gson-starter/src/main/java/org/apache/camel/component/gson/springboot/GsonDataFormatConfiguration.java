@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -55,7 +55,7 @@ public class GsonDataFormatConfiguration
     /**
      * Which json library to use.
      */
-    private JsonLibrary library = JsonLibrary.XStream;
+    private JsonLibrary library = JsonLibrary.Jackson;
     /**
      * Class name of the java type to use when unarmshalling
      */

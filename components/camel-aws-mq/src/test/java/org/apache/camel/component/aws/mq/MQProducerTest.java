@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,18 +30,21 @@ import com.amazonaws.services.mq.model.ListBrokersResult;
 import com.amazonaws.services.mq.model.UpdateBrokerResult;
 import com.amazonaws.services.mq.model.User;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class MQProducerTest extends CamelTestSupport {
+
+    @BindToRegistry("amazonMqClient")
+    AmazonMQClientMock clientMock = new AmazonMQClientMock();
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
     
     @Test
@@ -166,17 +169,6 @@ public class MQProducerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         DescribeBrokerResult resultGet = (DescribeBrokerResult) exchange.getIn().getBody();
         assertEquals(resultGet.getBrokerId(), "1");
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonMQClientMock clientMock = new AmazonMQClientMock();
-        
-        registry.bind("amazonMqClient", clientMock);
-        
-        return registry;
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -17,7 +17,6 @@
 package org.apache.camel.support;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,13 +27,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static java.util.Comparator.comparing;
+
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Comparator.comparing;
 import static org.apache.camel.TimeoutMap.Listener.Type.Evict;
 import static org.apache.camel.TimeoutMap.Listener.Type.Put;
 import static org.apache.camel.TimeoutMap.Listener.Type.Remove;
@@ -61,7 +61,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
     private final long purgePollTime;
     private final Lock lock;
 
-    private final List<Listener<K,V>> listeners = new ArrayList<>(2);
+    private final List<Listener<K, V>> listeners = new ArrayList<>(2);
 
     public DefaultTimeoutMap(ScheduledExecutorService executor) {
         this(executor, 1000);

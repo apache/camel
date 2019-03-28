@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -152,8 +152,8 @@ public class LinkedInConfiguration {
     }
 
     /**
-     * A number of milliseconds since the UNIX Epoch. The default is 60 days. 
-     * A LinkedIn access token expires when this amount of time elapses after the token is in use. 
+     * A number of milliseconds since the UNIX Epoch. The default is 60 days.
+     * A LinkedIn access token expires when this amount of time elapses after the token is in use.
      */
     public void setExpiryTime(Long expiryTime) {
         this.expiryTime = expiryTime;
@@ -247,7 +247,8 @@ public class LinkedInConfiguration {
                 && (redirectUri == null ? other.redirectUri == null : redirectUri.equals(other.redirectUri))
                 && Arrays.equals(scopes, other.scopes)
                 && (httpParams == null ? other.httpParams == null : httpParams.equals(other.httpParams))
-                && (lazyAuth == other.lazyAuth);
+                && (lazyAuth == other.lazyAuth)
+                && (accessToken == null ? other.accessToken == null : accessToken.equals(other.accessToken));
         }
         return false;
     }
@@ -256,16 +257,35 @@ public class LinkedInConfiguration {
     public int hashCode() {
         return new HashCodeBuilder().append(userName).append(userPassword).append(secureStorage)
             .append(clientId).append(clientSecret)
-            .append(redirectUri).append(scopes).append(httpParams).append(lazyAuth).toHashCode();
+            .append(redirectUri).append(scopes).append(httpParams).append(lazyAuth).append(accessToken).toHashCode();
     }
 
     public void validate() throws IllegalArgumentException {
-        StringHelper.notEmpty(userName, "userName");
-        if (ObjectHelper.isEmpty(userPassword) && secureStorage == null) {
-            throw new IllegalArgumentException("Property userPassword or secureStorage is required");
+            //if access token is null, authentication credentials have to be validated
+        if (ObjectHelper.isEmpty(accessToken)) {
+            StringHelper.notEmpty(userName, "userName");
+            if (ObjectHelper.isEmpty(userPassword) && secureStorage == null) {
+                throw new IllegalArgumentException("Property userPassword or secureStorage is required");
+            }
+            StringHelper.notEmpty(clientId, "clientId");
+            StringHelper.notEmpty(clientSecret, "clientSecret");
+        } else {
+            //if accessToken is net, other parameters hav to be empty
+            if (!ObjectHelper.isEmpty(userName)) {
+                throw new IllegalArgumentException("Property accessToken can not be defined if property userName is set");
+            }
+            if (!ObjectHelper.isEmpty(userPassword)) {
+                throw new IllegalArgumentException("Property accessToken can not be defined if property userPassword is set");
+            }
+            if (!ObjectHelper.isEmpty(clientId)) {
+                throw new IllegalArgumentException("Property accessToken can not be defined if property clientId is set");
+            }
+            if (!ObjectHelper.isEmpty(clientSecret)) {
+                throw new IllegalArgumentException("Property accessToken can not be defined if property clientSecret is set");
+            }
         }
-        StringHelper.notEmpty(clientId, "clientId");
-        StringHelper.notEmpty(clientSecret, "clientSecret");
+
+        //redirectUri has to be valid for both cases
         StringHelper.notEmpty(redirectUri, "redirectUri");
     }
 }

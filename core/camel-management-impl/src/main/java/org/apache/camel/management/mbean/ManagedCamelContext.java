@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -24,17 +24,12 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.CompositeDataSupport;
-import javax.management.openmbean.CompositeType;
-import javax.management.openmbean.TabularData;
-import javax.management.openmbean.TabularDataSupport;
 
 import org.w3c.dom.Document;
 
@@ -45,10 +40,8 @@ import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
@@ -60,7 +53,6 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.support.JSonSchemaHelper;
 import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -411,11 +403,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public String dumpRoutesAsXml() throws Exception {
-        return dumpRoutesAsXml(false);
+        return dumpRoutesAsXml(false, false);
     }
 
     @Override
     public String dumpRoutesAsXml(boolean resolvePlaceholders) throws Exception {
+        return dumpRoutesAsXml(resolvePlaceholders, false);
+    }
+
+    @Override
+    public String dumpRoutesAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         List<RouteDefinition> routes = context.getRouteDefinitions();
         if (routes.isEmpty()) {
             return null;
@@ -424,36 +421,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         // use a routes definition to dump the routes
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
-        String xml = ModelHelper.dumpModelAsXml(context, def);
 
-        // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
-        if (resolvePlaceholders) {
-            final AtomicBoolean changed = new AtomicBoolean();
-            InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-            Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
-                @Override
-                public String transform(String text) {
-                    try {
-                        String after = getContext().resolvePropertyPlaceholders(text);
-                        if (!changed.get()) {
-                            changed.set(!text.equals(after));
-                        }
-                        return after;
-                    } catch (Exception e) {
-                        // ignore
-                        return text;
-                    }
-                }
-            });
-            // okay there were some property placeholder replaced so re-create the model
-            if (changed.get()) {
-                xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                RoutesDefinition copy = ModelHelper.createModelFromXml(context, xml, RoutesDefinition.class);
-                xml = ModelHelper.dumpModelAsXml(context, copy);
-            }
-        }
-
-        return xml;
+        return ModelHelper.dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
     }
 
     public void addOrUpdateRoutesFromXml(String xml) throws Exception {
@@ -644,134 +613,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return removed.size();
     }
 
-    public Map<String, Properties> findEips() throws Exception {
-        return context.adapt(CatalogCamelContext.class).findEips();
-    }
-
-    public List<String> findEipNames() throws Exception {
-        Map<String, Properties> map = findEips();
-        return new ArrayList<>(map.keySet());
-    }
-
-    public TabularData listEips() throws Exception {
-        try {
-            // find all EIPs
-            Map<String, Properties> eips = context.adapt(CatalogCamelContext.class).findEips();
-
-            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listEipsTabularType());
-
-            // gather EIP detail for each eip
-            for (Map.Entry<String, Properties> entry : eips.entrySet()) {
-                String name = entry.getKey();
-                String title = (String) entry.getValue().get("title");
-                String description = (String) entry.getValue().get("description");
-                String label = (String) entry.getValue().get("label");
-                String type = (String) entry.getValue().get("class");
-                String status = ModelCamelContextHelper.isEipInUse(context, name) ? "in use" : "on classpath";
-                CompositeType ct = CamelOpenMBeanTypes.listEipsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"name", "title", "description", "label", "status", "type"},
-                        new Object[]{name, title, description, label, status, type});
-                answer.put(data);
-            }
-            return answer;
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
-    }
-
-    public Map<String, Properties> findComponents() throws Exception {
-        Map<String, Properties> answer = context.adapt(CatalogCamelContext.class).findComponents();
-        for (Map.Entry<String, Properties> entry : answer.entrySet()) {
-            if (entry.getValue() != null) {
-                // remove component as its not serializable over JMX
-                entry.getValue().remove("component");
-                // .. and components which just list all the components in the JAR/bundle and that is verbose and not needed
-                entry.getValue().remove("components");
-            }
-        }
-        return answer;
-    }
-
-    public String createRouteStaticEndpointJson() {
-        return createRouteStaticEndpointJson(true);
-    }
-
-    public String createRouteStaticEndpointJson(boolean includeDynamic) {
-        return context.adapt(CatalogCamelContext.class).createRouteStaticEndpointJson(null, includeDynamic);
-    }
-
-    public List<String> findComponentNames() throws Exception {
-        Map<String, Properties> map = findComponents();
-        return new ArrayList<>(map.keySet());
-    }
-
-    @Override
-    public TabularData listComponents() throws Exception {
-        try {
-            // find all components
-            Map<String, Properties> components = context.adapt(CatalogCamelContext.class).findComponents();
-
-            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listComponentsTabularType());
-
-            // gather component detail for each component
-            for (Map.Entry<String, Properties> entry : components.entrySet()) {
-                String name = entry.getKey();
-                String title = null;
-                String syntax = null;
-                String description = null;
-                String label = null;
-                String deprecated = null;
-                String secret = null;
-                String status = context.hasComponent(name) != null ? "in use" : "on classpath";
-                String type = (String) entry.getValue().get("class");
-                String groupId = null;
-                String artifactId = null;
-                String version = null;
-
-                // a component may have been given a different name, so resolve its default name by its java type
-                // as we can find the component json information from the default component name
-                String defaultName = context.adapt(CatalogCamelContext.class).resolveComponentDefaultName(type);
-                String target = defaultName != null ? defaultName : name;
-
-                // load component json data, and parse it to gather the component meta-data
-                String json = context.adapt(CatalogCamelContext.class).getComponentParameterJsonSchema(target);
-                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-                for (Map<String, String> row : rows) {
-                    if (row.containsKey("title")) {
-                        title = row.get("title");
-                    } else if (row.containsKey("syntax")) {
-                        syntax = row.get("syntax");
-                    } else if (row.containsKey("description")) {
-                        description = row.get("description");
-                    } else if (row.containsKey("label")) {
-                        label = row.get("label");
-                    } else if (row.containsKey("deprecated")) {
-                        deprecated = row.get("deprecated");
-                    } else if (row.containsKey("secret")) {
-                        secret = row.get("secret");
-                    } else if (row.containsKey("javaType")) {
-                        type = row.get("javaType");
-                    } else if (row.containsKey("groupId")) {
-                        groupId = row.get("groupId");
-                    } else if (row.containsKey("artifactId")) {
-                        artifactId = row.get("artifactId");
-                    } else if (row.containsKey("version")) {
-                        version = row.get("version");
-                    }
-                }
-
-                CompositeType ct = CamelOpenMBeanTypes.listComponentsCompositeType();
-                CompositeData data = new CompositeDataSupport(ct,
-                        new String[]{"name", "title", "syntax", "description", "label", "deprecated", "secret", "status", "type", "groupId", "artifactId", "version"},
-                        new Object[]{name, title, syntax, description, label, deprecated, secret, status, type, groupId, artifactId, version});
-                answer.put(data);
-            }
-            return answer;
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
-    }
-
     public String componentParameterJsonSchema(String componentName) throws Exception {
         return context.adapt(CatalogCamelContext.class).getComponentParameterJsonSchema(componentName);
     }
@@ -786,18 +627,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public String eipParameterJsonSchema(String eipName) throws Exception {
         return context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema(eipName);
-    }
-
-    public String explainEipJson(String nameOrId, boolean includeAllOptions) {
-        return context.adapt(CatalogCamelContext.class).explainEipJson(nameOrId, includeAllOptions);
-    }
-
-    public String explainComponentJson(String componentName, boolean includeAllOptions) throws Exception {
-        return context.adapt(CatalogCamelContext.class).explainComponentJson(componentName, includeAllOptions);
-    }
-
-    public String explainEndpointJson(String uri, boolean includeAllOptions) throws Exception {
-        return context.adapt(CatalogCamelContext.class).explainEndpointJson(uri, includeAllOptions);
     }
 
     public void reset(boolean includeRoutes) throws Exception {

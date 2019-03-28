@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,9 +50,8 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        // core type converters is always loaded which does not use any classpath scanning
-        // and therefore is fast
 
+        // core type converters is always loaded which does not use any classpath scanning and therefore is fast
         loadCoreTypeConverters();
         if (loadTypeConverters) {
             int core = typeMappings.size();

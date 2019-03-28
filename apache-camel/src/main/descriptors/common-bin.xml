@@ -150,7 +150,6 @@
         <include>org.apache.camel:camel-hazelcast</include>
         <include>org.apache.camel:camel-hbase</include>
         <include>org.apache.camel:camel-hdfs2</include>
-        <include>org.apache.camel:camel-headersmap</include>
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-http-common</include>
@@ -184,6 +183,7 @@
         <include>org.apache.camel:camel-jmx</include>
         <include>org.apache.camel:camel-johnzon</include>
         <include>org.apache.camel:camel-jolt</include>
+        <include>org.apache.camel:camel-jooq</include>
         <include>org.apache.camel:camel-jpa</include>
         <include>org.apache.camel:camel-jsch</include>
         <include>org.apache.camel:camel-json-validator</include>
@@ -361,6 +361,8 @@
         <include>org.apache.camel:camel-commands-core</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
         <include>org.apache.camel:camel-route-parser</include>
+        <include>org.apache.camel:camel-headersmap</include>
+        <include>org.apache.camel:camel-caffeine-lrucache</include>
       </includes>
     </dependencySet>
 
@@ -510,6 +512,7 @@
         <include>org.apache.camel:camel-jmx-starter</include>
         <include>org.apache.camel:camel-johnzon-starter</include>
         <include>org.apache.camel:camel-jolt-starter</include>
+        <include>org.apache.camel:camel-jooq-starter</include>
         <include>org.apache.camel:camel-jpa-starter</include>
         <include>org.apache.camel:camel-jsch-starter</include>
         <include>org.apache.camel:camel-json-validator-starter</include>

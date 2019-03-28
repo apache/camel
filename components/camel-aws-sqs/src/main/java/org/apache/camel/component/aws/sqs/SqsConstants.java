@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,4 +29,5 @@ public interface SqsConstants {
     String RECEIPT_HANDLE = "CamelAwsSqsReceiptHandle";
     String DELAY_HEADER = "CamelAwsSqsDelaySeconds";
     String MESSAGE_GROUP_ID_PROPERTY = "CamelAwsMessageGroupId";
+    String SQS_OPERATION = "CamelAwsSqsOperation";
 }

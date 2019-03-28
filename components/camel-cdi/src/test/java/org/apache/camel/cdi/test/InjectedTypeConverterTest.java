@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.cdi.bean.InjectedTypeConverterRoute;
-import org.apache.camel.cdi.converter.InjectedTypeConverter;
+import org.apache.camel.cdi.converter.InjectedTestTypeConverter;
 import org.apache.camel.cdi.pojo.TypeConverterInput;
 import org.apache.camel.cdi.pojo.TypeConverterOutput;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -58,7 +58,7 @@ public class InjectedTypeConverterTest {
             // Test class
             .addClass(InjectedTypeConverterRoute.class)
             // Type converter
-            .addClass(InjectedTypeConverter.class)
+            .addClass(InjectedTestTypeConverter.class)
             // No need as Camel CDI automatically registers the type converter bean
             //.addAsManifestResource(new StringAsset("org.apache.camel.cdi.se.converter"), ArchivePaths.create("services/org/apache/camel/TypeConverter"))
             // Bean archive deployment descriptor

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
@@ -152,6 +151,14 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                         throw new RuntimeException("Error: " + e.toString(), e);
                     }
                 }
+            }
+        }
+
+        // remove excluded properties from parent as we dont want to inherit them again
+        if (parentData != null && parentData.get("properties") != null) {
+            Map map = (Map<String, Object>) parentData.get("properties");
+            for (String exclude : uriEndpoint.excludeProperties().split(",")) {
+                map.remove(exclude);
             }
         }
 

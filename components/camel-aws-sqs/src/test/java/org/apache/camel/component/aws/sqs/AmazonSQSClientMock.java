@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -30,7 +30,9 @@ import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.http.SdkHttpMetadata;
 import com.amazonaws.services.sqs.AbstractAmazonSQS;
+import com.amazonaws.services.sqs.model.BatchResultErrorEntry;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
 import com.amazonaws.services.sqs.model.ChangeMessageVisibilityResult;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
@@ -41,6 +43,10 @@ import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
+import com.amazonaws.services.sqs.model.SendMessageBatchRequest;
+import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
+import com.amazonaws.services.sqs.model.SendMessageBatchResult;
+import com.amazonaws.services.sqs.model.SendMessageBatchResultEntry;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
@@ -179,5 +185,27 @@ public class AmazonSQSClientMock extends AbstractAmazonSQS {
     public ChangeMessageVisibilityResult changeMessageVisibility(ChangeMessageVisibilityRequest changeMessageVisibilityRequest) throws AmazonServiceException, AmazonClientException {
         this.changeMessageVisibilityRequests.add(changeMessageVisibilityRequest);
         return new ChangeMessageVisibilityResult();
+    }
+    
+    @Override
+    public SendMessageBatchResult sendMessageBatch(SendMessageBatchRequest request) {
+        SendMessageBatchResult result = new SendMessageBatchResult();
+        Collection<SendMessageBatchResultEntry> entriesSuccess = new ArrayList<SendMessageBatchResultEntry>();
+        SendMessageBatchResultEntry entry1 = new SendMessageBatchResultEntry();
+        SendMessageBatchResultEntry entry2 = new SendMessageBatchResultEntry();
+        entry1.setId("team1");
+        entry2.setId("team2");
+        entriesSuccess.add(entry1);
+        entriesSuccess.add(entry2);
+        Collection<BatchResultErrorEntry> entriesFail = new ArrayList<BatchResultErrorEntry>();
+        BatchResultErrorEntry entry3 = new BatchResultErrorEntry();
+        BatchResultErrorEntry entry4 = new BatchResultErrorEntry();
+        entry3.setId("team1");
+        entry4.setId("team4");
+        entriesFail.add(entry3);
+        entriesFail.add(entry4);
+        result.setSuccessful(entriesSuccess);
+        result.setFailed(entriesFail);
+        return result;
     }
 }

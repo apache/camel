@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,18 +16,11 @@
  */
 package org.apache.camel.core.osgi;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.camel.LoadPropertiesException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.BeanRepository;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultRegistry;
 import org.osgi.framework.BundleContext;
 
@@ -49,11 +42,6 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
         addLifecycleStrategy(repo1);
         // setup the application context classloader with the bundle classloader
         setApplicationContextClassLoader(new BundleDelegatingClassLoader(bundleContext.getBundle()));
-    }
-
-    @Override
-    public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
-        return BundleContextUtils.findComponents(bundleContext, this);
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,8 @@ package org.apache.camel.component.as2;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -26,8 +28,12 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.as2.api.AS2ClientConnection;
 import org.apache.camel.component.as2.api.AS2ClientManager;
+import org.apache.camel.component.as2.api.AS2CompressionAlgorithm;
+import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
+import org.apache.camel.component.as2.api.AS2MessageStructure;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
+import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ApiName;
 import org.apache.camel.component.as2.internal.AS2ConnectionHelper;
@@ -38,6 +44,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
+import org.apache.http.entity.ContentType;
 
 /**
  * Component used for transferring data secure and reliable over the internet using the AS2 protocol.
@@ -85,6 +92,135 @@ public class AS2Endpoint extends AbstractApiEndpoint<AS2ApiName, AS2Configuratio
         // also set consumer.* properties
         configureConsumer(consumer);
         return consumer;
+    }
+
+    
+    public String getRequestUri() {
+        return configuration.getRequestUri();
+    }
+
+    public void setRequestUri(String requestUri) {
+        configuration.setRequestUri(requestUri);
+    }
+
+    public String getSubject() {
+        return configuration.getSubject();
+    }
+
+    public void setSubject(String subject) {
+        configuration.setSubject(subject);
+    }
+
+    public String getFrom() {
+        return configuration.getFrom();
+    }
+
+    public void setFrom(String from) {
+        configuration.setFrom(from);
+    }
+
+    public String getAs2From() {
+        return configuration.getAs2From();
+    }
+
+    public void setAs2From(String as2From) {
+        configuration.setAs2From(as2From);
+    }
+
+    public String getAs2To() {
+        return configuration.getAs2To();
+    }
+
+    public void setAs2To(String as2To) {
+        configuration.setAs2To(as2To);
+    }
+    
+    public AS2MessageStructure getAs2MessageStructure() {
+        return configuration.getAs2MessageStructure();
+    }
+
+    public void setAs2MessageStructure(AS2MessageStructure as2MessageStructure) {
+        configuration.setAs2MessageStructure(as2MessageStructure);
+    }
+    
+    public ContentType getEdiMessageType() {
+        return configuration.getEdiMessageType();
+    }
+
+    public void setEdiMessageContentType(ContentType ediMessageType) {
+        configuration.setEdiMessageType(ediMessageType);
+    }
+    
+    public String getEdiMessageTransferEncoding() {
+        return configuration.getEdiMessageTransferEncoding();
+    }
+
+    public void setEdiMessageTransferEncoding(String ediMessageTransferEncoding) {
+        configuration.setEdiMessageTransferEncoding(ediMessageTransferEncoding);
+    }
+    
+    public AS2SignatureAlgorithm getSigningAlgorithm() {
+        return configuration.getSigningAlgorithm();
+    }
+    
+    public void setSigningAlgorithm(AS2SignatureAlgorithm signingAlgorithm) {
+        configuration.setSigningAlgorithm(signingAlgorithm);
+    }
+    
+    public Certificate[] getSigningCertificateChain() {
+        return configuration.getSigningCertificateChain();
+    }
+    
+    public void setSigningCertificateChain(Certificate[] signingCertificateChain) {
+        configuration.setSigningCertificateChain(signingCertificateChain);
+    }
+
+    public PrivateKey getSigningPrivateKey() {
+        return configuration.getSigningPrivateKey();
+    }
+
+    public void setSigningPrivateKey(PrivateKey signingPrivateKey) {
+        configuration.setSigningPrivateKey(signingPrivateKey);
+    }
+
+    public AS2CompressionAlgorithm getCompressionAlgorithm() {
+        return configuration.getCompressionAlgorithm();
+    }
+
+    public void setCompressionAlgorithm(AS2CompressionAlgorithm compressionAlgorithm) {
+        configuration.setCompressionAlgorithm(compressionAlgorithm);
+    }
+
+    public String getDispositionNotificationTo() {
+        return configuration.getDispositionNotificationTo();
+    }
+
+    public void setDispositionNotificationTo(String dispositionNotificationTo) {
+        configuration.setDispositionNotificationTo(dispositionNotificationTo);
+    }
+    
+    public String[] getSignedReceiptMicAlgorithms() {
+        return configuration.getSignedReceiptMicAlgorithms();
+    }
+    
+    public void setSignedReceiptMicAlgorithms(String[] signedReceiptMicAlgorithms) {
+        configuration.setSignedReceiptMicAlgorithms(signedReceiptMicAlgorithms);
+    }
+    
+    public AS2EncryptionAlgorithm getEncryptingAlgorithm() {
+        return configuration.getEncryptingAlgorithm();
+    }
+    
+    public void setEncryptingAlgorithm(AS2EncryptionAlgorithm encryptingAlgorithm) {
+        configuration.setEncryptingAlgorithm(encryptingAlgorithm);
+    }
+    
+    public Certificate[] getEncryptingCertificateChain() {
+        return configuration.getEncryptingCertificateChain();
+    }
+    
+    public void setEncryptingCertificateChain(Certificate[] encryptingCertificateChain) {
+        configuration.setEncryptingCertificateChain(encryptingCertificateChain);
     }
 
     @Override

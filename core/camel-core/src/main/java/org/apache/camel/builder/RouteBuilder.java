@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -110,6 +110,17 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     public void bindToRegistry(String id, Object bean) {
         getContext().getRegistry().bind(id, bean);
+    }
+
+    /**
+     * Binds the bean to the repository (if possible).
+     *
+     * @param id   the id of the bean
+     * @param type the type of the bean to associate the binding
+     * @param bean the bean
+     */
+    public void bindToRegistry(String id, Class<?> type, Object bean) {
+        getContext().getRegistry().bind(id, type, bean);
     }
 
     /**

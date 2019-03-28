@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -294,6 +294,39 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
     }
 
     /**
+     * Read value of the People object and split the results
+     * into individual messages
+     */
+    @Test
+    public void testConsumerReadClientValuesSplitResults() throws Exception {
+        final Map<String, Object> headers = new HashMap<>();
+        String endpoint = "olingo2://read/Manufacturers('1')/Address?consumer.splitResult=true";
+
+        this.context.setTracing(true);
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-value");
+        mockEndpoint.expectedMinimumMessageCount(1);
+        mockEndpoint.setResultWaitTime(60000);
+
+        final Map<String, Object> resultValue = requestBodyAndHeaders(endpoint, null, headers);
+        assertNotNull(resultValue);
+
+        mockEndpoint.assertIsSatisfied();
+        //
+        // 1 individual message in the exchange
+        //
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+        assertIsInstanceOf(Map.class, body);
+        Map<String, Object> value = (Map<String, Object>) body;
+        Object addrObj = value.get("Address");
+        assertIsInstanceOf(Map.class, addrObj);
+        Map<String, Object> addrMap = (Map<String, Object>) addrObj;
+        assertEquals("70173", addrMap.get("ZipCode"));
+        assertEquals("Star Street 137", addrMap.get("Street"));
+        assertEquals("Germany", addrMap.get("Country"));
+        assertEquals("Stuttgart", addrMap.get("City"));
+    }
+
+    /**
      * Read entity set of the People object and with no filter already seen, all
      * items should be present in each message
      *
@@ -454,9 +487,14 @@ public class Olingo2ComponentTest extends AbstractOlingo2TestSupport {
                 //
                 // Consumer endpoint
                 //
-                from("olingo2://read/Manufacturers?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false").to("mock:consumer-alreadyseen");
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&consumer.splitResult=false")
+                    .to("mock:consumer-alreadyseen");
 
-                from("olingo2://read/Manufacturers?consumer.splitResult=true").to("mock:consumer-splitresult");
+                from("olingo2://read/Manufacturers?consumer.splitResult=true")
+                    .to("mock:consumer-splitresult");
+
+                from("olingo2://read/Manufacturers('1')/Address?consumer.splitResult=true")
+                    .to("mock:consumer-value");
             }
         };
     }

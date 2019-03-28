@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -82,6 +82,8 @@ public class SqsConfiguration implements Cloneable {
     private MessageGroupIdStrategy messageGroupIdStrategy;
     @UriParam(label = "producer", defaultValue = "useExchangeId", enums = "useExchangeId,useContentBasedDeduplication")
     private MessageDeduplicationIdStrategy messageDeduplicationIdStrategy = new ExchangeIdMessageDeduplicationIdStrategy();
+    @UriParam(label = "producer")
+    private SqsOperations operation;
 
     // queue properties
     @UriParam(label = "queue")
@@ -475,6 +477,17 @@ public class SqsConfiguration implements Cloneable {
         } else {
             throw new IllegalArgumentException("Unrecognised MessageDeduplicationIdStrategy: " + strategy);
         }
+    }
+    
+    public SqsOperations getOperation() {
+        return operation;
+    }
+
+    /**
+     * The operation to do in case the user don't want to send only a message
+     */
+    public void setOperation(SqsOperations operation) {
+        this.operation = operation;
     }
     
     // *************************************************

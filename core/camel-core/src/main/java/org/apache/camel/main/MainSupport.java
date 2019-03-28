@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -89,6 +89,8 @@ public abstract class MainSupport extends ServiceSupport {
     protected ReloadStrategy reloadStrategy;
     protected String propertyPlaceholderLocations;
     protected boolean autoConfigurationEnabled = true;
+    protected Properties initialProperties;
+    protected Properties overrideProperties;
 
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
@@ -544,6 +546,30 @@ public abstract class MainSupport extends ServiceSupport {
         this.autoConfigurationEnabled = autoConfigurationEnabled;
     }
 
+    public Properties getInitialProperties() {
+        return initialProperties;
+    }
+
+    /**
+     * Sets initial properties for the properties component,
+     * which will be used before any locations are resolved.
+     */
+    public void setInitialProperties(Properties initialProperties) {
+        this.initialProperties = initialProperties;
+    }
+
+    public Properties getOverrideProperties() {
+        return overrideProperties;
+    }
+
+    /**
+     * Sets a special list of override properties that take precedence
+     * and will use first, if a property exist.
+     */
+    public void setOverrideProperties(Properties overrideProperties) {
+        this.overrideProperties = overrideProperties;
+    }
+
     public boolean isTrace() {
         return trace;
     }
@@ -707,12 +733,24 @@ public abstract class MainSupport extends ServiceSupport {
         if (propertyPlaceholderLocations != null) {
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             pc.addLocation(propertyPlaceholderLocations);
+            if (initialProperties != null) {
+                pc.setInitialProperties(initialProperties);
+            }
+            if (overrideProperties != null) {
+                pc.setOverrideProperties(overrideProperties);
+            }
             LOG.info("Using properties from: {}", propertyPlaceholderLocations);
         } else {
             // lets default to application.properties and ignore if its missing
             PropertiesComponent pc = camelContext.getPropertiesComponent();
             pc.addLocation("classpath:application.properties");
             pc.setIgnoreMissingLocation(true);
+            if (initialProperties != null) {
+                pc.setInitialProperties(initialProperties);
+            }
+            if (overrideProperties != null) {
+                pc.setOverrideProperties(overrideProperties);
+            }
             LOG.info("Using optional properties from classpath:application.properties");
         }
         if (trace) {

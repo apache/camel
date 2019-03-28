@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -20,24 +20,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
 import org.junit.Test;
 
 public class SesComponentTest extends CamelTestSupport {
-    
-    private AmazonSESClientMock sesClient;
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        sesClient = new AmazonSESClientMock();
-        super.setUp();
-    }
+    @BindToRegistry("amazonSESClient")
+    private AmazonSESClientMock sesClient = new AmazonSESClientMock();
 
     @Test
     public void sendInOnlyMessageUsingUrlOptions() throws Exception {
@@ -103,15 +97,6 @@ public class SesComponentTest extends CamelTestSupport {
         assertTrue(sendEmailRequest.getReplyToAddresses().contains("anotherReplyTo2@example.com"));
         assertEquals("anotherSubject", getSubject(sendEmailRequest));
         assertEquals("This is my message text.", getBody(sendEmailRequest));
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        registry.bind("amazonSESClient", sesClient);
-        
-        return registry;
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
+import com.amazonaws.services.sqs.model.DeleteMessageResult;
+import com.amazonaws.services.sqs.model.SendMessageBatchResult;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -28,10 +34,10 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SqsComponentSpringTest extends CamelSpringTestSupport {
     
-    @EndpointInject(uri = "direct:start")
+    @EndpointInject("direct:start")
     private ProducerTemplate template;
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint result;
     
     @Test
@@ -80,6 +86,44 @@ public class SqsComponentSpringTest extends CamelSpringTestSupport {
         
         assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
+    }
+    
+    @Test
+    public void sendBatchMessage() throws Exception {
+        result.expectedMessageCount(1);
+
+        template.send("direct:start-batch", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Collection c = new ArrayList<Integer>();
+                c.add("team1");
+                c.add("team2");
+                c.add("team3");
+                c.add("team4");
+                exchange.getIn().setBody(c);
+            }
+        });
+        assertMockEndpointsSatisfied();
+        SendMessageBatchResult res = result.getExchanges().get(0).getIn().getBody(SendMessageBatchResult.class);
+        assertEquals(2, res.getFailed().size());
+        assertEquals(2, res.getSuccessful().size());
+    }
+    
+    @Test
+    public void deleteMessage() throws Exception {
+        result.expectedMessageCount(1);
+
+        template.send("direct:start-delete", new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(SqsConstants.RECEIPT_HANDLE, "123456");
+            }
+        });
+        assertMockEndpointsSatisfied();
+        DeleteMessageResult res = result.getExchanges().get(0).getIn().getBody(DeleteMessageResult.class);
+        assertNotNull(res);
     }
 
     @Override

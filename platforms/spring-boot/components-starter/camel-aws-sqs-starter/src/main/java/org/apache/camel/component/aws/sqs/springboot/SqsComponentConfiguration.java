@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,6 +18,7 @@ package org.apache.camel.component.aws.sqs.springboot;
 
 import javax.annotation.Generated;
 import com.amazonaws.services.sqs.AmazonSQS;
+import org.apache.camel.component.aws.sqs.SqsOperations;
 import org.apache.camel.spring.boot.ComponentConfigurationPropertiesCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -268,6 +269,11 @@ public class SqsComponentConfiguration
          * be set on the message.
          */
         private String messageDeduplicationIdStrategy = "useExchangeId";
+        /**
+         * The operation to do in case the user don't want to send only a
+         * message
+         */
+        private SqsOperations operation;
 
         public String getAmazonAWSHost() {
             return amazonAWSHost;
@@ -519,6 +525,14 @@ public class SqsComponentConfiguration
         public void setMessageDeduplicationIdStrategy(
                 String messageDeduplicationIdStrategy) {
             this.messageDeduplicationIdStrategy = messageDeduplicationIdStrategy;
+        }
+
+        public SqsOperations getOperation() {
+            return operation;
+        }
+
+        public void setOperation(SqsOperations operation) {
+            this.operation = operation;
         }
     }
 }

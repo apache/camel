@@ -644,11 +644,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-headersmap</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-hipchat</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -810,6 +805,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jolt</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jooq</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2259,6 +2259,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jolt-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jooq-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

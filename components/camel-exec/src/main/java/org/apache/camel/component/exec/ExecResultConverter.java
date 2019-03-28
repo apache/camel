@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -38,7 +38,7 @@ import static org.apache.camel.TypeConverter.MISS_VALUE;
  * href="http://camel.apache.org/type-converter.html">the Camel docs for type
  * converters.</a>
  */
-@Converter
+@Converter(loader = true)
 public final class ExecResultConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ExecResultConverter.class);

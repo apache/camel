@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -89,8 +89,11 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                                       boolean lazyAuth, String[] enabledProtocols) {
 
         this.oAuthParams = oAuthParams;
-        this.oAuthToken = null;
-
+        if (oAuthParams.getSecureStorage() != null) {
+            this.oAuthToken = oAuthParams.getSecureStorage().getOAuthToken();
+        } else {
+            this.oAuthToken = null;
+        }
 
         if (httpParams != null && httpParams.get(ConnRoutePNames.DEFAULT_PROXY) != null) {
             final HttpHost proxyHost = (HttpHost)httpParams.get(ConnRoutePNames.DEFAULT_PROXY);
@@ -361,11 +364,6 @@ public final class LinkedInOAuthRequestFilter implements ClientRequestFilter {
                     return;
                 }
                 LOG.info("OAuth secure storage returned a null or expired token, creating a new token...");
-
-                // throw an exception if a user password is not set for authorization
-                if (oAuthParams.getUserPassword() == null || oAuthParams.getUserPassword().isEmpty()) {
-                    throw new IllegalArgumentException("Missing password for LinkedIn authorization");
-                }
             }
 
             // need new OAuth token, authorize user, LinkedIn does not support OAuth2 grant_type=refresh_token

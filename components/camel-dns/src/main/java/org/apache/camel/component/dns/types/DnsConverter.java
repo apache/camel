@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,7 +29,7 @@ import org.xbill.DNS.Record;
 /**
  * A converter for all the DNS objects used by the DNS component.
  */
-@Converter
+@Converter(loader = true)
 public final class DnsConverter {
 
     private DnsConverter() {

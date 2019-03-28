@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -50,7 +50,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     private static final Logger LOG = LoggerFactory.getLogger(OsgiTypeConverter.class);
 
     private final BundleContext bundleContext;
-    private final CamelContext camelContext;
+    private CamelContext camelContext;
     private final Injector injector;
     private final FactoryFinder factoryFinder;
     private final ServiceTracker<TypeConverterLoader, Object> tracker;
@@ -106,6 +106,16 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         this.tracker.close();
         ServiceHelper.stopService(this.delegate);
         this.delegate = null;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public boolean allowNull() {

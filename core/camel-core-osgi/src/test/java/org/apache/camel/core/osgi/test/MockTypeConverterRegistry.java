@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,6 +19,7 @@ package org.apache.camel.core.osgi.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.TypeConverterExists;
@@ -93,6 +94,22 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
 
     public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
         // noop
+    }
+
+    public boolean isAnnotationScanning() {
+        return false;
+    }
+
+    public void setAnnotationScanning(boolean annotationScanning) {
+        // noop
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        // noop
+    }
+
+    public CamelContext getCamelContext() {
+        return null;
     }
 
     public void start() throws Exception {

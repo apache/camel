@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,11 +16,9 @@
  */
 package org.apache.camel;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
@@ -691,6 +689,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     TypeConverterRegistry getTypeConverterRegistry();
 
     /**
+     * Configures the type converter registry to use, where type converters can be added or looked up.
+     *
+     * @param typeConverterRegistry the registry to use
+     */
+    void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry);
+
+    /**
      * Returns the registry used to lookup components by name and type such as SimpleRegistry, Spring ApplicationContext,
      * JNDI, or the OSGi Service Registry.
      *
@@ -1267,22 +1272,22 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setUuidGenerator(UuidGenerator uuidGenerator);
 
     /**
-     * Sets whether to load custom type converters by scanning classpath.
-     * This can be turned off if you are only using Camel components
-     * that does not provide type converters which is needed at runtime.
-     * In such situations setting this option to false, can speedup starting
-     * Camel.
+     * Whether to load custom type converters by scanning classpath.
+     * This is used for backwards compatibility with Camel 2.x.
+     * Its recommended to migrate to use fast type converter loading
+     * by setting <tt>@Converter(loader = true)</tt> on your custom
+     * type converter classes.
      */
     Boolean isLoadTypeConverters();
 
     /**
-     * Sets whether to load custom type converters by scanning classpath.
-     * This can be turned off if you are only using Camel components
-     * that does not provide type converters which is needed at runtime.
-     * In such situations setting this option to false, can speedup starting
-     * Camel.
+     * Whether to load custom type converters by scanning classpath.
+     * This is used for backwards compatibility with Camel 2.x.
+     * Its recommended to migrate to use fast type converter loading
+     * by setting <tt>@Converter(loader = true)</tt> on your custom
+     * type converter classes.
      *
-     * @param loadTypeConverters whether to load custom type converters.
+     * @param loadTypeConverters whether to load custom type converters using classpath scanning.
      */
     void setLoadTypeConverters(Boolean loadTypeConverters);
 

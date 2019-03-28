@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -59,7 +59,7 @@ public class InjectedTypeConverterMultipleContextsTest {
                 .addClass(FirstCamelContextConvertingRoute.class)
                 .addClass(SecondCamelContextConvertingRoute.class)
                 // Type converter
-                .addClass(InjectedTypeConverter.class)
+                .addClass(InjectedTestTypeConverter.class)
                 // No need as Camel CDI automatically registers the type converter bean
                 //.addAsManifestResource(new StringAsset("org.apache.camel.cdi.se.converter"), ArchivePaths.create("services/org/apache/camel/TypeConverter"))
                 // Bean archive deployment descriptor
@@ -107,7 +107,7 @@ public class InjectedTypeConverterMultipleContextsTest {
     }
 
     @Converter
-    public static final class InjectedTypeConverter {
+    public static final class InjectedTestTypeConverter {
         @Converter
         public TypeConverterOutput convert(TypeConverterInput input) throws Exception {
             TypeConverterOutput output = new TypeConverterOutput();

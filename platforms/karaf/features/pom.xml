@@ -211,6 +211,12 @@
             </properties>
         </profile>
         <profile>
+            <id>release</id>
+            <properties>
+                <features.verify.skip>true</features.verify.skip>
+            </properties>
+        </profile>
+        <profile>
             <id>skipTests</id>
             <activation>
                 <property>

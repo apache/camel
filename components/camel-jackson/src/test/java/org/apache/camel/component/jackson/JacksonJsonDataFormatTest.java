@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,11 +26,12 @@ public class JacksonJsonDataFormatTest extends JacksonMarshalTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:in").marshal().json(JsonLibrary.Jackson);
-                from("direct:back").unmarshal().json(JsonLibrary.Jackson).to("mock:reverse");
+                // jackson is default for json
+                from("direct:in").marshal().json();
+                from("direct:back").unmarshal().json().to("mock:reverse");
 
-                from("direct:inPretty").marshal().json(JsonLibrary.Jackson, true);
-                from("direct:backPretty").unmarshal().json(JsonLibrary.Jackson).to("mock:reverse");
+                from("direct:inPretty").marshal().json(true);
+                from("direct:backPretty").unmarshal().json().to("mock:reverse");
 
                 from("direct:inPojo").marshal().json(JsonLibrary.Jackson);
                 from("direct:backPojo").unmarshal().json(JsonLibrary.Jackson, TestPojo.class).to("mock:reversePojo");

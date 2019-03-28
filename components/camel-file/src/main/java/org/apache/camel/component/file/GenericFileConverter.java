@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -33,7 +33,6 @@ import java.util.function.Supplier;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -45,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A set of converter methods for working with generic file types
  */
-@Converter
+@Converter(loader = true)
 public final class GenericFileConverter {
 
     static Supplier<Charset> defaultCharset = Charset::defaultCharset;
@@ -56,7 +55,7 @@ public final class GenericFileConverter {
         // Helper Class
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
         throws IOException, NoTypeConversionAvailableException {
 

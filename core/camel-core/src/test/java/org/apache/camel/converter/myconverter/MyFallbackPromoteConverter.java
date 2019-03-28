@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -18,14 +18,13 @@ package org.apache.camel.converter.myconverter;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.converter.MyCoolBean;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 @Converter
 public class MyFallbackPromoteConverter {
 
-    @FallbackConverter(canPromote = true)
+    @Converter(fallback = true, fallbackCanPromote = true)
     public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         if (MyCoolBean.class.isAssignableFrom(value.getClass())) {
             return "This is cool: " + value.toString();

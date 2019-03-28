@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -51,7 +51,13 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
     }
 
     protected String description() {
-        return exception != null ? exception.getClass().getCanonicalName() : "ref:" + ref;
+        if (exception != null) {
+            return exception.getClass().getCanonicalName();
+        } else if (ref != null) {
+            return "ref:" + ref;
+        } else {
+            return "";
+        }
     }
 
     @Override

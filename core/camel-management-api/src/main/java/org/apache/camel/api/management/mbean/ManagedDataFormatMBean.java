@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,10 +16,7 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import javax.management.openmbean.TabularData;
-
 import org.apache.camel.api.management.ManagedAttribute;
-import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedDataFormatMBean {
 
@@ -34,11 +31,5 @@ public interface ManagedDataFormatMBean {
 
     @ManagedAttribute(description = "DataFormat State")
     String getState();
-
-    @ManagedOperation(description = "DataFormat information as JSon")
-    String informationJson();
-
-    @ManagedOperation(description = "Explain how this data format is configured")
-    TabularData explain(boolean allOptions);
 
 }

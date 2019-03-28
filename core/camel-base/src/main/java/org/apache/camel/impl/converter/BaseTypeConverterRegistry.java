@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -48,13 +48,14 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.DoubleMap;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Base implementation of a type converter registry used for
  * <a href="http://camel.apache.org/type-converter.html">type converters</a> in Camel.
  */
-public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry, CamelContextAware {
+public abstract class BaseTypeConverterRegistry extends ServiceSupport implements TypeConverter, TypeConverterRegistry {
 
     protected static final TypeConverter MISS_CONVERTER = new TypeConverterSupport() {
         @Override
@@ -66,8 +67,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final DoubleMap<Class<?>, Class<?>, TypeConverter> typeMappings = new DoubleMap<>(200);
     protected final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<>();
     protected final List<FallbackTypeConverter> fallbackConverters = new CopyOnWriteArrayList<>();
-    protected final PackageScanClassResolver resolver;
     protected CamelContext camelContext;
+    protected PackageScanClassResolver resolver;
     protected Injector injector;
     protected final FactoryFinder factoryFinder;
     protected TypeConverterExists typeConverterExists = TypeConverterExists.Override;
@@ -76,15 +77,16 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     protected final LongAdder noopCounter = new LongAdder();
     protected final LongAdder attemptCounter = new LongAdder();
     protected final LongAdder missCounter = new LongAdder();
-    protected final LongAdder baseHitCounter = new LongAdder();
     protected final LongAdder hitCounter = new LongAdder();
     protected final LongAdder failedCounter = new LongAdder();
 
     public BaseTypeConverterRegistry(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
-        this.resolver = resolver;
         this.injector = injector;
         this.factoryFinder = factoryFinder;
-        this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+        this.resolver = resolver;
+        if (resolver != null) {
+            this.typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+        }
 
         List<FallbackTypeConverter> fallbacks = new ArrayList<>();
         // add to string first as it will then be last in the last as to string can nearly
@@ -402,6 +404,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         fallbackConverters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
+
+        // TODO: Remove this in the near future as this is no longer needed (you can use exchange as parameter)
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
             typeConverterAware.setTypeConverter(this);
@@ -420,6 +424,8 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         // add in top of fallback as the toString() fallback will nearly always be able to convert
         // the last one which is add to the FallbackTypeConverter will be called at the first place
         converters.add(0, new FallbackTypeConverter(typeConverter, canPromote));
+
+        // TODO: Remove this in the near future as this is no longer needed (you can use exchange as parameter)
         if (typeConverter instanceof TypeConverterAware) {
             TypeConverterAware typeConverterAware = (TypeConverterAware) typeConverter;
             typeConverterAware.setTypeConverter(this);
@@ -546,9 +552,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
-        List<TypeConverter> converters = factoryFinder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
-        for (TypeConverter converter : converters) {
-            addFallbackTypeConverter(converter, false);
+        if (factoryFinder != null) {
+            List<TypeConverter> converters = factoryFinder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
+            for (TypeConverter converter : converters) {
+                addFallbackTypeConverter(converter, false);
+            }
         }
     }
 

@@ -73,11 +73,6 @@
             <artifactId>camel-util-json</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.github.ben-manes.caffeine</groupId>
-            <artifactId>caffeine</artifactId>
-        </dependency>
-
         <!-- required dependencies by camel-core -->
         <dependency>
             <groupId>org.slf4j</groupId>

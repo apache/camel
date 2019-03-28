@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -28,7 +28,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 /**
  * A set of converter methods for working with MINA2 types
  */
-@Converter
+@Converter(loader = true)
 public final class Mina2Converter {
 
     private Mina2Converter() {

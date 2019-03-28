@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,6 +26,8 @@ import com.amazonaws.services.kafka.model.CreateClusterRequest;
 import com.amazonaws.services.kafka.model.CreateClusterResult;
 import com.amazonaws.services.kafka.model.DeleteClusterRequest;
 import com.amazonaws.services.kafka.model.DeleteClusterResult;
+import com.amazonaws.services.kafka.model.DescribeClusterRequest;
+import com.amazonaws.services.kafka.model.DescribeClusterResult;
 import com.amazonaws.services.kafka.model.ListClustersRequest;
 import com.amazonaws.services.kafka.model.ListClustersResult;
 
@@ -59,6 +61,16 @@ public class AmazonMSKClientMock extends AbstractAWSKafka {
         DeleteClusterResult res = new DeleteClusterResult();
         res.setClusterArn(request.getClusterArn());
         res.setState(ClusterState.DELETING.name());
+        return res;
+    }
+    
+    @Override
+    public DescribeClusterResult describeCluster(DescribeClusterRequest request) {
+        DescribeClusterResult res = new DescribeClusterResult();
+        ClusterInfo clusterInfo = new ClusterInfo();
+        clusterInfo.setClusterArn("test-kafka");
+        clusterInfo.setState(ClusterState.ACTIVE.name());
+        res.setClusterInfo(clusterInfo);
         return res;
     }
 }

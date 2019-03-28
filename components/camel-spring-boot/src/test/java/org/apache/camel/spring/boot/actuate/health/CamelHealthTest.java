@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -31,7 +31,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
 @SpringBootApplication
-@SpringBootTest(classes = {CamelAutoConfiguration.class, CamelHealthAutoConfiguration.class, MyCamelRoute.class})
+@SpringBootTest(
+    classes = {CamelAutoConfiguration.class, CamelHealthAutoConfiguration.class, MyCamelRoute.class},
+    properties = {"management.info.camel.verbose = true"}
+    )
 public class CamelHealthTest extends Assert {
 
     @Autowired
@@ -47,9 +50,12 @@ public class CamelHealthTest extends Assert {
 
         String code = health.getStatus().getCode();
         assertEquals("UP", code);
-
+        
         String version = (String) health.getDetails().get("version");
         assertEquals(camelContext.getVersion(), version);
+        
+        String name = (String) health.getDetails().get("name");
+        assertEquals(camelContext.getName(), name);
     }
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,7 @@ package org.apache.camel.component.hbase.converter;
 import org.apache.camel.Converter;
 import org.apache.hadoop.hbase.util.Bytes;
 
-@Converter
+@Converter(loader = true)
 public final class HBaseModelConverter {
 
     private HBaseModelConverter() {

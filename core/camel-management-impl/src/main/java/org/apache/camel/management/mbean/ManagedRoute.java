@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management.mbean;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.AttributeValueExp;
 import javax.management.MBeanServer;
@@ -40,10 +37,7 @@ import javax.management.openmbean.CompositeType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
-import org.w3c.dom.Document;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -62,7 +56,6 @@ import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -325,44 +318,21 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public String dumpRouteAsXml() throws Exception {
-        return dumpRouteAsXml(false);
+        return dumpRouteAsXml(false, false);
+    }
+
+    public String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception {
+        return dumpRouteAsXml(resolvePlaceholders, false);
     }
 
     @Override
-    public String dumpRouteAsXml(boolean resolvePlaceholders) throws Exception {
+    public String dumpRouteAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         String id = route.getId();
         RouteDefinition def = context.getRouteDefinition(id);
         if (def != null) {
-            String xml = ModelHelper.dumpModelAsXml(context, def);
-
-            // if resolving placeholders we parse the xml, and resolve the property placeholders during parsing
-            if (resolvePlaceholders) {
-                final AtomicBoolean changed = new AtomicBoolean();
-                InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-                Document dom = XmlLineNumberParser.parseXml(is, new XmlLineNumberParser.XmlTextTransformer() {
-                    @Override
-                    public String transform(String text) {
-                        try {
-                            String after = getContext().resolvePropertyPlaceholders(text);
-                            if (!changed.get()) {
-                                changed.set(!text.equals(after));
-                            }
-                            return after;
-                        } catch (Exception e) {
-                            // ignore
-                            return text;
-                        }
-                    }
-                });
-                // okay there were some property placeholder replaced so re-create the model
-                if (changed.get()) {
-                    xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                    RouteDefinition copy = ModelHelper.createModelFromXml(context, xml, RouteDefinition.class);
-                    xml = ModelHelper.dumpModelAsXml(context, copy);
-                }
-            }
-            return xml;
+            return ModelHelper.dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
         }
+
         return null;
     }
 
@@ -553,15 +523,6 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                 }
             }
         }
-    }
-
-    public String createRouteStaticEndpointJson() {
-        return getContext().adapt(CatalogCamelContext.class).createRouteStaticEndpointJson(getRouteId());
-    }
-
-    @Override
-    public String createRouteStaticEndpointJson(boolean includeDynamic) {
-        return getContext().adapt(CatalogCamelContext.class).createRouteStaticEndpointJson(getRouteId(), includeDynamic);
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -34,14 +34,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class MQProducerSpringTest extends CamelSpringTestSupport {
     
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mock;
     
     @Test
@@ -166,17 +165,6 @@ public class MQProducerSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
         DescribeBrokerResult resultGet = (DescribeBrokerResult) exchange.getIn().getBody();
         assertEquals(resultGet.getBrokerId(), "1");
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonMQClientMock clientMock = new AmazonMQClientMock();
-        
-        registry.bind("amazonMqClient", clientMock);
-        
-        return registry;
     }
 
     @Override

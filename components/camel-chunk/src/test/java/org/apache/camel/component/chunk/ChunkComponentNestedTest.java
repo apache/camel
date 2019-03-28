@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -29,10 +29,10 @@ import org.junit.Test;
  */
 public class ChunkComponentNestedTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "mock:endSimple")
+    @EndpointInject("mock:endSimple")
     protected MockEndpoint endSimpleMock;
 
-    @Produce(uri = "direct:startSimple")
+    @Produce("direct:startSimple")
     protected ProducerTemplate startSimpleProducerTemplate;
 
     /**

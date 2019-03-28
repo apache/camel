@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -41,9 +41,6 @@ import org.apache.camel.Service;
 import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.processor.DeferServiceFactory;
-import org.apache.camel.processor.EventNotifierProducer;
-import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.service.ServiceHelper;

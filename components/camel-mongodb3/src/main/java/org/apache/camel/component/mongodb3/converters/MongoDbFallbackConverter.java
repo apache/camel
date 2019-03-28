@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -26,12 +26,11 @@ import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.bson.Document;
 
-@Converter
+@Converter(loader = true)
 public final class MongoDbFallbackConverter {
 
     // Jackson's ObjectMapper is thread-safe, so no need to create a pool nor synchronize access to it
@@ -40,7 +39,7 @@ public final class MongoDbFallbackConverter {
     private MongoDbFallbackConverter() {
     }
 
-    @FallbackConverter
+    @Converter(fallback = true)
     @SuppressWarnings("unchecked")
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry)
         throws InvalidPayloadException {

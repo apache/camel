@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,7 @@ package org.apache.camel.component.aws.ddbstream;
 import org.apache.camel.Converter;
 
 // Allow to ignore this type converter if the ddbstream JARs are not present on the classpath
-@Converter(ignoreOnLoadError = true)
+@Converter(loader = true, ignoreOnLoadError = true)
 public final class StringSequenceNumberConverter {
 
     private StringSequenceNumberConverter() {

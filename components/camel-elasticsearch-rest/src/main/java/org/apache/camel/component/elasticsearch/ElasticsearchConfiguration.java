@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -108,7 +108,6 @@ public class ElasticsearchConfiguration {
 
     /**
      * Comma separated list with ip:port formatted remote transport addresses to use.
-     * The ip and port options must be left blank for hostAddresses to be considered instead.
      */
     public String getHostAddresses() {
         return hostAddresses;

@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -19,7 +19,7 @@ package org.apache.camel.component.atomix;
 import io.atomix.catalyst.transport.Address;
 import org.apache.camel.Converter;
 
-@Converter
+@Converter(loader = true)
 public final class AtomixTypeConverter {
 
     private AtomixTypeConverter() {
