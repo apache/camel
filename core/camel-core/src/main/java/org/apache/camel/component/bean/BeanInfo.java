@@ -83,6 +83,8 @@ public class BeanInfo {
         EXCLUDED_METHODS.addAll(Arrays.asList(Object.class.getDeclaredMethods()));
         // exclude all java.lang.reflect.Proxy methods as we dont want to invoke them
         EXCLUDED_METHODS.addAll(Arrays.asList(Proxy.class.getDeclaredMethods()));
+        // Remove private methods
+        EXCLUDED_METHODS.removeIf(m -> Modifier.isPrivate(m.getModifiers()));
         try {
             // but keep toString as this method is okay
             EXCLUDED_METHODS.remove(Object.class.getDeclaredMethod("toString"));
