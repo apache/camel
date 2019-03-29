@@ -41,7 +41,7 @@ public class PulsarComponentTest extends CamelTestSupport {
     public void testPulsarEndpointConfiguration() throws Exception {
         PulsarComponent component = new PulsarComponent(context, autoConfiguration, null);
 
-        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/test/fulfilment/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
+        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 
         assertNotNull(endpoint);
     }
@@ -50,7 +50,7 @@ public class PulsarComponentTest extends CamelTestSupport {
     public void testPulsarEndpointDefaultConfiguration() throws Exception {
         PulsarComponent component = new PulsarComponent(context, null, null);
 
-        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/test/fulfilment/BatchCreated");
+        PulsarEndpoint endpoint = (PulsarEndpoint) component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated");
 
         assertNotNull(endpoint);
         assertEquals("sole-consumer", endpoint.getConfiguration().getConsumerName());
@@ -67,7 +67,7 @@ public class PulsarComponentTest extends CamelTestSupport {
         when(autoConfiguration.isAutoConfigurable()).thenReturn(true);
         PulsarComponent component = new PulsarComponent(context, autoConfiguration, null);
 
-        component.createEndpoint("pulsar://persistent/test/fulfilment/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
+        component.createEndpoint("pulsar://persistent/test/foobar/BatchCreated?numberOfConsumers=10&subscriptionName=batch-created-subscription&subscriptionType=Shared");
 
         verify(autoConfiguration).ensureNameSpaceAndTenant(Matchers.anyString());
     }
