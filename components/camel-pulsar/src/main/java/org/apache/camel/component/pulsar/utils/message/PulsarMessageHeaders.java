@@ -16,16 +16,15 @@
  */
 package org.apache.camel.component.pulsar.utils.message;
 
-public class PulsarMessageHeaders {
+public interface PulsarMessageHeaders {
 
-    public static final String PROPERTIES = "properties";
-
-    static final String PRODUCER_NAME = "producer_name";
-    static final String SEQUENCE_ID = "sequence_id";
-    static final String PUBLISH_TIME = "publish_time";
-    static final String MESSAGE_ID = "message_id";
-    static final String EVENT_TIME = "event_time";
-    static final String KEY = "key";
-    static final String KEY_BYTES = "key_bytes";
-    static final String TOPIC_NAME = "topic_name";
+    String PROPERTIES = "properties";
+    String PRODUCER_NAME = "producer_name";
+    String SEQUENCE_ID = "sequence_id";
+    String PUBLISH_TIME = "publish_time";
+    String MESSAGE_ID = "message_id";
+    String EVENT_TIME = "event_time";
+    String KEY = "key";
+    String KEY_BYTES = "key_bytes";
+    String TOPIC_NAME = "topic_name";
 }
