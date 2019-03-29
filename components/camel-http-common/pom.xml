@@ -41,6 +41,7 @@
 
     <dependencies>
 
+        <!-- TODO: requires camel-core due camel.cloud is not in camel-support -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>

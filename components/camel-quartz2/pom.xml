@@ -33,6 +33,7 @@
     <description>Camel Quartz2 support</description>
 
     <dependencies>
+        <!-- TODO: try to fix this -->
         <!-- core required: org.apache.camel.processor.loadbalancer -->
         <dependency>
             <groupId>org.apache.camel</groupId>

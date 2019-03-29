@@ -34,6 +34,7 @@
 
     <dependencies>
 
+        <!-- requires camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>

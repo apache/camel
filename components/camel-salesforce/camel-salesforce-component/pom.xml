@@ -36,7 +36,7 @@
     <properties>
         <camel.osgi.import.additional>
             com.thoughtworks.xstream.*;version="[1.4.7,2)",
-            org.eclipse.jetty.*;version="[9.3,10)",
+            org.eclipse.jetty.*;version="[9.4,10)",
             org.mortbay.cometd.*;version="[6.1,7)"
         </camel.osgi.import.additional>
         <camel.osgi.private.pkg>org.apache.camel.component.salesforce.internal.*</camel.osgi.private.pkg>
@@ -44,21 +44,13 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>${commons-csv-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <scope>test</scope>
-        </dependency>
+
+        <!-- requires camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-client</artifactId>
@@ -138,6 +130,17 @@
         </dependency>
 
         <!-- testing -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>${commons-csv-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
