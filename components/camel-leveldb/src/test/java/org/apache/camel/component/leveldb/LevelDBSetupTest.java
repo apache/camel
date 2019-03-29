@@ -33,6 +33,7 @@ public class LevelDBSetupTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
+        deleteDirectory("leveldb.dat");
         super.tearDown();
     }
 
@@ -41,7 +42,6 @@ public class LevelDBSetupTest extends CamelTestSupport {
      */
     @Test
     public void testLevelDBStartWithNoPath() {
-        deleteDirectory("leveldb.dat");
         levelDBFile = new LevelDBFile();
         levelDBFile.setFileName("leveldb.dat");
         levelDBFile.start();
