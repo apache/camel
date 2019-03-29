@@ -22,8 +22,7 @@ import org.apache.camel.component.pulsar.PulsarMessageListener;
 import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 
-// does this need to be called *Utils? It lives in a utils package after all
-public final class CommonCreationStrategyUtils {
+public final class CommonCreationStrategyImpl {
 
     public static ConsumerBuilder<byte[]> create(final String name,
                                                  final PulsarEndpoint pulsarEndpoint,
