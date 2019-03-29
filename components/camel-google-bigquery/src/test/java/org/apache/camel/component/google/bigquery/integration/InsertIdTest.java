@@ -35,30 +35,30 @@ import org.junit.Test;
 public class InsertIdTest extends BigQueryTestSupport {
     private static final String TABLE_ID = "insertId";
 
-    @EndpointInject(uri = "direct:withInsertId")
+    @EndpointInject("direct:withInsertId")
     private Endpoint directInWithInsertId;
 
-    @EndpointInject(uri = "direct:in")
+    @EndpointInject("direct:in")
     private Endpoint directIn;
 
-    @EndpointInject(uri = "google-bigquery:{{project.id}}:{{bigquery.datasetId}}:"
+    @EndpointInject("google-bigquery:{{project.id}}:{{bigquery.datasetId}}:"
             + TABLE_ID + "?useAsInsertId=col1")
     private Endpoint bigqueryEndpointWithInsertId;
 
-    @EndpointInject(uri = "google-bigquery:{{project.id}}:{{bigquery.datasetId}}:"
+    @EndpointInject("google-bigquery:{{project.id}}:{{bigquery.datasetId}}:"
             + TABLE_ID)
     private Endpoint bigqueryEndpoint;
 
-    @EndpointInject(uri = "mock:sendResult")
+    @EndpointInject("mock:sendResult")
     private MockEndpoint sendResult;
 
-    @EndpointInject(uri = "mock:sendResultWithInsertId")
+    @EndpointInject("mock:sendResultWithInsertId")
     private MockEndpoint sendResultWithInsertId;
 
-    @Produce(uri = "direct:withInsertId")
+    @Produce("direct:withInsertId")
     private ProducerTemplate producerWithInsertId;
 
-    @Produce(uri = "direct:in")
+    @Produce("direct:in")
     private ProducerTemplate producer;
 
     @Before
