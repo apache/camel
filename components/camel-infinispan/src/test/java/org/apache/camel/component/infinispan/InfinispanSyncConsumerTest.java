@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class InfinispanSyncConsumerTest extends InfinispanTestSupport {
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
     @Test

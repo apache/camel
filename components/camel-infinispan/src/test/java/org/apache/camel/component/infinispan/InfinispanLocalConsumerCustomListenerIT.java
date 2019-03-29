@@ -25,7 +25,7 @@ import org.junit.Test;
 public class InfinispanLocalConsumerCustomListenerIT extends InfinispanTestSupport {
     private static final String CUSTOM_CACHE_NAME = "customCacheName";
 
-    @EndpointInject(uri = "mock:result")
+    @EndpointInject("mock:result")
     private MockEndpoint mockResult;
 
     @Override

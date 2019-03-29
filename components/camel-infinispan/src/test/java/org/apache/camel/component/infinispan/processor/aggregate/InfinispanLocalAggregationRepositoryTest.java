@@ -34,10 +34,10 @@ public class InfinispanLocalAggregationRepositoryTest extends CamelTestSupport {
     private static final String MOCK_GOTCHA = "mock:gotcha";
     private static final String DIRECT_ONE = "direct:one";
 
-    @EndpointInject(uri = MOCK_GOTCHA)
+    @EndpointInject(MOCK_GOTCHA)
     private MockEndpoint mock;
 
-    @Produce(uri = DIRECT_ONE)
+    @Produce(DIRECT_ONE)
     private ProducerTemplate produceOne;
 
 
