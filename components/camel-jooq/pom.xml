@@ -31,7 +31,7 @@
     <artifactId>camel-jooq</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: JOOQ</name>
-    <description>The jooq component enables you to store and retrieve entities from databases using JOOQ.</description>
+    <description>The jooq component enables you to store and retrieve entities from databases using JOOQ</description>
 
     <properties>
         <generated-jooq-directory>target/generated-test-sources/jooq</generated-jooq-directory>
@@ -40,7 +40,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
+            <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
