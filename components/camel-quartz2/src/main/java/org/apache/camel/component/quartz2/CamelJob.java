@@ -18,6 +18,7 @@ package org.apache.camel.component.quartz2;
 
 import java.util.Collection;
 
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.DelegateEndpoint;
@@ -38,7 +39,6 @@ import org.slf4j.LoggerFactory;
 /**
  * This is a Quartz Job that is scheduled by QuartzEndpoint's Consumer and will call it to
  * produce a QuartzMessage sending to a route.
- *
  */
 public class CamelJob implements Job {
     private static final Logger LOG = LoggerFactory.getLogger(CamelJob.class);
@@ -55,7 +55,15 @@ public class CamelJob implements Job {
             QuartzEndpoint endpoint = lookupQuartzEndpoint(camelContext, context);
             exchange = endpoint.createExchange();
             exchange.setIn(new QuartzMessage(exchange, context));
-            endpoint.getConsumerLoadBalancer().process(exchange);
+
+            AsyncProcessor processor = endpoint.getProcessor();
+            try {
+                if (processor != null) {
+                    processor.process(exchange);
+                }
+            } catch (Throwable e) {
+                exchange.setException(e);
+            }
 
             if (exchange.getException() != null) {
                 throw new JobExecutionException(exchange.getException());
@@ -124,7 +132,7 @@ public class CamelJob implements Job {
         // fallback and lookup existing from registry (eg maybe a @Consume POJO with a quartz endpoint, and thus not from a route)
         String endpointUri = quartzContext.getMergedJobDataMap().getString(QuartzConstants.QUARTZ_ENDPOINT_URI);
         
-        QuartzEndpoint result = null;
+        QuartzEndpoint result;
 
         // Even though the same camelContext.getEndpoint call, but if/else display different log.
         if (camelContext.hasEndpoint(endpointUri) != null) {
