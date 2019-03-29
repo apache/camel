@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CalendarCalendarsIntegrationTest extends AbstractGoogleCalendarTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CalendarCalendarsIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleCalendarApiCollection.getCollection().getApiName(CalendarCalendarsApiMethod.class).getName();
 
     @Test
