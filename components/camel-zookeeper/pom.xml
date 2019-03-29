@@ -38,9 +38,10 @@
 
     <dependencies>
 
+        <!-- requires camel-core due camel-cloud and others -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.zookeeper</groupId>

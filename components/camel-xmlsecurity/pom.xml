@@ -37,9 +37,11 @@
     </properties>
 
     <dependencies>
+
+        <!-- requires camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-support</artifactId>
+            <artifactId>camel-core</artifactId>
         </dependency>
         <!-- for base 64 in XAdES -->
         <dependency>
