@@ -36,7 +36,7 @@ import org.junit.Test;
 
 public class HipchatComponentCustomHttpClientTest extends CamelTestSupport {
 
-    @EndpointInject(uri = "hipchat:http://api.hipchat.com?httpClient=#myHttpClient&authToken=anything&consumeUsers=@AUser")
+    @EndpointInject("hipchat:http://api.hipchat.com?httpClient=#myHttpClient&authToken=anything&consumeUsers=@AUser")
     private HipchatEndpoint hipchatEndpoint;
     
     @Test
