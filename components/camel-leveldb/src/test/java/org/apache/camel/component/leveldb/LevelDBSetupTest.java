@@ -20,13 +20,6 @@ package org.apache.camel.component.leveldb;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
-/**
- * The class LevelDBSetupTest
- *
- * @author mgr, 2019-03-27
- * @version 1.0
- */
 public class LevelDBSetupTest extends CamelTestSupport {
     /**
      * The Level db file.
