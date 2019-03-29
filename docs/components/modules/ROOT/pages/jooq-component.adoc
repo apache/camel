@@ -48,7 +48,7 @@ The JOOQ component supports 2 options, which are listed below.
 The JOOQ endpoint is configured using URI syntax:
 
 ----
-jooq://entityType/operation
+jooq:entityType/operation
 ----
 
 with the following path and query parameters:
